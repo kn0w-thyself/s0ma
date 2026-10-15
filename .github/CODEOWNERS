@@ -1,0 +1,4 @@
+# Every path is owned by the maintainer. With the ruleset on `main` requiring
+# one approving review from a code owner, this is what makes that review the
+# maintainer's own rather than any collaborator's.
+* @rob-kts
