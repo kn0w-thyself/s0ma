@@ -1,0 +1,44 @@
+module bare_module
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Module covering its own PUBLIC nerve via a bare-name test target."
+    exports: [BareNerve]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve BareNerve :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Returns the integer 7 for tests to assert against."
+    expects: "no inputs"
+    guarantees: "Returns the integer 7."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def BareNerve() -> int:
+        return 7
+
+test test_bare_nerve_returns_7 :: DOMAIN
+    intent: "Verifies BareNerve returns 7 using a bare-name target."
+    tests: [BareNerve]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_bare_nerve_returns_7():
+        assert BareNerve() == 7

@@ -1,0 +1,229 @@
+{
+  "identity": {
+    "channel": "preview",
+    "journey": "journey:drift-recovery",
+    "published_by": "doc:guide/drift-recovery",
+    "release": "0.19.1 (preview)",
+    "snapshot": "sha256:46cb0cce5f7c07cf"
+  },
+  "package": {
+    "audience": [
+      "user"
+    ],
+    "cautions": [
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "1",
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "2",
+        "surface": "cli:s0ma/build",
+        "surface_name": "s0ma build"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "3",
+        "surface": "cli:s0ma/build",
+        "surface_name": "s0ma build"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "4",
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "5",
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      }
+    ],
+    "chapters": [
+      {
+        "caption": "Ask whether the project holds together, so that everything after this is measured against a run that was clean.",
+        "ordinal": "1",
+        "step": "1",
+        "title": "s0ma check"
+      },
+      {
+        "caption": "Build again once a line has been added by hand to a file under build, which is a folder the toolchain writes and owns.",
+        "ordinal": "2",
+        "step": "2",
+        "title": "s0ma build"
+      },
+      {
+        "caption": "Say out loud which of the two copies survives: rebuild from the written source and let the hand-written line go.",
+        "ordinal": "3",
+        "step": "3",
+        "title": "s0ma build"
+      },
+      {
+        "caption": "Ask the same question at release strictness, once a promise in the source has deliberately been left unwritten.",
+        "ordinal": "4",
+        "step": "4",
+        "title": "s0ma check"
+      },
+      {
+        "caption": "Write the promise the field was waiting for and ask once more, at the strictness a release has to pass.",
+        "ordinal": "5",
+        "step": "5",
+        "title": "s0ma check"
+      },
+      {
+        "caption": "When you cannot tell which of these you are in, ask for the health report before changing anything.",
+        "ordinal": "6",
+        "step": "6",
+        "title": "s0ma doctor"
+      }
+    ],
+    "consent": [],
+    "evidence": [
+      {
+        "id": "example:transcript/drift-recovery",
+        "source": "docs/s0ma_src/evidence/drift-recovery.json"
+      }
+    ],
+    "outcome": "Meet the two refusals a working project runs into — a file the toolchain owns that somebody edited, and a promise left unwritten before a release — and get back to a clean run from each without guessing.",
+    "prerequisites": [
+      {
+        "concept": "concept:authored-vs-generated-boundary",
+        "term": "authored-vs-generated boundary"
+      },
+      {
+        "concept": "concept:check-and-build-loop",
+        "term": "check and build loop"
+      },
+      {
+        "concept": "concept:doc-guide",
+        "term": "doc-guide"
+      },
+      {
+        "concept": "concept:doc-ref",
+        "term": "doc-ref"
+      }
+    ],
+    "recovery": [
+      {
+        "action": "Two honest answers and no third: move the hand-written change into the source it belongs in and build again, or accept losing it and build with --force. The build stops until you pick one, because the two copies cannot both be right.",
+        "next_surface": "cli:s0ma/build",
+        "next_surface_name": "s0ma build",
+        "when": "GENERATED_FILE_DRIFT"
+      },
+      {
+        "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-core and s0ma-dsl in the project's own list of dependencies.",
+        "next_surface": "cli:s0ma/doctor",
+        "next_surface_name": "s0ma doctor",
+        "when": "HOST_RUNTIME_UNDECLARED"
+      },
+      {
+        "action": "Write the value the field is waiting for and ask again, or leave the note where it is and stop asking for the release reading until you are ready. A written-down debt is allowed; it earns nothing, and it will not let a release through.",
+        "next_surface": "cli:s0ma/check",
+        "next_surface_name": "s0ma check",
+        "when": "SEMANTIC_PENDING_DEBT"
+      }
+    ],
+    "steps": [
+      {
+        "channel": "cli",
+        "expected_visible_state": "One line saying how many files were read and that nothing in them was refused.",
+        "ordinal": "1",
+        "purpose": "Ask whether the project holds together, so that everything after this is measured against a run that was clean.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The build stops, names the file and the failure, and writes nothing — so the hand-written line is still there to read.",
+        "ordinal": "2",
+        "purpose": "Build again once a line has been added by hand to a file under build, which is a folder the toolchain writes and owns.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/build",
+        "surface_name": "s0ma build"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "A clean build, and the file back to what the source says it should be — the hand-written line gone, as asked.",
+        "ordinal": "3",
+        "purpose": "Say out loud which of the two copies survives: rebuild from the written source and let the hand-written line go.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/build",
+        "surface_name": "s0ma build"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The finding that was a warning a moment ago is now the reason the run fails, and the last line names the reading you got.",
+        "ordinal": "4",
+        "purpose": "Ask the same question at release strictness, once a promise in the source has deliberately been left unwritten.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The clean line again, this time earned under the reading that refuses a debt.",
+        "ordinal": "5",
+        "purpose": "Write the promise the field was waiting for and ask once more, at the strictness a release has to pass.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "What is installed, what this project is set to, whether the build is fresh, and one thing to do next.",
+        "ordinal": "6",
+        "purpose": "When you cannot tell which of these you are in, ask for the health report before changing anything.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/doctor",
+        "surface_name": "s0ma doctor"
+      }
+    ],
+    "teaches": [
+      {
+        "concept": "concept:drift",
+        "term": "drift"
+      },
+      {
+        "concept": "concept:drift-gate",
+        "term": "drift-gate"
+      },
+      {
+        "concept": "concept:strictness-mode",
+        "term": "strictness mode"
+      }
+    ],
+    "title": "When s0ma refuses, and how to get back to green"
+  },
+  "schema": "s0ma-docs-model@1"
+}

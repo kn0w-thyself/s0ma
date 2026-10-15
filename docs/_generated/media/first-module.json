@@ -1,0 +1,175 @@
+{
+  "identity": {
+    "channel": "preview",
+    "journey": "journey:first-module",
+    "published_by": "doc:guide/first-module",
+    "release": "0.19.1 (preview)",
+    "snapshot": "sha256:46cb0cce5f7c07cf"
+  },
+  "package": {
+    "audience": [
+      "user"
+    ],
+    "cautions": [
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "1",
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "2",
+        "surface": "cli:s0ma/build",
+        "surface_name": "s0ma build"
+      }
+    ],
+    "chapters": [
+      {
+        "caption": "Ask whether the module you have just written holds together, before anything is built from it.",
+        "ordinal": "1",
+        "step": "1",
+        "title": "s0ma check"
+      },
+      {
+        "caption": "Turn the source into ordinary Python, and write the record of what each file declared beside it.",
+        "ordinal": "2",
+        "step": "2",
+        "title": "s0ma build"
+      },
+      {
+        "caption": "Ask the built module what it now contains, and read back the parts you declared.",
+        "ordinal": "3",
+        "step": "3",
+        "title": "s0ma inspect"
+      }
+    ],
+    "consent": [],
+    "evidence": [
+      {
+        "id": "example:transcript/first-module",
+        "source": "docs/s0ma_src/evidence/first-module.json"
+      }
+    ],
+    "outcome": "Write your first module into a project that already builds, and follow it through to the point where the system can describe it back to you.",
+    "prerequisites": [
+      {
+        "concept": "concept:check-and-build-loop",
+        "term": "check and build loop"
+      },
+      {
+        "concept": "concept:intent",
+        "term": "intent"
+      },
+      {
+        "concept": "concept:registry-snapshot",
+        "term": "registry snapshot"
+      },
+      {
+        "concept": "concept:self-model",
+        "term": "self-model"
+      }
+    ],
+    "recovery": [
+      {
+        "action": "The check stopped on the code under one of your declarations and named the file and the line it stopped at. Repair that line, then ask the same question again — nothing is built from a file the toolchain cannot read.",
+        "next_surface": "cli:s0ma/check",
+        "next_surface_name": "s0ma check",
+        "when": "PARSE_ERROR"
+      }
+    ],
+    "steps": [
+      {
+        "channel": "cli",
+        "expected_visible_state": "A clean run says how many files it read and that it found nothing wrong. Anything it is unhappy about is listed with the file and the line that caused it.",
+        "ordinal": "1",
+        "purpose": "Ask whether the module you have just written holds together, before anything is built from it.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "One line per module built and one line per file written, ending with the count of modules and where the manifest went. Your new module appears among them.",
+        "ordinal": "2",
+        "purpose": "Turn the source into ordinary Python, and write the record of what each file declared beside it.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/build",
+        "surface_name": "s0ma build"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The module's own header, then every part it holds with who may call it and what archetype it is, then the connections the build worked out for itself, then what the file publishes.",
+        "ordinal": "3",
+        "purpose": "Ask the built module what it now contains, and read back the parts you declared.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/inspect",
+        "surface_name": "s0ma inspect"
+      }
+    ],
+    "teaches": [
+      {
+        "concept": "concept:layer",
+        "term": "layer"
+      },
+      {
+        "concept": "concept:module",
+        "term": "module"
+      },
+      {
+        "concept": "concept:s0ma-file",
+        "term": ".s0ma file"
+      },
+      {
+        "concept": "concept:kind",
+        "term": "kind"
+      },
+      {
+        "concept": "concept:visibility",
+        "term": "visibility"
+      },
+      {
+        "concept": "concept:contract",
+        "term": "contract"
+      },
+      {
+        "concept": "concept:nerve",
+        "term": "nerve"
+      },
+      {
+        "concept": "concept:cell",
+        "term": "cell"
+      },
+      {
+        "concept": "concept:ganglion",
+        "term": "ganglion"
+      },
+      {
+        "concept": "concept:axon",
+        "term": "axon"
+      },
+      {
+        "concept": "concept:uses",
+        "term": "uses:"
+      },
+      {
+        "concept": "concept:canonical-ir",
+        "term": "canonical IR"
+      }
+    ],
+    "title": "Your first module: the anatomy of a .s0ma file"
+  },
+  "schema": "s0ma-docs-model@1"
+}

@@ -1,0 +1,18 @@
+module example_prohibited_construct
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture with an example body calling exec() — prohibited."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+example bad_example
+    intent: "Example that uses exec() inside its body."
+    demonstrates: [nerve::greet]
+    runs_in: standalone
+    ---
+    exec("print('boom')")

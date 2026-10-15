@@ -1,0 +1,124 @@
+# adopt_source: src/bookshelf/cli.py@sha256:7b088d5511f405836763126eccfcbbea5f8fcf969534ecc6f55900b4f1940868
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module cli` rather than
+#   `bookshelf.cli`. Every module name in a project must be unique; rename the draft if
+#   another module already carries this name.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+# note: `bookshelf.api` is another module of this project that is not a .s0ma module yet, so it
+#   is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.config` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.errors` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+module cli
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'The command line: one sub-command per job done at the counter.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports: [build_parser, main]
+
+    requires:
+      - argparse
+      - bookshelf.config:DATA_DIR
+      - bookshelf.config:LIBRARY_NAME
+      - bookshelf.errors:BookshelfError
+      - bookshelf:api
+      - datetime:date
+      - json
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+nerve build_parser :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def build_parser() -> argparse.ArgumentParser:
+        """The parser behind ``python -m bookshelf``."""
+        parser = argparse.ArgumentParser(
+            prog="bookshelf",
+            description=f"{LIBRARY_NAME} counter tools.",
+        )
+        parser.add_argument("--data-dir", default=DATA_DIR, help="where the JSON tables are kept")
+        parser.add_argument("--today", default=None, help="the date to judge lateness against")
+        commands = parser.add_subparsers(dest="command", required=True)
+
+        commands.add_parser("list", help="list every title the library owns")
+
+        add = commands.add_parser("add", help="add a title to the catalogue")
+        add.add_argument("isbn")
+        add.add_argument("title")
+        add.add_argument("author")
+        add.add_argument("--copies", type=int, default=1)
+
+        borrow = commands.add_parser("borrow", help="lend a copy to a member")
+        borrow.add_argument("isbn")
+        borrow.add_argument("card_number")
+
+        commands.add_parser("overdue", help="list the loans that are late")
+        return parser
+
+nerve main :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def main(argv: list[str] | None = None) -> int:
+        """Run one counter command and print what it returned, as JSON."""
+        args = build_parser().parse_args(argv)
+        catalog, register = api.build_services(args.data_dir)
+        today = date.fromisoformat(args.today) if args.today else date.today()
+        try:
+            if args.command == "list":
+                result: object = api.list_titles(catalog)
+            elif args.command == "add":
+                result = api.add_title(catalog, args.isbn, args.title, args.author, args.copies)
+            elif args.command == "borrow":
+                result = api.borrow_title(register, args.isbn, args.card_number, today)
+            else:
+                result = api.overdue_report(register, today)
+        except BookshelfError as error:
+            print(json.dumps(api.describe_failure(error), indent=2, sort_keys=True))
+            return 1
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0

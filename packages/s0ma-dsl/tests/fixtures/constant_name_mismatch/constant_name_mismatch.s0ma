@@ -1,0 +1,25 @@
+module constant_name_mismatch
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Regression fixture for the CONSTANT_NAME_MISMATCH check: the
+        cell is declared as `VizTemplate` but the body assigns to
+        `VIZ_TEMPLATE`, so the emitted
+        `from constant_name_mismatch import VizTemplate` would fail at
+        runtime, and the validator must catch it at check time."
+    requires: []
+    uses: []
+    exports: [VizTemplate]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell VizTemplate :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Cell name disagrees with body identifier — should error."
+    schema: "string of HTML5 markup"
+    invariants: none
+    covered_by: none
+    ---
+    VIZ_TEMPLATE = """<!doctype html><html><body><h1>broken</h1></body></html>"""

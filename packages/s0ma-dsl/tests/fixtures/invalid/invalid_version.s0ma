@@ -1,0 +1,11 @@
+module invalid_version
+    layer: DOMAIN
+    version: not_a_version
+    intent: "Module with an invalid version string"
+    exports: []
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none

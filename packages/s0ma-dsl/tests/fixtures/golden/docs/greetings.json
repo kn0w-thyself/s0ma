@@ -1,0 +1,55 @@
+{
+  "_hash": "1:67716b5cfadcd4aaec4e049bf8b1013379bc0d415e66cf6568114af7476179f5",
+  "_meta": {
+    "content_hash": "1:67716b5cfadcd4aaec4e049bf8b1013379bc0d415e66cf6568114af7476179f5",
+    "format": "json",
+    "intent": "JSON reference for every public greetings nerve.",
+    "module": "render_targets",
+    "name": "greetings_json",
+    "s0ma_kind": "doc-ref",
+    "schema_version": "3.0.0"
+  },
+  "covers": [
+    {
+      "group_by": null,
+      "ordered_by": [],
+      "predicate_raw": "nerve where visibility == PUBLIC",
+      "target_kind": "nerve"
+    }
+  ],
+  "sections": [
+    {
+      "entries": [
+        {
+          "kind": "nerve",
+          "name": "greet",
+          "value": "Returns a greeting for the given username."
+        }
+      ],
+      "field": "intent",
+      "type": "field"
+    },
+    {
+      "entries": [
+        {
+          "kind": "nerve",
+          "name": "greet",
+          "value": "username is a non-empty string"
+        }
+      ],
+      "field": "expects",
+      "type": "field"
+    },
+    {
+      "entries": [
+        {
+          "kind": "nerve",
+          "name": "greet",
+          "value": "returns a non-empty greeting string"
+        }
+      ],
+      "field": "guarantees",
+      "type": "field"
+    }
+  ]
+}

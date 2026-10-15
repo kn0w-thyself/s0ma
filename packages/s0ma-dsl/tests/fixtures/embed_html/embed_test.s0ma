@@ -1,0 +1,22 @@
+module embed_test
+    layer: PRESENTATION
+    version: 0.0.1
+    intent: "Smoke fixture for the @file() content embed directive,
+        paired with templates/viz.html: the cell metadata stays here and
+        the HTML, CSS and JS live in their native syntax in the embedded file."
+    requires: []
+    uses: []
+    exports: [VIZ_TEMPLATE]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell VIZ_TEMPLATE :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Self-contained HTML5 visualization template — embedded via @file()."
+    schema: "string of valid HTML5 with inline CSS and JS"
+    content: @file("templates/viz.html")
+    invariants: none
+    covered_by: none

@@ -1,0 +1,13 @@
+[project]
+name = "source_source_overlap"
+version = "0.0.1"
+
+# G2 (feedback 5–6 cleanup) fixture: two source_roots overlap (the
+# second is a subpath of the first). Less common than source/test
+# overlap but the detector must catch it — discovering the same files
+# from two declared anchors still produces the
+# ``MODULE_NAME_COLLISION``-against-itself failure mode.
+[tool.s0ma]
+source_roots = ["src", "src/myproject"]
+test_roots = ["tests"]
+build_dir = "source_source_overlap_build"

@@ -1,0 +1,23 @@
+# The Claude Desktop extension's project file.
+#
+# The MCPB `uv` server type requires one: "dependencies are declared in
+# pyproject.toml and installed by the host application using UV" (MCPB
+# MANIFEST.md, server type `uv`, spec 0.4). Claude Desktop reads it, builds the
+# environment the launcher runs in, and provides the Python itself - which is
+# why nobody has to install Python to use this extension.
+#
+# There is nothing to install. The launcher is standard library only, by rule
+# (plan `beta-prep-2-claude`, section 3.1, rule 7), so the dependency list is
+# empty and stays empty. `requires-python` matches the launcher's own PEP 723
+# header.
+#
+# There is deliberately no [build-system] table: without one, uv treats this as
+# a project to run in rather than a package to build, so no wheel is ever made
+# of the launcher.
+
+[project]
+name = "s0ma-desktop-extension"
+version = "0.19.1"
+description = "Starts s0ma for Claude Desktop."
+requires-python = ">=3.11"
+dependencies = []

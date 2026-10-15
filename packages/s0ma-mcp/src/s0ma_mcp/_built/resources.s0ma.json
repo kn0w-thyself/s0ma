@@ -1,0 +1,2584 @@
+{
+  "components": [
+    {
+      "canonical_id": "resources::SERVER_NAME",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: s0ma-authoring."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The MCP server name (FR-MCP-1) in the version document."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 21,
+        "start_line": 13
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "resources::GuideDoc",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "Frozen dataclass. key: str, uri: str, filename: str, source: str. All fields required; source is repo-root-relative and used only by the drift gate."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "One packaged document (agent guide or meta resource): its loader key, MCP resource URI, packaged filename, and drift-gate source path."
+      },
+      "kind": "MODEL",
+      "location": {
+        "end_line": 50,
+        "start_line": 23
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::GUIDE_DOCS",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "dict[str, GuideDoc] keyed by loader key; source paths are monorepo-root-relative and exist only in a repo checkout."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Keyed registry of every packaged document the server serves: key, URI, packaged filename, and the in-repo source the drift gate byte-compares."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 124,
+        "start_line": 52
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::load_doc",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "key is one of the GUIDE_DOCS loader keys"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the packaged document's full UTF-8 text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Resolves the packaged agent-guide documents from s0ma_mcp/_docs package data via importlib.resources so they load from an installed wheel"
+      },
+      "kind": "ADAPTER",
+      "location": {
+        "end_line": 168,
+        "start_line": 126
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::system_prompt_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the agent system prompt is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full prompt text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_uri": "s0ma://guide/system-prompt"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the drop-in coding-agent system prompt that teaches an LLM how to author .s0ma files"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 200,
+        "start_line": 170
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::getting_started_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the canonical getting-started guide is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the same getting-started Markdown embedded in the root README"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_uri": "s0ma://guide/getting-started"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the canonical outcome-first cold-start journey: product fit, project creation, model orientation, dependency inspection, drift and release-gate proof, and explicit host verification."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 233,
+        "start_line": 202
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::survival_card_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the survival card is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full survival-card text (deliberately under a few KB)"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_uri": "s0ma://guide/survival-card"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the survival card (under 4 KB): the bootstrap loop, the three body rules, one minimal valid module, and the recovery moves for the top diagnostic codes — deliberately small enough to hold in context"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 270,
+        "start_line": 235
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::self_prompting_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the runtime self-prompting guide is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full runtime self-prompting guide text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_uri": "s0ma://guide/self-prompting"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the runtime self-prompting guide: verified companion loading, self_inspect adapter wiring, a ContextAssembler concierge-shaped example, and the recommended host prompt trust block."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 303,
+        "start_line": 272
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::quick_reference_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the quick reference page is packaged under s0ma_mcp/_docs as a byte-identical copy of docs/reference/quick-reference-readable.md"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full quick-reference page as Markdown"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_mime_type": "text/markdown",
+          "mcp_uri": "s0ma://guide/quick-reference"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the generated s0ma quick reference, the page written for a reader: every kind of declaration, every line each may carry with whether it must be written, the words a line chooses from, a checked sample of each kind, the everyday commands, the strictness modes and the basic rules, rendered by the documentation build from the language the check enforces"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 343,
+        "start_line": 305
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::quick_reference_machine_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the quick reference data twin is packaged under s0ma_mcp/_docs as a byte-identical copy of docs/_generated/quick-reference-machine.json"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full quick-reference document as JSON text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_mime_type": "application/json",
+          "mcp_uri": "s0ma://guide/quick-reference.json"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the generated s0ma quick reference as data (schema s0ma-quick-reference@1): the same facts as the page, rendered from the same value, so that a coding agent can read every line of every kind of declaration without reading a page laid out for a person"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 380,
+        "start_line": 345
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::patterns_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the patterns guide is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full patterns-guide text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_uri": "s0ma://guide/patterns"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the DSL patterns guide of worked idioms and recipes for structuring non-trivial s0ma applications"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 413,
+        "start_line": 382
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::spec_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the language spec is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full specification text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_uri": "s0ma://spec/current"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the current normative s0ma DSL language specification — the authority when the guides are not enough"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 445,
+        "start_line": 415
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::errors_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the generated error catalog is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full error-catalog text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_uri": "s0ma://guide/errors"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 480,
+        "start_line": 447
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::changelog_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the changelog copy is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the full changelog text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_uri": "s0ma://meta/changelog"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the monorepo's canonical changelog so agents and humans can read what changed in the installed toolchain version"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 514,
+        "start_line": 482
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::version_document",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "importlib.metadata can see the installed distributions"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never reads a version from a packaged file or reaches the network; each one comes live from the running environment."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a dict with server, s0ma_core, s0ma_dsl, s0ma_mcp, s0ma_studi0, mcp_sdk, and python keys; None marks a distribution that is not installed"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Builds the version surface as a JSON-compatible dict, rendered live from importlib.metadata with no file reads and no network (FR-MCP-10, P-6)"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 564,
+        "start_line": 526
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::version_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "version_document renders the installed distributions"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never reaches the network to report the installed versions."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the version document as pretty-printed JSON text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_mime_type": "application/json",
+          "mcp_uri": "s0ma://meta/version"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the installed toolchain versions (server, the four s0ma distributions, MCP SDK, Python) live from importlib.metadata — offline by design"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 602,
+        "start_line": 566
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::self_model_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the s0ma_mcp self-model registry is importable"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never serves a component graph that can drift from the MCP surface this server serves."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the live component graph as pretty-printed JSON text"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_mime_type": "application/json",
+          "mcp_uri": "s0ma://self/model"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves this server's own live component graph as JSON — every tool, resource, prompt, and factory with kind, layer, intent, and dependencies, the same registry the served surface is derived from (FR-MCP-7)"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 639,
+        "start_line": 604
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::runbook_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the server's working directory is at or under the target project (the blessed per-project `uv run s0ma-mcp` registration); absent that, the teaching variant renders"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the runbook markdown text; never raises and never empty — an unresolved project yields the teaching variant"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_mime_type": "text/markdown",
+          "mcp_uri": "s0ma://project/runbook"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the per-project operational runbook: run/health commands, env contracts, runtime state_paths that must never be reverted, module inventory, and the ops rules — rendered from the project's [tool.s0ma] keys, or a teaching variant naming what to declare when they are absent"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 892,
+        "start_line": 854
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::DOCS_MODEL_FILENAME",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: s0ma-docs-model.json."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The packaged documentation snapshot's filename inside s0ma_mcp/_docs, so a wheel install answers documentation questions from the release it is, not from a checkout it does not have."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 902,
+        "start_line": 894
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::DOCS_MODEL_SOURCE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant, monorepo-root-relative. Value: docs/_generated/s0ma-docs-model.json."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The in-repo snapshot the packaged copy is a byte mirror of, named once here so the drift gate and the refresh instruction cannot disagree about which file to copy."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 912,
+        "start_line": 904
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::DOCS_ROOT",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: docs."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The documentation root the committed pages are written under, which is the tree every page path this server hands out is relative to."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 922,
+        "start_line": 914
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::DOCS_MAP_PAGE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant, monorepo-root-relative. Value: docs/README.md."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The generated map of record — the page that lists every current document — used as the last-resort answer to 'where do I read more' for a topic no single page is written about."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 932,
+        "start_line": 924
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::DOCS_SURFACES_PAGE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant, monorepo-root-relative. Value: docs/reference/surfaces-index.md."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The generated index of everything s0ma can do — the page that lists every served capability by id — where a surface with no reference page of its own is documented."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 942,
+        "start_line": 934
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::DOCS_CATEGORY_WORDS",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "dict[str, str] keyed by the part of a topic id before the first colon."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "What each id prefix in the snapshot is, in one reader's phrase — the only authored words in the docs index, because the snapshot records categories by prefix and says nothing about what a prefix means. Counts, prefixes and page paths beside them are all read from the snapshot; a prefix with no phrase here still gets its own line, so a new category can never go missing from the index unnoticed."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 964,
+        "start_line": 944
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::load_docs_model",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the snapshot is packaged under s0ma_mcp/_docs"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the snapshot's full UTF-8 text, byte-identical to the in-repo snapshot it was copied from"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Reads the packaged documentation snapshot out of s0ma_mcp/_docs package data, so the documentation read surfaces answer identically from a wheel and from a checkout"
+      },
+      "kind": "ADAPTER",
+      "location": {
+        "end_line": 1000,
+        "start_line": 966
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_bundle",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the packaged snapshot is present and carries a schema version this build of the model reads"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never reaches the network or consults anything but package data."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the same DocsBundle object on every call in a process; offline, and it consults nothing but package data"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Hands out the packaged documentation snapshot as records — the one reading every documentation surface of this server answers from"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1047,
+        "start_line": 1019
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_topic_index",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the packaged snapshot is present and readable"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the same TopicIndex object on every call in a process"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Hands out the resolver's index over the packaged snapshot: everything this build can be asked about, and the ways of asking"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1077,
+        "start_line": 1049
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_snapshot_identity",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the packaged snapshot is present and carries a build stamp"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never gives the version a reader meets without its channel label when the build is not a release."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns exactly the three identity keys, all non-empty"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "States which build of the documentation an answer came from: the release it describes, that release as a reader meets it (labelled when the build is not a release), and the snapshot digest of the records it was read out of"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1121,
+        "start_line": 1079
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_page_for",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "topic_id is an id this build addresses"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never answers with a machine path or an invented page path."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a non-empty repository-relative page path, never a machine path and never an invented one"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Answers 'where is this written down in full' for one topic id, as a path in the s0ma repository — the reference pages' anchored deep link where the id class has one, the concept's own learning page, the page whose declared coverage names the topic, a document's or an authority clause's own source, and failing all of those the index that does list it"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1191,
+        "start_line": 1123
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_journey_steps",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "journey_id names a journey this build records"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns one entry per recorded step, in walking order, each carrying the surface it calls, why, what a good result looks like, and any approval the step needs; an unknown id returns nothing rather than raising"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Reads one journey's steps out of the packaged snapshot in the order they are walked, so a prompt that teaches a journey renders the steps the model records rather than a second copy somebody has to keep in step with them"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1235,
+        "start_line": 1193
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_journey_recovery",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "journey_id names a journey this build records"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns one entry per recorded recovery path, in the order the journey records them; an unknown id returns nothing rather than raising"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Reads one journey's recovery paths out of the packaged snapshot: the named thing that can go wrong, what to do about it, and the surface that does it — so a prompt that teaches a journey teaches its recoveries from the same record rather than from a second account of them"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1277,
+        "start_line": 1237
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_index_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the packaged snapshot is present and readable"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never states a count or a category that is written down rather than read from the packaged snapshot."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the index text, every count and category read from the snapshot rather than written down"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_mime_type": "text/markdown",
+          "mcp_uri": "s0ma://docs/index"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the documentation index: which build this is, every category of topic it addresses with a count and an example id, how to ask for one, how many earlier names still answer, where the full pages are, and which s0ma://docs addresses belong to the other server"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1396,
+        "start_line": 1319
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_concepts_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the packaged snapshot is present and readable"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns one line per recorded concept, each carrying the summary the concept itself declares, word for word"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_mime_type": "text/markdown",
+          "mcp_uri": "s0ma://docs/concepts"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves the whole concept vocabulary in one read: every concept this build records, its id, its term and its authored one-sentence summary, in id order"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1448,
+        "start_line": 1398
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::docs_journeys_resource",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the packaged snapshot is present and readable"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns one section per recorded journey with its steps in walking order, read from the same records the journey-shaped prompts render"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_mime_type": "text/markdown",
+          "mcp_uri": "s0ma://docs/journeys"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Serves every worked path this build records, step by step: what the path is for, each step's surface, why it is taken, what a good result looks like, any approval it needs, and what to do when a named thing goes wrong"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1515,
+        "start_line": 1450
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "resources::test_guide_resources_serve_packaged_documents",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "load_doc",
+            "getting_started_resource",
+            "survival_card_resource",
+            "self_prompting_resource",
+            "system_prompt_resource",
+            "quick_reference_resource",
+            "quick_reference_machine_resource",
+            "patterns_resource",
+            "spec_resource",
+            "errors_resource",
+            "changelog_resource"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that every packaged document loads from s0ma_mcp/_docs package data and serves substantial platform text, that each guide provider returns exactly its registered document, and that the survival card keeps its context-economy contract (under 4 KB) — exercised on the built module pytest imports."
+      },
+      "kind": null,
+      "location": {
+        "end_line": 1546,
+        "start_line": 1517
+      },
+      "visibility": null
+    },
+    {
+      "canonical_id": "resources::test_meta_resources_render_live_documents",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "version_document",
+            "version_resource",
+            "self_model_resource"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that the version surface and the self-model resource render live JSON documents carrying the server identity, the installed-version keys, and a non-empty component graph — exercised on the built module pytest imports."
+      },
+      "kind": null,
+      "location": {
+        "end_line": 1565,
+        "start_line": 1548
+      },
+      "visibility": null
+    },
+    {
+      "canonical_id": "resources::test_runbook_resource_serves",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "runbook_resource"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that the project runbook resource always serves non-empty markdown carrying the ops rule, the runtime-state semantics, and the declare-the-runbook teaching — whichever project variant the server's working directory resolves — exercised on the built module pytest imports."
+      },
+      "kind": null,
+      "location": {
+        "end_line": 1582,
+        "start_line": 1567
+      },
+      "visibility": null
+    },
+    {
+      "canonical_id": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "load_docs_model",
+            "docs_bundle",
+            "docs_topic_index",
+            "docs_snapshot_identity",
+            "docs_page_for",
+            "docs_journey_steps",
+            "docs_journey_recovery",
+            "docs_index_resource",
+            "docs_concepts_resource",
+            "docs_journeys_resource"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that the packaged documentation snapshot loads from s0ma_mcp/_docs, indexes to the topics it records, states one build identity, resolves every topic to a page path that names a real category of committed page, reads a journey's steps in walking order, and serves all three s0ma://docs resources with their counts read from the snapshot rather than written down — exercised on the built module pytest imports."
+      },
+      "kind": null,
+      "location": {
+        "end_line": 1674,
+        "start_line": 1584
+      },
+      "visibility": null
+    }
+  ],
+  "doc_guides": [],
+  "doc_refs": [],
+  "edges": {
+    "authored": [
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "changelog_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::changelog_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "the recorded concepts",
+        "coupling": "TIGHT",
+        "intent": "docs_concepts_resource CALLS docs_bundle: the recorded concepts",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_concepts_resource",
+        "target": "resources::docs_bundle"
+      },
+      {
+        "carries": "which build this is",
+        "coupling": "TIGHT",
+        "intent": "docs_concepts_resource CALLS docs_snapshot_identity: which build this is",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_concepts_resource",
+        "target": "resources::docs_snapshot_identity"
+      },
+      {
+        "carries": "which build this is",
+        "coupling": "TIGHT",
+        "intent": "docs_index_resource CALLS docs_snapshot_identity: which build this is",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_index_resource",
+        "target": "resources::docs_snapshot_identity"
+      },
+      {
+        "carries": "every id this build addresses",
+        "coupling": "TIGHT",
+        "intent": "docs_index_resource CALLS docs_topic_index: every id this build addresses",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_index_resource",
+        "target": "resources::docs_topic_index"
+      },
+      {
+        "carries": "the recorded journeys",
+        "coupling": "TIGHT",
+        "intent": "docs_journey_recovery CALLS docs_bundle: the recorded journeys",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_journey_recovery",
+        "target": "resources::docs_bundle"
+      },
+      {
+        "carries": "the recorded journeys",
+        "coupling": "TIGHT",
+        "intent": "docs_journey_steps CALLS docs_bundle: the recorded journeys",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_journey_steps",
+        "target": "resources::docs_bundle"
+      },
+      {
+        "carries": "the recorded journeys",
+        "coupling": "TIGHT",
+        "intent": "docs_journeys_resource CALLS docs_bundle: the recorded journeys",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_journeys_resource",
+        "target": "resources::docs_bundle"
+      },
+      {
+        "carries": "one journey's steps in order",
+        "coupling": "TIGHT",
+        "intent": "docs_journeys_resource CALLS docs_journey_steps: one journey's steps in order",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_journeys_resource",
+        "target": "resources::docs_journey_steps"
+      },
+      {
+        "carries": "which build this is",
+        "coupling": "TIGHT",
+        "intent": "docs_journeys_resource CALLS docs_snapshot_identity: which build this is",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_journeys_resource",
+        "target": "resources::docs_snapshot_identity"
+      },
+      {
+        "carries": "the last-resort page",
+        "coupling": "TIGHT",
+        "intent": "docs_page_for READS DOCS_MAP_PAGE: the last-resort page",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "resources::docs_page_for",
+        "target": "resources::DOCS_MAP_PAGE"
+      },
+      {
+        "carries": "the documentation root paths are relative to",
+        "coupling": "TIGHT",
+        "intent": "docs_page_for READS DOCS_ROOT: the documentation root paths are relative to",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "resources::docs_page_for",
+        "target": "resources::DOCS_ROOT"
+      },
+      {
+        "carries": "the served-capability index",
+        "coupling": "TIGHT",
+        "intent": "docs_page_for READS DOCS_SURFACES_PAGE: the served-capability index",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "resources::docs_page_for",
+        "target": "resources::DOCS_SURFACES_PAGE"
+      },
+      {
+        "carries": "the declared page coverage",
+        "coupling": "TIGHT",
+        "intent": "docs_page_for CALLS docs_bundle: the declared page coverage",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_page_for",
+        "target": "resources::docs_bundle"
+      },
+      {
+        "carries": "the snapshot's build stamp",
+        "coupling": "TIGHT",
+        "intent": "docs_snapshot_identity CALLS docs_bundle: the snapshot's build stamp",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::docs_snapshot_identity",
+        "target": "resources::docs_bundle"
+      },
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "errors_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::errors_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "getting-started loader key",
+        "coupling": "TIGHT",
+        "intent": "getting_started_resource CALLS load_doc: getting-started loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::getting_started_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "packaged-document registry",
+        "coupling": "TIGHT",
+        "intent": "load_doc READS GUIDE_DOCS: packaged-document registry",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "resources::load_doc",
+        "target": "resources::GUIDE_DOCS"
+      },
+      {
+        "carries": "packaged snapshot filename",
+        "coupling": "TIGHT",
+        "intent": "load_docs_model READS DOCS_MODEL_FILENAME: packaged snapshot filename",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "resources::load_docs_model",
+        "target": "resources::DOCS_MODEL_FILENAME"
+      },
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "patterns_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::patterns_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "quick_reference_machine_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::quick_reference_machine_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "quick_reference_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::quick_reference_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "self_prompting_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::self_prompting_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "spec_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::spec_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "survival_card_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::survival_card_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "loader key",
+        "coupling": "TIGHT",
+        "intent": "system_prompt_resource CALLS load_doc: loader key",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::system_prompt_resource",
+        "target": "resources::load_doc"
+      },
+      {
+        "carries": "server identity",
+        "coupling": "TIGHT",
+        "intent": "version_document READS SERVER_NAME: server identity",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "resources::version_document",
+        "target": "resources::SERVER_NAME"
+      },
+      {
+        "carries": "version document",
+        "coupling": "TIGHT",
+        "intent": "version_resource CALLS version_document: version document",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "resources::version_resource",
+        "target": "resources::version_document"
+      }
+    ],
+    "derived": [],
+    "verification": [
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_bundle"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_concepts_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_index_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_journey_recovery"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_journey_steps"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_journeys_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_page_for"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_snapshot_identity"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::docs_topic_index"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+        "validates": "resources::load_docs_model"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::changelog_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::errors_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::getting_started_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::load_doc"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::patterns_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::quick_reference_machine_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::quick_reference_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::self_prompting_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::spec_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::survival_card_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_guide_resources_serve_packaged_documents",
+        "validates": "resources::system_prompt_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_meta_resources_render_live_documents",
+        "validates": "resources::self_model_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_meta_resources_render_live_documents",
+        "validates": "resources::version_document"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_meta_resources_render_live_documents",
+        "validates": "resources::version_resource"
+      },
+      {
+        "origin": "tests_field",
+        "test": "resources::test_runbook_resource_serves",
+        "validates": "resources::runbook_resource"
+      }
+    ]
+  },
+  "examples": [],
+  "exports": {
+    "state": "value",
+    "value": [
+      "GuideDoc",
+      "GUIDE_DOCS",
+      "load_doc",
+      "getting_started_resource",
+      "survival_card_resource",
+      "self_prompting_resource",
+      "system_prompt_resource",
+      "quick_reference_resource",
+      "quick_reference_machine_resource",
+      "patterns_resource",
+      "spec_resource",
+      "errors_resource",
+      "changelog_resource",
+      "version_document",
+      "version_resource",
+      "self_model_resource",
+      "runbook_resource",
+      "DOCS_MODEL_FILENAME",
+      "DOCS_MODEL_SOURCE",
+      "DOCS_ROOT",
+      "DOCS_MAP_PAGE",
+      "DOCS_SURFACES_PAGE",
+      "DOCS_CATEGORY_WORDS",
+      "load_docs_model",
+      "docs_bundle",
+      "docs_topic_index",
+      "docs_snapshot_identity",
+      "docs_page_for",
+      "docs_journey_steps",
+      "docs_journey_recovery",
+      "docs_index_resource",
+      "docs_concepts_resource",
+      "docs_journeys_resource"
+    ]
+  },
+  "helpers": [
+    {
+      "body": {
+        "state": "value",
+        "value": "def _dist_version(distribution: str) -> str | None:\n    \"\"\"The installed version of ``distribution``, or ``None`` if absent.\"\"\"\n    try:\n        return metadata.version(distribution)\n    except metadata.PackageNotFoundError:  # pragma: no cover - broken env\n        return None"
+      },
+      "body_kind": "function",
+      "canonical_id": "resources::_dist_version",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "The installed version of a distribution, or None if it is absent from the environment."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 524,
+        "start_line": 516
+      },
+      "module": "resources",
+      "name": "_dist_version",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _render_runbook(start: Path) -> str:\n    \"\"\"Render the ops runbook markdown for the project rooted at ``start``.\n\n    Discovers the project by walking up from ``start`` — in production\n    the server's working directory, which the blessed per-project\n    registration (``claude mcp add s0ma --scope project -- uv run\n    s0ma-mcp``) sets to the project root. On success renders the\n    declared runbook fields; on ``S0maProjectNotFound`` (or any\n    toolchain load error) renders the teaching variant naming what to\n    declare and where. Read-only — it never writes, so resolving from\n    the working directory does not engage the NFR-6 write fence (that\n    fence governs writes, and every writing tool still takes an\n    explicit project_root).\n\n    Args:\n        start: Directory to begin project discovery from.\n\n    Returns:\n        The runbook markdown text (always non-empty).\n    \"\"\"\n    try:\n        project = S0maProject.discover(start)\n    except S0maProjectNotFound:\n        project = None\n    except Exception:  # noqa: BLE001 — a broken toolchain still teaches\n        project = None\n\n    lines: list[str] = []\n    name = project.project_name if project is not None else \"(no project resolved)\"\n    lines.append(f\"# Operational runbook — {name}\")\n    lines.append(\"\")\n\n    # batch-01c M1 (warm O3): a mid-diagnosis agent read\n    # runbook_declared: false and blamed a live env-var fault on the\n    # undeclared runbook — the one incorrect detection verdict in its\n    # cell. Whenever the runbook is undeclared or only partially\n    # declared, LEAD with the not-a-fault disclaimer: an absent\n    # runbook is a documentation gap, never a service defect, and a\n    # failure is diagnosed from observed behavior, not from what the\n    # runbook fails to declare.\n    if project is None:\n        declared_fields: list[str] = []\n    else:\n        declared_fields = [\n            field_name\n            for field_name, present in (\n                (\"run_command\", bool(project.run_command)),\n                (\"health_command\", bool(project.health_command)),\n                (\"env\", bool(project.env)),\n                (\"state_paths\", bool(project.state_paths)),\n                (\"runbook_notes\", bool(project.runbook_notes)),\n            )\n            if present\n        ]\n    if not declared_fields:\n        lines.append(\n            \"> No runbook fields are declared. This is a documentation \"\n            \"gap, never a service fault — the absence of a runbook \"\n            \"cannot break or degrade a running service. If you are \"\n            \"diagnosing a failure, diagnose from observed behavior, \"\n            \"configuration, and environment; declare a runbook \"\n            \"afterward as follow-up documentation.\"\n        )\n        lines.append(\"\")\n    elif len(declared_fields) < 5:\n        lines.append(\n            \"> Some runbook fields are undeclared below (marked \\\"not \"\n            \"declared\\\"). An undeclared runbook field is a documentation \"\n            \"gap, never a service fault — a missing field cannot break \"\n            \"or degrade a running service. If you are diagnosing a \"\n            \"failure, diagnose from observed behavior, configuration, \"\n            \"and environment; declare the missing fields afterward as \"\n            \"follow-up documentation.\"\n        )\n        lines.append(\"\")\n\n    if project is None:\n        lines.append(\n            \"No s0ma project was resolved from the server's working \"\n            f\"directory (no [tool.s0ma] table found walking up from {start}). \"\n            \"This runbook renders per project — declare the ops keys under \"\n            \"[tool.s0ma] in your project's pyproject.toml (see \\\"Declaring \"\n            \"the runbook\\\" below) and read this resource again. The ops \"\n            \"rules below apply regardless.\"\n        )\n        lines.append(\"\")\n\n    run_cmd = project.run_command if project is not None else None\n    health_cmd = project.health_command if project is not None else None\n    lines.append(\"## Run & health\")\n    lines.append(\n        f\"- run command: `{run_cmd}`\" if run_cmd else\n        \"- run command: (not declared — add `run_command = \\\"...\\\"` under [tool.s0ma])\"\n    )\n    lines.append(\n        f\"- health command: `{health_cmd}`\" if health_cmd else\n        \"- health command: (not declared — add `health_command = \\\"...\\\"` under [tool.s0ma])\"\n    )\n    lines.append(\"\")\n\n    env = project.env if project is not None else {}\n    lines.append(\"## Environment\")\n    if env:\n        for var_name in sorted(env):\n            spec = env[var_name]\n            bits = [\n                f\"required={str(spec.required).lower()}\",\n                f\"fail_fast={str(spec.fail_fast).lower()}\",\n            ]\n            if spec.default is not None:\n                bits.append(f\"default=`{spec.default}`\")\n            lines.append(f\"- `{var_name}`: \" + \", \".join(bits))\n    else:\n        lines.append(\n            \"- (no environment variables declared — add \"\n            \"[tool.s0ma.env.<NAME>] subtables)\"\n        )\n    lines.append(\"\")\n\n    state_paths = project.state_paths if project is not None else ()\n    lines.append(\"## Runtime state — NEVER revert, restore, or regenerate\")\n    if state_paths:\n        for state_path in state_paths:\n            lines.append(f\"- `{state_path}`\")\n    else:\n        lines.append(\n            \"- (no state_paths declared — add `state_paths = [\\\"...\\\"]` \"\n            \"under [tool.s0ma] for every path that holds live runtime data)\"\n        )\n    lines.append(\n        \"These paths hold runtime state the running application owns and \"\n        \"produces — NOT derivable from source. Do not restore a committed \"\n        \"version, revert, or regenerate them: that destroys real data. \"\n        \"(See the ops rules below.)\"\n    )\n    lines.append(\"\")\n\n    module_names: list[str] = []\n    if project is not None:\n        try:\n            seen: set[str] = set()\n            for source_root in project.source_roots:\n                for source_file in _discover_s0ma_files(str(source_root)):\n                    module_name = extract_module_name(source_file)\n                    if module_name not in seen:\n                        seen.add(module_name)\n                        module_names.append(module_name)\n            module_names.sort()\n        except Exception:  # noqa: BLE001 — inventory is best-effort\n            module_names = []\n    lines.append(\"## Modules\")\n    if module_names:\n        lines.append(\n            f\"{len(module_names)} module(s): \" + \", \".join(module_names)\n        )\n    else:\n        lines.append(\"(no .s0ma modules discovered)\")\n    lines.append(\"\")\n\n    lines.append(\"## Ops rules\")\n    lines.append(\n        \"- Live state is the deliverable: demonstrate fixes on the durable \"\n        \"instance, and never restore committed versions of runtime data.\"\n    )\n    lines.append(\n        \"- The state_paths above are runtime state, not source — never \"\n        \"revert, restore from git, or regenerate them.\"\n    )\n    lines.append(\n        \"- Only edit .s0ma sources; a hand edit to a generated file under \"\n        \"build/ is refused by every build (GENERATED_FILE_DRIFT) until the \"\n        \".s0ma source says the same thing. After editing a source, run \"\n        \"check then build_project.\"\n    )\n    lines.append(\"\")\n\n    notes = project.runbook_notes if project is not None else ()\n    if notes:\n        lines.append(\"## Notes\")\n        for note in notes:\n            lines.append(f\"- {note}\")\n        lines.append(\"\")\n\n    lines.append(\"## Declaring the runbook\")\n    lines.append(\n        \"Add these keys to your project's pyproject.toml under [tool.s0ma] \"\n        \"(all optional):\"\n    )\n    lines.append(\"\")\n    lines.append(\"```toml\")\n    lines.append(\"[tool.s0ma]\")\n    lines.append('run_command = \"uv run myapp\"')\n    lines.append('health_command = \"curl -fsS localhost:8080/health\"')\n    lines.append('state_paths = [\"var/app.db\", \"var/uploads\"]')\n    lines.append('runbook_notes = \"anything an operator should know\"')\n    lines.append(\"\")\n    lines.append(\"[tool.s0ma.env.DATABASE_URL]\")\n    lines.append(\"required = true\")\n    lines.append(\"fail_fast = true\")\n    lines.append('default = \"sqlite:///dev.db\"')\n    lines.append(\"```\")\n    lines.append(\"\")\n    lines.append(\n        \"For this project's live runtime facts (declared/required/\"\n        \"missing-required env, build status), call the project_status tool \"\n        \"— its `runtime` section reads them from an explicit project_root.\"\n    )\n\n    return \"\\n\".join(lines)"
+      },
+      "body_kind": "function",
+      "canonical_id": "resources::_render_runbook",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Renders the operational-runbook markdown for the project discovered by walking up from `start`, or the teaching variant (what to declare, where) when no project or no runbook keys are found — always serves, never raises, never empty. Undeclared and partially-declared states LEAD with the not-a-fault disclaimer, so a mid-diagnosis agent cannot mistake a missing runbook for the root cause of a live service fault."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 852,
+        "start_line": 641
+      },
+      "module": "resources",
+      "name": "_render_runbook",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "@functools.lru_cache(maxsize=1)\ndef _docs_bundle_cached() -> Any:\n    \"\"\"The deserialized documentation bundle, parsed once.\"\"\"\n    return deserialize_bundle(load_docs_model())"
+      },
+      "body_kind": "function",
+      "canonical_id": "resources::_docs_bundle_cached",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Deserializes the packaged snapshot once per process. The snapshot is half a megabyte of JSON and every documentation answer reads from it, so the parse is paid on the first question and never again; the file it reads is package data that cannot change under a running process, which is what makes caching it honest rather than merely fast."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1008,
+        "start_line": 1002
+      },
+      "module": "resources",
+      "name": "_docs_bundle_cached",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "@functools.lru_cache(maxsize=1)\ndef _docs_index_cached() -> Any:\n    \"\"\"The topic index over the packaged bundle, built once.\"\"\"\n    bundle = _docs_bundle_cached()\n    return TopicIndex.of(bundle, bundle.alias_index())"
+      },
+      "body_kind": "function",
+      "canonical_id": "resources::_docs_index_cached",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Indexes the packaged snapshot once per process, for the same reason its parse is cached: the index is what every topic question resolves through, and rebuilding it per question would pay for 683 records to answer about one. The snapshot's own alias table is handed to the index, so an agent that arrives holding a term a release renamed is answered rather than missed."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1017,
+        "start_line": 1010
+      },
+      "module": "resources",
+      "name": "_docs_index_cached",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _docs_category_lines() -> list[str]:\n    \"\"\"One line per id prefix in the snapshot, in prefix order.\"\"\"\n    index = docs_topic_index()\n    counts: dict[str, int] = {}\n    first: dict[str, str] = {}\n    for identifier in index.ids():\n        prefix = identifier.partition(\":\")[0]\n        counts[prefix] = counts.get(prefix, 0) + 1\n        first.setdefault(prefix, identifier)\n    lines: list[str] = []\n    for prefix in sorted(counts):\n        words = DOCS_CATEGORY_WORDS.get(prefix, \"no description is authored for this category yet\")\n        lines.append(\n            f\"- {prefix}: {counts[prefix]} topics — {words}. Ask by id, as \"\n            f\"in {first[prefix]}, which is written up in \"\n            f\"{docs_page_for(first[prefix]).partition('#')[0]}.\"\n        )\n    return lines"
+      },
+      "body_kind": "function",
+      "canonical_id": "resources::_docs_category_lines",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Writes one line per category of the packaged snapshot: how many topics it holds, what it is, and the page its full entries are written on. Counts and prefixes are read from the index and the phrase is looked up beside them, so a category this build grew and nobody described still gets a line — an index that silently omitted a category would be exactly the kind of quiet gap the documentation application exists to refuse."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1299,
+        "start_line": 1279
+      },
+      "module": "resources",
+      "name": "_docs_category_lines",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _docs_alias_lines() -> list[str]:\n    \"\"\"The alias sentence and its blank line, or nothing at all.\"\"\"\n    entries = docs_bundle().aliases\n    if not entries:\n        return []\n    first = min(entries, key=lambda entry: entry.id)\n    return [\n        f\"{len(entries)} earlier names still answer. A term this \"\n        f\"release renamed resolves forward to the id that replaced \"\n        f\"it — learn_s0ma(topic=\\\"{first.id}\\\") answers about \"\n        f\"{first.canonical} — so a question phrased in an older \"\n        f\"vocabulary is answered rather than missed.\",\n        \"\",\n    ]"
+      },
+      "body_kind": "function",
+      "canonical_id": "resources::_docs_alias_lines",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Writes the sentence that tells a reader this build answers to names it no longer uses, with a worked pair taken from the snapshot's own alias table rather than written out here — a hardcoded example would be the first thing to go stale, and it would be stale silently. A build with no aliases says nothing, which is the honest line for a build that has none to describe."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1317,
+        "start_line": 1301
+      },
+      "module": "resources",
+      "name": "_docs_alias_lines",
+      "tags": []
+    }
+  ],
+  "imports": {
+    "deferred_requires": {
+      "state": "value",
+      "value": [
+        "s0ma_dsl.project.S0maProject",
+        "s0ma_dsl.errors.S0maProjectNotFound",
+        "s0ma_dsl.cli.main._discover_s0ma_files",
+        "s0ma_dsl.cache.extract_module_name",
+        "s0ma_dsl.docs_model.deserialize_bundle",
+        "s0ma_dsl.docs_model.resolve.TopicIndex",
+        "s0ma_dsl.docs_model.learn_pages.page_path",
+        "s0ma_dsl.docs_model.reference_pages.PAGE_BY_ID_CLASS",
+        "s0ma_dsl.docs_model.reference_pages.deep_link"
+      ]
+    },
+    "privileged": [],
+    "requires": {
+      "state": "value",
+      "value": [
+        "functools",
+        "json",
+        "platform",
+        "pathlib.Path",
+        "dataclasses.dataclass",
+        "importlib.metadata",
+        "importlib.resources",
+        "typing.Any",
+        "s0ma_mcp.self_model_json"
+      ]
+    },
+    "runtime_only_requires": {
+      "state": "none"
+    },
+    "soft_requires": {
+      "state": "none"
+    },
+    "uses": {
+      "state": "none"
+    }
+  },
+  "integrations": [],
+  "module": {
+    "content_hash": "sha256:f31d52ccaf3cac65daa6f03ff2057e4f4c228be83b229eedefce97a042f31cf7",
+    "exports_helpers": {
+      "state": "none"
+    },
+    "intent": {
+      "state": "value",
+      "value": "Agent-guide and meta resource providers for the s0ma authoring MCP server: the packaged alignment corpus and runtime self-prompting guide, the generated error catalog and changelog, the live version surface, the server's own self-model, the per-project operational runbook, and the packaged documentation snapshot every read surface of this server answers from, with the three bounded s0ma://docs resources that make it addressable."
+    },
+    "layer": "PRESENTATION",
+    "name": "resources",
+    "source_file": "s0ma_src/resources.s0ma",
+    "tags": [],
+    "transpiled_file": "resources.py",
+    "version": "0.7.0"
+  },
+  "schema_version": "3.0.0",
+  "source_hash": "sha256:f31d52ccaf3cac65",
+  "transpiler_version": "1.0.0"
+}

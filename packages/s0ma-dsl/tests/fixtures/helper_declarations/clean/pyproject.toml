@@ -1,0 +1,9 @@
+[project]
+name = "helper_declarations_clean"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/sample"]
+test_roots = ["tests"]
+build_dir = "helper_declarations_clean_build"
+bootstrap_files = []

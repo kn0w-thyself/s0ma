@@ -1,0 +1,78 @@
+{
+  "record": {
+    "concepts_required": [
+      "concept:intent",
+      "concept:layer",
+      "concept:module",
+      "concept:nerve",
+      "concept:s0ma-file"
+    ],
+    "concepts_taught": [
+      "concept:registry-snapshot",
+      "concept:self-model",
+      "concept:self-knowledge",
+      "concept:strictness-mode",
+      "concept:check-and-build-loop",
+      "concept:authored-vs-generated-boundary",
+      "concept:metacognition"
+    ],
+    "evidence": [
+      {
+        "id": "example:transcript/mcp-authoring-loop",
+        "source": "docs/s0ma_src/evidence/mcp-authoring-loop.json"
+      }
+    ],
+    "id": "journey:mcp-authoring-loop",
+    "intent": "Let a coding agent take a project from first sight to a built component and back out again without ever leaving its own tool channel: ask the tree what it is, write a component from its intent, have the toolchain check it, build, then read the result back out of the self-model rather than out of the code.",
+    "recovery_paths": [
+      {
+        "action": "The check refuses the edited component because its provides: list names an operation the body never defines. Add the missing def, or take the name out of provides:, and walk the loop the fix_check_failures prompt lays out until the check is clean.",
+        "next_surface": "mcp:prompt/fix_check_failures",
+        "when": "MISSING_PROVIDED_FUNCTION"
+      },
+      {
+        "action": "The body carries its own import line, and the build writes imports from the declarations instead. Move it into the module header — requires: for Python, uses: for another s0ma component — take the line out of the body, and ask the check again.",
+        "next_surface": "mcp:tool/check",
+        "when": "BARE_IMPORT"
+      },
+      {
+        "action": "The build refuses because generated code was edited by hand, and that edit would be silently overwritten. Move the change back into the .s0ma source it belongs to, undo the hand edit, and ask the check again before building.",
+        "next_surface": "mcp:tool/check",
+        "when": "GENERATED_FILE_DRIFT"
+      }
+    ],
+    "steps": [
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One answer with the whole posture in it: whether this is a s0ma project at all, which mode it is in, every module it already holds and whether each is still fresh, what is built, the short list of rules worth following here, and a named next call. A directory that is not a project is a valid answer, not an error.",
+        "purpose": "Find out what this tree already is before writing anything into it.",
+        "surface": "mcp:tool/project_status"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "A new .s0ma source written into the project and handed back in full, already checked on its own and already valid, so the intent and the contracts can be edited straight away rather than guessed at.",
+        "purpose": "Start the new behaviour from its intent, in a skeleton the toolchain already accepts.",
+        "surface": "mcp:tool/scaffold_module"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "Either a clean answer counting the files it read, or findings that each name the file, the line, the failure and what to do about it — and whether the problem is new since the last green build or was here before this session.",
+        "purpose": "Ask whether what was just written holds together, before anything is built from it.",
+        "surface": "mcp:tool/check"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The generated code and a manifest naming every module and the order they import in, written once and the same every time — plus whatever the build still wants, which in a fresh project includes a warning that the s0ma runtime it now imports has not been declared as a dependency.",
+        "purpose": "Turn the checked sources into the artifacts the project runs from.",
+        "surface": "mcp:tool/build_project"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The component's own record: its canonical name, what kind of part it is, who may call it, the intent and the contracts it was authored with, and what it provides — what the system knows about itself rather than a reading of the code it emitted.",
+        "purpose": "Read back what the build now knows about the component, instead of reading the code it wrote.",
+        "surface": "mcp:tool/inspect_module"
+      }
+    ]
+  },
+  "schema": "s0ma-docs-journeys@1"
+}

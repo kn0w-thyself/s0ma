@@ -1,0 +1,9 @@
+[project]
+name = "multi_source_root_project"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["domain", "application", "presentation"]
+test_roots = ["tests"]
+build_dir = "multi_source_root_project_build"
+bootstrap_files = []

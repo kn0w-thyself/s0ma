@@ -1,0 +1,33 @@
+module calculator_tests
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Tests for calculator using *_tests.s0ma naming to validate the python_files glob extension."
+    uses: [calculator.add, calculator.multiply]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_add_returns_integer_sum :: DOMAIN
+    intent: "Verifies that add() returns the integer sum of its arguments."
+    tests: [calculator.add]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_add_returns_integer_sum():
+        assert add(2, 3) == 5
+        assert add(-1, 1) == 0
+
+test test_multiply_returns_integer_product :: DOMAIN
+    intent: "Verifies that multiply() returns the integer product of its arguments."
+    tests: [calculator.multiply]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_multiply_returns_integer_product():
+        assert multiply(3, 4) == 12
+        assert multiply(0, 99) == 0

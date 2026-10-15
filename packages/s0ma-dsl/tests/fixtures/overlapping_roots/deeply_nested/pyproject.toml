@@ -1,0 +1,13 @@
+[project]
+name = "deeply_nested"
+version = "0.0.1"
+
+# G2 (feedback 5–6 cleanup) fixture: deeply nested overlap (more than
+# one directory level between the enclosing root and the enclosed
+# root). ``Path.is_relative_to`` handles arbitrary depth, but the
+# fixture pins the behaviour explicitly so a future "shallow nesting
+# only" optimisation cannot regress this case.
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = ["src/myproject/layer/sub/tests"]
+build_dir = "deeply_nested_build"

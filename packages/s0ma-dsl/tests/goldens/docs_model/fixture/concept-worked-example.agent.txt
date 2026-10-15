@@ -1,0 +1,13 @@
+Topic: concept:worked-example
+Release: 0.18.1 (preview)
+Snapshot: sha256:2af357cac6cb8a5a
+Examples: example:first_project_walkthrough
+Decided by: authority:spec/fixture-journey
+
+In short:
+  A small, runnable illustration of an idea, kept beside the idea
+  itself.
+
+Read more:
+  the full page for concept:worked-example carries every fact left out
+  here, word for word.

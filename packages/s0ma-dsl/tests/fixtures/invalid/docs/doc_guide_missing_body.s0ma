@@ -1,0 +1,19 @@
+module doc_guide_missing_body
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture with a doc-guide lacking a --- separator."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-guide broken_guide
+    intent: "doc-guide without prose body."
+    format: markdown
+    output: docs/broken.md
+    covers: [nerve::greet]
+    asserts: [nerve::greet.visibility == PUBLIC]
+    examples: [example::greet_example]

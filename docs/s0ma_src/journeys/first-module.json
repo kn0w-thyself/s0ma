@@ -1,0 +1,60 @@
+{
+  "record": {
+    "concepts_required": [
+      "concept:check-and-build-loop",
+      "concept:intent",
+      "concept:registry-snapshot",
+      "concept:self-model"
+    ],
+    "concepts_taught": [
+      "concept:layer",
+      "concept:module",
+      "concept:s0ma-file",
+      "concept:kind",
+      "concept:visibility",
+      "concept:contract",
+      "concept:nerve",
+      "concept:cell",
+      "concept:ganglion",
+      "concept:axon",
+      "concept:uses",
+      "concept:canonical-ir"
+    ],
+    "evidence": [
+      {
+        "id": "example:transcript/first-module",
+        "source": "docs/s0ma_src/evidence/first-module.json"
+      }
+    ],
+    "id": "journey:first-module",
+    "intent": "Write your first module into a project that already builds, and follow it through to the point where the system can describe it back to you.",
+    "recovery_paths": [
+      {
+        "action": "The check stopped on the code under one of your declarations and named the file and the line it stopped at. Repair that line, then ask the same question again — nothing is built from a file the toolchain cannot read.",
+        "next_surface": "cli:s0ma/check",
+        "when": "PARSE_ERROR"
+      }
+    ],
+    "steps": [
+      {
+        "approval_boundary": "",
+        "expected_outcome": "A clean run says how many files it read and that it found nothing wrong. Anything it is unhappy about is listed with the file and the line that caused it.",
+        "purpose": "Ask whether the module you have just written holds together, before anything is built from it.",
+        "surface": "cli:s0ma/check"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One line per module built and one line per file written, ending with the count of modules and where the manifest went. Your new module appears among them.",
+        "purpose": "Turn the source into ordinary Python, and write the record of what each file declared beside it.",
+        "surface": "cli:s0ma/build"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The module's own header, then every part it holds with who may call it and what archetype it is, then the connections the build worked out for itself, then what the file publishes.",
+        "purpose": "Ask the built module what it now contains, and read back the parts you declared.",
+        "surface": "cli:s0ma/inspect"
+      }
+    ]
+  },
+  "schema": "s0ma-docs-journeys@1"
+}

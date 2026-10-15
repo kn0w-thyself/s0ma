@@ -1,0 +1,9 @@
+[project]
+name = "cross_module_test_project"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/sample_app"]
+test_roots = ["tests"]
+build_dir = "cross_module_test_project_build"
+bootstrap_files = []

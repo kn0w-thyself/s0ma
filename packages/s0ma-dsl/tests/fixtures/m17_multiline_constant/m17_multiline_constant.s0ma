@@ -1,0 +1,32 @@
+module m17_multiline_constant
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Regression fixture for the CONSTANT_NAME_MISMATCH check on
+        a multi-line CONSTANT body whose triple-quoted string contains
+        column-0 lines: the parser dedents every body once at parse time
+        by its first line's indent, so the validator reads the canonical
+        column-0 form and reports no mismatch when the top-level
+        assignment matches the cell name."
+    requires: []
+    uses: []
+    exports: [BIG_TEMPLATE]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell BIG_TEMPLATE :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Exercises the CONSTANT_NAME_MISMATCH false positive: a multi-line string body with column-0 lines."
+    schema: "string of valid HTML"
+    invariants: none
+    covered_by: none
+    ---
+    BIG_TEMPLATE = """
+<html>
+<body>
+Plain content with no indent.
+</body>
+</html>
+"""

@@ -1,0 +1,2012 @@
+{
+  "classification": null,
+  "effort": {
+    "bands": [
+      [
+        "small",
+        5
+      ],
+      [
+        "medium",
+        6
+      ],
+      [
+        "large",
+        0
+      ]
+    ],
+    "basis": "Bands come from four things that can be seen without running anything — how many lines of real code a module has, how many things it defines, how much of it runs the moment it is imported, and whether it is tangled in an import cycle — so they sort the work from easiest to hardest and are not hours, not a schedule and not a promise.",
+    "per_module": [
+      [
+        "bookshelf",
+        "small"
+      ],
+      [
+        "bookshelf.__main__",
+        "small"
+      ],
+      [
+        "bookshelf.api",
+        "medium"
+      ],
+      [
+        "bookshelf.catalog",
+        "small"
+      ],
+      [
+        "bookshelf.cli",
+        "small"
+      ],
+      [
+        "bookshelf.config",
+        "medium"
+      ],
+      [
+        "bookshelf.errors",
+        "medium"
+      ],
+      [
+        "bookshelf.lending",
+        "small"
+      ],
+      [
+        "bookshelf.models",
+        "medium"
+      ],
+      [
+        "bookshelf.notifications",
+        "medium"
+      ],
+      [
+        "bookshelf.storage",
+        "medium"
+      ]
+    ]
+  },
+  "graph": {
+    "cycles": [],
+    "deferred_edges": [
+      [
+        "bookshelf.catalog",
+        "bookshelf.lending"
+      ],
+      [
+        "bookshelf.notifications",
+        "bookshelf.models"
+      ]
+    ],
+    "edges": [
+      [
+        "bookshelf",
+        "bookshelf.catalog"
+      ],
+      [
+        "bookshelf",
+        "bookshelf.errors"
+      ],
+      [
+        "bookshelf",
+        "bookshelf.lending"
+      ],
+      [
+        "bookshelf",
+        "bookshelf.models"
+      ],
+      [
+        "bookshelf",
+        "bookshelf.notifications"
+      ],
+      [
+        "bookshelf",
+        "bookshelf.storage"
+      ],
+      [
+        "bookshelf.__main__",
+        "bookshelf.cli"
+      ],
+      [
+        "bookshelf.api",
+        "bookshelf.catalog"
+      ],
+      [
+        "bookshelf.api",
+        "bookshelf.errors"
+      ],
+      [
+        "bookshelf.api",
+        "bookshelf.lending"
+      ],
+      [
+        "bookshelf.api",
+        "bookshelf.models"
+      ],
+      [
+        "bookshelf.api",
+        "bookshelf.storage"
+      ],
+      [
+        "bookshelf.catalog",
+        "bookshelf.config"
+      ],
+      [
+        "bookshelf.catalog",
+        "bookshelf.errors"
+      ],
+      [
+        "bookshelf.catalog",
+        "bookshelf.models"
+      ],
+      [
+        "bookshelf.catalog",
+        "bookshelf.storage"
+      ],
+      [
+        "bookshelf.cli",
+        "bookshelf.api"
+      ],
+      [
+        "bookshelf.cli",
+        "bookshelf.config"
+      ],
+      [
+        "bookshelf.cli",
+        "bookshelf.errors"
+      ],
+      [
+        "bookshelf.lending",
+        "bookshelf.catalog"
+      ],
+      [
+        "bookshelf.lending",
+        "bookshelf.config"
+      ],
+      [
+        "bookshelf.lending",
+        "bookshelf.errors"
+      ],
+      [
+        "bookshelf.lending",
+        "bookshelf.models"
+      ],
+      [
+        "bookshelf.lending",
+        "bookshelf.storage"
+      ],
+      [
+        "bookshelf.notifications",
+        "bookshelf.config"
+      ],
+      [
+        "bookshelf.storage",
+        "bookshelf.errors"
+      ]
+    ],
+    "fan_in": [
+      [
+        "bookshelf",
+        0
+      ],
+      [
+        "bookshelf.__main__",
+        0
+      ],
+      [
+        "bookshelf.api",
+        1
+      ],
+      [
+        "bookshelf.catalog",
+        3
+      ],
+      [
+        "bookshelf.cli",
+        1
+      ],
+      [
+        "bookshelf.config",
+        4
+      ],
+      [
+        "bookshelf.errors",
+        6
+      ],
+      [
+        "bookshelf.lending",
+        2
+      ],
+      [
+        "bookshelf.models",
+        4
+      ],
+      [
+        "bookshelf.notifications",
+        1
+      ],
+      [
+        "bookshelf.storage",
+        4
+      ]
+    ],
+    "fan_out": [
+      [
+        "bookshelf",
+        6
+      ],
+      [
+        "bookshelf.__main__",
+        1
+      ],
+      [
+        "bookshelf.api",
+        5
+      ],
+      [
+        "bookshelf.catalog",
+        4
+      ],
+      [
+        "bookshelf.cli",
+        3
+      ],
+      [
+        "bookshelf.config",
+        0
+      ],
+      [
+        "bookshelf.errors",
+        0
+      ],
+      [
+        "bookshelf.lending",
+        5
+      ],
+      [
+        "bookshelf.models",
+        0
+      ],
+      [
+        "bookshelf.notifications",
+        1
+      ],
+      [
+        "bookshelf.storage",
+        1
+      ]
+    ],
+    "order": [
+      "bookshelf.config",
+      "bookshelf.errors",
+      "bookshelf.models",
+      "bookshelf.notifications",
+      "bookshelf.storage",
+      "bookshelf.catalog",
+      "bookshelf.lending",
+      "bookshelf",
+      "bookshelf.api",
+      "bookshelf.cli",
+      "bookshelf.__main__"
+    ]
+  },
+  "modules": [
+    {
+      "content_hash": "sha256:b9abc279c1563feee37b24b63479afaa716caaf7e2c30445d5d4071e83ec4f7b",
+      "dunder_all": [
+        "Availability",
+        "Book",
+        "BookNotFoundError",
+        "BookUnavailableError",
+        "BookshelfError",
+        "Catalog",
+        "CatalogError",
+        "DuplicateBookError",
+        "JsonStore",
+        "LendingError",
+        "Loan",
+        "LoanLimitReachedError",
+        "LoanNotFoundError",
+        "LoanRegister",
+        "LoanWindow",
+        "Member",
+        "Notifier",
+        "RecordingNotifier",
+        "RenewalRefusedError",
+        "StorageCorruptError",
+        "overdue_loans"
+      ],
+      "entities": [],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 9,
+          "module": "bookshelf.catalog",
+          "names": [
+            "Catalog"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 10,
+          "module": "bookshelf.errors",
+          "names": [
+            "BookNotFoundError",
+            "BookshelfError",
+            "BookUnavailableError",
+            "CatalogError",
+            "DuplicateBookError",
+            "LendingError",
+            "LoanLimitReachedError",
+            "LoanNotFoundError",
+            "RenewalRefusedError",
+            "StorageCorruptError"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 22,
+          "module": "bookshelf.lending",
+          "names": [
+            "LoanRegister",
+            "overdue_loans"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 23,
+          "module": "bookshelf.models",
+          "names": [
+            "Availability",
+            "Book",
+            "Loan",
+            "LoanWindow",
+            "Member"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 24,
+          "module": "bookshelf.notifications",
+          "names": [
+            "Notifier",
+            "RecordingNotifier"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 25,
+          "module": "bookshelf.storage",
+          "names": [
+            "JsonStore"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 34,
+      "parse_error": null,
+      "sloc": 30,
+      "source": {
+        "module": "bookshelf",
+        "path": "src/bookshelf/__init__.py",
+        "role": "package_marker",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:50fd328dfe5b5339a9958444940e9ce45b9764dbb7b130cc25f3a966ccb706a8",
+      "dunder_all": null,
+      "entities": [],
+      "has_main_guard": true,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 1,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "bookshelf.cli",
+          "names": [
+            "main"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 6,
+      "parse_error": null,
+      "sloc": 4,
+      "source": {
+        "module": "bookshelf.__main__",
+        "path": "src/bookshelf/__main__.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:fc00ffbb7aa13c96040a7d47faa5fe8ead1e7ef36d047d0f2beec309c3da5ff4",
+      "dunder_all": [
+        "add_title",
+        "borrow_title",
+        "build_services",
+        "list_titles",
+        "overdue_report",
+        "return_title",
+        "title_detail"
+      ],
+      "entities": [
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 25,
+          "name": "build_services",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 31,
+          "name": "list_titles",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 36,
+          "name": "title_detail",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 41,
+          "name": "add_title",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 47,
+          "name": "borrow_title",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 58,
+          "name": "return_title",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 64,
+          "name": "overdue_report",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 73,
+          "name": "describe_failure",
+          "public": false,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "FUNCTION",
+          "line": 86,
+          "name": "_title_summary",
+          "public": false,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 9,
+          "module": "datetime",
+          "names": [
+            "date"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 10,
+          "module": "pathlib",
+          "names": [
+            "Path"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 11,
+          "module": "typing",
+          "names": [
+            "Any"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 13,
+          "module": "bookshelf.catalog",
+          "names": [
+            "Catalog"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 14,
+          "module": "bookshelf.errors",
+          "names": [
+            "BookshelfError"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 15,
+          "module": "bookshelf.lending",
+          "names": [
+            "LoanRegister",
+            "overdue_loans"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 16,
+          "module": "bookshelf.models",
+          "names": [
+            "Book"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 17,
+          "module": "bookshelf.storage",
+          "names": [
+            "JsonStore"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 91,
+      "parse_error": null,
+      "sloc": 67,
+      "source": {
+        "module": "bookshelf.api",
+        "path": "src/bookshelf/api.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:2139da5be6a1c887ca11bc971633cc006a67086ebe7de3c970d367dd1d918aa8",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 14,
+          "name": "CATALOG_TABLE",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "CLASS",
+          "line": 17,
+          "name": "Catalog",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [
+            "lru_cache(maxsize=1)"
+          ],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 66,
+          "name": "shelf_sections",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 71,
+          "name": "_as_record",
+          "public": false,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "functools",
+          "names": [
+            "lru_cache"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 6,
+          "module": "pathlib",
+          "names": [
+            "Path"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "typing",
+          "names": [
+            "Any"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 9,
+          "module": "bookshelf.config",
+          "names": [
+            "DATA_DIR"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 10,
+          "module": "bookshelf.errors",
+          "names": [
+            "BookNotFoundError",
+            "DuplicateBookError"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 11,
+          "module": "bookshelf.models",
+          "names": [
+            "Availability",
+            "Book"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 12,
+          "module": "bookshelf.storage",
+          "names": [
+            "JsonStore"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": true,
+          "line": 50,
+          "module": "bookshelf.lending",
+          "names": [
+            "LoanRegister"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 76,
+      "parse_error": null,
+      "sloc": 58,
+      "source": {
+        "module": "bookshelf.catalog",
+        "path": "src/bookshelf/catalog.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:7b088d5511f405836763126eccfcbbea5f8fcf969534ecc6f55900b4f1940868",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 14,
+          "name": "build_parser",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 40,
+          "name": "main",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "argparse",
+          "names": [],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 6,
+          "module": "json",
+          "names": [],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "datetime",
+          "names": [
+            "date"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 9,
+          "module": "bookshelf",
+          "names": [
+            "api"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 10,
+          "module": "bookshelf.config",
+          "names": [
+            "DATA_DIR",
+            "LIBRARY_NAME"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 11,
+          "module": "bookshelf.errors",
+          "names": [
+            "BookshelfError"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 58,
+      "parse_error": null,
+      "sloc": 47,
+      "source": {
+        "module": "bookshelf.cli",
+        "path": "src/bookshelf/cli.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:24ca5b194b2b3cfed1bb51c3aa098b5fa5ff12e145f27659119e3413e0f751fc",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 7,
+          "name": "DEFAULT_LOAN_DAYS",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 8,
+          "name": "MAX_LOANS_PER_MEMBER",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 9,
+          "name": "RENEWAL_LIMIT",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 10,
+          "name": "LIBRARY_NAME",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 14,
+          "name": "DATA_DIR",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 17,
+          "name": "loan_length_days",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "os",
+          "names": [],
+          "origin": "stdlib",
+          "type_checking": false
+        }
+      ],
+      "lines": 24,
+      "parse_error": null,
+      "sloc": 15,
+      "source": {
+        "module": "bookshelf.config",
+        "path": "src/bookshelf/config.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:671053c4b0840a801925b88a7882c8587c06f291a3b172e7cdc0b33369f8851e",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [
+            "Exception"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 10,
+          "name": "BookshelfError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "BookshelfError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 14,
+          "name": "CatalogError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "CatalogError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 18,
+          "name": "BookNotFoundError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "CatalogError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 26,
+          "name": "DuplicateBookError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "BookshelfError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 34,
+          "name": "StorageCorruptError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "BookshelfError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 43,
+          "name": "LendingError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "LendingError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 47,
+          "name": "BookUnavailableError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "LendingError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 55,
+          "name": "LoanNotFoundError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "LendingError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 64,
+          "name": "LoanLimitReachedError",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "LendingError"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "EXCEPTION",
+          "line": 73,
+          "name": "RenewalRefusedError",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        }
+      ],
+      "lines": 79,
+      "parse_error": null,
+      "sloc": 50,
+      "source": {
+        "module": "bookshelf.errors",
+        "path": "src/bookshelf/errors.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:3eac1063f79df154f51df5518d7c8d338100a8c9b927c6cc4431899a2895be63",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 20,
+          "name": "LOANS_TABLE",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "CLASS",
+          "line": 23,
+          "name": "LoanRegister",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 87,
+          "name": "overdue_loans",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 95,
+          "name": "_loan_from_record",
+          "public": false,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 105,
+          "name": "_loan_record",
+          "public": false,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "datetime",
+          "names": [
+            "date",
+            "timedelta"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 6,
+          "module": "pathlib",
+          "names": [
+            "Path"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "typing",
+          "names": [
+            "Any"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 9,
+          "module": "bookshelf.catalog",
+          "names": [
+            "Catalog"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 10,
+          "module": "bookshelf.config",
+          "names": [
+            "DATA_DIR",
+            "MAX_LOANS_PER_MEMBER",
+            "RENEWAL_LIMIT",
+            "loan_length_days"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 11,
+          "module": "bookshelf.errors",
+          "names": [
+            "BookUnavailableError",
+            "LoanLimitReachedError",
+            "LoanNotFoundError",
+            "RenewalRefusedError"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 17,
+          "module": "bookshelf.models",
+          "names": [
+            "Loan",
+            "LoanWindow"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 18,
+          "module": "bookshelf.storage",
+          "names": [
+            "JsonStore"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 111,
+      "parse_error": null,
+      "sloc": 88,
+      "source": {
+        "module": "bookshelf.lending",
+        "path": "src/bookshelf/lending.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:8dd709a199153e10f09f13b5e461b7af280aa91d88627dd70acc63792c2b5a17",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [
+            "Enum"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "ENUM",
+          "line": 17,
+          "name": "Availability",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "TypedDict"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 25,
+          "name": "BookRecord",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "NamedTuple"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 34,
+          "name": "LoanWindow",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [
+            "dataclass(frozen=True)"
+          ],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 42,
+          "name": "Book",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [
+            "dataclass(frozen=True)"
+          ],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 72,
+          "name": "Member",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [
+            "dataclass(frozen=True)"
+          ],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 81,
+          "name": "Loan",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 9,
+          "module": "dataclasses",
+          "names": [
+            "dataclass"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 10,
+          "module": "enum",
+          "names": [
+            "Enum"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 11,
+          "module": "typing",
+          "names": [
+            "TYPE_CHECKING",
+            "Any",
+            "NamedTuple",
+            "TypedDict"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 14,
+          "module": "datetime",
+          "names": [
+            "date"
+          ],
+          "origin": "stdlib",
+          "type_checking": true
+        }
+      ],
+      "lines": 95,
+      "parse_error": null,
+      "sloc": 68,
+      "source": {
+        "module": "bookshelf.models",
+        "path": "src/bookshelf/models.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:5b5d60573d36a1fccf510bf17d462b5069db198521a8ad1c6166c08dd049d0e1",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 15,
+          "name": "REMINDER_WINDOW_DAYS",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [
+            "Protocol"
+          ],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "PROTOCOL",
+          "line": 18,
+          "name": "Notifier",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [
+            "dataclass"
+          ],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 26,
+          "name": "_RecordedMessage",
+          "public": false,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "CLASS",
+          "line": 34,
+          "name": "RecordingNotifier",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 57,
+          "name": "due_soon_message",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "async_function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 67,
+          "name": "remind_member",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "dataclasses",
+          "names": [
+            "dataclass"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 6,
+          "module": "typing",
+          "names": [
+            "TYPE_CHECKING",
+            "Protocol"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 8,
+          "module": "bookshelf.config",
+          "names": [
+            "LIBRARY_NAME"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 11,
+          "module": "datetime",
+          "names": [
+            "date"
+          ],
+          "origin": "stdlib",
+          "type_checking": true
+        },
+        {
+          "deferred": false,
+          "line": 13,
+          "module": "bookshelf.models",
+          "names": [
+            "Loan",
+            "Member"
+          ],
+          "origin": "first_party",
+          "type_checking": true
+        }
+      ],
+      "lines": 82,
+      "parse_error": null,
+      "sloc": 58,
+      "source": {
+        "module": "bookshelf.notifications",
+        "path": "src/bookshelf/notifications.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:784338970fae8ff9192008bf2f3dbd3a4f042019b710d875ee61d56668a9ac93",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "CLASS",
+          "line": 16,
+          "name": "JsonStore",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 1,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "json",
+          "names": [],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 4,
+          "module": "logging",
+          "names": [],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "pathlib",
+          "names": [
+            "Path"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 6,
+          "module": "typing",
+          "names": [
+            "Any"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 8,
+          "module": "bookshelf.errors",
+          "names": [
+            "StorageCorruptError"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": true,
+          "line": 45,
+          "module": "os",
+          "names": [],
+          "origin": "stdlib",
+          "type_checking": false
+        }
+      ],
+      "lines": 56,
+      "parse_error": null,
+      "sloc": 41,
+      "source": {
+        "module": "bookshelf.storage",
+        "path": "src/bookshelf/storage.py",
+        "role": "app",
+        "source_root": "src"
+      },
+      "top_level_effects": 2
+    }
+  ],
+  "perimeter": {
+    "bootstrap_files": [
+      "src/bookshelf/__main__.py"
+    ],
+    "mode": "migration",
+    "notes": [],
+    "package_markers": [
+      "src/bookshelf/__init__.py"
+    ],
+    "source_roots": [
+      "src"
+    ]
+  },
+  "project": {
+    "has_s0ma_config": false,
+    "mode": null,
+    "name": null
+  },
+  "proposals": [
+    {
+      "confidence": "low",
+      "kind_mix": [],
+      "layer": null,
+      "module": "bookshelf",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "medium",
+      "kind_mix": [],
+      "layer": "PRESENTATION",
+      "module": "bookshelf.__main__",
+      "reasons": [
+        "nothing else in the project imports it and it can be run on its own, which makes it one of the ways in to the program."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [
+        [
+          "FUNCTION",
+          9
+        ]
+      ],
+      "layer": "PRESENTATION",
+      "module": "bookshelf.api",
+      "reasons": [
+        "its name contains `api`, and things called that are usually a PRESENTATION concern.",
+        "`bookshelf.api` already imports `bookshelf.storage` when it loads, but the layer rules do not let a PRESENTATION module reach an INFRASTRUCTURE one — if both of these proposed layers are right, that import has to change before the converted project will build."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          1
+        ],
+        [
+          "FUNCTION",
+          2
+        ],
+        [
+          "SERVICE",
+          1
+        ]
+      ],
+      "layer": null,
+      "module": "bookshelf.catalog",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "high",
+      "kind_mix": [
+        [
+          "FUNCTION",
+          2
+        ]
+      ],
+      "layer": "PRESENTATION",
+      "module": "bookshelf.cli",
+      "reasons": [
+        "its name contains `cli`, and things called that are usually a PRESENTATION concern.",
+        "it imports `argparse` (the command-line argument reader), which is how a program gets reached from outside — that is presentation work."
+      ]
+    },
+    {
+      "confidence": "medium",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          5
+        ],
+        [
+          "FUNCTION",
+          1
+        ]
+      ],
+      "layer": "DOMAIN",
+      "module": "bookshelf.config",
+      "reasons": [
+        "it defines things of its own and imports nothing — not another module of this project, not a library that reaches outside the program — which is what a piece of self-contained domain logic looks like."
+      ]
+    },
+    {
+      "confidence": "medium",
+      "kind_mix": [
+        [
+          "EXCEPTION",
+          10
+        ]
+      ],
+      "layer": "DOMAIN",
+      "module": "bookshelf.errors",
+      "reasons": [
+        "it defines things of its own and imports nothing — not another module of this project, not a library that reaches outside the program — which is what a piece of self-contained domain logic looks like."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          1
+        ],
+        [
+          "FUNCTION",
+          3
+        ],
+        [
+          "SERVICE",
+          1
+        ]
+      ],
+      "layer": null,
+      "module": "bookshelf.lending",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "high",
+      "kind_mix": [
+        [
+          "ENUM",
+          1
+        ],
+        [
+          "MODEL",
+          5
+        ]
+      ],
+      "layer": "DOMAIN",
+      "module": "bookshelf.models",
+      "reasons": [
+        "its name contains `models`, and things called that are usually a DOMAIN concern.",
+        "it defines things of its own and imports nothing — not another module of this project, not a library that reaches outside the program — which is what a piece of self-contained domain logic looks like."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          1
+        ],
+        [
+          "FUNCTION",
+          2
+        ],
+        [
+          "MODEL",
+          1
+        ],
+        [
+          "SERVICE",
+          1
+        ],
+        [
+          "TYPE",
+          1
+        ]
+      ],
+      "layer": null,
+      "module": "bookshelf.notifications",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [
+        [
+          "SERVICE",
+          1
+        ]
+      ],
+      "layer": "INFRASTRUCTURE",
+      "module": "bookshelf.storage",
+      "reasons": [
+        "its name contains `storage`, and things called that are usually an INFRASTRUCTURE concern.",
+        "`bookshelf.api` already imports `bookshelf.storage` when it loads, but the layer rules do not let a PRESENTATION module reach an INFRASTRUCTURE one — if both of these proposed layers are right, that import has to change before the converted project will build."
+      ]
+    }
+  ],
+  "schema": "s0ma-adopt-scan@1",
+  "scope": {
+    "directories_outside": [
+      {
+        "directory": "tests",
+        "files": 5
+      }
+    ],
+    "origin": "inferred",
+    "outside_files": 5,
+    "outside_tests": 5,
+    "reason": null,
+    "source_roots": [
+      "src"
+    ],
+    "test_directories": [
+      "tests"
+    ]
+  },
+  "summary": {
+    "cycles": 0,
+    "lines": 712,
+    "modules": 11,
+    "outside_files": 5,
+    "packages": 1,
+    "parse_errors": 0,
+    "public_entities": 43,
+    "registered_entities": 0,
+    "sloc": 526,
+    "test_files": 5
+  },
+  "warnings": [
+    {
+      "code": "ADOPT_SCAN_DEFERRED_CYCLE",
+      "message": "`bookshelf.catalog` and `bookshelf.lending` refer to each other, and the only reason that is not a circle is that `bookshelf.catalog` does its import inside a function instead of at the top of the file. It has to stay that way: when you convert `bookshelf.catalog`, the import belongs under `deferred_requires:` and not under `requires:`. Moving it up — or letting a draft write it as an ordinary requirement — makes a circle the build will refuse.",
+      "module": "bookshelf.catalog"
+    }
+  ]
+}

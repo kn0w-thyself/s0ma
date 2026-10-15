@@ -1,0 +1,12 @@
+[project]
+name = "identical_roots"
+version = "0.0.1"
+
+# G2 (feedback 5–6 cleanup) fixture: the same path is declared in both
+# source_roots and test_roots. Identity is the degenerate-equality
+# corner of overlap; the detector must reject it the same way as
+# proper-nesting overlap.
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = ["src"]
+build_dir = "identical_roots_build"

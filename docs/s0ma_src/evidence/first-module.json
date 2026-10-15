@@ -1,0 +1,152 @@
+{
+  "record": {
+    "channel": "cli",
+    "covers": [
+      "cli:s0ma/build",
+      "cli:s0ma/check",
+      "cli:s0ma/inspect"
+    ],
+    "id": "example:transcript/first-module",
+    "intent": "Walk the authoring path of the first-module journey for real: prepare a throwaway project, write one module into it by hand, ask whether it holds together, build it, and ask the built module what it now contains.",
+    "journey": "journey:first-module",
+    "not_covered": [],
+    "scaffold": {
+      "argv": [
+        "s0ma",
+        "new",
+        "project",
+        "demo",
+        "--name",
+        "demo"
+      ],
+      "kind": "new-project",
+      "workdir": "demo"
+    },
+    "steps": [
+      {
+        "path": "src/greeting/greeting_domain.s0ma",
+        "text": "module greeting_domain\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"The greeting feature: turn a person's name into a line that also says what this project is.\"\n    exports: [greet]\n    requires: none\n    uses: [core_domain.describe_self]\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\n\ncell GREETING_OPENER :: DOMAIN\n    kind: CONSTANT\n    visibility: INTERNAL\n    intent: \"Keep the word every greeting opens with in one place, so the wording is settled once.\"\n    schema: \"The single word a greeting starts with.\"\n    invariants: \"Never empty.\"\n    covered_by: none\n    ---\n    GREETING_OPENER = \"Hello\"\n\nnerve greet :: DOMAIN\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Greet a person by name and tell them what this project is.\"\n    expects: \"A name that is not empty.\"\n    guarantees: \"Returns one line that opens with the settled opener, names the person, and says what the project is.\"\n    forbids: \"Never returns a greeting that leaves out the person's name.\"\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def greet(name: str) -> str:\n        \"\"\"Greet a person by name and say what this project is.\"\"\"\n        return GREETING_OPENER + \", \" + name + \". \" + describe_self()\n"
+      },
+      {
+        "argv": [
+          "s0ma",
+          "check"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "4 file(s) checked. No errors."
+          },
+          {
+            "match": "absent",
+            "text": "ERROR"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "build",
+          "src"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "{project}/pyproject.toml:1: WARNING [HOST_RUNTIME_UNDECLARED]"
+          },
+          {
+            "match": "line",
+            "text": "Results: 0 error(s), 1 warning(s) [mode: dev]"
+          },
+          {
+            "match": "line",
+            "text": "Build complete: 3 module(s) → {project}/build (manifest: build.s0ma.json)"
+          },
+          {
+            "match": "contains",
+            "text": "{project}/build/greeting_domain.py"
+          },
+          {
+            "match": "contains",
+            "text": "{project}/build/greeting_domain.s0ma.json"
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "inspect",
+          "greeting_domain"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Module: greeting_domain"
+          },
+          {
+            "match": "line",
+            "text": "  Layer: DOMAIN"
+          },
+          {
+            "match": "line",
+            "text": "  Source: src/greeting/greeting_domain.s0ma"
+          },
+          {
+            "match": "line",
+            "text": "Components (2):"
+          },
+          {
+            "match": "line",
+            "text": "  greeting_domain::GREETING_OPENER [INTERNAL CONSTANT cell]"
+          },
+          {
+            "match": "line",
+            "text": "  greeting_domain::greet [PUBLIC FUNCTION nerve]"
+          },
+          {
+            "match": "line",
+            "text": "Derived edges (1):"
+          },
+          {
+            "match": "line",
+            "text": "  greeting_domain::greet --[TYPE_USES]--> core_domain::describe_self"
+          },
+          {
+            "match": "line",
+            "text": "Exports: greet"
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      }
+    ]
+  },
+  "schema": "s0ma-docs-evidence@1"
+}

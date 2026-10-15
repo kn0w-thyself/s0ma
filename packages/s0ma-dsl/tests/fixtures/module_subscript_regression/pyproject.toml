@@ -1,0 +1,17 @@
+[project]
+name = "module_subscript_regression"
+version = "0.0.1"
+
+# B1 regression fixture (s0ma 0.11.0, batch-01a). Shaped after the bench
+# workspace batch-01a-20260713_P1_P_haiku45_r02 that detonated: a
+# factory-dict `registry` module plus a `cli` consumer that treats the
+# bare `uses: [registry]` MODULE as the dict its `registry()` nerve
+# returns and subscripts it — `registry["get_op"]` compiles cleanly and
+# crashes at runtime as `'module' object is not subscriptable`. The
+# MODULE_SUBSCRIPT guard must flag `cli`; the correctly-authored
+# `op_rename` (dotted `uses: [registry.registry]`, local-dict subscript)
+# must stay clean.
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = ["tests"]
+build_dir = "build"

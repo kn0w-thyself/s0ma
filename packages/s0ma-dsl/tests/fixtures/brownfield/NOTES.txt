@@ -1,0 +1,273 @@
+brownfield fixture applications
+==============================
+
+Two complete, plain-Python applications for the `s0ma adopt` family to be
+proved against. There is no s0ma anywhere inside them: no [tool.s0ma]
+table, no s0ma import, no .s0ma file, no third-party import in the
+application code. They are the "before" picture a retrofit starts from.
+
+This file is a map, not documentation. It is NOTES.txt and not a .md file
+on purpose: every tracked Markdown file in this repository needs a catalog
+row and a ledger row (plan section 1.2, fact 13), and a fixture does not
+belong in the documentation corpus. It sits beside the applications rather
+than inside them, so a scan of either tree sees only the application.
+
+Line numbers below are current as of the A2 milestone. They move whenever
+the fixtures move; test_brownfield_fixtures.py pins the file bytes, so a
+drifted line number here is a sign the manifest was updated and this file
+was not.
+
+
+1. What is where
+----------------
+
+tiny_app/            a flat, three-module script with no packaging at all
+  inventory.py       functions, two constants, one private helper
+  report.py          imports inventory, one class, a function-scoped import
+  run.py             __main__ guard, argparse
+                     (no pyproject.toml, no tests, 120 lines)
+
+layered_app/         a small library-lending service, src layout
+  pyproject.toml     a real [project] table; NO [tool.s0ma]
+  src/bookshelf/     the package (11 modules)
+  tests/             15 plain pytest tests over the public API
+                     (895 lines in all)
+
+multi_pkg_app/       a benchmarking toolkit shaped like a real repository
+                     that is NOT one package under src/ (milestone G3a,
+                     modelled on what the s0ma-bench pilot met)
+  pyproject.toml     [project], [tool.setuptools] naming the three
+                     packages, [tool.pytest.ini_options] with
+                     testpaths = ["tests_suite"], and [tool.ruff]
+  metrics/           leaf package: counting, standard library only
+  harnesslib/        imports metrics; carries __main__.py, the entry point
+  evallib/           imports harnesslib and metrics
+  samples/           TWO self-contained sample applications that are DATA:
+                     the toolkit never imports them, and demo_one/app.py
+                     deliberately defines `Anomaly`, a s0ma name
+  tests_suite/       13 plain pytest tests (not a directory named "tests",
+                     so the files are test code by NAME rather than place)
+                     (399 lines in all)
+
+
+2. Running them
+---------------
+
+The applications must keep working on their own; later milestones use
+"the project's own tests are still green" as the headline parity proof.
+
+  cd packages/s0ma-dsl/tests/fixtures/brownfield/layered_app
+  python -m pytest -q                      -> 15 passed
+
+layered_app/pyproject.toml carries pythonpath = ["src"] and
+testpaths = ["tests"], so nothing else has to be set up. Any interpreter
+with pytest installed will do; PYTHONPATH=src python -m pytest works too.
+
+  cd packages/s0ma-dsl/tests/fixtures/brownfield/multi_pkg_app
+  python -m pytest -q                      -> 13 passed
+  python -m harnesslib case-one case-two   -> the entry point
+  python samples/demo_one/app.py           -> a sample application
+
+multi_pkg_app/pyproject.toml carries pythonpath = ["."] and
+testpaths = ["tests_suite"], so the three packages import from the
+directory itself and the samples are never collected.
+
+  cd packages/s0ma-dsl/tests/fixtures/brownfield/tiny_app
+  python run.py --add jam 2 --remove milk 1
+
+CAUTION: do not use `uv run` inside layered_app or multi_pkg_app. The
+[project] table makes
+uv treat the fixture as a project of its own, and it writes a .venv/ and a
+uv.lock into the fixture tree. Use an interpreter directly, or copy the
+tree to a temporary directory first (which is what the later milestones do
+anyway, because they write to it).
+
+
+3. The deliberate cases (A2.T2.S2 and the plan's section 5.2 data model)
+------------------------------------------------------------------------
+
+async def
+  notifications.py:67   async def remind_member(...)
+
+decorated function (functools.lru_cache)
+  catalog.py:65-66      @lru_cache(maxsize=1) over shelf_sections()
+
+class with @property and @classmethod
+  models.py:50          Book.label      (@property)
+  models.py:55          Book.from_record (@classmethod)
+  notifications.py:43   RecordingNotifier.sent (@property), a second case
+
+underscore-private function and class
+  catalog.py:71         _as_record
+  lending.py:95, 105    _loan_from_record, _loan_record
+  api.py:86             _title_summary
+  notifications.py:26   _RecordedMessage  (private class)
+  tiny_app/inventory.py:40  _is_low
+
+TYPE_CHECKING import block
+  models.py:13-14       stdlib only: datetime.date
+  notifications.py:10-12  stdlib AND first-party: datetime.date, .models
+                        (so both origins are exercised)
+
+module docstring on some modules and not others
+  present:  config, errors, models, catalog, lending, notifications, api,
+            cli, __init__, and all three tiny_app modules
+  ABSENT:   storage.py, __main__.py
+
+one comment block directly above a definition
+  lending.py:84-86      three comment lines immediately above
+                        def overdue_loans (line 87)
+  (a second, shorter one: config.py:12-13 above DATA_DIR)
+
+top-level statement with a side effect
+  storage.py:10         logger = logging.getLogger(__name__)
+                        (a lower-case module-level assignment)
+  storage.py:13         logger.addHandler(logging.NullHandler())
+                        (a bare call statement)
+  These two are the ONLY top-level effects in either application. Every
+  other module's count is 0, so a census can be asserted exactly.
+
+function-scoped (deferred) import
+  storage.py:45         import os, inside JsonStore.write
+  catalog.py:50         from .lending import LoanRegister, inside
+                        Catalog.copies_available  -- this is the cycle
+  tiny_app/report.py:25 from textwrap import indent, inside render
+
+constants and an os.environ read
+  config.py:7-10        DEFAULT_LOAN_DAYS, MAX_LOANS_PER_MEMBER,
+                        RENEWAL_LIMIT, LIBRARY_NAME
+  config.py:14          DATA_DIR = os.environ.get(...)  -- an upper-case
+                        assignment, so it is a constant, NOT an effect
+  catalog.py:14 CATALOG_TABLE / lending.py:20 LOANS_TABLE /
+  notifications.py:15 REMINDER_WINDOW_DAYS
+  tiny_app/inventory.py:5-6, tiny_app/run.py:10
+
+exception hierarchy
+  errors.py:10          BookshelfError(Exception)
+  errors.py:14          CatalogError -> 18 BookNotFoundError,
+                        26 DuplicateBookError
+  errors.py:34          StorageCorruptError
+  errors.py:43          LendingError -> 47 BookUnavailableError,
+                        55 LoanNotFoundError, 64 LoanLimitReachedError,
+                        73 RenewalRefusedError
+  Every class name ends in Error because ruff's N818 is on for this
+  repository; the base-class names all end in Error too, so the census
+  EXCEPTION hint fires on the base name either way.
+
+frozen dataclasses, an Enum, a TypedDict, a NamedTuple, a Protocol
+  models.py:17          Availability(Enum)
+  models.py:25          BookRecord(TypedDict)
+  models.py:34          LoanWindow(NamedTuple)
+  models.py:41-42       @dataclass(frozen=True) Book
+  models.py:71-72       @dataclass(frozen=True) Member
+  models.py:80-81       @dataclass(frozen=True) Loan
+  notifications.py:18   Notifier(Protocol)
+  notifications.py:25-26 @dataclass _RecordedMessage (not frozen)
+  notifications.py:34   RecordingNotifier -- the implementation
+
+__all__
+  api.py:19             declared, and DELIBERATELY INCOMPLETE: the public
+                        name describe_failure (api.py:73) is not in it, so
+                        a census that intersects public names with __all__
+                        has something to bite on
+  __init__.py:27        declared, and complete
+
+main guard
+  __main__.py:5         inside a package (role: app, a bootstrap candidate)
+  tiny_app/run.py:48    outside any package (role: script)
+
+package marker
+  __init__.py           docstring, imports and __all__ and nothing else
+
+
+4. The import graph
+-------------------
+
+Load-time first-party edges (excluding the tests):
+
+  storage        -> errors
+  catalog        -> config, errors, models, storage
+  lending        -> catalog, config, errors, models, storage
+  notifications  -> config
+  api            -> catalog, errors, lending, models, storage
+  cli            -> api, config, errors
+  __main__       -> cli
+  bookshelf      -> catalog, errors, lending, models, notifications, storage
+
+  config, errors and models have no first-party imports at all.
+
+Deferred (function-scoped) first-party edge:
+
+  catalog -> lending          catalog.py:50
+
+Type-checking-only edge:
+
+  notifications -> models     notifications.py:12
+
+So catalog and lending DO refer to each other in the source, which is the
+deliberate first-party cycle. It stays importable in either order because
+only one direction is a load-time import; the other is inside
+Catalog.copies_available. Which of the two a scan calls a "cycle" depends
+on whether deferred edges count:
+
+  - over load-time edges alone there is NO cycle, and the leaf-first
+    order is: config, errors, models -> storage -> catalog, notifications
+    -> lending -> api -> cli -> __main__ -> bookshelf
+  - over load-time plus deferred edges there is a two-module cycle,
+    (catalog, lending)
+
+A2 builds the shape; B2 and B4 decide which of the two they report. B4's
+task text expects both "the cycle is reported" and "the deferred import is
+not" from these fixtures, which only both hold if the cycle is reported
+from the combined graph while the EDGE stays out of the load-time set. See
+the friction log entry F-A2-2.
+
+leaf-first conversion order: errors is the first true leaf with no
+first-party imports and public names worth converting, which is why D4 and
+E2 convert bookshelf.errors.
+
+
+5. Roles (the plan's SourceFile.role)
+-------------------------------------
+
+  package_marker   src/bookshelf/__init__.py
+  app              every other module under src/bookshelf/
+                   (including __main__.py: it has a main guard but sits
+                   inside a package)
+  test             tests/conftest.py and tests/test_*.py
+  script           tiny_app/run.py
+  app              tiny_app/inventory.py, tiny_app/report.py
+
+multi_pkg_app adds the shapes a one-package tree cannot show:
+
+  package_marker   metrics/__init__.py, harnesslib/__init__.py,
+                   evallib/__init__.py
+  app              every other module inside the three packages
+  test             tests_suite/test_*.py — test code by NAME, because
+                   "tests_suite" is not one of the test directory names
+  script           samples/demo_one/app.py, samples/demo_two/main.py
+                   (a main guard outside any package) — but they sit
+                   OUTSIDE the three source roots, so a scan scoped to
+                   the project's own code counts them and does not read
+                   them
+
+  what names the project's own code: [tool.setuptools].packages and the
+  [project.scripts] entry point both name harnesslib/evallib/metrics, and
+  the three import each other (evallib -> harnesslib -> metrics). samples/
+  is named by nothing and imported by nothing, and holds two self-contained
+  trees — which is what makes it data.
+
+
+6. House rules these trees follow
+---------------------------------
+
+  - UTF-8, LF line endings, no trailing whitespace, a final newline.
+  - No absolute paths and nothing that depends on the clock or the
+    machine, except the date.today() defaults in api.borrow_title and
+    api.overdue_report, which every test passes an explicit date to.
+  - Standard library only in the application code. The tests import
+    pytest, which is the runner, not a dependency of the service.
+  - No .md file anywhere under either tree (A2.T4).
+  - conftest.py beside this file keeps both trees out of the DSL suite's
+    collection; read its docstring before changing anything about where
+    the fixtures live.

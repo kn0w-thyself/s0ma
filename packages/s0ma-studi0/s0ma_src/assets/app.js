@@ -1,0 +1,3240 @@
+/* sh0w — the studi0 graph viewer.
+ *
+ * One file, no imports, no build step, no external URL of any kind
+ * (FR-STUDI0-7). Vanilla JS + SVG against evergreen browsers. The file
+ * contains no `import`/`export` statement, so it loads either as an ES
+ * module (how index.html loads it) or as a classic script (how the
+ * file:// dev harness loads it).
+ *
+ * Boot modes (plan §3.6):
+ *   1. fixture — window.__S0MA_FIXTURE__ holds an s0ma-graph@2 payload;
+ *      render it once, no polling.
+ *   2. live — poll /api/state every 1000 ms; when seq changes, fetch
+ *      /api/graph, diff it against what is on screen, repaint.
+ *
+ * Truth discipline: everything drawn or written in the inspector comes
+ * from the payload. Nothing is inferred, nothing is invented, and an
+ * absent value says so. The canonical s0ma-ir@3 state wrappers
+ * ({state: value|none|pending}) are projected for display, never
+ * flattened away: `pending` is authoring debt and is shown as such.
+ *
+ * Two kinds of truth, never mixed: the GRAPH is what the project's
+ * build says, and NARRATION is what an agent says it is doing. The
+ * narration pane carries the second, marked as self-report, in its own
+ * surface with its own visual language — no checkmarks, no verified
+ * affordances, and never a mark on the canvas itself. The only thing
+ * narration is allowed to do to the graph is FOCUS it: naming a
+ * component that really exists selects it, exactly as a click would.
+ * A name the graph does not carry moves nothing at all.
+ *
+ * Determinism: the FIRST layout of a payload is a pure function of
+ * (payload, toggle state, per-organ collapse choices). No randomness,
+ * no clock, no measurement of rendered text feeds a position.
+ *
+ * Spatial stability: after that first layout, grid slots are sticky for
+ * the session. A build landing while the page is open never re-flows
+ * what is already on screen — a new component takes the next free slot
+ * in its organ, a removed one leaves its slot empty, and everything
+ * else stays exactly where the reader last saw it. Changing a
+ * visibility toggle is a different question, not a delta, and answers
+ * with a fresh deterministic layout.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Constants
+ * ------------------------------------------------------------------ */
+
+var POLL_INTERVAL_MS = 1000;
+
+/* Layout metrics, in user units. */
+var NODE_W = 132;
+var NODE_H = 82;
+var NODE_GAP_X = 18;
+var NODE_GAP_Y = 16;
+var GLYPH_CY = 27; /* glyph centre, from the node cell's top edge */
+var LABEL_Y = 58;
+var STALE_CHIP_Y = 66;
+var NODE_LABEL_MAX_CHARS = 20;
+
+var ORGAN_PAD_X = 20;
+var ORGAN_PAD_TOP = 8;
+var ORGAN_PAD_BOTTOM = 20;
+var ORGAN_HEADER_H = 44;
+var ORGAN_COLLAPSED_PAD = 10;
+var ORGAN_GAP_X = 44;
+var ORGAN_GAP_Y = 30;
+var ORGAN_MIN_W = 236;
+
+var BAND_PAD_TOP = 42;
+var BAND_PAD_BOTTOM = 24;
+var BAND_GAP_Y = 18;
+/* Organs wrap to a second row inside a band past this width, so one
+ * crowded layer cannot stretch the canvas indefinitely sideways. */
+var BAND_MAX_WIDTH = 2600;
+var CONTENT_X = 32;
+
+/* Band tints are drawn far past the content on both sides so a layer
+ * reads as a band across the view however far the graph is panned. The
+ * bleed is presentation only: it never enters the layout size, so
+ * fit-to-view still frames the content and not the tint. */
+var BAND_BLEED = 6000;
+
+var FIT_PAD = 48;
+
+/* An organ renders collapsed when the whole view holds more visible
+ * nodes than this. One constant, deliberately tunable (plan §6). */
+var COLLAPSE_THRESHOLD = 60;
+
+/* The materialize beat — this file's only motion, and the only motion
+ * anywhere on the canvas. It exists to answer one question ("what just
+ * changed?") and it stops answering it after a few seconds.
+ *
+ * The durations live in app.css, which owns the animations; the two
+ * milliseconds named here are the JS side of the same contract — when
+ * the marks are dropped from the DOM. They are deliberately a little
+ * longer than their CSS counterparts so a mark is never pulled out from
+ * under an animation that is still running. Under
+ * prefers-reduced-motion nothing animates, the ring is drawn statically
+ * instead, and these timers are what make it appear for the same few
+ * seconds and then go: every transition stays perceivable without
+ * motion (truth language §11). */
+var BEAT_RING_MS = 4000;
+var BEAT_OUT_MS = 300;
+var BEAT_EXPIRY_MS = BEAT_RING_MS + 300;
+var BEAT_SWEEP_MS = BEAT_OUT_MS + 120;
+
+/* How far the highlight ring sits outside the thing it highlights. */
+var BEAT_RING_INSET = 5;
+
+var LAYER_ORDER = [
+  "PRESENTATION",
+  "APPLICATION",
+  "DOMAIN",
+  "INFRASTRUCTURE",
+  "FRAMEWORK",
+];
+
+/* Sort order for nodes inside an organ. */
+var DECLARATION_ORDER = [
+  "ganglion",
+  "nerve",
+  "cell",
+  "axon",
+  "test",
+  "helper",
+  "doc_ref",
+  "doc_guide",
+  "example",
+];
+
+/* Declaration types hidden until the "tests and docs" toggle is on. */
+var TEST_AND_DOC_TYPES = {
+  test: true,
+  helper: true,
+  doc_ref: true,
+  doc_guide: true,
+  example: true,
+};
+
+/* Shape + letter per declaration type. Never colour alone. */
+var GLYPH_LETTER = {
+  ganglion: "G",
+  nerve: "N",
+  cell: "C",
+  axon: "A",
+  test: "T",
+  helper: "H",
+  doc_ref: "D",
+  doc_guide: "D",
+  example: "E",
+};
+
+var FAMILY_LABEL = {
+  authored: "authored",
+  derived: "derived",
+  verification: "verification",
+};
+
+/* Fields the inspector lifts to the top of the field list when present. */
+var FIELD_PRIORITY = ["guarantees", "expects", "forbids"];
+
+/* The four movement phases the narration schema froze. A phase outside
+ * this map is never rendered — the server refuses the line first, and
+ * this is the second wall. */
+var PHASE_LABEL = {
+  orient: "orient",
+  author: "author",
+  verify: "verify",
+  move_on: "move on",
+};
+
+/* How many narrations the pane shows at once. The payload is already
+ * bounded server-side; this is the reading limit, not the truth limit,
+ * and the pane says what it is not showing. */
+var NARRATION_SHOWN = 12;
+
+/* The SVG namespace, read from a probe element instead of a URL
+ * literal: no absolute URL of any scheme appears in this file, so the
+ * page can be proven self-contained by inspection (FR-STUDI0-7). */
+var SVG_NS = (function () {
+  var probe = document.createElement("div");
+  probe.innerHTML = "<svg></svg>";
+  return probe.firstChild.namespaceURI;
+})();
+
+/* ------------------------------------------------------------------ *
+ * Session state
+ * ------------------------------------------------------------------ */
+
+var state = {
+  live: false,
+  seq: 0,
+  graph: null,
+  model: null,
+  layout: null,
+  buildStatus: "missing",
+  staleModules: [],
+  toggles: { tests: false, framework: false },
+  collapseOverrides: {},
+  selection: null,
+  viewBox: null,
+  fitted: false,
+  offline: false,
+  offlineDismissed: false,
+  error: null,
+  /* What the last payload changed. Drives the materialize beat, and is
+   * dropped again once the beat is over. */
+  delta: emptyDelta(),
+  /* True between "a delta arrived" and "the paint that showed it". */
+  beatPending: false,
+  /* Sticky layout memory, one entry per module (see organSlotting).
+   * Wiped whenever `slotKey` changes, which is the only thing that
+   * licenses a full relayout. */
+  slots: {},
+  slotKey: null,
+  defaultCollapsed: false,
+  /* What an agent has said it is doing: the bounded window the server
+   * serves, how many narrations there have been in all, and how many
+   * session-log lines the server read and refused. Self-report, kept
+   * out of `graph` and `model` on purpose. */
+  narration: { entries: [], total: 0, invalid: 0 },
+  /* The ordinal of the newest narration focus sync has already acted
+   * on, so an unchanged window never re-steers the canvas. */
+  narrationFocused: 0,
+};
+
+var ui = {};
+
+/* The two timers this file owns, both of them the beat's own lifecycle
+ * and nothing else. */
+var beatExpiryTimer = null;
+var beatSweepTimer = null;
+
+/* ------------------------------------------------------------------ *
+ * Small helpers
+ * ------------------------------------------------------------------ */
+
+function r2(value) {
+  return Math.round(value * 100) / 100;
+}
+
+function el(tag, className, text) {
+  var node = document.createElement(tag);
+  if (className) {
+    node.className = className;
+  }
+  if (text !== undefined && text !== null) {
+    node.textContent = text;
+  }
+  return node;
+}
+
+function svgEl(tag, attrs) {
+  var node = document.createElementNS(SVG_NS, tag);
+  if (attrs) {
+    for (var key in attrs) {
+      if (Object.prototype.hasOwnProperty.call(attrs, key)) {
+        node.setAttribute(key, String(attrs[key]));
+      }
+    }
+  }
+  return node;
+}
+
+function svgText(x, y, className, text, attrs) {
+  var node = svgEl("text", attrs || {});
+  node.setAttribute("x", String(r2(x)));
+  node.setAttribute("y", String(r2(y)));
+  if (className) {
+    node.setAttribute("class", className);
+  }
+  node.textContent = text;
+  return node;
+}
+
+function clear(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+}
+
+function shortName(canonicalId) {
+  var marker = canonicalId.indexOf("::");
+  return marker === -1 ? canonicalId : canonicalId.slice(marker + 2);
+}
+
+function middleTruncate(text, max) {
+  if (text.length <= max) {
+    return text;
+  }
+  var keep = max - 1;
+  var head = Math.ceil(keep / 2);
+  var tail = keep - head;
+  return text.slice(0, head) + "…" + text.slice(text.length - tail);
+}
+
+/* Deterministic width estimate: layout must never depend on how a
+ * particular browser measures a particular font. */
+function estimateTextWidth(text, pxPerChar) {
+  return text.length * pxPerChar;
+}
+
+function declarationRank(declarationType) {
+  var index = DECLARATION_ORDER.indexOf(declarationType);
+  return index === -1 ? DECLARATION_ORDER.length : index;
+}
+
+function compareStrings(a, b) {
+  if (a < b) {
+    return -1;
+  }
+  return a > b ? 1 : 0;
+}
+
+/* Element-wise list equality. Deliberately not a join-and-compare: any
+ * separator is a guess about what the strings cannot contain, and this
+ * question ("did the stale set change?") deserves an answer that does
+ * not rest on a guess. */
+function sameStringList(a, b) {
+  if (a.length !== b.length) {
+    return false;
+  }
+  for (var i = 0; i < a.length; i += 1) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function hasKeys(map) {
+  for (var key in map) {
+    if (Object.prototype.hasOwnProperty.call(map, key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* ------------------------------------------------------------------ *
+ * State-wrapper projection (plan §3.2 "As implemented")
+ * ------------------------------------------------------------------ */
+
+/* Projects one IR leaf for display:
+ *   {state: "value", value: X}      -> {kind: "value", value: X}
+ *   {state: "none"}                 -> {kind: "none"}
+ *   {state: "pending", reason: R}   -> {kind: "pending", reason: R}
+ *   anything else (a plain scalar,
+ *   list or map the IR carries
+ *   without a wrapper)              -> {kind: "value", value: it}
+ * A missing key is "none": the field was not declared. */
+function projectValue(raw) {
+  if (raw === undefined || raw === null) {
+    return { kind: "none" };
+  }
+  if (
+    typeof raw === "object" &&
+    !Array.isArray(raw) &&
+    typeof raw.state === "string"
+  ) {
+    if (raw.state === "value") {
+      return { kind: "value", value: raw.value };
+    }
+    if (raw.state === "none") {
+      return { kind: "none" };
+    }
+    if (raw.state === "pending") {
+      return { kind: "pending", reason: raw.reason };
+    }
+  }
+  return { kind: "value", value: raw };
+}
+
+/* One-line projection for tooltips and other single-string surfaces. */
+function projectToLine(raw, absentText) {
+  var projected = projectValue(raw);
+  if (projected.kind === "none") {
+    return absentText;
+  }
+  if (projected.kind === "pending") {
+    return "pending: " + valueToLine(projected.reason);
+  }
+  return valueToLine(projected.value);
+}
+
+function valueToLine(value) {
+  if (value === undefined || value === null) {
+    return "";
+  }
+  if (Array.isArray(value)) {
+    return value.map(valueToLine).join(", ");
+  }
+  if (typeof value === "object") {
+    var parts = [];
+    var keys = Object.keys(value).sort(compareStrings);
+    for (var i = 0; i < keys.length; i += 1) {
+      parts.push(keys[i] + ": " + valueToLine(value[keys[i]]));
+    }
+    return parts.join("; ");
+  }
+  return String(value);
+}
+
+/* ------------------------------------------------------------------ *
+ * Model
+ * ------------------------------------------------------------------ */
+
+function buildModel(graph) {
+  var components = graph && graph.components ? graph.components : {};
+  var rawModules = graph && graph.modules ? graph.modules : [];
+  var rawEdges = graph && graph.edges ? graph.edges : {};
+
+  var modules = {};
+  var moduleNames = [];
+  var i;
+
+  for (i = 0; i < rawModules.length; i += 1) {
+    var entry = rawModules[i];
+    modules[entry.name] = entry;
+    moduleNames.push(entry.name);
+  }
+
+  var componentIds = Object.keys(components).sort(compareStrings);
+
+  /* A component whose module is missing from `modules` still belongs
+   * somewhere: fall back to a module record built from what the
+   * component itself declares. Nothing is invented — the module name
+   * and layer are the component's own. */
+  for (i = 0; i < componentIds.length; i += 1) {
+    var component = components[componentIds[i]];
+    var moduleName = component.module;
+    if (moduleName && !modules[moduleName]) {
+      modules[moduleName] = {
+        name: moduleName,
+        layer: component.layer,
+        intent: null,
+        components: [],
+      };
+      moduleNames.push(moduleName);
+    }
+  }
+  moduleNames.sort(compareStrings);
+
+  var edges = [];
+  var families = ["authored", "derived", "verification"];
+  for (i = 0; i < families.length; i += 1) {
+    var family = families[i];
+    var list = rawEdges[family] || [];
+    for (var j = 0; j < list.length; j += 1) {
+      var raw = list[j];
+      var source = family === "verification" ? raw.test : raw.source;
+      var target = family === "verification" ? raw.validates : raw.target;
+      edges.push({
+        family: family,
+        source: source,
+        target: target,
+        relation: raw.relation || null,
+        origin: raw.origin || null,
+        carries: raw.carries,
+        coupling: raw.coupling,
+        intent: raw.intent,
+        index: edges.length,
+      });
+    }
+  }
+
+  var integrations = graph && graph.integrations ? graph.integrations : [];
+  var integrationsByModule = {};
+  var integrationsById = {};
+  for (i = 0; i < integrations.length; i += 1) {
+    var integration = integrations[i];
+    var owner = integration.module || "";
+    if (!integrationsByModule[owner]) {
+      integrationsByModule[owner] = [];
+    }
+    integrationsByModule[owner].push(integration);
+    integrationsById[integration.canonical_id] = integration;
+  }
+
+  var freshness = graph ? graph.freshness : null;
+
+  return {
+    components: components,
+    componentIds: componentIds,
+    modules: modules,
+    moduleNames: moduleNames,
+    edges: edges,
+    integrations: integrations,
+    integrationsByModule: integrationsByModule,
+    integrationsById: integrationsById,
+    freshness: freshness || null,
+  };
+}
+
+function deriveStateFromGraph(graph) {
+  var freshness = graph ? graph.freshness : null;
+  if (!freshness || !freshness.status) {
+    return { build_status: "missing", stale_modules: [] };
+  }
+  return {
+    build_status: freshness.status,
+    stale_modules: freshness.stale_modules || [],
+  };
+}
+
+function isStaleModule(moduleName) {
+  return state.staleModules.indexOf(moduleName) !== -1;
+}
+
+/* ------------------------------------------------------------------ *
+ * Visibility
+ * ------------------------------------------------------------------ */
+
+function isComponentVisible(component) {
+  if (TEST_AND_DOC_TYPES[component.declaration_type] && !state.toggles.tests) {
+    return false;
+  }
+  if (component.layer === "FRAMEWORK" && !state.toggles.framework) {
+    return false;
+  }
+  return true;
+}
+
+function isModuleVisible(moduleName) {
+  var module = state.model.modules[moduleName];
+  if (module && module.layer === "FRAMEWORK" && !state.toggles.framework) {
+    return false;
+  }
+  return true;
+}
+
+/* ------------------------------------------------------------------ *
+ * Layout (deterministic; no physics, no measurement)
+ * ------------------------------------------------------------------ */
+
+function computeLayout() {
+  var model = state.model;
+  var visible = {};
+  var visibleIds = [];
+  var i;
+  var j;
+
+  for (i = 0; i < model.componentIds.length; i += 1) {
+    var id = model.componentIds[i];
+    var component = model.components[id];
+    if (isComponentVisible(component) && isModuleVisible(component.module)) {
+      visible[id] = true;
+      visibleIds.push(id);
+    }
+  }
+
+  /* A toggle changes which question the view is answering, so it earns
+   * a fresh deterministic layout. A delta does not. */
+  var key = slotKey();
+  var firstLayout = state.slotKey !== key;
+  if (firstLayout) {
+    state.slots = {};
+    state.slotKey = key;
+    state.defaultCollapsed = visibleIds.length > COLLAPSE_THRESHOLD;
+  }
+  /* Held from the first layout: a build that pushes the node count past
+   * the collapse threshold must not fold the whole view up under the
+   * reader. Expand-all and collapse-all remain the way to change it. */
+  var defaultCollapsed = state.defaultCollapsed;
+
+  /* Group visible components by module, in (declaration type, name)
+   * order — the order the grid fills. */
+  var byModule = {};
+  for (i = 0; i < visibleIds.length; i += 1) {
+    var component2 = model.components[visibleIds[i]];
+    var moduleName = component2.module || "";
+    if (!byModule[moduleName]) {
+      byModule[moduleName] = [];
+    }
+    byModule[moduleName].push(component2);
+  }
+  for (var name in byModule) {
+    if (Object.prototype.hasOwnProperty.call(byModule, name)) {
+      byModule[name].sort(function (a, b) {
+        var rank = declarationRank(a.declaration_type) -
+          declarationRank(b.declaration_type);
+        if (rank !== 0) {
+          return rank;
+        }
+        return compareStrings(a.canonical_id, b.canonical_id);
+      });
+    }
+  }
+
+  /* Bands: only layers that actually hold a visible module. */
+  var modulesByLayer = {};
+  var presentModules = Object.keys(byModule).sort(compareStrings);
+  for (i = 0; i < presentModules.length; i += 1) {
+    var moduleRecord = model.modules[presentModules[i]];
+    var layer = (moduleRecord && moduleRecord.layer) || "FRAMEWORK";
+    if (!modulesByLayer[layer]) {
+      modulesByLayer[layer] = [];
+    }
+    modulesByLayer[layer].push(presentModules[i]);
+  }
+
+  var organs = [];
+  var organsByModule = {};
+  var nodesById = {};
+  var bands = [];
+  var y = 0;
+  var maxRight = 0;
+
+  for (i = 0; i < LAYER_ORDER.length; i += 1) {
+    var bandLayer = LAYER_ORDER[i];
+    var bandModules = modulesByLayer[bandLayer];
+    if (!bandModules || bandModules.length === 0) {
+      continue;
+    }
+    bandModules = orderModulesInBand(bandModules, visible);
+
+    var bandTop = y;
+    var cursorX = CONTENT_X;
+    var rowTop = bandTop + BAND_PAD_TOP;
+    var rowHeight = 0;
+
+    for (j = 0; j < bandModules.length; j += 1) {
+      var organModule = bandModules[j];
+      var members = byModule[organModule];
+      var slotting = organSlotting(organModule, members);
+      var collapsed = organCollapsed(organModule, defaultCollapsed);
+      var geometry = organGeometry(organModule, slotting, members.length, collapsed);
+
+      if (
+        cursorX > CONTENT_X &&
+        cursorX + geometry.width > CONTENT_X + BAND_MAX_WIDTH
+      ) {
+        cursorX = CONTENT_X;
+        rowTop = rowTop + rowHeight + ORGAN_GAP_Y;
+        rowHeight = 0;
+      }
+
+      var organ = {
+        module: organModule,
+        layer: bandLayer,
+        collapsed: collapsed,
+        stale: isStaleModule(organModule),
+        members: members,
+        integrations: model.integrationsByModule[organModule] || [],
+        x: cursorX,
+        y: rowTop,
+        width: geometry.width,
+        height: geometry.height,
+        cols: geometry.cols,
+        rows: geometry.rows,
+        nodes: [],
+      };
+      organ.headerBox = {
+        x: organ.x,
+        y: organ.y,
+        w: organ.width,
+        h: ORGAN_HEADER_H,
+      };
+
+      if (!collapsed) {
+        /* Slot -> cell. The offset is frozen with the organ's first
+         * layout, so a header that grows a chip widens the box to the
+         * right and leaves every node exactly where it was. */
+        var gridLeft = organ.x + slotting.offsetX;
+        var gridTop = organ.y + ORGAN_HEADER_H + ORGAN_PAD_TOP;
+        for (var k = 0; k < members.length; k += 1) {
+          var slot = slotting.index[members[k].canonical_id];
+          var col = slot % slotting.cols;
+          var row = Math.floor(slot / slotting.cols);
+          var node = {
+            id: members[k].canonical_id,
+            component: members[k],
+            organ: organ,
+            slot: slot,
+            x: gridLeft + col * (NODE_W + NODE_GAP_X),
+            y: gridTop + row * (NODE_H + NODE_GAP_Y),
+            w: NODE_W,
+            h: NODE_H,
+          };
+          organ.nodes.push(node);
+          nodesById[node.id] = node;
+        }
+      }
+
+      organs.push(organ);
+      organsByModule[organModule] = organ;
+      cursorX = cursorX + geometry.width + ORGAN_GAP_X;
+      rowHeight = Math.max(rowHeight, geometry.height);
+      maxRight = Math.max(maxRight, organ.x + organ.width);
+    }
+
+    var bandBottom = rowTop + rowHeight + BAND_PAD_BOTTOM;
+    bands.push({
+      layer: bandLayer,
+      y: bandTop,
+      height: bandBottom - bandTop,
+    });
+    y = bandBottom + BAND_GAP_Y;
+  }
+
+  var width = Math.max(maxRight + CONTENT_X, CONTENT_X * 2 + ORGAN_MIN_W);
+  var height = Math.max(y - BAND_GAP_Y, 1);
+  for (i = 0; i < bands.length; i += 1) {
+    bands[i].width = width;
+  }
+
+  var layout = {
+    bands: bands,
+    organs: organs,
+    organsByModule: organsByModule,
+    nodesById: nodesById,
+    visible: visible,
+    visibleCount: visibleIds.length,
+    width: width,
+    height: height,
+    defaultCollapsed: defaultCollapsed,
+  };
+  layout.edgeGroups = computeEdgeGroups(layout);
+  return layout;
+}
+
+function organCollapsed(moduleName, defaultCollapsed) {
+  if (
+    Object.prototype.hasOwnProperty.call(state.collapseOverrides, moduleName)
+  ) {
+    return state.collapseOverrides[moduleName];
+  }
+  return defaultCollapsed;
+}
+
+/* The identity of the current visibility question. The sticky slot map
+ * belongs to one answer of it; a different answer starts over. */
+function slotKey() {
+  return (
+    (state.toggles.tests ? "tests" : "-") +
+    "/" +
+    (state.toggles.framework ? "framework" : "-")
+  );
+}
+
+/* The sticky grid of one organ: how many columns it has, which slot
+ * each component sits in, and how many slots it has ever handed out.
+ *
+ * First time through, this is exactly the pure layout M4 specified —
+ * ceil(sqrt(n)) columns, members filling slots 0..n-1 in (declaration
+ * type, name) order. From then on it only ever grows: a component new
+ * to the payload takes the next never-used slot (the organ grows
+ * downward), and a component that leaves takes its slot out of use for
+ * the rest of the session rather than letting its neighbours slide up
+ * into the gap. Neither event moves anything already on screen, which
+ * is the whole point (plan §4 M5.T2, scope §3.2). */
+function organSlotting(moduleName, members) {
+  var memory = state.slots[moduleName];
+  var i;
+  if (!memory) {
+    memory = {
+      cols: Math.max(1, Math.ceil(Math.sqrt(members.length))),
+      index: {},
+      capacity: 0,
+      /* Both settle on the organ's first layout (see organGeometry). */
+      offsetX: null,
+      width: 0,
+    };
+    state.slots[moduleName] = memory;
+  }
+  for (i = 0; i < members.length; i += 1) {
+    var id = members[i].canonical_id;
+    if (memory.index[id] === undefined) {
+      memory.index[id] = memory.capacity;
+      memory.capacity += 1;
+    }
+  }
+  return memory;
+}
+
+function organGeometry(moduleName, slotting, count, collapsed) {
+  var cols = slotting.cols;
+  /* Rows are cut for every slot ever handed out, not just the occupied
+   * ones: a removal leaves a hole, and an organ that shrank back would
+   * drag its whole band up with it. */
+  var rows = Math.max(1, Math.ceil(Math.max(slotting.capacity, 1) / cols));
+  var gridWidth = cols * NODE_W + (cols - 1) * NODE_GAP_X;
+
+  var headerWidth = Math.max(
+    ORGAN_MIN_W,
+    headerWidthEstimate(moduleName, count)
+  );
+  var expandedWidth = Math.max(headerWidth, gridWidth + ORGAN_PAD_X * 2);
+  /* Monotonic: "13 components" is a wider header than "9 components",
+   * and an organ that breathed in and out with its own label would move
+   * every organ to its right on every build. */
+  if (expandedWidth > slotting.width) {
+    slotting.width = expandedWidth;
+  }
+  if (slotting.offsetX === null) {
+    /* Centre the grid once, against the organ's first width. Later
+     * growth is added on the right, so this offset stays true. */
+    slotting.offsetX = (slotting.width - gridWidth) / 2;
+  }
+
+  /* Collapsed, an organ is only its header, so it may be narrower —
+   * collapsing is the reader's own doing, not a delta arriving. */
+  var width = collapsed ? headerWidth : slotting.width;
+
+  var height = collapsed
+    ? ORGAN_HEADER_H + ORGAN_COLLAPSED_PAD
+    : ORGAN_HEADER_H +
+      ORGAN_PAD_TOP +
+      rows * NODE_H +
+      (rows - 1) * NODE_GAP_Y +
+      ORGAN_PAD_BOTTOM;
+
+  return { width: width, height: height, cols: cols, rows: rows };
+}
+
+function organLayer(moduleName) {
+  var module = state.model.modules[moduleName];
+  return (module && module.layer) || "";
+}
+
+function headerMetaText(count) {
+  return count === 1 ? "1 component" : count + " components";
+}
+
+/* Chip text is 9.5px and can be uppercase and letter-spaced (a layer
+ * name) or lowercase (a stale marker), so a single per-character
+ * average is not enough to keep text inside its pill. Still a pure
+ * estimate — nothing is measured, so the layout stays identical across
+ * browsers and font stacks. */
+function chipTextWidth(text) {
+  var width = 0;
+  for (var i = 0; i < text.length; i += 1) {
+    var ch = text.charAt(i);
+    if (ch >= "A" && ch <= "Z") {
+      width += 7.2;
+    } else if (ch === " " || ch === ":" || ch === "." || ch === "_") {
+      width += 3.4;
+    } else {
+      width += 5.6;
+    }
+  }
+  return width;
+}
+
+function chipWidth(text) {
+  return chipTextWidth(text) + 14;
+}
+
+function integrationChipTexts(moduleName) {
+  var integrations = state.model.integrationsByModule[moduleName] || [];
+  var texts = [];
+  for (var i = 0; i < integrations.length && i < 2; i += 1) {
+    texts.push("integration: " + integrations[i].name);
+  }
+  return texts;
+}
+
+/* Header width is estimated, never measured: layout must not change
+ * with the browser's font metrics. Every chip that will be drawn is
+ * counted here so a header never runs past its organ. */
+function headerWidthEstimate(moduleName, count) {
+  var width =
+    ORGAN_PAD_X * 2 +
+    14 +
+    estimateTextWidth(moduleName, 7.6) +
+    12 +
+    chipWidth(organLayer(moduleName)) +
+    8 +
+    estimateTextWidth(headerMetaText(count), 6.3) +
+    12;
+  var integrations = integrationChipTexts(moduleName);
+  for (var i = 0; i < integrations.length; i += 1) {
+    width += chipWidth(integrations[i]) + 6;
+  }
+  if (isStaleModule(moduleName)) {
+    width += chipWidth("stale") + 6 + 18;
+  }
+  return width;
+}
+
+/* Within a band, order modules so dependencies sit to the right:
+ * a topological order over the aggregated inter-module edges, with
+ * name-ascending tie-breaks (and a name-ascending choice when a cycle
+ * leaves nothing with an empty in-edge set). */
+function orderModulesInBand(moduleNames, visible) {
+  var names = moduleNames.slice().sort(compareStrings);
+  var inBand = {};
+  var i;
+  for (i = 0; i < names.length; i += 1) {
+    inBand[names[i]] = true;
+  }
+
+  var dependsOn = {};
+  var indegree = {};
+  for (i = 0; i < names.length; i += 1) {
+    dependsOn[names[i]] = {};
+    indegree[names[i]] = 0;
+  }
+
+  var edges = state.model.edges;
+  for (i = 0; i < edges.length; i += 1) {
+    var edge = edges[i];
+    /* Verification edges are evidence, not dependency direction, so
+     * module order does not shift when the tests toggle changes. */
+    if (edge.family === "verification") {
+      continue;
+    }
+    if (!visible[edge.source] || !visible[edge.target]) {
+      continue;
+    }
+    var sourceModule = state.model.components[edge.source].module;
+    var targetModule = state.model.components[edge.target].module;
+    if (sourceModule === targetModule) {
+      continue;
+    }
+    if (!inBand[sourceModule] || !inBand[targetModule]) {
+      continue;
+    }
+    if (!dependsOn[sourceModule][targetModule]) {
+      dependsOn[sourceModule][targetModule] = true;
+      indegree[targetModule] += 1;
+    }
+  }
+
+  var remaining = names.slice();
+  var ordered = [];
+  while (remaining.length > 0) {
+    var pick = -1;
+    for (i = 0; i < remaining.length; i += 1) {
+      if (indegree[remaining[i]] === 0) {
+        pick = i;
+        break;
+      }
+    }
+    if (pick === -1) {
+      pick = 0; /* cycle: fall back to the name-ascending choice */
+    }
+    var chosen = remaining.splice(pick, 1)[0];
+    ordered.push(chosen);
+    var targets = Object.keys(dependsOn[chosen]).sort(compareStrings);
+    for (i = 0; i < targets.length; i += 1) {
+      if (indegree[targets[i]] !== undefined) {
+        indegree[targets[i]] -= 1;
+      }
+    }
+  }
+  return ordered;
+}
+
+/* ------------------------------------------------------------------ *
+ * Edge routing
+ * ------------------------------------------------------------------ */
+
+function anchorFor(layout, canonicalId) {
+  if (!layout.visible[canonicalId]) {
+    /* Hidden by a filter, not by collapse: the edge has nowhere
+     * honest to land, so it is not drawn. The inspector still lists
+     * it. */
+    return null;
+  }
+  var node = layout.nodesById[canonicalId];
+  if (node) {
+    return {
+      key: "n:" + canonicalId,
+      box: { x: node.x, y: node.y, w: node.w, h: node.h },
+    };
+  }
+  var component = state.model.components[canonicalId];
+  if (!component) {
+    return null;
+  }
+  var organ = layout.organsByModule[component.module];
+  if (!organ) {
+    return null;
+  }
+  return { key: "o:" + organ.module, box: organ.headerBox };
+}
+
+function computeEdgeGroups(layout) {
+  var groups = [];
+  var byKey = {};
+  var edges = state.model.edges;
+  for (var i = 0; i < edges.length; i += 1) {
+    var edge = edges[i];
+    if (edge.family === "verification" && !state.toggles.tests) {
+      continue;
+    }
+    var from = anchorFor(layout, edge.source);
+    var to = anchorFor(layout, edge.target);
+    if (!from || !to || from.key === to.key) {
+      continue;
+    }
+    var key = edge.family + "|" + from.key + "|" + to.key;
+    var group = byKey[key];
+    if (!group) {
+      group = {
+        key: key,
+        family: edge.family,
+        from: from,
+        to: to,
+        edges: [],
+        aggregated: from.key.charAt(0) === "o" || to.key.charAt(0) === "o",
+      };
+      byKey[key] = group;
+      groups.push(group);
+    }
+    group.edges.push(edge);
+  }
+  for (var j = 0; j < groups.length; j += 1) {
+    groups[j].geometry = edgeGeometry(groups[j].from.box, groups[j].to.box);
+  }
+  return groups;
+}
+
+function edgeGeometry(a, b) {
+  var ac = { x: a.x + a.w / 2, y: a.y + a.h / 2 };
+  var bc = { x: b.x + b.w / 2, y: b.y + b.h / 2 };
+  var dx = bc.x - ac.x;
+  var dy = bc.y - ac.y;
+  var p1;
+  var p2;
+  var c1;
+  var c2;
+
+  if (Math.abs(dx) >= Math.abs(dy)) {
+    p1 = { x: dx >= 0 ? a.x + a.w : a.x, y: ac.y };
+    p2 = { x: dx >= 0 ? b.x : b.x + b.w, y: bc.y };
+    var kx = Math.max(28, Math.min(150, Math.abs(p2.x - p1.x) * 0.42));
+    c1 = { x: p1.x + (dx >= 0 ? kx : -kx), y: p1.y };
+    c2 = { x: p2.x - (dx >= 0 ? kx : -kx), y: p2.y };
+  } else {
+    p1 = { x: ac.x, y: dy >= 0 ? a.y + a.h : a.y };
+    p2 = { x: bc.x, y: dy >= 0 ? b.y : b.y + b.h };
+    var ky = Math.max(24, Math.min(130, Math.abs(p2.y - p1.y) * 0.42));
+    c1 = { x: p1.x, y: p1.y + (dy >= 0 ? ky : -ky) };
+    c2 = { x: p2.x, y: p2.y - (dy >= 0 ? ky : -ky) };
+  }
+
+  var d =
+    "M " +
+    r2(p1.x) +
+    " " +
+    r2(p1.y) +
+    " C " +
+    r2(c1.x) +
+    " " +
+    r2(c1.y) +
+    ", " +
+    r2(c2.x) +
+    " " +
+    r2(c2.y) +
+    ", " +
+    r2(p2.x) +
+    " " +
+    r2(p2.y);
+
+  return { d: d, mid: cubicPoint(p1, c1, c2, p2, 0.5) };
+}
+
+function cubicPoint(p0, p1, p2, p3, t) {
+  var mt = 1 - t;
+  var a = mt * mt * mt;
+  var b = 3 * mt * mt * t;
+  var c = 3 * mt * t * t;
+  var d = t * t * t;
+  return {
+    x: a * p0.x + b * p1.x + c * p2.x + d * p3.x,
+    y: a * p0.y + b * p1.y + c * p2.y + d * p3.y,
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ * Shell
+ * ------------------------------------------------------------------ */
+
+function buildShell(mount) {
+  clear(mount);
+  var root = el("div", "sh0w");
+
+  var topbar = el("header", "topbar");
+  var brand = el("div", "brand");
+  brand.appendChild(el("span", "brand-mark", "s0ma studi0"));
+  brand.appendChild(
+    el("span", "brand-sub", "sh0w — canonical component graph")
+  );
+  topbar.appendChild(brand);
+
+  var toolbar = el("div", "toolbar");
+  toolbar.setAttribute("role", "toolbar");
+  toolbar.setAttribute("aria-label", "view controls");
+
+  ui.toggleTests = toolbarButton("tests and docs", function () {
+    state.toggles.tests = !state.toggles.tests;
+    render();
+  });
+  ui.toggleTests.setAttribute("aria-pressed", "false");
+  ui.toggleTests.title =
+    "show test, helper and doc declarations, and draw verification edges";
+
+  ui.toggleFramework = toolbarButton("framework layer", function () {
+    state.toggles.framework = !state.toggles.framework;
+    render();
+  });
+  ui.toggleFramework.setAttribute("aria-pressed", "false");
+  ui.toggleFramework.title = "show FRAMEWORK-layer modules";
+
+  toolbar.appendChild(ui.toggleTests);
+  toolbar.appendChild(ui.toggleFramework);
+  toolbar.appendChild(el("span", "toolbar-sep"));
+  toolbar.appendChild(
+    toolbarButton("expand all", function () {
+      setAllCollapsed(false);
+    })
+  );
+  toolbar.appendChild(
+    toolbarButton("collapse all", function () {
+      setAllCollapsed(true);
+    })
+  );
+  toolbar.appendChild(el("span", "toolbar-sep"));
+
+  var zoomOut = toolbarButton("−", function () {
+    zoomBy(1 / 0.8);
+  });
+  zoomOut.className = "btn btn--icon";
+  zoomOut.setAttribute("aria-label", "zoom out");
+  zoomOut.title = "zoom out (-)";
+  var zoomIn = toolbarButton("+", function () {
+    zoomBy(0.8);
+  });
+  zoomIn.className = "btn btn--icon";
+  zoomIn.setAttribute("aria-label", "zoom in");
+  zoomIn.title = "zoom in (+)";
+  var fit = toolbarButton("fit", function () {
+    fitToView();
+  });
+  fit.title = "fit the whole graph in view (f)";
+
+  toolbar.appendChild(zoomOut);
+  toolbar.appendChild(zoomIn);
+  toolbar.appendChild(fit);
+  topbar.appendChild(toolbar);
+  root.appendChild(topbar);
+
+  ui.banners = el("div", "banners");
+  root.appendChild(ui.banners);
+
+  ui.stage = el("main", "stage");
+
+  /* First in the stage, so Tab reaches the account of the work before
+   * the graph it is about. Hidden until something has actually been
+   * narrated: an empty pane would be a claim that nothing is happening,
+   * which is not the same as nobody saying anything. */
+  ui.narration = el("aside", "narration");
+  ui.narration.setAttribute("aria-label", "agent narration (self-reported)");
+  ui.narration.setAttribute("tabindex", "-1");
+  ui.narration.hidden = true;
+  ui.stage.appendChild(ui.narration);
+
+  ui.canvasWrap = el("div", "canvas-wrap");
+  ui.canvas = svgEl("svg", {
+    class: "canvas",
+    preserveAspectRatio: "xMidYMid meet",
+    role: "application",
+    "aria-label": "component graph",
+  });
+  ui.canvas.appendChild(buildDefs());
+  ui.viewport = svgEl("g", { class: "viewport" });
+  ui.layerBands = svgEl("g", { class: "layer-bands" });
+  ui.layerOrgans = svgEl("g", { class: "layer-organs" });
+  ui.layerEdges = svgEl("g", { class: "layer-edges" });
+  /* Nodes on their way out live here for the length of their fade:
+   * they have already left the model, so they must not sit in the
+   * layer the next paint rebuilds. */
+  ui.layerGhosts = svgEl("g", { class: "layer-ghosts" });
+  ui.layerNodes = svgEl("g", { class: "layer-nodes" });
+  ui.viewport.appendChild(ui.layerBands);
+  ui.viewport.appendChild(ui.layerOrgans);
+  ui.viewport.appendChild(ui.layerEdges);
+  ui.viewport.appendChild(ui.layerGhosts);
+  ui.viewport.appendChild(ui.layerNodes);
+  ui.canvas.appendChild(ui.viewport);
+  ui.canvasWrap.appendChild(ui.canvas);
+  ui.canvasWrap.appendChild(buildLegend());
+  ui.statusLine = el("div", "status-line");
+  ui.canvasWrap.appendChild(ui.statusLine);
+  ui.stage.appendChild(ui.canvasWrap);
+
+  ui.inspector = el("aside", "inspector");
+  ui.inspector.setAttribute("aria-label", "inspector");
+  ui.inspector.setAttribute("tabindex", "-1");
+  ui.inspector.hidden = true;
+  ui.stage.appendChild(ui.inspector);
+
+  root.appendChild(ui.stage);
+  mount.appendChild(root);
+  ui.root = root;
+
+  attachCanvasInteraction();
+  document.addEventListener("keydown", onDocumentKeyDown);
+}
+
+function toolbarButton(label, handler) {
+  var button = el("button", "btn", label);
+  button.type = "button";
+  button.addEventListener("click", handler);
+  return button;
+}
+
+function buildDefs() {
+  var defs = svgEl("defs");
+  var families = ["authored", "derived", "verification"];
+  for (var i = 0; i < families.length; i += 1) {
+    var marker = svgEl("marker", {
+      id: "sh0w-arrow-" + families[i],
+      markerWidth: 7,
+      markerHeight: 7,
+      refX: 6.2,
+      refY: 3,
+      orient: "auto",
+      markerUnits: "userSpaceOnUse",
+    });
+    marker.appendChild(
+      svgEl("path", {
+        class: "edge-arrow",
+        d: "M 0 0 L 7 3 L 0 6 z",
+        fill: "#8f98a3",
+      })
+    );
+    defs.appendChild(marker);
+  }
+  return defs;
+}
+
+function buildLegend() {
+  var legend = el("div", "legend");
+  var shapes = el("div", "legend-row");
+  var glyphs = [
+    ["ganglion", "ganglion"],
+    ["nerve", "nerve"],
+    ["cell", "cell"],
+    ["axon", "axon"],
+    ["test", "test"],
+  ];
+  for (var i = 0; i < glyphs.length; i += 1) {
+    var item = el("span", "legend-item");
+    var swatch = svgEl("svg", { class: "legend-swatch", viewBox: "0 0 20 20" });
+    swatch.appendChild(glyphShape(glyphs[i][0], 10, 10, 0.42));
+    item.appendChild(swatch);
+    item.appendChild(el("span", null, glyphs[i][1]));
+    shapes.appendChild(item);
+  }
+  legend.appendChild(shapes);
+
+  var lines = el("div", "legend-row");
+  var styles = [
+    ["authored", "authored"],
+    ["derived", "derived"],
+    ["verification", "verification"],
+  ];
+  for (var j = 0; j < styles.length; j += 1) {
+    var lineItem = el("span", "legend-item");
+    var lineSwatch = svgEl("svg", {
+      class: "legend-swatch",
+      viewBox: "0 0 20 20",
+    });
+    var group = svgEl("g", { class: "edge edge--" + styles[j][0] });
+    group.appendChild(
+      svgEl("path", { class: "edge-line", d: "M 1 10 L 19 10" })
+    );
+    lineSwatch.appendChild(group);
+    lineItem.appendChild(lineSwatch);
+    lineItem.appendChild(el("span", null, styles[j][1]));
+    lines.appendChild(lineItem);
+  }
+  legend.appendChild(lines);
+  return legend;
+}
+
+/* ------------------------------------------------------------------ *
+ * Render
+ * ------------------------------------------------------------------ */
+
+function render() {
+  if (!ui.root) {
+    return;
+  }
+  ui.toggleTests.setAttribute("aria-pressed", String(state.toggles.tests));
+  ui.toggleFramework.setAttribute(
+    "aria-pressed",
+    String(state.toggles.framework)
+  );
+
+  renderBanners();
+
+  if (state.buildStatus === "missing" || !state.model) {
+    /* There is no canvas to beat on. Drop the delta rather than let it
+     * wait for a paint that would replay it out of its moment. */
+    state.beatPending = false;
+    state.delta = emptyDelta();
+    renderEmptyState();
+    return;
+  }
+  if (ui.emptyState) {
+    ui.emptyState.parentNode.removeChild(ui.emptyState);
+    ui.emptyState = null;
+    ui.stage.style.display = "";
+  }
+
+  state.layout = computeLayout();
+  dropSelectionOfVanishedEdge();
+  renderBands(state.layout);
+  renderOrgans(state.layout);
+  renderEdges(state.layout);
+  if (state.beatPending) {
+    /* Rescue the departing nodes before the layer they live in is
+     * rebuilt without them. */
+    harvestGhosts();
+  }
+  renderNodes(state.layout);
+  renderStatusLine(state.layout);
+
+  if (!state.fitted) {
+    fitToView();
+    state.fitted = true;
+  } else {
+    applyViewBox();
+  }
+  applySelection();
+
+  if (state.beatPending) {
+    state.beatPending = false;
+    scheduleBeatEnd();
+  }
+}
+
+/* A toggle can remove the very edge the inspector is describing (the
+ * verification family disappears with the tests toggle). Rather than
+ * leave a panel describing something no longer on the canvas, close
+ * it. A hidden NODE keeps its panel: the component still exists, it is
+ * only filtered out of the drawing. */
+function dropSelectionOfVanishedEdge() {
+  if (!state.selection || state.selection.type !== "edge") {
+    return;
+  }
+  var groups = state.layout.edgeGroups;
+  for (var i = 0; i < groups.length; i += 1) {
+    if (groups[i].key === state.selection.key) {
+      return;
+    }
+  }
+  state.selection = null;
+  ui.inspector.hidden = true;
+  clear(ui.inspector);
+}
+
+function renderBanners() {
+  clear(ui.banners);
+
+  if (state.error) {
+    var errorBanner = el("div", "banner banner--offline");
+    errorBanner.setAttribute("role", "status");
+    errorBanner.appendChild(el("span", "chip", "error"));
+    errorBanner.appendChild(el("span", "banner-text", state.error));
+    ui.banners.appendChild(errorBanner);
+  }
+
+  if (state.offline && !state.offlineDismissed) {
+    var offline = el("div", "banner banner--offline");
+    offline.setAttribute("role", "status");
+    offline.appendChild(el("span", "chip", "offline"));
+    offline.appendChild(
+      el(
+        "span",
+        "banner-text",
+        "viewer disconnected — relaunch with s0ma studi0"
+      )
+    );
+    var dismiss = el("button", "btn banner-dismiss", "dismiss");
+    dismiss.type = "button";
+    dismiss.addEventListener("click", function () {
+      state.offlineDismissed = true;
+      renderBanners();
+    });
+    offline.appendChild(dismiss);
+    ui.banners.appendChild(offline);
+  }
+
+  if (state.buildStatus === "stale" && state.staleModules.length > 0) {
+    var stale = el("div", "banner banner--stale");
+    stale.setAttribute("role", "status");
+    stale.appendChild(el("span", "chip chip--stale", "stale"));
+    var text = el("span", "banner-text");
+    text.appendChild(
+      el("span", "banner-modules", state.staleModules.join(", "))
+    );
+    text.appendChild(
+      document.createTextNode(
+        (state.staleModules.length === 1 ? " has" : " have") +
+          " changed since the last build — " +
+          "showing last canonical build — run s0ma build to refresh"
+      )
+    );
+    stale.appendChild(text);
+    ui.banners.appendChild(stale);
+  }
+}
+
+function renderEmptyState() {
+  if (ui.emptyState) {
+    return;
+  }
+  ui.stage.style.display = "none";
+  var wrap = el("div", "empty-state");
+  var card = el("div", "empty-card");
+  card.appendChild(el("h1", "empty-title", "no canonical build to show"));
+  card.appendChild(
+    el(
+      "p",
+      "empty-body",
+      "sh0w draws the component graph from build artifacts. This project " +
+        "has none yet: no build.s0ma.json was found, so there is nothing " +
+        "canonical to draw."
+    )
+  );
+  card.appendChild(el("pre", "empty-command", "s0ma build <project root>"));
+  card.appendChild(
+    el(
+      "p",
+      "empty-hint",
+      state.live
+        ? "studi0 keeps watching: this page draws the graph as soon as the " +
+            "build lands."
+        : "run the build, then reload this page."
+    )
+  );
+  wrap.appendChild(card);
+  ui.emptyState = wrap;
+  ui.root.appendChild(wrap);
+}
+
+function renderBands(layout) {
+  clear(ui.layerBands);
+  for (var i = 0; i < layout.bands.length; i += 1) {
+    var band = layout.bands[i];
+    ui.layerBands.appendChild(
+      svgEl("rect", {
+        class: "band-tint",
+        "data-layer": band.layer,
+        x: -BAND_BLEED,
+        y: r2(band.y),
+        width: r2(band.width + BAND_BLEED * 2),
+        height: r2(band.height),
+      })
+    );
+    ui.layerBands.appendChild(
+      svgText(CONTENT_X, band.y + 26, "band-label", band.layer)
+    );
+  }
+}
+
+function renderOrgans(layout) {
+  clear(ui.layerOrgans);
+  for (var i = 0; i < layout.organs.length; i += 1) {
+    ui.layerOrgans.appendChild(organElement(layout.organs[i]));
+  }
+}
+
+function organElement(organ) {
+  var classes = "organ";
+  if (organ.stale) {
+    classes += " is-stale";
+  }
+  var group = svgEl("g", {
+    class: classes,
+    "data-module": organ.module,
+    role: "group",
+    "aria-label": organAriaLabel(organ),
+  });
+
+  /* A module that has just gone stale gets the ring and nothing else:
+   * the chips appear, and no pixel moves. Staleness is a fact about
+   * the build, not an event to animate. */
+  if (state.delta.stale[organ.module]) {
+    group.setAttribute("data-delta", "stale");
+    group.appendChild(
+      beatRing(organ.x, organ.y, organ.width, organ.height, 14)
+    );
+  }
+
+  group.appendChild(
+    svgEl("rect", {
+      class: "organ-body",
+      x: r2(organ.x),
+      y: r2(organ.y),
+      width: r2(organ.width),
+      height: r2(organ.height),
+      rx: 10,
+    })
+  );
+
+  if (!organ.collapsed) {
+    group.appendChild(
+      svgEl("line", {
+        class: "organ-header-rule",
+        x1: r2(organ.x),
+        y1: r2(organ.y + ORGAN_HEADER_H),
+        x2: r2(organ.x + organ.width),
+        y2: r2(organ.y + ORGAN_HEADER_H),
+      })
+    );
+  }
+
+  if (organ.stale) {
+    group.appendChild(staleTriangle(organ.x + organ.width, organ.y, 16));
+  }
+
+  var caret = svgText(
+    organ.x + ORGAN_PAD_X,
+    organ.y + 27,
+    "organ-caret",
+    organ.collapsed ? "▶" : "▼"
+  );
+  group.appendChild(caret);
+
+  var nameX = organ.x + ORGAN_PAD_X + 14;
+  group.appendChild(svgText(nameX, organ.y + 27, "organ-name", organ.module));
+
+  var chipX = nameX + estimateTextWidth(organ.module, 7.6) + 12;
+  var layerChip = svgChip(
+    chipX,
+    organ.y + 14,
+    organLayer(organ.module),
+    "svg-chip--layer"
+  );
+  group.appendChild(layerChip.node);
+  chipX += layerChip.width + 8;
+
+  var meta = headerMetaText(organ.members.length);
+  group.appendChild(svgText(chipX, organ.y + 27, "organ-meta", meta));
+  chipX += estimateTextWidth(meta, 6.3) + 12;
+
+  var i;
+  for (i = 0; i < organ.integrations.length && i < 2; i += 1) {
+    var integration = organ.integrations[i];
+    var chip = svgChip(
+      chipX,
+      organ.y + 14,
+      "integration: " + integration.name,
+      "svg-chip--integration"
+    );
+    chip.node.style.cursor = "pointer";
+    bindIntegrationChip(chip.node, integration.canonical_id);
+    group.appendChild(chip.node);
+    chipX += chip.width + 6;
+  }
+
+  if (organ.stale) {
+    var staleChip = svgChip(chipX, organ.y + 14, "stale", "svg-chip--stale");
+    group.appendChild(staleChip.node);
+    chipX += staleChip.width + 6;
+  }
+
+  var moduleRecord = state.model.modules[organ.module];
+  var title = svgEl("title");
+  title.textContent =
+    organ.module +
+    " — " +
+    projectToLine(moduleRecord ? moduleRecord.intent : null, "intent not declared");
+  group.appendChild(title);
+
+  return group;
+}
+
+/* The header's click/focus target lives in the top layer with the
+ * nodes, not in the organ group, so the tab order reads module by
+ * module: header, then that module's nodes, then the next header. */
+function organHeaderHit(organ) {
+  var header = svgEl("rect", {
+    class: "organ-header-hit",
+    "data-organ-header": organ.module,
+    x: r2(organ.x),
+    y: r2(organ.y),
+    width: r2(organ.width),
+    height: ORGAN_HEADER_H,
+    rx: 10,
+    tabindex: "0",
+    role: "button",
+    "aria-expanded": String(!organ.collapsed),
+    "aria-label":
+      (organ.collapsed ? "expand" : "collapse") + " module " + organ.module,
+  });
+  header.addEventListener("click", function (event) {
+    event.stopPropagation();
+    toggleOrgan(organ.module);
+  });
+  header.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleOrgan(organ.module);
+    }
+  });
+  return header;
+}
+
+function organAriaLabel(organ) {
+  var parts = [
+    "module " + organ.module,
+    (state.model.modules[organ.module] || {}).layer || "unknown layer",
+    organ.members.length + " components",
+    organ.collapsed ? "collapsed" : "expanded",
+  ];
+  if (organ.stale) {
+    parts.push("stale");
+  }
+  return parts.join(", ");
+}
+
+function staleTriangle(rightX, topY, size) {
+  return svgEl("path", {
+    class: "stale-triangle",
+    d:
+      "M " +
+      r2(rightX - size) +
+      " " +
+      r2(topY) +
+      " L " +
+      r2(rightX) +
+      " " +
+      r2(topY) +
+      " L " +
+      r2(rightX) +
+      " " +
+      r2(topY + size) +
+      " z",
+  });
+}
+
+function svgChip(x, y, text, extraClass) {
+  var width = chipWidth(text);
+  var group = svgEl("g", {
+    class: "svg-chip " + (extraClass || ""),
+  });
+  group.appendChild(
+    svgEl("rect", {
+      class: "svg-chip-box",
+      x: r2(x),
+      y: r2(y),
+      width: r2(width),
+      height: 16,
+      rx: 8,
+    })
+  );
+  group.appendChild(svgText(x + 7, y + 11.5, "svg-chip-text", text));
+  return { node: group, width: width };
+}
+
+function bindIntegrationChip(node, canonicalId) {
+  node.addEventListener("click", function (event) {
+    event.stopPropagation();
+    select({ type: "integration", id: canonicalId });
+  });
+}
+
+function renderEdges(layout) {
+  clear(ui.layerEdges);
+  var groups = layout.edgeGroups;
+  for (var i = 0; i < groups.length; i += 1) {
+    var group = groups[i];
+    var node = svgEl("g", {
+      class: "edge edge--" + group.family,
+      "data-edge": group.key,
+    });
+    node.appendChild(
+      svgEl("path", {
+        class: "edge-line",
+        d: group.geometry.d,
+        "marker-end": "url(#sh0w-arrow-" + group.family + ")",
+      })
+    );
+    var hit = svgEl("path", { class: "edge-hit", d: group.geometry.d });
+    node.appendChild(hit);
+
+    var title = svgEl("title");
+    title.textContent = edgeSummaryLine(group);
+    node.appendChild(title);
+
+    if (group.edges.length > 1) {
+      var mid = group.geometry.mid;
+      var label = String(group.edges.length);
+      var width = estimateTextWidth(label, 6.2) + 12;
+      node.appendChild(
+        svgEl("rect", {
+          class: "edge-count-box",
+          x: r2(mid.x - width / 2),
+          y: r2(mid.y - 8),
+          width: r2(width),
+          height: 16,
+          rx: 8,
+        })
+      );
+      node.appendChild(
+        svgText(mid.x, mid.y + 4, "edge-count-text", label)
+      );
+    }
+
+    bindEdge(node, group.key);
+    ui.layerEdges.appendChild(node);
+  }
+}
+
+function bindEdge(node, key) {
+  node.addEventListener("click", function (event) {
+    event.stopPropagation();
+    select({ type: "edge", key: key });
+  });
+}
+
+function edgeSummaryLine(group) {
+  if (group.edges.length === 1) {
+    var edge = group.edges[0];
+    return (
+      FAMILY_LABEL[group.family] +
+      ": " +
+      edge.source +
+      " → " +
+      edge.target +
+      (edge.relation ? " (" + edge.relation + ")" : "")
+    );
+  }
+  return (
+    group.edges.length +
+    " " +
+    FAMILY_LABEL[group.family] +
+    " edges — click to list them"
+  );
+}
+
+function renderNodes(layout) {
+  clear(ui.layerNodes);
+  for (var i = 0; i < layout.organs.length; i += 1) {
+    var organ = layout.organs[i];
+    ui.layerNodes.appendChild(organHeaderHit(organ));
+    for (var j = 0; j < organ.nodes.length; j += 1) {
+      ui.layerNodes.appendChild(nodeElement(organ.nodes[j], organ));
+    }
+  }
+}
+
+function nodeElement(node, organ) {
+  var component = node.component;
+  var declarationType = component.declaration_type;
+  var classes = "node node-" + declarationType;
+  if (organ.stale) {
+    classes += " is-stale";
+  }
+
+  var group = svgEl("g", {
+    class: classes,
+    "data-node": node.id,
+    tabindex: "0",
+    role: "button",
+    "aria-label":
+      shortName(node.id) +
+      ", " +
+      declarationType +
+      ", " +
+      (component.layer || "unknown layer"),
+  });
+  var mark = deltaMark(node.id);
+  if (mark) {
+    group.setAttribute("data-delta", mark);
+    group.appendChild(beatRing(node.x, node.y, node.w, node.h, 12));
+  }
+
+  group.appendChild(
+    svgEl("rect", {
+      class: "node-focus-ring",
+      x: r2(node.x + 2),
+      y: r2(node.y + 2),
+      width: r2(node.w - 4),
+      height: r2(node.h - 4),
+      rx: 9,
+    })
+  );
+
+  var cx = node.x + node.w / 2;
+  var cy = node.y + GLYPH_CY;
+  group.appendChild(glyphShape(declarationType, cx, cy, 1));
+  group.appendChild(
+    svgText(cx, cy + 4, "node-letter", GLYPH_LETTER[declarationType] || "?")
+  );
+
+  group.appendChild(
+    svgText(
+      cx,
+      node.y + LABEL_Y,
+      "node-label",
+      middleTruncate(shortName(node.id), NODE_LABEL_MAX_CHARS)
+    )
+  );
+
+  if (organ.stale) {
+    var chip = svgChip(
+      cx - chipWidth("stale") / 2,
+      node.y + STALE_CHIP_Y,
+      "stale",
+      "svg-chip--stale"
+    );
+    group.appendChild(chip.node);
+    group.appendChild(staleTriangle(node.x + node.w - 4, node.y + 4, 11));
+  }
+
+  var title = svgEl("title");
+  title.textContent =
+    node.id + " — " + projectToLine(component.intent, "intent not declared");
+  group.appendChild(title);
+
+  group.appendChild(
+    svgEl("rect", {
+      class: "node-hit",
+      x: r2(node.x),
+      y: r2(node.y),
+      width: r2(node.w),
+      height: r2(node.h),
+    })
+  );
+
+  group.addEventListener("click", function (event) {
+    event.stopPropagation();
+    select({ type: "node", id: node.id });
+  });
+  group.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      event.stopPropagation();
+      select({ type: "node", id: node.id });
+    }
+  });
+  return group;
+}
+
+/* Shapes are drawn around (cx, cy); `scale` shrinks them for the
+ * legend swatches. */
+function glyphShape(declarationType, cx, cy, scale) {
+  var s = scale || 1;
+  if (declarationType === "nerve") {
+    return svgEl("rect", {
+      class: "node-glyph",
+      x: r2(cx - 23 * s),
+      y: r2(cy - 15 * s),
+      width: r2(46 * s),
+      height: r2(30 * s),
+      rx: r2(9 * s),
+    });
+  }
+  if (declarationType === "cell") {
+    return svgEl("circle", {
+      class: "node-glyph",
+      cx: r2(cx),
+      cy: r2(cy),
+      r: r2(16 * s),
+    });
+  }
+  if (declarationType === "ganglion") {
+    return svgEl("polygon", {
+      class: "node-glyph",
+      points: polygonPoints(
+        [
+          [-11, -16],
+          [11, -16],
+          [21, 0],
+          [11, 16],
+          [-11, 16],
+          [-21, 0],
+        ],
+        cx,
+        cy,
+        s
+      ),
+    });
+  }
+  if (declarationType === "axon") {
+    return svgEl("polygon", {
+      class: "node-glyph",
+      points: polygonPoints(
+        [
+          [0, -18],
+          [19, 0],
+          [0, 18],
+          [-19, 0],
+        ],
+        cx,
+        cy,
+        s
+      ),
+    });
+  }
+  if (declarationType === "test") {
+    return svgEl("rect", {
+      class: "node-glyph",
+      x: r2(cx - 15 * s),
+      y: r2(cy - 15 * s),
+      width: r2(30 * s),
+      height: r2(30 * s),
+      rx: r2(3 * s),
+    });
+  }
+  return svgEl("circle", {
+    class: "node-glyph",
+    cx: r2(cx),
+    cy: r2(cy),
+    r: r2(14 * s),
+  });
+}
+
+function polygonPoints(points, cx, cy, scale) {
+  var out = [];
+  for (var i = 0; i < points.length; i += 1) {
+    out.push(
+      r2(cx + points[i][0] * scale) + "," + r2(cy + points[i][1] * scale)
+    );
+  }
+  return out.join(" ");
+}
+
+function renderStatusLine(layout) {
+  var total = state.model.componentIds.length;
+  var drawn = 0;
+  for (var i = 0; i < layout.edgeGroups.length; i += 1) {
+    drawn += layout.edgeGroups[i].edges.length;
+  }
+  var parts = [
+    layout.visibleCount + " of " + total + " components shown",
+    layout.organs.length + " modules",
+    drawn + " of " + state.model.edges.length + " edges drawn",
+  ];
+  var freshness = state.model.freshness;
+  if (freshness && freshness.transpiler_version) {
+    parts.push("built by s0ma " + freshness.transpiler_version);
+  }
+  ui.statusLine.textContent = parts.join(" · ");
+}
+
+/* ------------------------------------------------------------------ *
+ * The materialize beat
+ * ------------------------------------------------------------------ *
+ *
+ * A build lands, and for a few seconds the view says which parts of it
+ * are new, which were rewritten, and which have gone. Then it stops
+ * saying so and goes back to being a map. That is the whole of the
+ * motion budget (visual truth language §9: motion communicates state
+ * change, never liveliness).
+ *
+ * The animations themselves are CSS, hung off a `data-delta` attribute
+ * and a highlight-ring element. JavaScript's only part is deciding what
+ * changed, drawing the ring, and taking the marks away again — the two
+ * timers below. Under prefers-reduced-motion the CSS animates nothing
+ * and the ring is simply drawn; the same timers still remove it, so the
+ * transition is perceivable without a single moving pixel.
+ */
+
+function emptyDelta() {
+  return { added: {}, removed: {}, changed: {}, stale: {} };
+}
+
+function deltaHasAny(delta) {
+  return (
+    hasKeys(delta.added) ||
+    hasKeys(delta.removed) ||
+    hasKeys(delta.changed) ||
+    hasKeys(delta.stale)
+  );
+}
+
+/* Which beat, if any, a component is owed on this paint. */
+function deltaMark(canonicalId) {
+  if (state.delta.added[canonicalId]) {
+    return "added";
+  }
+  if (state.delta.changed[canonicalId]) {
+    return "changed";
+  }
+  return null;
+}
+
+function beatRing(x, y, w, h, radius) {
+  return svgEl("rect", {
+    class: "beat-ring",
+    x: r2(x - BEAT_RING_INSET),
+    y: r2(y - BEAT_RING_INSET),
+    width: r2(w + BEAT_RING_INSET * 2),
+    height: r2(h + BEAT_RING_INSET * 2),
+    rx: radius,
+  });
+}
+
+/* Move the nodes this delta removed out of the live layer and into the
+ * ghost layer, where they fade at their last known position. They are
+ * no longer in the model, so they are inert: no focus, no pointer, no
+ * inspector. */
+function harvestGhosts() {
+  clear(ui.layerGhosts);
+  if (!hasKeys(state.delta.removed)) {
+    return;
+  }
+  var living = ui.layerNodes.childNodes;
+  var doomed = [];
+  var i;
+  for (i = 0; i < living.length; i += 1) {
+    var element = living[i];
+    var id = element.getAttribute ? element.getAttribute("data-node") : null;
+    if (id && state.delta.removed[id]) {
+      doomed.push(element);
+    }
+  }
+  for (i = 0; i < doomed.length; i += 1) {
+    var ghost = doomed[i];
+    ghost.removeAttribute("data-delta");
+    ghost.setAttribute("tabindex", "-1");
+    ghost.setAttribute("aria-hidden", "true");
+    setClassFlag(ghost, "is-removing", true);
+    ui.layerGhosts.appendChild(ghost);
+  }
+  if (doomed.length > 0) {
+    scheduleGhostSweep();
+  }
+}
+
+function scheduleGhostSweep() {
+  if (beatSweepTimer !== null) {
+    window.clearTimeout(beatSweepTimer);
+  }
+  beatSweepTimer = window.setTimeout(function () {
+    beatSweepTimer = null;
+    clear(ui.layerGhosts);
+  }, BEAT_SWEEP_MS);
+}
+
+function scheduleBeatEnd() {
+  if (beatExpiryTimer !== null) {
+    window.clearTimeout(beatExpiryTimer);
+  }
+  beatExpiryTimer = window.setTimeout(endBeat, BEAT_EXPIRY_MS);
+}
+
+/* The beat is over. The marks come off in place — no relayout, no
+ * reflow, not one node moved — because ending an explanation must not
+ * itself look like a change. */
+function endBeat() {
+  beatExpiryTimer = null;
+  state.delta = emptyDelta();
+  stripBeatMarks(ui.layerNodes);
+  stripBeatMarks(ui.layerOrgans);
+  clear(ui.layerGhosts);
+}
+
+function stripBeatMarks(layer) {
+  if (!layer) {
+    return;
+  }
+  var children = layer.childNodes;
+  for (var i = 0; i < children.length; i += 1) {
+    var element = children[i];
+    if (!element.removeAttribute) {
+      continue;
+    }
+    element.removeAttribute("data-delta");
+    var rings = element.getElementsByTagName
+      ? element.getElementsByTagName("rect")
+      : [];
+    for (var j = rings.length - 1; j >= 0; j -= 1) {
+      if (rings[j].getAttribute("class") === "beat-ring") {
+        rings[j].parentNode.removeChild(rings[j]);
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Selection + inspector
+ * ------------------------------------------------------------------ */
+
+function select(selection) {
+  state.selection = selection;
+  applySelection();
+  renderInspector();
+}
+
+function clearSelection() {
+  state.selection = null;
+  applySelection();
+  ui.inspector.hidden = true;
+  clear(ui.inspector);
+}
+
+function applySelection() {
+  var nodes = ui.layerNodes.childNodes;
+  var edges = ui.layerEdges.childNodes;
+  var organs = ui.layerOrgans.childNodes;
+  var i;
+  var incident = {};
+  var selection = state.selection;
+
+  if (selection && selection.type === "node" && state.layout) {
+    var groups = state.layout.edgeGroups;
+    for (i = 0; i < groups.length; i += 1) {
+      var group = groups[i];
+      for (var j = 0; j < group.edges.length; j += 1) {
+        if (
+          group.edges[j].source === selection.id ||
+          group.edges[j].target === selection.id
+        ) {
+          incident[group.key] = true;
+        }
+      }
+    }
+  }
+
+  for (i = 0; i < nodes.length; i += 1) {
+    var nodeEl = nodes[i];
+    var isSelected =
+      selection && selection.type === "node" &&
+      nodeEl.getAttribute("data-node") === selection.id;
+    setClassFlag(nodeEl, "is-selected", Boolean(isSelected));
+  }
+
+  for (i = 0; i < edges.length; i += 1) {
+    var edgeEl = edges[i];
+    var key = edgeEl.getAttribute("data-edge");
+    var selectedEdge =
+      selection && selection.type === "edge" && selection.key === key;
+    setClassFlag(edgeEl, "is-selected", Boolean(selectedEdge));
+    setClassFlag(edgeEl, "is-incident", Boolean(incident[key]));
+    var dim =
+      selection &&
+      selection.type === "node" &&
+      !incident[key];
+    setClassFlag(edgeEl, "is-dimmed", Boolean(dim));
+  }
+
+  for (i = 0; i < organs.length; i += 1) {
+    var organEl = organs[i];
+    var selectedOrgan =
+      selection &&
+      selection.type === "integration" &&
+      state.model.integrationsById[selection.id] &&
+      state.model.integrationsById[selection.id].module ===
+        organEl.getAttribute("data-module");
+    setClassFlag(organEl, "is-selected", Boolean(selectedOrgan));
+  }
+}
+
+function setClassFlag(node, className, on) {
+  var current = node.getAttribute("class") || "";
+  var parts = current.split(/\s+/);
+  var out = [];
+  for (var i = 0; i < parts.length; i += 1) {
+    if (parts[i] && parts[i] !== className) {
+      out.push(parts[i]);
+    }
+  }
+  if (on) {
+    out.push(className);
+  }
+  node.setAttribute("class", out.join(" "));
+}
+
+function renderInspector() {
+  var selection = state.selection;
+  clear(ui.inspector);
+  if (!selection) {
+    ui.inspector.hidden = true;
+    return;
+  }
+  ui.inspector.hidden = false;
+
+  if (selection.type === "node") {
+    renderComponentInspector(state.model.components[selection.id]);
+  } else if (selection.type === "integration") {
+    renderIntegrationInspector(state.model.integrationsById[selection.id]);
+  } else if (selection.type === "edge") {
+    renderEdgeInspector(selection.key);
+  }
+}
+
+function inspectorHead(title, subtitle) {
+  var head = el("div", "inspector-head");
+  head.appendChild(el("h2", "inspector-title", title));
+  var close = el("button", "btn inspector-close", "close");
+  close.type = "button";
+  close.setAttribute("aria-label", "close inspector (Esc)");
+  close.addEventListener("click", clearSelection);
+  head.appendChild(close);
+  ui.inspector.appendChild(head);
+  if (subtitle) {
+    ui.inspector.appendChild(el("p", "inspector-sub", subtitle));
+  }
+}
+
+function inspectorSection(label) {
+  var section = el("section", "inspector-section");
+  section.appendChild(el("h3", "section-label", label));
+  ui.inspector.appendChild(section);
+  return section;
+}
+
+function renderComponentInspector(component) {
+  if (!component) {
+    return;
+  }
+  inspectorHead(shortName(component.canonical_id), component.canonical_id);
+
+  if (isStaleModule(component.module)) {
+    var note = el(
+      "p",
+      "inspector-note",
+      "stale — last canonical build. Module " +
+        component.module +
+        " has changed since this build; run s0ma build to refresh."
+    );
+    ui.inspector.appendChild(note);
+  }
+
+  /* 1. intent */
+  var intent = inspectorSection("intent");
+  var intentValue = projectValue(component.intent);
+  if (intentValue.kind === "value") {
+    intent.appendChild(el("p", "intent-text", valueToLine(intentValue.value)));
+  } else {
+    var holder = el("p", "intent-text");
+    appendProjectedValue(holder, component.intent);
+    intent.appendChild(holder);
+  }
+
+  /* 2. kind / layer / visibility / declaration type */
+  var declaration = inspectorSection("declaration");
+  var declarationList = el("dl", "dl");
+  appendDefinition(declarationList, "kind", component.kind);
+  appendDefinition(declarationList, "layer", component.layer);
+  appendDefinition(declarationList, "visibility", component.visibility);
+  appendDefinition(
+    declarationList,
+    "declaration type",
+    component.declaration_type
+  );
+  appendDefinition(declarationList, "module", component.module);
+  declaration.appendChild(declarationList);
+
+  /* 3. fields */
+  var fieldsSection = inspectorSection("fields");
+  var fields = component.fields || {};
+  var keys = orderedFieldKeys(fields);
+  if (keys.length === 0) {
+    fieldsSection.appendChild(el("p", "value-absent", "not declared"));
+  } else {
+    var fieldList = el("dl", "dl");
+    for (var i = 0; i < keys.length; i += 1) {
+      appendDefinition(fieldList, keys[i], fields[keys[i]]);
+    }
+    fieldsSection.appendChild(fieldList);
+  }
+
+  /* 4. relationships */
+  renderRelationships(component.canonical_id);
+
+  /* 5. location */
+  renderLocation(component.location);
+}
+
+function renderIntegrationInspector(integration) {
+  if (!integration) {
+    return;
+  }
+  inspectorHead(integration.name, integration.canonical_id);
+
+  var intent = inspectorSection("intent");
+  var holder = el("p", "intent-text");
+  appendProjectedValue(holder, integration.intent);
+  intent.appendChild(holder);
+
+  var declaration = inspectorSection("declaration");
+  var declarationList = el("dl", "dl");
+  appendDefinition(declarationList, "kind", "integration declaration");
+  appendDefinition(declarationList, "layer", integration.layer);
+  appendDefinition(declarationList, "version", integration.version);
+  appendDefinition(declarationList, "module", integration.module);
+  declaration.appendChild(declarationList);
+
+  var fieldsSection = inspectorSection("fields");
+  var fieldList = el("dl", "dl");
+  var skip = {
+    canonical_id: true,
+    name: true,
+    module: true,
+    layer: true,
+    version: true,
+    intent: true,
+    location: true,
+  };
+  var keys = Object.keys(integration).sort(compareStrings);
+  var shown = 0;
+  for (var i = 0; i < keys.length; i += 1) {
+    if (skip[keys[i]]) {
+      continue;
+    }
+    appendDefinition(fieldList, keys[i], integration[keys[i]]);
+    shown += 1;
+  }
+  if (shown === 0) {
+    fieldsSection.appendChild(el("p", "value-absent", "not declared"));
+  } else {
+    fieldsSection.appendChild(fieldList);
+  }
+
+  renderRelationships(integration.canonical_id);
+  renderLocation(integration.location);
+}
+
+function renderEdgeInspector(key) {
+  var group = null;
+  var groups = state.layout ? state.layout.edgeGroups : [];
+  for (var i = 0; i < groups.length; i += 1) {
+    if (groups[i].key === key) {
+      group = groups[i];
+      break;
+    }
+  }
+  if (!group) {
+    clearSelection();
+    return;
+  }
+
+  var title =
+    group.edges.length === 1
+      ? FAMILY_LABEL[group.family] + " edge"
+      : group.edges.length + " " + FAMILY_LABEL[group.family] + " edges";
+  /* Two different things put more than one edge behind one line, and
+   * the panel must not name the wrong one: an endpoint anchored to a
+   * COLLAPSED ORGAN (`group.aggregated`) really is a bundle crossing a
+   * module boundary, while several edges between the SAME two visible
+   * nodes are just parallel declarations. Saying "collapsed module"
+   * for the second case states a reason that is not the reason. */
+  var subtitle;
+  if (group.edges.length === 1) {
+    subtitle = group.edges[0].source + " → " + group.edges[0].target;
+  } else if (group.aggregated) {
+    subtitle = "aggregated into a collapsed module";
+  } else {
+    subtitle = group.from.key.slice(2) + " → " + group.to.key.slice(2);
+  }
+  inspectorHead(title, subtitle);
+
+  if (group.edges.length === 1 && group.family === "authored") {
+    var intent = inspectorSection("intent");
+    var holder = el("p", "intent-text");
+    appendProjectedValue(holder, group.edges[0].intent);
+    intent.appendChild(holder);
+  }
+
+  var section = inspectorSection("edges");
+  var list = el("ul", "rel-list");
+  for (var j = 0; j < group.edges.length; j += 1) {
+    list.appendChild(edgeListItem(group.edges[j], null));
+  }
+  section.appendChild(list);
+}
+
+function orderedFieldKeys(fields) {
+  var keys = Object.keys(fields).sort(compareStrings);
+  var head = [];
+  var tail = [];
+  for (var i = 0; i < keys.length; i += 1) {
+    if (FIELD_PRIORITY.indexOf(keys[i]) !== -1) {
+      head.push(keys[i]);
+    } else {
+      tail.push(keys[i]);
+    }
+  }
+  head.sort(function (a, b) {
+    return FIELD_PRIORITY.indexOf(a) - FIELD_PRIORITY.indexOf(b);
+  });
+  return head.concat(tail);
+}
+
+function appendDefinition(list, term, raw) {
+  list.appendChild(el("dt", null, term));
+  var dd = el("dd");
+  appendProjectedValue(dd, raw);
+  list.appendChild(dd);
+}
+
+/* The one place a state wrapper becomes pixels. `none` says "not
+ * declared" in a muted voice; `pending` says so out loud, because
+ * pending is authoring debt someone still owes (text + treatment,
+ * never colour alone). */
+function appendProjectedValue(host, raw) {
+  var projected = projectValue(raw);
+
+  if (projected.kind === "none") {
+    host.appendChild(el("span", "value-absent", "not declared"));
+    return;
+  }
+
+  if (projected.kind === "pending") {
+    var pending = el("span", "value-pending");
+    pending.appendChild(el("span", "pending-word", "pending:"));
+    pending.appendChild(
+      document.createTextNode(" " + valueToLine(projected.reason))
+    );
+    host.appendChild(pending);
+    return;
+  }
+
+  appendPlainValue(host, projected.value);
+}
+
+function appendPlainValue(host, value) {
+  if (value === undefined || value === null) {
+    host.appendChild(el("span", "value-absent", "not declared"));
+    return;
+  }
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      host.appendChild(el("span", "value-absent", "not declared"));
+      return;
+    }
+    var list = el("ul");
+    for (var i = 0; i < value.length; i += 1) {
+      var item = el("li");
+      appendPlainValue(item, value[i]);
+      list.appendChild(item);
+    }
+    host.appendChild(list);
+    return;
+  }
+  if (typeof value === "object") {
+    var keys = Object.keys(value).sort(compareStrings);
+    if (keys.length === 0) {
+      host.appendChild(el("span", "value-absent", "not declared"));
+      return;
+    }
+    var nested = el("dl", "dl");
+    for (var j = 0; j < keys.length; j += 1) {
+      appendDefinition(nested, keys[j], value[keys[j]]);
+    }
+    host.appendChild(nested);
+    return;
+  }
+  host.appendChild(document.createTextNode(String(value)));
+}
+
+function renderRelationships(canonicalId) {
+  var section = inspectorSection("relationships");
+  var families = ["authored", "derived", "verification"];
+  var edges = state.model.edges;
+  var found = 0;
+
+  for (var f = 0; f < families.length; f += 1) {
+    var family = families[f];
+    var outgoing = [];
+    var incoming = [];
+    for (var i = 0; i < edges.length; i += 1) {
+      var edge = edges[i];
+      if (edge.family !== family) {
+        continue;
+      }
+      if (edge.source === canonicalId) {
+        outgoing.push(edge);
+      } else if (edge.target === canonicalId) {
+        incoming.push(edge);
+      }
+    }
+    if (outgoing.length === 0 && incoming.length === 0) {
+      continue;
+    }
+    found += outgoing.length + incoming.length;
+
+    var group = el("div", "rel-group");
+    group.appendChild(
+      el(
+        "p",
+        "rel-group-label",
+        FAMILY_LABEL[family] + " (" + (outgoing.length + incoming.length) + ")"
+      )
+    );
+    var list = el("ul", "rel-list");
+    var j;
+    for (j = 0; j < outgoing.length; j += 1) {
+      list.appendChild(edgeListItem(outgoing[j], "out"));
+    }
+    for (j = 0; j < incoming.length; j += 1) {
+      list.appendChild(edgeListItem(incoming[j], "in"));
+    }
+    group.appendChild(list);
+
+    if (family === "verification" && !state.toggles.tests) {
+      group.appendChild(
+        el(
+          "p",
+          "rel-meta",
+          "verification edges are always listed here; turn on " +
+            "“tests and docs” to draw them on the graph."
+        )
+      );
+    }
+    section.appendChild(group);
+  }
+
+  if (found === 0) {
+    section.appendChild(el("p", "value-absent", "none declared"));
+  }
+}
+
+function edgeListItem(edge, direction) {
+  var item = el("li", "rel-item");
+  var head = el("div", "rel-head");
+
+  var relationText = edge.relation
+    ? edge.relation
+    : edge.family === "verification"
+      ? direction === "in"
+        ? "verified by"
+        : "verifies"
+      : edge.family;
+  head.appendChild(el("span", "rel-relation", relationText));
+
+  var peer;
+  if (direction === "in") {
+    head.appendChild(el("span", "rel-arrow", "←"));
+    peer = edge.source;
+  } else if (direction === "out") {
+    head.appendChild(el("span", "rel-arrow", "→"));
+    peer = edge.target;
+  } else {
+    /* No direction to report relative to a selected component: name
+     * both ends instead. */
+    head.appendChild(el("span", "rel-arrow", " "));
+    peer = edge.source + " → " + edge.target;
+  }
+  head.appendChild(el("span", "rel-peer", peer));
+  item.appendChild(head);
+
+  var meta = [FAMILY_LABEL[edge.family] + " edge"];
+  meta.push("origin " + (edge.origin || "not declared"));
+  if (edge.coupling !== undefined && edge.coupling !== null) {
+    meta.push("coupling " + valueToLine(projectValue(edge.coupling).value));
+  }
+  item.appendChild(el("div", "rel-meta", meta.join(" · ")));
+
+  if (edge.carries !== undefined && edge.carries !== null) {
+    item.appendChild(
+      el(
+        "div",
+        "rel-meta",
+        "carries: " + projectToLine(edge.carries, "not declared")
+      )
+    );
+  }
+  if (edge.intent !== undefined && edge.intent !== null) {
+    item.appendChild(
+      el("div", "rel-intent", projectToLine(edge.intent, "not declared"))
+    );
+  }
+  return item;
+}
+
+function renderLocation(location) {
+  var section = inspectorSection("location");
+  var projected = projectValue(location);
+  if (projected.kind !== "value" || !projected.value) {
+    section.appendChild(el("p", "value-absent", "not declared"));
+    return;
+  }
+  var value = projected.value;
+  var file = value.file || "";
+  var start = value.line !== undefined ? value.line : value.start_line;
+  var end = value.end_line;
+  var text = file;
+  if (start !== undefined && start !== null) {
+    text += " · lines " + start;
+    if (end !== undefined && end !== null && end !== start) {
+      text += "–" + end;
+    }
+  }
+  section.appendChild(el("p", "location-text", text || "not declared"));
+}
+
+/* ------------------------------------------------------------------ *
+ * Narration — the agent's account of its own work
+ * ------------------------------------------------------------------ *
+ *
+ * A second kind of truth, and the pane says so out loud: every entry
+ * here was written by an agent about itself, and studi0 verified none
+ * of it. The visual language is deliberately unlike the graph's — a
+ * sunken surface, a dashed edge, no glyphs and no checkmarks — so no
+ * reader can take a narration for a declaration. Provenance is stated
+ * in words, not only in styling, and the counts say plainly how much
+ * is not shown and how many lines were unreadable.
+ */
+
+/* Take the narration block off a /api/state document. A server that has
+ * never seen a narration says so with an empty window and two zeros;
+ * a document without the block at all (an older studi0) is read the
+ * same way rather than guessed about. */
+function applyNarration(stateDoc) {
+  var block = (stateDoc && stateDoc.narration) || {};
+  var entries = block.entries || [];
+  state.narration = {
+    entries: entries,
+    total: typeof block.total === "number" ? block.total : entries.length,
+    invalid: typeof block.invalid === "number" ? block.invalid : 0,
+  };
+  renderNarration();
+  syncNarrationFocus();
+}
+
+/* The newest narration steers the canvas, and only the newest, and only
+ * once: whatever it names is selected exactly as a click would select
+ * it. Names the graph does not carry move nothing — no error, no
+ * message, no guess at what was meant (GP-3 silence). */
+function syncNarrationFocus() {
+  var entries = state.narration.entries;
+  if (!entries.length || !state.model) {
+    return;
+  }
+  var newest = entries[entries.length - 1];
+  var ordinal = typeof newest.n === "number" ? newest.n : 0;
+  if (ordinal <= state.narrationFocused) {
+    return;
+  }
+  /* Marked as acted on either way: an unresolvable narration is not
+   * retried on every poll, it is simply not a focus instruction. */
+  state.narrationFocused = ordinal;
+  var subject = firstKnownSubject(newest.subjects);
+  if (subject) {
+    select({ type: "node", id: subject });
+  }
+}
+
+/* The FIRST subject the current graph actually carries — declared
+ * order, so which one wins is the narration's choice and not ours. */
+function firstKnownSubject(subjects) {
+  if (!subjects || !state.model) {
+    return null;
+  }
+  for (var i = 0; i < subjects.length; i += 1) {
+    if (state.model.components[subjects[i]]) {
+      return subjects[i];
+    }
+  }
+  return null;
+}
+
+function renderNarration() {
+  if (!ui.narration) {
+    return;
+  }
+  clear(ui.narration);
+  var narration = state.narration;
+  var entries = narration.entries;
+  if (!entries.length && !narration.invalid) {
+    ui.narration.hidden = true;
+    return;
+  }
+  ui.narration.hidden = false;
+
+  var head = el("div", "narration-head");
+  head.appendChild(el("h2", "narration-title", "agent narration"));
+  ui.narration.appendChild(head);
+  /* The provenance line, in words: this is what an agent SAID, and
+   * nothing on this pane was checked against the project. */
+  ui.narration.appendChild(
+    el(
+      "p",
+      "narration-provenance",
+      "self-reported by the agent working here — not verified against " +
+        "the build. The graph beside it is the canonical truth."
+    )
+  );
+
+  var shown = entries.slice(Math.max(0, entries.length - NARRATION_SHOWN));
+  var list = el("ol", "narration-list");
+  /* Newest at top: the list is built in reverse and told so, rather
+   * than reversed visually, so a screen reader hears the same order a
+   * reader sees. */
+  list.setAttribute("reversed", "reversed");
+  for (var i = shown.length - 1; i >= 0; i -= 1) {
+    list.appendChild(narrationItem(shown[i]));
+  }
+  ui.narration.appendChild(list);
+
+  ui.narration.appendChild(narrationFoot(narration, shown.length));
+}
+
+function narrationItem(entry) {
+  var item = el("li", "narration-item");
+  item.appendChild(el("p", "narration-movement", String(entry.movement)));
+  if (entry.why) {
+    item.appendChild(el("p", "narration-why", String(entry.why)));
+  }
+
+  var meta = el("div", "narration-meta");
+  var phase = String(entry.phase);
+  meta.appendChild(
+    el("span", "chip chip--phase", PHASE_LABEL[phase] || phase)
+  );
+
+  var subjects = entry.subjects || [];
+  for (var i = 0; i < subjects.length; i += 1) {
+    meta.appendChild(narrationSubject(String(subjects[i])));
+  }
+  item.appendChild(meta);
+  return item;
+}
+
+/* A subject the graph carries is a button that selects it — the same
+ * path a click on the node takes. A subject the graph does not carry is
+ * shown as text, labelled for what it is: a name studi0 cannot find. It
+ * is never hidden, because the agent did say it. */
+function narrationSubject(canonicalId) {
+  if (state.model && state.model.components[canonicalId]) {
+    var button = el("button", "narration-subject", shortName(canonicalId));
+    button.type = "button";
+    button.title = canonicalId;
+    button.setAttribute("aria-label", "show " + canonicalId + " in the graph");
+    button.addEventListener("click", function () {
+      select({ type: "node", id: canonicalId });
+    });
+    return button;
+  }
+  var unknown = el("span", "narration-subject narration-subject--unknown");
+  unknown.appendChild(el("span", null, shortName(canonicalId)));
+  unknown.appendChild(el("span", "narration-unknown-note", "not in this graph"));
+  unknown.title = canonicalId;
+  return unknown;
+}
+
+function narrationFoot(narration, shownCount) {
+  var parts = [];
+  if (narration.total > shownCount) {
+    parts.push(
+      shownCount + " of " + narration.total + " narrated movements shown"
+    );
+  } else {
+    parts.push(narration.total + " narrated movements");
+  }
+  if (narration.invalid) {
+    /* Never rendered as narration, never repaired — but never hidden
+     * either: a line studi0 could not read is a fact about the log. */
+    parts.push(
+      narration.invalid +
+        (narration.invalid === 1
+          ? " line unreadable — not shown"
+          : " lines unreadable — not shown")
+    );
+  }
+  var foot = el("p", "narration-foot", parts.join(" · "));
+  if (narration.invalid) {
+    foot.className = "narration-foot narration-foot--flagged";
+  }
+  return foot;
+}
+
+/* ------------------------------------------------------------------ *
+ * Collapse controls
+ * ------------------------------------------------------------------ */
+
+function toggleOrgan(moduleName) {
+  var current = state.layout && state.layout.organsByModule[moduleName]
+    ? state.layout.organsByModule[moduleName].collapsed
+    : false;
+  state.collapseOverrides[moduleName] = !current;
+  render();
+}
+
+function setAllCollapsed(collapsed) {
+  if (!state.layout) {
+    return;
+  }
+  for (var i = 0; i < state.layout.organs.length; i += 1) {
+    state.collapseOverrides[state.layout.organs[i].module] = collapsed;
+  }
+  render();
+}
+
+/* ------------------------------------------------------------------ *
+ * Pan, zoom, keyboard
+ * ------------------------------------------------------------------ */
+
+function applyViewBox() {
+  var box = state.viewBox;
+  if (!box) {
+    return;
+  }
+  ui.canvas.setAttribute(
+    "viewBox",
+    r2(box.x) + " " + r2(box.y) + " " + r2(box.w) + " " + r2(box.h)
+  );
+}
+
+function fitToView() {
+  if (!state.layout) {
+    return;
+  }
+  state.viewBox = {
+    x: -FIT_PAD,
+    y: -FIT_PAD,
+    w: state.layout.width + FIT_PAD * 2,
+    h: state.layout.height + FIT_PAD * 2,
+  };
+  applyViewBox();
+}
+
+function zoomBy(factor, focus) {
+  if (!state.viewBox) {
+    return;
+  }
+  var box = state.viewBox;
+  var limitW = state.layout ? state.layout.width * 8 + 400 : 40000;
+  var newW = Math.max(160, Math.min(limitW, box.w * factor));
+  var scale = newW / box.w;
+  var point = focus || { x: box.x + box.w / 2, y: box.y + box.h / 2 };
+  state.viewBox = {
+    x: point.x - (point.x - box.x) * scale,
+    y: point.y - (point.y - box.y) * scale,
+    w: box.w * scale,
+    h: box.h * scale,
+  };
+  applyViewBox();
+}
+
+function clientToUser(clientX, clientY, matrix) {
+  var ctm = matrix || ui.canvas.getScreenCTM();
+  if (!ctm) {
+    return null;
+  }
+  var point = ui.canvas.createSVGPoint();
+  point.x = clientX;
+  point.y = clientY;
+  return point.matrixTransform(ctm.inverse ? ctm.inverse() : ctm);
+}
+
+function attachCanvasInteraction() {
+  var panning = null;
+  var suppressClick = false;
+
+  ui.canvas.addEventListener("wheel", function (event) {
+    if (!state.viewBox) {
+      return;
+    }
+    event.preventDefault();
+    var focus = clientToUser(event.clientX, event.clientY);
+    var factor = event.deltaY > 0 ? 1.12 : 1 / 1.12;
+    zoomBy(factor, focus || undefined);
+  });
+
+  function onPointerMove(event) {
+    if (!panning || !panning.start) {
+      return;
+    }
+    var current = clientToUser(event.clientX, event.clientY, panning.matrix);
+    if (!current) {
+      return;
+    }
+    var dx = current.x - panning.start.x;
+    var dy = current.y - panning.start.y;
+    if (!panning.moved) {
+      /* Below the threshold this is a click, not a drag: leave the
+       * view alone so selecting a node does not nudge the canvas. */
+      if (Math.abs(dx) <= 2 && Math.abs(dy) <= 2) {
+        return;
+      }
+      panning.moved = true;
+      ui.canvas.classList.add("is-panning");
+    }
+    state.viewBox = {
+      x: panning.box.x - dx,
+      y: panning.box.y - dy,
+      w: panning.box.w,
+      h: panning.box.h,
+    };
+    applyViewBox();
+  }
+
+  function onPointerUp() {
+    if (!panning) {
+      return;
+    }
+    suppressClick = panning.moved;
+    panning = null;
+    ui.canvas.classList.remove("is-panning");
+    window.removeEventListener("pointermove", onPointerMove);
+    window.removeEventListener("pointerup", onPointerUp);
+    window.removeEventListener("pointercancel", onPointerUp);
+  }
+
+  ui.canvas.addEventListener("pointerdown", function (event) {
+    if (event.button !== 0 || !state.viewBox) {
+      return;
+    }
+    var ctm = ui.canvas.getScreenCTM();
+    if (!ctm) {
+      return;
+    }
+    /* Deliberately no setPointerCapture: capturing retargets the
+     * following click to the canvas, which would swallow every click
+     * on a node. The window listeners below keep a drag alive outside
+     * the canvas without that cost. */
+    panning = {
+      matrix: ctm,
+      start: clientToUser(event.clientX, event.clientY, ctm),
+      box: {
+        x: state.viewBox.x,
+        y: state.viewBox.y,
+        w: state.viewBox.w,
+        h: state.viewBox.h,
+      },
+      moved: false,
+    };
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+  });
+
+  /* A click on empty canvas clears the selection; the click that ends
+   * a drag does not. */
+  ui.canvas.addEventListener("click", function () {
+    if (suppressClick) {
+      suppressClick = false;
+      return;
+    }
+    if (state.selection) {
+      clearSelection();
+    }
+  });
+}
+
+function panBy(dxFraction, dyFraction) {
+  if (!state.viewBox) {
+    return;
+  }
+  state.viewBox = {
+    x: state.viewBox.x + state.viewBox.w * dxFraction,
+    y: state.viewBox.y + state.viewBox.h * dyFraction,
+    w: state.viewBox.w,
+    h: state.viewBox.h,
+  };
+  applyViewBox();
+}
+
+function onDocumentKeyDown(event) {
+  var target = event.target;
+  if (
+    target &&
+    target.tagName &&
+    /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
+  ) {
+    return;
+  }
+
+  if (event.key === "Escape") {
+    if (state.selection) {
+      clearSelection();
+      event.preventDefault();
+    }
+    return;
+  }
+  if (event.metaKey || event.ctrlKey || event.altKey) {
+    return;
+  }
+
+  /* Enter / Space act on whatever the graph has focused. The focused
+   * element handles this itself when the key event reaches it, but SVG
+   * focus targeting varies between engines, so the document is the
+   * backstop: the keyboard contract must not depend on it. */
+  if (event.key === "Enter" || event.key === " ") {
+    var active = document.activeElement;
+    if (active && active.getAttribute) {
+      var focusedNode = active.getAttribute("data-node");
+      if (focusedNode) {
+        select({ type: "node", id: focusedNode });
+        event.preventDefault();
+        return;
+      }
+      var focusedHeader = active.getAttribute("data-organ-header");
+      if (focusedHeader) {
+        toggleOrgan(focusedHeader);
+        event.preventDefault();
+        return;
+      }
+    }
+    return;
+  }
+
+  switch (event.key) {
+    case "ArrowLeft":
+      panBy(-0.08, 0);
+      event.preventDefault();
+      break;
+    case "ArrowRight":
+      panBy(0.08, 0);
+      event.preventDefault();
+      break;
+    case "ArrowUp":
+      panBy(0, -0.08);
+      event.preventDefault();
+      break;
+    case "ArrowDown":
+      panBy(0, 0.08);
+      event.preventDefault();
+      break;
+    case "+":
+    case "=":
+      zoomBy(0.8);
+      event.preventDefault();
+      break;
+    case "-":
+    case "_":
+      zoomBy(1 / 0.8);
+      event.preventDefault();
+      break;
+    case "f":
+    case "F":
+      fitToView();
+      event.preventDefault();
+      break;
+    default:
+      break;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Payload application + live loop
+ * ------------------------------------------------------------------ */
+
+function applyGraph(graph, stateDoc) {
+  var previous = state.graph;
+  var delta = diffGraphs(previous, graph);
+  var derived = stateDoc || deriveStateFromGraph(graph);
+  var nextStale = (derived.stale_modules || []).slice().sort(compareStrings);
+  delta.stale = newlyStale(state.staleModules, nextStale);
+
+  state.delta = delta;
+  state.graph = graph;
+  state.model = buildModel(graph);
+  state.buildStatus = derived.build_status || "missing";
+  state.staleModules = nextStale;
+  state.error = null;
+  /* Only a real change earns the beat. A first payload is not a
+   * change — nothing was on screen to change from. */
+  state.beatPending = deltaHasAny(delta);
+
+  if (state.selection && state.selection.type === "node") {
+    if (!state.model.components[state.selection.id]) {
+      state.selection = null;
+    }
+  }
+  render();
+  renderInspector();
+}
+
+/* Which modules crossed into staleness with this reading. A module that
+ * was already stale is not news, and a module that just became fresh
+ * again says so by dropping its chips. */
+function newlyStale(previousStale, nextStale) {
+  var flipped = {};
+  var was = {};
+  var i;
+  for (i = 0; i < previousStale.length; i += 1) {
+    was[previousStale[i]] = true;
+  }
+  for (i = 0; i < nextStale.length; i += 1) {
+    if (!was[nextStale[i]]) {
+      flipped[nextStale[i]] = true;
+    }
+  }
+  return flipped;
+}
+
+/* Component-level diff: what the payload added, dropped, or rewrote.
+ * A component counts as changed when its own entry differs — the
+ * inspector shows that entry, so any difference in it is a difference a
+ * reader can go and look at. */
+function diffGraphs(previous, next) {
+  var delta = emptyDelta();
+  var nextComponents = (next && next.components) || {};
+  var previousComponents = (previous && previous.components) || {};
+  var key;
+  if (!previous) {
+    return delta;
+  }
+  for (key in nextComponents) {
+    if (!Object.prototype.hasOwnProperty.call(nextComponents, key)) {
+      continue;
+    }
+    if (!Object.prototype.hasOwnProperty.call(previousComponents, key)) {
+      delta.added[key] = true;
+    } else if (
+      JSON.stringify(previousComponents[key]) !==
+      JSON.stringify(nextComponents[key])
+    ) {
+      delta.changed[key] = true;
+    }
+  }
+  for (key in previousComponents) {
+    if (
+      Object.prototype.hasOwnProperty.call(previousComponents, key) &&
+      !Object.prototype.hasOwnProperty.call(nextComponents, key)
+    ) {
+      delta.removed[key] = true;
+    }
+  }
+  return delta;
+}
+
+function startLive() {
+  state.live = true;
+  pollOnce();
+  window.setInterval(pollOnce, POLL_INTERVAL_MS);
+}
+
+function pollOnce() {
+  fetch("/api/state", { cache: "no-store" })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("/api/state responded " + response.status);
+      }
+      return response.json();
+    })
+    .then(function (stateDoc) {
+      setOffline(false);
+      if (stateDoc.error) {
+        showError(stateDoc.error.message || "the viewer reported an error");
+        return null;
+      }
+      if (stateDoc.seq !== state.seq || !state.graph) {
+        state.seq = stateDoc.seq;
+        /* Narration is applied on the far side of the graph fetch, so
+         * a movement that names a component this very build added can
+         * still resolve to it. */
+        return fetchGraph(stateDoc);
+      }
+      applyStateOnly(stateDoc);
+      applyNarration(stateDoc);
+      return null;
+    })
+    .catch(function () {
+      setOffline(true);
+    });
+}
+
+function fetchGraph(stateDoc) {
+  return fetch("/api/graph", { cache: "no-store" })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("/api/graph responded " + response.status);
+      }
+      return response.json();
+    })
+    .then(function (document_) {
+      if (document_.error) {
+        showError(document_.error.message || "the viewer reported an error");
+        return;
+      }
+      if (typeof document_.seq === "number") {
+        state.seq = document_.seq;
+      }
+      applyGraph(document_.graph, stateDoc);
+      applyNarration(stateDoc);
+    });
+}
+
+function applyStateOnly(stateDoc) {
+  var nextStatus = stateDoc.build_status || state.buildStatus;
+  var nextStale = (stateDoc.stale_modules || []).slice().sort(compareStrings);
+  if (
+    nextStatus === state.buildStatus &&
+    sameStringList(nextStale, state.staleModules)
+  ) {
+    return;
+  }
+  /* The graph itself did not move, so this is a staleness beat and
+   * nothing more: chips appear, ring appears, no motion. */
+  state.delta = emptyDelta();
+  state.delta.stale = newlyStale(state.staleModules, nextStale);
+  state.buildStatus = nextStatus;
+  state.staleModules = nextStale;
+  state.beatPending = deltaHasAny(state.delta);
+  render();
+}
+
+function setOffline(offline) {
+  if (state.offline === offline) {
+    return;
+  }
+  state.offline = offline;
+  if (!offline) {
+    state.offlineDismissed = false;
+  }
+  renderBanners();
+}
+
+function showError(message) {
+  state.error = message;
+  renderBanners();
+}
+
+/* ------------------------------------------------------------------ *
+ * Boot
+ * ------------------------------------------------------------------ */
+
+function boot() {
+  var mount = document.getElementById("s0ma-sh0w");
+  if (!mount) {
+    mount = document.createElement("div");
+    mount.id = "s0ma-sh0w";
+    document.body.appendChild(mount);
+  }
+  buildShell(mount);
+
+  var fixture = window.__S0MA_FIXTURE__;
+  if (fixture) {
+    /* Fixture mode: one payload, no polling (plan §3.6). An optional
+     * second global carries a narration block in the shape /api/state
+     * serves, so the pane can be worked on and looked at without a
+     * server; absent, applyNarration leaves the pane hidden. */
+    applyGraph(fixture, deriveStateFromGraph(fixture));
+    applyNarration({ narration: window.__S0MA_NARRATION__ });
+    return;
+  }
+  render();
+  startLive();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", boot);
+} else {
+  boot();
+}

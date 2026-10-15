@@ -1,0 +1,113 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "s0ma-studi0"
+version = "0.19.1"
+description = "s0ma studi0 — the local viewer that renders a s0ma project's canonical component graph from its build artifacts, truthfully and read-only."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [
+    { name = "kn0wthyself", email = "support@kn0wthyself.ai" },
+]
+keywords = ["s0ma", "studi0", "sh0w", "dsl", "self-model", "self-knowledge"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Compilers",
+    "Typing :: Typed",
+]
+dependencies = [
+    # The one graph contract: studi0 reads a project's component graph ONLY
+    # through s0ma-dsl's export mechanism (never IR JSON directly). The floor
+    # is the lockstep release that carries it (INV-4). s0ma-core is declared
+    # directly because the bootstrap (`s0ma.bootstrap.bootstrap_imports`, M10)
+    # and the committed build output's own imports (decorators/models/types)
+    # are core surfaces — same honest posture as s0ma-mcp, and it clears the
+    # HOST_RUNTIME_UNDECLARED check warning.
+    # Raised to 0.19.1 on evidence: a CONSTANT or TYPE cell registers with a
+    # qualified name only from that core, so a build that declares one reads
+    # HEALTHY only there; and the runtime bridge every emitted module imports
+    # declares dependencies on core components that an older core's global
+    # registry does not yet hold at import time, which it logs as warnings.
+    "s0ma-core >= 0.19.1",
+    "s0ma-dsl >= 0.16.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest >= 7.0",
+    "pytest-cov >= 4.0",
+    "ruff >= 0.4",
+]
+
+# No console script on purpose: the door to studi0 is the DSL CLI subcommand
+# `s0ma studi0 <project_root>`, which lazily imports this package and calls
+# launch(). A second entry point would be a second door to keep honest.
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/s0ma_studi0"]
+# The committed build output (src/s0ma_studi0/_built/) ships in the wheel
+# as-is — the same committed-build posture as s0ma-mcp. Only the regenerable
+# incremental-build cache is excluded (it is gitignored too, and CI builds
+# with --no-cache, but a local cached build must not leak into a wheel).
+exclude = ["src/s0ma_studi0/_built/.s0ma.cache"]
+
+[tool.uv.sources]
+s0ma-core = { workspace = true }
+s0ma-dsl = { workspace = true }
+
+# Self-hosting: this package is a real s0ma project, like s0ma-mcp. The .s0ma
+# sources live in s0ma_src/; `s0ma build` emits the committed build output into
+# src/s0ma_studi0/_built/ (the generated subpackage the runtime bootstraps
+# from). The `mode` key is declarative — pass --mode explicitly to override it.
+# studi0 was authored at `dev` while its surface was still forming and ramped
+# to `strict` at M6, once the module set settled — s0ma-mcp's precedent (its
+# D-6 ramp dev -> strict -> release). `release` stays open: it additionally
+# demands doc-guide/example coverage for every public nerve, a body of
+# authoring work deliberately left out of v1's scope.
+# bootstrap_files is the handwritten-module inventory (`s0ma verify` shows them
+# as BOOTSTRAP, not UNKNOWN): the package __init__ is the SINGLE handwritten
+# module — it bootstraps the built modules and exposes launch().
+[tool.s0ma]
+mode = "strict"
+source_roots = ["s0ma_src"]
+test_roots = ["tests"]
+build_dir = "src/s0ma_studi0/_built"
+bootstrap_files = [
+    "src/s0ma_studi0/__init__.py",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+# Generated code (the committed s0ma build output) is exempt from human
+# line-length/style rules — the DSL emits registered strings on single long
+# lines by design (authoring rule A-6). mypy --strict does NOT exclude it:
+# emitted code meets the same typing gate as handwritten code (D-2/INV-8).
+extend-exclude = ["src/s0ma_studi0/_built"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "A", "C4", "SIM", "TCH"]
+
+[tool.mypy]
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+python_version = "3.11"
+
+# s0ma-core ships py.typed since 0.7.0 and s0ma-dsl since 0.8.0, so both
+# s0ma.* and s0ma_dsl.* imports resolve with their real types here and need
+# no override — the bootstrap's bridge and the emitted modules'
+# runtime_bridge registration calls are type-checked against them.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

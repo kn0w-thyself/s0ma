@@ -1,0 +1,94 @@
+{
+  "mappings": {
+    "declarations": [
+      {
+        "body_output": {
+          "end_line": 47,
+          "start_line": 23
+        },
+        "body_source_file": "s0ma_src/assets/index.html",
+        "body_source_lines": {
+          "end_line": 25,
+          "start_line": 1
+        },
+        "name": "INDEX_HTML",
+        "output": {
+          "end_line": 54,
+          "start_line": 23
+        },
+        "source": {
+          "end_line": 21,
+          "start_line": 14
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 1173,
+          "start_line": 56
+        },
+        "body_source_file": "s0ma_src/assets/app.css",
+        "body_source_lines": {
+          "end_line": 1118,
+          "start_line": 1
+        },
+        "name": "APP_CSS",
+        "output": {
+          "end_line": 1180,
+          "start_line": 56
+        },
+        "source": {
+          "end_line": 30,
+          "start_line": 23
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 4422,
+          "start_line": 1182
+        },
+        "body_source_file": "s0ma_src/assets/app.js",
+        "body_source_lines": {
+          "end_line": 3241,
+          "start_line": 1
+        },
+        "name": "APP_JS",
+        "output": {
+          "end_line": 4429,
+          "start_line": 1182
+        },
+        "source": {
+          "end_line": 40,
+          "start_line": 32
+        },
+        "type": "cell"
+      }
+    ],
+    "module_header": {
+      "output_all": {
+        "end_line": 13,
+        "start_line": 13
+      },
+      "output_header": {
+        "end_line": 5,
+        "start_line": 1
+      },
+      "output_imports": {
+        "end_line": 11,
+        "start_line": 6
+      },
+      "output_registration": {
+        "end_line": 21,
+        "start_line": 15
+      },
+      "source": {
+        "end_line": 12,
+        "start_line": 1
+      }
+    }
+  },
+  "output_file": "sh0w_assets.py",
+  "source_file": "s0ma_src/sh0w_assets.s0ma",
+  "version": "1.0.0"
+}

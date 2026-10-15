@@ -1,0 +1,48 @@
+module task_orchestrator
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Orchestrates end-to-end task processing with adapter integration"
+    requires: [logging]
+    uses: [task_service.execute_task, task_service.validate_task, task_adapter.parse_task_json as parse_json, task_adapter.format_task_output, data_models.TaskModel, data_models.TaskError]
+    exports: [process_task_request]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve process_task_request :: APPLICATION
+    kind: ORCHESTRATOR
+    visibility: PUBLIC
+    intent: "End-to-end task processing: parse, validate, execute, format"
+    expects: "A raw JSON string representing a task request"
+    guarantees: "Returns a formatted JSON response string"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    latency_ms: 1000
+    raises: [TaskError]
+    depends_on:
+        parse_json: {relation: CALLS, carries: "JSON parsing step", coupling: LOOSE}
+        validate_task: {relation: CALLS, carries: "validation step", coupling: LOOSE}
+        execute_task: {relation: CALLS, carries: "execution step", coupling: LOOSE}
+        format_task_output: {relation: CALLS, carries: "formatting step", coupling: LOOSE}
+    provides: none
+    returns: none
+    interface: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def process_task_request(raw_json: str) -> str:
+        task = parse_json(raw_json)
+        validate_task(task)
+        result = execute_task(task)
+        logging.info("Task processed successfully")
+        return format_task_output(result)
+
+axon process_task_request -> execute_task
+    relation: CALLS
+    intent: "Orchestrator delegates execution to the task service"
+    carries: "validated task for execution"
+    coupling: LOOSE

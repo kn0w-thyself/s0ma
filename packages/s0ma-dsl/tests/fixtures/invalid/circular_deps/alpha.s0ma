@@ -1,0 +1,35 @@
+module alpha
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Alpha module in a circular dependency chain"
+    uses: [beta.beta_fn]
+    exports: [alpha_fn]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve alpha_fn :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Function that depends on beta"
+    expects: "nothing"
+    guarantees: "nothing"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        beta_fn: {relation: CALLS, carries: "data", coupling: LOOSE}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def alpha_fn():
+        return beta_fn()

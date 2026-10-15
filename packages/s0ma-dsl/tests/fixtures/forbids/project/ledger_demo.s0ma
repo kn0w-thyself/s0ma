@@ -1,0 +1,48 @@
+module ledger_demo
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Settles accounts and watches the settlements for drift."
+    exports: [settle]
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+nerve settle :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Settles one account and returns its balance."
+    expects: "An account number."
+    guarantees: "Returns the settled balance as a whole number."
+    forbids: "Never writes a file or reaches the network."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def settle(account):
+        return 0
+
+ganglion watch_settle :: DOMAIN
+    visibility: INTERNAL
+    scope: SUBSYSTEM
+    intent: "Watches settlements for drift."
+    observes: [settle]
+    on_anomaly: "Logs the drift and carries on."
+    forbids: none
+    priors: "Balances never go negative."
+    depends_on: none
+    covered_by: none
+    ---
+    def watch_settle(signal):
+        return signal

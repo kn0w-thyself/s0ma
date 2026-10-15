@@ -1,0 +1,57 @@
+module calculator
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Pure-arithmetic calculator service for the cross-module test fixture."
+    exports: [add, multiply]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve add :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Adds two integers and returns the sum."
+    expects: "Two integer arguments."
+    guarantees: "Returns the integer sum a + b."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def add(a: int, b: int) -> int:
+        return a + b
+
+nerve multiply :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Multiplies two integers and returns the product."
+    expects: "Two integer arguments."
+    guarantees: "Returns the integer product a * b."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def multiply(a: int, b: int) -> int:
+        return a * b

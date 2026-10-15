@@ -1,0 +1,21 @@
+module calculator_tests
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Smoke test for the calculator nerve."
+    uses: [calculator.add]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_add_smoke :: DOMAIN
+    intent: "Confirms add(1, 2) == 3."
+    tests: [calculator.add]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_add_smoke():
+        assert add(1, 2) == 3

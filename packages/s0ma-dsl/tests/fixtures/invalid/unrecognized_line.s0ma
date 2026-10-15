@@ -1,0 +1,36 @@
+module unrecognized_line
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "A nerve one of whose lines starts two spaces too far in."
+    exports: [greet]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+nerve greet :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Greet somebody by name."
+    expects: "A name that is not empty."
+    guarantees: "A greeting that contains the name."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+      tags: [greeting]
+    ---
+    def greet(name: str) -> str:
+        return f"Hello, {name}."

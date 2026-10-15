@@ -1,0 +1,37 @@
+module event_builder_tests
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Tests for event_builder. Demonstrates that test modules may import a helper from another module via uses:."
+    uses: [event_builder._format_attendee, event_builder.build_event_payload]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_format_attendee_returns_email_and_displayname :: APPLICATION
+    intent: "Verify the _format_attendee helper returns a dict with the expected keys."
+    tests: [event_builder._format_attendee]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_format_attendee_returns_email_and_displayname():
+        assert _format_attendee("a@example.com", "Ada") == {"email": "a@example.com", "displayName": "Ada"}
+
+test test_build_event_payload_combines_inputs :: APPLICATION
+    intent: "Verify build_event_payload assembles summary, description, and attendees correctly."
+    tests: [event_builder.build_event_payload]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_build_event_payload_combines_inputs():
+        result = build_event_payload({
+            "summary": "Standup",
+            "description": "Daily sync",
+            "attendees": [{"email": "a@example.com", "name": "Ada"}],
+        })
+        assert result["summary"] == "Standup"
+        assert result["attendees"][0]["displayName"] == "Ada"

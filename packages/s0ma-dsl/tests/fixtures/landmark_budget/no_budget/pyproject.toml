@@ -1,0 +1,9 @@
+[project]
+name = "landmark_no_budget"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = []
+build_dir = "landmark_no_budget_build"
+bootstrap_files = []

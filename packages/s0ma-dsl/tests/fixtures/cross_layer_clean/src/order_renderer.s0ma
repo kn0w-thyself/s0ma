@@ -1,0 +1,35 @@
+module order_renderer
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Presentation-layer module that renders order processing results into human-readable strings."
+    uses: [order_model.Order, order_service.process_order]
+    exports: [render_order]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render_order :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Render an Order's processing result as a sentence the user can read."
+    expects: "An Order with a populated id."
+    guarantees: "Returns a non-empty string describing the processing outcome."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render_order(order: Order) -> str:
+        status = process_order(order)
+        return f"Order {order.id}: {status}"

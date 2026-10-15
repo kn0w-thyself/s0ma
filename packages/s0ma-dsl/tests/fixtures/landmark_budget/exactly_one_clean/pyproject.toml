@@ -1,0 +1,12 @@
+[project]
+name = "landmark_budget_clean"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = []
+build_dir = "landmark_budget_clean_build"
+bootstrap_files = []
+
+[tool.s0ma.attribute_budgets]
+landmark = "exactly_one_per_page"

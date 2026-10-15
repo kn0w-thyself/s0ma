@@ -1,0 +1,81 @@
+{
+  "build_dir": "src/s0ma_mcp/_built",
+  "external_content_files": {
+    "prompts::AUTHOR_MODULE_TEMPLATE": {
+      "hash": "sha256:d97e9e7f4c509dab1a3b5f77a5b5a74af69494b26e1888769109bde1ebb2c058",
+      "path": "prompts/author_module.txt"
+    },
+    "prompts::DIAGNOSE_FAULT_TEMPLATE": {
+      "hash": "sha256:bf97be8b29627e7f87fae03b83a6dfc328125f1d4655371dd49c29fde17a8bae",
+      "path": "prompts/diagnose_fault.txt"
+    },
+    "prompts::FEEDBACK_TEMPLATE": {
+      "hash": "sha256:dbc977d44e8657e65f451fbbb1ae70b75144b450be3057192c9d26d68b8147e2",
+      "path": "prompts/feedback.txt"
+    },
+    "prompts::FIX_CHECK_FAILURES_TEMPLATE": {
+      "hash": "sha256:97d5c9bef8138a526b380937a8190ab5c342905a1e289764937034f655074c18",
+      "path": "prompts/fix_check_failures.txt"
+    },
+    "prompts::MIGRATE_PROJECT_TEMPLATE": {
+      "hash": "sha256:da7a001b47b9b2bd60fb951797546a89f1f615a95f7baf882c538233eccd8e4e",
+      "path": "prompts/migrate_project.txt"
+    }
+  },
+  "modules": [
+    {
+      "ir": "prompts.s0ma.json",
+      "logical_path": "prompts.s0ma",
+      "name": "prompts",
+      "output": "prompts.py",
+      "output_hash": "sha256:9f6c254361239e2a7efe141d7b5e706c28b9c9137aeee1b62eb219fae845769d",
+      "role": "source",
+      "source": "s0ma_src/prompts.s0ma",
+      "source_hash": "sha256:f960a6ef64194f5521760e4b868d553a837f00ca36f058401e3d097541f7381e",
+      "source_map": "prompts.s0ma.map",
+      "source_root": "s0ma_src"
+    },
+    {
+      "ir": "resources.s0ma.json",
+      "logical_path": "resources.s0ma",
+      "name": "resources",
+      "output": "resources.py",
+      "output_hash": "sha256:f0df4bd740ac6fe8cca2aeb62d484850f98b4c2c62de5261d84dd2ebac32a4db",
+      "role": "source",
+      "source": "s0ma_src/resources.s0ma",
+      "source_hash": "sha256:f31d52ccaf3cac65daa6f03ff2057e4f4c228be83b229eedefce97a042f31cf7",
+      "source_map": "resources.s0ma.map",
+      "source_root": "s0ma_src"
+    },
+    {
+      "ir": "tools.s0ma.json",
+      "logical_path": "tools.s0ma",
+      "name": "tools",
+      "output": "tools.py",
+      "output_hash": "sha256:0e3fe7737230304a9f08550043a26cff8961e2a022c82e21d49a8972eeb03593",
+      "role": "source",
+      "source": "s0ma_src/tools.s0ma",
+      "source_hash": "sha256:e55b6b456f902bea5b5e48f859d3da50b3660c2db18e7414255a41c77f645ff4",
+      "source_map": "tools.s0ma.map",
+      "source_root": "s0ma_src"
+    }
+  ],
+  "project": "s0ma-mcp",
+  "schema": "s0ma-build-manifest@1",
+  "self_context": {
+    "json": {
+      "path": "self_context.json",
+      "sha256": "sha256:a81651447dc55d1318608cd2faff4a3b2d8c9f8fefa82011d7794f0bdd721f85"
+    },
+    "prompt_card": {
+      "path": "self_prompt_card.md",
+      "sha256": "sha256:f9d5b19e3fb5cbfba3df6f8c842c74d415236de7f012bc1ec5aff5c2f3682e95"
+    }
+  },
+  "topological_import_order": [
+    "resources",
+    "prompts",
+    "tools"
+  ],
+  "transpiler_version": "0.19.1"
+}

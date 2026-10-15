@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "args": [
+              "run",
+              "--script",
+              "${CLAUDE_PLUGIN_ROOT}/launcher/s0ma_launch.py",
+              "session-hint"
+            ],
+            "command": "uv",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,488 @@
+{
+  "record": {
+    "channel": "cli",
+    "covers": [
+      "cli:s0ma/adopt/baseline",
+      "cli:s0ma/adopt/draft",
+      "cli:s0ma/adopt/init",
+      "cli:s0ma/adopt/scan",
+      "cli:s0ma/adopt/status",
+      "cli:s0ma/adopt/verify-parity",
+      "cli:s0ma/score",
+      "cli:s0ma/verify"
+    ],
+    "id": "example:transcript/retrofit-existing-codebase",
+    "intent": "Walk the retrofit ladder for real on a plain-Python lending service: read it without changing a byte, write the perimeter into the pyproject.toml it already had, read back the honest backlog, then take one module the whole way — record what it promises, draft it, write the meaning a draft will not invent, build it, and prove the promise survived.",
+    "journey": "journey:retrofit-existing-codebase",
+    "not_covered": [
+      {
+        "reason": "The health report names the directory the authoring server was installed into on the machine it runs on, so a recorded run of it would pin one machine's layout rather than anything about this path. What it says about the project — that there is one, and which strictness mode it is in — the two commands after it read back and this transcript does check.",
+        "surface": "cli:s0ma/doctor"
+      }
+    ],
+    "scaffold": {
+      "files": {
+        "bookshelf/pyproject.toml": "[build-system]\nrequires = [\"hatchling\"]\nbuild-backend = \"hatchling.build\"\n\n[project]\nname = \"bookshelf\"\nversion = \"1.4.0\"\ndescription = \"The Fennel Street Library lending service.\"\nrequires-python = \">=3.11\"\ndependencies = []\n\n[tool.hatch.build.targets.wheel]\npackages = [\"src/bookshelf\"]\n\n[tool.pytest.ini_options]\n# `python -m pytest` from this directory finds the package under src/ and\n# runs the suite in tests/. Nothing else is needed to try the service out.\ntestpaths = [\"tests\"]\npythonpath = [\"src\"]\n",
+        "bookshelf/src/bookshelf/__init__.py": "\"\"\"The Fennel Street Library lending service.\n\nImport what you need from here; how the modules underneath are arranged is\nan implementation detail that has changed before and will change again.\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom .catalog import Catalog\nfrom .errors import (\n    BookNotFoundError,\n    BookshelfError,\n    BookUnavailableError,\n    CatalogError,\n    DuplicateBookError,\n    LendingError,\n    LoanLimitReachedError,\n    LoanNotFoundError,\n    RenewalRefusedError,\n    StorageCorruptError,\n)\nfrom .lending import LoanRegister, overdue_loans\nfrom .models import Availability, Book, Loan, LoanWindow, Member\nfrom .notifications import Notifier, RecordingNotifier\nfrom .storage import JsonStore\n\n__all__ = [\n    \"Availability\", \"Book\", \"BookNotFoundError\", \"BookUnavailableError\",\n    \"BookshelfError\", \"Catalog\", \"CatalogError\", \"DuplicateBookError\",\n    \"JsonStore\", \"LendingError\", \"Loan\", \"LoanLimitReachedError\",\n    \"LoanNotFoundError\", \"LoanRegister\", \"LoanWindow\", \"Member\",\n    \"Notifier\", \"RecordingNotifier\", \"RenewalRefusedError\",\n    \"StorageCorruptError\", \"overdue_loans\",\n]\n",
+        "bookshelf/src/bookshelf/__main__.py": "from __future__ import annotations\n\nfrom .cli import main\n\nif __name__ == \"__main__\":\n    raise SystemExit(main())\n",
+        "bookshelf/src/bookshelf/api.py": "\"\"\"The handlers behind the counter screen.\n\nEach handler takes plain values and gives plain records back, so the same\nfunctions serve the command line and anything else put in front of them.\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom datetime import date\nfrom pathlib import Path\nfrom typing import Any\n\nfrom .catalog import Catalog\nfrom .errors import BookshelfError\nfrom .lending import LoanRegister, overdue_loans\nfrom .models import Book\nfrom .storage import JsonStore\n\n__all__ = [\n    \"add_title\", \"borrow_title\", \"build_services\", \"list_titles\",\n    \"overdue_report\", \"return_title\", \"title_detail\",\n]\n\n\ndef build_services(data_dir: str | Path) -> tuple[Catalog, LoanRegister]:\n    \"\"\"The catalogue and the loan register, both over one data directory.\"\"\"\n    store = JsonStore(Path(data_dir))\n    return Catalog(store), LoanRegister(store)\n\n\ndef list_titles(catalog: Catalog) -> list[dict[str, Any]]:\n    \"\"\"Every title the library owns, as records fit for a screen.\"\"\"\n    return [_title_summary(catalog, book) for book in catalog.books()]\n\n\ndef title_detail(catalog: Catalog, isbn: str) -> dict[str, Any]:\n    \"\"\"One title, with how many copies are free right now.\"\"\"\n    return _title_summary(catalog, catalog.find(isbn))\n\n\ndef add_title(catalog: Catalog, isbn: str, title: str, author: str, copies: int) -> dict[str, Any]:\n    \"\"\"Put a new title in the catalogue and return how it now reads.\"\"\"\n    catalog.add(Book(isbn=isbn, title=title, author=author, copies=copies))\n    return title_detail(catalog, isbn)\n\n\ndef borrow_title(\n    register: LoanRegister, isbn: str, card_number: str, today: date | None = None\n) -> dict[str, Any]:\n    \"\"\"Lend one copy to one member and return the loan as a record.\"\"\"\n    loan = register.borrow(isbn, card_number, today or date.today())\n    return {\n        \"isbn\": loan.isbn, \"card_number\": loan.card_number,\n        \"due\": loan.window.due.isoformat(), \"renewals\": loan.renewals,\n    }\n\n\ndef return_title(register: LoanRegister, isbn: str, card_number: str) -> dict[str, Any]:\n    \"\"\"Take one copy back from one member.\"\"\"\n    register.give_back(isbn, card_number)\n    return {\"isbn\": isbn, \"card_number\": card_number, \"returned\": True}\n\n\ndef overdue_report(register: LoanRegister, today: date | None = None) -> list[dict[str, Any]]:\n    \"\"\"The list of late loans that is read out at the counter each morning.\"\"\"\n    judged = today or date.today()\n    return [\n        {\"isbn\": loan.isbn, \"card_number\": loan.card_number, \"days_late\": -loan.days_left(judged)}\n        for loan in overdue_loans(register, judged)\n    ]\n\n\ndef describe_failure(error: Exception) -> dict[str, str]:\n    \"\"\"Turn a failure into something that can be put in front of a person.\n\n    Errors raised on purpose carry a message worth showing; anything else\n    gets a flat apology rather than an internal detail.\n    \"\"\"\n    expected = isinstance(error, BookshelfError)\n    return {\n        \"error\": type(error).__name__,\n        \"message\": str(error) if expected else \"something went wrong at our end\",\n    }\n\n\ndef _title_summary(catalog: Catalog, book: Book) -> dict[str, Any]:\n    return {\n        \"isbn\": book.isbn, \"label\": book.label, \"copies\": book.copies,\n        \"available\": catalog.copies_available(book.isbn),\n        \"availability\": catalog.availability(book.isbn).value,\n    }\n",
+        "bookshelf/src/bookshelf/catalog.py": "\"\"\"Everything the library knows about the titles it owns.\"\"\"\n\nfrom __future__ import annotations\n\nfrom functools import lru_cache\nfrom pathlib import Path\nfrom typing import Any\n\nfrom .config import DATA_DIR\nfrom .errors import BookNotFoundError, DuplicateBookError\nfrom .models import Availability, Book\nfrom .storage import JsonStore\n\nCATALOG_TABLE = \"catalog\"\n\n\nclass Catalog:\n    \"\"\"The library's holdings, backed by one table in the store.\"\"\"\n\n    def __init__(self, store: JsonStore | None = None) -> None:\n        self._store = store if store is not None else JsonStore(Path(DATA_DIR))\n\n    def books(self) -> list[Book]:\n        \"\"\"Every title the library owns, sorted by title and then author.\"\"\"\n        records = self._store.read(CATALOG_TABLE)\n        books = [Book.from_record(_as_record(record)) for record in records]\n        return sorted(books, key=lambda book: (book.title, book.author))\n\n    def find(self, isbn: str) -> Book:\n        \"\"\"The title carrying this ISBN, or :class:`BookNotFoundError`.\"\"\"\n        for book in self.books():\n            if book.isbn == isbn:\n                return book\n        raise BookNotFoundError(isbn)\n\n    def add(self, book: Book) -> None:\n        \"\"\"Add a title the library does not already hold.\"\"\"\n        held = self.books()\n        if any(other.isbn == book.isbn for other in held):\n            raise DuplicateBookError(book.isbn)\n        self._store.write(CATALOG_TABLE, [other.as_record() for other in [*held, book]])\n\n    def copies_available(self, isbn: str) -> int:\n        \"\"\"How many copies of this title are on the shelf right now.\n\n        The loan register reads the catalogue in turn, so this module and\n        :mod:`bookshelf.lending` refer to each other. Importing the register\n        inside the one method that needs it keeps both importable.\n        \"\"\"\n        from .lending import LoanRegister\n\n        book = self.find(isbn)\n        return book.copies - LoanRegister(self._store).count_for(isbn)\n\n    def availability(self, isbn: str) -> Availability:\n        \"\"\"Whether a copy of this title can be borrowed right now.\"\"\"\n        book = self.find(isbn)\n        if book.copies == 0:\n            return Availability.WITHDRAWN\n        if self.copies_available(isbn) > 0:\n            return Availability.ON_SHELF\n        return Availability.ON_LOAN\n\n\n@lru_cache(maxsize=1)\ndef shelf_sections() -> tuple[str, ...]:\n    \"\"\"The shelf sections titles are filed under; fixed while we are running.\"\"\"\n    return (\"children\", \"fiction\", \"local history\", \"reference\")\n\n\ndef _as_record(record: dict[str, Any]) -> dict[str, Any]:\n    \"\"\"Narrow a stored record to the four fields a title is made of.\"\"\"\n    return {\n        \"isbn\": record[\"isbn\"], \"title\": record[\"title\"],\n        \"author\": record[\"author\"], \"copies\": record[\"copies\"],\n    }\n",
+        "bookshelf/src/bookshelf/cli.py": "\"\"\"The command line: one sub-command per job done at the counter.\"\"\"\n\nfrom __future__ import annotations\n\nimport argparse\nimport json\nfrom datetime import date\n\nfrom . import api\nfrom .config import DATA_DIR, LIBRARY_NAME\nfrom .errors import BookshelfError\n\n\ndef build_parser() -> argparse.ArgumentParser:\n    \"\"\"The parser behind ``python -m bookshelf``.\"\"\"\n    parser = argparse.ArgumentParser(\n        prog=\"bookshelf\",\n        description=f\"{LIBRARY_NAME} counter tools.\",\n    )\n    parser.add_argument(\"--data-dir\", default=DATA_DIR, help=\"where the JSON tables are kept\")\n    parser.add_argument(\"--today\", default=None, help=\"the date to judge lateness against\")\n    commands = parser.add_subparsers(dest=\"command\", required=True)\n\n    commands.add_parser(\"list\", help=\"list every title the library owns\")\n\n    add = commands.add_parser(\"add\", help=\"add a title to the catalogue\")\n    add.add_argument(\"isbn\")\n    add.add_argument(\"title\")\n    add.add_argument(\"author\")\n    add.add_argument(\"--copies\", type=int, default=1)\n\n    borrow = commands.add_parser(\"borrow\", help=\"lend a copy to a member\")\n    borrow.add_argument(\"isbn\")\n    borrow.add_argument(\"card_number\")\n\n    commands.add_parser(\"overdue\", help=\"list the loans that are late\")\n    return parser\n\n\ndef main(argv: list[str] | None = None) -> int:\n    \"\"\"Run one counter command and print what it returned, as JSON.\"\"\"\n    args = build_parser().parse_args(argv)\n    catalog, register = api.build_services(args.data_dir)\n    today = date.fromisoformat(args.today) if args.today else date.today()\n    try:\n        if args.command == \"list\":\n            result: object = api.list_titles(catalog)\n        elif args.command == \"add\":\n            result = api.add_title(catalog, args.isbn, args.title, args.author, args.copies)\n        elif args.command == \"borrow\":\n            result = api.borrow_title(register, args.isbn, args.card_number, today)\n        else:\n            result = api.overdue_report(register, today)\n    except BookshelfError as error:\n        print(json.dumps(api.describe_failure(error), indent=2, sort_keys=True))\n        return 1\n    print(json.dumps(result, indent=2, sort_keys=True))\n    return 0\n",
+        "bookshelf/src/bookshelf/config.py": "\"\"\"Settings for the lending service: no other module reads the environment.\"\"\"\n\nfrom __future__ import annotations\n\nimport os\n\nDEFAULT_LOAN_DAYS = 21\nMAX_LOANS_PER_MEMBER = 5\nRENEWAL_LIMIT = 2\nLIBRARY_NAME = \"Fennel Street Library\"\n\n# The data directory is the one setting that really does change between one\n# deployment and the next, so it is the one setting read from the environment.\nDATA_DIR = os.environ.get(\"BOOKSHELF_DATA_DIR\", \"var/bookshelf\")\n\n\ndef loan_length_days(renewals: int) -> int:\n    \"\"\"How long a loan runs, given how often it has already been renewed.\n\n    Renewed loans are shorter, so a title in demand comes back sooner.\n    \"\"\"\n    if renewals <= 0:\n        return DEFAULT_LOAN_DAYS\n    return max(7, DEFAULT_LOAN_DAYS - 7 * renewals)\n",
+        "bookshelf/src/bookshelf/errors.py": "\"\"\"Every error the lending service raises on purpose, in one hierarchy.\n\nCatch :class:`BookshelfError` for anything; catch a narrower class to\nhandle one failure on its own.\n\"\"\"\n\nfrom __future__ import annotations\n\n\nclass BookshelfError(Exception):\n    \"\"\"Base class for every error the lending service raises.\"\"\"\n\n\nclass CatalogError(BookshelfError):\n    \"\"\"Something is wrong with the catalogue or with a record in it.\"\"\"\n\n\nclass BookNotFoundError(CatalogError):\n    \"\"\"No title in the catalogue carries the requested ISBN.\"\"\"\n\n    def __init__(self, isbn: str) -> None:\n        super().__init__(f\"no title with ISBN {isbn} is in the catalogue\")\n        self.isbn = isbn\n\n\nclass DuplicateBookError(CatalogError):\n    \"\"\"A title with this ISBN is already in the catalogue.\"\"\"\n\n    def __init__(self, isbn: str) -> None:\n        super().__init__(f\"ISBN {isbn} is already in the catalogue\")\n        self.isbn = isbn\n\n\nclass StorageCorruptError(BookshelfError):\n    \"\"\"A stored table could not be read back as a list of records.\"\"\"\n\n    def __init__(self, table: str, reason: str) -> None:\n        super().__init__(f\"the {table} table could not be read: {reason}\")\n        self.table = table\n        self.reason = reason\n\n\nclass LendingError(BookshelfError):\n    \"\"\"A loan could not be made, renewed or returned.\"\"\"\n\n\nclass BookUnavailableError(LendingError):\n    \"\"\"Every copy of this title is already out on loan.\"\"\"\n\n    def __init__(self, isbn: str) -> None:\n        super().__init__(f\"every copy of ISBN {isbn} is out on loan\")\n        self.isbn = isbn\n\n\nclass LoanNotFoundError(LendingError):\n    \"\"\"This member does not have this title out on loan.\"\"\"\n\n    def __init__(self, isbn: str, card_number: str) -> None:\n        super().__init__(f\"card {card_number} does not have ISBN {isbn} on loan\")\n        self.isbn = isbn\n        self.card_number = card_number\n\n\nclass LoanLimitReachedError(LendingError):\n    \"\"\"This member is already holding as many books as the rules allow.\"\"\"\n\n    def __init__(self, card_number: str, limit: int) -> None:\n        super().__init__(f\"card {card_number} already holds the limit of {limit} books\")\n        self.card_number = card_number\n        self.limit = limit\n\n\nclass RenewalRefusedError(LendingError):\n    \"\"\"This loan has been renewed as often as the rules allow.\"\"\"\n\n    def __init__(self, isbn: str, limit: int) -> None:\n        super().__init__(f\"ISBN {isbn} has already been renewed {limit} times\")\n        self.isbn = isbn\n        self.limit = limit\n",
+        "bookshelf/src/bookshelf/lending.py": "\"\"\"Making, renewing and returning loans.\"\"\"\n\nfrom __future__ import annotations\n\nfrom datetime import date, timedelta\nfrom pathlib import Path\nfrom typing import Any\n\nfrom .catalog import Catalog\nfrom .config import DATA_DIR, MAX_LOANS_PER_MEMBER, RENEWAL_LIMIT, loan_length_days\nfrom .errors import (\n    BookUnavailableError,\n    LoanLimitReachedError,\n    LoanNotFoundError,\n    RenewalRefusedError,\n)\nfrom .models import Loan, LoanWindow\nfrom .storage import JsonStore\n\nLOANS_TABLE = \"loans\"\n\n\nclass LoanRegister:\n    \"\"\"Every loan the library currently has out.\"\"\"\n\n    def __init__(self, store: JsonStore | None = None) -> None:\n        self._store = store if store is not None else JsonStore(Path(DATA_DIR))\n\n    def loans(self) -> list[Loan]:\n        \"\"\"Every loan on the register, in the order it was written.\"\"\"\n        return [_loan_from_record(record) for record in self._store.read(LOANS_TABLE)]\n\n    def count_for(self, isbn: str) -> int:\n        \"\"\"How many copies of this title are out on loan.\"\"\"\n        return sum(1 for loan in self.loans() if loan.isbn == isbn)\n\n    def loans_for(self, card_number: str) -> list[Loan]:\n        \"\"\"Every loan held by one member.\"\"\"\n        return [loan for loan in self.loans() if loan.card_number == card_number]\n\n    def borrow(self, isbn: str, card_number: str, today: date) -> Loan:\n        \"\"\"Lend a copy of ``isbn`` to ``card_number`` and return the new loan.\"\"\"\n        if len(self.loans_for(card_number)) >= MAX_LOANS_PER_MEMBER:\n            raise LoanLimitReachedError(card_number, MAX_LOANS_PER_MEMBER)\n        if Catalog(self._store).copies_available(isbn) <= 0:\n            raise BookUnavailableError(isbn)\n        loan = Loan(\n            isbn=isbn, card_number=card_number,\n            window=LoanWindow(today, today + timedelta(days=loan_length_days(0))),\n        )\n        self._save([*self.loans(), loan])\n        return loan\n\n    def renew(self, isbn: str, card_number: str, today: date) -> Loan:\n        \"\"\"Extend one loan, for as long as the renewal limit allows.\"\"\"\n        loans = self.loans()\n        for position, loan in enumerate(loans):\n            if loan.isbn != isbn or loan.card_number != card_number:\n                continue\n            if loan.renewals >= RENEWAL_LIMIT:\n                raise RenewalRefusedError(isbn, RENEWAL_LIMIT)\n            renewals = loan.renewals + 1\n            days = loan_length_days(renewals)\n            loans[position] = Loan(\n                isbn=isbn, card_number=card_number, renewals=renewals,\n                window=LoanWindow(today, today + timedelta(days=days)),\n            )\n            self._save(loans)\n            return loans[position]\n        raise LoanNotFoundError(isbn, card_number)\n\n    def give_back(self, isbn: str, card_number: str) -> None:\n        \"\"\"Take a title back from a member.\"\"\"\n        loans = self.loans()\n        kept = [one for one in loans if one.isbn != isbn or one.card_number != card_number]\n        if len(kept) == len(loans):\n            raise LoanNotFoundError(isbn, card_number)\n        self._save(kept)\n\n    def _save(self, loans: list[Loan]) -> None:\n        self._store.write(LOANS_TABLE, [_loan_record(loan) for loan in loans])\n\n\n# The overdue list is read out at the counter every morning, so the day is an\n# argument rather than something this function reads off the clock: the same\n# register and the same date always give the same list.\ndef overdue_loans(register: LoanRegister, today: date) -> list[Loan]:\n    \"\"\"Every loan on ``register`` whose due date has gone by.\"\"\"\n    return sorted(\n        (loan for loan in register.loans() if loan.is_overdue(today)),\n        key=lambda loan: (loan.window.due, loan.isbn),\n    )\n\n\ndef _loan_from_record(record: dict[str, Any]) -> Loan:\n    \"\"\"Rebuild a loan from the record shape kept in the store.\"\"\"\n    start = date.fromisoformat(str(record[\"start\"]))\n    due = date.fromisoformat(str(record[\"due\"]))\n    return Loan(\n        isbn=str(record[\"isbn\"]), card_number=str(record[\"card_number\"]),\n        window=LoanWindow(start, due), renewals=int(record[\"renewals\"]),\n    )\n\n\ndef _loan_record(loan: Loan) -> dict[str, Any]:\n    \"\"\"Flatten a loan into the record shape kept in the store.\"\"\"\n    return {\n        \"isbn\": loan.isbn, \"card_number\": loan.card_number,\n        \"start\": loan.window.start.isoformat(),\n        \"due\": loan.window.due.isoformat(), \"renewals\": loan.renewals,\n    }\n",
+        "bookshelf/src/bookshelf/models.py": "\"\"\"The nouns of the lending service: titles, members and loans.\n\nNothing here reaches for the catalogue or the loan register; the classes\nknow only what can be worked out from the values they carry.\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom dataclasses import dataclass\nfrom enum import Enum\nfrom typing import TYPE_CHECKING, Any, NamedTuple, TypedDict\n\nif TYPE_CHECKING:\n    from datetime import date\n\n\nclass Availability(Enum):\n    \"\"\"Whether a copy of a title can be borrowed right now.\"\"\"\n\n    ON_SHELF = \"on_shelf\"\n    ON_LOAN = \"on_loan\"\n    WITHDRAWN = \"withdrawn\"\n\n\nclass BookRecord(TypedDict):\n    \"\"\"The shape one title takes when it is stored on disk.\"\"\"\n\n    isbn: str\n    title: str\n    author: str\n    copies: int\n\n\nclass LoanWindow(NamedTuple):\n    \"\"\"The two dates that bound a loan.\"\"\"\n\n    start: date\n    due: date\n\n\n@dataclass(frozen=True)\nclass Book:\n    \"\"\"A title the library owns, and how many copies it holds.\"\"\"\n\n    isbn: str\n    title: str\n    author: str\n    copies: int = 1\n\n    @property\n    def label(self) -> str:\n        \"\"\"A one-line description fit for a shelf edge or a screen.\"\"\"\n        return f\"{self.title} by {self.author}\"\n\n    @classmethod\n    def from_record(cls, record: dict[str, Any]) -> Book:\n        \"\"\"Build a title from the dictionary shape used on disk.\"\"\"\n        return cls(\n            isbn=str(record[\"isbn\"]), title=str(record[\"title\"]),\n            author=str(record[\"author\"]), copies=int(record[\"copies\"]),\n        )\n\n    def as_record(self) -> BookRecord:\n        \"\"\"Return the dictionary shape used on disk.\"\"\"\n        return {\n            \"isbn\": self.isbn, \"title\": self.title,\n            \"author\": self.author, \"copies\": self.copies,\n        }\n\n\n@dataclass(frozen=True)\nclass Member:\n    \"\"\"Someone the library has issued a card to.\"\"\"\n\n    card_number: str\n    name: str\n    email: str\n\n\n@dataclass(frozen=True)\nclass Loan:\n    \"\"\"One member's hold on one title, for a window of dates.\"\"\"\n\n    isbn: str\n    card_number: str\n    window: LoanWindow\n    renewals: int = 0\n\n    def is_overdue(self, today: date) -> bool:\n        \"\"\"True when ``today`` has passed the loan's due date.\"\"\"\n        return today > self.window.due\n\n    def days_left(self, today: date) -> int:\n        \"\"\"Days left before the loan falls due; negative once it is late.\"\"\"\n        return (self.window.due - today).days\n",
+        "bookshelf/src/bookshelf/notifications.py": "\"\"\"How the library tells members about the books they are holding.\"\"\"\n\nfrom __future__ import annotations\n\nfrom dataclasses import dataclass\nfrom typing import TYPE_CHECKING, Protocol\n\nfrom .config import LIBRARY_NAME\n\nif TYPE_CHECKING:\n    from datetime import date\n\n    from .models import Loan, Member\n\nREMINDER_WINDOW_DAYS = 3\n\n\nclass Notifier(Protocol):\n    \"\"\"Anything that can put one message in front of one member.\"\"\"\n\n    def send(self, member: Member, subject: str, body: str) -> None:\n        \"\"\"Deliver the message, however this channel delivers messages.\"\"\"\n\n\n@dataclass\nclass _RecordedMessage:\n    \"\"\"One message a :class:`RecordingNotifier` was asked to send.\"\"\"\n\n    card_number: str\n    subject: str\n    body: str\n\n\nclass RecordingNotifier:\n    \"\"\"A notifier that keeps messages in memory instead of sending them.\n\n    What the service runs on until a real channel is configured.\n    \"\"\"\n\n    def __init__(self) -> None:\n        self._sent: list[_RecordedMessage] = []\n\n    @property\n    def sent(self) -> list[_RecordedMessage]:\n        \"\"\"Every message this notifier has been handed, oldest first.\"\"\"\n        return list(self._sent)\n\n    def send(self, member: Member, subject: str, body: str) -> None:\n        \"\"\"Record the message instead of delivering it anywhere.\"\"\"\n        self._sent.append(_RecordedMessage(member.card_number, subject, body))\n\n    def clear(self) -> None:\n        \"\"\"Forget everything recorded so far.\"\"\"\n        self._sent.clear()\n\n\ndef due_soon_message(loan: Loan, days_left: int) -> tuple[str, str]:\n    \"\"\"The subject and body of the reminder sent before a loan falls due.\"\"\"\n    subject = f\"{LIBRARY_NAME}: a book is due back in {days_left} days\"\n    body = (\n        f\"ISBN {loan.isbn} is due back on {loan.window.due.isoformat()}. \"\n        \"You can renew it at the counter or on the library's website.\"\n    )\n    return subject, body\n\n\nasync def remind_member(\n    notifier: Notifier, member: Member, loans: list[Loan], today: date\n) -> int:\n    \"\"\"Send one reminder per loan that is nearly due, and count what was sent.\n\n    This is a coroutine because a real channel would wait on the network.\n    The in-memory notifier finishes without waiting for anything.\n    \"\"\"\n    sent = 0\n    for loan in loans:\n        days_left = loan.days_left(today)\n        if 0 <= days_left <= REMINDER_WINDOW_DAYS:\n            subject, body = due_soon_message(loan, days_left)\n            notifier.send(member, subject, body)\n            sent += 1\n    return sent\n",
+        "bookshelf/src/bookshelf/storage.py": "from __future__ import annotations\n\nimport json\nimport logging\nfrom pathlib import Path\nfrom typing import Any\n\nfrom .errors import StorageCorruptError\n\nlogger = logging.getLogger(__name__)\n# A library has no business configuring logging for the program that imports\n# it; the null handler keeps \"no handlers could be found\" off a quiet console.\nlogger.addHandler(logging.NullHandler())\n\n\nclass JsonStore:\n    \"\"\"Keeps the service's tables as one JSON file per table.\n\n    A table is a list of records; nothing here knows what a record means.\n    \"\"\"\n\n    def __init__(self, root: Path) -> None:\n        self.root = Path(root)\n\n    def read(self, table: str) -> list[dict[str, Any]]:\n        \"\"\"Every record in ``table``; one that was never written reads empty.\"\"\"\n        path = self.path_for(table)\n        if not path.exists():\n            return []\n        try:\n            records = json.loads(path.read_text(encoding=\"utf-8\"))\n        except json.JSONDecodeError as exc:\n            raise StorageCorruptError(table, str(exc)) from exc\n        if not isinstance(records, list):\n            raise StorageCorruptError(table, \"the stored value is not a list of records\")\n        return records\n\n    def write(self, table: str, records: list[dict[str, Any]]) -> None:\n        \"\"\"Replace every record in ``table``.\n\n        The new file is written beside the old one and renamed over it, so a\n        reader never sees a half-written table.\n        \"\"\"\n        # Only the write path needs this, and writing is the rare case.\n        import os\n\n        self.root.mkdir(parents=True, exist_ok=True)\n        path = self.path_for(table)\n        scratch = path.with_name(path.name + \".new\")\n        scratch.write_text(json.dumps(records, indent=2, sort_keys=True) + \"\\n\", encoding=\"utf-8\")\n        os.replace(scratch, path)\n        logger.debug(\"wrote %d records to %s\", len(records), path.name)\n\n    def path_for(self, table: str) -> Path:\n        \"\"\"Where ``table`` is kept on disk.\"\"\"\n        return self.root / f\"{table}.json\"\n",
+        "bookshelf/tests/conftest.py": "\"\"\"Fixtures shared by the lending service's tests.\"\"\"\n\nfrom __future__ import annotations\n\nfrom pathlib import Path\n\nimport pytest\nfrom bookshelf import Book, Catalog, JsonStore, LoanRegister\n\nPRATCHETT = \"978-0-00-000001-1\"\nCLARKE = \"978-0-00-000002-8\"\nMANTEL = \"978-0-00-000003-5\"\n\n\n@pytest.fixture()\ndef store(tmp_path: Path) -> JsonStore:\n    \"\"\"A store over an empty directory, one per test.\"\"\"\n    return JsonStore(Path(tmp_path, \"data\"))\n\n\n@pytest.fixture()\ndef catalog(store: JsonStore) -> Catalog:\n    \"\"\"A catalogue holding three titles, one of them withdrawn.\"\"\"\n    shelf = Catalog(store)\n    shelf.add(Book(isbn=PRATCHETT, title=\"Small Gods\", author=\"Terry Pratchett\", copies=2))\n    shelf.add(Book(isbn=CLARKE, title=\"Piranesi\", author=\"Susanna Clarke\", copies=1))\n    shelf.add(Book(isbn=MANTEL, title=\"Wolf Hall\", author=\"Hilary Mantel\", copies=0))\n    return shelf\n\n\n@pytest.fixture()\ndef register(store: JsonStore) -> LoanRegister:\n    \"\"\"A loan register over the same store as the catalogue fixture.\"\"\"\n    return LoanRegister(store)\n",
+        "bookshelf/tests/test_api.py": "\"\"\"The handlers the counter screen calls.\"\"\"\n\nfrom __future__ import annotations\n\nfrom datetime import date\n\nfrom bookshelf import BookNotFoundError, api\n\nPRATCHETT = \"978-0-00-000001-1\"\n\n\ndef test_list_titles_says_how_many_copies_are_free(catalog):\n    assert [row[\"available\"] for row in api.list_titles(catalog)] == [1, 2, 0]\n\n\ndef test_borrowing_through_the_handler_returns_the_due_date(catalog, register):\n    record = api.borrow_title(register, PRATCHETT, \"C-1001\", date(2024, 3, 1))\n    assert record[\"due\"] == \"2024-03-22\"\n\n\ndef test_an_expected_failure_is_described_plainly():\n    described = api.describe_failure(BookNotFoundError(\"978-0-00-000999-9\"))\n    assert described[\"error\"] == \"BookNotFoundError\"\n    assert \"978-0-00-000999-9\" in described[\"message\"]\n\n\ndef test_an_unexpected_failure_keeps_its_detail_to_itself():\n    described = api.describe_failure(ValueError(\"connection string: hunter2\"))\n    assert \"hunter2\" not in described[\"message\"]\n",
+        "bookshelf/tests/test_catalog.py": "\"\"\"The catalogue: what the library owns, and how much of it is free.\"\"\"\n\nfrom __future__ import annotations\n\nimport pytest\nfrom bookshelf import Availability, Book, BookNotFoundError, DuplicateBookError\n\nCLARKE = \"978-0-00-000002-8\"\nMANTEL = \"978-0-00-000003-5\"\n\n\ndef test_books_come_back_sorted_by_title(catalog):\n    assert [book.title for book in catalog.books()] == [\"Piranesi\", \"Small Gods\", \"Wolf Hall\"]\n\n\ndef test_find_refuses_an_isbn_the_library_does_not_hold(catalog):\n    with pytest.raises(BookNotFoundError):\n        catalog.find(\"978-0-00-000999-9\")\n\n\ndef test_the_same_title_cannot_be_added_twice(catalog):\n    with pytest.raises(DuplicateBookError):\n        catalog.add(Book(isbn=CLARKE, title=\"Piranesi\", author=\"Susanna Clarke\"))\n\n\ndef test_a_title_with_no_copies_reads_as_withdrawn(catalog):\n    assert catalog.availability(MANTEL) is Availability.WITHDRAWN\n",
+        "bookshelf/tests/test_lending.py": "\"\"\"Borrowing, renewing and giving books back.\"\"\"\n\nfrom __future__ import annotations\n\nfrom datetime import date\n\nimport pytest\nfrom bookshelf import (\n    BookUnavailableError,\n    LoanNotFoundError,\n    RenewalRefusedError,\n    overdue_loans,\n)\n\nPRATCHETT = \"978-0-00-000001-1\"\nCLARKE = \"978-0-00-000002-8\"\nBORROWED_ON = date(2024, 3, 1)\n\n\ndef test_borrowing_takes_a_copy_off_the_shelf(catalog, register):\n    register.borrow(CLARKE, \"C-1001\", BORROWED_ON)\n    assert catalog.copies_available(CLARKE) == 0\n\n\ndef test_the_last_copy_cannot_be_lent_twice(catalog, register):\n    register.borrow(CLARKE, \"C-1001\", BORROWED_ON)\n    with pytest.raises(BookUnavailableError):\n        register.borrow(CLARKE, \"C-1002\", BORROWED_ON)\n\n\ndef test_a_loan_can_be_renewed_up_to_the_limit(catalog, register):\n    register.borrow(PRATCHETT, \"C-1001\", BORROWED_ON)\n    register.renew(PRATCHETT, \"C-1001\", BORROWED_ON)\n    register.renew(PRATCHETT, \"C-1001\", BORROWED_ON)\n    with pytest.raises(RenewalRefusedError):\n        register.renew(PRATCHETT, \"C-1001\", BORROWED_ON)\n\n\ndef test_giving_back_a_book_nobody_borrowed_is_refused(register):\n    with pytest.raises(LoanNotFoundError):\n        register.give_back(PRATCHETT, \"C-1001\")\n\n\ndef test_overdue_loans_are_listed_once_the_due_date_has_passed(catalog, register):\n    register.borrow(PRATCHETT, \"C-1001\", BORROWED_ON)\n    assert [loan.isbn for loan in overdue_loans(register, date(2024, 5, 1))] == [PRATCHETT]\n",
+        "bookshelf/tests/test_notifications.py": "\"\"\"Reminders sent to members about books that are nearly due.\"\"\"\n\nfrom __future__ import annotations\n\nimport asyncio\nfrom datetime import date\n\nfrom bookshelf import Member, RecordingNotifier\nfrom bookshelf.notifications import remind_member\n\nPRATCHETT = \"978-0-00-000001-1\"\nMEMBER = Member(card_number=\"C-1001\", name=\"Ada Okonjo\", email=\"ada@example.invalid\")\n\n\ndef test_a_reminder_goes_out_when_a_loan_is_nearly_due(catalog, register):\n    register.borrow(PRATCHETT, \"C-1001\", date(2024, 3, 1))\n    notifier = RecordingNotifier()\n    sent = asyncio.run(remind_member(notifier, MEMBER, register.loans(), date(2024, 3, 20)))\n    assert sent == 1\n    assert \"due back in 2 days\" in notifier.sent[0].subject\n\n\ndef test_nothing_goes_out_while_a_loan_still_has_weeks_to_run(catalog, register):\n    register.borrow(PRATCHETT, \"C-1001\", date(2024, 3, 1))\n    notifier = RecordingNotifier()\n    sent = asyncio.run(remind_member(notifier, MEMBER, register.loans(), date(2024, 3, 2)))\n    assert sent == 0\n    assert notifier.sent == []\n"
+      },
+      "kind": "authored-tree",
+      "workdir": "bookshelf"
+    },
+    "steps": [
+      {
+        "argv": [
+          "s0ma",
+          "adopt",
+          "scan"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Scanned: 11 modules across 1 package, 712 lines, 526 of them code."
+          },
+          {
+            "match": "line",
+            "text": "43 public things to convert; none of them are registered with s0ma yet."
+          },
+          {
+            "match": "line",
+            "text": "5 test files seen and left out of the numbers above."
+          },
+          {
+            "match": "line",
+            "text": "Perimeter it would declare (`s0ma adopt init` writes this):"
+          },
+          {
+            "match": "line",
+            "text": "  source roots    src"
+          },
+          {
+            "match": "line",
+            "text": "  bootstrap files src/bookshelf/__main__.py"
+          },
+          {
+            "match": "line",
+            "text": "  package markers src/bookshelf/__init__.py"
+          },
+          {
+            "match": "line",
+            "text": "  mode            migration"
+          },
+          {
+            "match": "line",
+            "text": "Convert in this order, leaves first (10 modules):"
+          },
+          {
+            "match": "contains",
+            "text": "bookshelf.errors"
+          },
+          {
+            "match": "line",
+            "text": "Import cycles: none at load time. Every module can be converted after the ones it"
+          },
+          {
+            "match": "contains",
+            "text": "ADOPT_SCAN_DEFERRED_CYCLE"
+          },
+          {
+            "match": "contains",
+            "text": "`s0ma adopt init`"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "adopt",
+          "init"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Appended to pyproject.toml:"
+          },
+          {
+            "match": "line",
+            "text": "  [tool.s0ma]"
+          },
+          {
+            "match": "line",
+            "text": "  source_roots = [\"src\"]"
+          },
+          {
+            "match": "line",
+            "text": "  mode = \"migration\""
+          },
+          {
+            "match": "line",
+            "text": "  bootstrap_files = [\"src/bookshelf/__main__.py\"]"
+          },
+          {
+            "match": "line",
+            "text": "  package_markers = [\"src/bookshelf/__init__.py\"]"
+          },
+          {
+            "match": "line",
+            "text": "Wrote AGENTS.md, so whoever works here next reads the same rules you do."
+          },
+          {
+            "match": "line",
+            "text": "No application file was touched, and nothing else was written."
+          },
+          {
+            "match": "line",
+            "text": "Run these three next:"
+          },
+          {
+            "match": "contains",
+            "text": "s0ma doctor"
+          },
+          {
+            "match": "contains",
+            "text": "s0ma verify --all src"
+          },
+          {
+            "match": "contains",
+            "text": "s0ma score"
+          },
+          {
+            "match": "contains",
+            "text": "Every application file will show as UNKNOWN"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "verify",
+          "--all",
+          "src"
+        ],
+        "exit_code": 4,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Verifying 11 transpiled file(s)..."
+          },
+          {
+            "match": "contains",
+            "text": "PACKAGE_MARKER src/bookshelf/__init__.py"
+          },
+          {
+            "match": "contains",
+            "text": "BOOTSTRAP src/bookshelf/__main__.py"
+          },
+          {
+            "match": "contains",
+            "text": "UNKNOWN  src/bookshelf/errors.py"
+          },
+          {
+            "match": "line",
+            "text": "Verified 0 module(s). 1 bootstrap file(s) recognized. 1 package marker(s). 9 unknown."
+          },
+          {
+            "match": "line",
+            "text": "Coverage: 0 modeled s0ma module(s), 0 roster-adopted file(s), 9 unknown plain-Python file(s)."
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "score"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "s0ma score — bookshelf"
+          },
+          {
+            "match": "line",
+            "text": "  authoring mode   migration"
+          },
+          {
+            "match": "line",
+            "text": "  proprioception   0.0%  (structure)"
+          },
+          {
+            "match": "contains",
+            "text": "0 componentized, 0 roster-adopted, 9 unknown"
+          },
+          {
+            "match": "line",
+            "text": "  exempt set       2 item(s) outside s0ma"
+          },
+          {
+            "match": "contains",
+            "text": "[bootstrap module] src/bookshelf/__main__.py"
+          },
+          {
+            "match": "contains",
+            "text": "[package_markers] src/bookshelf/__init__.py"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "adopt",
+          "baseline",
+          "bookshelf.errors"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Captured 1 baseline:"
+          },
+          {
+            "match": "contains",
+            "text": "bookshelf.errors   src/bookshelf/errors.py"
+          },
+          {
+            "match": "contains",
+            "text": "Recorded in adopt-baseline.s0ma.json."
+          },
+          {
+            "match": "contains",
+            "text": "Commit it with your code"
+          },
+          {
+            "match": "contains",
+            "text": "it cannot be taken again once the Python file"
+          },
+          {
+            "match": "contains",
+            "text": "s0ma adopt draft bookshelf.errors"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "adopt",
+          "draft",
+          "bookshelf.errors"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Wrote src/bookshelf/errors.s0ma"
+          },
+          {
+            "match": "line",
+            "text": "It carries 21 placeholders — that many fields whose meaning only a person can write,"
+          },
+          {
+            "match": "contains",
+            "text": "each marked FIXME(adopt):"
+          },
+          {
+            "match": "contains",
+            "text": "src/bookshelf/errors.py has not been touched."
+          },
+          {
+            "match": "line",
+            "text": "Run this next:"
+          },
+          {
+            "match": "contains",
+            "text": "s0ma check"
+          }
+        ]
+      },
+      {
+        "path": "src/bookshelf/errors.s0ma",
+        "text": "# adopt_source: src/bookshelf/errors.py@sha256:671053c4b0840a801925b88a7882c8587c06f291a3b172e7cdc0b33369f8851e\n# note: s0ma module names are flat, so this draft declares `module errors` rather than\n#   `bookshelf.errors`. Every module name in a project must be unique; rename the draft if\n#   another module already carries this name.\n# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma\n#   writes the generated file's import block itself, and a future import has to be the first\n#   statement of a file. Annotations are therefore evaluated as they are written — quote any\n#   annotation that names something defined later in the file.\nmodule errors\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"Every failure the lending service raises on purpose, in one hierarchy, so a caller can catch the whole family or one failure by name.\"\n    exports:\n      - BookshelfError\n      - CatalogError\n      - BookNotFoundError\n      - DuplicateBookError\n      - StorageCorruptError\n      - LendingError\n      - BookUnavailableError\n      - LoanNotFoundError\n      - LoanLimitReachedError\n      - RenewalRefusedError\n\n    requires: none\n    uses: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\n\ncell BookshelfError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"The base every failure of this service inherits from, so one except clause can catch all of them.\"\n    schema: \"An exception class with no fields of its own; its message is whatever the failure that raised it put there.\"\n    invariants: none\n    covered_by: none\n    ---\n    class BookshelfError(Exception):\n        \"\"\"Base class for every error the lending service raises.\"\"\"\n\ncell CatalogError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"Says the catalogue or a record in it is wrong, as opposed to a loan going astray.\"\n    schema: \"An exception class; its message names the record the catalogue could not make sense of.\"\n    invariants: none\n    covered_by: none\n    ---\n    class CatalogError(BookshelfError):\n        \"\"\"Something is wrong with the catalogue or with a record in it.\"\"\"\n\ncell BookNotFoundError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"Says no title in the catalogue carries the ISBN somebody asked for.\"\n    schema: \"An exception class carrying the isbn that was looked for; its message quotes it.\"\n    invariants: none\n    covered_by: none\n    ---\n    class BookNotFoundError(CatalogError):\n        \"\"\"No title in the catalogue carries the requested ISBN.\"\"\"\n\n        def __init__(self, isbn: str) -> None:\n            super().__init__(f\"no title with ISBN {isbn} is in the catalogue\")\n            self.isbn = isbn\n\ncell DuplicateBookError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"Says a title with this ISBN is in the catalogue already, so adding it again would leave two of it.\"\n    schema: \"An exception class carrying the isbn that is already there; its message quotes it.\"\n    invariants: none\n    covered_by: none\n    ---\n    class DuplicateBookError(CatalogError):\n        \"\"\"A title with this ISBN is already in the catalogue.\"\"\"\n\n        def __init__(self, isbn: str) -> None:\n            super().__init__(f\"ISBN {isbn} is already in the catalogue\")\n            self.isbn = isbn\n\ncell StorageCorruptError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"Says a stored table could not be read back as a list of records, so the file on disk is not what this service wrote.\"\n    schema: \"An exception class carrying the table that failed and the reason it failed; its message quotes both.\"\n    invariants: none\n    covered_by: none\n    ---\n    class StorageCorruptError(BookshelfError):\n        \"\"\"A stored table could not be read back as a list of records.\"\"\"\n\n        def __init__(self, table: str, reason: str) -> None:\n            super().__init__(f\"the {table} table could not be read: {reason}\")\n            self.table = table\n            self.reason = reason\n\ncell LendingError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"The base of the loan failures, so a caller handling borrowing can catch those without catching catalogue faults.\"\n    schema: \"An exception class with no fields of its own; the class that raised it supplies the message.\"\n    invariants: none\n    covered_by: none\n    ---\n    class LendingError(BookshelfError):\n        \"\"\"A loan could not be made, renewed or returned.\"\"\"\n\ncell BookUnavailableError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"Says every copy of a title is already out on loan, so this one cannot be borrowed today.\"\n    schema: \"An exception class carrying the isbn nobody can borrow; its message quotes it.\"\n    invariants: none\n    covered_by: none\n    ---\n    class BookUnavailableError(LendingError):\n        \"\"\"Every copy of this title is already out on loan.\"\"\"\n\n        def __init__(self, isbn: str) -> None:\n            super().__init__(f\"every copy of ISBN {isbn} is out on loan\")\n            self.isbn = isbn\n\ncell LoanNotFoundError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"Says this member does not have this title on loan, so there is nothing to renew or return.\"\n    schema: \"An exception class carrying the isbn and the card_number that do not go together; its message quotes both.\"\n    invariants: none\n    covered_by: none\n    ---\n    class LoanNotFoundError(LendingError):\n        \"\"\"This member does not have this title out on loan.\"\"\"\n\n        def __init__(self, isbn: str, card_number: str) -> None:\n            super().__init__(f\"card {card_number} does not have ISBN {isbn} on loan\")\n            self.isbn = isbn\n            self.card_number = card_number\n\ncell LoanLimitReachedError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"Says a member is already holding as many books as the rules allow, so another loan would break the limit.\"\n    schema: \"An exception class carrying the card_number and the limit it has reached; its message quotes both.\"\n    invariants: none\n    covered_by: none\n    ---\n    class LoanLimitReachedError(LendingError):\n        \"\"\"This member is already holding as many books as the rules allow.\"\"\"\n\n        def __init__(self, card_number: str, limit: int) -> None:\n            super().__init__(f\"card {card_number} already holds the limit of {limit} books\")\n            self.card_number = card_number\n            self.limit = limit\n\ncell RenewalRefusedError :: DOMAIN\n    kind: EXCEPTION\n    visibility: PUBLIC\n    intent: \"Says a loan has been renewed as often as the rules allow, so the title has to come back.\"\n    schema: \"An exception class carrying the isbn and the renewal limit it has reached; its message quotes both.\"\n    invariants: none\n    covered_by: none\n    ---\n    class RenewalRefusedError(LendingError):\n        \"\"\"This loan has been renewed as often as the rules allow.\"\"\"\n\n        def __init__(self, isbn: str, limit: int) -> None:\n            super().__init__(f\"ISBN {isbn} has already been renewed {limit} times\")\n            self.isbn = isbn\n            self.limit = limit\n"
+      },
+      {
+        "argv": [
+          "s0ma",
+          "build"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "contains",
+            "text": "Results: 0 error(s), 1 warning(s) [mode: migration]"
+          },
+          {
+            "match": "contains",
+            "text": "Build complete: 1 module(s)"
+          },
+          {
+            "match": "contains",
+            "text": "bookshelf_build/errors.py"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "adopt",
+          "verify-parity",
+          "bookshelf.errors"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "bookshelf.errors — same surface (compared with bookshelf_build/errors.py)"
+          },
+          {
+            "match": "contains",
+            "text": "1 module compared, and its surface is what it was."
+          },
+          {
+            "match": "contains",
+            "text": "Run the project's own tests next"
+          },
+          {
+            "match": "line",
+            "text": "Before you delete src/bookshelf/errors.py:"
+          },
+          {
+            "match": "contains",
+            "text": "_BUILT = bootstrap_imports(Path(__file__).resolve().parents[2] / \"bookshelf_build\")"
+          },
+          {
+            "match": "contains",
+            "text": "sys.modules[f\"{__name__}.errors\"] = errors"
+          },
+          {
+            "match": "contains",
+            "text": "2. Declare the s0ma runtime"
+          },
+          {
+            "match": "contains",
+            "text": "3. Ship bookshelf_build with the application."
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "adopt",
+          "status"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "bookshelf — rung 3 of 4: converting."
+          },
+          {
+            "match": "line",
+            "text": "1 of 9 modules converted, 8 still plain Python."
+          },
+          {
+            "match": "line",
+            "text": "  drafted 0 · placeholders 0 · adopted in place 0 · baselines 1 · parity: 1 same surface"
+          },
+          {
+            "match": "line",
+            "text": "  mode migration (floor 50%) · score not measurable yet (`s0ma score` says why)"
+          },
+          {
+            "match": "line",
+            "text": "In flight: bookshelf.errors — built, unchanged, the .py is still there."
+          },
+          {
+            "match": "line",
+            "text": "Next — finish what is started before starting another:"
+          },
+          {
+            "match": "contains",
+            "text": "bookshelf.errors is converted and unchanged."
+          },
+          {
+            "match": "contains",
+            "text": "src/bookshelf/errors.py"
+          },
+          {
+            "match": "contains",
+            "text": "s0ma adopt verify-parity bookshelf.errors"
+          },
+          {
+            "match": "contains",
+            "text": "s0ma docs show doc:guide/retrofit-existing-codebase"
+          }
+        ]
+      }
+    ]
+  },
+  "schema": "s0ma-docs-evidence@1"
+}

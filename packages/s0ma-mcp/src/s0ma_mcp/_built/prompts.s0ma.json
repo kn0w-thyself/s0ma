@@ -1,0 +1,857 @@
+{
+  "components": [
+    {
+      "canonical_id": "prompts::PROMPT_JOURNEYS",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "dict[str, str] mapping served prompt name to the journey id whose steps it renders; every value must be a journey the packaged snapshot records."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Which served prompt walks which recorded journey: a prompt named here renders its steps from the journey record, so adding, removing or rewording a step in the model is the only way to change what the prompt says."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 23,
+        "start_line": 13
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "prompts::PROMPT_WITHOUT_JOURNEY",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "dict[str, str] mapping served prompt name to the reason its flow is not one of the recorded journeys; together with PROMPT_JOURNEYS the keys are exactly the served prompts."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Why each of the other served prompts is still authored rather than bound to a journey. Written down because 'this prompt is not bound' and 'somebody forgot to bind this prompt' look identical from outside, and only one of them is a decision."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 60,
+        "start_line": 25
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "prompts::journey_ladder",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "journey_id names a journey the packaged documentation snapshot records"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never invents a step, or a path for a journey the packaged documentation snapshot does not record."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the steps in walking order, every word of them read from the record; a journey this build does not record renders as nothing rather than as an invented path"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_dependency": [
+            "s0ma://docs/journeys"
+          ]
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Renders one recorded journey as the numbered ladder a prompt teaches: each step's call, why it is taken and what a good result looks like, any approval it needs, then the named things that can go wrong and what to do about each"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 126,
+        "start_line": 77
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "prompts::AUTHOR_MODULE_TEMPLATE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "placeholders": {
+          "state": "value",
+          "value": [
+            "__PROJECT_ROOT__",
+            "__MODULE_NAME__",
+            "__KIND_ARG__",
+            "__JOURNEY_STEPS__"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant embedded from prompts/author_module.txt; markers __PROJECT_ROOT__, __MODULE_NAME__, __KIND_ARG__, and __JOURNEY_STEPS__ are substituted at render time."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The author-a-new-module journey's framing: the golden rule, the survival card, the argument shapes the journey record does not carry, and the edit-and-recheck work that happens between the recorded steps. The steps themselves are NOT here — __JOURNEY_STEPS__ is where journey:mcp-authoring-loop renders in, from the record."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 137,
+        "start_line": 128
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "prompts::FIX_CHECK_FAILURES_TEMPLATE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "placeholders": {
+          "state": "value",
+          "value": [
+            "__PROJECT_ROOT__"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant embedded from prompts/fix_check_failures.txt; the __PROJECT_ROOT__ marker is substituted at render time."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The fix-check-failures journey's prompt copy: run check, group structured diagnostics by code, look codes up in the error catalog, apply remediations in severity order, re-check until clean."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 147,
+        "start_line": 138
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "prompts::MIGRATE_PROJECT_TEMPLATE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "placeholders": {
+          "state": "value",
+          "value": [
+            "__PROJECT_ROOT__"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant embedded from prompts/migrate_project.txt; the __PROJECT_ROOT__ marker is substituted at render time."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The migrate-a-legacy-project journey's prompt copy: migrate_ext dry-run plan, present, apply, rebuild, and check until clean."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 157,
+        "start_line": 148
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "prompts::DIAGNOSE_FAULT_TEMPLATE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "placeholders": {
+          "state": "value",
+          "value": [
+            "__PROJECT_ROOT__",
+            "__FAULT__"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant embedded from prompts/diagnose_fault.txt; markers __PROJECT_ROOT__ and __FAULT__ are substituted at render time."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The look-inward-first runtime fault journey: observed symptom, project_status runtime context, runbook, suspect and dependency-neighbor inspection, host evidence when needed, and a live-behavior probe that preserves durable state."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 167,
+        "start_line": 158
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "prompts::FEEDBACK_TEMPLATE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "placeholders": {
+          "state": "value",
+          "value": [
+            "__MESSAGE__"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant embedded from prompts/feedback.txt; the __MESSAGE__ marker is substituted at render time."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The send-feedback-to-the-s0ma-team journey's prompt copy: identify what the user is actually reporting, confirm it is meant for s0ma when their words never named it, draft from evidence and nothing else, prepare, show the exact feedback data and what redaction removed, submit only through the client's approval form, and relay the receipt or the saved draft."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 177,
+        "start_line": 168
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "prompts::author_module_prompt",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root and module_name are non-empty; kind, when given, is a scaffold-recognized nerve kind"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never renders the authoring steps from a copy in its own text instead of the journey:mcp-authoring-loop record."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the rendered journey text with every placeholder marker substituted, its numbered steps identical to the ones journey:mcp-authoring-loop records"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_dependency": [
+            "s0ma://guide/quick-reference",
+            "s0ma://docs/journeys",
+            "scaffold_module",
+            "check",
+            "transpile",
+            "build_project",
+            "inspect_module"
+          ],
+          "mcp_prompt_title": "Author a new s0ma module"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "author_module"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Walks an agent through authoring one new module end to end, rendering the steps of journey:mcp-authoring-loop from the record rather than from a copy in the prompt text, wrapped in the framing the record does not carry: the golden rule, the survival card, the argument shapes, and the editing that happens between steps"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 229,
+        "start_line": 178
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "prompts::fix_check_failures_prompt",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is non-empty"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the rendered journey text with the project root substituted"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_dependency": [
+            "check",
+            "s0ma://guide/errors"
+          ],
+          "mcp_prompt_title": "Fix s0ma check failures"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "fix_check_failures"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Walks an agent through diagnosing and clearing check failures: group structured diagnostics by code, fix highest severity first via each remediation, re-check until clean"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 266,
+        "start_line": 231
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "prompts::migrate_project_prompt",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is non-empty"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the rendered journey text with the project root substituted"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_dependency": [
+            "migrate_ext",
+            "build_project",
+            "check"
+          ],
+          "mcp_prompt_title": "Migrate a legacy s0ma project"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "migrate_project"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Walks an agent through migrating a pre-consolidation project: migrate_ext dry-run, present the plan, apply, rebuild, and check until clean"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 303,
+        "start_line": 268
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "prompts::diagnose_fault_prompt",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root and fault are non-empty"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the look-inward-first diagnostic journey with the project root and observed fault substituted"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_dependency": [
+            "project_status",
+            "s0ma://project/runbook",
+            "inspect_module",
+            "verify_host"
+          ],
+          "mcp_prompt_title": "Diagnose an observed runtime fault"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "diagnose_fault"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Guides an agent from an observed runtime fault through project_status, declared runtime/runbook context, suspect and dependency-neighbor inspection, host evidence when needed, and a state-preserving live behavior probe."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 341,
+        "start_line": 305
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "prompts::feedback_prompt",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "message, when given, is the user's own account of what they want reported; an absent message means the journey opens by asking for it"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the rendered journey text with no placeholder marker left behind, whether or not a message was supplied"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_dependency": [
+            "prepare_feedback",
+            "submit_feedback"
+          ],
+          "mcp_prompt_title": "Send feedback to the s0ma team"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "feedback"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Walks an agent through carrying one piece of the user's own feedback to the s0ma team: identify it, confirm it is about s0ma when the user never said so, draft from evidence, prepare, show the exact feedback data and what redaction removed, submit only through the client's approval form, and relay the receipt or the saved draft"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 381,
+        "start_line": 343
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "prompts::test_prompts_render_with_arguments_substituted",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "author_module_prompt",
+            "fix_check_failures_prompt",
+            "migrate_project_prompt",
+            "diagnose_fault_prompt",
+            "feedback_prompt",
+            "journey_ladder"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that every journey prompt renders its embedded template with the client's arguments substituted and no placeholder marker left behind — the rendering nerves' guarantee, exercised on the built module pytest imports; the feedback journey additionally renders with its one argument absent, the case whose whole point is that the agent is told to ask rather than to invent; and the PROMPT_JOURNEYS binding is proved from the record, so a journey step edited in the model reaches the served prompt or turns this red."
+      },
+      "kind": null,
+      "location": {
+        "end_line": 443,
+        "start_line": 383
+      },
+      "visibility": null
+    }
+  ],
+  "doc_guides": [],
+  "doc_refs": [],
+  "edges": {
+    "authored": [
+      {
+        "carries": "journey prompt copy",
+        "coupling": "TIGHT",
+        "intent": "author_module_prompt READS AUTHOR_MODULE_TEMPLATE: journey prompt copy",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "prompts::author_module_prompt",
+        "target": "prompts::AUTHOR_MODULE_TEMPLATE"
+      },
+      {
+        "carries": "the journey this prompt walks",
+        "coupling": "TIGHT",
+        "intent": "author_module_prompt READS PROMPT_JOURNEYS: the journey this prompt walks",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "prompts::author_module_prompt",
+        "target": "prompts::PROMPT_JOURNEYS"
+      },
+      {
+        "carries": "the recorded journey id",
+        "coupling": "TIGHT",
+        "intent": "author_module_prompt CALLS journey_ladder: the recorded journey id",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "prompts::author_module_prompt",
+        "target": "prompts::journey_ladder"
+      },
+      {
+        "carries": "diagnostic journey prompt copy",
+        "coupling": "TIGHT",
+        "intent": "diagnose_fault_prompt READS DIAGNOSE_FAULT_TEMPLATE: diagnostic journey prompt copy",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "prompts::diagnose_fault_prompt",
+        "target": "prompts::DIAGNOSE_FAULT_TEMPLATE"
+      },
+      {
+        "carries": "journey prompt copy",
+        "coupling": "TIGHT",
+        "intent": "feedback_prompt READS FEEDBACK_TEMPLATE: journey prompt copy",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "prompts::feedback_prompt",
+        "target": "prompts::FEEDBACK_TEMPLATE"
+      },
+      {
+        "carries": "journey prompt copy",
+        "coupling": "TIGHT",
+        "intent": "fix_check_failures_prompt READS FIX_CHECK_FAILURES_TEMPLATE: journey prompt copy",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "prompts::fix_check_failures_prompt",
+        "target": "prompts::FIX_CHECK_FAILURES_TEMPLATE"
+      },
+      {
+        "carries": "journey prompt copy",
+        "coupling": "TIGHT",
+        "intent": "migrate_project_prompt READS MIGRATE_PROJECT_TEMPLATE: journey prompt copy",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "prompts::migrate_project_prompt",
+        "target": "prompts::MIGRATE_PROJECT_TEMPLATE"
+      }
+    ],
+    "derived": [],
+    "verification": [
+      {
+        "origin": "tests_field",
+        "test": "prompts::test_prompts_render_with_arguments_substituted",
+        "validates": "prompts::author_module_prompt"
+      },
+      {
+        "origin": "tests_field",
+        "test": "prompts::test_prompts_render_with_arguments_substituted",
+        "validates": "prompts::diagnose_fault_prompt"
+      },
+      {
+        "origin": "tests_field",
+        "test": "prompts::test_prompts_render_with_arguments_substituted",
+        "validates": "prompts::feedback_prompt"
+      },
+      {
+        "origin": "tests_field",
+        "test": "prompts::test_prompts_render_with_arguments_substituted",
+        "validates": "prompts::fix_check_failures_prompt"
+      },
+      {
+        "origin": "tests_field",
+        "test": "prompts::test_prompts_render_with_arguments_substituted",
+        "validates": "prompts::journey_ladder"
+      },
+      {
+        "origin": "tests_field",
+        "test": "prompts::test_prompts_render_with_arguments_substituted",
+        "validates": "prompts::migrate_project_prompt"
+      }
+    ]
+  },
+  "examples": [],
+  "exports": {
+    "state": "value",
+    "value": [
+      "PROMPT_JOURNEYS",
+      "PROMPT_WITHOUT_JOURNEY",
+      "journey_ladder",
+      "author_module_prompt",
+      "fix_check_failures_prompt",
+      "migrate_project_prompt",
+      "diagnose_fault_prompt",
+      "feedback_prompt"
+    ]
+  },
+  "helpers": [
+    {
+      "body": {
+        "state": "value",
+        "value": "def _step_call(surface: str) -> str:\n    \"\"\"How to take the step ``surface`` names, said as an instruction.\"\"\"\n    channel, _, name = surface.partition(\"/\")\n    if channel == \"mcp:tool\":\n        return f\"Call {name}\"\n    if channel == \"mcp:prompt\":\n        return f\"Use the {name} prompt\"\n    if channel == \"cli:s0ma\":\n        spelled = name.replace(\"/\", \" \")\n        return f\"Run s0ma {spelled}\"\n    return f\"Use {surface}\""
+      },
+      "body_kind": "function",
+      "canonical_id": "prompts::_step_call",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Says how one journey step is taken, in the words of the channel that takes it: a tool is called, a prompt is used, a command is run. Derived from the surface id's own class rather than from a table beside it, so a journey that grows a step on a new channel names that step rather than silently rendering a raw id."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 75,
+        "start_line": 62
+      },
+      "module": "prompts",
+      "name": "_step_call",
+      "tags": []
+    }
+  ],
+  "imports": {
+    "deferred_requires": {
+      "state": "value",
+      "value": [
+        "s0ma_mcp.resources"
+      ]
+    },
+    "privileged": [],
+    "requires": {
+      "state": "none"
+    },
+    "runtime_only_requires": {
+      "state": "none"
+    },
+    "soft_requires": {
+      "state": "none"
+    },
+    "uses": {
+      "state": "none"
+    }
+  },
+  "integrations": [],
+  "module": {
+    "content_hash": "sha256:f960a6ef64194f5521760e4b868d553a837f00ca36f058401e3d097541f7381e",
+    "exports_helpers": {
+      "state": "none"
+    },
+    "intent": {
+      "state": "value",
+      "value": "Authoring and operational journey prompts for the s0ma MCP server: author a module, fix check failures, migrate a legacy project, diagnose an observed runtime fault from project self-knowledge before broad code search, or carry the user's own feedback about s0ma to the s0ma team through the prepare-review-approve path they control. A prompt whose flow IS a journey the documentation model records renders that journey's steps from the record instead of keeping a second copy of them in its text (PROMPT_JOURNEYS); each prompt whose flow is not a recorded journey stays authored and says why in PROMPT_WITHOUT_JOURNEY rather than leaving a reader to guess whether the binding was forgotten."
+    },
+    "layer": "PRESENTATION",
+    "name": "prompts",
+    "source_file": "s0ma_src/prompts.s0ma",
+    "tags": [],
+    "transpiled_file": "prompts.py",
+    "version": "0.7.0"
+  },
+  "schema_version": "3.0.0",
+  "source_hash": "sha256:f960a6ef64194f55",
+  "transpiler_version": "1.0.0"
+}

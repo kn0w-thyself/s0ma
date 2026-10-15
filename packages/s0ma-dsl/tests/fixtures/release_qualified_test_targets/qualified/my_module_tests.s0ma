@@ -1,0 +1,21 @@
+module my_module_tests
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Verification test using the qualified module.Component form."
+    uses: [my_module.MyNerve]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_my_nerve_returns_42 :: DOMAIN
+    intent: "Verifies MyNerve returns the constant 42."
+    tests: [my_module.MyNerve]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_my_nerve_returns_42():
+        assert MyNerve() == 42

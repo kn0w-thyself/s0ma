@@ -1,0 +1,87 @@
+module data_models
+    layer: DOMAIN
+    version: 1.2.0
+    intent: "Core data models, constants, and types for the golden test project"
+    exports: [TaskModel, Priority, TaskConfig, MAX_RETRIES, TaskError, TaskStatus]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell TaskModel :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "Represents a task with title, priority, and status tracking"
+    schema: "Dataclass with title: str, priority: Priority, status: TaskStatus"
+    invariants: none
+    covered_by: none
+    ---
+    class TaskModel:
+        title: str
+        priority: str
+        status: str = "pending"
+
+cell Priority :: DOMAIN
+    kind: ENUM
+    visibility: PUBLIC
+    intent: "Valid priority levels for tasks"
+    schema: "Enum with LOW, MEDIUM, HIGH, CRITICAL values"
+    invariants: none
+    covered_by: none
+    ---
+    class Priority:
+        LOW = "low"
+        MEDIUM = "medium"
+        HIGH = "high"
+        CRITICAL = "critical"
+
+cell TaskConfig :: DOMAIN
+    kind: CONFIG
+    visibility: PUBLIC
+    intent: "Configuration for task processing behavior"
+    schema: "Dataclass with timeout_ms: int, max_batch: int"
+    invariants: none
+    covered_by: none
+    ---
+    class TaskConfig:
+        timeout_ms: int = 5000
+        max_batch: int = 10
+
+cell MAX_RETRIES :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Maximum number of retry attempts for failed tasks"
+    schema: "int constant = 3"
+    invariants: none
+    covered_by: none
+    ---
+    MAX_RETRIES = 3
+
+cell TaskError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "Raised when a task operation fails irrecoverably"
+    schema: "Exception subclass with message and task_id fields"
+    invariants: none
+    covered_by: none
+    ---
+    class TaskError(Exception):
+        def __init__(self, message: str, task_id: str = ""):
+            self.task_id = task_id
+            super().__init__(message)
+
+cell TaskStatus :: DOMAIN
+    kind: ENUM
+    visibility: PUBLIC
+    intent: "Lifecycle states for a task"
+    schema: "Enum with PENDING, RUNNING, DONE, FAILED values"
+    invariants: none
+    covered_by: none
+    ---
+    class TaskStatus:
+        PENDING = "pending"
+        RUNNING = "running"
+        DONE = "done"
+        FAILED = "failed"

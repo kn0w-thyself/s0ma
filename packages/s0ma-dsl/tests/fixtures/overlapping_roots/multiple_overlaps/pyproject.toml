@@ -1,0 +1,13 @@
+[project]
+name = "multiple_overlaps"
+version = "0.0.1"
+
+# G2 (feedback 5–6 cleanup) fixture: multiple offending pairs at once.
+# Two source_roots overlap with each other AND a test_root overlaps
+# with a source_root. The detector must surface every offending pair
+# in a single diagnostic — silently reporting one and dropping the
+# rest would force the author through several edit-rerun cycles.
+[tool.s0ma]
+source_roots = ["src", "src/myproject"]
+test_roots = ["src/myproject/tests"]
+build_dir = "multiple_overlaps_build"

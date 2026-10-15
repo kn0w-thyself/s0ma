@@ -1,0 +1,40 @@
+module shared_utils
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Module that re-exports a helper via exports_helpers."
+    exports: [render_attendee]
+    exports_helpers: [_compare]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+helper _compare :: APPLICATION
+    intent: "Compare two values for equality."
+    ---
+    def _compare(a, b):
+        return a == b
+
+nerve render_attendee :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Render an attendee."
+    expects: "An attendee dict."
+    guarantees: "Returns a string."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render_attendee(attendee: dict) -> str:
+        return str(attendee.get("name", ""))

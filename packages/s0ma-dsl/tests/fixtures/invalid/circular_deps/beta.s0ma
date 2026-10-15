@@ -1,0 +1,35 @@
+module beta
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Beta module that completes the circular dependency"
+    uses: [alpha.alpha_fn]
+    exports: [beta_fn]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve beta_fn :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Function that depends on alpha, creating a cycle"
+    expects: "nothing"
+    guarantees: "nothing"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        alpha_fn: {relation: CALLS, carries: "data", coupling: LOOSE}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def beta_fn():
+        return alpha_fn()

@@ -1,0 +1,8 @@
+[project]
+name = "helper_declarations_violation"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/sample"]
+build_dir = "helper_declarations_violation_build"
+bootstrap_files = []

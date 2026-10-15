@@ -1,0 +1,118 @@
+name: Report a bug
+description: Something in s0ma did not do what it said it would.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time. Fill in what you can — a report with
+        gaps is far better than no report.
+
+        **If this is a security problem, stop and read
+        [SECURITY.md](https://github.com/kn0w-thyself/s0ma/blob/main/SECURITY.md)
+        instead.** Report it privately, not here.
+
+        **If you want to tell us about s0ma itself** — something confusing,
+        something missing, something you loved — a
+        [discussion](https://github.com/kn0w-thyself/s0ma/discussions) is the
+        better place. Nothing to set up, and it stays findable.
+
+  - type: checkboxes
+    id: not-a-security-report
+    attributes:
+      label: This is not a security report
+      options:
+        - label:
+            What I am reporting could not be used against somebody before it is
+            fixed. (If it could, close this and use private reporting instead.)
+          required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: >-
+        What you did, and what s0ma did. Paste the command you ran and what it
+        printed, including any code in square brackets.
+      placeholder: |
+        I ran `uv run s0ma check` and it printed ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-you-expected
+    attributes:
+      label: What you expected instead
+      description: >-
+        This is the one we cannot work out for ourselves, and it is often where
+        the real finding is. A message that is technically correct and still
+        leaves you stuck is a bug we want to fix.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: The smallest way to make it happen again
+      description: >-
+        Numbered steps from a fresh start, if you can. If it only happens in
+        your own project, say what is unusual about it — the size, the layout,
+        the Python version, anything you changed just before.
+      placeholder: |
+        1. `uv run s0ma new project demo`
+        2. ...
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: The output of `s0ma doctor`
+      description: >-
+        Run `uv run s0ma doctor` and paste the whole thing. It prints the
+        versions you have, whether s0ma found your project, and the paths it
+        found things at — it settles most of our first questions in one paste.
+        Trim the paths if you would rather not share them; the versions are the
+        part we need.
+      render: text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Windows
+        - Linux
+        - Something else (say which below)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: how-installed
+    attributes:
+      label: How you installed s0ma
+      description: >-
+        A clone of this repository is the route this release offers; say so
+        below if s0ma arrived another way.
+      options:
+        - From source, in a clone of this repository
+        - Some other way (say which below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: anything-else
+    attributes:
+      label: Anything else
+      description: >-
+        Screenshots, a link to a project that shows it, or the thing you are not
+        sure is relevant. Please leave out any key or secret, and anything from
+        your own work that you would not want published.
+    validations:
+      required: false

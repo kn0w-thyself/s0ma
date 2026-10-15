@@ -1,0 +1,25 @@
+module minimal_doc_guide
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture module hosting a minimal doc-guide declaration."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-guide getting_started
+    intent: "Hand-authored walk-through of the minimal-module happy path."
+    format: markdown
+    output: docs/getting_started.md
+    covers: [nerve::greet]
+    asserts: [nerve::greet.visibility == PUBLIC]
+    examples: [example::greet_example]
+    ---
+    # Getting Started
+
+    The {{nerve::greet}} nerve takes a username and returns a greeting.
+
+    Example usage is embedded below.

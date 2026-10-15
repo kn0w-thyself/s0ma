@@ -1,0 +1,18 @@
+[project]
+name = "foo-bar-baz"
+version = "0.0.1"
+
+# G3 (feedback 5–6 cleanup) fixture: a hyphenated [project].name
+# whose default build_dir derivation must sanitize hyphens to
+# underscores so the resulting directory ('foo_bar_baz_build') is a
+# valid Python identifier and the M6a runtime bridge can import the
+# transpiled modules via `from foo_bar_baz_build import <module>`.
+#
+# Note: build_dir is intentionally NOT set here — the test pins the
+# default-derivation path. The companion test
+# ``test_explicit_invalid_build_dir_errors`` builds its own throwaway
+# pyproject.toml under tmp_path with an explicit build_dir to exercise
+# the explicit-validation branch.
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = ["tests"]

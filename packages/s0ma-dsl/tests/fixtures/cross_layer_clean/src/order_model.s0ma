@@ -1,0 +1,25 @@
+module order_model
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Domain-layer model module exposing the Order data structure for the application layer to orchestrate."
+    exports: [Order]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell Order :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "Plain order data model with an id field."
+    schema: |
+        id: str
+
+    invariants: none
+    covered_by: none
+    ---
+    class Order:
+        def __init__(self, id: str) -> None:
+            self.id = id

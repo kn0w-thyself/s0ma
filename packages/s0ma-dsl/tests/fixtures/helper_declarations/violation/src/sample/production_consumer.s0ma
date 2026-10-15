@@ -1,0 +1,35 @@
+module production_consumer
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Production module that incorrectly imports a helper from event_builder. Must trigger HELPER_PRIVATE_TO_MODULE."
+    uses: [event_builder._format_attendee]
+    exports: [render_attendee_line]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render_attendee_line :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Render an attendee as a single human-readable line — but this is a production module, so the helper import must be rejected."
+    expects: "An email and a name string."
+    guarantees: "Returns a single line of the form 'Name <email>'."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render_attendee_line(email: str, name: str) -> str:
+        attendee = _format_attendee(email, name)
+        return attendee["displayName"] + " <" + attendee["email"] + ">"

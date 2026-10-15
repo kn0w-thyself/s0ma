@@ -1,0 +1,24 @@
+You are migrating the pre-consolidation s0ma project at __PROJECT_ROOT__ to
+the current platform surface: the .s0ma file-extension family and the
+[tool.s0ma] config table.
+
+Work these steps with the s0ma-authoring tools:
+
+1. Plan first: call migrate_ext(project_root="__PROJECT_ROOT__"). It runs DRY
+   by default — the returned actions list is the complete migration plan;
+   nothing has been changed yet.
+2. Present the plan: summarize the file renames, the config-table rewrite,
+   and the legacy-cache removals for the user. If the plan reports
+   collisions or touches anything unexpected, stop and resolve that first.
+3. Apply: call migrate_ext(project_root="__PROJECT_ROOT__", dry_run=false).
+   The migration is idempotent and refuses to overwrite existing files — on
+   a collision it aborts having changed nothing.
+4. Rebuild: call build_project(project_root="__PROJECT_ROOT__"). The legacy
+   caches removed in step 3 are regenerable by design — this build recreates
+   everything in current form: .py, .s0ma.json IR, build.s0ma.json manifest.
+5. Verify: call check(project_root="__PROJECT_ROOT__"). Each diagnostic
+   carries a remediation — that is the fix instruction; apply it, re-check,
+   and loop until ok is true.
+
+Done when: a final migrate_ext dry run reports nothing left to migrate, the
+build succeeds, and check is clean.

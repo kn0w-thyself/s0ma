@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "s0ma": {
+      "args": [
+        "run",
+        "--script",
+        "${CLAUDE_PLUGIN_ROOT}/launcher/s0ma_launch.py",
+        "serve"
+      ],
+      "command": "${user_config.uv_path}",
+      "env": {
+        "PATH": "${PATH}:${HOME:-/nonexistent}/.local/bin:${HOME:-/nonexistent}/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:${PATH}",
+        "S0MA_LICENSE_KEY": "${user_config.license_key}",
+        "S0MA_UPDATE": "${user_config.update}"
+      }
+    }
+  }
+}

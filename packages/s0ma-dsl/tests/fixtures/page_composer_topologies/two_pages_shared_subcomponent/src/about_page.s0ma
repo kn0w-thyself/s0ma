@@ -1,0 +1,35 @@
+module about_page
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "About page composer; consumes the shared header and is the second page composer in this fixture."
+    uses: [shared_header.render_header]
+    exports: [compose_about]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve compose_about :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Compose the about page using the shared header."
+    expects: "No arguments."
+    guarantees: "Returns a full HTML page string."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    is_page_composer: true
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def compose_about() -> str:
+        return render_header() + "<main>About.</main>"

@@ -1,0 +1,480 @@
+{
+  "aliases": {
+    "concept:authored-vs-derived-split": "concept:authored-vs-generated-boundary",
+    "concept:check-drift": "concept:drift-gate",
+    "concept:embodied-hardware": "concept:embodiment",
+    "concept:feedback-report": "concept:feedback",
+    "concept:reasoning-faculty": "concept:metacognition",
+    "concept:runtime-state-faculty": "concept:interoception",
+    "concept:software-self-knowledge": "concept:self-knowledge",
+    "concept:structural-faculty": "concept:proprioception"
+  },
+  "authorities": [
+    {
+      "heading": "1. Vision",
+      "id": "authority:prd/section.vision",
+      "section": "1",
+      "source": "references/s0ma-prd.md"
+    },
+    {
+      "heading": "2. Problem statement",
+      "id": "authority:prd/section.problem-statement",
+      "section": "2",
+      "source": "references/s0ma-prd.md"
+    },
+    {
+      "heading": "3. Product thesis",
+      "id": "authority:prd/section.product-thesis",
+      "section": "3",
+      "source": "references/s0ma-prd.md"
+    }
+  ],
+  "domain": "product",
+  "external_ids": [
+    "authority:adr/repo.ADR-003",
+    "authority:prd/FR-COM-4",
+    "authority:prd/FR-CORE-1",
+    "authority:prd/FR-CORE-2",
+    "authority:prd/FR-CORE-4",
+    "authority:prd/FR-CORE-6",
+    "authority:prd/FR-DSL-2",
+    "authority:prd/FR-DSL-5",
+    "authority:prd/FR-DSL-6",
+    "authority:prd/FR-DSL-7",
+    "authority:prd/FR-DSL-8",
+    "authority:prd/FR-FB-1",
+    "authority:prd/FR-FB-11",
+    "authority:prd/FR-FB-2",
+    "authority:prd/FR-FB-3",
+    "authority:prd/FR-FB-8",
+    "authority:prd/FR-MCP-10",
+    "authority:prd/FR-MCP-3",
+    "authority:prd/FR-X-3",
+    "authority:prd/FR-X-4",
+    "authority:prd/FR-X-5",
+    "authority:prd/INV-1",
+    "authority:prd/INV-2",
+    "authority:prd/NFR-3",
+    "authority:prd/NFR-6",
+    "authority:prd/P-1",
+    "authority:prd/P-2",
+    "authority:prd/P-3",
+    "authority:prd/P-4",
+    "authority:prd/P-6",
+    "authority:prd/P-8",
+    "authority:prd/glossary.adoption-ladder",
+    "authority:prd/glossary.component",
+    "authority:prd/glossary.derived-edge",
+    "authority:prd/glossary.embodiment",
+    "authority:prd/glossary.interoception",
+    "authority:prd/glossary.metacognition",
+    "authority:prd/glossary.mirror",
+    "authority:prd/glossary.perimeter",
+    "authority:prd/glossary.proprioception",
+    "authority:prd/glossary.release-channel",
+    "authority:prd/glossary.self-knowledge",
+    "authority:prd/glossary.self-model",
+    "concept:cell",
+    "concept:drift",
+    "concept:integration",
+    "concept:intent",
+    "concept:nerve",
+    "concept:registry-snapshot",
+    "concept:strictness-mode"
+  ],
+  "records": [
+    {
+      "do_not_use_when": "Do not use it for the strictness modes, which are the ratchet at the top of it rather than the ladder itself, and do not call one conversion a rung — converting a single module is one turn of rung three's loop.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-DSL-6",
+        "authority:prd/FR-DSL-8",
+        "authority:prd/P-8",
+        "authority:prd/glossary.adoption-ladder"
+      ],
+      "id": "concept:adoption-ladder",
+      "plain_definition": "The adoption ladder is the order the work is done in, and every rung is a place a project can honestly sit for weeks. Rung zero is reading: the codebase is scanned as it stands and comes back with the order to convert it in. Rung one sets the perimeter, which makes the tree a s0ma project without changing a line of it. Rung two is optional and marks up the existing Python where it lies, for a codebase too large to convert quickly. Rung three is the loop that converts one module at a time, leaves first, and is repeated until there is nothing left on the list. Rung four tightens the strictness mode as more of the project arrives. A project halfway up is a normal state with a number on it, not an unfinished mess.",
+      "purpose": "Rewriting a working application in one go is the thing nobody can afford, so the alternative has to be a path with stopping places on it. Naming the rungs gives every stopping place a command that reaches it, a number that says it was reached, and one next step — which is what turns “we will adopt this eventually” into work somebody can pick up on a Tuesday and put down again on the Friday.",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma"
+        ],
+        [
+          "requires",
+          "concept:strictness-mode"
+        ]
+      ],
+      "summary": "The five-rung path a working Python codebase takes to become a s0ma application, one rung at a time.",
+      "syntax": [],
+      "term": "adoption ladder",
+      "use_when": "Use adoption ladder for the whole ordered path, and rung for one place on it: which rung a project has reached, which rung a command belongs to, what the next rung asks for."
+    },
+    {
+      "do_not_use_when": "Do not use it to argue that hand-written explanation is unwelcome. Guides are authored on purpose; the boundary governs only the factual claims inside them, which are checked against the system rather than trusted.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-DSL-2",
+        "authority:prd/P-2",
+        "authority:prd/glossary.derived-edge"
+      ],
+      "id": "concept:authored-vs-generated-boundary",
+      "plain_definition": "The authored-vs-generated boundary is the rule that every fact about the system has exactly one home. Facts a person states — what a part is for, what it promises, what it depends on — are authored, and are written once, in the source. Facts the build can work out for itself — which errors a piece of logic raises, which types it touches, what a finished documentation page says — are generated, and writing one of them by hand is refused rather than accepted as a shortcut. Documentation is rendered from the declarations; it is never maintained alongside them.",
+      "purpose": "One home per fact is what makes disagreement impossible rather than merely unlikely. Where a fact is written in two places, one of them is eventually wrong and nothing can say which; where the generated half is rebuilt from the authored half every time, the two cannot part without the build seeing it.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:self-model"
+        ]
+      ],
+      "summary": "The line between what a person writes and what the build works out for itself, with no fact living on both sides of it.",
+      "syntax": [],
+      "term": "authored-vs-generated boundary",
+      "use_when": "Use this idea when deciding where a fact belongs: if a person has to state it, author it once; if the build can derive it, let the build derive it and never copy the answer anywhere."
+    },
+    {
+      "do_not_use_when": "Do not use drift gate for the condition it detects — the divergence itself is drift — and do not use it for a check that only warns. A gate that does not refuse is not a gate.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-DSL-5",
+        "authority:prd/FR-DSL-7",
+        "authority:prd/P-3",
+        "authority:prd/P-4",
+        "authority:prd/section.problem-statement"
+      ],
+      "id": "concept:drift-gate",
+      "plain_definition": "The drift gate is where drift stops being a fact and becomes a failure. Every generated document carries a fingerprint of everything it was built from; the gate rebuilds the documents, compares the result with what is committed, and fails when the two differ. It runs in the same pipeline as the tests, so a change that leaves the written record behind cannot be merged, and the remedy is to rebuild rather than to remember.",
+      "purpose": "Warnings get learned and then ignored. Making the disagreement a build failure — rather than a report somebody reads later, or never — is what turns an accurate written record from an intention into a property of the repository.",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma"
+        ],
+        [
+          "requires",
+          "concept:authored-vs-generated-boundary"
+        ],
+        [
+          "requires",
+          "concept:drift"
+        ]
+      ],
+      "summary": "The build step that refuses a change when the written record and the system it describes have parted.",
+      "syntax": [],
+      "term": "drift-gate",
+      "use_when": "Use drift gate for the enforcing step itself: the check that runs in the pipeline, compares what was built against what is committed, and refuses the change."
+    },
+    {
+      "do_not_use_when": "Do not use embodiment for a system that merely talks to a device over a wire and declares nothing about it; that is an integration with no physical facts recorded. Never say the hardware is represented from outside the system: the whole point of the word is that the hardware is inside the boundary, declared like every other part.",
+      "examples": [],
+      "governed_by": [
+        "authority:adr/repo.ADR-003",
+        "authority:prd/FR-CORE-1",
+        "authority:prd/FR-X-4",
+        "authority:prd/P-1",
+        "authority:prd/glossary.component",
+        "authority:prd/glossary.embodiment"
+      ],
+      "id": "concept:embodiment",
+      "plain_definition": "Embodiment is what happens when the physical parts of a machine are declared as ordinary parts of the system that drives them, rather than described from outside it. A sensor or a motor is embodied when it is declared like everything else: an attached device is an integration, reading it or driving it is a nerve, its readings and physical value types are cells, and its physical facts — part identity, where it is mounted, size, mass, material, sweep, supply voltage, current draw — are recorded as declared metadata under one shared vocabulary. The language gains nothing new to make this possible.",
+      "purpose": "Physical parts inside the boundary can be held to their declarations the way software is: a current ceiling the running machine exceeds becomes an anomaly the system raises about itself, and a physical fact that has changed becomes a discrepancy a build can find. Physical parts described from outside the boundary are a document, and documents drift.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:cell"
+        ],
+        [
+          "requires",
+          "concept:integration"
+        ],
+        [
+          "requires",
+          "concept:nerve"
+        ],
+        [
+          "requires",
+          "concept:self-model"
+        ]
+      ],
+      "summary": "Bringing the physical parts of a machine inside the boundary of what a system knows about itself, as ordinary declared parts.",
+      "syntax": [],
+      "term": "embodiment",
+      "use_when": "Use embodiment — and the word embodied — whenever physical parts are brought inside the self-knowing boundary as declared parts of the system, whether that is a sensor board, a drive train, or a door."
+    },
+    {
+      "do_not_use_when": "Do not describe a feedback report as anonymous; it is pseudonymous and locally redacted, which is a different and more honest claim. Do not treat feedback as background collection either — nothing is gathered while you work, and nothing leaves the machine without a person approving that exact report.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-FB-1",
+        "authority:prd/FR-FB-11",
+        "authority:prd/FR-FB-2",
+        "authority:prd/FR-FB-3",
+        "authority:prd/FR-FB-8",
+        "authority:prd/NFR-6"
+      ],
+      "id": "concept:feedback",
+      "plain_definition": "Feedback is the path for telling the people who make s0ma what happened: a report prepared on your own machine, shown to you whole, and sent only after you have approved that exact report. Preparation is local and needs no network. The feedback data is redacted by a fixed rule and limited to an agreed list of context, so no transcripts, prompts, source, raw logs, or hardware identifiers travel by default. What you approved is what is transmitted, what is stored, and what the receipt refers back to.",
+      "purpose": "Sending anything from a developer's machine is a trust decision, and the only honest way to ask for it is to show the whole feedback report first and let the person say no. Building it this way also keeps it harmless: nothing about preparing or sending a feedback report can change what a build, a check, or a running system does.",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma"
+        ]
+      ],
+      "summary": "A report to the people who make s0ma, shown to you in full and sent only after you approve that exact report.",
+      "syntax": [],
+      "term": "feedback",
+      "use_when": "Use the feedback path when something about s0ma itself is worth reporting — a diagnostic that confused you, a step that failed, a guide that misled you — and expect to read the report before it goes."
+    },
+    {
+      "do_not_use_when": "Do not use interoception for structural facts, which hold whether or not anything is running, and do not use it as another word for monitoring: what distinguishes it is the comparison against what the part itself declared.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-CORE-4",
+        "authority:prd/glossary.interoception",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:interoception",
+      "plain_definition": "Interoception is the internal-state faculty of self-knowledge: the system's sense of how it is actually behaving compared with the behaviour it declared. A part can state what it expects of itself — how long a call should take, how often it may fail, how much memory or current it may draw — and the interoception verifier compares live measurements against those statements, so a part quietly running outside its own declared envelope becomes a reported fact instead of a surprise.",
+      "purpose": "It gives the platform a second kind of truth to check. Structure can be verified from the code alone; behaviour can only be verified while the system runs, and without a name for that sense the runtime half of self-knowledge has nowhere to live.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:metacognition"
+        ],
+        [
+          "contrasts-with",
+          "concept:proprioception"
+        ],
+        [
+          "part-of",
+          "concept:self-knowledge"
+        ]
+      ],
+      "summary": "The runtime-state faculty: a system's sense of how it is behaving against how it said it would.",
+      "syntax": [],
+      "term": "interoception",
+      "use_when": "Use interoception when the sentence is about a running system measured against its own declarations: how fast, how often it fails, what it draws, and the anomalies raised when a reading crosses a declared bound."
+    },
+    {
+      "do_not_use_when": "Do not use metacognition for the act of recording structure or measuring behaviour — those are the other two faculties, and this is what is done with what they record. Do not let it imply a language model is involved: the reasoning here is rule-based by principle, so that a system can answer for itself with no network and no model call.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-CORE-6",
+        "authority:prd/P-6",
+        "authority:prd/glossary.metacognition",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:metacognition",
+      "plain_definition": "Metacognition is the reasoning faculty of self-knowledge: answering questions about the system by reasoning over its recorded model instead of re-reading its source. Asking what would break if this changed, asking where a new part belongs, asking a question in plain words, and noticing that the model and the code no longer agree are all metacognition. Each takes the recorded model as its subject, and each follows fixed rules rather than calling a language model, so the answers are reproducible and available offline.",
+      "purpose": "It is what makes the record worth keeping. A record nobody can question is an archive; a record that answers what would break if this changed, and where a new part belongs, is the reason the other two faculties are maintained at all.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:interoception"
+        ],
+        [
+          "contrasts-with",
+          "concept:proprioception"
+        ],
+        [
+          "part-of",
+          "concept:self-knowledge"
+        ],
+        [
+          "requires",
+          "concept:self-model"
+        ]
+      ],
+      "summary": "The reasoning faculty: answering questions by working over the system's own model rather than over its code.",
+      "syntax": [],
+      "term": "metacognition",
+      "use_when": "Use metacognition when the sentence is about reasoning over the recorded model: queries, impact analysis, guidance about where something belongs, and the detection of disagreement between the model and reality."
+    },
+    {
+      "do_not_use_when": "Do not call a document a mirror when it is edited in its own right, or when it merely covers the same ground as another. That is a second document, and two documents describing one thing are how a contradiction gets shipped.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-MCP-10",
+        "authority:prd/FR-MCP-3",
+        "authority:prd/P-2",
+        "authority:prd/glossary.mirror"
+      ],
+      "id": "concept:mirror",
+      "plain_definition": "A mirror is a second copy of a document, committed at another path because something genuinely needs it there — most often inside an installed package, so an agent working on a project can read the guides without a copy of the repository. A mirror is never edited in place: it is copied from the one source, and a check compares the two character for character and fails the build when they have parted. The source is the document; the mirror is a delivery of it.",
+      "purpose": "Some documents really do have to exist in two places, and the honest way to allow that is to make the second copy mechanically dependent on the first. A copy nobody compares becomes a second source of truth within a week; a copy compared on every build stays a delivery mechanism.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:authored-vs-generated-boundary"
+        ],
+        [
+          "requires",
+          "concept:drift-gate"
+        ]
+      ],
+      "summary": "A committed copy of a document, held identical to its one source by a check that fails when they part.",
+      "syntax": [],
+      "term": "mirror",
+      "use_when": "Use mirror for a committed copy whose whole job is to be identical to a source elsewhere in the repository, and name the source whenever you name a mirror."
+    },
+    {
+      "do_not_use_when": "Do not use it for the conversion work inside it: a file joins the self-model by being converted, not by the perimeter moving. A file named as an entry point or a package marker sits outside the account rather than inside it, so setting a perimeter is never a claim that the code within it has been converted.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-DSL-5",
+        "authority:prd/FR-DSL-8",
+        "authority:prd/P-8",
+        "authority:prd/glossary.perimeter"
+      ],
+      "id": "concept:perimeter",
+      "plain_definition": "The perimeter is four settings a project keeps in its own pyproject.toml: where its source lives, which files are the plain-Python entry points, which files are package markers that only re-export, and which strictness mode it is held to. Together they say what s0ma is answerable for here. Anything inside the perimeter that has not been converted yet is reported as unknown, which is the honest list of what is left to do; anything named as an entry point or a package marker is reported as exempt, by name, so what sits outside is something a reader can check rather than something they have to trust.",
+      "purpose": "A project that adopts s0ma a piece at a time needs a way of saying “this much, so far” that is exact enough to check. Without a declared perimeter the toolchain would have to guess which plain Python was left over and which was meant to stay plain, and a guess is the one thing an account of a system may not rest on.",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:adoption-ladder"
+        ],
+        [
+          "requires",
+          "concept:strictness-mode"
+        ]
+      ],
+      "summary": "The line a project draws around the code s0ma answers for, and the files it deliberately leaves outside.",
+      "syntax": [],
+      "term": "perimeter",
+      "use_when": "Use perimeter for the declared boundary itself: setting it on an existing tree, widening it as more is converted, or reading what it leaves outside."
+    },
+    {
+      "do_not_use_when": "Do not use proprioception for how a system is behaving while it runs — that is interoception — and do not use it as another word for the whole of self-knowledge. It carried that larger meaning before the three faculties were named separately, and it no longer does.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-CORE-2",
+        "authority:prd/glossary.proprioception",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:proprioception",
+      "plain_definition": "Proprioception is the structural faculty of self-knowledge: the system's sense of its own composition — which parts exist, what each is for, which layer it belongs to, and what depends on what. It is carried by the index every part must enter in order to exist, the verifier that compares that index against the code, the map of dependencies, the layer rules, and the relationships recorded in the build's machine-readable output.",
+      "purpose": "It names the sense most of the platform serves today and keeps it separate from the other two, so that a claim about structure is not read as a claim about behaviour. A system with proprioception can answer what would break if this changed without anybody reading the code.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:interoception"
+        ],
+        [
+          "contrasts-with",
+          "concept:metacognition"
+        ],
+        [
+          "part-of",
+          "concept:self-knowledge"
+        ]
+      ],
+      "summary": "The structural faculty: a system's sense of what it is made of and how it is wired together.",
+      "syntax": [],
+      "term": "proprioception",
+      "use_when": "Use proprioception when the sentence is about structure: what exists, what it is called, where it sits, and what it depends on."
+    },
+    {
+      "do_not_use_when": "Do not call a page a release build when it came from an untagged state, however finished the work feels, and do not use historical as a polite way of keeping a page that is simply wrong. A page that has been superseded points at what replaced it.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-COM-4",
+        "authority:prd/FR-X-3",
+        "authority:prd/FR-X-5",
+        "authority:prd/NFR-3",
+        "authority:prd/glossary.release-channel"
+      ],
+      "id": "concept:release-channel",
+      "plain_definition": "A release channel is the label every rendered page carries saying which build it came from and how far it can be trusted. Release means the page was built from the exact state of a tagged version and describes that version and no other. Preview means it was built from the moving main line, so it may describe work that has not shipped, and every preview page says so where a reader can see it. Historical means the page describes a version that has passed, kept for the people still on it and never presented as current.",
+      "purpose": "A reader arriving from a search engine cannot tell which version a page describes, and a page that is right about tomorrow is wrong today. Stamping the channel onto the page itself makes that question answerable without anyone having to ask.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:drift"
+        ]
+      ],
+      "summary": "Which build a page came from — a released version, a preview of work in progress, or a record kept for a version that has passed.",
+      "syntax": [],
+      "term": "release channel",
+      "use_when": "Use the channel words whenever a document's currency is at stake: saying which build a page came from, deciding whether unreleased work may appear in it, or marking material that has been superseded."
+    },
+    {
+      "do_not_use_when": "Do not use s0ma for a single package: the runtime is s0ma-core, the language is s0ma-dsl, the authoring interface is s0ma-mcp, and the viewer is s0ma-studi0. Do not use it for something somebody built on the platform either — that is a s0ma project. And it is always written with a digit zero.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/INV-1",
+        "authority:prd/INV-2",
+        "authority:prd/section.product-thesis",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:s0ma",
+      "plain_definition": "s0ma is a Python platform built on one idea — that a system should carry an accurate, queryable, machine-readable model of itself, and that the model should be load-bearing rather than descriptive. Four layers deliver it: a runtime that records and verifies the parts of a running system, a language and compiler that refuse to build undeclared or undescribed code, an interface that lets a coding agent author against the same rules, and a viewer that draws what the model says. One version, one philosophy, four packages.",
+      "purpose": "It exists because the written account of a system and the system itself part company within weeks, and nobody can tell which half is lying. s0ma removes the parallel account: the description is rendered from declarations the system needs in order to run at all, so a description that has gone wrong is a system that refuses to start.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:self-knowledge"
+        ]
+      ],
+      "summary": "The platform built on one idea: software should carry an accurate, queryable model of itself.",
+      "syntax": [],
+      "term": "s0ma",
+      "use_when": "Use s0ma for the platform as a whole — the four packages, the language, and the idea they serve — and use the specific package name when you mean one of them."
+    },
+    {
+      "do_not_use_when": "Do not use self-knowledge where one faculty is meant; the specific words exist and say more. Do not use it for the record itself either: the artifact is the self-model, and self-knowledge is what having one lets a system do.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/glossary.self-knowledge",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:self-knowledge",
+      "plain_definition": "Self-knowledge is a system's ability to maintain an accurate, queryable, machine-readable model of itself: its structure, its behaviour while it runs, and the reasoning that can be done over both. It is the umbrella term, and it spans three faculties that answer different questions — proprioception asks what the system is made of, interoception asks how it is behaving against what it declared, and metacognition reasons over the model itself.",
+      "purpose": "The word gives the product one name for the whole capability, so that the three faculties can be discussed separately without any one of them being mistaken for the entire idea. Before it, the structural third carried the name of the whole, which quietly hid the other two.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:self-model"
+        ]
+      ],
+      "summary": "The umbrella faculty: a system's ability to hold an accurate, queryable model of itself.",
+      "syntax": [],
+      "term": "self-knowledge",
+      "use_when": "Use self-knowledge whenever the whole capability is meant, or when the particular faculty does not matter to the sentence."
+    },
+    {
+      "do_not_use_when": "Do not use self-model for the capability of having one; that is self-knowledge. Do not use it for a diagram or a written page produced from it either — those are views of the model, and the model is what they are views of.",
+      "examples": [],
+      "governed_by": [
+        "authority:prd/P-1",
+        "authority:prd/glossary.self-model",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:self-model",
+      "plain_definition": "The self-model is the system's record of itself: every declared part with its purpose, its kind, its layer, what it promises and what it depends on, together with the relationships between the parts and the documentation and examples attached to each. It is load-bearing rather than descriptive — being declared is a condition of a part existing at all, so the record cannot be skipped without the system failing to start.",
+      "purpose": "Making the record load-bearing is what stops it rotting. A description kept beside the code is optional, and optional records go stale; a record the system needs in order to run is maintained by everyone who touches the code, whether or not they were thinking about documentation at the time.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:registry-snapshot"
+        ]
+      ],
+      "summary": "The queryable record of a system's parts, their relationships, and the documentation and examples attached to them.",
+      "syntax": [],
+      "term": "self-model",
+      "use_when": "Use self-model for the recorded artifact itself — the thing that is queried, rendered, verified, and compared against reality."
+    }
+  ],
+  "schema": "s0ma-docs-concepts@1",
+  "sources": [
+    {
+      "path": "references/s0ma-prd.md",
+      "sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f"
+    }
+  ]
+}

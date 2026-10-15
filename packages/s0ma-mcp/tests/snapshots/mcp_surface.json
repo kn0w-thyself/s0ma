@@ -1,0 +1,1115 @@
+{
+  "prompts": [
+    {
+      "arguments": [
+        {
+          "description": null,
+          "name": "project_root",
+          "required": true
+        },
+        {
+          "description": null,
+          "name": "module_name",
+          "required": true
+        },
+        {
+          "description": null,
+          "name": "kind",
+          "required": false
+        }
+      ],
+      "description": "Author a new s0ma module end to end.\n\nFrom nothing to a built, registered module: read the survival\ncard, then walk journey:mcp-authoring-loop \u2014 scaffold a\nknown-valid skeleton, edit through the check loop (diagnostics\ncarry the fix instructions), build, then read the module's\ncomponents back out of the self-model. The numbered steps are\nrendered from that journey's record, so this prompt teaches the\npath the model holds rather than a second copy of it.",
+      "icons": null,
+      "meta": null,
+      "name": "author_module",
+      "title": "Author a new s0ma module"
+    },
+    {
+      "arguments": [
+        {
+          "description": null,
+          "name": "project_root",
+          "required": true
+        },
+        {
+          "description": null,
+          "name": "fault",
+          "required": true
+        }
+      ],
+      "description": "Diagnose an observed runtime fault from self-knowledge first.\n\nCaptures the symptom, orients with project_status, reads declared\nruntime/runbook context, inspects suspects and dependency neighbors,\nrequests host evidence when applicable, then tests the smallest\nhypothesis against observed behavior without reverting durable state.",
+      "icons": null,
+      "meta": null,
+      "name": "diagnose_fault",
+      "title": "Diagnose an observed runtime fault"
+    },
+    {
+      "arguments": [
+        {
+          "description": null,
+          "name": "message",
+          "required": false
+        }
+      ],
+      "description": "Send the user's feedback about s0ma to the s0ma team.\n\nIdentifies what is being reported, confirms it is meant for s0ma\nwhen the user never named it, drafts from evidence alone, prepares\nand shows the exact feedback data, submits only through the\nclient's approval form, and relays the receipt or the saved draft.",
+      "icons": null,
+      "meta": null,
+      "name": "feedback",
+      "title": "Send feedback to the s0ma team"
+    },
+    {
+      "arguments": [
+        {
+          "description": null,
+          "name": "project_root",
+          "required": true
+        }
+      ],
+      "description": "Diagnose and fix s0ma check failures until the project is clean.\n\nRuns check for structured diagnostics, groups findings by code,\nlooks unfamiliar codes up in the error catalog, and applies each\ndiagnostic's remediation \u2014 highest severity first \u2014 re-checking\nuntil ok.",
+      "icons": null,
+      "meta": null,
+      "name": "fix_check_failures",
+      "title": "Fix s0ma check failures"
+    },
+    {
+      "arguments": [
+        {
+          "description": null,
+          "name": "project_root",
+          "required": true
+        }
+      ],
+      "description": "Migrate a pre-consolidation project to the current s0ma surface.\n\nPlans the migration with a migrate_ext dry run, presents the plan,\napplies it (refuse-don't-clobber), rebuilds \u2014 legacy caches are\nremoved and the build regenerates everything \u2014 then checks until\nclean.",
+      "icons": null,
+      "meta": null,
+      "name": "migrate_project",
+      "title": "Migrate a legacy s0ma project"
+    }
+  ],
+  "resources": [
+    {
+      "annotations": null,
+      "description": "Every s0ma concept, one line each.\n\nThe whole vocabulary in one read: what each word means, in the\none sentence the concept itself declares. For the full page on\nany of them \u2014 what it is for, when to use it, when not to, its\nsyntax and what decided it \u2014 ask learn_s0ma for its id.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/markdown",
+      "name": "docs_concepts_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://docs/concepts"
+    },
+    {
+      "annotations": null,
+      "description": "What s0ma can be asked about, and how to ask.\n\nThe starting point for questions about s0ma itself rather than\nabout your project: every category of topic this release\ndocuments, how many there are, an id you can copy, and the page\neach category is written out on. Ask for one topic with the\nlearn_s0ma tool.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/markdown",
+      "name": "docs_index_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://docs/index"
+    },
+    {
+      "annotations": null,
+      "description": "Every worked path through s0ma, step by step.\n\nA journey is a path from a starting point to a finished\noutcome: the steps in order, what each is for, and what a good\nresult looks like. These are the same records the journey\nprompts render, so a path read here and a path walked with a\nprompt are one path.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/markdown",
+      "name": "docs_journeys_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://docs/journeys"
+    },
+    {
+      "annotations": null,
+      "description": "The s0ma diagnostic error catalog (FR-MCP-10).\n\nEvery s0ma-dsl error code in one table: severity per strictness\nmode (migration / dev / strict / release) and a one-sentence\ndescription of the cause and canonical fix. Look unfamiliar\ndiagnostic codes up here while working the check loop \u2014 generated\nfrom the DSL's own error-code registry, so it cannot drift from\nthe diagnostics the tools return.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/plain",
+      "name": "errors_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://guide/errors"
+    },
+    {
+      "annotations": null,
+      "description": "What s0ma is, who it fits, and how to prove its value.\n\nThe canonical cold journey shared with the root README: initialize,\norient with project_status, inspect canonical dependency facts, watch\ngenerated drift and pending release debt block, then explicitly prove\nimports under the host application's trusted Python.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/plain",
+      "name": "getting_started_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://guide/getting-started"
+    },
+    {
+      "annotations": null,
+      "description": "The s0ma DSL patterns guide \u2014 idioms for real applications.\n\nWorked patterns and recipes (component shapes, layering,\ndocumentation declarations, testing) distilled from real s0ma\nprojects. Read after the quick reference when structuring\nnon-trivial modules.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/plain",
+      "name": "patterns_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://guide/patterns"
+    },
+    {
+      "annotations": null,
+      "description": "The s0ma quick reference: every declaration, line by line.\n\nOne page, generated from the language itself when the release's\ndocumentation is built: the kinds of declaration and when to\nreach for each, every line each kind may carry and whether it\nmust be written, whether a line may be none or pending, the\nwords a line chooses from, a checked sample of every kind, the\neveryday commands, the strictness modes and the basic rules.\nLook a topic up here rather than holding the page in context;\nthe rules to keep in mind are s0ma://guide/survival-card. The\nsame facts as data, for a program, are\ns0ma://guide/quick-reference.json.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/markdown",
+      "name": "quick_reference_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://guide/quick-reference"
+    },
+    {
+      "annotations": null,
+      "description": "The s0ma quick reference as data (JSON, schema s0ma-quick-reference@1).\n\nThe same facts as s0ma://guide/quick-reference, rendered from the\nsame value at the same build, so the two cannot disagree: every\nkind of declaration with every line it may carry, whether each\nmust be written and what it may hold instead, the closed sets of\nwords, the sample project, the commands, the modes, the rules\nand the identity of the release described. Read this form when\nyou want to look a line up by name instead of reading prose.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "application/json",
+      "name": "quick_reference_machine_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://guide/quick-reference.json"
+    },
+    {
+      "annotations": null,
+      "description": "Runtime self-prompting and verified self_inspect wiring.\n\nShows an application host how to load the content-addressed card and\ncompanion with s0ma-core, register the deterministic self_inspect\nadapter, assemble an F1-shaped concierge context profile, and keep\nauthored intents inside the explicit untrusted-data boundary.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/plain",
+      "name": "self_prompting_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://guide/self-prompting"
+    },
+    {
+      "annotations": null,
+      "description": "The s0ma survival card (under 4 KB) \u2014 read this FIRST, hold it in context.\n\nThe 60-second version of everything needed to author valid\nmodules: the bootstrap loop (project_status -> init_project ->\nscaffold_module -> edit -> check -> build_project), the three\nrules that prevent most errors (only edit .s0ma; a nerve body is\nexactly one def; imports are declared in the module header's\nrequires:, never written in bodies), one minimal valid module,\nand the fix for the most common diagnostic codes. Small by\ncontract \u2014 safe to read whole even in a tight context window.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/plain",
+      "name": "survival_card_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://guide/survival-card"
+    },
+    {
+      "annotations": null,
+      "description": "The s0ma DSL coding-agent system prompt.\n\nA drop-in prompt (or prompt fragment) instructing an LLM how to\nauthor .s0ma files: file structure, declaration types, required\nfields, body rules, dependency rules, visibility, naming.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/plain",
+      "name": "system_prompt_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://guide/system-prompt"
+    },
+    {
+      "annotations": null,
+      "description": "The s0ma platform changelog \u2014 what's new, per version (FR-MCP-10).\n\nThe monorepo's canonical Keep-a-Changelog document covering every\npackage (s0ma-core, s0ma-dsl, s0ma-mcp \u2014 one lockstep version,\nINV-4). Read it to learn what changed in the version you are\nrunning, or what an upgrade would bring; pair with\ns0ma://meta/version for the installed versions themselves.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/plain",
+      "name": "changelog_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://meta/changelog"
+    },
+    {
+      "annotations": null,
+      "description": "The installed s0ma toolchain versions as JSON (FR-MCP-10).\n\nOne document answering \"what exactly am I talking to\":\n{server, s0ma_core, s0ma_dsl, s0ma_mcp, s0ma_studi0, mcp_sdk,\npython} \u2014 the server name and the installed versions of the four\ns0ma distributions (s0ma_studi0 is null when the optional viewer\nis not installed), the MCP SDK, and the Python runtime, rendered\nlive via importlib.metadata. Offline by design: no file is read\nand no network is touched. Pair with s0ma://meta/changelog to see what\nyour versions contain.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "application/json",
+      "name": "version_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://meta/version"
+    },
+    {
+      "annotations": null,
+      "description": "The project's operational runbook (O1) as markdown.\n\nThe ops-story surface: how to run and health-check the built\napplication, its declared environment-variable contracts, the\nruntime `state_paths` that must NEVER be reverted or regenerated\n(the bench's git-revert-of-live-DB failure), the module\ninventory, and the ops rules \u2014 the same \"live state is the\ndeliverable\" rule the survival card carries, restated here with\nthe state_paths semantics. Rendered from the project resolved\nfrom the server's working directory; when no project (or no\nrunbook keys) is found it still serves, teaching exactly what to\ndeclare and where. For this project's live runtime facts with an\nexplicit root, use the project_status tool's `runtime` section.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/markdown",
+      "name": "runbook_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://project/runbook"
+    },
+    {
+      "annotations": null,
+      "description": "The authoring server's live self-model (FR-MCP-7) as JSON.\n\nThe server eats its own dog food (FR-MCP-11): every tool,\nresource, and prompt here is authored as a s0ma component, and\nthis document is the live graph the served surface is derived\nfrom \u2014 components with name, kind, layer, intent, and\ndependencies, rendered through s0ma-core's own registry snapshot,\nplus the server's name and version. Read it to learn what this\nserver is and what it can do; the ``describe_server`` tool returns\nthe same graph with an LLM-ready text rendering.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "application/json",
+      "name": "self_model_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://self/model"
+    },
+    {
+      "annotations": null,
+      "description": "The current s0ma DSL language specification (normative).\n\nThe full grammar and semantics: every declaration kind, field,\nnamespace rule, strictness mode, error code, and artifact\nformat. The authority when the guides are not enough.",
+      "icons": null,
+      "meta": null,
+      "mimeType": "text/plain",
+      "name": "spec_resource",
+      "size": null,
+      "title": null,
+      "uri": "s0ma://spec/current"
+    }
+  ],
+  "tools": [
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Record a legacy Python file"
+      },
+      "description": "When migrating old Python, record it as interim roster debt.\n\nExample: adopt_file(project_root=\"/work/app\", path=\"src/legacy.py\",\ndescription=\"Legacy billing adapter\") records its intent/hash and\nreturns mapped/roster counts plus a real scaffold_module action. Never\nuse this for code you just wrote; new code starts from intent. The\nfourth intake reports advisory ADOPTED_CHURN without changing a gate.\nMutating, non-destructive, non-idempotent, and closed-world.\n\nArgs:\n    project_root: Directory whose pyproject.toml carries the\n        [tool.s0ma] table (explicit; never the server's cwd).\n    path: File to adopt \u2014 absolute, or relative to\n        project_root.\n    description: Required one-line purpose statement recorded\n        with the file. This is authored semantic intent; paths,\n        modes, timeouts, and other invocation options keep their\n        ordinary required/optional command semantics.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root",
+          "path",
+          "description"
+        ],
+        "title": "adopt_fileArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "adopt_file",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "adopt_fileDictOutput",
+        "type": "object"
+      },
+      "title": "Record a legacy Python file"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Build the project"
+      },
+      "description": "After check is clean, build the complete configured project.\n\nExample: build_project(project_root=\"/work/app\", mode=\"dev\") resolves\ncross-module edges, writes deterministic artifacts and manifest, and\nreturns a health_echo for the declared runtime command. It refuses NEW\ncheck errors and hand-edited generated files; overrides are explicit\nand separately recorded. Mutating, non-destructive, idempotent, and\nclosed-world.\n\nArgs:\n    project_root: Directory whose pyproject.toml carries the\n        [tool.s0ma] table (explicit; never the server's cwd).\n    mode: Strictness mode \u2014 migration, dev, strict, or release.\n    clean: Remove cached transpiler output before building.\n    force: Overwrite generated .py files even when they were\n        edited by hand (discards those edits). Default false \u2014\n        the build refuses and reports GENERATED_FILE_DRIFT.\n    allow_new_errors: Build even when the edit introduces NEW\n        check errors since the last baseline (the override is\n        recorded in the build manifest). Default false \u2014 the\n        build refuses and lists them. Distinct from force (which\n        discards hand-edits to generated files).",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "allow_new_errors": {
+            "default": false,
+            "title": "Allow New Errors",
+            "type": "boolean"
+          },
+          "clean": {
+            "default": false,
+            "title": "Clean",
+            "type": "boolean"
+          },
+          "force": {
+            "default": false,
+            "title": "Force",
+            "type": "boolean"
+          },
+          "mode": {
+            "default": "dev",
+            "title": "Mode",
+            "type": "string"
+          },
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ],
+        "title": "build_projectArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "build_project",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "build_projectDictOutput",
+        "type": "object"
+      },
+      "title": "Build the project"
+    },
+    {
+      "annotations": {
+        "destructiveHint": null,
+        "idempotentHint": null,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Check s0ma source"
+      },
+      "description": "After editing intent or code, validate before building.\n\nExample: check(project_root=\"/work/app\", mode=\"strict\") returns\nstructured findings with owner, owner_intent, and remediation; fix\neach finding, then follow next_actions. Add gate_mode=\"release\" only\nwhen the caller intends to evaluate the frozen release policy.\nRead-only and closed-world.\n\nArgs:\n    path: A .s0ma file or directory. Omit to check every\n        configured source_roots + test_roots entry of the\n        project at project_root.\n    project_root: Explicit project root for [tool.s0ma]\n        discovery; defaults to the path's own directory.\n    mode: Strictness mode (default strict \u2014 warnings in dev\n        become errors here, matching CI).\n    gate_mode: Optional caller-selected evaluation policy\n        (migration, dev, strict, or release). When omitted, this\n        remains a diagnostic-only check. It is never read from the\n        project's authoring mode.\n    adoption_policy: Optional explicit path to a\n        s0ma-adoption-policy@1 document. Project-local\n        adoption_exempt entries classify only and never waive debt.\n    expected_adoption_policy_hash: Optional normalized sha256 pin;\n        requires adoption_policy and refuses on mismatch.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "adoption_policy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Adoption Policy"
+          },
+          "expected_adoption_policy_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected Adoption Policy Hash"
+          },
+          "gate_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Gate Mode"
+          },
+          "mode": {
+            "default": "strict",
+            "title": "Mode",
+            "type": "string"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Path"
+          },
+          "project_root": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Project Root"
+          }
+        },
+        "title": "checkArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "check",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "checkDictOutput",
+        "type": "object"
+      },
+      "title": "Check s0ma source"
+    },
+    {
+      "annotations": {
+        "destructiveHint": null,
+        "idempotentHint": null,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Describe this server"
+      },
+      "description": "When you do not know which s0ma surface fits, ask the server.\n\nExample: describe_server() returns the live tool name-to-intent map,\nsituation-to-tool journeys, survival rules, and the server's own\ncomponent graph. Choose from this response rather than guessing a tool\nor argument name. Read-only and closed-world.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {},
+        "title": "describe_serverArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "describe_server",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "describe_serverDictOutput",
+        "type": "object"
+      },
+      "title": "Describe this server"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Set up a s0ma project"
+      },
+      "description": "When project_status says false, add the canonical project table.\n\nExample: init_project(project_root=\"/work/app\", mode=\"dev\") appends a\nbyte-preserving [tool.s0ma] table or creates a minimal pyproject, then\nreturns survival rules and a project_status action. Repeating it is an\nunchanged success. Mutating, non-destructive, idempotent, and\nclosed-world.\n\nArgs:\n    project_root: Directory to initialize (explicit root; the\n        table is written to <project_root>/pyproject.toml, never\n        anywhere else).\n    mode: Strictness mode the table declares \u2014 migration, dev,\n        strict, or release (default dev).",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "mode": {
+            "default": "dev",
+            "title": "Mode",
+            "type": "string"
+          },
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ],
+        "title": "init_projectArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "init_project",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "init_projectDictOutput",
+        "type": "object"
+      },
+      "title": "Set up a s0ma project"
+    },
+    {
+      "annotations": {
+        "destructiveHint": null,
+        "idempotentHint": null,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Inspect the self-model"
+      },
+      "description": "Before grepping for where X is handled, inspect the self-model.\n\nExample: inspect_module(project_root=\"/work/app\", module=\"billing\")\nreturns canonical tagged IR plus structured depends_on/depended_by\nneighbor calls. For roster-only Python it instead returns an exact\nDERIVED (unverified) banner and s0ma-derived-surface@1 provenance; that\ndraft never satisfies a score or gate. Omit module for a survey.\nRead-only and closed-world.\n\nArgs:\n    project_root: The project to query (explicit root).\n    module: Module name as declared in its .s0ma header; omit\n        for the whole-project survey.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "module": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Module"
+          },
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ],
+        "title": "inspect_moduleArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "inspect_module",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "inspect_moduleDictOutput",
+        "type": "object"
+      },
+      "title": "Inspect the self-model"
+    },
+    {
+      "annotations": {
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Ask about s0ma"
+      },
+      "description": "Ask s0ma one question about s0ma, and get a short answer back.\n\nExample: learn_s0ma(topic=\"concept:ganglion\") returns what a\nganglion is, which release and documentation snapshot the answer\ncame from, what decided it, the topics to read next, and the page\ncarrying the full account. A bare term works too (\"ganglion\"), and\na question this build cannot place comes back with the nearest ids\nit does address instead of a guess. Read-only, offline, and the\nsame question always returns the same answer from the same build.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "topic": {
+            "title": "Topic",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic"
+        ],
+        "title": "learn_s0maArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "learn_s0ma",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "learn_s0maDictOutput",
+        "type": "object"
+      },
+      "title": "Ask about s0ma"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Migrate old file extensions"
+      },
+      "description": "When legacy extension names remain, preview and apply their migration.\n\nExample: migrate_ext(project_root=\"/work/app\") returns a dry-run plan;\nreview it, then repeat with dry_run=false and follow the check action.\nCollisions abort atomically. Mutating, non-destructive, idempotent, and\nclosed-world.\n\nArgs:\n    project_root: The project to migrate (explicit root).\n    dry_run: When true (the default), plan only \u2014 change nothing.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "dry_run": {
+            "default": true,
+            "title": "Dry Run",
+            "type": "boolean"
+          },
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ],
+        "title": "migrate_extArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "migrate_ext",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "migrate_extDictOutput",
+        "type": "object"
+      },
+      "title": "Migrate old file extensions"
+    },
+    {
+      "annotations": {
+        "destructiveHint": null,
+        "idempotentHint": null,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Prepare feedback for review"
+      },
+      "description": "Write up feedback about s0ma for the user to review \u2014 read-only.\n\nExample: prepare_feedback(summary=\"The remediation was unclear\",\ncategory=\"diagnostic_quality\", impact=\"minor\") returns the exact feedback\ndata and its fingerprint. Nothing is saved or sent; show it, then submit.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "actual": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Actual"
+          },
+          "category": {
+            "enum": [
+              "bug",
+              "friction",
+              "idea",
+              "documentation",
+              "diagnostic_quality",
+              "agent_behavior",
+              "performance",
+              "privacy_or_trust",
+              "other"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Details"
+          },
+          "diagnostic_codes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Diagnostic Codes"
+          },
+          "expected": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expected"
+          },
+          "impact": {
+            "enum": [
+              "blocked",
+              "degraded",
+              "minor",
+              "idea"
+            ],
+            "title": "Impact",
+            "type": "string"
+          },
+          "reproduction": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reproduction"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "surface_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Surface Kind"
+          },
+          "surface_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Surface Name"
+          }
+        },
+        "required": [
+          "summary",
+          "category",
+          "impact"
+        ],
+        "title": "prepare_feedbackArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "prepare_feedback",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "prepare_feedbackDictOutput",
+        "type": "object"
+      },
+      "title": "Prepare feedback for review"
+    },
+    {
+      "annotations": {
+        "destructiveHint": null,
+        "idempotentHint": null,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "Project status"
+      },
+      "description": "When landing in a tree or diagnosing it, orient in one call.\n\nExample: project_status(project_root=\"/work/app\") returns project and\nbuild posture, mapped/roster module rows and counts, pending semantic\ndebt, runtime/runbook facts, survival rules, and structured next\nactions. With run/health context it also embeds the look-inward-first\ndiagnostic journey. A non-project is a valid answer pointing to\ninit_project. Read-only and closed-world.\n\nArgs:\n    project_root: Directory to orient from (explicit; never\n        the server's cwd). Discovery walks upward from here.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root"
+        ],
+        "title": "project_statusArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "project_status",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "project_statusDictOutput",
+        "type": "object"
+      },
+      "title": "Project status"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Run a documented example"
+      },
+      "description": "When documentation claims behavior, run its executable example.\n\nExample: run_example(project_root=\"/work/app\",\nexample_name=\"checkout_happy_path\") executes that declaration in a\ntimeout-bounded subprocess and returns stdout, stderr, duration, and\npass/fail evidence. This executes trusted project code: not read-only,\npotentially destructive, non-idempotent, and closed-world.\n\nArgs:\n    project_root: The project containing the examples.\n    example_name: Run only this example (default: run all).\n    source_path: Narrow discovery to one file or directory\n        (default: the whole project root).\n    timeout_seconds: Per-example subprocess timeout.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "example_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Example Name"
+          },
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          },
+          "source_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Path"
+          },
+          "timeout_seconds": {
+            "default": 30,
+            "title": "Timeout Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "project_root"
+        ],
+        "title": "run_exampleArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "run_example",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "run_exampleDictOutput",
+        "type": "object"
+      },
+      "title": "Run a documented example"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Start a new component"
+      },
+      "description": "When starting new behavior, create a valid intent-first component.\n\nExample: scaffold_module(project_root=\"/work/app\",\nmodule_name=\"billing\", kind=\"SERVICE\", layer=\"APPLICATION\") writes a\nchecked .s0ma skeleton and returns its content, survival rules, and a\ncheck action. Edit intent/contracts rather than generated Python. The\nproject must already be initialized. Mutating, non-destructive,\nidempotent, and closed-world.\n\nArgs:\n    project_root: The project to scaffold into (explicit root;\n        writes outside it are refused).\n    module_name: New module name (PascalCase or snake_case).\n    kind: Nerve kind \u2014 SERVICE, FUNCTION, ADAPTER, or\n        ORCHESTRATOR.\n    layer: DOMAIN, APPLICATION, INFRASTRUCTURE, or PRESENTATION.\n    output_dir: Target directory (default: <project_root>/src),\n        inside the project tree.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "default": "SERVICE",
+            "title": "Kind",
+            "type": "string"
+          },
+          "layer": {
+            "default": "DOMAIN",
+            "title": "Layer",
+            "type": "string"
+          },
+          "module_name": {
+            "title": "Module Name",
+            "type": "string"
+          },
+          "output_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Output Dir"
+          },
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_root",
+          "module_name"
+        ],
+        "title": "scaffold_moduleArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "scaffold_module",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "scaffold_moduleDictOutput",
+        "type": "object"
+      },
+      "title": "Start a new component"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false,
+        "title": "Send approved feedback"
+      },
+      "description": "Ask the user to approve this exact feedback data, then send it.\n\nExample: submit_feedback(envelope=..., payload_sha256=...) \u2014 pass BOTH\nthrough from prepare_feedback unchanged; any edit needs a fresh one. On\napproval this sends and returns a receipt, else it saves a local draft.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "contact_ok": {
+            "default": false,
+            "title": "Contact Ok",
+            "type": "boolean"
+          },
+          "envelope": {
+            "additionalProperties": true,
+            "title": "Envelope",
+            "type": "object"
+          },
+          "payload_sha256": {
+            "title": "Payload Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "envelope",
+          "payload_sha256"
+        ],
+        "title": "submit_feedbackArguments",
+        "type": "object"
+      },
+      "meta": {
+        "anthropic/requiresUserInteraction": true
+      },
+      "name": "submit_feedback",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "submit_feedbackDictOutput",
+        "type": "object"
+      },
+      "title": "Send approved feedback"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "Transpile one source file"
+      },
+      "description": "When iterating on one source, emit its Python, IR, and source map.\n\nExample: transpile(source_path=\"/work/app/src/billing.s0ma\",\nproject_root=\"/work/app\") returns structured diagnostics and emitted\nartifact paths. Use build_project for cross-module resolution. Mutating,\nnon-destructive, idempotent, and closed-world.\n\nArgs:\n    source_path: A .s0ma file, or a directory of .s0ma files.\n    project_root: Explicit project root; defaults to the\n        source's own directory. Writes outside it are refused.\n    mode: Strictness mode \u2014 migration, dev, strict, or release.\n    output_dir: Artifact destination (default: next to each\n        source file); must be inside the project root.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "mode": {
+            "default": "dev",
+            "title": "Mode",
+            "type": "string"
+          },
+          "output_dir": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Output Dir"
+          },
+          "project_root": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Project Root"
+          },
+          "source_path": {
+            "title": "Source Path",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_path"
+        ],
+        "title": "transpileArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "transpile",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "transpileDictOutput",
+        "type": "object"
+      },
+      "title": "Transpile one source file"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false,
+        "title": "Verify imports in the app's Python"
+      },
+      "description": "After static checks pass, prove imports in the app's real Python.\n\nExample: verify_host(project_root=\"/work/app\",\npython=\"/work/app/.venv/bin/python\", gate_mode=\"release\") returns a\nnested s0ma-host-verification@1 document with interpreter, dependency,\nand isolated import evidence. DANGER: this imports trusted project code\nwithout a sandbox; it may perform arbitrary side effects. Explicitly\napprove execution first. Not read-only, potentially destructive,\nnon-idempotent, and open-world.\n\nArgs:\n    project_root: Explicit root containing pyproject.toml and build.\n    python: Explicit host Python executable. Omit to resolve\n        [tool.s0ma].venv_path, then platform .venv, else refuse.\n    gate_mode: Optional caller-selected gate policy. Omit for a\n        report-only probe whose gate.passes is null.\n    module_timeout_seconds: Per-module import timeout.\n    timeout_seconds: Whole-run timeout.",
+      "execution": null,
+      "icons": null,
+      "inputSchema": {
+        "properties": {
+          "gate_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Gate Mode"
+          },
+          "module_timeout_seconds": {
+            "default": 10.0,
+            "title": "Module Timeout Seconds",
+            "type": "number"
+          },
+          "project_root": {
+            "title": "Project Root",
+            "type": "string"
+          },
+          "python": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Python"
+          },
+          "timeout_seconds": {
+            "default": 60.0,
+            "title": "Timeout Seconds",
+            "type": "number"
+          }
+        },
+        "required": [
+          "project_root"
+        ],
+        "title": "verify_hostArguments",
+        "type": "object"
+      },
+      "meta": null,
+      "name": "verify_host",
+      "outputSchema": {
+        "additionalProperties": true,
+        "title": "verify_hostDictOutput",
+        "type": "object"
+      },
+      "title": "Verify imports in the app's Python"
+    }
+  ]
+}

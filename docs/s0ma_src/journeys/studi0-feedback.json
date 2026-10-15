@@ -1,0 +1,62 @@
+{
+  "record": {
+    "concepts_required": [
+      "concept:intent",
+      "concept:module",
+      "concept:registry-snapshot",
+      "concept:self-model"
+    ],
+    "concepts_taught": [
+      "concept:proprioception",
+      "concept:feedback"
+    ],
+    "evidence": [
+      {
+        "id": "example:transcript/studi0-feedback",
+        "source": "docs/s0ma_src/evidence/studi0-feedback.json"
+      }
+    ],
+    "id": "journey:studi0-feedback",
+    "intent": "Look at the system you have built, notice the thing that is wrong with it, and tell the people who make s0ma — with the whole report in front of you, and nothing leaving your machine until you say so.",
+    "recovery_paths": [
+      {
+        "action": "The viewer is running and there is nothing built for it to draw. Build the project once and reload the page — the viewer repaints as builds land, so nothing needs restarting.",
+        "next_surface": "cli:s0ma/build",
+        "when": "NOT_BUILT"
+      }
+    ],
+    "steps": [
+      {
+        "approval_boundary": "",
+        "expected_outcome": "A local address on your own machine, printed and then opened in a browser. The viewer reads what the build produced; it never runs your application.",
+        "purpose": "Put the built project on screen, so you are looking at what it is rather than at what you remember writing.",
+        "surface": "cli:s0ma/studi0"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The whole graph the build produced, wrapped in the reading number it belongs to — the same document the graph command prints, passed on entire rather than summarised, so the picture and the build cannot disagree.",
+        "purpose": "Let the page ask for the thing it draws: every part of the project, and the wiring between the parts.",
+        "surface": "studi0:action/api/graph"
+      },
+      {
+        "approval_boundary": "You are approving one exact feedback report — the one printed just above the question, ending in its fingerprint. Nothing is sent until you answer yes, and answering anything else sends nothing at all.",
+        "expected_outcome": "The report on screen field by field, in the words you wrote, ending in the fingerprint that ties it to what you approve; then two questions — whether kn0wthyself may contact you, and whether to send exactly this.",
+        "purpose": "Write up what the picture showed you in one line, and read back the report s0ma composed from it before deciding anything.",
+        "surface": "cli:s0ma/feedback"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "Every report written on this machine and not yet sent, each with its short identifier and the line you wrote — or one sentence saying there are none, which is the answer when nothing was ever composed.",
+        "purpose": "Find the report again after answering no, or after a send that could not get through — it was saved before the question that sends anything.",
+        "surface": "cli:s0ma/feedback/drafts"
+      },
+      {
+        "approval_boundary": "The same approval as the first time, asked again on the saved report: nothing is sent until you answer yes, and answering no leaves the draft exactly where it was.",
+        "expected_outcome": "The saved report shown again in full, the contact answer you already gave repeated back to you, and the same send question — a second look at exactly what would travel.",
+        "purpose": "Read the saved report once more and finish sending it, or decide again not to.",
+        "surface": "cli:s0ma/feedback/submit"
+      }
+    ]
+  },
+  "schema": "s0ma-docs-journeys@1"
+}

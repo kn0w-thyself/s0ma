@@ -1,0 +1,38 @@
+module order_repository
+    layer: INFRASTRUCTURE
+    version: 1.0.0
+    intent: "Infrastructure-layer adapter that persists Order instances after the application service has validated them."
+    uses: [order_model.Order, order_service.process_order]
+    exports: [save_order]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve save_order :: INFRASTRUCTURE
+    kind: ADAPTER
+    visibility: PUBLIC
+    intent: "Save an Order instance to durable storage if process_order accepts it."
+    expects: "An Order instance with a populated id."
+    guarantees: "Returns True if the order was queued (and persisted), False otherwise."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def save_order(order: Order) -> bool:
+        status = process_order(order)
+        if status == "queued":
+            # Pretend to write to a persistence layer.
+            return True
+        return False

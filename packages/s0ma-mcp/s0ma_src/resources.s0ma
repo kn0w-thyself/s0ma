@@ -1,0 +1,1674 @@
+module resources
+    layer: PRESENTATION
+    version: 0.7.0
+    intent: "Agent-guide and meta resource providers for the s0ma authoring MCP server: the packaged alignment corpus and runtime self-prompting guide, the generated error catalog and changelog, the live version surface, the server's own self-model, the per-project operational runbook, and the packaged documentation snapshot every read surface of this server answers from, with the three bounded s0ma://docs resources that make it addressable."
+    requires: [functools, json, platform, pathlib.Path, dataclasses.dataclass, importlib:metadata, importlib:resources, typing.Any, s0ma_mcp:self_model_json]
+    deferred_requires: [s0ma_dsl.project:S0maProject, s0ma_dsl.errors:S0maProjectNotFound, s0ma_dsl.cli.main:_discover_s0ma_files, s0ma_dsl.cache:extract_module_name, s0ma_dsl.docs_model:deserialize_bundle, s0ma_dsl.docs_model.resolve:TopicIndex, s0ma_dsl.docs_model.learn_pages:page_path, s0ma_dsl.docs_model.reference_pages:PAGE_BY_ID_CLASS, s0ma_dsl.docs_model.reference_pages:deep_link]
+    exports: [GuideDoc, GUIDE_DOCS, load_doc, getting_started_resource, survival_card_resource, self_prompting_resource, system_prompt_resource, quick_reference_resource, quick_reference_machine_resource, patterns_resource, spec_resource, errors_resource, changelog_resource, version_document, version_resource, self_model_resource, runbook_resource, DOCS_MODEL_FILENAME, DOCS_MODEL_SOURCE, DOCS_ROOT, DOCS_MAP_PAGE, DOCS_SURFACES_PAGE, DOCS_CATEGORY_WORDS, load_docs_model, docs_bundle, docs_topic_index, docs_snapshot_identity, docs_page_for, docs_journey_steps, docs_journey_recovery, docs_index_resource, docs_concepts_resource, docs_journeys_resource]
+
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    exports_helpers: none
+cell SERVER_NAME :: PRESENTATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "The MCP server name (FR-MCP-1) in the version document."
+    schema: "str constant. Value: s0ma-authoring."
+    invariants: none
+    covered_by: none
+    ---
+    SERVER_NAME: str = "s0ma-authoring"
+
+cell GuideDoc :: PRESENTATION
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "One packaged document (agent guide or meta resource): its loader key, MCP resource URI, packaged filename, and drift-gate source path."
+    schema: "Frozen dataclass. key: str, uri: str, filename: str, source: str. All fields required; source is repo-root-relative and used only by the drift gate."
+    invariants: none
+    covered_by: none
+    ---
+    @dataclass(frozen=True)
+    class GuideDoc:
+        """One packaged document (agent guide or meta resource).
+
+        Attributes:
+            key: Short identifier used by :func:`load_doc`.
+            uri: The MCP resource URI the server registers for it.
+            filename: Filename inside ``s0ma_mcp/_docs/``.
+            source: Repo-root-relative path of the in-repo source document
+                this file is a committed copy of (the drift gate compares
+                the two; most live under ``packages/s0ma-dsl/docs/``, the
+                changelog at the repo root, and the quick reference in both
+                its forms under ``docs/``, where the documentation build
+                writes it).
+        """
+
+        key: str
+        uri: str
+        filename: str
+        source: str
+
+cell GUIDE_DOCS :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Keyed registry of every packaged document the server serves: key, URI, packaged filename, and the in-repo source the drift gate byte-compares."
+    schema: "dict[str, GuideDoc] keyed by loader key; source paths are monorepo-root-relative and exist only in a repo checkout."
+    invariants: none
+    covered_by: none
+    ---
+    GUIDE_DOCS: dict[str, GuideDoc] = {
+        doc.key: doc
+        for doc in (
+            GuideDoc(
+                key="getting-started",
+                uri="s0ma://guide/getting-started",
+                filename="getting-started.md",
+                source="docs/getting-started.md",
+            ),
+            GuideDoc(
+                key="survival-card",
+                uri="s0ma://guide/survival-card",
+                filename="survival_card.md",
+                source="packages/s0ma-dsl/docs/survival_card.md",
+            ),
+            GuideDoc(
+                key="system-prompt",
+                uri="s0ma://guide/system-prompt",
+                filename="agent_system_prompt.md",
+                source="packages/s0ma-dsl/docs/agent_system_prompt.md",
+            ),
+            GuideDoc(
+                key="self-prompting",
+                uri="s0ma://guide/self-prompting",
+                filename="self_prompting.md",
+                source="packages/s0ma-dsl/docs/self_prompting.md",
+            ),
+            GuideDoc(
+                key="quick-reference",
+                uri="s0ma://guide/quick-reference",
+                filename="quick-reference-readable.md",
+                source="docs/reference/quick-reference-readable.md",
+            ),
+            GuideDoc(
+                key="quick-reference-machine",
+                uri="s0ma://guide/quick-reference.json",
+                filename="quick-reference-machine.json",
+                source="docs/_generated/quick-reference-machine.json",
+            ),
+            GuideDoc(
+                key="patterns",
+                uri="s0ma://guide/patterns",
+                filename="dsl_patterns_guide.md",
+                source="packages/s0ma-dsl/docs/references/dsl_patterns_guide.md",
+            ),
+            GuideDoc(
+                key="spec",
+                uri="s0ma://spec/current",
+                filename="s0ma-dsl-spec-v0.17.0.md",
+                source="packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
+            ),
+            GuideDoc(
+                key="errors",
+                uri="s0ma://guide/errors",
+                filename="common_errors.md",
+                source="packages/s0ma-dsl/docs/_generated/common_errors.md",
+            ),
+            GuideDoc(
+                key="changelog",
+                uri="s0ma://meta/changelog",
+                filename="CHANGELOG.md",
+                source="CHANGELOG.md",
+            ),
+        )
+    }
+
+nerve load_doc :: PRESENTATION
+    kind: ADAPTER
+    visibility: PUBLIC
+    intent: "Resolves the packaged agent-guide documents from s0ma_mcp/_docs package data via importlib.resources so they load from an installed wheel"
+    expects: "key is one of the GUIDE_DOCS loader keys"
+    guarantees: "Returns the packaged document's full UTF-8 text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        GUIDE_DOCS: {relation: READS, carries: "packaged-document registry", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def load_doc(key: str) -> str:
+        """Return the full text of the packaged document ``key``.
+
+        Args:
+            key: One of ``"survival-card"``, ``"system-prompt"``,
+                ``"self-prompting"``, ``"quick-reference"``,
+                ``"quick-reference-machine"``, ``"patterns"``, ``"spec"``,
+                ``"errors"``, ``"changelog"`` (see ``GUIDE_DOCS``).
+
+        Returns:
+            The document's UTF-8 text.
+
+        Raises:
+            KeyError: If ``key`` is not a known guide document. Start with
+                ``"getting-started"`` for the canonical cold journey.
+            FileNotFoundError: If the packaged file is missing from the
+                installed distribution (a packaging bug — the wheel smoke
+                test in the consolidation plan exists to catch this).
+        """
+        doc = GUIDE_DOCS[key]
+        path = resources.files("s0ma_mcp").joinpath("_docs", doc.filename)
+        return path.read_text(encoding="utf-8")
+
+nerve system_prompt_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the drop-in coding-agent system prompt that teaches an LLM how to author .s0ma files"
+    expects: "the agent system prompt is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the full prompt text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://guide/system-prompt"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def system_prompt_resource() -> str:
+        """The s0ma DSL coding-agent system prompt.
+
+        A drop-in prompt (or prompt fragment) instructing an LLM how to
+        author .s0ma files: file structure, declaration types, required
+        fields, body rules, dependency rules, visibility, naming.
+        """
+        return load_doc("system-prompt")
+
+nerve getting_started_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the canonical outcome-first cold-start journey: product fit, project creation, model orientation, dependency inspection, drift and release-gate proof, and explicit host verification."
+    expects: "the canonical getting-started guide is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the same getting-started Markdown embedded in the root README"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://guide/getting-started"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "getting-started loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def getting_started_resource() -> str:
+        """What s0ma is, who it fits, and how to prove its value.
+
+        The canonical cold journey shared with the root README: initialize,
+        orient with project_status, inspect canonical dependency facts, watch
+        generated drift and pending release debt block, then explicitly prove
+        imports under the host application's trusted Python.
+        """
+        return load_doc("getting-started")
+
+nerve survival_card_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the survival card (under 4 KB): the bootstrap loop, the three body rules, one minimal valid module, and the recovery moves for the top diagnostic codes — deliberately small enough to hold in context"
+    expects: "the survival card is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the full survival-card text (deliberately under a few KB)"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://guide/survival-card"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def survival_card_resource() -> str:
+        """The s0ma survival card (under 4 KB) — read this FIRST, hold it in context.
+
+        The 60-second version of everything needed to author valid
+        modules: the bootstrap loop (project_status -> init_project ->
+        scaffold_module -> edit -> check -> build_project), the three
+        rules that prevent most errors (only edit .s0ma; a nerve body is
+        exactly one def; imports are declared in the module header's
+        requires:, never written in bodies), one minimal valid module,
+        and the fix for the most common diagnostic codes. Small by
+        contract — safe to read whole even in a tight context window.
+        """
+        return load_doc("survival-card")
+
+nerve self_prompting_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the runtime self-prompting guide: verified companion loading, self_inspect adapter wiring, a ContextAssembler concierge-shaped example, and the recommended host prompt trust block."
+    expects: "the runtime self-prompting guide is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the full runtime self-prompting guide text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://guide/self-prompting"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def self_prompting_resource() -> str:
+        """Runtime self-prompting and verified self_inspect wiring.
+
+        Shows an application host how to load the content-addressed card and
+        companion with s0ma-core, register the deterministic self_inspect
+        adapter, assemble an F1-shaped concierge context profile, and keep
+        authored intents inside the explicit untrusted-data boundary.
+        """
+        return load_doc("self-prompting")
+
+nerve quick_reference_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the generated s0ma quick reference, the page written for a reader: every kind of declaration, every line each may carry with whether it must be written, the words a line chooses from, a checked sample of each kind, the everyday commands, the strictness modes and the basic rules, rendered by the documentation build from the language the check enforces"
+    expects: "the quick reference page is packaged under s0ma_mcp/_docs as a byte-identical copy of docs/reference/quick-reference-readable.md"
+    guarantees: "Returns the full quick-reference page as Markdown"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://guide/quick-reference"
+        mcp_mime_type: "text/markdown"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def quick_reference_resource() -> str:
+        """The s0ma quick reference: every declaration, line by line.
+
+        One page, generated from the language itself when the release's
+        documentation is built: the kinds of declaration and when to
+        reach for each, every line each kind may carry and whether it
+        must be written, whether a line may be none or pending, the
+        words a line chooses from, a checked sample of every kind, the
+        everyday commands, the strictness modes and the basic rules.
+        Look a topic up here rather than holding the page in context;
+        the rules to keep in mind are s0ma://guide/survival-card. The
+        same facts as data, for a program, are
+        s0ma://guide/quick-reference.json.
+        """
+        return load_doc("quick-reference")
+
+nerve quick_reference_machine_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the generated s0ma quick reference as data (schema s0ma-quick-reference@1): the same facts as the page, rendered from the same value, so that a coding agent can read every line of every kind of declaration without reading a page laid out for a person"
+    expects: "the quick reference data twin is packaged under s0ma_mcp/_docs as a byte-identical copy of docs/_generated/quick-reference-machine.json"
+    guarantees: "Returns the full quick-reference document as JSON text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://guide/quick-reference.json"
+        mcp_mime_type: "application/json"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def quick_reference_machine_resource() -> str:
+        """The s0ma quick reference as data (JSON, schema s0ma-quick-reference@1).
+
+        The same facts as s0ma://guide/quick-reference, rendered from the
+        same value at the same build, so the two cannot disagree: every
+        kind of declaration with every line it may carry, whether each
+        must be written and what it may hold instead, the closed sets of
+        words, the sample project, the commands, the modes, the rules
+        and the identity of the release described. Read this form when
+        you want to look a line up by name instead of reading prose.
+        """
+        return load_doc("quick-reference-machine")
+
+nerve patterns_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the DSL patterns guide of worked idioms and recipes for structuring non-trivial s0ma applications"
+    expects: "the patterns guide is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the full patterns-guide text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://guide/patterns"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def patterns_resource() -> str:
+        """The s0ma DSL patterns guide — idioms for real applications.
+
+        Worked patterns and recipes (component shapes, layering,
+        documentation declarations, testing) distilled from real s0ma
+        projects. Read after the quick reference when structuring
+        non-trivial modules.
+        """
+        return load_doc("patterns")
+
+nerve spec_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the current normative s0ma DSL language specification — the authority when the guides are not enough"
+    expects: "the language spec is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the full specification text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://spec/current"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def spec_resource() -> str:
+        """The current s0ma DSL language specification (normative).
+
+        The full grammar and semantics: every declaration kind, field,
+        namespace rule, strictness mode, error code, and artifact
+        format. The authority when the guides are not enough.
+        """
+        return load_doc("spec")
+
+nerve errors_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix"
+    expects: "the generated error catalog is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the full error-catalog text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://guide/errors"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def errors_resource() -> str:
+        """The s0ma diagnostic error catalog (FR-MCP-10).
+
+        Every s0ma-dsl error code in one table: severity per strictness
+        mode (migration / dev / strict / release) and a one-sentence
+        description of the cause and canonical fix. Look unfamiliar
+        diagnostic codes up here while working the check loop — generated
+        from the DSL's own error-code registry, so it cannot drift from
+        the diagnostics the tools return.
+        """
+        return load_doc("errors")
+
+nerve changelog_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the monorepo's canonical changelog so agents and humans can read what changed in the installed toolchain version"
+    expects: "the changelog copy is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the full changelog text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://meta/changelog"
+    depends_on:
+        load_doc: {relation: CALLS, carries: "loader key", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def changelog_resource() -> str:
+        """The s0ma platform changelog — what's new, per version (FR-MCP-10).
+
+        The monorepo's canonical Keep-a-Changelog document covering every
+        package (s0ma-core, s0ma-dsl, s0ma-mcp — one lockstep version,
+        INV-4). Read it to learn what changed in the version you are
+        running, or what an upgrade would bring; pair with
+        s0ma://meta/version for the installed versions themselves.
+        """
+        return load_doc("changelog")
+
+helper _dist_version :: PRESENTATION
+    intent: "The installed version of a distribution, or None if it is absent from the environment."
+    ---
+    def _dist_version(distribution: str) -> str | None:
+        """The installed version of ``distribution``, or ``None`` if absent."""
+        try:
+            return metadata.version(distribution)
+        except metadata.PackageNotFoundError:  # pragma: no cover - broken env
+            return None
+
+nerve version_document :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Builds the version surface as a JSON-compatible dict, rendered live from importlib.metadata with no file reads and no network (FR-MCP-10, P-6)"
+    expects: "importlib.metadata can see the installed distributions"
+    guarantees: "Returns a dict with server, s0ma_core, s0ma_dsl, s0ma_mcp, s0ma_studi0, mcp_sdk, and python keys; None marks a distribution that is not installed"
+    forbids: "Never reads a version from a packaged file or reaches the network; each one comes live from the running environment."
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        SERVER_NAME: {relation: READS, carries: "server identity", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def version_document() -> dict[str, Any]:
+        """The version surface as a JSON-compatible dict (FR-MCP-10).
+
+        Rendered live from ``importlib.metadata`` — no packaged file, no
+        network (PRD P-6 / plan D-2). ``None`` marks a distribution that
+        is not installed: a broken environment for s0ma-core / s0ma-dsl /
+        s0ma-mcp, and an ordinary absence for the optional s0ma-studi0
+        viewer. Neither is hidden.
+        """
+        return {
+            "server": SERVER_NAME,
+            "s0ma_core": _dist_version("s0ma-core"),
+            "s0ma_dsl": _dist_version("s0ma-dsl"),
+            "s0ma_mcp": _dist_version("s0ma-mcp"),
+            "s0ma_studi0": _dist_version("s0ma-studi0"),
+            "mcp_sdk": _dist_version("mcp"),
+            "python": platform.python_version(),
+        }
+
+nerve version_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the installed toolchain versions (server, the four s0ma distributions, MCP SDK, Python) live from importlib.metadata — offline by design"
+    expects: "version_document renders the installed distributions"
+    guarantees: "Returns the version document as pretty-printed JSON text"
+    forbids: "Never reaches the network to report the installed versions."
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://meta/version"
+        mcp_mime_type: "application/json"
+    depends_on:
+        version_document: {relation: CALLS, carries: "version document", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def version_resource() -> str:
+        """The installed s0ma toolchain versions as JSON (FR-MCP-10).
+
+        One document answering "what exactly am I talking to":
+        {server, s0ma_core, s0ma_dsl, s0ma_mcp, s0ma_studi0, mcp_sdk,
+        python} — the server name and the installed versions of the four
+        s0ma distributions (s0ma_studi0 is null when the optional viewer
+        is not installed), the MCP SDK, and the Python runtime, rendered
+        live via importlib.metadata. Offline by design: no file is read
+        and no network is touched. Pair with s0ma://meta/changelog to see what
+        your versions contain.
+        """
+        return json.dumps(version_document(), indent=2)
+
+nerve self_model_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves this server's own live component graph as JSON — every tool, resource, prompt, and factory with kind, layer, intent, and dependencies, the same registry the served surface is derived from (FR-MCP-7)"
+    expects: "the s0ma_mcp self-model registry is importable"
+    guarantees: "Returns the live component graph as pretty-printed JSON text"
+    forbids: "Never serves a component graph that can drift from the MCP surface this server serves."
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://self/model"
+        mcp_mime_type: "application/json"
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def self_model_resource() -> str:
+        """The authoring server's live self-model (FR-MCP-7) as JSON.
+
+        The server eats its own dog food (FR-MCP-11): every tool,
+        resource, and prompt here is authored as a s0ma component, and
+        this document is the live graph the served surface is derived
+        from — components with name, kind, layer, intent, and
+        dependencies, rendered through s0ma-core's own registry snapshot,
+        plus the server's name and version. Read it to learn what this
+        server is and what it can do; the ``describe_server`` tool returns
+        the same graph with an LLM-ready text rendering.
+        """
+        return self_model_json()
+
+helper _render_runbook :: PRESENTATION
+    intent: "Renders the operational-runbook markdown for the project discovered by walking up from `start`, or the teaching variant (what to declare, where) when no project or no runbook keys are found — always serves, never raises, never empty. Undeclared and partially-declared states LEAD with the not-a-fault disclaimer, so a mid-diagnosis agent cannot mistake a missing runbook for the root cause of a live service fault."
+    ---
+    def _render_runbook(start: Path) -> str:
+        """Render the ops runbook markdown for the project rooted at ``start``.
+
+        Discovers the project by walking up from ``start`` — in production
+        the server's working directory, which the blessed per-project
+        registration (``claude mcp add s0ma --scope project -- uv run
+        s0ma-mcp``) sets to the project root. On success renders the
+        declared runbook fields; on ``S0maProjectNotFound`` (or any
+        toolchain load error) renders the teaching variant naming what to
+        declare and where. Read-only — it never writes, so resolving from
+        the working directory does not engage the NFR-6 write fence (that
+        fence governs writes, and every writing tool still takes an
+        explicit project_root).
+
+        Args:
+            start: Directory to begin project discovery from.
+
+        Returns:
+            The runbook markdown text (always non-empty).
+        """
+        try:
+            project = S0maProject.discover(start)
+        except S0maProjectNotFound:
+            project = None
+        except Exception:  # noqa: BLE001 — a broken toolchain still teaches
+            project = None
+
+        lines: list[str] = []
+        name = project.project_name if project is not None else "(no project resolved)"
+        lines.append(f"# Operational runbook — {name}")
+        lines.append("")
+
+        # batch-01c M1 (warm O3): a mid-diagnosis agent read
+        # runbook_declared: false and blamed a live env-var fault on the
+        # undeclared runbook — the one incorrect detection verdict in its
+        # cell. Whenever the runbook is undeclared or only partially
+        # declared, LEAD with the not-a-fault disclaimer: an absent
+        # runbook is a documentation gap, never a service defect, and a
+        # failure is diagnosed from observed behavior, not from what the
+        # runbook fails to declare.
+        if project is None:
+            declared_fields: list[str] = []
+        else:
+            declared_fields = [
+                field_name
+                for field_name, present in (
+                    ("run_command", bool(project.run_command)),
+                    ("health_command", bool(project.health_command)),
+                    ("env", bool(project.env)),
+                    ("state_paths", bool(project.state_paths)),
+                    ("runbook_notes", bool(project.runbook_notes)),
+                )
+                if present
+            ]
+        if not declared_fields:
+            lines.append(
+                "> No runbook fields are declared. This is a documentation "
+                "gap, never a service fault — the absence of a runbook "
+                "cannot break or degrade a running service. If you are "
+                "diagnosing a failure, diagnose from observed behavior, "
+                "configuration, and environment; declare a runbook "
+                "afterward as follow-up documentation."
+            )
+            lines.append("")
+        elif len(declared_fields) < 5:
+            lines.append(
+                "> Some runbook fields are undeclared below (marked \"not "
+                "declared\"). An undeclared runbook field is a documentation "
+                "gap, never a service fault — a missing field cannot break "
+                "or degrade a running service. If you are diagnosing a "
+                "failure, diagnose from observed behavior, configuration, "
+                "and environment; declare the missing fields afterward as "
+                "follow-up documentation."
+            )
+            lines.append("")
+
+        if project is None:
+            lines.append(
+                "No s0ma project was resolved from the server's working "
+                f"directory (no [tool.s0ma] table found walking up from {start}). "
+                "This runbook renders per project — declare the ops keys under "
+                "[tool.s0ma] in your project's pyproject.toml (see \"Declaring "
+                "the runbook\" below) and read this resource again. The ops "
+                "rules below apply regardless."
+            )
+            lines.append("")
+
+        run_cmd = project.run_command if project is not None else None
+        health_cmd = project.health_command if project is not None else None
+        lines.append("## Run & health")
+        lines.append(
+            f"- run command: `{run_cmd}`" if run_cmd else
+            "- run command: (not declared — add `run_command = \"...\"` under [tool.s0ma])"
+        )
+        lines.append(
+            f"- health command: `{health_cmd}`" if health_cmd else
+            "- health command: (not declared — add `health_command = \"...\"` under [tool.s0ma])"
+        )
+        lines.append("")
+
+        env = project.env if project is not None else {}
+        lines.append("## Environment")
+        if env:
+            for var_name in sorted(env):
+                spec = env[var_name]
+                bits = [
+                    f"required={str(spec.required).lower()}",
+                    f"fail_fast={str(spec.fail_fast).lower()}",
+                ]
+                if spec.default is not None:
+                    bits.append(f"default=`{spec.default}`")
+                lines.append(f"- `{var_name}`: " + ", ".join(bits))
+        else:
+            lines.append(
+                "- (no environment variables declared — add "
+                "[tool.s0ma.env.<NAME>] subtables)"
+            )
+        lines.append("")
+
+        state_paths = project.state_paths if project is not None else ()
+        lines.append("## Runtime state — NEVER revert, restore, or regenerate")
+        if state_paths:
+            for state_path in state_paths:
+                lines.append(f"- `{state_path}`")
+        else:
+            lines.append(
+                "- (no state_paths declared — add `state_paths = [\"...\"]` "
+                "under [tool.s0ma] for every path that holds live runtime data)"
+            )
+        lines.append(
+            "These paths hold runtime state the running application owns and "
+            "produces — NOT derivable from source. Do not restore a committed "
+            "version, revert, or regenerate them: that destroys real data. "
+            "(See the ops rules below.)"
+        )
+        lines.append("")
+
+        module_names: list[str] = []
+        if project is not None:
+            try:
+                seen: set[str] = set()
+                for source_root in project.source_roots:
+                    for source_file in _discover_s0ma_files(str(source_root)):
+                        module_name = extract_module_name(source_file)
+                        if module_name not in seen:
+                            seen.add(module_name)
+                            module_names.append(module_name)
+                module_names.sort()
+            except Exception:  # noqa: BLE001 — inventory is best-effort
+                module_names = []
+        lines.append("## Modules")
+        if module_names:
+            lines.append(
+                f"{len(module_names)} module(s): " + ", ".join(module_names)
+            )
+        else:
+            lines.append("(no .s0ma modules discovered)")
+        lines.append("")
+
+        lines.append("## Ops rules")
+        lines.append(
+            "- Live state is the deliverable: demonstrate fixes on the durable "
+            "instance, and never restore committed versions of runtime data."
+        )
+        lines.append(
+            "- The state_paths above are runtime state, not source — never "
+            "revert, restore from git, or regenerate them."
+        )
+        lines.append(
+            "- Only edit .s0ma sources; a hand edit to a generated file under "
+            "build/ is refused by every build (GENERATED_FILE_DRIFT) until the "
+            ".s0ma source says the same thing. After editing a source, run "
+            "check then build_project."
+        )
+        lines.append("")
+
+        notes = project.runbook_notes if project is not None else ()
+        if notes:
+            lines.append("## Notes")
+            for note in notes:
+                lines.append(f"- {note}")
+            lines.append("")
+
+        lines.append("## Declaring the runbook")
+        lines.append(
+            "Add these keys to your project's pyproject.toml under [tool.s0ma] "
+            "(all optional):"
+        )
+        lines.append("")
+        lines.append("```toml")
+        lines.append("[tool.s0ma]")
+        lines.append('run_command = "uv run myapp"')
+        lines.append('health_command = "curl -fsS localhost:8080/health"')
+        lines.append('state_paths = ["var/app.db", "var/uploads"]')
+        lines.append('runbook_notes = "anything an operator should know"')
+        lines.append("")
+        lines.append("[tool.s0ma.env.DATABASE_URL]")
+        lines.append("required = true")
+        lines.append("fail_fast = true")
+        lines.append('default = "sqlite:///dev.db"')
+        lines.append("```")
+        lines.append("")
+        lines.append(
+            "For this project's live runtime facts (declared/required/"
+            "missing-required env, build status), call the project_status tool "
+            "— its `runtime` section reads them from an explicit project_root."
+        )
+
+        return "\n".join(lines)
+
+nerve runbook_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the per-project operational runbook: run/health commands, env contracts, runtime state_paths that must never be reverted, module inventory, and the ops rules — rendered from the project's [tool.s0ma] keys, or a teaching variant naming what to declare when they are absent"
+    expects: "the server's working directory is at or under the target project (the blessed per-project `uv run s0ma-mcp` registration); absent that, the teaching variant renders"
+    guarantees: "Returns the runbook markdown text; never raises and never empty — an unresolved project yields the teaching variant"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://project/runbook"
+        mcp_mime_type: "text/markdown"
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def runbook_resource() -> str:
+        """The project's operational runbook (O1) as markdown.
+
+        The ops-story surface: how to run and health-check the built
+        application, its declared environment-variable contracts, the
+        runtime `state_paths` that must NEVER be reverted or regenerated
+        (the bench's git-revert-of-live-DB failure), the module
+        inventory, and the ops rules — the same "live state is the
+        deliverable" rule the survival card carries, restated here with
+        the state_paths semantics. Rendered from the project resolved
+        from the server's working directory; when no project (or no
+        runbook keys) is found it still serves, teaching exactly what to
+        declare and where. For this project's live runtime facts with an
+        explicit root, use the project_status tool's `runtime` section.
+        """
+        return _render_runbook(Path.cwd())
+
+cell DOCS_MODEL_FILENAME :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The packaged documentation snapshot's filename inside s0ma_mcp/_docs, so a wheel install answers documentation questions from the release it is, not from a checkout it does not have."
+    schema: "str constant. Value: s0ma-docs-model.json."
+    invariants: none
+    covered_by: none
+    ---
+    DOCS_MODEL_FILENAME: str = "s0ma-docs-model.json"
+
+cell DOCS_MODEL_SOURCE :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The in-repo snapshot the packaged copy is a byte mirror of, named once here so the drift gate and the refresh instruction cannot disagree about which file to copy."
+    schema: "str constant, monorepo-root-relative. Value: docs/_generated/s0ma-docs-model.json."
+    invariants: none
+    covered_by: none
+    ---
+    DOCS_MODEL_SOURCE: str = "docs/_generated/s0ma-docs-model.json"
+
+cell DOCS_ROOT :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The documentation root the committed pages are written under, which is the tree every page path this server hands out is relative to."
+    schema: "str constant. Value: docs."
+    invariants: none
+    covered_by: none
+    ---
+    DOCS_ROOT: str = "docs"
+
+cell DOCS_MAP_PAGE :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The generated map of record — the page that lists every current document — used as the last-resort answer to 'where do I read more' for a topic no single page is written about."
+    schema: "str constant, monorepo-root-relative. Value: docs/README.md."
+    invariants: none
+    covered_by: none
+    ---
+    DOCS_MAP_PAGE: str = "docs/README.md"
+
+cell DOCS_SURFACES_PAGE :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The generated index of everything s0ma can do — the page that lists every served capability by id — where a surface with no reference page of its own is documented."
+    schema: "str constant, monorepo-root-relative. Value: docs/reference/surfaces-index.md."
+    invariants: none
+    covered_by: none
+    ---
+    DOCS_SURFACES_PAGE: str = "docs/reference/surfaces-index.md"
+
+cell DOCS_CATEGORY_WORDS :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "What each id prefix in the snapshot is, in one reader's phrase — the only authored words in the docs index, because the snapshot records categories by prefix and says nothing about what a prefix means. Counts, prefixes and page paths beside them are all read from the snapshot; a prefix with no phrase here still gets its own line, so a new category can never go missing from the index unnoticed."
+    schema: "dict[str, str] keyed by the part of a topic id before the first colon."
+    invariants: none
+    covered_by: none
+    ---
+    DOCS_CATEGORY_WORDS: dict[str, str] = {
+        "concept": "the ideas the language and the product are built from",
+        "cli": "what the s0ma command line does",
+        "config": "the [tool.s0ma] settings a project declares",
+        "diagnostic": "every code a check can report, and its fix",
+        "mcp": "the tools, resources and prompts the two MCP servers serve",
+        "studi0": "what the local viewer does",
+        "python": "the importable Python surface of the packages",
+        "rest": "the hosting service's HTTP endpoints",
+        "journey": "worked paths from a starting point to a finished outcome",
+        "doc": "the documents this product is written in",
+        "authority": "the clauses that decided things, quoted where they decide",
+    }
+
+nerve load_docs_model :: PRESENTATION
+    kind: ADAPTER
+    visibility: PUBLIC
+    intent: "Reads the packaged documentation snapshot out of s0ma_mcp/_docs package data, so the documentation read surfaces answer identically from a wheel and from a checkout"
+    expects: "the snapshot is packaged under s0ma_mcp/_docs"
+    guarantees: "Returns the snapshot's full UTF-8 text, byte-identical to the in-repo snapshot it was copied from"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        DOCS_MODEL_FILENAME: {relation: READS, carries: "packaged snapshot filename", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def load_docs_model() -> str:
+        """The packaged documentation snapshot, as text.
+
+        Returns:
+            The snapshot's UTF-8 text.
+
+        Raises:
+            FileNotFoundError: If the packaged file is missing from the
+                installed distribution (a packaging bug — the drift gate
+                in the test suite exists to catch this before a wheel is
+                built).
+        """
+        path = resources.files("s0ma_mcp").joinpath("_docs", DOCS_MODEL_FILENAME)
+        return path.read_text(encoding="utf-8")
+
+helper _docs_bundle_cached :: PRESENTATION
+    intent: "Deserializes the packaged snapshot once per process. The snapshot is half a megabyte of JSON and every documentation answer reads from it, so the parse is paid on the first question and never again; the file it reads is package data that cannot change under a running process, which is what makes caching it honest rather than merely fast."
+    ---
+    @functools.lru_cache(maxsize=1)
+    def _docs_bundle_cached() -> Any:
+        """The deserialized documentation bundle, parsed once."""
+        return deserialize_bundle(load_docs_model())
+
+helper _docs_index_cached :: PRESENTATION
+    intent: "Indexes the packaged snapshot once per process, for the same reason its parse is cached: the index is what every topic question resolves through, and rebuilding it per question would pay for 683 records to answer about one. The snapshot's own alias table is handed to the index, so an agent that arrives holding a term a release renamed is answered rather than missed."
+    ---
+    @functools.lru_cache(maxsize=1)
+    def _docs_index_cached() -> Any:
+        """The topic index over the packaged bundle, built once."""
+        bundle = _docs_bundle_cached()
+        return TopicIndex.of(bundle, bundle.alias_index())
+
+nerve docs_bundle :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Hands out the packaged documentation snapshot as records — the one reading every documentation surface of this server answers from"
+    expects: "the packaged snapshot is present and carries a schema version this build of the model reads"
+    guarantees: "Returns the same DocsBundle object on every call in a process; offline, and it consults nothing but package data"
+    forbids: "Never reaches the network or consults anything but package data."
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on: none
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_bundle() -> Any:
+        """The documentation snapshot this build ships, as records.
+
+        Every documentation answer this server gives is read from this
+        one object: the learn_s0ma tool, the three s0ma://docs
+        resources, and the journey a prompt walks. No network, no
+        model, no checkout — package data and nothing else.
+        """
+        return _docs_bundle_cached()
+
+nerve docs_topic_index :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Hands out the resolver's index over the packaged snapshot: everything this build can be asked about, and the ways of asking"
+    expects: "the packaged snapshot is present and readable"
+    guarantees: "Returns the same TopicIndex object on every call in a process"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on: none
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_topic_index() -> Any:
+        """Everything this build addresses, and the ways of asking.
+
+        The index the documentation resolver works over. One index for
+        every channel of this server, so `learn_s0ma` and the
+        s0ma://docs resources cannot answer to different spellings of
+        one question.
+        """
+        return _docs_index_cached()
+
+nerve docs_snapshot_identity :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "States which build of the documentation an answer came from: the release it describes, that release as a reader meets it (labelled when the build is not a release), and the snapshot digest of the records it was read out of"
+    expects: "the packaged snapshot is present and carries a build stamp"
+    guarantees: "Returns exactly the three identity keys, all non-empty"
+    forbids: "Never gives the version a reader meets without its channel label when the build is not a release."
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        docs_bundle: {relation: CALLS, carries: "the snapshot's build stamp", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_snapshot_identity() -> dict[str, str]:
+        """Which documentation build an answer came from.
+
+        Three facts, and the same three on every channel: the product
+        release the documentation describes, that release written the
+        way a reader meets it, and the digest of the snapshot the
+        answer was read out of. An answer that does not say which build
+        it is from cannot be checked against anything.
+
+        The version appears twice on purpose. `release_version` is the
+        bare number a caller compares; `version_line` is the written
+        form, which carries the channel label when this build is not a
+        released one — "0.18.1 (preview)". A blurb that printed the
+        bare number would tell its reader it is the released 0.18.1,
+        which is the one thing preview documentation may not say.
+        """
+        stamp = docs_bundle().stamp
+        return {
+            "release_version": str(stamp.release_version),
+            "version_line": str(stamp.version_line()),
+            "snapshot_hash": str(stamp.snapshot_hash),
+        }
+
+nerve docs_page_for :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Answers 'where is this written down in full' for one topic id, as a path in the s0ma repository — the reference pages' anchored deep link where the id class has one, the concept's own learning page, the page whose declared coverage names the topic, a document's or an authority clause's own source, and failing all of those the index that does list it"
+    expects: "topic_id is an id this build addresses"
+    guarantees: "Returns a non-empty repository-relative page path, never a machine path and never an invented one"
+    forbids: "Never answers with a machine path or an invented page path."
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        DOCS_ROOT: {relation: READS, carries: "the documentation root paths are relative to", coupling: TIGHT}
+        DOCS_MAP_PAGE: {relation: READS, carries: "the last-resort page", coupling: TIGHT}
+        DOCS_SURFACES_PAGE: {relation: READS, carries: "the served-capability index", coupling: TIGHT}
+        docs_bundle: {relation: CALLS, carries: "the declared page coverage", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_page_for(topic_id: str) -> str:
+        """Where one topic is written down in full, in the s0ma repository.
+
+        Six rules, tried in order, and every one of them derived:
+
+        1. a command, a setting or a diagnostic code has an anchored
+           entry on a generated reference page — the F3 deep link;
+        2. a concept has a page of its own under the learning
+           collection;
+        3. anything a committed document declares it *covers* is
+           written about on that document's own page (this is how a
+           journey reaches its guide);
+        4. a document is written where it says it is written;
+        5. an authority clause is written in the document it was
+           decided in;
+        6. a served capability with no page of its own is listed in the
+           index of everything s0ma can do, and everything else in the
+           map of record.
+
+        The path is relative to the repository, not to this machine:
+        these pages ship in the source tree, not in the wheel.
+        """
+        kind = topic_id.partition(":")[0]
+        if kind in PAGE_BY_ID_CLASS:
+            return deep_link(topic_id, docs_root=DOCS_ROOT)
+        if kind == "concept":
+            return f"{DOCS_ROOT}/{page_path(topic_id)}"
+        bundle = docs_bundle()
+        covering = sorted(
+            str(document.canonical_source)
+            for document in bundle.documents
+            if topic_id in document.covers
+        )
+        if covering:
+            return covering[0]
+        for document in bundle.documents:
+            if document.id == topic_id:
+                return str(document.canonical_source)
+        for authority in bundle.authorities:
+            if authority.id == topic_id:
+                return str(authority.source)
+        for surface in bundle.surfaces:
+            if surface.id == topic_id:
+                return DOCS_SURFACES_PAGE
+        return DOCS_MAP_PAGE
+
+nerve docs_journey_steps :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Reads one journey's steps out of the packaged snapshot in the order they are walked, so a prompt that teaches a journey renders the steps the model records rather than a second copy somebody has to keep in step with them"
+    expects: "journey_id names a journey this build records"
+    guarantees: "Returns one entry per recorded step, in walking order, each carrying the surface it calls, why, what a good result looks like, and any approval the step needs; an unknown id returns nothing rather than raising"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        docs_bundle: {relation: CALLS, carries: "the recorded journeys", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_journey_steps(journey_id: str) -> list[dict[str, str]]:
+        """One journey's steps, in the order they are walked.
+
+        The binding F7 put under the journey-shaped prompts: a prompt
+        that teaches a path reads the path from here, so adding,
+        removing or rewording a step in the model is the only way to
+        change what the prompt says — and the two can no longer drift
+        into two different accounts of one journey.
+        """
+        for journey in docs_bundle().journeys:
+            if journey.id != journey_id:
+                continue
+            return [
+                {
+                    "surface": str(step.surface),
+                    "purpose": str(step.purpose),
+                    "expected_outcome": str(step.expected_outcome),
+                    "approval_boundary": str(step.approval_boundary),
+                }
+                for step in journey.steps
+            ]
+        return []
+
+nerve docs_journey_recovery :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Reads one journey's recovery paths out of the packaged snapshot: the named thing that can go wrong, what to do about it, and the surface that does it — so a prompt that teaches a journey teaches its recoveries from the same record rather than from a second account of them"
+    expects: "journey_id names a journey this build records"
+    guarantees: "Returns one entry per recorded recovery path, in the order the journey records them; an unknown id returns nothing rather than raising"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        docs_bundle: {relation: CALLS, carries: "the recorded journeys", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_journey_recovery(journey_id: str) -> list[dict[str, str]]:
+        """One journey's recovery paths, as the model records them.
+
+        A journey says what goes right; a recovery path says what to do
+        when a named thing goes wrong instead, and which surface does it.
+        Read from the record for the same reason the steps are: two
+        accounts of one recovery are one account too many.
+        """
+        for journey in docs_bundle().journeys:
+            if journey.id != journey_id:
+                continue
+            return [
+                {
+                    "when": str(path.when),
+                    "action": str(path.action),
+                    "next_surface": str(path.next_surface),
+                }
+                for path in journey.recovery_paths
+            ]
+        return []
+
+helper _docs_category_lines :: PRESENTATION
+    intent: "Writes one line per category of the packaged snapshot: how many topics it holds, what it is, and the page its full entries are written on. Counts and prefixes are read from the index and the phrase is looked up beside them, so a category this build grew and nobody described still gets a line — an index that silently omitted a category would be exactly the kind of quiet gap the documentation application exists to refuse."
+    ---
+    def _docs_category_lines() -> list[str]:
+        """One line per id prefix in the snapshot, in prefix order."""
+        index = docs_topic_index()
+        counts: dict[str, int] = {}
+        first: dict[str, str] = {}
+        for identifier in index.ids():
+            prefix = identifier.partition(":")[0]
+            counts[prefix] = counts.get(prefix, 0) + 1
+            first.setdefault(prefix, identifier)
+        lines: list[str] = []
+        for prefix in sorted(counts):
+            words = DOCS_CATEGORY_WORDS.get(prefix, "no description is authored for this category yet")
+            lines.append(
+                f"- {prefix}: {counts[prefix]} topics — {words}. Ask by id, as "
+                f"in {first[prefix]}, which is written up in "
+                f"{docs_page_for(first[prefix]).partition('#')[0]}."
+            )
+        return lines
+
+helper _docs_alias_lines :: PRESENTATION
+    intent: "Writes the sentence that tells a reader this build answers to names it no longer uses, with a worked pair taken from the snapshot's own alias table rather than written out here — a hardcoded example would be the first thing to go stale, and it would be stale silently. A build with no aliases says nothing, which is the honest line for a build that has none to describe."
+    ---
+    def _docs_alias_lines() -> list[str]:
+        """The alias sentence and its blank line, or nothing at all."""
+        entries = docs_bundle().aliases
+        if not entries:
+            return []
+        first = min(entries, key=lambda entry: entry.id)
+        return [
+            f"{len(entries)} earlier names still answer. A term this "
+            f"release renamed resolves forward to the id that replaced "
+            f"it — learn_s0ma(topic=\"{first.id}\") answers about "
+            f"{first.canonical} — so a question phrased in an older "
+            f"vocabulary is answered rather than missed.",
+            "",
+        ]
+
+nerve docs_index_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the documentation index: which build this is, every category of topic it addresses with a count and an example id, how to ask for one, how many earlier names still answer, where the full pages are, and which s0ma://docs addresses belong to the other server"
+    expects: "the packaged snapshot is present and readable"
+    guarantees: "Returns the index text, every count and category read from the snapshot rather than written down"
+    forbids: "Never states a count or a category that is written down rather than read from the packaged snapshot."
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://docs/index"
+        mcp_mime_type: "text/markdown"
+    depends_on:
+        docs_snapshot_identity: {relation: CALLS, carries: "which build this is", coupling: TIGHT}
+        docs_topic_index: {relation: CALLS, carries: "every id this build addresses", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_index_resource() -> str:
+        """What s0ma can be asked about, and how to ask.
+
+        The starting point for questions about s0ma itself rather than
+        about your project: every category of topic this release
+        documents, how many there are, an id you can copy, and the page
+        each category is written out on. Ask for one topic with the
+        learn_s0ma tool.
+        """
+        identity = docs_snapshot_identity()
+        index = docs_topic_index()
+        lines = [
+            "# What s0ma can be asked about",
+            "",
+            f"This is s0ma {identity['version_line']}, documentation snapshot "
+            f"{identity['snapshot_hash']}. Every answer below comes from that "
+            f"snapshot and from nothing else.",
+            "",
+            f"Ask one question at a time with the learn_s0ma tool: "
+            f"learn_s0ma(topic=\"concept:ganglion\"). It answers in a few "
+            f"hundred bytes and names the page the rest is on. A term on its "
+            f"own works too — \"ganglion\" resolves to the same topic — and a "
+            f"question it cannot place comes back with the nearest ids this "
+            f"build does address.",
+            "",
+            *_docs_alias_lines(),
+            f"## The {len(index.ids())} topics this build addresses",
+            "",
+            *_docs_category_lines(),
+            "",
+            "## The other two resources here",
+            "",
+            "- s0ma://docs/concepts — every concept, one line each. Read it "
+            "once and you have the whole vocabulary.",
+            "- s0ma://docs/journeys — every worked path, step by step, as the "
+            "model records them.",
+            "",
+            "Commands, settings, diagnostic codes and served capabilities are "
+            "not resources here: there are hundreds of them, so they are "
+            "answered one at a time by learn_s0ma and written out in full on "
+            "the reference pages named above.",
+            "",
+            "## Not this server",
+            "",
+            "s0ma://docs/user-guide, s0ma://docs/compliance-rules and "
+            "s0ma://docs/architecture are served by a different server: the "
+            "one a built s0ma application exposes about itself. This server "
+            "is the authoring toolchain, and it documents s0ma. If you are "
+            "talking to both, the address alone does not tell you which; the "
+            "server does.",
+            "",
+        ]
+        return "\n".join(lines)
+
+nerve docs_concepts_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves the whole concept vocabulary in one read: every concept this build records, its id, its term and its authored one-sentence summary, in id order"
+    expects: "the packaged snapshot is present and readable"
+    guarantees: "Returns one line per recorded concept, each carrying the summary the concept itself declares, word for word"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://docs/concepts"
+        mcp_mime_type: "text/markdown"
+    depends_on:
+        docs_bundle: {relation: CALLS, carries: "the recorded concepts", coupling: TIGHT}
+        docs_snapshot_identity: {relation: CALLS, carries: "which build this is", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_concepts_resource() -> str:
+        """Every s0ma concept, one line each.
+
+        The whole vocabulary in one read: what each word means, in the
+        one sentence the concept itself declares. For the full page on
+        any of them — what it is for, when to use it, when not to, its
+        syntax and what decided it — ask learn_s0ma for its id.
+        """
+        identity = docs_snapshot_identity()
+        concepts = sorted(docs_bundle().concepts, key=lambda record: record.id)
+        lines = [
+            "# The s0ma vocabulary",
+            "",
+            f"{len(concepts)} concepts, from s0ma {identity['version_line']} "
+            f"(snapshot {identity['snapshot_hash']}). Each summary is the "
+            f"concept's own; ask learn_s0ma for an id to get the rest, or read "
+            f"the page named beside it.",
+            "",
+        ]
+        for record in concepts:
+            lines.append(
+                f"- `{record.id}` ({record.term}) — {record.summary} "
+                f"[{docs_page_for(record.id)}]"
+            )
+        lines.append("")
+        return "\n".join(lines)
+
+nerve docs_journeys_resource :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Serves every worked path this build records, step by step: what the path is for, each step's surface, why it is taken, what a good result looks like, any approval it needs, and what to do when a named thing goes wrong"
+    expects: "the packaged snapshot is present and readable"
+    guarantees: "Returns one section per recorded journey with its steps in walking order, read from the same records the journey-shaped prompts render"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_uri: "s0ma://docs/journeys"
+        mcp_mime_type: "text/markdown"
+    depends_on:
+        docs_bundle: {relation: CALLS, carries: "the recorded journeys", coupling: TIGHT}
+        docs_journey_steps: {relation: CALLS, carries: "one journey's steps in order", coupling: TIGHT}
+        docs_snapshot_identity: {relation: CALLS, carries: "which build this is", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def docs_journeys_resource() -> str:
+        """Every worked path through s0ma, step by step.
+
+        A journey is a path from a starting point to a finished
+        outcome: the steps in order, what each is for, and what a good
+        result looks like. These are the same records the journey
+        prompts render, so a path read here and a path walked with a
+        prompt are one path.
+        """
+        identity = docs_snapshot_identity()
+        journeys = sorted(docs_bundle().journeys, key=lambda record: record.id)
+        lines = [
+            "# Worked paths through s0ma",
+            "",
+            f"{len(journeys)} paths, from s0ma {identity['version_line']} "
+            f"(snapshot {identity['snapshot_hash']}).",
+            "",
+        ]
+        for journey in journeys:
+            lines.extend([
+                f"## `{journey.id}`",
+                "",
+                str(journey.intent),
+                "",
+                f"Written up in {docs_page_for(journey.id)}.",
+                "",
+            ])
+            for position, step in enumerate(docs_journey_steps(journey.id), start=1):
+                lines.append(f"{position}. `{step['surface']}` — {step['purpose']}")
+                lines.append(f"   You should see: {step['expected_outcome']}")
+                if step["approval_boundary"]:
+                    lines.append(f"   Needs approval: {step['approval_boundary']}")
+            lines.append("")
+            for path in journey.recovery_paths:
+                lines.append(
+                    f"- If {path.when}: {path.action} (`{path.next_surface}`)"
+                )
+            if journey.recovery_paths:
+                lines.append("")
+        return "\n".join(lines)
+
+test test_guide_resources_serve_packaged_documents :: PRESENTATION
+    intent: "Release-gate verification (FR-DSL-6 coverage) that every packaged document loads from s0ma_mcp/_docs package data and serves substantial platform text, that each guide provider returns exactly its registered document, and that the survival card keeps its context-economy contract (under 4 KB) — exercised on the built module pytest imports."
+    tests: [load_doc, getting_started_resource, survival_card_resource, self_prompting_resource, system_prompt_resource, quick_reference_resource, quick_reference_machine_resource, patterns_resource, spec_resource, errors_resource, changelog_resource]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_guide_resources_serve_packaged_documents() -> None:
+        providers_by_key = {
+            "getting-started": getting_started_resource,
+            "survival-card": survival_card_resource,
+            "system-prompt": system_prompt_resource,
+            "self-prompting": self_prompting_resource,
+            "quick-reference": quick_reference_resource,
+            "quick-reference-machine": quick_reference_machine_resource,
+            "patterns": patterns_resource,
+            "spec": spec_resource,
+            "errors": errors_resource,
+            "changelog": changelog_resource,
+        }
+        for key, provider in providers_by_key.items():
+            served = provider()
+            assert served == load_doc(key)
+            assert "s0ma" in served
+        assert set(providers_by_key) == set(GUIDE_DOCS)
+        # The survival card exists BECAUSE the other guides are large:
+        # its whole value is fitting in any context window. Pin the
+        # context-economy contract so it cannot quietly grow into
+        # another quick-reference.
+        assert len(survival_card_resource().encode("utf-8")) < 4_096
+
+test test_meta_resources_render_live_documents :: PRESENTATION
+    intent: "Release-gate verification (FR-DSL-6 coverage) that the version surface and the self-model resource render live JSON documents carrying the server identity, the installed-version keys, and a non-empty component graph — exercised on the built module pytest imports."
+    tests: [version_document, version_resource, self_model_resource]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_meta_resources_render_live_documents() -> None:
+        document = version_document()
+        assert set(document) == {
+            "server", "s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0",
+            "mcp_sdk", "python",
+        }
+        assert document["server"] == SERVER_NAME
+        assert json.loads(version_resource()) == document
+        model = json.loads(self_model_resource())
+        assert model["server"]["name"] == SERVER_NAME
+        assert model["component_count"] > 0
+
+test test_runbook_resource_serves :: PRESENTATION
+    intent: "Release-gate verification (FR-DSL-6 coverage) that the project runbook resource always serves non-empty markdown carrying the ops rule, the runtime-state semantics, and the declare-the-runbook teaching — whichever project variant the server's working directory resolves — exercised on the built module pytest imports."
+    tests: [runbook_resource]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_runbook_resource_serves() -> None:
+        served = runbook_resource()
+        # Always-present invariants, independent of which project (if any)
+        # the server's working directory resolves to.
+        assert served.startswith("# Operational runbook")
+        assert "never restore committed versions of runtime data" in served
+        assert "## Runtime state" in served
+        assert "state_paths" in served
+        assert "Declaring the runbook" in served
+
+test test_docs_snapshot_surfaces_answer_from_package_data :: PRESENTATION
+    intent: "Release-gate verification (FR-DSL-6 coverage) that the packaged documentation snapshot loads from s0ma_mcp/_docs, indexes to the topics it records, states one build identity, resolves every topic to a page path that names a real category of committed page, reads a journey's steps in walking order, and serves all three s0ma://docs resources with their counts read from the snapshot rather than written down — exercised on the built module pytest imports."
+    tests: [load_docs_model, docs_bundle, docs_topic_index, docs_snapshot_identity, docs_page_for, docs_journey_steps, docs_journey_recovery, docs_index_resource, docs_concepts_resource, docs_journeys_resource]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_docs_snapshot_surfaces_answer_from_package_data() -> None:
+        text = load_docs_model()
+        assert '"schema": "s0ma-docs-model@1"' in text
+        bundle = docs_bundle()
+        index = docs_topic_index()
+        assert docs_bundle() is bundle  # parsed once, not per question
+        assert len(index.ids()) == (
+            len(bundle.authorities)
+            + len(bundle.concepts)
+            + len(bundle.documents)
+            + len(bundle.journeys)
+            + len(bundle.sequences)
+            + len(bundle.surfaces)
+        )
+
+        identity = docs_snapshot_identity()
+        assert set(identity) == {"release_version", "snapshot_hash"}
+        assert identity["snapshot_hash"].startswith("sha256:")
+
+        # Every addressable topic reaches a written-down place, and the
+        # path it reaches is relative to the repository — never a machine
+        # path, never absolute, never a guess above the checkout.
+        for identifier in index.ids():
+            page = docs_page_for(identifier)
+            assert page, identifier
+            assert not page.startswith("/"), identifier
+            assert ".." not in page, identifier
+        # The four id classes that have a page of their own reach it under
+        # the documentation root, which is what the deep-link convention
+        # promises a reader following one.
+        for identifier in index.ids():
+            if identifier.partition(":")[0] in {"cli", "config", "concept", "diagnostic"}:
+                assert docs_page_for(identifier).startswith(f"{DOCS_ROOT}/"), identifier
+
+        steps = docs_journey_steps("journey:mcp-authoring-loop")
+        assert steps, "the mcp authoring journey records no steps"
+        assert [step["surface"] for step in steps] == [
+            step.surface
+            for journey in bundle.journeys
+            if journey.id == "journey:mcp-authoring-loop"
+            for step in journey.steps
+        ]
+        assert docs_journey_steps("journey:nothing-called-this") == []
+
+        recovery = docs_journey_recovery("journey:mcp-authoring-loop")
+        assert recovery, "the mcp authoring journey records no recovery paths"
+        assert [path["when"] for path in recovery] == [
+            path.when
+            for journey in bundle.journeys
+            if journey.id == "journey:mcp-authoring-loop"
+            for path in journey.recovery_paths
+        ]
+        assert docs_journey_recovery("journey:nothing-called-this") == []
+
+        served_index = docs_index_resource()
+        # The LABELLED version, not the bare one: the bare number is a
+        # substring of the labelled line, so asserting it would pass on a
+        # blurb that had quietly dropped the channel (H2).
+        assert identity["version_line"] in served_index
+        assert identity["snapshot_hash"] in served_index
+        assert "learn_s0ma" in served_index
+        assert f"{len(index.ids())} topics this build addresses" in served_index
+        # Every category the snapshot holds has a line, and every line has
+        # authored words: a category nobody described would still be listed,
+        # and this is what says so out loud.
+        for prefix in sorted({identifier.partition(":")[0] for identifier in index.ids()}):
+            assert f"- {prefix}: " in served_index, prefix
+            assert prefix in DOCS_CATEGORY_WORDS, prefix
+        assert "s0ma://docs/user-guide" in served_index  # the other server, named
+        # The index is the first thing an agent reads about s0ma itself, so
+        # it is held to the survival card's context-economy ceiling: it
+        # grows by category, never by topic, and this is what says so.
+        assert len(served_index.encode("utf-8")) < 4_096
+
+        concepts = docs_concepts_resource()
+        for record in bundle.concepts:
+            assert f"`{record.id}`" in concepts
+            assert record.summary in concepts
+
+        journeys = docs_journeys_resource()
+        for journey in bundle.journeys:
+            assert f"`{journey.id}`" in journeys
+            for step in journey.steps:
+                assert step.purpose in journeys

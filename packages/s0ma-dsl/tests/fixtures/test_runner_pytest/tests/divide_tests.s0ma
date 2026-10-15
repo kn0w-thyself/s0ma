@@ -1,0 +1,32 @@
+module divide_tests
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Tests for arithmetic.divide — body uses pytest.raises so pytest is required."
+    requires: [pytest]
+    uses: [arithmetic.divide]
+    exports: []
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_divide_by_zero_raises :: DOMAIN
+    intent: "Verifies that divide() raises ValueError on divide-by-zero."
+    tests: [arithmetic.divide]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_divide_by_zero_raises():
+        with pytest.raises(ValueError):
+            divide(10, 0)
+
+test test_divide_returns_integer_quotient :: DOMAIN
+    intent: "Verifies happy-path integer quotient."
+    tests: [arithmetic.divide]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_divide_returns_integer_quotient():
+        assert divide(10, 2) == 5

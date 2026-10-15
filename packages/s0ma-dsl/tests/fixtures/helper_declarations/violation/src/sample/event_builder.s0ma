@@ -1,0 +1,51 @@
+module event_builder
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Build calendar event payloads. Same source module as the clean fixture; paired with a production consumer that incorrectly imports a helper."
+    exports: [build_event_payload]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+helper _format_attendee :: APPLICATION
+    intent: "Format a single attendee dict from a raw email/name pair."
+    ---
+    def _format_attendee(email: str, name: str) -> dict:
+        return {"email": email, "displayName": name}
+
+helper _format_event_body :: APPLICATION
+    intent: "Combine summary, description, and attendee list into a Google Calendar event payload."
+    ---
+    def _format_event_body(summary: str, description: str, attendees: list) -> dict:
+        formatted = [_format_attendee(a["email"], a["name"]) for a in attendees]
+        return {
+            "summary": summary,
+            "description": description,
+            "attendees": formatted,
+        }
+
+nerve build_event_payload :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Build a Google Calendar event payload from raw scheduler args."
+    expects: "A dict with summary, description, and attendees keys."
+    guarantees: "Returns a Google Calendar event body dict with email/displayName attendees."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def build_event_payload(args: dict) -> dict:
+        return _format_event_body(args["summary"], args["description"], args["attendees"])

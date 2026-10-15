@@ -1,0 +1,43 @@
+{
+  "entries": [
+    {
+      "movement": "Reading the agenda screen before changing anything",
+      "n": 1,
+      "phase": "orient",
+      "subjects": [
+        "console::render_agenda"
+      ],
+      "why": "the overdue count is wrong on the agenda header"
+    },
+    {
+      "movement": "Wiring the overdue boundary into the urgency classifier",
+      "n": 2,
+      "phase": "author",
+      "subjects": [
+        "reminders::classify_urgency",
+        "reminders::URGENCY_BANDS"
+      ],
+      "why": "the band table is the only place the boundary is declared"
+    },
+    {
+      "movement": "Checking the push channel against the gateway's refusal path",
+      "n": 3,
+      "phase": "verify",
+      "subjects": [
+        "delivery::PushChannel"
+      ],
+      "why": null
+    },
+    {
+      "movement": "Moving on to the billing side of the invoice total",
+      "n": 4,
+      "phase": "move_on",
+      "subjects": [
+        "billing::charge_invoice"
+      ],
+      "why": "the agenda work is finished and checked"
+    }
+  ],
+  "invalid": 1,
+  "total": 4
+}

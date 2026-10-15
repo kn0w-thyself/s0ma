@@ -1,0 +1,35 @@
+module processing
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Application-layer service for the flat-build-layout fixture project."
+    uses: [models.UserModel]
+    exports: [process_user]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve process_user :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Returns a one-line summary string for a UserModel."
+    expects: "A UserModel instance with a name field."
+    guarantees: "Returns a non-empty string referencing user.name."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        UserModel: {relation: READS, carries: "user identity", coupling: LOOSE}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def process_user(user: UserModel) -> str:
+        return f"processed:{user.name}"

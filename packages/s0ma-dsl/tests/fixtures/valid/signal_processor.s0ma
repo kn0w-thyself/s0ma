@@ -1,0 +1,106 @@
+module signal_processor
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Receives raw nerve signals, validates them, and routes them
+        to the appropriate subsystem evaluator."
+    requires: [uuid.UUID, dataclasses.dataclass, time]
+    uses: [routing.select_evaluator, errors.SignalValidationError]
+    exports: [process_signal, SignalEnvelope]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell SignalEnvelope :: APPLICATION
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "Wraps a raw nerve signal with metadata for evaluation
+        routing: source, timestamp, trace ID."
+    schema: "Immutable dataclass. source: str, timestamp: float,
+        trace_id: UUID, payload: dict. All fields required."
+    invariants: none
+    covered_by: none
+    ---
+    @dataclass(frozen=True)
+    class SignalEnvelope:
+        source: str
+        timestamp: float
+        trace_id: UUID
+        payload: dict
+
+cell MAX_STALENESS_SECONDS :: APPLICATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "Maximum age in seconds for a signal envelope before it
+        is rejected by validation as stale."
+    schema: "int constant. Value: 300 (5 minutes)."
+    invariants: none
+    covered_by: none
+    ---
+    MAX_STALENESS_SECONDS: int = 300
+
+nerve validate_envelope :: APPLICATION
+    kind: FUNCTION
+    visibility: INTERNAL
+    intent: "Confirms that a SignalEnvelope contains all required
+        fields and that timestamp is within staleness bounds."
+    expects: "envelope is not None; all required fields present"
+    guarantees: "Returns True if valid"
+    forbids: none
+    raises: [SignalValidationError]
+    latency_ms: 5
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        MAX_STALENESS_SECONDS: {relation: READS, carries: "threshold", coupling: TIGHT}
+    provides: none
+    returns: none
+    interface: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def validate_envelope(envelope: SignalEnvelope) -> bool:
+        if not envelope.source or not envelope.trace_id:
+            raise SignalValidationError("Missing required fields")
+        if time.time() - envelope.timestamp > MAX_STALENESS_SECONDS:
+            raise SignalValidationError("Envelope is stale")
+        return True
+
+nerve process_signal :: APPLICATION
+    kind: ORCHESTRATOR
+    visibility: PUBLIC
+    intent: "Primary entry point for signal processing. Validates
+        the incoming envelope, then routes it to the correct
+        subsystem evaluator based on source layer."
+    expects: "envelope is a valid SignalEnvelope"
+    guarantees: "Signal reaches exactly one subsystem evaluator"
+    forbids: none
+    raises: [SignalValidationError]
+    latency_ms: 50
+    evaluates_at: SUBSYSTEM
+    depends_on:
+        validate_envelope: {relation: CALLS, carries: "SignalEnvelope", coupling: TIGHT}
+    provides: none
+    returns: none
+    interface: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def process_signal(envelope: SignalEnvelope) -> bool:
+        validate_envelope(envelope)
+        evaluator = select_evaluator(envelope.source)
+        return evaluator.receive(envelope)
+
+# Cross-module authored dependency (R-15)
+axon process_signal -> select_evaluator
+    relation: CALLS
+    intent: "process_signal delegates evaluator selection to the routing
+        module. Loose coupling: routing strategy can change without
+        modifying signal processing logic."
+    carries: "source layer string"
+    coupling: LOOSE

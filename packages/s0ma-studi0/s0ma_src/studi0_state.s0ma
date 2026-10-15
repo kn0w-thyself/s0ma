@@ -1,0 +1,478 @@
+module studi0_state
+    layer: APPLICATION
+    version: 0.19.1
+    intent: "What one studi0 session knows about one project: the component graph read from that project's build artifacts, how fresh that build is against the sources it was built from, whatever an agent has said it is doing, and a sequence number that advances only when something really changed. Every graph fact enters studi0 here and only here — through s0ma_dsl.graph_export, never by opening IR JSON directly — so studi0 can never drift into a second, quieter answer about what a project contains. Narration enters through studi0_narration and stays in its own fields the whole way out: it is the agent's account of its work, never evidence about the project."
+    exports: [STATE_SCHEMA, GRAPH_SCHEMA, CARRIED_GRAPH_SCHEMA, STATE_DOCUMENT_KEYS, NARRATION_BLOCK_KEYS, GRAPH_DOCUMENT_KEYS, BUILD_STATUS_MISSING, Studi0Snapshot, Studi0Session, read_graph, create_session, refresh_session, read_snapshot, state_document, graph_document]
+
+    requires: [threading, dataclasses.dataclass, dataclasses.field, pathlib.Path, typing.Any, s0ma_dsl.graph_export:DETAIL_FULL, s0ma_dsl.graph_export:NoIRArtifactsError, s0ma_dsl.graph_export:collect_graph]
+    uses: [studi0_narration.NarrationLog, studi0_narration.narration_snapshot, studi0_narration.read_narrations]
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell STATE_SCHEMA :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The versioned name of the document GET /api/state answers with, stamped on every response so a page that outlives a studi0 upgrade can tell whether it still understands what it is being told. Version 2 added the narration block — the frozen key set grew, so the stamp moved with it rather than letting a v1 reader meet a document it was never promised."
+    schema: "str constant. Value: s0ma-studi0-state@2."
+    invariants: none
+    covered_by: ["tests/test_api.py — the state document's frozen key set"]
+    ---
+    STATE_SCHEMA: str = "s0ma-studi0-state@2"
+
+cell GRAPH_SCHEMA :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The versioned name of the ENVELOPE GET /api/graph answers with — the seq-stamped wrapper studi0 puts around the graph document. The graph document inside it carries its own, separate schema string (s0ma-graph@2, stamped by s0ma_dsl.graph_export); the two version independently on purpose, because the transport and the graph contract change for different reasons."
+    schema: "str constant. Value: s0ma-studi0-graph@1."
+    invariants: none
+    covered_by: ["tests/test_api.py — the graph document's frozen key set"]
+    ---
+    GRAPH_SCHEMA: str = "s0ma-studi0-graph@1"
+
+cell CARRIED_GRAPH_SCHEMA :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The versioned name of the graph document that rides INSIDE the /api/graph envelope — the one s0ma_dsl.graph_export stamps on its own output. studi0 neither produces it nor rewrites it; naming it here is how this package states which graph contract this build was written against, so a page, a test and a documentation build read one answer instead of three copies of a string that can drift apart."
+    schema: "str constant. Value: s0ma-graph@2. Stamped by s0ma_dsl.graph_export, never by studi0."
+    invariants: "studi0 never writes this value into a document it serves. It is the contract studi0 reads; a graph arriving under a different one is a mismatch to report, not a value to overwrite."
+    covered_by: ["tests/test_api.py — the graph document's frozen key set"]
+    ---
+    CARRIED_GRAPH_SCHEMA: str = "s0ma-graph@2"
+
+cell STATE_DOCUMENT_KEYS :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Every key GET /api/state answers with, and no others — the frozen shape a page built against this API is built against. Declared in the package rather than written out in a test, so the contract has exactly one owner: whoever asks what studi0 serves gets the package's own answer, and the test that pins the served document compares against this instead of against a second copy of it."
+    schema: "tuple[str, ...] constant, sorted. Value: ('build_status', 'narration', 'schema', 'seq', 'stale_modules')."
+    invariants: "Sorted, so two readings of the contract are the same bytes. The set is exact: a document carrying a key not named here, or missing one that is, is a contract change and moves STATE_SCHEMA with it."
+    covered_by: ["tests/test_api.py — the state document's frozen key set"]
+    ---
+    STATE_DOCUMENT_KEYS: tuple[str, ...] = (
+        "build_status",
+        "narration",
+        "schema",
+        "seq",
+        "stale_modules",
+    )
+
+cell NARRATION_BLOCK_KEYS :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Every key the narration block of GET /api/state answers with. It is a nested block with a frozen shape of its own precisely because self-report must never sit at the same level as build truth — and a shape stated here is a shape a reader can check, rather than one inferred from whichever session happened to be running."
+    schema: "tuple[str, ...] constant, sorted. Value: ('entries', 'invalid', 'total')."
+    invariants: "Sorted. The block is always present, even for a session nobody narrated in — an empty window and two zeros is a fact, not an absence to fill in."
+    covered_by: ["tests/test_api.py — the state document's frozen key set"]
+    ---
+    NARRATION_BLOCK_KEYS: tuple[str, ...] = (
+        "entries",
+        "invalid",
+        "total",
+    )
+
+cell GRAPH_DOCUMENT_KEYS :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: three keys that say which reading this is and what it carries."
+    schema: "tuple[str, ...] constant, sorted. Value: ('graph', 'schema', 'seq')."
+    invariants: "Sorted. The set is exact, and it describes the envelope alone: nothing here constrains the graph document the envelope carries."
+    covered_by: ["tests/test_api.py — the graph document's frozen key set"]
+    ---
+    GRAPH_DOCUMENT_KEYS: tuple[str, ...] = (
+        "graph",
+        "schema",
+        "seq",
+    )
+
+cell BUILD_STATUS_MISSING :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The build status studi0 reports when it cannot find a build to judge: nothing is built, or the build manifest is unreadable, so freshness is a question studi0 has no evidence to answer. The other two statuses — fresh and stale — are never decided here; they arrive verbatim from the graph document's own freshness block, which is the only place source hashes are compared."
+    schema: "str constant. Value: missing. One of the three statuses in the frozen /api/state contract (fresh | stale | missing)."
+    invariants: none
+    covered_by: ["tests/test_api.py — an unbuilt project reports missing"]
+    ---
+    BUILD_STATUS_MISSING: str = "missing"
+
+cell Studi0Snapshot :: APPLICATION
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "One consistent reading of a project's truth: the sequence number that identifies it, the graph document it carries, the build's status, the modules whose sources have moved on since the build, and — kept deliberately separate from all of those — what an agent has said it is doing. Frozen, so a request thread holding a snapshot is holding a reading that cannot shift underneath it while it answers."
+    schema: "Frozen dataclass. seq: int — the reading's identity; graph: dict[str, Any] | None — a full s0ma-graph@2 graph document, or None when the project has no build artifacts at all; build_status: str — fresh | stale | missing; stale_modules: tuple[str, ...] — the module names whose sources no longer hash to what the build recorded, sorted; narration: tuple[dict[str, Any], ...] — the most recent accepted narrations in file order, bounded by NARRATION_WINDOW; narrated: int — every narration accepted this session; unreadable: int — session-log lines seen and refused."
+    invariants: "seq is a monotonic counter, never a timestamp and never derived from one (INV-5). stale_modules is empty unless build_status is stale. narration is agent self-report and never a canonical graph fact — the two never merge."
+    covered_by: ["tests/test_api.py — seq advances only on a real change"]
+    ---
+    @dataclass(frozen=True)
+    class Studi0Snapshot:
+        """One consistent reading of a project's build truth.
+
+        Attributes:
+            seq: The reading's identity. Starts at 1 and only ever
+                increases, so a client can compare two readings without
+                comparing two whole graph documents.
+            graph: The full ``s0ma-graph@2`` graph document, exactly as
+                ``s0ma_dsl.graph_export`` produced it — state wrappers
+                and all — or ``None`` when the project has nothing
+                built to read.
+            build_status: ``fresh``, ``stale``, or ``missing``.
+            stale_modules: The modules named as stale by the graph
+                document's freshness block; empty unless ``build_status`` is
+                ``stale``.
+            narration: The most recent narrations read from the
+                session log, oldest first. Agent self-report, carried
+                beside the graph and never folded into it.
+            narrated: How many narrations have been accepted in all,
+                so a bounded list cannot read as a complete one.
+            unreadable: How many session-log lines were refused —
+                counted, never rendered as narration.
+        """
+
+        seq: int
+        graph: dict[str, Any] | None
+        build_status: str
+        stale_modules: tuple[str, ...]
+        narration: tuple[dict[str, Any], ...] = ()
+        narrated: int = 0
+        unreadable: int = 0
+
+cell Studi0Session :: APPLICATION
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "One studi0 viewing session: the project being shown, the current reading of it, and how far into that project's narration log the session has read. The reading is replaced whole rather than edited in place, so a reader never observes a half-updated session, and a lock serialises publishers so two of them cannot both claim the same sequence number."
+    schema: "Mutable dataclass. project_root: Path — the project being shown, opened read-only apart from studi0's own presence marker; snapshot: Studi0Snapshot — the current reading, replaced as one whole object; narration: NarrationLog — the session's place in the narration log, advanced by the same refresh that re-reads the graph; seeded: bool — whether a first reading has been published (False means the seq must not advance yet); publish_lock: threading.Lock — held only across the compare-and-publish step."
+    invariants: "studi0 writes nothing under project_root except its own .s0ma/studi0/active.json presence marker — never a source, never a build artifact. Only the publish path mutates a session; readers take snapshot and let go."
+    covered_by: ["tests/test_api.py — the API's two endpoints agree on seq"]
+    ---
+    @dataclass
+    class Studi0Session:
+        """One project, and the current reading of it.
+
+        Attributes:
+            project_root: The project being shown. Opened read-only —
+                the only thing studi0 ever writes into the tree it is
+                viewing is its own presence marker (see
+                ``studi0_narration.write_presence``).
+            snapshot: The reading served right now. Replaced whole; a
+                reader binds it once and works from that object.
+            narration: How far this session has read into the
+                project's narration log, and what it accepted. The
+                agent's account of its own work, kept beside the
+                canonical reading rather than inside it.
+            seeded: Whether a first reading has been published yet. The
+                first publish keeps ``seq`` at 1 rather than advancing
+                it, so a fresh session's first served answer is seq 1
+                whatever it found.
+            publish_lock: Serialises the compare-and-publish step. Held
+                only there — never across the file reads.
+        """
+
+        project_root: Path
+        snapshot: Studi0Snapshot
+        narration: NarrationLog = field(default_factory=NarrationLog)
+        seeded: bool = False
+        publish_lock: threading.Lock = field(default_factory=threading.Lock)
+
+helper _freshness_facts :: APPLICATION
+    intent: "Reads the two facts /api/state reports — the build status and the stale module names — out of a graph document's freshness block, and answers 'missing' for every shape that carries no verdict: no graph document at all, no freshness key (the graph document's way of saying no manifest was found), or a freshness block that is not the record it should be."
+    ---
+    def _freshness_facts(graph: dict[str, Any] | None) -> tuple[str, tuple[str, ...]]:
+        """The (build_status, stale_modules) pair a graph document testifies to."""
+        if graph is None:
+            return (BUILD_STATUS_MISSING, ())
+        freshness = graph.get("freshness")
+        if not isinstance(freshness, dict):
+            # No freshness block means graph_export found no readable
+            # manifest, which is exactly the "missing" case (plan §3.2).
+            return (BUILD_STATUS_MISSING, ())
+        status = str(freshness.get("status", BUILD_STATUS_MISSING))
+        recorded = freshness.get("stale_modules")
+        if not isinstance(recorded, list):
+            return (status, ())
+        return (status, tuple(str(name) for name in recorded))
+
+nerve read_graph :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Reads one project's whole component graph the only way studi0 is allowed to: by asking s0ma_dsl.graph_export for that project's full s0ma-graph@2 graph document. A project with no build artifacts is not an error here — it is the answer 'nothing is built', reported as None so the caller can say so plainly instead of showing an empty graph and letting a viewer read it as an empty project."
+    expects: "project_root is a path to the project being shown — a project root, a build directory, or a single IR artifact, whatever graph_export accepts"
+    guarantees: "Returns the graph document graph_export produced, passed through untouched (state wrappers included), or None when the target holds no IR artifacts at all. Never writes to the project."
+    forbids: "Never writes to the project, never reads its graph any way but through s0ma_dsl.graph_export, and never alters what that returns."
+    evaluates_at: FUNCTION_BOUNDARY
+    expected_exceptions: [s0ma_dsl.graph_export.NoIRArtifactsError]
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    consumes_via_dict: none
+    declares_attributes: none
+    depends_on: none
+    covered_by: ["tests/test_api.py — /api/graph equals collect_graph's own output"]
+    ---
+    def read_graph(project_root: Path) -> dict[str, Any] | None:
+        """The project's full ``s0ma-graph@2`` document, or None if unbuilt.
+
+        The single graph source for the whole viewer (studi0 plan §1.4):
+        studi0 never opens ``*.s0ma.json`` itself, so there is exactly
+        one answer in the system to "what does this project contain".
+        The document is returned exactly as it arrives — no projection,
+        no flattening of the IR's state wrappers — because a renderer
+        that cannot see ``{"state": "pending"}`` cannot show authoring
+        debt honestly.
+
+        Args:
+            project_root: The project being shown. Read-only.
+
+        Returns:
+            The full graph document, or ``None`` when the target yields
+            no IR artifacts at all.
+        """
+        try:
+            return collect_graph(project_root, detail=DETAIL_FULL)
+        except NoIRArtifactsError:
+            return None
+
+nerve create_session :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Opens a viewing session on a project without reading anything yet: a session that knows which project it is for and admits, until its first reading lands, that it has nothing to show. Construction touches no files, so binding a server can never be delayed or defeated by the project's state on disk."
+    expects: "project_root is the root of the project to show"
+    guarantees: "Returns an unseeded session at seq 1 whose snapshot reports build_status missing and carries no graph; performs no file access"
+    forbids: "Never touches a file: opening a session reads and writes nothing on disk."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_api.py — seq starts at 1"]
+    depends_on:
+        BUILD_STATUS_MISSING: {relation: READS, carries: "the status of a session that has read nothing yet", coupling: TIGHT}
+    ---
+    def create_session(project_root: Path) -> Studi0Session:
+        """Open a session on ``project_root`` with nothing read yet.
+
+        The first reading is taken by whoever starts the watch — see
+        ``studi0_watch.start_watcher`` — so that every refresh failure,
+        including the very first one, is handled in the one place built
+        to handle it.
+
+        Args:
+            project_root: The project to show. Opened read-only.
+
+        Returns:
+            A session at seq 1 reporting ``missing`` and carrying no
+            graph, ready for its first refresh.
+        """
+        return Studi0Session(
+            project_root=project_root,
+            snapshot=Studi0Snapshot(
+                seq=1,
+                graph=None,
+                build_status=BUILD_STATUS_MISSING,
+                stale_modules=(),
+            ),
+        )
+
+nerve refresh_session :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Takes a fresh reading of the project and publishes it only if it says something new. This is the one place a sequence number advances, and it advances on evidence alone: an identical graph, an identical status, an identical stale set, and an unmoved narration log mean nothing happened, whatever ran in between. A new narration is evidence like any other — it is why the page repaints — but it enters as its own field and never as a graph fact. A first reading publishes at seq 1 rather than advancing to 2, so a client's first answer is never seq 2 for a project that never changed."
+    expects: "session is a session opened by create_session; the caller accepts that reading a project mid-build can raise"
+    guarantees: "Either publishes a new snapshot and returns True, or leaves the session exactly as it was and returns False. seq advances by exactly one per published change, and never on the first publish. Failures propagate unchanged — this function never publishes a guess."
+    forbids: "Never publishes a reading it failed to take or one that changed nothing, and never records a narration as a fact of the graph."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_api.py — stale flip bumps seq; tests/test_watcher.py — an unchanged project never bumps seq"]
+    depends_on:
+        read_graph: {relation: CALLS, carries: "the project root to read", coupling: TIGHT}
+    ---
+    def refresh_session(session: Studi0Session) -> bool:
+        """Re-read the project; publish the reading only if it changed.
+
+        The comparison is plain equality on the graph document, which for
+        JSON-shaped data (dicts, lists, strings, ints — never a float
+        or a set) is exactly JSON equality: key order carries no
+        meaning on either side of it.
+
+        The narration log is tailed first, and on its own terms: that
+        read never raises, so narration keeps up even on a tick where
+        the graph read is about to fail on a half-written artifact.
+        Entries it accepted are held in the session's log and published
+        by whichever tick next gets that far — never lost, never
+        published twice.
+
+        The reads happen outside the lock — they are the slow part, and
+        holding a lock across file I/O would stall every request thread
+        for the duration. Only the compare-and-publish step is
+        serialised, which is all that is needed to keep two publishers
+        from claiming one sequence number.
+
+        Args:
+            session: The session to refresh, in place.
+
+        Returns:
+            True when a new snapshot was published, False when the
+            project said exactly what it said last time.
+
+        Raises:
+            Exception: Whatever reading the project raised — an
+                unreadable or half-written artifact, most often. The
+                session keeps its last good reading; the caller decides
+                whether to report or retry.
+        """
+        read_narrations(session.narration, session.project_root)
+        narration, narrated, unreadable = narration_snapshot(session.narration)
+        graph = read_graph(session.project_root)
+        build_status, stale_modules = _freshness_facts(graph)
+
+        with session.publish_lock:
+            current = session.snapshot
+            if (
+                session.seeded
+                and current.graph == graph
+                and current.build_status == build_status
+                and current.stale_modules == stale_modules
+                and current.narration == narration
+                and current.narrated == narrated
+                and current.unreadable == unreadable
+            ):
+                return False
+            session.snapshot = Studi0Snapshot(
+                seq=current.seq + 1 if session.seeded else current.seq,
+                graph=graph,
+                build_status=build_status,
+                stale_modules=stale_modules,
+                narration=narration,
+                narrated=narrated,
+                unreadable=unreadable,
+            )
+            session.seeded = True
+            return True
+
+nerve read_snapshot :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Hands a caller the session's current reading as one object, so everything it answers from — the sequence number, the graph, the status — comes from a single moment. Two documents built from one snapshot can never disagree about seq, however many builds land while the response is being written."
+    expects: "session is a session opened by create_session"
+    guarantees: "Returns the snapshot published at the moment of the call; the returned object is frozen and will not change afterwards"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_api.py — the API's two endpoints agree on seq"]
+    depends_on: none
+    ---
+    def read_snapshot(session: Studi0Session) -> Studi0Snapshot:
+        """The session's current reading, as one consistent object.
+
+        No lock is taken: publishing replaces the whole snapshot with a
+        single attribute assignment, so a reader either sees the old
+        object or the new one and never a mixture of the two.
+        """
+        return session.snapshot
+
+nerve state_document :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Renders the answer to GET /api/state: which reading this is, whether the build still matches the sources it was built from, which modules have moved on since — and, in its own block, what an agent has said it is doing. The narration block is a block precisely so that no reader can mistake self-report for build truth: it is nested, named, and carries its own counts. This is the small, cheap document the page polls; the graph itself is fetched only when the sequence number says it is worth fetching."
+    expects: "snapshot is a reading taken from a session"
+    guarantees: "Returns a JSON-compatible document carrying exactly the frozen key set schema, seq, build_status, stale_modules, narration; the module list is a plain list, ordered as the graph document's freshness block ordered it, and the narration entries are in file order, oldest first"
+    forbids: "Never puts what an agent says it is doing among the build's own facts; narration stays in its own nested, named block."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_api.py — the state document's frozen key set"]
+    depends_on:
+        STATE_SCHEMA: {relation: READS, carries: "the document's schema stamp", coupling: TIGHT}
+    ---
+    def state_document(snapshot: Studi0Snapshot) -> dict[str, Any]:
+        """The ``/api/state`` document for one reading (plan §3.5).
+
+        ``narration`` carries the agent's own account of its work:
+        ``entries`` (the bounded, file-ordered window), ``total``
+        (every narration accepted, so the window cannot read as the
+        whole session), and ``invalid`` (lines refused, counted rather
+        than shown). A session that never narrated answers with an
+        empty window and two zeros — which is a fact, not an absence
+        to fill in.
+        """
+        return {
+            "schema": STATE_SCHEMA,
+            "seq": snapshot.seq,
+            "build_status": snapshot.build_status,
+            "stale_modules": list(snapshot.stale_modules),
+            "narration": {
+                "entries": [dict(entry) for entry in snapshot.narration],
+                "total": snapshot.narrated,
+                "invalid": snapshot.unreadable,
+            },
+        }
+
+nerve graph_document :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project."
+    expects: "snapshot is a reading taken from a session"
+    guarantees: "Returns a JSON-compatible document carrying exactly the frozen key set schema, seq, graph — with graph identical to the graph document the snapshot holds — or None when the snapshot carries no graph"
+    forbids: "Never trims, summarises or drops a field of the graph it wraps, and never offers an empty graph when nothing is built."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_api.py — /api/graph equals collect_graph's own output"]
+    depends_on:
+        GRAPH_SCHEMA: {relation: READS, carries: "the envelope's schema stamp", coupling: TIGHT}
+    ---
+    def graph_document(snapshot: Studi0Snapshot) -> dict[str, Any] | None:
+        """The ``/api/graph`` document for one reading, or None (plan §3.5).
+
+        The graph document rides through whole. In particular the canonical
+        ``s0ma-ir@3`` state wrappers on ``intent`` and on every
+        ``fields`` leaf — ``{"state": "value", ...}``,
+        ``{"state": "none"}``, ``{"state": "pending", "reason": ...}``
+        — are passed on untouched, because projecting them is the
+        renderer's decision to make in front of a reader, not the
+        server's to make behind one.
+        """
+        if snapshot.graph is None:
+            return None
+        return {
+            "schema": GRAPH_SCHEMA,
+            "seq": snapshot.seq,
+            "graph": snapshot.graph,
+        }

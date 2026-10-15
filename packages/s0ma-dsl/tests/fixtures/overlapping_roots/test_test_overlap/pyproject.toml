@@ -1,0 +1,11 @@
+[project]
+name = "test_test_overlap"
+version = "0.0.1"
+
+# G2 (feedback 5–6 cleanup) fixture: two test_roots overlap (the
+# second is a subpath of the first). Same failure mode as the
+# source/source case, mirrored to the test list.
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = ["tests", "tests/integration"]
+build_dir = "test_test_overlap_build"

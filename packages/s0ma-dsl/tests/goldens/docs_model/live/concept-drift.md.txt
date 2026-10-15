@@ -1,0 +1,46 @@
+# drift
+
+## In short
+
+The gap that opens when a written description and the thing it describes stop agreeing.
+
+## What it is
+
+Drift is what happens when a description and the thing it describes stop agreeing: the written record still says one thing while the code has quietly moved on. s0ma turns that disagreement into something a machine can notice. Every generated document carries a fingerprint of everything it was built from, and recomputing that fingerprint says at once whether the two still match.
+
+## Why it exists
+
+Drift is the failure the whole product exists to prevent. Naming it, fingerprinting it, and rechecking it on every merge is what turns "the documentation is accurate" from a claim somebody makes into a fact the build can prove.
+
+## When to use it
+
+Ask for the drift check whenever you need to know whether the written record still matches the system: before a release, in the merge gate, and after any change to something a document describes.
+
+## When not to use it
+
+Drift is not a word for a document that is badly written, out of date in its judgement, or missing a section. Those are editorial problems and a fingerprint cannot see them. Drift is the narrow, mechanical case where the source a document was built from has changed and the document has not been rebuilt.
+
+## Related ideas
+
+- `requires concept:doc-guide`
+- `requires concept:doc-ref`
+
+## Worked examples
+
+- none recorded
+
+## What decides this
+
+- `authority:spec/drift-check`
+
+## Where to read the decision
+
+- `packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md#4.12.5`
+
+---
+
+## Identity
+
+- Topic id: `concept:drift`
+- Release: `0.18.1 (preview)`
+- Documentation snapshot: `sha256:7730325659b12fd5`

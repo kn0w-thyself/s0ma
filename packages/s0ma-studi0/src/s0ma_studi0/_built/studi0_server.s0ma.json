@@ -1,0 +1,849 @@
+{
+  "components": [
+    {
+      "canonical_id": "studi0_server::Studi0ServerConfig",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — loopback-only binding"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "host is the loopback address 127.0.0.1 — studi0 never offers itself to another machine."
+        },
+        "schema": {
+          "state": "value",
+          "value": "Class-level constants — host: str (always the loopback address), shutdown_poll_seconds: float, client_poll_interval_ms: int."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The studi0 host's settings: the loopback interface the server is allowed to bind, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number."
+      },
+      "kind": "CONFIG",
+      "location": {
+        "end_line": 25,
+        "start_line": 14
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::ROUTE_TABLE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the declared route table is the served routing table"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Every path here is a path route_request answers, and every path route_request answers is here — apart from the empty-string spelling of the root, which no HTTP request line can carry. Every path this table does NOT name answers NOT_FOUND: the fallback is what happens off the table, so it is not an entry on it. answered_by names registered declarations of this package and nothing else."
+        },
+        "schema": {
+          "state": "value",
+          "value": "tuple[dict[str, str], ...] constant, ordered as route_request decides. Each entry carries seven keys — path: the path as served, leading slash kept; method: the HTTP method, always GET; purpose: one sentence naming what the caller gets; effects: none (embedded bytes, nothing read) or read (the session's current reading); answered_by: the declarations that produce the answer as canonical module::name ids, comma separated; media_type: the Content-Type of a successful answer; errors: the structured error codes this path can answer with, comma separated, empty where it has none."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Every path studi0 serves, declared as data: what a caller asks for, what comes back, which declarations produce it, and what answering costs. The routing decision is still taken in route_request one path at a time — this is that same table said out loud, so a person, a test and a documentation build can all read what studi0 serves without reading a function body and guessing. The two are held in step by tests/test_api.py: a path named here that route_request does not answer, or a path route_request answers that is not named here, fails there."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 81,
+        "start_line": 27
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::NOT_BUILT_ERROR",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — an unbuilt project answers NOT_BUILT"
+          ]
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "dict[str, dict[str, str]] — the frozen error envelope {'error': {'code', 'message'}}."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The answer GET /api/graph gives for a project that has no build artifacts at all. There is no graph to serve and an empty one would be a lie a viewer could not detect — an empty graph and an unbuilt project look identical on screen — so studi0 names the situation and names the remedy instead."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 100,
+        "start_line": 83
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::NOT_FOUND_ERROR",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — unserved paths answer NOT_FOUND"
+          ]
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "dict[str, dict[str, str]] — the frozen error envelope {'error': {'code', 'message'}}."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The answer for any path studi0 does not serve — an /assets file this build does not carry, a mistyped /api route, anything else: the same structured error envelope, never a traceback and never a stack of guesses."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 115,
+        "start_line": 102
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::_HTML_CONTENT_TYPE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: text/html; charset=utf-8."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The Content-Type header value studi0 sends with every HTML document it serves, stated once so the served page cannot drift into a charset guess."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 125,
+        "start_line": 117
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "studi0_server::_JSON_CONTENT_TYPE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: application/json; charset=utf-8."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The Content-Type header value studi0 sends with every JSON document it serves, stated once so API answers and API errors are labelled identically."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 135,
+        "start_line": 127
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "studi0_server::_CSS_CONTENT_TYPE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_integration_live.py — the asset routes are labelled and encoded"
+          ]
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: text/css; charset=utf-8."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The Content-Type header value studi0 sends with the sh0w stylesheet, named here rather than at the route so the charset is declared once and cannot drift between assets."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 145,
+        "start_line": 137
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "studi0_server::_JS_CONTENT_TYPE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_integration_live.py — the asset routes are labelled and encoded"
+          ]
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: text/javascript; charset=utf-8."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The Content-Type header value studi0 sends with the sh0w script. It must be a JavaScript type a browser will accept for a module script, or the page loads its stylesheet and then draws nothing."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 155,
+        "start_line": 147
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "studi0_server::project_display_name",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — the serving line names the project"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a path to a directory, relative or absolute"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a non-empty display name; falls back to the resolved directory name when the given path has none (for example '.')"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Names the project studi0 is showing the way a person would name it — its own directory name — for the one line studi0 prints when it starts serving. The served page is never told: it carries no project name at all, because everything it shows it learns from the graph API."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 214,
+        "start_line": 186
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::route_request",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — routing table",
+            "tests/test_api.py — the API's frozen key sets",
+            "tests/test_api.py — the declared route table is the served routing table",
+            "tests/test_integration_live.py — the asset routes serve the embedded bytes"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never puts a traceback in a response body, and never changes a byte of the embedded page, stylesheet or script it serves."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a status, a content type, and an encoded body for every possible path — never raises, and never puts a traceback in a body. The three asset routes answer with the embedded bytes unchanged. Both API routes answer from a single reading, so their sequence numbers agree within one request."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "value",
+          "value": [
+            "status",
+            "content_type",
+            "body"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Decides what studi0 answers for one requested path: the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 278,
+        "start_line": 216
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::bound_address",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — loopback-only binding, ephemeral port"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "server is a server whose socket is already bound"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the socket's own host and port; the port is the real one even when port 0 was requested"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "value",
+          "value": [
+            "host",
+            "port"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Reports the address a running studi0 server actually bound, asked of the socket itself rather than of the requested settings — the only answer that survives an OS-assigned port, and the one a caller prints or asserts on."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 303,
+        "start_line": 280
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::create_server",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — loopback-only binding, ephemeral port"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is the root of the project being viewed; port is a free port, or 0 to let the OS assign one; session is the viewing session to answer the API from, or None to open a fresh one"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never binds to any address but loopback, so nothing beyond this machine can reach the server it builds."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a server bound to the loopback address only, serving nothing until it is run; requests are answered by the routing table and never logged to stderr"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Builds the studi0 host for one project: a threading HTTP server bound to the loopback interface whose only behavior is to answer GET requests from the routing table, quietly, so the console stays the caller's."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 374,
+        "start_line": 305
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::run_server",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — clean shutdown"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "value",
+          "value": [
+            "KeyboardInterrupt"
+          ]
+        },
+        "expects": {
+          "state": "value",
+          "value": "server is a bound server, as returned by create_server"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Serves until interrupted or shut down, then closes the server socket and returns 0; a keyboard interrupt is a clean stop, not an error"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Runs a studi0 server until the person watching it stops it, and closes the socket on the way out — an interrupted studi0 leaves nothing bound behind it."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 413,
+        "start_line": 376
+      },
+      "visibility": "PUBLIC"
+    }
+  ],
+  "doc_guides": [],
+  "doc_refs": [],
+  "edges": {
+    "authored": [
+      {
+        "carries": "the loopback host to bind",
+        "coupling": "TIGHT",
+        "intent": "create_server READS Studi0ServerConfig: the loopback host to bind",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::create_server",
+        "target": "studi0_server::Studi0ServerConfig"
+      },
+      {
+        "carries": "the requested path",
+        "coupling": "TIGHT",
+        "intent": "create_server CALLS route_request: the requested path",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "studi0_server::create_server",
+        "target": "studi0_server::route_request"
+      },
+      {
+        "carries": "the sh0w stylesheet",
+        "coupling": "TIGHT",
+        "intent": "route_request READS APP_CSS: the sh0w stylesheet",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::APP_CSS"
+      },
+      {
+        "carries": "the sh0w script",
+        "coupling": "TIGHT",
+        "intent": "route_request READS APP_JS: the sh0w script",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::APP_JS"
+      },
+      {
+        "carries": "the sh0w page served at the root",
+        "coupling": "TIGHT",
+        "intent": "route_request READS INDEX_HTML: the sh0w page served at the root",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::INDEX_HTML"
+      },
+      {
+        "carries": "the unbuilt-project answer",
+        "coupling": "TIGHT",
+        "intent": "route_request READS NOT_BUILT_ERROR: the unbuilt-project answer",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::NOT_BUILT_ERROR"
+      },
+      {
+        "carries": "the unserved-path answer",
+        "coupling": "TIGHT",
+        "intent": "route_request READS NOT_FOUND_ERROR: the unserved-path answer",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::NOT_FOUND_ERROR"
+      },
+      {
+        "carries": "the stylesheet content type header",
+        "coupling": "TIGHT",
+        "intent": "route_request READS _CSS_CONTENT_TYPE: the stylesheet content type header",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::_CSS_CONTENT_TYPE"
+      },
+      {
+        "carries": "the HTML content type header",
+        "coupling": "TIGHT",
+        "intent": "route_request READS _HTML_CONTENT_TYPE: the HTML content type header",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::_HTML_CONTENT_TYPE"
+      },
+      {
+        "carries": "the script content type header",
+        "coupling": "TIGHT",
+        "intent": "route_request READS _JS_CONTENT_TYPE: the script content type header",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::_JS_CONTENT_TYPE"
+      },
+      {
+        "carries": "how often the loop checks for a shutdown request",
+        "coupling": "TIGHT",
+        "intent": "run_server READS Studi0ServerConfig: how often the loop checks for a shutdown request",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::run_server",
+        "target": "studi0_server::Studi0ServerConfig"
+      }
+    ],
+    "derived": [
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_server::create_server",
+        "target": "studi0_state::Studi0Session"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_server::create_server",
+        "target": "studi0_state::create_session"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_server::route_request",
+        "target": "studi0_state::Studi0Session"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_server::route_request",
+        "target": "studi0_state::graph_document"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_server::route_request",
+        "target": "studi0_state::read_snapshot"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_server::route_request",
+        "target": "studi0_state::state_document"
+      }
+    ],
+    "verification": []
+  },
+  "examples": [],
+  "exports": {
+    "state": "value",
+    "value": [
+      "Studi0ServerConfig",
+      "ROUTE_TABLE",
+      "NOT_BUILT_ERROR",
+      "NOT_FOUND_ERROR",
+      "project_display_name",
+      "route_request",
+      "bound_address",
+      "create_server",
+      "run_server"
+    ]
+  },
+  "helpers": [
+    {
+      "body": {
+        "state": "value",
+        "value": "def _json_bytes(document: dict[str, Any]) -> bytes:\n    \"\"\"Serialize ``document`` to deterministic UTF-8 JSON bytes.\"\"\"\n    return json.dumps(document, sort_keys=True).encode(\"utf-8\")"
+      },
+      "body_kind": "function",
+      "canonical_id": "studi0_server::_json_bytes",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Encodes one JSON-compatible document the way every studi0 response body is encoded — sorted keys, UTF-8 bytes — so identical documents are identical bytes on every machine (INV-5)."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 162,
+        "start_line": 157
+      },
+      "module": "studi0_server",
+      "name": "_json_bytes",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _text_response(content_type: str, text: str) -> dict[str, Any]:\n    \"\"\"One routing-table answer carrying an embedded text asset.\"\"\"\n    return {\n        \"status\": 200,\n        \"content_type\": content_type,\n        \"body\": text.encode(\"utf-8\"),\n    }"
+      },
+      "body_kind": "function",
+      "canonical_id": "studi0_server::_text_response",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Builds one answer carrying an embedded text asset — the page, its stylesheet, its script — encoded as UTF-8 exactly as the build recorded it. studi0 substitutes nothing into an asset on the way out, so what a browser receives is byte-for-byte what the model carries."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 173,
+        "start_line": 164
+      },
+      "module": "studi0_server",
+      "name": "_text_response",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _json_response(status: int, document: dict[str, Any]) -> dict[str, Any]:\n    \"\"\"One routing-table answer carrying a JSON document.\"\"\"\n    return {\n        \"status\": status,\n        \"content_type\": _JSON_CONTENT_TYPE,\n        \"body\": _json_bytes(document),\n    }"
+      },
+      "body_kind": "function",
+      "canonical_id": "studi0_server::_json_response",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Builds one JSON answer — status, content type, encoded body — so every JSON route in the table, answers and errors alike, is labelled and encoded identically and no route can quietly grow its own conventions."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 184,
+        "start_line": 175
+      },
+      "module": "studi0_server",
+      "name": "_json_response",
+      "tags": []
+    }
+  ],
+  "imports": {
+    "deferred_requires": {
+      "state": "none"
+    },
+    "privileged": [],
+    "requires": {
+      "state": "value",
+      "value": [
+        "json",
+        "pathlib.Path",
+        "typing.Any",
+        "urllib.parse.urlsplit",
+        "http.server.BaseHTTPRequestHandler",
+        "http.server.ThreadingHTTPServer"
+      ]
+    },
+    "runtime_only_requires": {
+      "state": "none"
+    },
+    "soft_requires": {
+      "state": "none"
+    },
+    "uses": {
+      "state": "value",
+      "value": [
+        "studi0_state.Studi0Session",
+        "studi0_state.create_session",
+        "studi0_state.read_snapshot",
+        "studi0_state.state_document",
+        "studi0_state.graph_document",
+        "sh0w_assets.INDEX_HTML",
+        "sh0w_assets.APP_CSS",
+        "sh0w_assets.APP_JS"
+      ]
+    }
+  },
+  "integrations": [],
+  "module": {
+    "content_hash": "sha256:37411718abe3a55a3bf43f13a59f1e0596869115233b2f4af8e6030bfcc259a9",
+    "exports_helpers": {
+      "state": "none"
+    },
+    "intent": {
+      "state": "value",
+      "value": "The studi0 local host: a loopback-only HTTP server that serves one page per s0ma project — the sh0w view of the project's own component graph — plus the read-only graph API the page polls. It binds 127.0.0.1 only, answers GET only, and writes nothing at all: the one file studi0 ever puts in the project it is showing is the presence marker its launcher writes (studi0_narration.write_presence), and no request path touches disk."
+    },
+    "layer": "PRESENTATION",
+    "name": "studi0_server",
+    "source_file": "s0ma_src/studi0_server.s0ma",
+    "tags": [],
+    "transpiled_file": "studi0_server.py",
+    "version": "0.19.1"
+  },
+  "schema_version": "3.0.0",
+  "source_hash": "sha256:37411718abe3a55a",
+  "transpiler_version": "1.0.0"
+}

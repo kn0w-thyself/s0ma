@@ -1,0 +1,111 @@
+# --- merged union of s0ma-core and s0ma-dsl ignore sets (M0) ---
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+wheels/
+*.egg-link
+MANIFEST
+
+# Wrangler local state/cache. Created here because the R2 mirror runs
+# `wrangler r2 object put` with this repo as cwd; it is machine-local
+# tooling state, not s0ma source.
+.wrangler/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+
+# Distribution / packaging
+pip-log.txt
+pip-delete-this-directory.txt
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
+*.py,cover
+nosetests.xml
+
+# Type checking / Linting
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+.ruff_cache/
+
+# Testing
+.pytest_cache/
+.hypothesis/
+pytestdebug.log
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# DSL / transpiler build artifacts
+*.out
+*.gen
+*.generated
+generated/
+output/
+transpiled/
+
+# s0ma DSL incremental-rebuild cache (current pre-M3 name; M3 renames the extension family)
+.s0ma.cache/
+
+# Legacy s0ma DSL cache (pre-M6a). No longer emitted; ignore lingering trees.
+__s0ma_cache__/
+
+# s0ma persistence
+.s0ma/
+
+# IDEs & editors
+.idea/
+.vscode/
+.claude/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+logs/

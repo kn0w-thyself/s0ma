@@ -1,0 +1,12 @@
+[project]
+name = "route_budget_violation"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = []
+build_dir = "route_budget_violation_build"
+bootstrap_files = []
+
+[tool.s0ma.attribute_budgets]
+route = "unique_in_project"

@@ -1,0 +1,204 @@
+{
+  "identity": {
+    "channel": "preview",
+    "journey": "journey:mcp-authoring-loop",
+    "published_by": "doc:guide/mcp-authoring",
+    "release": "0.19.1 (preview)",
+    "snapshot": "sha256:46cb0cce5f7c07cf"
+  },
+  "package": {
+    "audience": [
+      "agent",
+      "user"
+    ],
+    "cautions": [
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "2",
+        "surface": "mcp:tool/scaffold_module",
+        "surface_name": "scaffold_module"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "4",
+        "surface": "mcp:tool/build_project",
+        "surface_name": "build_project"
+      }
+    ],
+    "chapters": [
+      {
+        "caption": "Find out what this tree already is before writing anything into it.",
+        "ordinal": "1",
+        "step": "1",
+        "title": "project_status"
+      },
+      {
+        "caption": "Start the new behaviour from its intent, in a skeleton the toolchain already accepts.",
+        "ordinal": "2",
+        "step": "2",
+        "title": "scaffold_module"
+      },
+      {
+        "caption": "Ask whether what was just written holds together, before anything is built from it.",
+        "ordinal": "3",
+        "step": "3",
+        "title": "check"
+      },
+      {
+        "caption": "Turn the checked sources into the artifacts the project runs from.",
+        "ordinal": "4",
+        "step": "4",
+        "title": "build_project"
+      },
+      {
+        "caption": "Read back what the build now knows about the component, instead of reading the code it wrote.",
+        "ordinal": "5",
+        "step": "5",
+        "title": "inspect_module"
+      }
+    ],
+    "consent": [],
+    "evidence": [
+      {
+        "id": "example:transcript/mcp-authoring-loop",
+        "source": "docs/s0ma_src/evidence/mcp-authoring-loop.json"
+      }
+    ],
+    "outcome": "Let a coding agent take a project from first sight to a built component and back out again without ever leaving its own tool channel: ask the tree what it is, write a component from its intent, have the toolchain check it, build, then read the result back out of the self-model rather than out of the code.",
+    "prerequisites": [
+      {
+        "concept": "concept:intent",
+        "term": "intent"
+      },
+      {
+        "concept": "concept:layer",
+        "term": "layer"
+      },
+      {
+        "concept": "concept:module",
+        "term": "module"
+      },
+      {
+        "concept": "concept:nerve",
+        "term": "nerve"
+      },
+      {
+        "concept": "concept:s0ma-file",
+        "term": ".s0ma file"
+      }
+    ],
+    "recovery": [
+      {
+        "action": "The check refuses the edited component because its provides: list names an operation the body never defines. Add the missing def, or take the name out of provides:, and walk the loop the fix_check_failures prompt lays out until the check is clean.",
+        "next_surface": "mcp:prompt/fix_check_failures",
+        "next_surface_name": "fix_check_failures",
+        "when": "MISSING_PROVIDED_FUNCTION"
+      },
+      {
+        "action": "The body carries its own import line, and the build writes imports from the declarations instead. Move it into the module header — requires: for Python, uses: for another s0ma component — take the line out of the body, and ask the check again.",
+        "next_surface": "mcp:tool/check",
+        "next_surface_name": "check",
+        "when": "BARE_IMPORT"
+      },
+      {
+        "action": "The build refuses because generated code was edited by hand, and that edit would be silently overwritten. Move the change back into the .s0ma source it belongs to, undo the hand edit, and ask the check again before building.",
+        "next_surface": "mcp:tool/check",
+        "next_surface_name": "check",
+        "when": "GENERATED_FILE_DRIFT"
+      }
+    ],
+    "steps": [
+      {
+        "channel": "mcp_tool",
+        "expected_visible_state": "One answer with the whole posture in it: whether this is a s0ma project at all, which mode it is in, every module it already holds and whether each is still fresh, what is built, the short list of rules worth following here, and a named next call. A directory that is not a project is a valid answer, not an error.",
+        "ordinal": "1",
+        "purpose": "Find out what this tree already is before writing anything into it.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "mcp:tool/project_status",
+        "surface_name": "project_status"
+      },
+      {
+        "channel": "mcp_tool",
+        "expected_visible_state": "A new .s0ma source written into the project and handed back in full, already checked on its own and already valid, so the intent and the contracts can be edited straight away rather than guessed at.",
+        "ordinal": "2",
+        "purpose": "Start the new behaviour from its intent, in a skeleton the toolchain already accepts.",
+        "side_effects": [
+          "write"
+        ],
+        "surface": "mcp:tool/scaffold_module",
+        "surface_name": "scaffold_module"
+      },
+      {
+        "channel": "mcp_tool",
+        "expected_visible_state": "Either a clean answer counting the files it read, or findings that each name the file, the line, the failure and what to do about it — and whether the problem is new since the last green build or was here before this session.",
+        "ordinal": "3",
+        "purpose": "Ask whether what was just written holds together, before anything is built from it.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "mcp:tool/check",
+        "surface_name": "check"
+      },
+      {
+        "channel": "mcp_tool",
+        "expected_visible_state": "The generated code and a manifest naming every module and the order they import in, written once and the same every time — plus whatever the build still wants, which in a fresh project includes a warning that the s0ma runtime it now imports has not been declared as a dependency.",
+        "ordinal": "4",
+        "purpose": "Turn the checked sources into the artifacts the project runs from.",
+        "side_effects": [
+          "write"
+        ],
+        "surface": "mcp:tool/build_project",
+        "surface_name": "build_project"
+      },
+      {
+        "channel": "mcp_tool",
+        "expected_visible_state": "The component's own record: its canonical name, what kind of part it is, who may call it, the intent and the contracts it was authored with, and what it provides — what the system knows about itself rather than a reading of the code it emitted.",
+        "ordinal": "5",
+        "purpose": "Read back what the build now knows about the component, instead of reading the code it wrote.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "mcp:tool/inspect_module",
+        "surface_name": "inspect_module"
+      }
+    ],
+    "teaches": [
+      {
+        "concept": "concept:registry-snapshot",
+        "term": "registry snapshot"
+      },
+      {
+        "concept": "concept:self-model",
+        "term": "self-model"
+      },
+      {
+        "concept": "concept:self-knowledge",
+        "term": "self-knowledge"
+      },
+      {
+        "concept": "concept:strictness-mode",
+        "term": "strictness mode"
+      },
+      {
+        "concept": "concept:check-and-build-loop",
+        "term": "check and build loop"
+      },
+      {
+        "concept": "concept:authored-vs-generated-boundary",
+        "term": "authored-vs-generated boundary"
+      },
+      {
+        "concept": "concept:metacognition",
+        "term": "metacognition"
+      }
+    ],
+    "title": "Authoring through the agent's own tool channel"
+  },
+  "schema": "s0ma-docs-model@1"
+}

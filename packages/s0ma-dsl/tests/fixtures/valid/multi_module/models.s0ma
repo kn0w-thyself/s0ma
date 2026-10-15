@@ -1,0 +1,36 @@
+module models
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Core data models for the user management system"
+    exports: [UserModel, UserRole]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell UserModel :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "Represents a system user with name and role"
+    schema: "Dataclass with name: str, role: str"
+    invariants: none
+    covered_by: none
+    ---
+    class UserModel:
+        name: str
+        role: str
+
+cell UserRole :: DOMAIN
+    kind: ENUM
+    visibility: PUBLIC
+    intent: "Valid user roles in the system"
+    schema: "Enum with ADMIN, USER, GUEST values"
+    invariants: none
+    covered_by: none
+    ---
+    class UserRole:
+        ADMIN = "admin"
+        USER = "user"
+        GUEST = "guest"

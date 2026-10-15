@@ -1,0 +1,1493 @@
+{
+  "counts": {
+    "by_distribution": {
+      "s0ma-core": 61,
+      "s0ma-dsl": 10,
+      "s0ma-mcp": 40,
+      "s0ma-studi0": 48
+    },
+    "by_kind": {
+      "ADAPTER": 2,
+      "CONFIG": 2,
+      "CONSTANT": 22,
+      "FRAMEWORK": 62,
+      "FUNCTION": 65,
+      "MODEL": 4,
+      "ORCHESTRATOR": 1,
+      "SERVICE": 1
+    },
+    "by_layer": {
+      "APPLICATION": 33,
+      "FRAMEWORK": 72,
+      "PRESENTATION": 54
+    },
+    "by_visibility": {
+      "(not declared)": 73,
+      "INTERNAL": 5,
+      "PUBLIC": 81
+    },
+    "components": 159
+  },
+  "entries": [
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.api.query_engine.QueryEngine",
+      "intent": "Rule-based natural language query engine that answers questions about the system using keyword matching and component name resolution",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.api.teaching.TeachingProvider",
+      "intent": "Serves documentation and live registry examples for teaching agents how to use the s0ma framework without duplicating content",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.decorators.component",
+      "intent": "Decorator factory that registers classes and functions as components in the self-model",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.decorators.internal",
+      "intent": "Lightweight marker decorator for private helpers intentionally excluded from registration",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.examples.dispatcher.DispatchOutcome",
+      "intent": "Raw per-dispatch result pairing a TimeoutResult with the effective runs_in mode that produced it",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.examples.dispatcher.ExampleDispatcher",
+      "intent": "Routes an ExampleRegistration to the correct subprocess runner based on its runs_in field (standalone, pytest, or integration)",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.examples.runner.ExampleResult",
+      "intent": "Structured outcome of a single example execution, carrying pass/fail summary, captured stdout/stderr, duration, return code, and timeout state",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.examples.runner.ExampleRunner",
+      "intent": "Discovers registered examples from a registry snapshot and executes each body in an isolated subprocess with per-example timeout enforcement",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.examples.timeout.TimeoutResult",
+      "intent": "Uniform subprocess outcome representation including returncode, captured stdout/stderr, duration, and whether the process was killed for exceeding its timeout budget",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.import_hook.S0maDSLLoader",
+      "intent": "Module loader for .s0ma source files that transpiles on-the-fly via the s0ma-dsl package and caches the emitted Python alongside the source",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.import_hook.S0maFinder",
+      "intent": "Meta-path finder that determines whether a module is in scope for registration enforcement",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.import_hook.S0maLoader",
+      "intent": "Module loader wrapper that scans for unregistered public entities after module execution",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.lifecycle.manager.LifecycleManager",
+      "intent": "Orchestrates component lifecycle operations (create, update, remove) with verification integration and automatic rollback",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.lifecycle.transaction.TransactionContext",
+      "intent": "Transactional wrapper for multi-step lifecycle operations with automatic rollback on failure",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.AdoptedFile",
+      "intent": "Record of a real (non-generated) file registered into the self-model by adoption: path, content hash at adoption time, optional description and metadata",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.Anomaly",
+      "intent": "Represents a detected code-model discrepancy classified by biological pathology",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.AssertExpr",
+      "intent": "Verifiable assertion attached to a doc-guide, pairing an assertion expression with its source span for precise diagnostic reporting",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ComponentSpec",
+      "intent": "Core data structure storing registration metadata for a single component",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ConfigurableProperty",
+      "intent": "Descriptor for runtime-configurable component properties like theme colors, layout options, and display settings",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.Contract",
+      "intent": "Behavioral contract declaring pre/postconditions, invariants, performance expectations, and cross-boundary protocol contracts with descriptive error messages on invalid keyword arguments",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.DocGuideRegistration",
+      "intent": "Registration record for a doc-guide declaration: an authored prose body with embedded example references, explicit covers, declarative asserts, and a content hash for drift detection",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.DocRefRegistration",
+      "intent": "Registration record for a doc-ref declaration: a generated-documentation artifact selecting entities via covers filter expressions and emitting structured sections, with a content hash for drift detection",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.DocsForResult",
+      "intent": "Structured result of RegistrySnapshot.docs_for, splitting matches into refs and guides lists so callers iterate either without runtime type dispatch",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.EntityRef",
+      "intent": "Typed reference to a registered entity by kind, name, and optional module, used for doc-guide covers and example demonstrates lists",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ErosionCoverageReport",
+      "intent": "de Silva et al. erosion-control strategy coverage tracking minimise, prevent, and repair activation",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ExampleRegistration",
+      "intent": "Registration record for an example declaration: a runnable body demonstrating named entities, dispatched by runs_in mode (standalone, pytest, or integration)",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.FilterExpr",
+      "intent": "Parsed filter expression used by doc-refs to select the entities they cover, carrying target kind, predicate, and raw source text",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ImportHookAnomaly",
+      "intent": "Frozen record describing one foreign-code violation detected by the s0ma import hook; appended to the registry's anomaly buffer and dispatched to subscribers for downstream immune-response detection",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.LifecycleEvent",
+      "intent": "Records a lifecycle operation (register, unregister, update, create) for audit logging and rollback reference",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ModuleMetadata",
+      "intent": "Metadata for module-level registration capturing layer, version, intent, exports, content hash, and tags",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.PluginRegistration",
+      "intent": "Registration metadata for a plugin with dependency validation against core components",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ProtocolContract",
+      "intent": "Declarative specification of a cross-boundary interface contract for WebSocket, REST, gRPC, or IPC protocols",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ReflexionAnalysis",
+      "intent": "Murphy's Reflexion Model output classifying convergences, divergences, and absences",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.RegistrySnapshot",
+      "intent": "Frozen serializable view of registry state with human-readable self-description",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.RelationshipEdge",
+      "intent": "Dependency relationship between two components with relation type (CALLS, READS, CONSTRUCTS, CONFIGURES, RAISES, TYPE_USES, OBSERVES, PRODUCES, CONSUMES), coupling, and authored/derived origin",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ResourceProfile",
+      "intent": "Expected resource usage profile for interoception monitoring of components",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.Section",
+      "intent": "Rendering section inside a doc-ref declaration with optional iterate, group_by, and structured render directive",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.SourceSpan",
+      "intent": "Source file location (path + line range) for a documentation subsystem declaration",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.TestRegistration",
+      "intent": "Registration metadata for a test declaration linking tests to the components they validate",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.VerificationReport",
+      "intent": "Aggregated results from running multiple verifiers with summary statistics and overall pass/fail",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.VerificationResult",
+      "intent": "Result from a single verifier run with anomalies, timing, and summary statistics",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.registry.ComponentRegistry",
+      "intent": "Central registry storing all registered components with hierarchical queries and SQLite persistence",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.self_model.analyzers.ExtensionPoint",
+      "intent": "Describes a location in the architecture where a new component can be added without violating constraints",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.self_model.analyzers.ImpactReport",
+      "intent": "Structured impact analysis result describing what would be affected if a component changes, including direct and transitive dependents, affected layers, and affected documentation and example artifacts",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.self_model.interface.SelfModelInterface",
+      "intent": "Python-native self-model query interface producing natural language text optimized for LLM consumption, including audience-aware output for code generation and agent contexts",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.testing.fresh_registry",
+      "intent": "Context manager providing a clean registry with freshly-imported modules, handling sys.modules eviction and restore for test isolation",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.testing.isolate_registry",
+      "intent": "Context manager creating a temporary isolated registry scope for tests that register synthetic components",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.testing.reinitialize_for_test",
+      "intent": "Imperatively reset the global registry and re-import modules for non-context-manager test isolation scenarios",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.utils.bootstrap_modules",
+      "intent": "Imports modules in dependency-safe order and registers their components, replacing manually-ordered module lists",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.utils.topological_sort_modules",
+      "intent": "Topologically sorts module paths by their declared dependencies using Kahn's algorithm with cycle detection and reporting",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.base.Verifier",
+      "intent": "Protocol defining the interface for all s0ma verification engines",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.contracts.ContractRegistry",
+      "intent": "Stores executable contract validators linked to component names for verification",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.contracts.ContractValidatorEntry",
+      "intent": "Data structure linking a callable validator to a contract description string",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.contracts.ContractValidators",
+      "intent": "Collection of all callable validators for a single registered component",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.contracts.ContractVerifier",
+      "intent": "Verifies component contracts: coverage reporting and performance/error validation",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.coverage.CoverageAuditor",
+      "intent": "Coverage auditor detecting dead code and pathologies using the biological taxonomy",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.interoception.ComponentMetrics",
+      "intent": "Collected runtime metrics for a single component including latency percentiles and error rates",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.interoception.DangerSignal",
+      "intent": "Aickelin's danger signal for adaptive monitoring based on component criticality",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.interoception.InteroceptionVerifier",
+      "intent": "Runtime monitoring verifier comparing metrics against declared ResourceProfile",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.interoception.MetricsCollector",
+      "intent": "Thread-safe collector of per-component runtime performance metrics",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.verifiers.structural.StructuralVerifier",
+      "intent": "AST-based structural drift detection comparing registry declarations against actual source code",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.docs_commands.cmd_docs_check",
+      "intent": "Handler for `s0ma docs check`: composes the documentation snapshot in memory and byte-compares it against the committed outputs without writing anything.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.docs_commands.cmd_docs_check_drift",
+      "intent": "Handler for `s0ma docs check-drift`: re-renders every doc and byte-compares against committed output files; reports diffs.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.docs_commands.cmd_docs_compose",
+      "intent": "Handler for `s0ma docs compose`: composes the documentation snapshot, runs every gate, and writes the declared outputs under the documentation root.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.docs_commands.cmd_docs_list",
+      "intent": "Handler for `s0ma docs list`: prints every topic of one part of the documentation, or of all five.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.docs_commands.cmd_docs_render",
+      "intent": "Handler for `s0ma docs render`: parse, validate, render every doc declaration to its declared output: path.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.docs_commands.cmd_docs_search",
+      "intent": "Handler for `s0ma docs search`: prints every topic a question could have meant, strongest match first, each with the reason it matched.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.docs_commands.cmd_docs_show",
+      "intent": "Handler for `s0ma docs show`: renders one resolved topic in full, or the ranked candidates a question could have meant.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.docs_commands.cmd_docs_verify",
+      "intent": "Handler for `s0ma docs verify`: runs documentation validation layers 1-5 without rendering output files.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.examples_commands.cmd_examples_run",
+      "intent": "Handler for `s0ma examples run`: discovers .s0ma examples and delegates execution to s0ma-core's ExampleRunner.",
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "id": "component:s0ma_dsl.cli.main.S0maCLI",
+      "intent": "Command-line interface for the s0ma DSL transpiler. Provides the s0ma command, whose subcommands include transpile, check, build, inspect and graph.",
+      "kind": "SERVICE",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.create_server",
+      "intent": "Builds the s0ma-authoring FastMCP server by deriving every tool, resource, and prompt registration from the package self-model registry — the registered component set IS the served surface",
+      "kind": "ORCHESTRATOR",
+      "layer": "APPLICATION",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.get_self_registry",
+      "intent": "Holds the s0ma-mcp self-model: a dedicated component registry of every tool, resource, prompt, and factory this server exposes, kept apart from the process-global registry",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:<component>.__component__",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.prompts.author_module_prompt",
+      "intent": "Walks an agent through authoring one new module end to end, rendering the steps of journey:mcp-authoring-loop from the record rather than from a copy in the prompt text, wrapped in the framing the record does not carry: the golden rule, the survival card, the argument shapes, and the editing that happens between steps",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.prompts.diagnose_fault_prompt",
+      "intent": "Guides an agent from an observed runtime fault through project_status, declared runtime/runbook context, suspect and dependency-neighbor inspection, host evidence when needed, and a state-preserving live behavior probe.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.prompts.feedback_prompt",
+      "intent": "Walks an agent through carrying one piece of the user's own feedback to the s0ma team: identify it, confirm it is about s0ma when the user never said so, draft from evidence, prepare, show the exact feedback data and what redaction removed, submit only through the client's approval form, and relay the receipt or the saved draft",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.prompts.fix_check_failures_prompt",
+      "intent": "Walks an agent through diagnosing and clearing check failures: group structured diagnostics by code, fix highest severity first via each remediation, re-check until clean",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.prompts.migrate_project_prompt",
+      "intent": "Walks an agent through migrating a pre-consolidation project: migrate_ext dry-run, present the plan, apply, rebuild, and check until clean",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.changelog_resource",
+      "intent": "Serves the monorepo's canonical changelog so agents and humans can read what changed in the installed toolchain version",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.docs_concepts_resource",
+      "intent": "Serves the whole concept vocabulary in one read: every concept this build records, its id, its term and its authored one-sentence summary, in id order",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.docs_index_resource",
+      "intent": "Serves the documentation index: which build this is, every category of topic it addresses with a count and an example id, how to ask for one, how many earlier names still answer, where the full pages are, and which s0ma://docs addresses belong to the other server",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.docs_journeys_resource",
+      "intent": "Serves every worked path this build records, step by step: what the path is for, each step's surface, why it is taken, what a good result looks like, any approval it needs, and what to do when a named thing goes wrong",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.errors_resource",
+      "intent": "Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.getting_started_resource",
+      "intent": "Serves the canonical outcome-first cold-start journey: product fit, project creation, model orientation, dependency inspection, drift and release-gate proof, and explicit host verification.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.load_doc",
+      "intent": "Resolves the packaged agent-guide documents from s0ma_mcp/_docs package data via importlib.resources so they load from an installed wheel",
+      "kind": "ADAPTER",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.patterns_resource",
+      "intent": "Serves the DSL patterns guide of worked idioms and recipes for structuring non-trivial s0ma applications",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.quick_reference_machine_resource",
+      "intent": "Serves the generated s0ma quick reference as data (schema s0ma-quick-reference@1): the same facts as the page, rendered from the same value, so that a coding agent can read every line of every kind of declaration without reading a page laid out for a person",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.quick_reference_resource",
+      "intent": "Serves the generated s0ma quick reference, the page written for a reader: every kind of declaration, every line each may carry with whether it must be written, the words a line chooses from, a checked sample of each kind, the everyday commands, the strictness modes and the basic rules, rendered by the documentation build from the language the check enforces",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.runbook_resource",
+      "intent": "Serves the per-project operational runbook: run/health commands, env contracts, runtime state_paths that must never be reverted, module inventory, and the ops rules — rendered from the project's [tool.s0ma] keys, or a teaching variant naming what to declare when they are absent",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.self_model_resource",
+      "intent": "Serves this server's own live component graph as JSON — every tool, resource, prompt, and factory with kind, layer, intent, and dependencies, the same registry the served surface is derived from (FR-MCP-7)",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.self_prompting_resource",
+      "intent": "Serves the runtime self-prompting guide: verified companion loading, self_inspect adapter wiring, a ContextAssembler concierge-shaped example, and the recommended host prompt trust block.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.spec_resource",
+      "intent": "Serves the current normative s0ma DSL language specification — the authority when the guides are not enough",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.survival_card_resource",
+      "intent": "Serves the survival card (under 4 KB): the bootstrap loop, the three body rules, one minimal valid module, and the recovery moves for the top diagnostic codes — deliberately small enough to hold in context",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.system_prompt_resource",
+      "intent": "Serves the drop-in coding-agent system prompt that teaches an LLM how to author .s0ma files",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.resources.version_resource",
+      "intent": "Serves the installed toolchain versions (server, the four s0ma distributions, MCP SDK, Python) live from importlib.metadata — offline by design",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools._run_cli",
+      "intent": "Invokes the s0ma DSL CLI in-process with captured stdout/stderr so tools receive the toolchain's own structured JSON diagnostics byte-for-byte",
+      "kind": "ADAPTER",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.adopt_file_tool",
+      "intent": "Records a pre-existing non-generated file as interim migration intake with mandatory authored intent, then points to author_module because roster adoption is not a semantic component model",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.build_project_tool",
+      "intent": "Runs a full cross-module s0ma build into the project's build dir and reports the build.s0ma.json manifest summary",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.check_tool",
+      "intent": "Validates .s0ma source without emitting artifacts and returns structured diagnostics with per-finding remediation — the agent's inner loop",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.describe_server_tool",
+      "intent": "Answers 'what is this server and what can it do' from the live self-model: the registered component graph plus an LLM-ready text rendering",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.init_project_tool",
+      "intent": "Makes a directory a s0ma project by writing the [tool.s0ma] table into its pyproject.toml (creating a minimal pyproject when none exists) — the bootstrap step no other tool performs, so an agent is never left scaffolding modules into a directory that is not a project",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.inspect_module_tool",
+      "intent": "Surfaces a built module's tagged .s0ma.json IR self-model (value/none/pending states preserved), or a per-module survey of the whole project when no module is named",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.learn_s0ma_tool",
+      "intent": "Answers one question about s0ma itself from the documentation snapshot packaged with this release: resolves the asked-for topic by exact id, then by name, then by category, renders the bounded answer with its own build identity, and names both the committed page and the resource carrying the rest",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.migrate_ext_tool",
+      "intent": "Migrates a pre-consolidation project to the .s0ma extension family and [tool.s0ma] config — dry-run by default, refuse-don't-clobber",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.prepare_feedback_tool",
+      "intent": "Composes and locally redacts one s0ma-feedback@1 report from the user's own words and returns the exact data plus its fingerprint — the review step of the feedback journey, and deliberately the only one that is pure: it saves nothing and contacts nothing",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.project_status_tool",
+      "intent": "Answers one-call orientation: is this a s0ma project, which mode and authoring posture, what is built or stale, which tagged pending semantic states block release, and the suggested next action",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.run_example_tool",
+      "intent": "Discovers example declarations and executes each in its own timeout-guarded subprocess via core's isolated example runner",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.scaffold_module_tool",
+      "intent": "Emits a minimal known-valid .s0ma module skeleton from the DSL's own template and validates it with check before returning",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.submit_feedback_tool",
+      "intent": "Proves the report it was handed is the one prepare_feedback produced, obtains the user's own approval through the client's approval interaction, and only then sends it — saving a local draft on every other outcome so nothing a user wrote is ever lost and nothing they did not approve is ever sent",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.transpile_tool",
+      "intent": "Compiles .s0ma source (one file or directory) into .py plus .s0ma.json IR plus .s0ma.map artifacts via the DSL pipeline",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "id": "component:s0ma_mcp.tools.verify_host_tool",
+      "intent": "Explicitly executes each built production module under the host application's selected Python and reports interpreter, dependency, and isolated import evidence without pretending project code is sandboxed",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.sh0w_assets.APP_CSS",
+      "intent": "The stylesheet served at /assets/app.css: the whole visual language of sh0w — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.sh0w_assets.APP_JS",
+      "intent": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, and the narration pane that shows what an agent says it is doing beside it. One file, no imports, no build step.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.sh0w_assets.INDEX_HTML",
+      "intent": "The document served at the root: a standalone HTML5 page that mounts sh0w and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7).",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.NARRATION_PHASES",
+      "intent": "The four phases a movement can be in — the arc the narration schema froze. A phase outside this set is not a phase studi0 knows how to show, so the line carrying it is invalid rather than rendered with an unknown chip.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.NARRATION_TYPE",
+      "intent": "The one record type studi0 will render as narration. The session log is an open file any tool could append to; naming the type it accepts is what keeps a line written for some other purpose out of the pane.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.NARRATION_WINDOW",
+      "intent": "How many of the most recent narrations the served document carries. A session log grows for as long as an agent works, and the page shows a scrolling account of recent movements rather than a transcript — so the narration block is bounded here, once, instead of growing without limit inside a document the page refetches. The count of everything ever narrated is reported separately, so a bounded list never reads as a complete one.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.NarrationLog",
+      "intent": "One session's reading of one narration log: how far into the file studi0 has already read, the recent narrations it accepted, and how many lines it has seen and refused. The offset is what makes the tail a tail — each tick reads only what was appended since the last one — and the two counters are what let a bounded list of entries be honest about being bounded.",
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.PRESENCE_PATH_PARTS",
+      "intent": "Where studi0 says it is watching, relative to the project root: .s0ma/ is the established gitignored local-state home, studi0/ scopes it to the viewer, active.json is the marker itself. The authoring MCP server reads this exact path to decide whether to ask for narration, so the two sides name it from one place — here on the writing side, and as a literal in the rule the server renders.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.SESSION_LOG_PATH_PARTS",
+      "intent": "Where the agent appends its narration, relative to the project root — the sibling of the presence marker, and the path the survival rule spells out verbatim to the agent that writes it.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.clear_presence",
+      "intent": "Takes the presence marker back down on the way out, so the next agent to ask is told the truth. It removes only a marker naming THIS process: two studi0s can watch one project, and the first to exit must not withdraw the second one's claim. A marker it cannot read is not one it can claim, so it is left alone — the pid check on the reading side is what makes a leftover harmless anyway.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.narration_snapshot",
+      "intent": "Takes one consistent reading of a narration log — the entries, everything ever accepted, everything refused — so a served document reports three numbers that were true at the same moment. Copies are handed out rather than the live list, because the reading keeps moving while a response is being written.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.presence_path",
+      "intent": "Names the presence marker for one project root, so every side of the feature — the writer, the remover, and the test that looks for it — resolves the same path from the same constant.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.read_narrations",
+      "intent": "Reads whatever the agent has appended to the session log since the last look, and nothing else. A line still being written is not read at all — the tail stops at the last newline and comes back for the rest next tick — so a narration is never shown half-written or half-parsed. A missing log is the ordinary case, not a failure: most sessions never narrate, and studi0 has nothing to say about that.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.session_log_path",
+      "intent": "Names the narration log for one project root — the file the agent appends to and the watch tails, resolved from one constant so the reading side can never drift from the path the rule tells the writing side.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_narration.write_presence",
+      "intent": "Says, in the project itself, that a studi0 is watching it right now — the one file studi0 ever writes into the tree it is showing. It carries the port it is serving on and the process id serving it, and nothing else: the port so a reader can find the viewer, the pid so a reader can tell a running studi0 from a marker an unclean shutdown left behind.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.NOT_BUILT_ERROR",
+      "intent": "The answer GET /api/graph gives for a project that has no build artifacts at all. There is no graph to serve and an empty one would be a lie a viewer could not detect — an empty graph and an unbuilt project look identical on screen — so studi0 names the situation and names the remedy instead.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.NOT_FOUND_ERROR",
+      "intent": "The answer for any path studi0 does not serve — an /assets file this build does not carry, a mistyped /api route, anything else: the same structured error envelope, never a traceback and never a stack of guesses.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.ROUTE_TABLE",
+      "intent": "Every path studi0 serves, declared as data: what a caller asks for, what comes back, which declarations produce it, and what answering costs. The routing decision is still taken in route_request one path at a time — this is that same table said out loud, so a person, a test and a documentation build can all read what studi0 serves without reading a function body and guessing. The two are held in step by tests/test_api.py: a path named here that route_request does not answer, or a path route_request answers that is not named here, fails there.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.Studi0ServerConfig",
+      "intent": "The studi0 host's settings: the loopback interface the server is allowed to bind, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number.",
+      "kind": "CONFIG",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server._CSS_CONTENT_TYPE",
+      "intent": "The Content-Type header value studi0 sends with the sh0w stylesheet, named here rather than at the route so the charset is declared once and cannot drift between assets.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server._HTML_CONTENT_TYPE",
+      "intent": "The Content-Type header value studi0 sends with every HTML document it serves, stated once so the served page cannot drift into a charset guess.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server._JSON_CONTENT_TYPE",
+      "intent": "The Content-Type header value studi0 sends with every JSON document it serves, stated once so API answers and API errors are labelled identically.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server._JS_CONTENT_TYPE",
+      "intent": "The Content-Type header value studi0 sends with the sh0w script. It must be a JavaScript type a browser will accept for a module script, or the page loads its stylesheet and then draws nothing.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "INTERNAL"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.bound_address",
+      "intent": "Reports the address a running studi0 server actually bound, asked of the socket itself rather than of the requested settings — the only answer that survives an OS-assigned port, and the one a caller prints or asserts on.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.create_server",
+      "intent": "Builds the studi0 host for one project: a threading HTTP server bound to the loopback interface whose only behavior is to answer GET requests from the routing table, quietly, so the console stays the caller's.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.project_display_name",
+      "intent": "Names the project studi0 is showing the way a person would name it — its own directory name — for the one line studi0 prints when it starts serving. The served page is never told: it carries no project name at all, because everything it shows it learns from the graph API.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.route_request",
+      "intent": "Decides what studi0 answers for one requested path: the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_server.run_server",
+      "intent": "Runs a studi0 server until the person watching it stops it, and closes the socket on the way out — an interrupted studi0 leaves nothing bound behind it.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.BUILD_STATUS_MISSING",
+      "intent": "The build status studi0 reports when it cannot find a build to judge: nothing is built, or the build manifest is unreadable, so freshness is a question studi0 has no evidence to answer. The other two statuses — fresh and stale — are never decided here; they arrive verbatim from the graph document's own freshness block, which is the only place source hashes are compared.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.CARRIED_GRAPH_SCHEMA",
+      "intent": "The versioned name of the graph document that rides INSIDE the /api/graph envelope — the one s0ma_dsl.graph_export stamps on its own output. studi0 neither produces it nor rewrites it; naming it here is how this package states which graph contract this build was written against, so a page, a test and a documentation build read one answer instead of three copies of a string that can drift apart.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.GRAPH_DOCUMENT_KEYS",
+      "intent": "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: three keys that say which reading this is and what it carries.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.GRAPH_SCHEMA",
+      "intent": "The versioned name of the ENVELOPE GET /api/graph answers with — the seq-stamped wrapper studi0 puts around the graph document. The graph document inside it carries its own, separate schema string (s0ma-graph@2, stamped by s0ma_dsl.graph_export); the two version independently on purpose, because the transport and the graph contract change for different reasons.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.NARRATION_BLOCK_KEYS",
+      "intent": "Every key the narration block of GET /api/state answers with. It is a nested block with a frozen shape of its own precisely because self-report must never sit at the same level as build truth — and a shape stated here is a shape a reader can check, rather than one inferred from whichever session happened to be running.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.STATE_DOCUMENT_KEYS",
+      "intent": "Every key GET /api/state answers with, and no others — the frozen shape a page built against this API is built against. Declared in the package rather than written out in a test, so the contract has exactly one owner: whoever asks what studi0 serves gets the package's own answer, and the test that pins the served document compares against this instead of against a second copy of it.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.STATE_SCHEMA",
+      "intent": "The versioned name of the document GET /api/state answers with, stamped on every response so a page that outlives a studi0 upgrade can tell whether it still understands what it is being told. Version 2 added the narration block — the frozen key set grew, so the stamp moved with it rather than letting a v1 reader meet a document it was never promised.",
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.Studi0Session",
+      "intent": "One studi0 viewing session: the project being shown, the current reading of it, and how far into that project's narration log the session has read. The reading is replaced whole rather than edited in place, so a reader never observes a half-updated session, and a lock serialises publishers so two of them cannot both claim the same sequence number.",
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.Studi0Snapshot",
+      "intent": "One consistent reading of a project's truth: the sequence number that identifies it, the graph document it carries, the build's status, the modules whose sources have moved on since the build, and — kept deliberately separate from all of those — what an agent has said it is doing. Frozen, so a request thread holding a snapshot is holding a reading that cannot shift underneath it while it answers.",
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.create_session",
+      "intent": "Opens a viewing session on a project without reading anything yet: a session that knows which project it is for and admits, until its first reading lands, that it has nothing to show. Construction touches no files, so binding a server can never be delayed or defeated by the project's state on disk.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.graph_document",
+      "intent": "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.read_graph",
+      "intent": "Reads one project's whole component graph the only way studi0 is allowed to: by asking s0ma_dsl.graph_export for that project's full s0ma-graph@2 graph document. A project with no build artifacts is not an error here — it is the answer 'nothing is built', reported as None so the caller can say so plainly instead of showing an empty graph and letting a viewer read it as an empty project.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.read_snapshot",
+      "intent": "Hands a caller the session's current reading as one object, so everything it answers from — the sequence number, the graph, the status — comes from a single moment. Two documents built from one snapshot can never disagree about seq, however many builds land while the response is being written.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.refresh_session",
+      "intent": "Takes a fresh reading of the project and publishes it only if it says something new. This is the one place a sequence number advances, and it advances on evidence alone: an identical graph, an identical status, an identical stale set, and an unmoved narration log mean nothing happened, whatever ran in between. A new narration is evidence like any other — it is why the page repaints — but it enters as its own field and never as a graph fact. A first reading publishes at seq 1 rather than advancing to 2, so a client's first answer is never seq 2 for a project that never changed.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_state.state_document",
+      "intent": "Renders the answer to GET /api/state: which reading this is, whether the build still matches the sources it was built from, which modules have moved on since — and, in its own block, what an agent has said it is doing. The narration block is a block precisely so that no reader can mistake self-report for build truth: it is nested, named, and carries its own counts. This is the small, cheap document the page polls; the graph itself is fetched only when the sequence number says it is worth fetching.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_watch.Studi0WatchConfig",
+      "intent": "The watch's two timings: how long it waits between readings of the project, and how long a shutdown waits for the watching thread to notice it was asked to stop.",
+      "kind": "CONFIG",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_watch.Studi0Watcher",
+      "intent": "One running watch: the session it keeps current, the way it is asked to stop, the thread doing the looking, and the failures it has already spoken about. The last of those is what keeps a broken project from filling a console with the same sentence four times a second.",
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_watch.poll_once",
+      "intent": "One reading of the project, taken safely. A build that lands while studi0 is looking leaves half-written artifacts behind it for a moment; reading one of those must cost the viewer nothing more than this tick, so every failure is caught, spoken about once, and answered by keeping the last good reading and trying again in three-quarters of a second.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_watch.start_watcher",
+      "intent": "Starts watching a project, taking the session's first reading before it returns so that whatever is served next is already true. The first reading goes through the same guarded tick as every later one, which is why a project that cannot be read at all still yields a running studi0 that says so rather than a studi0 that refuses to start.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "id": "component:s0ma_studi0.studi0_watch.stop_watcher",
+      "intent": "Asks a watch to stop and waits, briefly, for it to finish the tick it is in — so a studi0 that has exited is not still reading the project behind the console prompt. The wait is bounded because the thread is a daemon: worst case it is abandoned, never awaited forever.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    }
+  ],
+  "inventory": "components",
+  "readings": [
+    {
+      "components": 38,
+      "content_sha256": "b586abd9fe6b252376b87d2fb559536f78aaba13a290287bdd125dab41dbb68a",
+      "source": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json"
+    },
+    {
+      "components": 48,
+      "content_sha256": "7842678e9bdf967cd4a5fbdd89f818826042b582bed5fbb377dc977edf9a781f",
+      "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json"
+    },
+    {
+      "components": 12,
+      "content_sha256": "ff4ec7ad0b027b17a0f4d6543c3bf1ae83d76e98f52aaf1563e94d2d3562a600",
+      "source": "python:<component>.__component__"
+    },
+    {
+      "components": 61,
+      "content_sha256": "080a2abcafe4a481ad0e0334dd7786de3b6dbfa95d1e7bbd3c2f5ab594a9147f",
+      "source": "python:s0ma._bootstrap.bootstrap_register"
+    }
+  ],
+  "schema": "s0ma-docs-inventory@1",
+  "source": {
+    "model_schema": "s0ma-docs-model@1",
+    "release_version": "0.19.1",
+    "snapshot_hash": "sha256:46cb0cce5f7c07cf"
+  }
+}

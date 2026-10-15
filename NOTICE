@@ -1,0 +1,10 @@
+s0ma
+Copyright 2026 kn0wthyself LLC
+
+This product includes software developed by kn0wthyself LLC.
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+No third-party code is bundled inside any s0ma distribution. The runtime
+dependencies each distribution declares are installed from their own
+publishers under their own licenses, and are not redistributed here.

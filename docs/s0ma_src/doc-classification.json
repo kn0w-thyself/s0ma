@@ -1,0 +1,1012 @@
+{
+  "entries": [
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "The pull-request template. States the beta contribution policy (FD-4: issues and discussions welcome, pull requests by invitation) and the checklist an invited change meets. Authored at beta-prep-5-front-door A2; the first tracked Markdown under .github/.",
+      "path": ".github/PULL_REQUEST_TEMPLATE.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "normative-current",
+      "note": "The repository agent contract: it states the authority order every other document defers to, and binds every agent working in this tree. Version-gated.",
+      "path": "AGENTS.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Canonical lockstep changelog (PRD INV-4). Mirrored byte-exact into packages/s0ma-mcp/src/s0ma_mcp/_docs/CHANGELOG.md.",
+      "path": "CHANGELOG.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Adopts the Contributor Covenant 2.1 by reference — the canonical text is linked, not copied — with our own summary, the reporting address and what happens after a report. Authored at beta-prep-5-front-door A2.",
+      "path": "CODE_OF_CONDUCT.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "path": "CONTRIBUTING.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Hand-authored around one gate-pinned generated region (BEGIN/END GENERATED GETTING STARTED) copied from docs/getting-started.md. Mixed file; classified by its authored majority.",
+      "path": "README.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "The security policy: how to report a vulnerability privately, what to include, what to expect and when, scope, safe harbour, and the four trust-model facts a security-minded reader asks for, each linked rather than restated. Source of truth for the website's /security page. Authored at beta-prep-5-front-door A2.",
+      "path": "SECURITY.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "The map of record (F2): every document this repository keeps, grouped by the architecture plan's five-category information architecture, with each one's readers, standing and guard state. Rendered by the documentation application from the document catalog and byte-gated by the docs-application stage; hand-edits are lost at the next compose.",
+      "path": "docs/README.md"
+    },
+    {
+      "audience": "owner",
+      "disposition": "living-authored",
+      "note": "Canonical release runbook; supersedes both packages/*/docs/release_checklist.md.",
+      "path": "docs/RELEASING.md"
+    },
+    {
+      "audience": "machine",
+      "disposition": "non-documentation",
+      "note": "The byte-identical copy a project build writes into the build directory because declared outputs resolve against it (ADR-012 §1 addition 2, from the B1 spike's finding 6). Not `mirror` and not `generated`: ADR-012 records these copies as build artifacts, never linked and never read, so the F-phase map of record must not list it. It stops existing if the docs_output_dir key of ADR-012 §2.4 is ever adopted.",
+      "path": "docs/_built/reference/documentation-application.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "generated",
+      "note": "Deterministic self-prompt card emitted by `s0ma build` from canonical IR; committed with the docs application build (C8).",
+      "path": "docs/_built/self_prompt_card.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted.",
+      "path": "docs/adr/ADR-001-0.14-gate-integrity-and-value-loop.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted for 0.14.0 M6 — scope-bound to a shipped milestone; audit §3.2-C flags the ambiguity, treated as binding until an owner ruling says otherwise.",
+      "path": "docs/adr/ADR-002-self-context-authored-data-boundary.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted — owner-ratified 2026-08-09.",
+      "path": "docs/adr/ADR-003-hardware-embodiment-foundation.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted — owner-ratified 2026-08-27. Not to be confused with the superseded s0ma-dsl ADR-004.",
+      "path": "docs/adr/ADR-004-feedback-architecture.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Proposed — owner gate at B7.",
+      "path": "docs/adr/ADR-012-docs-application.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Proposed — owner gate at B7.",
+      "path": "docs/adr/ADR-013-derived-source-registry.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted by the owner's ruling of 2026-09-30. The contract records it as Revision R6.",
+      "path": "docs/adr/ADR-014-the-forbids-line.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "generated",
+      "note": "Generated index of every registered component (F4): what each one is, which layer and distribution it belongs to, and where its code is. It succeeds the hand-maintained architecture document the August 2026 audit found had stopped naming half of them. Byte-gated by `s0ma docs check`.",
+      "path": "docs/architecture/component-index.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "generated",
+      "note": "The documentation application's self-description (I1, architecture M7): the readings it composes the model from, the gates it runs, what its own s0ma module registers, and every file it writes — all read out of the build that renders it. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/architecture/docs-application.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Frozen contract (Status: Frozen for implementation); governed by docs/adr/ADR-001.",
+      "path": "docs/contracts/0.14.0-schema-and-surface-budget.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Frozen contract s0ma-feedback@1; governed by docs/adr/ADR-004.",
+      "path": "docs/contracts/feedback-v1.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Open design note. The 0.16 retarget expired, but the A3 outcome paragraph (2026-08-28) keeps the round explicitly open and folds the emitted-import decision into it — live, not archived. Filename version is historical.",
+      "path": "docs/design/0.15-runtime-free-emission.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "The self-hosted documentation-subsystem guide (I1), superseding the two stale package copies: the three declarations and the drift gate at the language level, the compose pipeline, gates, channels and read surfaces at the application level. Authored prose with every enumeration deferred to a generated page; coverage-bound under the G6 derivation rule and pinned in packages/s0ma-dsl/tests/test_docs_guide_bindings.py.",
+      "path": "docs/documentation-subsystem.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Source of record for the README generated block, the s0ma://guide/getting-started resource, and the _docs mirror. Three gates pin the copies.",
+      "path": "docs/getting-started.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Journey guide authored at Phase E; bound to its journey through the catalog.",
+      "path": "docs/getting-started/first-project.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "The Claude route: installing s0ma as a Claude Code plugin or a Claude Desktop extension, where the license key goes, how automatic updates and pinning behave, what happens offline and when access to new versions ends. Authored at beta-prep-2-claude D1; bound through the catalog and pinned by test_docs_guide_bindings.py. The route itself is not offered by the public repository's first release, and the page says so: the summary home, docs/getting-started.md, states the source route alone.",
+      "path": "docs/guides/claude-integration.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Journey guide authored at Phase E; bound to its journey through the catalog.",
+      "path": "docs/guides/drift-recovery.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Journey guide authored at Phase E; bound to its journey through the catalog.",
+      "path": "docs/guides/first-module.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Journey guide authored at Phase E; bound to its journey through the catalog.",
+      "path": "docs/guides/mcp-authoring.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "The brownfield journey guide: the five-rung adoption ladder from a plain-Python codebase to a s0ma application, opening with a self-sufficient card. Authored at beta-prep-1-retrofit F1; bound through the catalog and pinned by test_docs_guide_bindings.py.",
+      "path": "docs/guides/retrofit-existing-codebase.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Journey guide authored at Phase E; bound to its journey through the catalog.",
+      "path": "docs/guides/studi0-feedback.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Guide to the build's outputs: what each file in the build directory is, who reads it, and why none is edited by hand; bound to its coverage in the guide-bindings suite.",
+      "path": "docs/guides/what-the-build-writes.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "The tester-facing onboarding doc (private beta), plus the owner runbook in §6.",
+      "path": "docs/hosting-getting-started.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “adoption ladder” (beta-prep-1-retrofit F2a): the authored definition of the five-rung path from a plain-Python codebase to a s0ma one, when to reach for the word and when not to, and the concepts it relates to, rendered by the documentation application from the composed snapshot. Byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/adoption-ladder.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "The anatomy of a .s0ma file (F5): what a source file is made of, assembled out of `concept:s0ma-file` and the eleven declaration kinds that declare themselves part of it rather than narrated. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/learn/anatomy-of-a-s0ma-file.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “authored-vs-generated boundary” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/authored-vs-generated-boundary.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “axon” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/axon.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “canonical IR” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/canonical-ir.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “cell” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/cell.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “check and build loop” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/check-and-build-loop.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “contract” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/contract.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “doc-guide” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/doc-guide.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “doc-ref” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/doc-ref.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “drift-gate” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/drift-gate.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “drift” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/drift.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “embodiment” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/embodiment.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “example” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/example.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “executable evidence” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/executable-evidence.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “feedback” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/feedback.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “ganglion” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/ganglion.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "The public glossary (F5): every term s0ma teaches in one line each, with the alternate names that resolve onto them, rendered by the documentation application from the composed concepts. Closes the audit's missing-public-glossary gap. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/learn/glossary.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “helper” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/helper.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “integration” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/integration.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “intent” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/intent.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “interoception” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/interoception.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “kind” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/kind.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “layer” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/layer.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “metacognition” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/metacognition.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “mirror” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/mirror.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “module” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/module.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “nerve” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/nerve.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “perimeter” (beta-prep-1-retrofit F2a): the authored definition of the line a project draws around the code s0ma answers for, when to reach for the word and when not to, and the concepts it relates to, rendered by the documentation application from the composed snapshot. Byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/perimeter.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “proprioception” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/proprioception.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “registry snapshot” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/registry-snapshot.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “release channel” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/release-channel.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “requires:” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/requires.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “.s0ma file” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/s0ma-file.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “s0ma” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/s0ma.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “self-knowledge” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/self-knowledge.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “self-model” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/self-model.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “strictness mode” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/strictness-mode.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “test” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/test.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “uses:” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/uses.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Learning page for the concept “visibility” (F5): the authored definition, when to reach for it and when not to, worked examples and the concepts it relates to, rendered by the documentation application from the composed snapshot. One of the thirty-nine pages of the learning collection; byte-gated by `s0ma docs check`, and a page left behind by a deleted concept is reported as drift.",
+      "path": "docs/learn/visibility.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "The maintenance runbook (I3): what a contributor does when adding a concept, a surface, a journey, a document or a coverage claim, and what each gate asks of them when it refuses. Authored prose that points rather than restates — the subsystem guide owns how the system works, RELEASING.md owns the release cut, AGENTS.md owns the build commands — so it carries no inventory of its own to go stale.",
+      "path": "docs/operations/docs-maintenance.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Generated reference to every command s0ma serves (F3): each one's help line, arguments, options and defaults, taken from the argparse tree the CLI really builds. Rendered by the documentation application from the composed snapshot and byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/reference/cli.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Reader index of every concept s0ma teaches, rendered by the documentation application (D6) from the composed snapshot. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/reference/concepts-index.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Generated reference to every `[tool.s0ma]` setting a project can declare (F3): each key's type, default and meaning, read structurally out of the loader in `packages/s0ma-dsl/src/s0ma_dsl/project.py`. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/reference/configuration.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Generated reference to every report s0ma can make (F3): each code's description and its severity in each of the four strictness modes, read from the canonical registries in `s0ma_dsl.config`. A build that stopped on a code can send a reader straight to its entry. Byte-gated by `s0ma docs check`.",
+      "path": "docs/reference/diagnostics.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "generated",
+      "note": "doc-ref render of the documentation application's own public surface, produced from docs/s0ma_src/application.s0ma by `s0ma docs render` and byte-gated by the docs-application stage of check.py (F1). Adding it is what let docs/pyproject.toml raise mode to release.",
+      "path": "docs/reference/documentation-application.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Generated reference to both MCP servers (F4): every tool, resource and prompt each one serves, told apart by the adapter that read it, with what calling it does and which packaged documents mirror which resources. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/reference/mcp.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "generated",
+      "note": "Generated reference to the distributions this workspace ships (F4): each one's version, license, purpose and in-workspace dependencies, read off the same `pyproject.toml` the component facts already name. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/reference/packages.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Generated quick reference: every kind of declaration, every line each one may carry and whether it must be written, the words a line chooses from, the everyday commands and the basic rules, on one page. The lines and words are read from the language the check enforces, every sample is cut from a project that passes the strictest check, and the explanations are authored in `docs/s0ma_src/quick-reference.json`. Rendered by the documentation application beside its machine-readable twin, `docs/_generated/quick-reference-machine.json`, and byte-gated by `s0ma docs check`.",
+      "path": "docs/reference/quick-reference-readable.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Generated reference to the studi0 viewer (F4): the routes it serves and the declared contracts they are held to, rendered from the composed snapshot. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/reference/studi0.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "generated",
+      "note": "Reader index of every capability s0ma serves, grouped by channel, rendered by the documentation application (D6) from the composed snapshot. Byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",
+      "path": "docs/reference/surfaces-index.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "working-plan",
+      "note": "The human summary of this ledger. Moved out of plans/notes/ to docs/s0ma_src/ at beta-prep-5-front-door, because the ledger is a gate input — step 3 of adding a document, and three test modules read it — and a gate input must not live in a directory the public export withholds. Still a working record rather than shipped prose: the disposition enum, the audit's eight locations and the archive ledger.",
+      "path": "docs/s0ma_src/doc-classification.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "The stability statement: what a pre-1.0 s0ma promises and what it does not — the invariants, the two frozen contracts, the schema-string discipline, what may change between releases (human-facing wording, report sentences, generated bytes, the served tool surface, studi0), how a project protects itself (its own toolchain, pinning, the committed-build equality gate), how a change is announced, which versions get fixes, and what beta means — pre-1.0, and nothing else. Names no version number. Authored at beta-prep-5-front-door B1; bound through the catalog and pinned by test_docs_guide_bindings.py.",
+      "path": "docs/stability.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Human-oriented troubleshooting FAQ (A7). Seeded from docs/hosting-getting-started.md §5 and the generated common_errors table, rewritten for people; defers the hosted channel's install/key failures to §5 rather than forking them, and says that channel is not the route the public repository offers.",
+      "path": "docs/troubleshooting.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "The consolidated trust-model note (G7), closing the July GAP-1/API-5 gap: what s0ma treats as data rather than instruction, what each side-effect word means, how example and evidence execution is bounded, what the three connection surfaces expose and bind to, what the feedback flow can and cannot do, and the observed-versus-declared line. Every structural claim carries the gate or test that holds it; a consistency suite keeps those pointers resolvable.",
+      "path": "docs/trust-model.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Complete removal guide (A7). Covers a source install into a virtual environment, the keyed-installer layout and the Claude plugin or extension, and says which of those the public repository's first release offers.",
+      "path": "docs/uninstall.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "path": "docs/walkthrough.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Sole documentation for editors/s0ma.tmLanguage.json; spelling-gated only.",
+      "path": "editors/README.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
+      "path": "integrations/claude/plugin/skills/doctor/SKILL.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships; its body is byte-identical to the /s0ma-feedback skill `s0ma new project` scaffolds, and a test holds the two together.",
+      "path": "integrations/claude/plugin/skills/feedback/SKILL.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
+      "path": "integrations/claude/plugin/skills/new/SKILL.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
+      "path": "integrations/claude/plugin/skills/retrofit/SKILL.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
+      "path": "integrations/claude/plugin/skills/setup/SKILL.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
+      "path": "integrations/claude/plugin/skills/update/SKILL.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Pre-monorepo history (releases <= 0.4.0), preserved verbatim and carrying its own supersession line. Replacement: CHANGELOG.md. Full content, not a stub.",
+      "path": "packages/s0ma-core/CHANGELOG.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "path": "packages/s0ma-core/README.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "superseded-pointer",
+      "note": "Pointer stub since 2026-08-30 (G3), 30 lines. July DOC-1 closed by retirement rather than by generation: the file claimed to be generated from registry.snapshot().describe() and gated by a test, and neither was ever true. Replacements, both generated and both gated: docs/architecture/component-index.md for what core contains, and packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md for what it promises. Its design-decision log, module map and the LOA research-program framing are in git history; the LOA framing also survives in docs/archive/pre-monorepo/s0ma-core/plans/s0ma-PRD.md, which G5 archived. Still served as s0ma://docs/architecture from a checkout (teaching.py:795).",
+      "path": "packages/s0ma-core/docs/architecture.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "The operating (not authoring) survival card for an agent running an embodied s0ma system.",
+      "path": "packages/s0ma-core/docs/embodied_survival_card.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Dated consumer-feedback log, archived in place by A3. No replacement — it is a record, not guidance.",
+      "path": "packages/s0ma-core/docs/historical/s0ma-framework-feedback-3.1.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "superseded-pointer",
+      "note": "Reduced at I1 from the full runtime reference to a pointer at docs/documentation-subsystem.md plus the roster of core symbols no generated page carries: the import-hook markers, the registration keyword sets, the RegistrySnapshot and SelfModelInterface extensions, the examples module's functions/constants/pytest plugin, the REST response models and agent rules A-8/A-9. Every fact a generated surface does carry was removed and is listed at the foot of the page with where it now lives. Still hand-maintained and ungated; verified against the code at 0.18.1 at G3.",
+      "path": "packages/s0ma-core/docs/references/documentation_subsystem.md"
+    },
+    {
+      "audience": "owner",
+      "disposition": "superseded-pointer",
+      "note": "13-line stub. Replacement: docs/RELEASING.md. Historical text lives in git history.",
+      "path": "packages/s0ma-core/docs/release_checklist.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "historical",
+      "note": "The core spec as cut for 0.18.1 at G3, superseded at 0.19.0 by s0ma-core-spec-v0.19.0.md and kept under its own name with a historical banner, because historical cuts are never renamed.",
+      "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "historical",
+      "note": "The core spec as cut for 0.19.0, superseded at 0.19.1 by s0ma-core-spec-v0.19.1.md and kept under its own name with a historical banner, because historical cuts are never renamed.",
+      "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "normative-current",
+      "note": "The current core spec, cut at 0.19.1 from the 0.19.0 cut. States core's seven invariants and its contracts; states no inventory at all — every count and roster is deferred to the generated pages, and §12 is the routing table. Pinned to the package version by packages/s0ma-core/tests/test_doc_consistency.py, which also fails on a hand-written component count.",
+      "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "historical",
+      "note": "Frozen at the pre-monorepo 0.4.0 boundary. G3 rotated it: it keeps its content and its filename (historical cuts are never renamed) and gained a supersession banner naming s0ma-core-spec-v0.18.1.md as the current cut. July DOC-8 closed. The banner is held in place by packages/s0ma-core/tests/test_doc_consistency.py.",
+      "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "superseded-pointer",
+      "note": "11-line stub written at A3. Replacement: packages/s0ma-core/docs/historical/s0ma-framework-feedback-3.1.md. Scheduled for deletion once inbound links are updated.",
+      "path": "packages/s0ma-core/docs/s0ma-framework-feedback-3.1.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "The one canonical user guide. G2 merged the bidirectional fork here (audit §4, July DOC-2): the dsl copy's corrected packaging and DSL onboarding plus this copy's unique §§5.6-5.9 runtime API sections, §1 rewritten to the monorepo/R2 install routes, counts made count-agnostic, and the 2026-02-17 header replaced by a dated status. Homed with core because it documents the core runtime API. Its heading set is load-bearing for the learn_topic guide fallback and is now pinned by packages/s0ma-core/tests/test_teaching.py.",
+      "path": "packages/s0ma-core/docs/s0ma_user_guide.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Pre-monorepo history (releases <= 0.16.0 of the old per-package numbering), preserved verbatim with its own supersession line. Replacement: CHANGELOG.md.",
+      "path": "packages/s0ma-dsl/CHANGELOG.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "path": "packages/s0ma-dsl/README.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "generated",
+      "note": "Rendered from the canonical error-code registry through a doc-ref generator (`make -C packages/s0ma-dsl docs-derived`); carries an s0ma_kind front-matter block and a content hash. The only repo-docs generator today (July DOC-7).",
+      "path": "packages/s0ma-dsl/docs/_generated/common_errors.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-001-build-pipeline.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-002-runtime-expansion.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-003-source-map-format.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Status: Superseded (2026-08-28) — reversed by the 0.5.0 monorepo consolidation (banner added at A3). No successor ADR was written; the replacement authority is README.md + CONTRIBUTING.md for layout and references/s0ma-prd.md NFR-8/INV-4 for the package split.",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-004-separate-project.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-005-project-discovery.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-006-canonical-module-identity.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-007-single-build-layout.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-008-test-visibility.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-009-canonical-body-storage.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-010-derived-doc-targets.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. Authority rank 4 in AGENTS.md (accepted ADRs).",
+      "path": "packages/s0ma-dsl/docs/adr/ADR-011-declaration-metadata-and-language-surface-batch.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "The ADR index; states the append-only supersession rule the series follows.",
+      "path": "packages/s0ma-dsl/docs/adr/README.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "Served as s0ma://guide/system-prompt; mirrored byte-exact into _docs/.",
+      "path": "packages/s0ma-dsl/docs/agent_system_prompt.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "Best-maintained doc in the tree per the audit; not served, not mirrored.",
+      "path": "packages/s0ma-dsl/docs/coding_agent_handbook.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "historical",
+      "note": "Honestly self-dated 0.13.0 adoption guide (audit §3.2-B); no longer a live upgrade path. No replacement — the live upgrade reference is packages/s0ma-dsl/docs/migration_guide.md. Still advertised by the dsl README and the migration guide; those inbound links are a G-phase fix.",
+      "path": "packages/s0ma-dsl/docs/historical/release_walkthrough_5-6.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Dated record archived in place; no replacement, and none is owed.",
+      "path": "packages/s0ma-dsl/docs/historical/s0ma-feedback-findings-1-2.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Dated record archived in place; no replacement, and none is owed.",
+      "path": "packages/s0ma-dsl/docs/historical/s0ma-framework-feedback-3.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Dated record archived in place; no replacement, and none is owed.",
+      "path": "packages/s0ma-dsl/docs/historical/s0ma_build_fix.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Dated record archived in place; no replacement, and none is owed.",
+      "path": "packages/s0ma-dsl/docs/historical/s0ma_feedback-4.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Dated record archived in place; no replacement, and none is owed.",
+      "path": "packages/s0ma-dsl/docs/historical/s0ma_feedback.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "historical",
+      "note": "Dated record archived in place; no replacement, and none is owed.",
+      "path": "packages/s0ma-dsl/docs/historical/s0ma_py_drift_fix.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "path": "packages/s0ma-dsl/docs/migration_guide.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "superseded-pointer",
+      "note": "Pointer stub since I1. Replacement: docs/documentation-subsystem.md, which carries all of its teaching. Two things are named as dropped with reason rather than moved: the v0.11.0 migration-status table (the document catalog and docs/README.md now record every document's standing) and the resolved-design-decisions log (the live invariants are restated on the new page; the log is in git history and the archived plan). G5's corrected archive links are preserved.",
+      "path": "packages/s0ma-dsl/docs/references/documentation_subsystem.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "Served as s0ma://guide/patterns; mirrored byte-exact into _docs/; citation-gated. Carries a vestigial 'Version 1.0 - Milestone 13' header (audit §3.2-C).",
+      "path": "packages/s0ma-dsl/docs/references/dsl_patterns_guide.md"
+    },
+    {
+      "audience": "owner",
+      "disposition": "superseded-pointer",
+      "note": "18-line stub. Replacement: docs/RELEASING.md. Historical text lives in git history.",
+      "path": "packages/s0ma-dsl/docs/release_checklist.md"
+    },
+    {
+      "disposition": "superseded-pointer",
+      "note": "Pointer stub left at the pre-move path of release_walkthrough_5-6.md (moved to historical/ at doc-function-1 A5 findings, docs audit 9.1-6).",
+      "path": "packages/s0ma-dsl/docs/release_walkthrough_5-6.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "superseded-pointer",
+      "note": "4-line stub. Replacement: packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md. Scheduled for deletion in the release after 0.17.0.",
+      "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.16.0.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "normative-current",
+      "note": "The current versioned DSL spec — authority rank 3 in AGENTS.md. Served as s0ma://spec/current, mirrored byte-exact into _docs/, and pinned by a highest-version test.",
+      "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "superseded-pointer",
+      "note": "10-line stub written at A3. Replacement: packages/s0ma-dsl/docs/historical/s0ma_feedback-4.md. Scheduled for deletion once inbound links are updated.",
+      "path": "packages/s0ma-dsl/docs/s0ma_feedback-4.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "superseded-pointer",
+      "note": "Pointer stub since 2026-08-30 (G2). Its content was merged into packages/s0ma-core/docs/s0ma_user_guide.md, which the stub names. Scheduled for deletion once inbound links are updated.",
+      "path": "packages/s0ma-dsl/docs/s0ma_user_guide.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "superseded-pointer",
+      "note": "Pointer stub since 2026-08-30 (G2). Retired rather than folded: every section was a shortened copy of the full guide's same-named section, so it carried no unique inventory and folding it would have re-created the duplication G2 exists to remove. The stub routes readers to the merged guide and to the gated short forms (survival card, quick reference, learn_s0ma). Scheduled for deletion once inbound links are updated.",
+      "path": "packages/s0ma-dsl/docs/s0ma_user_guide_condensed.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "Served as s0ma://guide/self-prompting; mirrored byte-exact into _docs/.",
+      "path": "packages/s0ma-dsl/docs/self_prompting.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Hand-maintained R-01..R-32 rule-to-implementation matrix.",
+      "path": "packages/s0ma-dsl/docs/spec_traceability.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "Served as s0ma://guide/survival-card; mirrored byte-exact into _docs/; size-gated (< 4 KB, PRD NFR-5).",
+      "path": "packages/s0ma-dsl/docs/survival_card.md"
+    },
+    {
+      "audience": "machine",
+      "disposition": "non-documentation",
+      "note": "Golden expected-output fixture asserted by tests/test_doc_emitter_golden.py and test_doc_emitter_pipeline.py. Test data, not a document.",
+      "path": "packages/s0ma-dsl/tests/fixtures/golden/docs/greetings.md"
+    },
+    {
+      "audience": "machine",
+      "disposition": "non-documentation",
+      "note": "Golden expected-output fixture asserted by tests/test_doc_emitter_golden.py and test_doc_emitter_pipeline.py. Test data, not a document.",
+      "path": "packages/s0ma-dsl/tests/fixtures/golden/docs/walkthrough.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "non-documentation",
+      "note": "In-fixture explainer for the legacy_layout_project test fixture (tests/test_migrate_layout.py). Test scaffolding, outside the documentation corpus.",
+      "path": "packages/s0ma-dsl/tests/fixtures/legacy_layout_project/README.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Richest of the four package READMEs; documents the served surface and the self-hosted layout.",
+      "path": "packages/s0ma-mcp/README.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Accepted. The only ADR living outside docs/adr/ and packages/s0ma-dsl/docs/adr/.",
+      "path": "packages/s0ma-mcp/docs/adr/ADR-001-selfhost-layout.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "generated",
+      "note": "doc-ref render of the served MCP surface, produced by the self-host build from packages/s0ma-mcp/s0ma_src/tools.s0ma; committed and byte-gated by check.py.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_built/docs/mcp_public_surface_reference.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "generated",
+      "note": "doc-guide render produced by the self-host build from packages/s0ma-mcp/s0ma_src/tools.s0ma; committed and byte-gated by check.py.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_built/docs/selfhost_walkthrough.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "generated",
+      "note": "Deterministic self-prompt card emitted by `s0ma build` from canonical IR; committed and byte-gated by check.py.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_built/self_prompt_card.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of CHANGELOG.md, pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/CHANGELOG.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of packages/s0ma-dsl/docs/agent_system_prompt.md, pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/agent_system_prompt.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of packages/s0ma-dsl/docs/_generated/common_errors.md, pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/common_errors.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of packages/s0ma-dsl/docs/references/dsl_patterns_guide.md, pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/dsl_patterns_guide.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of docs/getting-started.md, pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/getting-started.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of docs/reference/quick-reference-readable.md (the generated quick reference, served as s0ma://guide/quick-reference), pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift and refreshed by step 3 of the documentation loop. Its data twin, quick-reference-machine.json beside it, is JSON and takes no row here.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/quick-reference-readable.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md, pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of packages/s0ma-dsl/docs/self_prompting.md, pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/self_prompting.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "mirror",
+      "note": "Byte-exact wheel copy of packages/s0ma-dsl/docs/survival_card.md, pinned by packages/s0ma-mcp/tests/test_resources.py::TestDocDrift.",
+      "path": "packages/s0ma-mcp/src/s0ma_mcp/_docs/survival_card.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "path": "packages/s0ma-studi0/README.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "generated",
+      "note": "Deterministic self-prompt card emitted by `s0ma build` from canonical IR; committed and byte-gated by check.py.",
+      "path": "packages/s0ma-studi0/src/s0ma_studi0/_built/self_prompt_card.md"
+    },
+    {
+      "audience": "owner",
+      "disposition": "normative-current",
+      "note": "PRD v1.9 (2026-08-27) — authority rank 2 in AGENTS.md, above the spec and the ADRs.",
+      "path": "references/s0ma-prd.md"
+    }
+  ],
+  "schema": "doc-classification@1"
+}

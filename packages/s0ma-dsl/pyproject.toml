@@ -1,0 +1,73 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "s0ma-dsl"
+version = "0.19.1"
+description = "The s0ma DSL transpiler — compiles .s0ma source files into self-describing Python for software self-knowledge."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [
+    { name = "kn0wthyself", email = "support@kn0wthyself.ai" },
+]
+keywords = ["s0ma", "dsl", "transpiler", "self-model", "self-knowledge"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Compilers",
+    "Typing :: Typed",
+]
+dependencies = [
+    # Raised to 0.19.1 on evidence: a CONSTANT or TYPE cell registers with a
+    # qualified name only from that core, so a build that declares one reads
+    # HEALTHY only there; and the runtime bridge every emitted module imports
+    # declares dependencies on core components that an older core's global
+    # registry does not yet hold at import time, which it logs as warnings.
+    "s0ma-core >= 0.19.1",
+    "lark[interegular] >= 1.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest >= 7.0",
+    "pytest-cov >= 4.0",
+    "ruff >= 0.4",
+]
+
+[project.scripts]
+s0ma = "s0ma_dsl.cli.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/s0ma_dsl"]
+
+[tool.uv.sources]
+s0ma-core = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "A", "C4", "SIM", "TCH"]
+
+[tool.ruff.lint.per-file-ignores]
+# templates.py embeds verbatim .s0ma archetype source as string literals
+# (STD-M7). Their `intent:`/body lines legitimately run long, mirroring real
+# .s0ma authoring (e.g. the flagship tools.s0ma); reflowing them to satisfy
+# the Python line-length limit would corrupt the generated DSL. E501 is
+# scoped off for this one content-only module.
+"src/s0ma_dsl/cli/templates.py" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+markers = [
+    "m0_contract: quarantined strict-XFAIL acceptance contracts for the 0.14 value-loop wave",
+]

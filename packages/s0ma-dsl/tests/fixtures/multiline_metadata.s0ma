@@ -1,0 +1,106 @@
+module multiline_metadata
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: |
+        This module exercises the YAML literal-block-scalar form of every
+        string-valued metadata field.
+
+        The block-scalar form lets authors write multi-line metadata
+        without the cramped comma-separated prose that the
+        inline-quoted form forces.
+    exports: [render]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: |
+        Render a value into a presentation-safe string.
+
+        Multi-line intent is preserved exactly through:
+          - the parser (line breaks survive)
+          - the IR (str field, contains \n)
+          - the generated Python (repr-routed; round-trips cleanly)
+          - s0ma inspect (rendered across multiple indented lines)
+    expects: |
+        Preconditions on input:
+          - value is non-null
+          - value is a str-coercible scalar
+          - caller has applied any domain-specific normalisation
+    guarantees: |
+        Postconditions on output:
+          - returns a str
+          - HTML-special characters are escaped
+          - never raises on valid input
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render(value: str) -> str:
+        return str(value)
+
+cell LOOKUP_TABLE :: PRESENTATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: |
+        A lookup table of presentation rules.
+
+        Indented sub-bullets:
+            - keyA: handles case A
+            - keyB: handles case B
+            - keyC: handles case C
+    schema: |
+        Mapping[str, str] with the following structure:
+            - key: a canonical rule name (snake_case, ASCII-only)
+            - value: the rendered HTML fragment
+
+        Keys MUST be globally unique within the module.
+    invariants: none
+    covered_by: none
+    ---
+    LOOKUP_TABLE: dict[str, str] = {
+        "keyA": "<a/>",
+        "keyB": "<b/>",
+        "keyC": "<c/>",
+    }
+
+ganglion observer :: PRESENTATION
+    visibility: INTERNAL
+    scope: SUBSYSTEM
+    intent: |
+        Observe render outputs for drift.
+
+        Triggers a soft warning rather than an exception when an
+        anomaly is detected, since presentation drift is recoverable.
+    observes: [render]
+    priors: |
+        Empirical priors gathered from production telemetry:
+          - 99.5% of outputs contain only ASCII printable characters
+          - 0.4% contain a small set of common entities
+          - 0.1% contain unexpected control chars (treated as drift)
+    on_anomaly: |
+        Anomaly handling:
+          - log the offending input + output at WARN
+          - emit a structured event to the drift channel
+          - DO NOT raise — presentation must remain best-effort
+    forbids: none
+    depends_on: none
+    covered_by: none
+    ---
+    def observer(signal):
+        return signal

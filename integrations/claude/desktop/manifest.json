@@ -1,0 +1,136 @@
+{
+  "author": {
+    "name": "kn0wthyself",
+    "url": "https://kn0wthyself.ai"
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32"
+    ]
+  },
+  "description": "Gives Claude a living model of what your project is made of - what each part is for, what it depends on, and why - so answers about your software come from the software itself.",
+  "display_name": "s0ma",
+  "homepage": "https://kn0wthyself.ai",
+  "keywords": [
+    "s0ma",
+    "self-knowledge",
+    "self-model",
+    "architecture",
+    "documentation",
+    "python"
+  ],
+  "license": "Apache-2.0",
+  "long_description": "s0ma gives Claude a living model of the software you are building: what each part is for, what it depends on, and why it is there. Answers about your project then come from the project itself, rather than from a guess made while reading its files.\n\nThis extension is a thin wrapper. It carries one small program that finds the copy of s0ma this computer should use, starts it, and fetches a newer one in the background - never in the middle of what you are doing. If s0ma is not installed yet the extension still starts, says so plainly, and names the one step that fixes it.\n\nYour key from account.kn0wthyself.ai goes in this extension's settings. It is kept in this computer's secure storage, is never written into a settings file, and is never shown in a conversation. If you run s0ma from its source code you do not need a key at all.",
+  "manifest_version": "0.4",
+  "name": "s0ma",
+  "privacy_policies": [
+    "https://kn0wthyself.ai/legal/privacy"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kn0w-thyself/claude-plugins"
+  },
+  "server": {
+    "entry_point": "server/s0ma_launch.py",
+    "mcp_config": {
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "server/s0ma_launch.py",
+        "serve"
+      ],
+      "command": "uv",
+      "env": {
+        "S0MA_LICENSE_KEY": "${user_config.license_key}",
+        "S0MA_UPDATE": "${user_config.update}"
+      }
+    },
+    "type": "uv"
+  },
+  "support": "https://github.com/kn0w-thyself/claude-plugins",
+  "tools": [
+    {
+      "description": "Write down what an existing Python file is for, so old code can join the project's self-model a piece at a time.",
+      "name": "adopt_file"
+    },
+    {
+      "description": "Build the whole project from its self-model, once the checks are clean.",
+      "name": "build_project"
+    },
+    {
+      "description": "Check the project for problems and explain how to fix each one. Changes nothing.",
+      "name": "check"
+    },
+    {
+      "description": "List what s0ma can do in this project and which part fits the job in hand. Changes nothing.",
+      "name": "describe_server"
+    },
+    {
+      "description": "Set a project up to use s0ma, leaving everything already in it untouched.",
+      "name": "init_project"
+    },
+    {
+      "description": "Read what one part of the project is for, what it depends on, and what depends on it. Changes nothing.",
+      "name": "inspect_module"
+    },
+    {
+      "description": "Answer one question about s0ma itself, and say which release and page the answer came from. Changes nothing.",
+      "name": "learn_s0ma"
+    },
+    {
+      "description": "Show, and then carry out, the renaming of parts that still use older s0ma names.",
+      "name": "migrate_ext"
+    },
+    {
+      "description": "Write up feedback about s0ma for you to read first. Nothing is saved or sent.",
+      "name": "prepare_feedback"
+    },
+    {
+      "description": "Sum up a project in one answer: what is there, what is missing, and what to do next. Changes nothing.",
+      "name": "project_status"
+    },
+    {
+      "description": "Run one of the project's own worked examples and report what it did. This runs the project's code.",
+      "name": "run_example"
+    },
+    {
+      "description": "Report whether s0ma is installed on this computer, which copy would run here, and the one thing to do next. Changes nothing.",
+      "name": "s0ma_setup_status"
+    },
+    {
+      "description": "Start a new part of the project from a description of what it is for.",
+      "name": "scaffold_module"
+    },
+    {
+      "description": "Send the feedback you approved to the s0ma team, and hand back the receipt.",
+      "name": "submit_feedback"
+    },
+    {
+      "description": "Turn one s0ma source file into Python and report anything wrong with it.",
+      "name": "transpile"
+    },
+    {
+      "description": "Prove the built project really loads in its own Python. This runs the project's code.",
+      "name": "verify_host"
+    }
+  ],
+  "tools_generated": true,
+  "user_config": {
+    "license_key": {
+      "description": "Your key from account.kn0wthyself.ai. It is kept in this computer's secure storage, never written into a settings file, and never shown in a conversation. Leave it empty if you run s0ma from its source code.",
+      "required": false,
+      "sensitive": true,
+      "title": "s0ma license key",
+      "type": "string"
+    },
+    "update": {
+      "default": "auto",
+      "description": "auto: fetch a newer s0ma in the background and start using it next time. notify: say when a newer one exists and leave the choice to you. off: never look.",
+      "title": "How s0ma keeps itself current",
+      "type": "string"
+    }
+  },
+  "version": "0.19.1"
+}

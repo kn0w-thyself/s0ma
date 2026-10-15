@@ -1,0 +1,49 @@
+{
+  "record": {
+    "concepts_required": [
+      "concept:intent",
+      "concept:module"
+    ],
+    "concepts_taught": [
+      "concept:registry-snapshot",
+      "concept:self-model",
+      "concept:self-knowledge"
+    ],
+    "evidence": [
+      {
+        "id": "example:transcript/studi0-viewing",
+        "source": "docs/s0ma_src/evidence/studi0-viewing.json"
+      }
+    ],
+    "id": "journey:studi0-viewing",
+    "intent": "See the system you have built rather than read about it: start the local viewer, let it fetch the graph, and follow one component from the picture into a precise answer about it.",
+    "recovery_paths": [
+      {
+        "action": "The viewer is running but there is nothing built for it to draw yet. Build the project once, then reload the page — the viewer repaints as builds land, so nothing needs restarting.",
+        "next_surface": "cli:s0ma/build",
+        "when": "NOT_BUILT"
+      }
+    ],
+    "steps": [
+      {
+        "approval_boundary": "",
+        "expected_outcome": "A local address on your own machine, printed and opened in a browser. Nothing is written to the project and the application itself is never run.",
+        "purpose": "Put the project's shape on screen instead of in your head.",
+        "surface": "cli:s0ma/studi0"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The viewer answers with the current graph and the reading number it belongs to, so what you are looking at is one settled picture rather than two half-pictures stitched together.",
+        "purpose": "Have the page ask for the components and the wiring between them, which is what it draws.",
+        "surface": "studi0:action/api/graph"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "That one component's own account of itself — what it is for, what it promises, and what it depends on — rather than a guess assembled from reading its code.",
+        "purpose": "Take one component the picture pointed you at and ask the self-model about it directly.",
+        "surface": "cli:s0ma/inspect"
+      }
+    ]
+  },
+  "schema": "s0ma-docs-journeys@1"
+}

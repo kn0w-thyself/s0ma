@@ -1,0 +1,40 @@
+module cli
+    layer: PRESENTATION
+    version: 0.1.0
+    intent: "CLI orchestrator that fatally subscripts the registry module object."
+    exports: [cli]
+    requires: []
+    uses: [registry]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve cli :: PRESENTATION
+    kind: ORCHESTRATOR
+    visibility: PUBLIC
+    intent: "Main CLI orchestrator"
+    expects: "Valid command and arguments"
+    guarantees: "Dispatches to the registered operation"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def cli(op_name):
+        # B1 regression: `registry` is a bare `uses: [registry]` MODULE
+        # object, not the dict the `registry()` nerve returns. This
+        # subscript compiles but raises `TypeError: 'module' object is
+        # not subscriptable` at runtime. The MODULE_SUBSCRIPT guard flags
+        # this line.
+        op = registry["get_op"](op_name)
+        return op

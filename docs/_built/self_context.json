@@ -1,0 +1,145 @@
+{
+  "build_health": {
+    "basis": "live runtime facts are not observed during deterministic build",
+    "status": "unknown"
+  },
+  "components": [
+    {
+      "dependencies": [],
+      "id": "application::COMPOSED_SNAPSHOT",
+      "intent": {
+        "state": "value",
+        "value": "The composed snapshot's place under the documentation root. It sits in the machine-readable directory because a program reads it and a person does not; reader-facing pages never share a path with it."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "application"
+    },
+    {
+      "dependencies": [],
+      "id": "application::DOCUMENTATION_ROOT",
+      "intent": {
+        "state": "value",
+        "value": "Where the documentation application lives, relative to the checkout. Every provider addresses its sources against the checkout, so this name is fixed rather than configurable: renaming it would rename them too."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "application"
+    },
+    {
+      "dependencies": [],
+      "id": "application::GENERATED_INVENTORIES",
+      "intent": {
+        "state": "value",
+        "value": "The nineteen files this application decides to render besides the snapshot. Seven are read by a program rather than by a person — three inventories of what s0ma knows about itself, the teaching content s0ma-core carries inside its own wheel, which is generated here and mirrored into that package so that an installed copy can answer a question about s0ma with this repository nowhere in sight, the coverage report, which states how much of what this build is required to cover it does cover and names every standing exception with the ledger that grants it, the quick reference written as data, so that a coding agent can read every line of every kind of declaration without reading a page laid out for a person, and the manifest of what this build is: the version it describes, the sources it read, the digest of the model it composed, and every file it wrote with the hash of what each one says. The other twelve are pages a person opens — an index of the concepts, an index of the capabilities, README.md (the map of every document this repository keeps), a reference for each family of capability the product serves (the command line, the settings a project can declare, the reports s0ma can make, the servers it answers agents on, and the viewer it shows a project through), a page naming the distributions this workspace ships, an index of every registered component behind all of them, the quick reference, which puts every kind of declaration and every line each one may carry on a single page and is rendered from the same value as its data twin so that the two cannot disagree, and architecture/docs-application.md, which turns that same treatment on this application: the readings it composes from, the gates it runs, what this module registers, and every file it writes, so that the account of how s0ma documents itself is generated from the build rather than written beside it and can be compared byte for byte like anything else here. The snapshot is named separately above, because it is the composed model itself rather than a listing taken from it; the two together are everything the composition decides to write, and the learning collection beside them is computed rather than decided, so it is named in its own cell below. One further page leaves this project and is deliberately absent from this list — reference/documentation-application.md, which the documentation emitter renders from the doc-ref declared at the top of this module rather than from the composed snapshot. It is named there, where the declaration that produces it is, because a list of what one command writes should not quietly include what another one does; it is also the reason the composed page above is called docs-application rather than documentation-application, since two pages one letter apart in two directories is a distinction a reader should not have to make."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "application"
+    },
+    {
+      "dependencies": [],
+      "id": "application::LEARNING_COLLECTION",
+      "intent": {
+        "state": "value",
+        "value": "Where the learning collection is written, relative to the documentation root: one page for every concept the composition holds, a glossary over all of them, and the anatomy of a .s0ma file. The pages are not listed here, and that is the decision this cell records — which concepts exist is authored in the concept files, so the set is computed from the composed model each build. A list of them here would be a second inventory somebody had to keep, and the day a concept was written it would ship with no page until somebody remembered this file."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "application"
+    },
+    {
+      "dependencies": [],
+      "id": "application::SOURCES_COMPOSED",
+      "intent": {
+        "state": "value",
+        "value": "The eleven readings this repository's documentation is composed from, in the order a person would meet them. Five say what s0ma is: what the framework registers about itself, what the repository's governing documents say, the two files of authored teaching vocabulary, and the catalog of every document that exists. Five say what s0ma serves: its command line, the diagnostics it can report, the keys a project can be configured with, the server it answers agents on, and the viewer it shows a project through. The last says how a person gets from one to the other: the authored paths through those capabilities, step by step."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "application"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "the path of a s0ma checkout, holding the catalog and the authored concept files the composition reads"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never reads anything from an earlier run, and never consults a clock or the network."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "returns one settled composition. The same checkout always produces the same one: nothing is read from an earlier run, no clock or network is consulted, and the order the sources are read in cannot change the answer."
+      },
+      "id": "application::compose_documentation",
+      "intent": {
+        "state": "value",
+        "value": "Reads every source once and settles them into a single picture of what s0ma knows about itself, which then stays the same for the rest of the build."
+      },
+      "kind": "ORCHESTRATOR",
+      "layer": "APPLICATION",
+      "module": "application"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "a settled composition"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never reads from or writes to the filesystem, and never alters or rebuilds the composition it is given."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "returns every rendered artifact with its place under the documentation root and its whole content. Nothing is read from or written to the filesystem to produce them."
+      },
+      "id": "application::documentation_artifacts",
+      "intent": {
+        "state": "value",
+        "value": "What a composition renders to, held in memory rather than written down, so that the command that writes the files and the command that checks them are looking at the same bytes."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "application"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "a settled composition"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never alters or rebuilds the composition it is given."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "returns every finding the gates produced, in reporting order, with an empty result meaning nothing is wrong. Each finding says where to go and what to write instead."
+      },
+      "id": "application::documentation_findings",
+      "intent": {
+        "state": "value",
+        "value": "Everything wrong with a composition, all of it at once. A run that stopped at the first problem would make somebody fix the documentation one line per run."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "application"
+    }
+  ],
+  "generation_version": "1",
+  "provenance": {
+    "authored_text_trust": "untrusted_project_data",
+    "authority": "canonical_ir",
+    "live_health": false
+  },
+  "schema": "s0ma-self-context@1",
+  "source_ir": [
+    {
+      "path": "application.s0ma.json",
+      "sha256": "sha256:9973f98e53f23203cbd1182b3c0161da56990e2a1ad7c75f61f7c143891d2938"
+    }
+  ]
+}

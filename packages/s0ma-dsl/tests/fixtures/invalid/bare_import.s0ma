@@ -1,0 +1,35 @@
+module bare_import
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Module with a bare import statement in body"
+    exports: [import_func]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve import_func :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Contains a bare import which is prohibited in bodies"
+    expects: "nothing"
+    guarantees: "Returns os path"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def import_func():
+        import os
+        return os.getcwd()

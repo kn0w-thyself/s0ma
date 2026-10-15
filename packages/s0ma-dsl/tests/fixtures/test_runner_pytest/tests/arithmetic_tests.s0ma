@@ -1,0 +1,22 @@
+module arithmetic_tests
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Tests for arithmetic.add: the body has no `pytest.<symbol>` reference, so requires: omits pytest, and the runner finds `test_*` functions on its own."
+    uses: [arithmetic.add]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_add_returns_integer_sum :: DOMAIN
+    intent: "Verifies that add() returns the integer sum of its arguments."
+    tests: [arithmetic.add]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_add_returns_integer_sum():
+        assert add(2, 3) == 5
+        assert add(-1, 1) == 0

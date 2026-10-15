@@ -1,0 +1,35 @@
+module page_composer
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Page composer for the landmark-budget clean fixture: it assembles header, main and footer, and is marked is_page_composer: true to scope the exactly_one_per_page budget."
+    uses: [page_header.render_header, page_main.render_main, page_footer.render_footer]
+    exports: [compose_page]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve compose_page :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Compose the full page from the three landmark renderers."
+    expects: "A string of body content."
+    guarantees: "Returns a full HTML page with header, main, and footer landmarks."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    is_page_composer: true
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def compose_page(body: str) -> str:
+        return render_header() + render_main(body) + render_footer()

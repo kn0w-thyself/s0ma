@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>s0ma viz template — M12 fixture</title>
+    <style>
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            margin: 0;
+            padding: 24px;
+            background: #0e1116;
+            color: #e6edf3;
+        }
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        h1 {
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 8px;
+        }
+        .node {
+            stroke: #fff;
+            stroke-width: 1.5px;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>s0ma component graph</h1>
+        <p>Force-directed visualization of declared components and their authored dependencies.</p>
+        <svg id="graph" width="900" height="600"></svg>
+    </div>
+    <script>
+        // M12 embed test: this script must round-trip byte-for-byte
+        // through the @file() directive. Mixed quoting and template
+        // literals are deliberate.
+        const greeting = "Hello, s0ma";
+        const farewell = 'safe travels';
+        function init() {
+            const svg = document.getElementById('graph');
+            console.log(`${greeting} — ${farewell}`);
+        }
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

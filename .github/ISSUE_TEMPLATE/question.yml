@@ -1,0 +1,45 @@
+name: Ask a question
+description: You are stuck, or something is not clear.
+title: "question: "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Discussions are the better place for most questions.**
+        [Start one here](https://github.com/kn0w-thyself/s0ma/discussions) —
+        answers there stay findable for the next person who asks the same
+        thing, and anybody can reply, not just us.
+
+        Two other places worth a look first:
+
+        - [Troubleshooting](https://github.com/kn0w-thyself/s0ma/blob/main/docs/troubleshooting.md)
+          — start with `uv run s0ma doctor`; most stops are named there with
+          what to do about them.
+        - [Getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md)
+          — the route in, end to end.
+
+        If you would still rather ask here, go ahead. We would rather have your
+        question in the wrong place than not have it.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: >-
+        What you are trying to do, and where it stopped making sense. If a
+        command was involved, paste it and what it printed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything that helps us answer
+      description: >-
+        Your operating system, how you installed s0ma, and the output of
+        `uv run s0ma doctor` if the question is about your own project.
+      render: text
+    validations:
+      required: false

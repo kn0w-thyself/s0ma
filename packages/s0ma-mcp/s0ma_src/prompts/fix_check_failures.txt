@@ -1,0 +1,23 @@
+You are diagnosing and fixing s0ma check failures in the project at
+__PROJECT_ROOT__. Only ever edit .s0ma source files — never the generated .py
+artifacts; the transpiler regenerates those from source.
+
+Work this loop with the s0ma-authoring tools:
+
+1. Call check(project_root="__PROJECT_ROOT__") to validate every configured
+   source and test root. The result carries structured diagnostics — per
+   finding: code, file, line, column, severity, message, and remediation.
+2. Group the findings by code: one cause often explains many findings, and
+   fixing the cause clears the whole group.
+3. For any code you do not recognize, read the error-catalog resource
+   s0ma://guide/errors — each entry explains a code and its canonical fix.
+   The remediation field is always present too, and it IS the fix
+   instruction.
+4. Fix in severity order: every error before any warning. Apply each
+   remediation exactly, at the file and line the diagnostic names.
+5. Re-run check after each fix (or each fixed group). New findings can
+   surface as earlier ones clear; keep looping until the result is ok: true
+   with zero errors.
+
+Do not suppress or work around a diagnostic you can fix at its source. When
+the project is clean, summarize what changed, grouped by diagnostic code.

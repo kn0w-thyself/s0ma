@@ -1,0 +1,23 @@
+Scanned: 3 modules (no packages), 120 lines, 85 of them code.
+12 public things to convert; none of them are registered with s0ma yet.
+
+Perimeter it would declare (`s0ma adopt init` writes this):
+  source roots    .
+  bootstrap files run.py
+  package markers none
+  mode            migration
+
+Convert in this order, leaves first (2 modules):
+  module                             size   proposed layer
+  inventory                          medium DOMAIN (medium confidence)
+  report                             small  yours to choose
+  Not in that list: run.py — declared above under `bootstrap_files`, so it stays plain
+  Python; a s0ma project names its entry points.
+
+Import cycles: none at load time. Every module can be converted after the ones it
+  imports, which is what makes the order above a plan rather than a suggestion.
+
+Nothing else worth flagging.
+
+Next: `s0ma adopt init` — it writes the perimeter above into pyproject.toml and touches
+  no application file.

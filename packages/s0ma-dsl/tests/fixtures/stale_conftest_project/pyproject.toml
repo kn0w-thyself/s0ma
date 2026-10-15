@@ -1,0 +1,9 @@
+[project]
+name = "stale_conftest_project"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/stale_conftest_project"]
+test_roots = ["tests"]
+build_dir = "stale_conftest_project_build"
+bootstrap_files = []

@@ -1,0 +1,2509 @@
+{
+  "about": {
+    "changes_columns": {
+      "changes": "What changed",
+      "date": "Date",
+      "edition": "Edition",
+      "written_for": "Written for"
+    },
+    "changes_heading": "What has changed",
+    "difference": "{kind}, {line}: may not be {state}.",
+    "differences_lead": "In {count} places the check accepts less than s0ma's own table says it should. This page shows what the check accepts:",
+    "heading": "About this page",
+    "machine": "Everything on this page is also written as data, for a program or a coding agent to read: `{path}`.",
+    "made": [
+      "**The lines, and whether each must be written,** are read from the table inside s0ma that the check itself enforces. A line is on this page exactly when the check accepts it.",
+      "**The words you choose from** are read from s0ma too, so a word it stops accepting leaves this page and a new one arrives on it.",
+      "**Every sample** is cut from one small project of {modules} files. The page is only written when every one of them passes s0ma's strictest check, and s0ma's own tests then build the project, run its {tests} tests and run its example.",
+      "**Every command** is checked against the command line s0ma really serves, down to each option, and every report named on this page is one s0ma can really make.",
+      "**The explanations** are written by a person, in `docs/s0ma_src/quick-reference.json`. That file is the place to change them."
+    ],
+    "made_heading": "How this page is made"
+  },
+  "choices": [
+    {
+      "column": "What belongs there",
+      "group": "layer",
+      "looks_like_column": "",
+      "says": "the band a file belongs to. Every part in the file shares it, and a file may only reach files in the bands listed.",
+      "title": "Layer",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "The subject matter itself: what the program is about.",
+          "value": "DOMAIN"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "The work that coordinates the subject matter.",
+          "value": "APPLICATION"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "The edge where the program meets people.",
+          "value": "PRESENTATION"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "The edge where the program meets other systems.",
+          "value": "INFRASTRUCTURE"
+        },
+        {
+          "looks_like": "",
+          "reserved": true,
+          "says": "s0ma's own machinery. Leave it to s0ma.",
+          "value": "FRAMEWORK"
+        }
+      ]
+    },
+    {
+      "column": "When it",
+      "group": "nerve-kind",
+      "looks_like_column": "",
+      "says": "what sort of working logic a nerve is.",
+      "title": "Kind of nerve",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "works something out and hands back the answer",
+          "value": "FUNCTION"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "keeps running, or offers several operations",
+          "value": "SERVICE"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "talks to something outside the program",
+          "value": "ADAPTER"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "coordinates other parts",
+          "value": "ORCHESTRATOR"
+        },
+        {
+          "looks_like": "",
+          "reserved": true,
+          "says": "It is kept for s0ma's own machinery: leave it to s0ma.",
+          "value": "FRAMEWORK"
+        }
+      ]
+    },
+    {
+      "column": "When it holds",
+      "group": "cell-kind",
+      "looks_like_column": "Its code looks like",
+      "says": "what sort of structure a cell is.",
+      "title": "Kind of cell",
+      "values": [
+        {
+          "looks_like": "`class Book:` with its fields",
+          "reserved": false,
+          "says": "a data shape",
+          "value": "MODEL"
+        },
+        {
+          "looks_like": "`LOAN_DAYS = 21`",
+          "reserved": false,
+          "says": "a fixed value",
+          "value": "CONSTANT"
+        },
+        {
+          "looks_like": "`class LibrarySettings:` with its defaults",
+          "reserved": false,
+          "says": "settings",
+          "value": "CONFIG"
+        },
+        {
+          "looks_like": "`class Shelf(Enum):`",
+          "reserved": false,
+          "says": "a list of allowed values",
+          "value": "ENUM"
+        },
+        {
+          "looks_like": "`class BookUnavailable(Exception):`",
+          "reserved": false,
+          "says": "an error type",
+          "value": "EXCEPTION"
+        },
+        {
+          "looks_like": "`BookId = NewType(\"BookId\", str)`",
+          "reserved": false,
+          "says": "a name for a type",
+          "value": "TYPE"
+        },
+        {
+          "looks_like": "",
+          "reserved": true,
+          "says": "It is kept for s0ma's own machinery: leave it to s0ma.",
+          "value": "FRAMEWORK"
+        }
+      ]
+    },
+    {
+      "column": "Who may call it",
+      "group": "visibility",
+      "looks_like_column": "",
+      "says": "who may call a part from another file. It limits calling and nothing else: watchers, tests and documentation can see every part.",
+      "title": "Visibility",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "Any file. The part must also be listed in its module's `exports`.",
+          "value": "PUBLIC"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "Only the file it lives in.",
+          "value": "INTERNAL"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "The file it lives in, and tests anywhere in the project.",
+          "value": "TEST"
+        }
+      ]
+    },
+    {
+      "column": "What is judged",
+      "group": "scale",
+      "looks_like_column": "",
+      "says": "used by `evaluates_at` on a nerve and `scope` on a ganglion.",
+      "title": "Scale",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "One part at a time: how long it took, whether it kept its promises, whether it failed.",
+          "value": "FUNCTION_BOUNDARY"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "Patterns across a group of parts.",
+          "value": "SUBSYSTEM"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "The system as a whole.",
+          "value": "SYSTEM"
+        }
+      ]
+    },
+    {
+      "column": "The first part",
+      "group": "relation",
+      "looks_like_column": "",
+      "says": "used by `axon`, and by each entry under `depends_on`.",
+      "title": "Relation",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "runs the second",
+          "value": "CALLS"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "creates the second, or fills in the interface the second describes",
+          "value": "CONSTRUCTS"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "reads a value or settings from the second",
+          "value": "READS"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "supplies settings to the second",
+          "value": "CONFIGURES"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "creates the second and sends it out",
+          "value": "PRODUCES"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "receives the second and handles it",
+          "value": "CONSUMES"
+        }
+      ]
+    },
+    {
+      "column": "Means",
+      "group": "coupling",
+      "looks_like_column": "",
+      "says": "used by `axon`, and by each entry under `depends_on`.",
+      "title": "Coupling",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "A change to the second part will probably force a change to the first.",
+          "value": "TIGHT"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "The second part can change on its own.",
+          "value": "LOOSE"
+        }
+      ]
+    },
+    {
+      "column": "Changing the cell changes",
+      "group": "category",
+      "looks_like_column": "",
+      "says": "used by `category` on a cell.",
+      "title": "Category",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "what the system can do",
+          "value": "capability"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "how the system behaves, and nothing it can do",
+          "value": "behaviour"
+        }
+      ]
+    },
+    {
+      "column": "The page is written as",
+      "group": "format",
+      "looks_like_column": "",
+      "says": "used by `format` on a `doc-ref` and a `doc-guide`.",
+      "title": "Format",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "Markdown, the plain-text form this page is written in",
+          "value": "markdown"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "a web page",
+          "value": "html"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "data for a program to read",
+          "value": "json"
+        }
+      ]
+    },
+    {
+      "column": "The example is run",
+      "group": "runs-in",
+      "looks_like_column": "",
+      "says": "used by `runs_in` on an example.",
+      "title": "Runs in",
+      "values": [
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "as a small program of its own",
+          "value": "standalone"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "as a test, by the test runner",
+          "value": "pytest"
+        },
+        {
+          "looks_like": "",
+          "reserved": false,
+          "says": "by a runner of your own",
+          "value": "integration"
+        }
+      ]
+    }
+  ],
+  "choices_section": {
+    "heading": "The words you choose from",
+    "reach_column": "May reach",
+    "reserved": "{value} is accepted too. {says}"
+  },
+  "commands": {
+    "first_session": [
+      {
+        "command": "cli:s0ma/new",
+        "note": "make a project that already builds",
+        "write": "s0ma new project library"
+      },
+      {
+        "command": "",
+        "note": "",
+        "write": "cd library"
+      },
+      {
+        "command": "cli:s0ma/check",
+        "note": "is everything in order?",
+        "write": "s0ma check"
+      },
+      {
+        "command": "cli:s0ma/build",
+        "note": "turn the .s0ma files into Python",
+        "write": "s0ma build ."
+      },
+      {
+        "command": "cli:s0ma/test",
+        "note": "run the tests",
+        "write": "s0ma test"
+      },
+      {
+        "command": "cli:s0ma/studi0",
+        "note": "look at what you made",
+        "write": "s0ma studi0"
+      }
+    ],
+    "groups": [
+      {
+        "commands": [
+          {
+            "command": "cli:s0ma/new",
+            "says": "Makes a new project that already builds: its settings, a starter feature with a test, a map of the project, and a guide for coding agents. Add `--template service` for a fuller start.",
+            "write": "s0ma new project <folder>"
+          },
+          {
+            "command": "cli:s0ma/new",
+            "says": "Writes a starter file with one nerve in it and every line filled in. Works for `module`, `cell` and `test` too.",
+            "write": "s0ma new nerve <name>"
+          }
+        ],
+        "title": "Start"
+      },
+      {
+        "commands": [
+          {
+            "command": "cli:s0ma/check",
+            "says": "Reads every `.s0ma` file and reports what is wrong and how to put it right. Builds nothing.",
+            "write": "s0ma check"
+          },
+          {
+            "command": "cli:s0ma/build",
+            "says": "Turns the `.s0ma` files into Python in the build directory, with the record of each file beside it.",
+            "write": "s0ma build ."
+          },
+          {
+            "command": "cli:s0ma/test",
+            "says": "Builds, then runs every test.",
+            "write": "s0ma test"
+          },
+          {
+            "command": "cli:s0ma/inspect",
+            "says": "Asks a built file what it contains. `s0ma inspect --all` lists every file.",
+            "write": "s0ma inspect <module>"
+          }
+        ],
+        "title": "The everyday loop"
+      },
+      {
+        "commands": [
+          {
+            "command": "cli:s0ma/studi0",
+            "says": "Opens studi0, the viewer: your project drawn as a graph in your browser. It changes nothing.",
+            "write": "s0ma studi0"
+          },
+          {
+            "command": "cli:s0ma/graph",
+            "says": "Prints which parts depend on which.",
+            "write": "s0ma graph ."
+          },
+          {
+            "command": "cli:s0ma/score",
+            "says": "Reports the self-knowledge score: how much of the project s0ma can describe and vouch for.",
+            "write": "s0ma score"
+          },
+          {
+            "command": "cli:s0ma/doctor",
+            "says": "Reports which versions are installed, the state of the project, and how to connect a coding agent.",
+            "write": "s0ma doctor"
+          }
+        ],
+        "title": "See the whole"
+      },
+      {
+        "commands": [
+          {
+            "command": "cli:s0ma/verify",
+            "says": "Finds generated files that were edited by hand, or that have fallen behind their source.",
+            "write": "s0ma verify build"
+          },
+          {
+            "command": "cli:s0ma/check",
+            "says": "Runs the strictest check, the one to pass before you ship.",
+            "write": "s0ma check --mode release"
+          },
+          {
+            "command": "cli:s0ma/docs/check-drift",
+            "says": "Rebuilds every reference page and guide and reports any that no longer match.",
+            "write": "s0ma docs check-drift src"
+          }
+        ],
+        "title": "Keep it honest"
+      },
+      {
+        "commands": [
+          {
+            "command": "cli:s0ma/adopt/scan",
+            "says": "Reads an existing Python project and says what to convert first. Writes nothing. `s0ma adopt status` then names the next command to run.",
+            "write": "s0ma adopt scan"
+          },
+          {
+            "command": "cli:s0ma/migrate/grammar",
+            "says": "For `.s0ma` files written when lines could be left out: shows the `none` lines it would add. Add `--apply` to write them.",
+            "write": "s0ma migrate grammar"
+          }
+        ],
+        "title": "Bring older work across"
+      },
+      {
+        "commands": [
+          {
+            "command": "cli:s0ma/docs",
+            "says": "Shows the map of everything s0ma can explain.",
+            "write": "s0ma docs"
+          },
+          {
+            "command": "cli:s0ma/docs/show",
+            "says": "Explains one topic: `s0ma docs show nerve`.",
+            "write": "s0ma docs show <topic>"
+          },
+          {
+            "command": "cli:s0ma/docs/search",
+            "says": "Finds every topic a word could mean.",
+            "write": "s0ma docs search <word>"
+          },
+          {
+            "command": "cli:s0ma/feedback",
+            "says": "Sends feedback to the people who make s0ma, after showing you exactly what will be sent.",
+            "write": "s0ma feedback -m \"<your words>\""
+          }
+        ],
+        "title": "Ask, and tell"
+      }
+    ],
+    "lead": "Run these in a terminal, from inside your project's folder. A first session looks like this:"
+  },
+  "commands_section": {
+    "command_column": "Command",
+    "does_column": "What it does",
+    "heading": "Everyday commands"
+  },
+  "editions": [
+    {
+      "changes": [
+        "First edition."
+      ],
+      "date": "2026-09-29",
+      "edition": 1,
+      "facts": {
+        "kind:axon": "e5960343ef80",
+        "kind:cell": "ed4a1f74d6dc",
+        "kind:doc-guide": "646c50c064a6",
+        "kind:doc-ref": "a16b1ac90c87",
+        "kind:example": "1f14babe0e19",
+        "kind:ganglion": "e142b0bec374",
+        "kind:helper": "a0741632f54f",
+        "kind:integration": "0033453c2304",
+        "kind:module": "2905a0871323",
+        "kind:nerve": "339df2cd6d72",
+        "kind:test": "20f7c68a54aa",
+        "layers:reach": "37ee1f310b23",
+        "modes": "6efc738298e2",
+        "words:category": "037be6fddcdf",
+        "words:cell-kind": "12f4e95434ea",
+        "words:coupling": "6ac6645c5bd9",
+        "words:format": "b2aac070e130",
+        "words:layer": "fca53446ff6f",
+        "words:nerve-kind": "04a5c495e232",
+        "words:relation": "046693b9de79",
+        "words:runs-in": "f812c81f1d08",
+        "words:scale": "61cafdec1abd",
+        "words:visibility": "e8c859976872"
+      },
+      "written_for": "0.19.0"
+    },
+    {
+      "changes": [
+        "A working part and a watcher now carry a `forbids` line: what it must never do. It must always be written, and `none` says there is nothing to rule out."
+      ],
+      "date": "2026-10-05",
+      "edition": 2,
+      "facts": {
+        "kind:axon": "e5960343ef80",
+        "kind:cell": "ed4a1f74d6dc",
+        "kind:doc-guide": "646c50c064a6",
+        "kind:doc-ref": "a16b1ac90c87",
+        "kind:example": "1f14babe0e19",
+        "kind:ganglion": "82c5199b666c",
+        "kind:helper": "a0741632f54f",
+        "kind:integration": "0033453c2304",
+        "kind:module": "2905a0871323",
+        "kind:nerve": "7207bdb1a84e",
+        "kind:test": "20f7c68a54aa",
+        "layers:reach": "37ee1f310b23",
+        "modes": "6efc738298e2",
+        "words:category": "037be6fddcdf",
+        "words:cell-kind": "12f4e95434ea",
+        "words:coupling": "6ac6645c5bd9",
+        "words:format": "b2aac070e130",
+        "words:layer": "fca53446ff6f",
+        "words:nerve-kind": "04a5c495e232",
+        "words:relation": "046693b9de79",
+        "words:runs-in": "f812c81f1d08",
+        "words:scale": "61cafdec1abd",
+        "words:visibility": "e8c859976872"
+      },
+      "written_for": "0.19.0"
+    }
+  ],
+  "identity": {
+    "changes_link": "what has changed",
+    "contents": "Contents",
+    "describes": "Describes",
+    "edition": "This page",
+    "edition_words": "edition {edition}, last revised {date}",
+    "packages": "Packages",
+    "packages_note": "which all share that version",
+    "snapshot": "Documentation snapshot",
+    "specification": "Language specification"
+  },
+  "kinds": [
+    {
+      "after_samples": [],
+      "before_samples": [],
+      "code": null,
+      "first_line": "module <name>",
+      "kind": "module",
+      "lines": [
+        {
+          "also": "",
+          "line": "layer",
+          "of": "",
+          "says": "The band the file belongs to. Every part in the file shares it.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "version",
+          "of": "",
+          "says": "The file's version, chosen by a person.",
+          "type": "version"
+        },
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "What this file is responsible for. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "exports",
+          "of": "names",
+          "says": "The parts other files may use. Each must be marked `visibility: PUBLIC`. `none` or `[]`: the file publishes nothing.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "requires",
+          "of": "imports",
+          "says": "Outside code the file draws on: the ordinary Python imports. `none`: it needs none.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "uses",
+          "of": "`file.part` names",
+          "says": "Parts of other s0ma files this file refers to. `none`: it refers to none.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "soft_requires",
+          "of": "imports",
+          "says": "Outside code that may not be installed. The file still loads without it.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "runtime_only_requires",
+          "of": "imports",
+          "says": "Outside code that must be loaded although no code names it, such as `pytest`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "deferred_requires",
+          "of": "imports",
+          "says": "Outside code loaded only at the moment a part that names it is called.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "exports_helpers",
+          "of": "helper names",
+          "says": "Helpers deliberately opened to tests in other files.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "helpers",
+          "of": "",
+          "says": "Helpers short enough to fit on one line each, declared here in place of a `helper` declaration of their own.",
+          "type": "block"
+        }
+      ],
+      "opening": "The header every file opens with. First line: `module <name>`, where the name is the file's name without `.s0ma`.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "module library_domain",
+          "file": "src/library/library_domain.s0ma"
+        }
+      ],
+      "when": "a new file"
+    },
+    {
+      "after_samples": [],
+      "before_samples": [
+        "You rarely type these from nothing: `s0ma new nerve <name>` writes every line for you, with `none` already in place.",
+        "This sample is a service, so it shows nearly every line in use. A plain `FUNCTION` answers most of them with `none`."
+      ],
+      "code": {
+        "says": "One `def`. A `SERVICE` or an `ADAPTER` may be a `class` instead.",
+        "type": "code",
+        "write": "Always, unless `abstract`"
+      },
+      "first_line": "nerve <name> :: <LAYER>",
+      "kind": "nerve",
+      "lines": [
+        {
+          "also": "",
+          "line": "kind",
+          "of": "",
+          "says": "What sort of working logic this is.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "visibility",
+          "of": "",
+          "says": "Who may call it from another file.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "Why this part exists. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "expects",
+          "of": "",
+          "says": "What must be true before it is called. `none`: it asks nothing of its caller.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "guarantees",
+          "of": "",
+          "says": "What it promises once it has finished. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "forbids",
+          "of": "",
+          "says": "What it must never do, however it is called. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling. `none`: it rules nothing out.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "evaluates_at",
+          "of": "",
+          "says": "The scale at which watchers judge it: one part, a group, or the whole system.",
+          "type": "choice"
+        },
+        {
+          "also": "block",
+          "line": "provides",
+          "of": "names",
+          "says": "The operations a service offers. Each one must be a `def` in the code. A block can give each operation its own promises.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "returns",
+          "of": "names",
+          "says": "The keys of the dictionary the code hands back.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "raises",
+          "of": "cell names",
+          "says": "The error types it may raise. Each must be an `EXCEPTION` cell this file declares or lists in `uses`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "interface",
+          "of": "names",
+          "says": "The methods that anything standing in for this nerve must define. Goes with `abstract`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "latency_ms",
+          "of": "",
+          "says": "The longest it may acceptably take, in thousandths of a second.",
+          "type": "number"
+        },
+        {
+          "also": "",
+          "line": "depends_on",
+          "of": "",
+          "says": "The parts it leans on by decision, one to a line: `name: {relation: …, carries: \"…\", coupling: …}`. Name a part in another file as `file.part`.",
+          "type": "block"
+        },
+        {
+          "also": "block",
+          "line": "internal",
+          "of": "names",
+          "says": "Private functions written inside the code, listed so a reader can see them. A block can give each one a reason.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "expected_exceptions",
+          "of": "Python names",
+          "says": "Outside errors the code catches on purpose, such as `json.JSONDecodeError`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "consumes_via_dict",
+          "of": "",
+          "says": "Settings it reads out of a dictionary by key, as pairs: `contract:` names the cell that describes them, and `param:` names what the code receives them as.",
+          "type": "block"
+        },
+        {
+          "also": "",
+          "line": "declares_attributes",
+          "of": "`group:value` pairs",
+          "says": "Claims about what it produces, such as `landmark:header`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "covered_by",
+          "of": "text",
+          "says": "Verification that lives outside s0ma: name the suite that does it. `none`: no outside evidence is claimed.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "abstract",
+          "of": "",
+          "says": "Write it only for an interface other nerves fill in. Such a nerve may have no code.",
+          "type": "flag"
+        },
+        {
+          "also": "",
+          "line": "deferred",
+          "of": "",
+          "says": "Write it only while the code is a placeholder, and say what it is waiting for.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "is_page_composer",
+          "of": "",
+          "says": "Write it only on the nerve that assembles a whole page.",
+          "type": "flag"
+        },
+        {
+          "also": "",
+          "line": "version",
+          "of": "",
+          "says": "This part's own version, when you track one.",
+          "type": "version"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "metadata",
+          "of": "",
+          "says": "Facts of your own, as `key: value` lines, that travel with the part. A value is quoted text, a number, `true` or `false`, or a list. s0ma stores them and never reads them.",
+          "type": "block"
+        },
+        {
+          "also": "",
+          "line": "serves_as",
+          "of": "",
+          "says": "The name it is served under, when that differs from its own.",
+          "type": "name"
+        }
+      ],
+      "opening": "A piece of working logic. First line: `nerve <name> :: <LAYER>`, where the layer is the file's layer.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "nerve lending_desk",
+          "file": "src/library/library_domain.s0ma"
+        }
+      ],
+      "when": "something that acts: it computes, decides, fetches or serves"
+    },
+    {
+      "after_samples": [],
+      "before_samples": [],
+      "code": {
+        "says": "A class, a value, or a type. A `CONSTANT` assigns to its own name: `LOAN_DAYS = 21`.",
+        "type": "code",
+        "write": "Always, unless `content`"
+      },
+      "first_line": "cell <Name> :: <LAYER>",
+      "kind": "cell",
+      "lines": [
+        {
+          "also": "",
+          "line": "kind",
+          "of": "",
+          "says": "What sort of structure this is.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "visibility",
+          "of": "",
+          "says": "Who may use it from another file.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "Why this part exists. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "schema",
+          "of": "",
+          "says": "What data it represents. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "invariants",
+          "of": "",
+          "says": "What must always be true of it. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling. `none`: no such rule.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "covered_by",
+          "of": "text",
+          "says": "Verification that lives outside s0ma: name the suite that does it. `none`: no outside evidence is claimed.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "category",
+          "of": "",
+          "says": "Whether changing it changes what the system can do, or only how it behaves.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "deferred",
+          "of": "",
+          "says": "Write it only while the code is a placeholder, and say what it is waiting for.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "dataclass_invariants",
+          "of": "text",
+          "says": "`MODEL` cells only: rules written so a machine can read them, such as `\"copies >= 0\"`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "placeholders",
+          "of": "markers",
+          "says": "Only with `content`: the markers, shaped `__NAME__`, that the file holds for later filling in.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "content",
+          "of": "",
+          "says": "`CONSTANT` cells only: take the value from a text file. Replaces the `---` line and the code.",
+          "type": "file"
+        },
+        {
+          "also": "",
+          "line": "version",
+          "of": "",
+          "says": "This part's own version, when you track one.",
+          "type": "version"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "metadata",
+          "of": "",
+          "says": "Facts of your own, as `key: value` lines, that travel with the part. A value is quoted text, a number, `true` or `false`, or a list. s0ma stores them and never reads them.",
+          "type": "block"
+        }
+      ],
+      "opening": "A piece of structure. First line: `cell <Name> :: <LAYER>`.",
+      "samples": [
+        {
+          "caption": "A data shape:",
+          "declaration": "cell Book",
+          "file": "src/library/library_domain.s0ma"
+        },
+        {
+          "caption": "A fixed value:",
+          "declaration": "cell LOAN_DAYS",
+          "file": "src/library/library_domain.s0ma"
+        }
+      ],
+      "when": "something that holds a shape or a value"
+    },
+    {
+      "after_samples": [],
+      "before_samples": [],
+      "code": {
+        "says": "One `def` that receives what was observed and returns a judgement. Write it when the watcher does its own judging.",
+        "type": "code",
+        "write": "When it applies"
+      },
+      "first_line": "ganglion <name> :: <LAYER>",
+      "kind": "ganglion",
+      "lines": [
+        {
+          "also": "",
+          "line": "visibility",
+          "of": "",
+          "says": "Who may call it from another file.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "What this watcher assesses. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "observes",
+          "of": "nerve names",
+          "says": "The parts it watches.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "scope",
+          "of": "",
+          "says": "The scale it judges at: one part, a group, or the whole system.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "priors",
+          "of": "",
+          "says": "What normal is expected to look like. `none`: nothing is assumed in advance.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "on_anomaly",
+          "of": "",
+          "says": "What to do when what it sees does not match.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "forbids",
+          "of": "",
+          "says": "What this watcher must never do while it assesses. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling. `none`: it rules nothing out.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "depends_on",
+          "of": "",
+          "says": "The parts it leans on by decision, one to a line: `name: {relation: …, carries: \"…\", coupling: …}`.",
+          "type": "block"
+        },
+        {
+          "also": "",
+          "line": "covered_by",
+          "of": "text",
+          "says": "Verification that lives outside s0ma: name the suite that does it. `none`: no outside evidence is claimed.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "deferred",
+          "of": "",
+          "says": "Write it only while the code is a placeholder, and say what it is waiting for.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "metadata",
+          "of": "",
+          "says": "Facts of your own, as `key: value` lines, that travel with the part. A value is quoted text, a number, `true` or `false`, or a list. s0ma stores them and never reads them.",
+          "type": "block"
+        }
+      ],
+      "opening": "A watcher. First line: `ganglion <name> :: <LAYER>`.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "ganglion lending_watch",
+          "file": "src/library/library_domain.s0ma"
+        }
+      ],
+      "when": "something that watches other parts"
+    },
+    {
+      "after_samples": [],
+      "before_samples": [
+        "An axon has no code, and every line is always written.",
+        "Inside one file, write the same thing as a `depends_on` line on the part itself. And do not write an axon for something s0ma works out by reading the code, such as which errors a part raises or which types it mentions. If the check reports `DUPLICATE_AXON`, it already knows about the connection: take the axon out."
+      ],
+      "code": null,
+      "first_line": "axon <this part> -> <that part>",
+      "kind": "axon",
+      "lines": [
+        {
+          "also": "",
+          "line": "relation",
+          "of": "",
+          "says": "What kind of dependence this is.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "Why the connection exists. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "carries",
+          "of": "",
+          "says": "What travels along it.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "coupling",
+          "of": "",
+          "says": "How closely the two parts are bound.",
+          "type": "choice"
+        }
+      ],
+      "opening": "A dependency between two files, written down because it was a decision. First line: `axon <this part> -> <that part>`. The first part lives in this file. The second lives in another file and is listed in this file's `uses`.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "axon reminder_day -> LOAN_DAYS",
+          "file": "src/reminders/reminders_application.s0ma"
+        }
+      ],
+      "when": "a dependency between two files that a reader should be told about"
+    },
+    {
+      "after_samples": [
+        "A helper that fits on one line can also be written inside the module header, under `helpers:`."
+      ],
+      "before_samples": [],
+      "code": {
+        "says": "One `def` or one `class`.",
+        "type": "code",
+        "write": "Always"
+      },
+      "first_line": "helper _<name> :: <LAYER>",
+      "kind": "helper",
+      "lines": [
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "Why this helper exists. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        }
+      ],
+      "opening": "A small private function that never leaves its file. First line: `helper _<name> :: <LAYER>`. The name starts with an underscore by custom. A helper carries no promises of its own, so it has none of a nerve's other lines.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "helper _tidy_title",
+          "file": "src/library/library_domain.s0ma"
+        }
+      ],
+      "when": "a small private routine only this file calls"
+    },
+    {
+      "after_samples": [],
+      "before_samples": [],
+      "code": {
+        "says": "Rarely needed: s0ma writes the routine wiring itself.",
+        "type": "code",
+        "write": "Optional"
+      },
+      "first_line": "integration <Name> :: INFRASTRUCTURE",
+      "kind": "integration",
+      "lines": [
+        {
+          "also": "",
+          "line": "version",
+          "of": "",
+          "says": "The version of this connection.",
+          "type": "version"
+        },
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "Why this connection exists. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "factory",
+          "of": "a `SERVICE` nerve in this file",
+          "says": "The part that builds the connection.",
+          "type": "name"
+        },
+        {
+          "also": "",
+          "line": "smoke_test_primary",
+          "of": "a nerve in this file, or one listed in `uses`",
+          "says": "The part that checks the connection is alive.",
+          "type": "name"
+        },
+        {
+          "also": "",
+          "line": "manifest",
+          "of": "",
+          "says": "What it offers and what it needs, as `key: value` lines. Usual keys: `provides`, `required_env`, `requires_oauth`. You may add your own.",
+          "type": "block"
+        },
+        {
+          "also": "",
+          "line": "requires",
+          "of": "imports",
+          "says": "Outside code this connection draws on.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "uses",
+          "of": "`file.part` names",
+          "says": "Parts of other s0ma files it refers to.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "raises",
+          "of": "cell names",
+          "says": "The error types it may raise.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        }
+      ],
+      "opening": "A connection to an outside service. First line: `integration <Name> :: INFRASTRUCTURE`. It can only live in an `INFRASTRUCTURE` file, beside the nerve that builds it.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "integration ReminderMail",
+          "file": "src/mail/mail_infrastructure.s0ma"
+        }
+      ],
+      "when": "a connection to a service you do not control"
+    },
+    {
+      "after_samples": [],
+      "before_samples": [],
+      "code": {
+        "says": "One `def` whose name starts with `test_`. The function's name decides whether the test runs; the declaration's name does not.",
+        "type": "code",
+        "write": "Always"
+      },
+      "first_line": "test <name> :: <LAYER>",
+      "kind": "test",
+      "lines": [
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "What behaviour this verifies. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "tests",
+          "of": "part names",
+          "says": "The parts it checks. Name a part in another file as `file.part`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "expects",
+          "of": "",
+          "says": "What must hold before it runs. `none`: nothing.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "depends_on",
+          "of": "",
+          "says": "The parts it leans on by decision, one to a line: `name: {relation: …, carries: \"…\", coupling: …}`.",
+          "type": "block"
+        },
+        {
+          "also": "",
+          "line": "mocks",
+          "of": "nerve names",
+          "says": "The nerves it replaces with stand-ins.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        }
+      ],
+      "opening": "A check that a part keeps its promises. First line: `test <name> :: <LAYER>`. Tests live in their own files under `tests/`, named to end in `_tests`, with `exports: []` in the header.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "test test_due_date_is_three_weeks_out",
+          "file": "tests/library/library_domain_tests.s0ma"
+        }
+      ],
+      "when": "a check that a part keeps its promises"
+    },
+    {
+      "after_samples": [],
+      "before_samples": [],
+      "code": null,
+      "first_line": "doc-ref <name>",
+      "kind": "doc-ref",
+      "lines": [
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "Why this reference page exists. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "format",
+          "of": "",
+          "says": "The kind of file to write.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "output",
+          "of": "",
+          "says": "Where to write it, inside the build directory.",
+          "type": "path"
+        },
+        {
+          "also": "",
+          "line": "covers",
+          "of": "selections",
+          "says": "Which parts to list: `[nerve where visibility == PUBLIC]`. Or, in place of a list, a table s0ma keeps itself: `{ source: error_codes }`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "sections",
+          "of": "field names",
+          "says": "What to print for each part. Write it whenever `covers` selects parts.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        }
+      ],
+      "opening": "A reference page built from the parts themselves. First line: `doc-ref <name>`. It has no code and no three-hyphen line.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "doc-ref public_reference",
+          "file": "src/library_docs.s0ma"
+        }
+      ],
+      "when": "a list or table of what the system contains"
+    },
+    {
+      "after_samples": [],
+      "before_samples": [],
+      "code": {
+        "says": "Ordinary writing. Name a part as `{{nerve::due_date}}` and show an example as `{{example::lend_a_book}}`.",
+        "type": "prose",
+        "write": "Always"
+      },
+      "first_line": "doc-guide <name>",
+      "kind": "doc-guide",
+      "lines": [
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "Why this guide exists. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "format",
+          "of": "",
+          "says": "The kind of file to write.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "output",
+          "of": "",
+          "says": "Where to write it, inside the build directory.",
+          "type": "path"
+        },
+        {
+          "also": "",
+          "line": "covers",
+          "of": "part references",
+          "says": "The parts the guide is about: `[nerve::due_date]`.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "asserts",
+          "of": "claims",
+          "says": "Statements the build checks: `[nerve::due_date.visibility == PUBLIC]`. `[]` when there are none.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "examples",
+          "of": "example references",
+          "says": "The examples it shows: `[example::lend_a_book]`. `[]` when there are none.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        }
+      ],
+      "opening": "A written guide whose claims are checked. First line: `doc-guide <name>`. After the three hyphens comes ordinary writing, in which a code sample is always an example and never typed in by hand.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "doc-guide lending_guide",
+          "file": "src/library_docs.s0ma"
+        }
+      ],
+      "when": "an explanation that names real parts"
+    },
+    {
+      "after_samples": [
+        "To run the examples yourself on macOS or Linux, build first, then: `PYTHONPATH=\"$PWD/build\" s0ma examples run src`. The first part tells Python where the built files are."
+      ],
+      "before_samples": [],
+      "code": {
+        "says": "Short Python, written to be read. It may carry its own `import` lines.",
+        "type": "code",
+        "write": "Always"
+      },
+      "first_line": "example <name>",
+      "kind": "example",
+      "lines": [
+        {
+          "also": "",
+          "line": "intent",
+          "of": "",
+          "says": "What this example teaches. Written to stand on its own, in the present tense: no plan, milestone, date, person or ruling.",
+          "type": "text"
+        },
+        {
+          "also": "",
+          "line": "demonstrates",
+          "of": "part references",
+          "says": "The parts it shows in use: `[nerve::due_date]`. At least one.",
+          "type": "list"
+        },
+        {
+          "also": "",
+          "line": "runs_in",
+          "of": "",
+          "says": "How it is run: as a small program, as a test, or by your own runner.",
+          "type": "choice"
+        },
+        {
+          "also": "",
+          "line": "tags",
+          "of": "names",
+          "says": "Labels for searching and grouping.",
+          "type": "list"
+        }
+      ],
+      "opening": "A short demonstration that has to keep working. First line: `example <name>`.",
+      "samples": [
+        {
+          "caption": "",
+          "declaration": "example lend_a_book",
+          "file": "src/library_docs.s0ma"
+        }
+      ],
+      "when": "a part a reader needs to see in use"
+    }
+  ],
+  "kinds_detail": {
+    "code_row": "the code",
+    "columns": {
+      "holds": "Holds",
+      "line": "Line",
+      "may": "May also be",
+      "says": "What it says",
+      "write": "Write it?"
+    },
+    "heading": "Each declaration, line by line",
+    "lead": "Every sample below comes from one small project, a town library, that passes s0ma's strictest check. See [how this page is made](#how-this-page-is-made).",
+    "prose_row": "the writing"
+  },
+  "kinds_section": {
+    "choosing": "Not sure which? If it *acts*, it is a nerve. If it *holds* something, it is a cell. If it *watches*, it is a ganglion.",
+    "code": {
+      "always": "yes",
+      "none": "no",
+      "optional": "optional",
+      "usually": "usually",
+      "writing": "writing"
+    },
+    "columns": {
+      "code": "Code?",
+      "in_short": "In short",
+      "kind": "Write a",
+      "when": "When you have"
+    },
+    "heading": "The kinds of declaration",
+    "lead": "A file is made of declarations, and there are {count} kinds of them.",
+    "more": "More"
+  },
+  "known_differences": [
+    {
+      "kind": "cell",
+      "line": "category",
+      "state": "pending",
+      "why": "The check reads the line as one of its two words and nothing else."
+    },
+    {
+      "kind": "integration",
+      "line": "factory",
+      "state": "pending",
+      "why": "The check needs the name of the nerve that builds the connection."
+    },
+    {
+      "kind": "integration",
+      "line": "smoke_test_primary",
+      "state": "pending",
+      "why": "The check needs the name of the nerve that tries the connection."
+    }
+  ],
+  "modes": {
+    "lead": "**How strict?** Most commands take `--mode`, and a project sets its usual one as `mode` under `[tool.s0ma]` in `pyproject.toml`.",
+    "only_here": "Made only in {mode}: {reports}.",
+    "unchanging": "The numbers count the {reports} reports whose weight depends on the mode. {always} of them are refused in every mode, so the modes differ over the rest. {unchanging} more reports are made the same way whatever the mode.",
+    "values": [
+      {
+        "meant_for": "bringing existing code across",
+        "mode": "migration",
+        "treats": "As `dev`, with a little more room."
+      },
+      {
+        "meant_for": "day to day",
+        "mode": "dev",
+        "treats": "A mistake the build can carry on past is a warning."
+      },
+      {
+        "meant_for": "the automated checks before a merge",
+        "mode": "strict",
+        "treats": "What the first two warn about is refused."
+      },
+      {
+        "meant_for": "shipping",
+        "mode": "release",
+        "treats": "As `strict`, and it makes checks the others do not: they are named under the table."
+      }
+    ]
+  },
+  "modes_columns": {
+    "meant_for": "Meant for",
+    "mode": "Mode",
+    "refuses": "Refuses",
+    "skips": "Does not check",
+    "treats": "How it treats what it finds",
+    "warns": "Warns about"
+  },
+  "more": {
+    "ask_agent": {
+      "by_column": "By using",
+      "can_column": "The agent can",
+      "for_agents": "**If you are a coding agent reading this:** call `project_status` first and follow the `next_actions` in each answer. Pass an explicit `project_root` on every call. Check after every edit. Use the server's tools in place of the `s0ma` command, which is often not installed where you are running.",
+      "lead": "Ask your coding agent.",
+      "rows": [
+        {
+          "by": "the {0} tool, and the list of what can be asked at {1}",
+          "can": "look up one idea, command, setting or report",
+          "with": [
+            "mcp:tool/learn_s0ma",
+            "mcp:resource/s0ma://docs/index"
+          ]
+        },
+        {
+          "by": "the {0} tool",
+          "can": "find out where it is and what to do next",
+          "with": [
+            "mcp:tool/project_status"
+          ]
+        },
+        {
+          "by": "the {0} tool",
+          "can": "ask a built file what it contains",
+          "with": [
+            "mcp:tool/inspect_module"
+          ]
+        },
+        {
+          "by": "the {0} tool",
+          "can": "find out which tool fits a situation",
+          "with": [
+            "mcp:tool/describe_server"
+          ]
+        },
+        {
+          "by": "{0}",
+          "can": "read the short rules, to keep in mind throughout",
+          "with": [
+            "mcp:resource/s0ma://guide/survival-card"
+          ]
+        },
+        {
+          "by": "{0}",
+          "can": "read this page, one topic at a time",
+          "with": [
+            "mcp:resource/s0ma://guide/quick-reference"
+          ]
+        },
+        {
+          "by": "{0}",
+          "can": "read the same facts as data, when it is a program doing the reading",
+          "with": [
+            "mcp:resource/s0ma://guide/quick-reference.json"
+          ]
+        },
+        {
+          "by": "{0}",
+          "can": "look up any report by its code name",
+          "with": [
+            "mcp:resource/s0ma://guide/errors"
+          ]
+        },
+        {
+          "by": "{0}",
+          "can": "read worked patterns for real applications",
+          "with": [
+            "mcp:resource/s0ma://guide/patterns"
+          ]
+        },
+        {
+          "by": "{0}",
+          "can": "read the language specification",
+          "with": [
+            "mcp:resource/s0ma://spec/current"
+          ]
+        },
+        {
+          "by": "the prompts {0}, {1}, {2}, {3} and {4}",
+          "can": "be walked through a whole task",
+          "with": [
+            "mcp:prompt/author_module",
+            "mcp:prompt/fix_check_failures",
+            "mcp:prompt/diagnose_fault",
+            "mcp:prompt/migrate_project",
+            "mcp:prompt/feedback"
+          ]
+        }
+      ],
+      "says": "Once the agent is connected to s0ma's authoring server, `s0ma-mcp`, ask it in your own words: \"what is a ganglion?\", \"why did the check fail?\", \"what does this project contain?\". To connect one, register the command `s0ma-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:"
+    },
+    "ask_s0ma": {
+      "commands": [
+        "cli:s0ma/docs",
+        "cli:s0ma/docs/show",
+        "cli:s0ma/docs/search"
+      ],
+      "lead": "Ask s0ma itself.",
+      "says": "In a terminal, `s0ma docs` shows the map, `s0ma docs show <topic>` explains one topic, and `s0ma docs search <word>` finds the topics a word could mean. A topic can be an idea (`nerve`), a command, a setting, or the code name of a report such as `VISIBILITY_MISMATCH`."
+    },
+    "read": {
+      "for_column": "For",
+      "lead": "Read the documents.",
+      "read_column": "Read",
+      "rows": [
+        {
+          "document": "doc:generated/map-of-record",
+          "for": "every document there is, and who it is for"
+        },
+        {
+          "document": "doc:generated/learn-glossary",
+          "for": "each idea explained on a page of its own, starting here"
+        },
+        {
+          "document": "doc:generated/learn-anatomy",
+          "for": "the parts of a file, each with its smallest written form"
+        },
+        {
+          "document": "doc:guide/first-module",
+          "for": "writing your first file, step by step"
+        },
+        {
+          "document": "doc:guide/mcp-authoring",
+          "for": "working through a coding agent, step by step"
+        },
+        {
+          "document": "doc:generated/cli-reference",
+          "for": "every command and every option"
+        },
+        {
+          "document": "doc:generated/configuration-reference",
+          "for": "every setting a project can declare"
+        },
+        {
+          "document": "doc:generated/diagnostics-reference",
+          "for": "every report s0ma can make, and what to do about it"
+        },
+        {
+          "document": "doc:normative/s0ma-dsl-spec-v0-17-0",
+          "for": "the language itself, in full"
+        }
+      ],
+      "says": "In a copy of the s0ma repository:"
+    }
+  },
+  "more_section": {
+    "heading": "Finding out more"
+  },
+  "orientation": {
+    "heading": "s0ma in one minute",
+    "lead": "Three things to know before anything else:",
+    "paragraphs": [
+      "s0ma is a way of writing software so that the software carries an accurate description of itself.",
+      "You write `.s0ma` files. In them, every part of your program first says what it is for, what it needs and what it promises, and then gives its code. s0ma turns those files into ordinary Python, and beside the Python it keeps a record of every part. You, your program, and your coding agent can all ask that record questions, and get answers that come from the program itself instead of from a document somebody hoped to keep up to date."
+    ],
+    "points": [
+      {
+        "because": "Everything in the build directory is written by s0ma and rewritten every time you build.",
+        "say": "Edit `.s0ma` files, and nothing else."
+      },
+      {
+        "because": "When the answer is \"nothing\", you write `none`. Leaving a required line out is an error.",
+        "say": "Every line is a question, and every question gets an answer."
+      },
+      {
+        "because": "`s0ma check` reads your files, changes none of them, and tells you what is wrong and how to put it right.",
+        "say": "Check after every change."
+      }
+    ]
+  },
+  "page": {
+    "preview_note": "A version marked `(preview)` is the latest release together with the changes made since, which are not released yet.",
+    "specification": "doc:normative/s0ma-dsl-spec-v0-17-0",
+    "summary": "One page to find your way around s0ma: what the parts of a `.s0ma` file are, what each line of them means, the commands you will use most, and where to ask for more.",
+    "title": "s0ma quick reference"
+  },
+  "reading": {
+    "heading": "How to read the tables",
+    "holds_lead": "**Holds** says what kind of answer the line takes.",
+    "imports": "An import is written `json` for a whole package, `datetime:date` for one name out of a package, and `numpy as np` to give it a shorter name.",
+    "lead": "Each declaration below has a table with one row for each line you can write, in the order you would write them. s0ma's own messages call these lines *fields*.",
+    "long_forms": "Two longer forms are there when a line gets crowded. For long text, write `|` in place of the text and put the text on the lines underneath, further in. For a long list, put one item on each line underneath, each starting with `- `.",
+    "looks_like_column": "Looks like",
+    "may": [
+      {
+        "means": "\"There is nothing here\", said out loud: `raises: none`.",
+        "shown_as": "`none`",
+        "word": "none"
+      },
+      {
+        "means": "\"Not decided yet\", with the reason in quotes: `expects: pending(\"waiting for the pricing rules\")`. Day to day this is a warning. In `strict` and `release` mode it is refused until you answer.",
+        "shown_as": "`pending`",
+        "word": "pending"
+      },
+      {
+        "means": "The line needs a real answer.",
+        "shown_as": "—",
+        "word": "neither"
+      }
+    ],
+    "may_lead": "**May also be** says what the line may hold in place of a real answer.",
+    "means_column": "Means",
+    "write": [
+      {
+        "means": "The line must be there.",
+        "shown_as": "Always",
+        "word": "always"
+      },
+      {
+        "means": "Write the line only in the situation its row describes.",
+        "shown_as": "When it applies",
+        "word": "when-it-applies"
+      },
+      {
+        "means": "Leave it out whenever you like.",
+        "shown_as": "Optional",
+        "word": "optional"
+      }
+    ],
+    "write_lead": "**Write it?** says whether the line has to be there."
+  },
+  "rules": [
+    {
+      "detail": "Never edit anything in the build directory. If a generated file is changed by hand, `s0ma verify` reports it and `s0ma build` refuses to go on until the change is moved into the `.s0ma` file it belongs to.",
+      "reports": [
+        "diagnostic:GENERATED_FILE_DRIFT"
+      ],
+      "rule": "Only edit `.s0ma` files."
+    },
+    {
+      "detail": "and the file's name matches the module's name. Names have no dots in them: join a feature and its layer with an underscore, as in `library_domain`.",
+      "reports": [
+        "diagnostic:MODULE_NAME_STEM_MISMATCH"
+      ],
+      "rule": "Every file opens with a `module` header,"
+    },
+    {
+      "detail": "`intent` is on every declaration, and it gives the reason, not a description of the code.",
+      "reports": [],
+      "rule": "Every part says why it exists."
+    },
+    {
+      "detail": "Write `none` when there is nothing to say and `pending(\"reason\")` when you have not decided. Do not leave the line out.",
+      "reports": [
+        "diagnostic:SEMANTIC_REQUIRED_STATE_OMITTED",
+        "diagnostic:SEMANTIC_PENDING_DEBT"
+      ],
+      "rule": "Answer every line marked Always."
+    },
+    {
+      "detail": "A line s0ma cannot read is reported, never passed over: a name it does not know, or a line that starts in the wrong place. Day to day these are warnings. In `strict` and `release` mode they are refused.",
+      "reports": [
+        "diagnostic:UNKNOWN_FIELD",
+        "diagnostic:UNRECOGNIZED_LINE"
+      ],
+      "rule": "Spell and indent each line exactly."
+    },
+    {
+      "detail": "A nerve's code is one `def`. A `SERVICE` or an `ADAPTER` may be a `class` instead.",
+      "reports": [],
+      "rule": "No code outside a declaration."
+    },
+    {
+      "detail": "Outside code goes in the header's `requires`. Parts of other s0ma files go in `uses`. An example is the one exception.",
+      "reports": [
+        "diagnostic:BARE_IMPORT"
+      ],
+      "rule": "No `import` lines in the code."
+    },
+    {
+      "detail": "and a file only reaches the layers its own layer allows.",
+      "reports": [
+        "diagnostic:LAYER_MISMATCH",
+        "diagnostic:CROSS_LAYER_DEPENDENCY"
+      ],
+      "rule": "One layer to a file,"
+    },
+    {
+      "detail": "A part listed in `exports` is `PUBLIC`. A part that is not listed is `INTERNAL` or `TEST`.",
+      "reports": [
+        "diagnostic:VISIBILITY_MISMATCH"
+      ],
+      "rule": "`exports` and `visibility` agree."
+    },
+    {
+      "detail": "It already links a part to the errors in its `raises` line and to the types its code mentions, so those need no `axon` and no `depends_on` line.",
+      "reports": [
+        "diagnostic:DUPLICATE_AXON"
+      ],
+      "rule": "Do not write a connection s0ma works out for itself."
+    },
+    {
+      "detail": "The function's name decides whether the test runs. One the test runner would never run is reported, because it would still count as a check on the parts it names.",
+      "reports": [
+        "diagnostic:TEST_NOT_COLLECTED"
+      ],
+      "rule": "Name test functions `test_...`."
+    },
+    {
+      "detail": "and check again.",
+      "reports": [],
+      "rule": "When you change the code, change its description in the same edit,"
+    },
+    {
+      "detail": "`exec`, `eval`, `__import__`, or code that swaps another part's behaviour while the program runs.",
+      "reports": [
+        "diagnostic:PROHIBITED_CONSTRUCT"
+      ],
+      "rule": "Never use"
+    }
+  ],
+  "rules_section": {
+    "heading": "Basic rules",
+    "reported_as": "Reported as"
+  },
+  "sample": {
+    "files": {
+      "pyproject.toml": [
+        "[project]",
+        "name = \"library\"",
+        "version = \"0.1.0\"",
+        "requires-python = \">=3.11\"",
+        "dependencies = [\"s0ma-core\", \"s0ma-dsl\"]",
+        "",
+        "[tool.s0ma]",
+        "source_roots = [\"src\"]",
+        "test_roots = [\"tests\"]",
+        "build_dir = \"build\"",
+        "mode = \"dev\""
+      ],
+      "src/library/library_domain.s0ma": [
+        "module library_domain",
+        "    # What a book is, and the rules for lending one.",
+        "    layer: DOMAIN",
+        "    version: 0.1.0",
+        "    intent: \"The library feature: what a book is, and the rules for lending one.\"",
+        "    exports: [Book, LOAN_DAYS, BookUnavailable, due_date, lending_desk]",
+        "    requires: [dataclasses:dataclass, datetime:date, datetime:timedelta]",
+        "    uses: none",
+        "    soft_requires: none",
+        "    runtime_only_requires: none",
+        "    deferred_requires: none",
+        "    exports_helpers: none",
+        "    tags: [library, lending]",
+        "",
+        "cell Book :: DOMAIN",
+        "    kind: MODEL",
+        "    visibility: PUBLIC",
+        "    intent: \"One book the library owns.\"",
+        "    schema: \"title: str, author: str, copies: int\"",
+        "    invariants: \"A book always has a title, and never fewer than zero copies.\"",
+        "    covered_by: none",
+        "    dataclass_invariants: [\"copies >= 0\"]",
+        "    version: 0.1.0",
+        "    tags: [catalogue]",
+        "    metadata:",
+        "        owner: \"front desk\"",
+        "        shelf_count: 3",
+        "    ---",
+        "    @dataclass(frozen=True)",
+        "    class Book:",
+        "        title: str",
+        "        author: str",
+        "        copies: int",
+        "",
+        "cell LOAN_DAYS :: DOMAIN",
+        "    kind: CONSTANT",
+        "    visibility: PUBLIC",
+        "    intent: \"How many days a loan lasts.\"",
+        "    schema: \"A whole number of days.\"",
+        "    invariants: \"Always greater than zero.\"",
+        "    covered_by: none",
+        "    category: behaviour",
+        "    ---",
+        "    LOAN_DAYS = 21",
+        "",
+        "cell BookUnavailable :: DOMAIN",
+        "    kind: EXCEPTION",
+        "    visibility: PUBLIC",
+        "    intent: \"Raised when someone asks for a book that is already out.\"",
+        "    schema: \"An error carrying the title that could not be lent.\"",
+        "    invariants: none",
+        "    covered_by: none",
+        "    ---",
+        "    class BookUnavailable(Exception):",
+        "        def __init__(self, title: str) -> None:",
+        "            self.title = title",
+        "            super().__init__(title)",
+        "",
+        "helper _tidy_title :: DOMAIN",
+        "    intent: \"Trim stray spaces from a title so two spellings of one book match.\"",
+        "    tags: [text]",
+        "    ---",
+        "    def _tidy_title(title: str) -> str:",
+        "        return \" \".join(title.split())",
+        "",
+        "nerve due_date :: DOMAIN",
+        "    kind: FUNCTION",
+        "    visibility: PUBLIC",
+        "    intent: \"Work out the day a book is due back.\"",
+        "    expects: \"The day the loan starts.\"",
+        "    guarantees: \"Returns the day LOAN_DAYS after the start.\"",
+        "    forbids: none",
+        "    evaluates_at: FUNCTION_BOUNDARY",
+        "    provides: none",
+        "    returns: none",
+        "    raises: none",
+        "    interface: none",
+        "    latency_ms: none",
+        "    depends_on: none",
+        "    internal: none",
+        "    expected_exceptions: none",
+        "    consumes_via_dict: none",
+        "    declares_attributes: none",
+        "    covered_by: none",
+        "    ---",
+        "    def due_date(start: date) -> date:",
+        "        \"\"\"Return the day a loan starting on *start* is due back.\"\"\"",
+        "        return start + timedelta(days=LOAN_DAYS)",
+        "",
+        "nerve lending_desk :: DOMAIN",
+        "    kind: SERVICE",
+        "    visibility: PUBLIC",
+        "    intent: \"Lend books and take them back, keeping track of what is out.\"",
+        "    expects: none",
+        "    guarantees: \"lend returns the due date; give_back says whether the book was out.\"",
+        "    forbids: \"Never lend a book that is already out; lend raises BookUnavailable instead.\"",
+        "    evaluates_at: FUNCTION_BOUNDARY",
+        "    provides: [lend, give_back]",
+        "    returns: [lend, give_back]",
+        "    raises: [BookUnavailable]",
+        "    interface: none",
+        "    latency_ms: 50",
+        "    depends_on:",
+        "        due_date: {relation: CALLS, carries: \"the day the loan starts\", coupling: TIGHT}",
+        "    internal:",
+        "      - _is_out: \"Say whether a title is on loan right now.\"",
+        "    expected_exceptions: [KeyError]",
+        "    consumes_via_dict: none",
+        "    declares_attributes: [desk:lending]",
+        "    covered_by: [\"tests/test_lending.py: a book that is out cannot be lent again\"]",
+        "    version: 0.1.0",
+        "    tags: [lending]",
+        "    serves_as: desk",
+        "    metadata:",
+        "        owner: \"front desk\"",
+        "        max_loans: 5",
+        "    ---",
+        "    def lending_desk() -> dict[str, object]:",
+        "        \"\"\"Open a lending desk with every book on the shelf.\"\"\"",
+        "        on_loan: set[str] = set()",
+        "",
+        "        def _is_out(title: str) -> bool:",
+        "            return _tidy_title(title) in on_loan",
+        "",
+        "        def lend(title: str, start: date) -> date:",
+        "            if _is_out(title):",
+        "                raise BookUnavailable(title)",
+        "            on_loan.add(_tidy_title(title))",
+        "            return due_date(start)",
+        "",
+        "        def give_back(title: str) -> bool:",
+        "            try:",
+        "                on_loan.remove(_tidy_title(title))",
+        "            except KeyError:",
+        "                return False",
+        "            return True",
+        "",
+        "        return {\"lend\": lend, \"give_back\": give_back}",
+        "",
+        "ganglion lending_watch :: DOMAIN",
+        "    visibility: INTERNAL",
+        "    intent: \"Notice when lending starts failing more often than it should.\"",
+        "    observes: [lending_desk]",
+        "    scope: FUNCTION_BOUNDARY",
+        "    priors: \"Lending succeeds unless the book is already out.\"",
+        "    on_anomaly: \"Report how many loans failed so a person can look.\"",
+        "    forbids: \"Never lend or take back a book itself; it reports how many loans failed so a person can look.\"",
+        "    depends_on: none",
+        "    covered_by: none",
+        "    tags: [health]",
+        "    metadata:",
+        "        owner: \"front desk\"",
+        "    ---",
+        "    def lending_watch(signals: list[dict[str, object]]) -> dict[str, int]:",
+        "        failures = [s for s in signals if s.get(\"error\")]",
+        "        return {\"failure_count\": len(failures), \"total\": len(signals)}"
+      ],
+      "src/library_docs.s0ma": [
+        "module library_docs",
+        "    layer: PRESENTATION",
+        "    version: 0.1.0",
+        "    intent: \"The library's own documentation: a generated reference, a written guide, and a runnable example.\"",
+        "    exports: []",
+        "    requires: none",
+        "    uses: none",
+        "    soft_requires: none",
+        "    runtime_only_requires: none",
+        "    deferred_requires: none",
+        "    exports_helpers: none",
+        "",
+        "doc-ref public_reference",
+        "    intent: \"A reference page listing every part other files may call, built from the project itself.\"",
+        "    format: markdown",
+        "    output: docs/public_reference.md",
+        "    covers: [nerve where visibility == PUBLIC]",
+        "    sections: [intent, expects, guarantees]",
+        "    tags: [reference]",
+        "",
+        "doc-guide lending_guide",
+        "    intent: \"Explains how lending works, in words a new librarian could follow.\"",
+        "    format: markdown",
+        "    output: docs/lending_guide.md",
+        "    covers: [nerve::due_date]",
+        "    asserts: [nerve::due_date.visibility == PUBLIC]",
+        "    examples: [example::lend_a_book]",
+        "    tags: [guide]",
+        "    ---",
+        "    # How lending works",
+        "",
+        "    A loan lasts three weeks. {{nerve::due_date}} works out the day a book is due back.",
+        "",
+        "    {{example::lend_a_book}}",
+        "",
+        "example lend_a_book",
+        "    intent: \"Shows the due date for a loan that starts on New Year's Day.\"",
+        "    demonstrates: [nerve::due_date]",
+        "    runs_in: standalone",
+        "    tags: [lending]",
+        "    ---",
+        "    from datetime import date",
+        "",
+        "    from library_domain import due_date",
+        "",
+        "    print(due_date(date(2026, 1, 1)))"
+      ],
+      "src/mail/mail_infrastructure.s0ma": [
+        "module mail_infrastructure",
+        "    layer: INFRASTRUCTURE",
+        "    version: 0.1.0",
+        "    intent: \"The post room: how the library sends reminder letters through an outside mail service.\"",
+        "    exports: [mail_client, mail_is_reachable]",
+        "    requires: none",
+        "    uses: none",
+        "    soft_requires: none",
+        "    runtime_only_requires: none",
+        "    deferred_requires: none",
+        "    exports_helpers: none",
+        "",
+        "nerve mail_client :: INFRASTRUCTURE",
+        "    kind: SERVICE",
+        "    visibility: PUBLIC",
+        "    intent: \"Build the set of operations the library uses to send letters.\"",
+        "    expects: none",
+        "    guarantees: \"Returns the send_reminder operation.\"",
+        "    forbids: none",
+        "    evaluates_at: FUNCTION_BOUNDARY",
+        "    provides: [send_reminder]",
+        "    returns: [send_reminder]",
+        "    raises: none",
+        "    interface: none",
+        "    latency_ms: none",
+        "    depends_on: none",
+        "    internal: none",
+        "    expected_exceptions: none",
+        "    consumes_via_dict: none",
+        "    declares_attributes: none",
+        "    covered_by: none",
+        "    ---",
+        "    def mail_client() -> dict[str, object]:",
+        "        def send_reminder(address: str, title: str) -> bool:",
+        "            return bool(address and title)",
+        "",
+        "        return {\"send_reminder\": send_reminder}",
+        "",
+        "nerve mail_is_reachable :: INFRASTRUCTURE",
+        "    kind: FUNCTION",
+        "    visibility: PUBLIC",
+        "    intent: \"Check that the mail service answers before anything depends on it.\"",
+        "    expects: none",
+        "    guarantees: \"Returns a status saying whether the service answered.\"",
+        "    forbids: none",
+        "    evaluates_at: FUNCTION_BOUNDARY",
+        "    provides: none",
+        "    returns: none",
+        "    raises: none",
+        "    interface: none",
+        "    latency_ms: none",
+        "    depends_on: none",
+        "    internal: none",
+        "    expected_exceptions: none",
+        "    consumes_via_dict: none",
+        "    declares_attributes: none",
+        "    covered_by: none",
+        "    ---",
+        "    def mail_is_reachable() -> dict[str, str]:",
+        "        return {\"status\": \"ok\"}",
+        "",
+        "integration ReminderMail :: INFRASTRUCTURE",
+        "    version: 0.1.0",
+        "    intent: \"Send overdue-book reminders through the outside mail service.\"",
+        "    factory: mail_client",
+        "    smoke_test_primary: mail_is_reachable",
+        "    manifest:",
+        "      provides: [send_reminder]",
+        "      required_env: [MAIL_API_KEY]",
+        "      requires_oauth: false",
+        "    requires: none",
+        "    uses: none",
+        "    raises: none",
+        "    tags: [mail]"
+      ],
+      "src/reminders/reminders_application.s0ma": [
+        "module reminders_application",
+        "    layer: APPLICATION",
+        "    version: 0.1.0",
+        "    intent: \"The reminders feature: decide when a borrower should hear that a book is due.\"",
+        "    exports: [reminder_day]",
+        "    requires: [datetime:date, datetime:timedelta]",
+        "    uses: [library_domain.LOAN_DAYS]",
+        "    soft_requires: none",
+        "    runtime_only_requires: none",
+        "    deferred_requires: none",
+        "    exports_helpers: none",
+        "",
+        "nerve reminder_day :: APPLICATION",
+        "    kind: ORCHESTRATOR",
+        "    visibility: PUBLIC",
+        "    intent: \"Pick the day to remind a borrower, two days before the book is due.\"",
+        "    expects: \"The day the loan started.\"",
+        "    guarantees: \"Returns the day two days before the loan runs out.\"",
+        "    forbids: none",
+        "    evaluates_at: FUNCTION_BOUNDARY",
+        "    provides: none",
+        "    returns: none",
+        "    raises: none",
+        "    interface: none",
+        "    latency_ms: none",
+        "    depends_on: none",
+        "    internal: none",
+        "    expected_exceptions: none",
+        "    consumes_via_dict: none",
+        "    declares_attributes: none",
+        "    covered_by: none",
+        "    ---",
+        "    def reminder_day(start: date) -> date:",
+        "        \"\"\"Return the day to send the reminder for a loan starting on *start*.\"\"\"",
+        "        return start + timedelta(days=LOAN_DAYS - 2)",
+        "",
+        "axon reminder_day -> LOAN_DAYS",
+        "    relation: READS",
+        "    intent: \"Reminders follow the library's loan length instead of keeping a second copy of it.\"",
+        "    carries: \"the number of days a loan lasts\"",
+        "    coupling: LOOSE"
+      ],
+      "tests/library/library_domain_tests.s0ma": [
+        "module library_domain_tests",
+        "    layer: DOMAIN",
+        "    version: 0.1.0",
+        "    intent: \"Checks that the library's lending rules do what they promise.\"",
+        "    exports: []",
+        "    requires: [datetime:date]",
+        "    uses: [library_domain.due_date, library_domain.lending_desk, library_domain.LOAN_DAYS]",
+        "    soft_requires: none",
+        "    runtime_only_requires: none",
+        "    deferred_requires: none",
+        "    exports_helpers: none",
+        "",
+        "test test_due_date_is_three_weeks_out :: DOMAIN",
+        "    intent: \"A loan that starts on the first of January is due back on the twenty-second.\"",
+        "    tests: [library_domain.due_date]",
+        "    expects: \"LOAN_DAYS is 21.\"",
+        "    depends_on: none",
+        "    mocks: none",
+        "    tags: [lending]",
+        "    ---",
+        "    def test_due_date_is_three_weeks_out() -> None:",
+        "        assert LOAN_DAYS == 21",
+        "        assert due_date(date(2026, 1, 1)) == date(2026, 1, 22)",
+        "",
+        "test test_a_book_comes_back_once :: DOMAIN",
+        "    intent: \"A book that was lent can be given back once, and only once.\"",
+        "    tests: [library_domain.lending_desk]",
+        "    expects: none",
+        "    depends_on: none",
+        "    mocks: none",
+        "    ---",
+        "    def test_a_book_comes_back_once() -> None:",
+        "        desk = lending_desk()",
+        "        desk[\"lend\"](\"Dune\", date(2026, 1, 1))",
+        "        assert desk[\"give_back\"](\"Dune\") is True",
+        "        assert desk[\"give_back\"](\"Dune\") is False"
+      ],
+      "tests/mail/mail_infrastructure_tests.s0ma": [
+        "module mail_infrastructure_tests",
+        "    layer: INFRASTRUCTURE",
+        "    version: 0.1.0",
+        "    intent: \"Checks that the post room can be reached and can send a letter.\"",
+        "    exports: []",
+        "    requires: none",
+        "    uses: [mail_infrastructure.mail_client, mail_infrastructure.mail_is_reachable]",
+        "    soft_requires: none",
+        "    runtime_only_requires: none",
+        "    deferred_requires: none",
+        "    exports_helpers: none",
+        "",
+        "test test_the_post_room_answers :: INFRASTRUCTURE",
+        "    intent: \"The mail service says it is reachable, and a reminder with an address and a title is sent.\"",
+        "    tests: [mail_infrastructure.mail_is_reachable, mail_infrastructure.mail_client]",
+        "    expects: none",
+        "    depends_on: none",
+        "    mocks: none",
+        "    ---",
+        "    def test_the_post_room_answers() -> None:",
+        "        assert mail_is_reachable() == {\"status\": \"ok\"}",
+        "        assert mail_client()[\"send_reminder\"](\"reader@example.org\", \"Dune\") is True"
+      ],
+      "tests/reminders/reminders_application_tests.s0ma": [
+        "module reminders_application_tests",
+        "    layer: APPLICATION",
+        "    version: 0.1.0",
+        "    intent: \"Checks that reminders go out two days before a book is due.\"",
+        "    exports: []",
+        "    requires: [datetime:date]",
+        "    uses: [reminders_application.reminder_day]",
+        "    soft_requires: none",
+        "    runtime_only_requires: none",
+        "    deferred_requires: none",
+        "    exports_helpers: none",
+        "",
+        "test test_reminder_is_two_days_early :: APPLICATION",
+        "    intent: \"The reminder for a loan starting on the first of January goes out on the twentieth.\"",
+        "    tests: [reminders_application.reminder_day]",
+        "    expects: none",
+        "    depends_on: none",
+        "    mocks: none",
+        "    ---",
+        "    def test_reminder_is_two_days_early() -> None:",
+        "        assert reminder_day(date(2026, 1, 1)) == date(2026, 1, 20)"
+      ],
+      "tests/test_lending.py": [
+        "\"\"\"An ordinary pytest file, kept outside s0ma on purpose.",
+        "",
+        "`lending_desk` names this file in its `covered_by:` line, so the claim is true.",
+        "\"\"\"",
+        "",
+        "from datetime import date",
+        "",
+        "import pytest",
+        "from library_domain import BookUnavailable, lending_desk",
+        "",
+        "",
+        "def test_a_book_that_is_out_cannot_be_lent_again() -> None:",
+        "    desk = lending_desk()",
+        "    desk[\"lend\"](\"Dune\", date(2026, 1, 1))",
+        "    with pytest.raises(BookUnavailable):",
+        "        desk[\"lend\"](\"Dune\", date(2026, 1, 2))"
+      ]
+    },
+    "name": "library",
+    "says": "a town library"
+  },
+  "schema": "s0ma-docs-quick-reference@1",
+  "shape": {
+    "heading": "What a file looks like",
+    "notes": [
+      "A file opens with one `module` header. After it come as many declarations as you like, in any order.",
+      "Inside a declaration the description comes first and the code comes after, with a line of exactly three hyphens between them.",
+      "Each line of a description starts with exactly four spaces. A line that belongs to the line above it, as in a block, goes further in.",
+      "A note to a reader starts with `#` and sits on a line of its own. Written after an answer, on the same line, it is read as part of the answer and refused.",
+      "The file is named after its module: `module library_domain` lives in `library_domain.s0ma`."
+    ],
+    "project": [
+      "my-project/",
+      "    pyproject.toml                        the project's settings, under [tool.s0ma]",
+      "    src/",
+      "        library/                          one folder for each feature",
+      "            library_domain.s0ma           one file for each layer the feature needs",
+      "    tests/",
+      "        library/",
+      "            library_domain_tests.s0ma",
+      "    build/                                written by s0ma: never edit",
+      "        library_domain.py                 the Python made from your file",
+      "        library_domain.s0ma.json          the record of what your file declared",
+      "        docs/                             the pages your doc-ref and doc-guide produce"
+    ],
+    "project_lead": "And a project, from the outside:",
+    "settings_file": "pyproject.toml",
+    "settings_lead": "The settings are short, and `s0ma new project` writes them for you:",
+    "sketch": [
+      "module <name>                     the header: it speaks for the whole file",
+      "    layer: <LAYER>",
+      "    version: 0.1.0",
+      "    intent: \"<what this file is responsible for>\"",
+      "    ...",
+      "",
+      "nerve <name> :: <LAYER>           a declaration: first the description ...",
+      "    kind: <KIND>",
+      "    intent: \"<why this part exists>\"",
+      "    ...",
+      "    ---                           ... then a line of three hyphens ...",
+      "    def <name>(...):              ... then the code",
+      "        ..."
+    ]
+  },
+  "types": [
+    {
+      "looks_like": "`\"The day the loan starts.\"` Put it in double quotes.",
+      "type": "text",
+      "word": "text"
+    },
+    {
+      "looks_like": "`due_date` Letters, digits and underscores, with no spaces.",
+      "type": "name",
+      "word": "name"
+    },
+    {
+      "looks_like": "`[lend, give_back]` An empty list is `[]`.",
+      "type": "list",
+      "word": "list"
+    },
+    {
+      "looks_like": "Exactly one of the words shown, spelled the way it is shown.",
+      "type": "choice",
+      "word": "one of"
+    },
+    {
+      "looks_like": "`50`",
+      "type": "number",
+      "word": "whole number"
+    },
+    {
+      "looks_like": "`0.1.0` Three numbers with dots between them.",
+      "type": "version",
+      "word": "version"
+    },
+    {
+      "looks_like": "Lower case, with no quotes.",
+      "type": "flag",
+      "word": "`true`"
+    },
+    {
+      "looks_like": "Lines underneath the line itself, further in, as in the samples.",
+      "type": "block",
+      "word": "block"
+    },
+    {
+      "looks_like": "`docs/lending_guide.md` Forward slashes, and no quotes.",
+      "type": "path",
+      "word": "file path"
+    },
+    {
+      "looks_like": "`@file(\"templates/letter.txt\")` The path is inside the quotes.",
+      "type": "file",
+      "word": "`@file(\"path\")`"
+    },
+    {
+      "looks_like": "Ordinary Python, four spaces in, as in the samples.",
+      "type": "code",
+      "word": "code, after the `---` line"
+    },
+    {
+      "looks_like": "Ordinary sentences, four spaces in, as in the samples.",
+      "type": "prose",
+      "word": "writing, after the `---` line"
+    }
+  ]
+}

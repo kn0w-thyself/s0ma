@@ -1,0 +1,18 @@
+module error_codes_doc
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture: a doc-ref pulling from the canonical error-code registry."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-ref ErrorCodesTable
+    intent: "Generated table of every registered s0ma-dsl error code with severity-by-mode and a canonical description."
+    format: markdown
+    output: docs/error_codes.md
+    covers: { source: error_codes }
+    sections: []

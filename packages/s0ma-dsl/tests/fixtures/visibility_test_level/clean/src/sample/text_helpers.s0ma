@@ -1,0 +1,58 @@
+module text_helpers
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Production text-rendering module exposing render_html and a TEST-visibility escape_text helper."
+    exports: [render_html]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve escape_text :: APPLICATION
+    kind: FUNCTION
+    visibility: TEST
+    intent: "Escape ampersands, less-than, and greater-than for safe HTML rendering. Visible to test modules; not part of the public surface."
+    expects: "A string of arbitrary text."
+    guarantees: "Returns the input with &, <, > replaced by their HTML entity references."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def escape_text(s: str) -> str:
+        return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+nerve render_html :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Render a tagged HTML span with the input text properly escaped. Public surface for HTML rendering."
+    expects: "A non-empty string of arbitrary text."
+    guarantees: "Returns a <span> element with the text HTML-escaped."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render_html(text: str) -> str:
+        escaped = escape_text(text)
+        return "<span>" + escaped + "</span>"

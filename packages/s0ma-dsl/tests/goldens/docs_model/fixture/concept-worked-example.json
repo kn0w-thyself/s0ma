@@ -1,0 +1,32 @@
+{
+  "identity": {
+    "authorities": [
+      "authority:spec/fixture-journey"
+    ],
+    "examples": [
+      "example:first_project_walkthrough"
+    ],
+    "release": "0.18.1 (preview)",
+    "snapshot": "sha256:2af357cac6cb8a5a",
+    "topic": "concept:worked-example"
+  },
+  "schema": "s0ma-docs-model@1",
+  "topic": {
+    "decided_in": [
+      "tests/test_docs_resolve_render.py#fixtures"
+    ],
+    "definition": "A worked example is a small piece of real, running code that shows one idea doing its job. It is kept beside the idea rather than in a separate collection, so that a reader who has just been told what something is can see it work without going looking.",
+    "do_not_use_when": "Do not use one as the definition. An example shows one case; the definition has to cover the ones nobody wrote an example for.",
+    "purpose": "An example that is run by the same machinery that runs everything else cannot quietly stop being true, which is what makes it worth more than a snippet somebody pasted into a page.",
+    "related": [
+      "part-of journey:first-project"
+    ],
+    "summary": "A small, runnable illustration of an idea, kept beside the idea itself.",
+    "syntax": [
+      "example <name> :: PRESENTATION",
+      "    intent: \"<what it shows>\""
+    ],
+    "term": "worked example",
+    "use_when": "Reach for a worked example when an idea is easier to recognize than to describe."
+  }
+}

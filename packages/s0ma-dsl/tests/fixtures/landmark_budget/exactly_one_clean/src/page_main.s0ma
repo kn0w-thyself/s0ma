@@ -1,0 +1,34 @@
+module page_main
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Renders the page main landmark for the landmark-budget clean fixture."
+    exports: [render_main]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render_main :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Renders the page <main> landmark element with content."
+    expects: "A string of pre-rendered body content."
+    guarantees: "Returns a string starting with '<main'."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    declares_attributes: [landmark:main]
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    covered_by: none
+    ---
+    def render_main(body: str) -> str:
+        return "<main>" + body + "</main>"

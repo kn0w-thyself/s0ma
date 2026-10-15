@@ -1,0 +1,813 @@
+{
+  "build_health": {
+    "basis": "live runtime facts are not observed during deterministic build",
+    "status": "unknown"
+  },
+  "components": [
+    {
+      "dependencies": [],
+      "id": "studi0_narration::NARRATION_PHASES",
+      "intent": {
+        "state": "value",
+        "value": "The four phases a movement can be in — the arc the narration schema froze. A phase outside this set is not a phase studi0 knows how to show, so the line carrying it is invalid rather than rendered with an unknown chip."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_narration::NARRATION_TYPE",
+      "intent": {
+        "state": "value",
+        "value": "The one record type studi0 will render as narration. The session log is an open file any tool could append to; naming the type it accepts is what keeps a line written for some other purpose out of the pane."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_narration::NARRATION_WINDOW",
+      "intent": {
+        "state": "value",
+        "value": "How many of the most recent narrations the served document carries. A session log grows for as long as an agent works, and the page shows a scrolling account of recent movements rather than a transcript — so the narration block is bounded here, once, instead of growing without limit inside a document the page refetches. The count of everything ever narrated is reported separately, so a bounded list never reads as a complete one."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_narration::NarrationLog",
+      "intent": {
+        "state": "value",
+        "value": "One session's reading of one narration log: how far into the file studi0 has already read, the recent narrations it accepted, and how many lines it has seen and refused. The offset is what makes the tail a tail — each tick reads only what was appended since the last one — and the two counters are what let a bounded list of entries be honest about being bounded."
+      },
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_narration::PRESENCE_PATH_PARTS",
+      "intent": {
+        "state": "value",
+        "value": "Where studi0 says it is watching, relative to the project root: .s0ma/ is the established gitignored local-state home, studi0/ scopes it to the viewer, active.json is the marker itself. The authoring MCP server reads this exact path to decide whether to ask for narration, so the two sides name it from one place — here on the writing side, and as a literal in the rule the server renders."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_narration::SESSION_LOG_PATH_PARTS",
+      "intent": {
+        "state": "value",
+        "value": "Where the agent appends its narration, relative to the project root — the sibling of the presence marker, and the path the survival rule spells out verbatim to the agent that writes it."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [
+        "studi0_narration::presence_path"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is the root of the project this process was watching"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never removes a presence marker naming another process, nor one it cannot read."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns True only when this process's own marker was removed; never raises, and is safe to call more than once and on a project that was never marked"
+      },
+      "id": "studi0_narration::clear_presence",
+      "intent": {
+        "state": "value",
+        "value": "Takes the presence marker back down on the way out, so the next agent to ask is told the truth. It removes only a marker naming THIS process: two studi0s can watch one project, and the first to exit must not withdraw the second one's claim. A marker it cannot read is not one it can claim, so it is left alone — the pid check on the reading side is what makes a leftover harmless anyway."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "log is a reading advanced by read_narrations"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns (entries, total, invalid) taken together under the log's lock; the entries are copies in file order, oldest first, and mutating them cannot affect the log"
+      },
+      "id": "studi0_narration::narration_snapshot",
+      "intent": {
+        "state": "value",
+        "value": "Takes one consistent reading of a narration log — the entries, everything ever accepted, everything refused — so a served document reports three numbers that were true at the same moment. Copies are handed out rather than the live list, because the reading keeps moving while a response is being written."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [
+        "studi0_narration::PRESENCE_PATH_PARTS"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is the root of the project being watched"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never touches the filesystem: working out the marker path reads and writes nothing."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the marker path under project_root; touches no filesystem"
+      },
+      "id": "studi0_narration::presence_path",
+      "intent": {
+        "state": "value",
+        "value": "Names the presence marker for one project root, so every side of the feature — the writer, the remover, and the test that looks for it — resolves the same path from the same constant."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [
+        "studi0_narration::session_log_path"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "log is the reading to advance; project_root is the project being watched"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never writes to the agent's session log, and never takes in a line the agent has not finished writing."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns True only when the reading actually changed. Never raises, whatever the log's bytes are doing: an unreadable or vanished file leaves the reading exactly as it was. Consumes only complete lines, in file order, and the accepted entries never exceed NARRATION_WINDOW"
+      },
+      "id": "studi0_narration::read_narrations",
+      "intent": {
+        "state": "value",
+        "value": "Reads whatever the agent has appended to the session log since the last look, and nothing else. A line still being written is not read at all — the tail stops at the last newline and comes back for the rest next tick — so a narration is never shown half-written or half-parsed. A missing log is the ordinary case, not a failure: most sessions never narrate, and studi0 has nothing to say about that."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [
+        "studi0_narration::SESSION_LOG_PATH_PARTS"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is the root of the project being watched"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never touches the filesystem: working out the log path reads and writes nothing."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the log path under project_root; touches no filesystem"
+      },
+      "id": "studi0_narration::session_log_path",
+      "intent": {
+        "state": "value",
+        "value": "Names the narration log for one project root — the file the agent appends to and the watch tails, resolved from one constant so the reading side can never drift from the path the rule tells the writing side."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [
+        "studi0_narration::presence_path"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is the root of the project being watched; port is the port studi0 really bound"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never writes any file into the project but this one marker under .s0ma/studi0/, and never puts anything in it but the port and the process id."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the marker path with the marker written, creating .s0ma/studi0/ if needed; the bytes are deterministic apart from the two live values — sorted keys, utf-8, one LF-terminated line, no timestamp"
+      },
+      "id": "studi0_narration::write_presence",
+      "intent": {
+        "state": "value",
+        "value": "Says, in the project itself, that a studi0 is watching it right now — the one file studi0 ever writes into the tree it is showing. It carries the port it is serving on and the process id serving it, and nothing else: the port so a reader can find the viewer, the pid so a reader can tell a running studi0 from a marker an unclean shutdown left behind."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_narration"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::BUILD_STATUS_MISSING",
+      "intent": {
+        "state": "value",
+        "value": "The build status studi0 reports when it cannot find a build to judge: nothing is built, or the build manifest is unreadable, so freshness is a question studi0 has no evidence to answer. The other two statuses — fresh and stale — are never decided here; they arrive verbatim from the graph document's own freshness block, which is the only place source hashes are compared."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::CARRIED_GRAPH_SCHEMA",
+      "intent": {
+        "state": "value",
+        "value": "The versioned name of the graph document that rides INSIDE the /api/graph envelope — the one s0ma_dsl.graph_export stamps on its own output. studi0 neither produces it nor rewrites it; naming it here is how this package states which graph contract this build was written against, so a page, a test and a documentation build read one answer instead of three copies of a string that can drift apart."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::GRAPH_DOCUMENT_KEYS",
+      "intent": {
+        "state": "value",
+        "value": "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: three keys that say which reading this is and what it carries."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::GRAPH_SCHEMA",
+      "intent": {
+        "state": "value",
+        "value": "The versioned name of the ENVELOPE GET /api/graph answers with — the seq-stamped wrapper studi0 puts around the graph document. The graph document inside it carries its own, separate schema string (s0ma-graph@2, stamped by s0ma_dsl.graph_export); the two version independently on purpose, because the transport and the graph contract change for different reasons."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::NARRATION_BLOCK_KEYS",
+      "intent": {
+        "state": "value",
+        "value": "Every key the narration block of GET /api/state answers with. It is a nested block with a frozen shape of its own precisely because self-report must never sit at the same level as build truth — and a shape stated here is a shape a reader can check, rather than one inferred from whichever session happened to be running."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::STATE_DOCUMENT_KEYS",
+      "intent": {
+        "state": "value",
+        "value": "Every key GET /api/state answers with, and no others — the frozen shape a page built against this API is built against. Declared in the package rather than written out in a test, so the contract has exactly one owner: whoever asks what studi0 serves gets the package's own answer, and the test that pins the served document compares against this instead of against a second copy of it."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::STATE_SCHEMA",
+      "intent": {
+        "state": "value",
+        "value": "The versioned name of the document GET /api/state answers with, stamped on every response so a page that outlives a studi0 upgrade can tell whether it still understands what it is being told. Version 2 added the narration block — the frozen key set grew, so the stamp moved with it rather than letting a v1 reader meet a document it was never promised."
+      },
+      "kind": "CONSTANT",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::Studi0Session",
+      "intent": {
+        "state": "value",
+        "value": "One studi0 viewing session: the project being shown, the current reading of it, and how far into that project's narration log the session has read. The reading is replaced whole rather than edited in place, so a reader never observes a half-updated session, and a lock serialises publishers so two of them cannot both claim the same sequence number."
+      },
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_state::Studi0Snapshot",
+      "intent": {
+        "state": "value",
+        "value": "One consistent reading of a project's truth: the sequence number that identifies it, the graph document it carries, the build's status, the modules whose sources have moved on since the build, and — kept deliberately separate from all of those — what an agent has said it is doing. Frozen, so a request thread holding a snapshot is holding a reading that cannot shift underneath it while it answers."
+      },
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [
+        "studi0_state::BUILD_STATUS_MISSING"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is the root of the project to show"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never touches a file: opening a session reads and writes nothing on disk."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns an unseeded session at seq 1 whose snapshot reports build_status missing and carries no graph; performs no file access"
+      },
+      "id": "studi0_state::create_session",
+      "intent": {
+        "state": "value",
+        "value": "Opens a viewing session on a project without reading anything yet: a session that knows which project it is for and admits, until its first reading lands, that it has nothing to show. Construction touches no files, so binding a server can never be delayed or defeated by the project's state on disk."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [
+        "studi0_state::GRAPH_SCHEMA"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "snapshot is a reading taken from a session"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never trims, summarises or drops a field of the graph it wraps, and never offers an empty graph when nothing is built."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible document carrying exactly the frozen key set schema, seq, graph — with graph identical to the graph document the snapshot holds — or None when the snapshot carries no graph"
+      },
+      "id": "studi0_state::graph_document",
+      "intent": {
+        "state": "value",
+        "value": "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a path to the project being shown — a project root, a build directory, or a single IR artifact, whatever graph_export accepts"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never writes to the project, never reads its graph any way but through s0ma_dsl.graph_export, and never alters what that returns."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the graph document graph_export produced, passed through untouched (state wrappers included), or None when the target holds no IR artifacts at all. Never writes to the project."
+      },
+      "id": "studi0_state::read_graph",
+      "intent": {
+        "state": "value",
+        "value": "Reads one project's whole component graph the only way studi0 is allowed to: by asking s0ma_dsl.graph_export for that project's full s0ma-graph@2 graph document. A project with no build artifacts is not an error here — it is the answer 'nothing is built', reported as None so the caller can say so plainly instead of showing an empty graph and letting a viewer read it as an empty project."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "session is a session opened by create_session"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the snapshot published at the moment of the call; the returned object is frozen and will not change afterwards"
+      },
+      "id": "studi0_state::read_snapshot",
+      "intent": {
+        "state": "value",
+        "value": "Hands a caller the session's current reading as one object, so everything it answers from — the sequence number, the graph, the status — comes from a single moment. Two documents built from one snapshot can never disagree about seq, however many builds land while the response is being written."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [
+        "studi0_state::read_graph"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "session is a session opened by create_session; the caller accepts that reading a project mid-build can raise"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never publishes a reading it failed to take or one that changed nothing, and never records a narration as a fact of the graph."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Either publishes a new snapshot and returns True, or leaves the session exactly as it was and returns False. seq advances by exactly one per published change, and never on the first publish. Failures propagate unchanged — this function never publishes a guess."
+      },
+      "id": "studi0_state::refresh_session",
+      "intent": {
+        "state": "value",
+        "value": "Takes a fresh reading of the project and publishes it only if it says something new. This is the one place a sequence number advances, and it advances on evidence alone: an identical graph, an identical status, an identical stale set, and an unmoved narration log mean nothing happened, whatever ran in between. A new narration is evidence like any other — it is why the page repaints — but it enters as its own field and never as a graph fact. A first reading publishes at seq 1 rather than advancing to 2, so a client's first answer is never seq 2 for a project that never changed."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [
+        "studi0_state::STATE_SCHEMA"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "snapshot is a reading taken from a session"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never puts what an agent says it is doing among the build's own facts; narration stays in its own nested, named block."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible document carrying exactly the frozen key set schema, seq, build_status, stale_modules, narration; the module list is a plain list, ordered as the graph document's freshness block ordered it, and the narration entries are in file order, oldest first"
+      },
+      "id": "studi0_state::state_document",
+      "intent": {
+        "state": "value",
+        "value": "Renders the answer to GET /api/state: which reading this is, whether the build still matches the sources it was built from, which modules have moved on since — and, in its own block, what an agent has said it is doing. The narration block is a block precisely so that no reader can mistake self-report for build truth: it is nested, named, and carries its own counts. This is the small, cheap document the page polls; the graph itself is fetched only when the sequence number says it is worth fetching."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_state"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_watch::Studi0WatchConfig",
+      "intent": {
+        "state": "value",
+        "value": "The watch's two timings: how long it waits between readings of the project, and how long a shutdown waits for the watching thread to notice it was asked to stop."
+      },
+      "kind": "CONFIG",
+      "layer": "APPLICATION",
+      "module": "studi0_watch"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_watch::Studi0Watcher",
+      "intent": {
+        "state": "value",
+        "value": "One running watch: the session it keeps current, the way it is asked to stop, the thread doing the looking, and the failures it has already spoken about. The last of those is what keeps a broken project from filling a console with the same sentence four times a second."
+      },
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "module": "studi0_watch"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "watcher is a watch whose session is the one to refresh"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never lets a failed reading replace or change the last good reading the session holds."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Never raises, whatever the project's files are doing. Returns True only when a new reading was actually published; on failure the session keeps its last good reading untouched and the failure is reported at most once per watch."
+      },
+      "id": "studi0_watch::poll_once",
+      "intent": {
+        "state": "value",
+        "value": "One reading of the project, taken safely. A build that lands while studi0 is looking leaves half-written artifacts behind it for a moment; reading one of those must cost the viewer nothing more than this tick, so every failure is caught, spoken about once, and answered by keeping the last good reading and trying again in three-quarters of a second."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_watch"
+    },
+    {
+      "dependencies": [
+        "studi0_watch::poll_once"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "session is a session opened by studi0_state.create_session"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "The session carries its first reading by the time this returns; a daemon thread is running and will keep the session current until stop_watcher is called; starting never raises because of the project's contents"
+      },
+      "id": "studi0_watch::start_watcher",
+      "intent": {
+        "state": "value",
+        "value": "Starts watching a project, taking the session's first reading before it returns so that whatever is served next is already true. The first reading goes through the same guarded tick as every later one, which is why a project that cannot be read at all still yields a running studi0 that says so rather than a studi0 that refuses to start."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_watch"
+    },
+    {
+      "dependencies": [
+        "studi0_watch::Studi0WatchConfig"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "watcher is a watch returned by start_watcher, or one that was never started"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "The watch will take no further readings after this returns; waits at most Studi0WatchConfig.join_seconds; never raises, and is safe to call more than once"
+      },
+      "id": "studi0_watch::stop_watcher",
+      "intent": {
+        "state": "value",
+        "value": "Asks a watch to stop and waits, briefly, for it to finish the tick it is in — so a studi0 that has exited is not still reading the project behind the console prompt. The wait is bounded because the thread is a daemon: worst case it is abandoned, never awaited forever."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "module": "studi0_watch"
+    },
+    {
+      "dependencies": [],
+      "id": "sh0w_assets::APP_CSS",
+      "intent": {
+        "state": "value",
+        "value": "The stylesheet served at /assets/app.css: the whole visual language of sh0w — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "sh0w_assets"
+    },
+    {
+      "dependencies": [],
+      "id": "sh0w_assets::APP_JS",
+      "intent": {
+        "state": "value",
+        "value": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, and the narration pane that shows what an agent says it is doing beside it. One file, no imports, no build step."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "sh0w_assets"
+    },
+    {
+      "dependencies": [],
+      "id": "sh0w_assets::INDEX_HTML",
+      "intent": {
+        "state": "value",
+        "value": "The document served at the root: a standalone HTML5 page that mounts sh0w and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7)."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "sh0w_assets"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_server::NOT_BUILT_ERROR",
+      "intent": {
+        "state": "value",
+        "value": "The answer GET /api/graph gives for a project that has no build artifacts at all. There is no graph to serve and an empty one would be a lie a viewer could not detect — an empty graph and an unbuilt project look identical on screen — so studi0 names the situation and names the remedy instead."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_server::NOT_FOUND_ERROR",
+      "intent": {
+        "state": "value",
+        "value": "The answer for any path studi0 does not serve — an /assets file this build does not carry, a mistyped /api route, anything else: the same structured error envelope, never a traceback and never a stack of guesses."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_server::ROUTE_TABLE",
+      "intent": {
+        "state": "value",
+        "value": "Every path studi0 serves, declared as data: what a caller asks for, what comes back, which declarations produce it, and what answering costs. The routing decision is still taken in route_request one path at a time — this is that same table said out loud, so a person, a test and a documentation build can all read what studi0 serves without reading a function body and guessing. The two are held in step by tests/test_api.py: a path named here that route_request does not answer, or a path route_request answers that is not named here, fails there."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_server::Studi0ServerConfig",
+      "intent": {
+        "state": "value",
+        "value": "The studi0 host's settings: the loopback interface the server is allowed to bind, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number."
+      },
+      "kind": "CONFIG",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_server::_CSS_CONTENT_TYPE",
+      "intent": {
+        "state": "value",
+        "value": "The Content-Type header value studi0 sends with the sh0w stylesheet, named here rather than at the route so the charset is declared once and cannot drift between assets."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_server::_HTML_CONTENT_TYPE",
+      "intent": {
+        "state": "value",
+        "value": "The Content-Type header value studi0 sends with every HTML document it serves, stated once so the served page cannot drift into a charset guess."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_server::_JSON_CONTENT_TYPE",
+      "intent": {
+        "state": "value",
+        "value": "The Content-Type header value studi0 sends with every JSON document it serves, stated once so API answers and API errors are labelled identically."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "id": "studi0_server::_JS_CONTENT_TYPE",
+      "intent": {
+        "state": "value",
+        "value": "The Content-Type header value studi0 sends with the sh0w script. It must be a JavaScript type a browser will accept for a module script, or the page loads its stylesheet and then draws nothing."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "server is a server whose socket is already bound"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the socket's own host and port; the port is the real one even when port 0 was requested"
+      },
+      "id": "studi0_server::bound_address",
+      "intent": {
+        "state": "value",
+        "value": "Reports the address a running studi0 server actually bound, asked of the socket itself rather than of the requested settings — the only answer that survives an OS-assigned port, and the one a caller prints or asserts on."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [
+        "studi0_server::Studi0ServerConfig",
+        "studi0_server::route_request"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is the root of the project being viewed; port is a free port, or 0 to let the OS assign one; session is the viewing session to answer the API from, or None to open a fresh one"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never binds to any address but loopback, so nothing beyond this machine can reach the server it builds."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a server bound to the loopback address only, serving nothing until it is run; requests are answered by the routing table and never logged to stderr"
+      },
+      "id": "studi0_server::create_server",
+      "intent": {
+        "state": "value",
+        "value": "Builds the studi0 host for one project: a threading HTTP server bound to the loopback interface whose only behavior is to answer GET requests from the routing table, quietly, so the console stays the caller's."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a path to a directory, relative or absolute"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a non-empty display name; falls back to the resolved directory name when the given path has none (for example '.')"
+      },
+      "id": "studi0_server::project_display_name",
+      "intent": {
+        "state": "value",
+        "value": "Names the project studi0 is showing the way a person would name it — its own directory name — for the one line studi0 prints when it starts serving. The served page is never told: it carries no project name at all, because everything it shows it learns from the graph API."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [
+        "studi0_server::APP_CSS",
+        "studi0_server::APP_JS",
+        "studi0_server::INDEX_HTML",
+        "studi0_server::NOT_BUILT_ERROR",
+        "studi0_server::NOT_FOUND_ERROR",
+        "studi0_server::_CSS_CONTENT_TYPE",
+        "studi0_server::_HTML_CONTENT_TYPE",
+        "studi0_server::_JS_CONTENT_TYPE"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never puts a traceback in a response body, and never changes a byte of the embedded page, stylesheet or script it serves."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a status, a content type, and an encoded body for every possible path — never raises, and never puts a traceback in a body. The three asset routes answer with the embedded bytes unchanged. Both API routes answer from a single reading, so their sequence numbers agree within one request."
+      },
+      "id": "studi0_server::route_request",
+      "intent": {
+        "state": "value",
+        "value": "Decides what studi0 answers for one requested path: the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [
+        "studi0_server::Studi0ServerConfig"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "server is a bound server, as returned by create_server"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Serves until interrupted or shut down, then closes the server socket and returns 0; a keyboard interrupt is a clean stop, not an error"
+      },
+      "id": "studi0_server::run_server",
+      "intent": {
+        "state": "value",
+        "value": "Runs a studi0 server until the person watching it stops it, and closes the socket on the way out — an interrupted studi0 leaves nothing bound behind it."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    }
+  ],
+  "generation_version": "1",
+  "provenance": {
+    "authored_text_trust": "untrusted_project_data",
+    "authority": "canonical_ir",
+    "live_health": false
+  },
+  "schema": "s0ma-self-context@1",
+  "source_ir": [
+    {
+      "path": "sh0w_assets.s0ma.json",
+      "sha256": "sha256:31c6407b2dcd4bb61bcbc7cddf06232ce0545ef3da3e67d7f5c77923726aab35"
+    },
+    {
+      "path": "studi0_narration.s0ma.json",
+      "sha256": "sha256:f0f7bd94b9cbefd60131732207192c4d54a61b235d78d7c3dafc753891979e1c"
+    },
+    {
+      "path": "studi0_server.s0ma.json",
+      "sha256": "sha256:8a3787abde7f2a996ac88dd1491cd23b29eb7ebcf08265e0b48fc1a4db69da3f"
+    },
+    {
+      "path": "studi0_state.s0ma.json",
+      "sha256": "sha256:dd788d59791e2617f6143e2fcf74a3fd741cec16fd21ee79cbbb1e45aa91e4e0"
+    },
+    {
+      "path": "studi0_watch.s0ma.json",
+      "sha256": "sha256:8eb2be905c752f58d5d658f7f17c408ce16051761184250c17dccaece44bc1ab"
+    }
+  ]
+}

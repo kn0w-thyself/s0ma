@@ -1,0 +1,67 @@
+module uncovered_module
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Module with a PUBLIC nerve that has no test coverage anywhere in the project."
+    exports: [UncoveredNerve, CoveredNerve]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve UncoveredNerve :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "PUBLIC nerve deliberately left uncovered for the regression test."
+    expects: "no inputs"
+    guarantees: "Returns 0."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def UncoveredNerve() -> int:
+        return 0
+
+nerve CoveredNerve :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "PUBLIC nerve covered by the test below."
+    expects: "no inputs"
+    guarantees: "Returns 1."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def CoveredNerve() -> int:
+        return 1
+
+test test_covered_nerve :: DOMAIN
+    intent: "Covers CoveredNerve only — UncoveredNerve is intentionally absent."
+    tests: [CoveredNerve]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_covered_nerve():
+        assert CoveredNerve() == 1

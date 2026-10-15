@@ -1,0 +1,188 @@
+# adopt_source: src/bookshelf/lending.py@sha256:3eac1063f79df154f51df5518d7c8d338100a8c9b927c6cc4431899a2895be63
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module lending` rather than
+#   `bookshelf.lending`. Every module name in a project must be unique; rename the draft if
+#   another module already carries this name.
+# note: `LoanRegister` is a plain class, so the draft calls it a cell of kind MODEL. If it is
+#   really a service or an adapter over something outside the program, make it a nerve of
+#   kind SERVICE or ADAPTER instead.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+# note: `bookshelf.catalog` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.config` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.errors` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.models` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.storage` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+module lending
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'Making, renewing and returning loans.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports: [LOANS_TABLE, LoanRegister, overdue_loans]
+
+    requires:
+      - bookshelf.catalog:Catalog
+      - bookshelf.config:DATA_DIR
+      - bookshelf.config:MAX_LOANS_PER_MEMBER
+      - bookshelf.config:RENEWAL_LIMIT
+      - bookshelf.config:loan_length_days
+      - bookshelf.errors:BookUnavailableError
+      - bookshelf.errors:LoanLimitReachedError
+      - bookshelf.errors:LoanNotFoundError
+      - bookshelf.errors:RenewalRefusedError
+      - bookshelf.models:Loan
+      - bookshelf.models:LoanWindow
+      - bookshelf.storage:JsonStore
+      - datetime:date
+      - datetime:timedelta
+      - pathlib:Path
+      - typing:Any
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell LOANS_TABLE :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    LOANS_TABLE = "loans"
+
+cell LoanRegister :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class LoanRegister:
+        """Every loan the library currently has out."""
+
+        def __init__(self, store: JsonStore | None = None) -> None:
+            self._store = store if store is not None else JsonStore(Path(DATA_DIR))
+
+        def loans(self) -> list[Loan]:
+            """Every loan on the register, in the order it was written."""
+            return [_loan_from_record(record) for record in self._store.read(LOANS_TABLE)]
+
+        def count_for(self, isbn: str) -> int:
+            """How many copies of this title are out on loan."""
+            return sum(1 for loan in self.loans() if loan.isbn == isbn)
+
+        def loans_for(self, card_number: str) -> list[Loan]:
+            """Every loan held by one member."""
+            return [loan for loan in self.loans() if loan.card_number == card_number]
+
+        def borrow(self, isbn: str, card_number: str, today: date) -> Loan:
+            """Lend a copy of ``isbn`` to ``card_number`` and return the new loan."""
+            if len(self.loans_for(card_number)) >= MAX_LOANS_PER_MEMBER:
+                raise LoanLimitReachedError(card_number, MAX_LOANS_PER_MEMBER)
+            if Catalog(self._store).copies_available(isbn) <= 0:
+                raise BookUnavailableError(isbn)
+            loan = Loan(
+                isbn=isbn, card_number=card_number,
+                window=LoanWindow(today, today + timedelta(days=loan_length_days(0))),
+            )
+            self._save([*self.loans(), loan])
+            return loan
+
+        def renew(self, isbn: str, card_number: str, today: date) -> Loan:
+            """Extend one loan, for as long as the renewal limit allows."""
+            loans = self.loans()
+            for position, loan in enumerate(loans):
+                if loan.isbn != isbn or loan.card_number != card_number:
+                    continue
+                if loan.renewals >= RENEWAL_LIMIT:
+                    raise RenewalRefusedError(isbn, RENEWAL_LIMIT)
+                renewals = loan.renewals + 1
+                days = loan_length_days(renewals)
+                loans[position] = Loan(
+                    isbn=isbn, card_number=card_number, renewals=renewals,
+                    window=LoanWindow(today, today + timedelta(days=days)),
+                )
+                self._save(loans)
+                return loans[position]
+            raise LoanNotFoundError(isbn, card_number)
+
+        def give_back(self, isbn: str, card_number: str) -> None:
+            """Take a title back from a member."""
+            loans = self.loans()
+            kept = [one for one in loans if one.isbn != isbn or one.card_number != card_number]
+            if len(kept) == len(loans):
+                raise LoanNotFoundError(isbn, card_number)
+            self._save(kept)
+
+        def _save(self, loans: list[Loan]) -> None:
+            self._store.write(LOANS_TABLE, [_loan_record(loan) for loan in loans])
+
+nerve overdue_loans :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    # The overdue list is read out at the counter every morning, so the day is an
+    # argument rather than something this function reads off the clock: the same
+    # register and the same date always give the same list.
+    def overdue_loans(register: LoanRegister, today: date) -> list[Loan]:
+        """Every loan on ``register`` whose due date has gone by."""
+        return sorted(
+            (loan for loan in register.loans() if loan.is_overdue(today)),
+            key=lambda loan: (loan.window.due, loan.isbn),
+        )
+
+helper _loan_from_record :: DOMAIN
+    intent: "FIXME(adopt): say in one sentence why this module-private helper exists and which declaration in this module uses it."
+    ---
+    def _loan_from_record(record: dict[str, Any]) -> Loan:
+        """Rebuild a loan from the record shape kept in the store."""
+        start = date.fromisoformat(str(record["start"]))
+        due = date.fromisoformat(str(record["due"]))
+        return Loan(
+            isbn=str(record["isbn"]), card_number=str(record["card_number"]),
+            window=LoanWindow(start, due), renewals=int(record["renewals"]),
+        )
+
+helper _loan_record :: DOMAIN
+    intent: "FIXME(adopt): say in one sentence why this module-private helper exists and which declaration in this module uses it."
+    ---
+    def _loan_record(loan: Loan) -> dict[str, Any]:
+        """Flatten a loan into the record shape kept in the store."""
+        return {
+            "isbn": loan.isbn, "card_number": loan.card_number,
+            "start": loan.window.start.isoformat(),
+            "due": loan.window.due.isoformat(), "renewals": loan.renewals,
+        }

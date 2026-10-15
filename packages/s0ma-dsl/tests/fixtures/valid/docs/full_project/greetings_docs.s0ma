@@ -1,0 +1,41 @@
+module greetings_docs
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Documentation module for greetings — exercises every doc declaration type."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-ref greetings_api_reference
+    intent: "Generated reference for every public greetings nerve."
+    format: markdown
+    output: docs/greetings_reference.md
+    covers: [nerve where visibility == PUBLIC]
+    sections: [intent, expects, guarantees]
+
+example greet_example
+    intent: "Demonstrates calling greet with a sample username."
+    demonstrates: [nerve::greet]
+    runs_in: standalone
+    ---
+    from greetings import greet
+
+    print(greet("Ada"))
+
+doc-guide greetings_walkthrough
+    intent: "Hand-authored walkthrough that embeds the greet example."
+    format: markdown
+    output: docs/greetings_walkthrough.md
+    covers: [nerve::greet]
+    asserts: [nerve::greet.visibility == PUBLIC]
+    examples: [example::greet_example]
+    ---
+    # Greetings walkthrough
+
+    The {{nerve::greet}} nerve produces a greeting from a username.
+
+    {{example::greet_example}}

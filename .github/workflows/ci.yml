@@ -1,0 +1,77 @@
+# s0ma monorepo CI. Two jobs:
+#
+#   check — the full gate (`scripts/check.py`: ruff, mypy on all four
+#           packages, all four test suites, selfhost/release integrity,
+#           INV-1 spelling guard) on an OS × Python matrix:
+#           ubuntu-latest × {3.11, 3.12, 3.13} and
+#           windows-latest × {3.11, 3.13} (NFR-7: Windows is a
+#           first-class, CI-enforced platform).
+#   build — wheels + sdists for every workspace package, uploaded as
+#           artifacts. `uv build --all-packages` discovers workspace
+#           members from the root pyproject, so a new package is
+#           picked up with no edit to this job.
+#
+# uv is pinned to the version the repo was consolidated with; bump it
+# deliberately, together with the lockfile.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    name: check (${{ matrix.os }}, py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12", "3.13"]
+        exclude:
+          # Deliberate: Windows runs 3.11 + 3.13 only. The brackets
+          # cover the supported range (a 3.12-only-on-Windows
+          # regression with both brackets green is vanishingly rare)
+          # and halve billed Windows minutes, which are 2× Linux.
+          - os: windows-latest
+            python-version: "3.12"
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv (Python ${{ matrix.python-version }})
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          version: "0.9.21"
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - name: Sync workspace (all packages, all extras)
+        run: uv sync --all-packages --all-extras
+
+      - name: Run the unified check pipeline
+        run: uv run python scripts/check.py
+
+  build:
+    name: build wheels
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          version: "0.9.21"
+          python-version: "3.12"
+
+      - name: Build every workspace package (wheel + sdist into dist/)
+        run: uv build --all-packages
+
+      - name: Upload distributions
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/*
+          if-no-files-found: error

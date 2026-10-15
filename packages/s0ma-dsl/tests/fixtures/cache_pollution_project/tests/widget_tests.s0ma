@@ -1,0 +1,21 @@
+module widget_tests
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Tests for widget.greet that exercise the `*_tests.s0ma` naming and validate that `s0ma test` excludes the build cache from collection."
+    uses: [widget.greet]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_greet_returns_hello :: DOMAIN
+    intent: "Verifies that greet() prefixes the supplied name."
+    tests: [widget.greet]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_greet_returns_hello():
+        assert greet("world") == "hello, world"

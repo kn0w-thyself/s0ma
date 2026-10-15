@@ -1,0 +1,16 @@
+[project]
+name = "two_pages_shared_subcomponent"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = []
+build_dir = "two_pages_shared_subcomponent_build"
+bootstrap_files = []
+
+# F3 stress fixture: two explicit page composers (home_page and
+# about_page) each consume a shared `Header` nerve. Each composer's
+# reachable set should include the shared `Header` once (so the
+# `landmark:header` budget is satisfied per page independently).
+[tool.s0ma.attribute_budgets]
+landmark = "exactly_one_per_page"

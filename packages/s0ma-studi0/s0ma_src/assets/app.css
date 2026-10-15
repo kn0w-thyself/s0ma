@@ -1,0 +1,1117 @@
+/* sh0w — the studi0 graph viewer.
+ *
+ * Calm and clean: near-white canvas, one accent hue, muted layer-band
+ * tints, generous whitespace, system fonts. Amber is the one other hue,
+ * and it carries a single meaning: stale (never colour alone — every
+ * stale mark also carries the word "stale" and a corner triangle).
+ *
+ * No decorative motion (visual truth language §9). The only transitions
+ * are functional state changes, and prefers-reduced-motion turns those
+ * into instant changes at the bottom of this file.
+ */
+
+:root {
+  --canvas: #fafafa;
+  --surface: #ffffff;
+  --surface-sunken: #f4f5f7;
+
+  --ink: #1b1f24;
+  --ink-soft: #5b636d;
+  --ink-faint: #8b939d;
+
+  --line: #d7dbe1;
+  --line-soft: #e7eaee;
+  --line-strong: #b9c0c9;
+
+  --accent: #2f6feb;
+  --accent-ink: #1d4ed8;
+  --accent-soft: #eaf1fe;
+  --accent-line: #b7cff8;
+
+  --amber: #9a5b00;
+  --amber-mark: #e8a317;
+  --amber-soft: #fdf4e2;
+  --amber-line: #efd9a8;
+
+  --band-presentation: #f1f4f8;
+  --band-application: #f1f5f4;
+  --band-domain: #f4f4f0;
+  --band-infrastructure: #f7f3ef;
+  --band-framework: #f3f3f5;
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --radius: 6px;
+  --panel-width: 384px;
+  --narration-width: 300px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sh0w-mount,
+.sh0w {
+  height: 100%;
+}
+
+.sh0w {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.sh0w-noscript {
+  margin: 40px;
+  max-width: 60ch;
+  color: var(--ink-soft);
+}
+
+/* ---------------------------------------------------------------- topbar */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 12px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand-mark {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.brand-sub {
+  color: var(--ink-faint);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--line-soft);
+  margin: 0 4px;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease,
+    color 120ms ease;
+}
+
+.btn:hover {
+  background: var(--surface-sunken);
+  color: var(--ink);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--accent-ink);
+}
+
+.btn--icon {
+  width: 28px;
+  padding: 6px 0;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- banner */
+
+.banner {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 20px;
+  font-size: 12.5px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.banner--stale {
+  background: var(--amber-soft);
+  border-bottom-color: var(--amber-line);
+  color: var(--amber);
+}
+
+.banner--offline {
+  background: var(--surface-sunken);
+  color: var(--ink-soft);
+}
+
+.banner-text {
+  min-width: 0;
+}
+
+.banner-modules {
+  font-weight: 600;
+}
+
+.banner-dismiss {
+  margin-left: auto;
+}
+
+.chip {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  white-space: nowrap;
+}
+
+.chip--stale {
+  border-color: var(--amber-line);
+  background: #fff;
+  color: var(--amber);
+  font-weight: 600;
+}
+
+.chip--pending {
+  border-color: var(--line-strong);
+  background: var(--surface-sunken);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ----------------------------------------------------------------- stage */
+
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+}
+
+.canvas-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--canvas);
+  touch-action: none;
+  cursor: grab;
+}
+
+.canvas.is-panning {
+  cursor: grabbing;
+}
+
+.canvas:focus-visible {
+  outline: none;
+}
+
+/* ------------------------------------------------------------ graph body */
+
+.band-tint {
+  fill: var(--band-framework);
+}
+
+.band-tint[data-layer="PRESENTATION"] {
+  fill: var(--band-presentation);
+}
+.band-tint[data-layer="APPLICATION"] {
+  fill: var(--band-application);
+}
+.band-tint[data-layer="DOMAIN"] {
+  fill: var(--band-domain);
+}
+.band-tint[data-layer="INFRASTRUCTURE"] {
+  fill: var(--band-infrastructure);
+}
+.band-tint[data-layer="FRAMEWORK"] {
+  fill: var(--band-framework);
+}
+
+.band-label {
+  fill: var(--ink-faint);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.organ-body {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.organ.is-stale .organ-body {
+  stroke: var(--amber-line);
+}
+
+.organ-header-hit {
+  fill: transparent;
+  stroke: none;
+  cursor: pointer;
+}
+
+.organ-header-hit:focus-visible {
+  outline: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.organ-header-rule {
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.organ-name {
+  fill: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.organ-meta {
+  fill: var(--ink-faint);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+}
+
+.organ-caret {
+  fill: var(--ink-faint);
+  font-size: 10px;
+}
+
+.organ.is-selected .organ-body {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.svg-chip-box {
+  fill: var(--surface-sunken);
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.svg-chip-text {
+  fill: var(--ink-soft);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+}
+
+.svg-chip--stale .svg-chip-box {
+  fill: #fff;
+  stroke: var(--amber-line);
+}
+
+.svg-chip--stale .svg-chip-text {
+  fill: var(--amber);
+  font-weight: 600;
+}
+
+.svg-chip--layer .svg-chip-box {
+  fill: var(--surface-sunken);
+  stroke: var(--line-soft);
+}
+
+.svg-chip--layer .svg-chip-text {
+  fill: var(--ink-faint);
+  letter-spacing: 0.1em;
+}
+
+.svg-chip--integration .svg-chip-box {
+  fill: var(--surface);
+  stroke: var(--line);
+}
+
+.stale-triangle {
+  fill: var(--amber-mark);
+}
+
+/* nodes */
+
+.node {
+  cursor: pointer;
+}
+
+.node-hit {
+  fill: transparent;
+}
+
+.node-glyph {
+  fill: var(--surface);
+  stroke: var(--line-strong);
+  stroke-width: 1.25;
+  transition: fill 120ms ease, stroke 120ms ease;
+}
+
+.node-letter {
+  fill: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+
+.node-label {
+  fill: var(--ink);
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+.node:hover .node-glyph {
+  stroke: var(--accent);
+}
+
+.node:focus {
+  outline: none;
+}
+
+.node:focus-visible .node-focus-ring,
+.node.is-selected .node-focus-ring {
+  opacity: 1;
+}
+
+.node-focus-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.node.is-selected .node-glyph {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+}
+
+.node.is-selected .node-label {
+  font-weight: 600;
+}
+
+.node.is-stale .node-glyph {
+  stroke: var(--amber-mark);
+}
+
+.node.is-dimmed,
+.edge.is-dimmed {
+  opacity: 0.22;
+}
+
+.node-test .node-glyph {
+  stroke-dasharray: 3 2.5;
+}
+
+/* edges */
+
+.edge-line {
+  fill: none;
+  stroke: #8f98a3;
+  stroke-width: 1.3;
+}
+
+.edge--derived .edge-line {
+  stroke: #a9b1bb;
+  stroke-dasharray: 5 4;
+}
+
+.edge--verification .edge-line {
+  stroke: #aab2bc;
+  stroke-dasharray: 1 4;
+  stroke-linecap: round;
+}
+
+/* The arrowhead takes the colour of the line it ends, so a selected
+ * edge's head follows its stroke. The presentation attribute in the
+ * markup is the fallback where context-stroke is unsupported. */
+.edge-arrow {
+  fill: #8f98a3;
+  fill: context-stroke;
+}
+
+.edge-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 12;
+  cursor: pointer;
+}
+
+.edge.is-incident .edge-line,
+.edge.is-selected .edge-line {
+  stroke: var(--accent);
+  stroke-width: 1.8;
+}
+
+.edge-count-box {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.edge-count-text {
+  fill: var(--ink-soft);
+  font-size: 9.5px;
+  text-anchor: middle;
+}
+
+/* ---------------------------------------------------- materialize beat */
+
+/* The only motion on this canvas, and the only motion sh0w has. It runs
+ * when a build lands and it says exactly one thing: here is what
+ * changed. After a few seconds it stops saying it (app.js removes the
+ * marks) and the view is a map again.
+ *
+ * Nothing else animates. There is no idle motion, no pulse to look
+ * alive, no traffic along the edges — a moving pixel here always means
+ * a real change in the model (visual truth language §9, §12).
+ *
+ * Every duration below has a matching constant in app.js, which owns
+ * the moment the marks come off. */
+
+@keyframes sh0w-materialize {
+  from {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sh0w-vanish {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes sh0w-ring-fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes sh0w-outline-pulse {
+  0% {
+    stroke-width: 1.25;
+  }
+  30% {
+    stroke-width: 3.4;
+  }
+  100% {
+    stroke-width: 1.25;
+  }
+}
+
+/* A component the last build added: it arrives, once. */
+.node[data-delta="added"] {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sh0w-materialize 300ms ease-out both;
+}
+
+/* A component the last build removed. It is already out of the model,
+ * so it is inert while it goes. */
+.node.is-removing {
+  transform-box: fill-box;
+  transform-origin: center;
+  pointer-events: none;
+  animation: sh0w-vanish 300ms ease-in both;
+}
+
+/* A component the last build rewrote: one outline pulse, then still. */
+.node[data-delta="changed"] .node-glyph {
+  animation: sh0w-outline-pulse 620ms ease-out 1;
+}
+
+/* The highlight that outlives the movement: four seconds to find what
+ * changed, then gone. */
+.beat-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  pointer-events: none;
+  animation: sh0w-ring-fade 4000ms ease-out both;
+}
+
+/* A module that has just gone stale: amber, because that is what amber
+ * means here, and no motion at all — the chips simply appear. */
+.organ[data-delta="stale"] .beat-ring {
+  stroke: var(--amber-mark);
+}
+
+/* --------------------------------------------------------------- legend */
+
+.legend {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  font-size: 11px;
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+}
+
+.status-line {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  font-size: 11px;
+  color: var(--ink-faint);
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------- narration */
+
+/* The agent's account of its own work, and it must never be mistakable
+ * for the graph's. So: a sunken surface rather than the graph's white
+ * one, a DASHED edge where every canonical panel has a solid one, no
+ * glyphs, no checkmarks, no accent hue, and a provenance sentence in
+ * words at the top. Amber is untouched here — it means stale and only
+ * stale — and the one flagged state (lines studi0 could not read) is
+ * carried by the words and the weight, never by colour alone.
+ *
+ * Nothing on this pane animates. It is a list of statements, not a
+ * transition, so there is nothing for reduced motion to take away. */
+
+.narration {
+  flex: 0 0 var(--narration-width);
+  width: var(--narration-width);
+  background: var(--surface-sunken);
+  border-right: 1px dashed var(--line-strong);
+  overflow-y: auto;
+  padding: 14px 16px 28px;
+}
+
+.narration[hidden] {
+  display: none;
+}
+
+.narration-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.narration-title {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.narration-provenance {
+  margin: 6px 0 14px;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.narration-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.narration-item {
+  border-top: 1px dashed var(--line);
+  padding: 10px 0 2px;
+}
+
+.narration-item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.narration-movement {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.narration-why {
+  margin: 4px 0 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.narration-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+
+.chip--phase {
+  border-style: dashed;
+  border-color: var(--line-strong);
+  background: transparent;
+  color: var(--ink-soft);
+}
+
+.narration-subject {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  padding: 1px 7px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  line-height: 1.6;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+button.narration-subject {
+  cursor: pointer;
+}
+
+button.narration-subject:hover {
+  border-color: var(--accent-line);
+  color: var(--accent-ink);
+}
+
+button.narration-subject:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* A name the graph does not carry. Said in words, not by fading it out:
+ * the agent did name it, and studi0 simply cannot find it. */
+.narration-subject--unknown {
+  color: var(--ink-soft);
+  background: transparent;
+  font-style: normal;
+}
+
+.narration-unknown-note {
+  font-family: var(--font);
+  font-size: 10px;
+  font-style: italic;
+  color: var(--ink-faint);
+}
+
+.narration-foot {
+  margin: 14px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+
+.narration-foot--flagged {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------- inspector */
+
+.inspector {
+  flex: 0 0 var(--panel-width);
+  width: var(--panel-width);
+  background: var(--surface);
+  border-left: 1px solid var(--line-soft);
+  overflow-y: auto;
+  padding: 16px 18px 32px;
+}
+
+.inspector[hidden] {
+  display: none;
+}
+
+.inspector-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.inspector-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.inspector-close {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.inspector-sub {
+  margin: 0 0 14px;
+  color: var(--ink-faint);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+}
+
+.inspector-section {
+  border-top: 1px solid var(--line-soft);
+  padding-top: 12px;
+  margin-top: 14px;
+}
+
+.inspector-section:first-of-type {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.section-label {
+  margin: 0 0 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.intent-text {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(96px, 34%) 1fr;
+  gap: 6px 12px;
+  align-items: baseline;
+}
+
+.dl dt {
+  color: var(--ink-faint);
+  font-size: 11.5px;
+  word-break: break-word;
+}
+
+.dl dd {
+  margin: 0;
+  font-size: 12.5px;
+  word-break: break-word;
+}
+
+.dl dd ul {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.value-absent {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.value-pending {
+  display: block;
+  border-left: 3px solid var(--line-strong);
+  background: var(--surface-sunken);
+  padding: 4px 8px;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.value-pending .pending-word {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.rel-group {
+  margin-bottom: 12px;
+}
+
+.rel-group:last-child {
+  margin-bottom: 0;
+}
+
+.rel-group-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+.rel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rel-item {
+  padding: 6px 0;
+  border-top: 1px dotted var(--line-soft);
+}
+
+.rel-item:first-child {
+  border-top: 0;
+}
+
+.rel-head {
+  font-size: 12.5px;
+}
+
+.rel-relation {
+  font-weight: 600;
+}
+
+.rel-arrow {
+  color: var(--ink-faint);
+  padding: 0 4px;
+}
+
+.rel-peer {
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+
+.rel-meta {
+  color: var(--ink-faint);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.rel-intent {
+  color: var(--ink-soft);
+  font-size: 11.5px;
+  margin-top: 2px;
+}
+
+.location-text {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  word-break: break-all;
+}
+
+.inspector-note {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  color: var(--amber);
+  background: var(--amber-soft);
+  border: 1px solid var(--amber-line);
+  border-radius: var(--radius);
+  padding: 7px 9px;
+}
+
+/* ------------------------------------------------------------ empty state */
+
+.empty-state {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.empty-card {
+  max-width: 62ch;
+}
+
+.empty-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.empty-body {
+  margin: 0 0 14px;
+  color: var(--ink-soft);
+  font-size: 13.5px;
+}
+
+.empty-command {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  overflow-x: auto;
+}
+
+.empty-hint {
+  margin: 0;
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+
+/* -------------------------------------------------------------- narrow */
+
+@media (max-width: 900px) {
+  .inspector {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(var(--panel-width), 92vw);
+    flex-basis: auto;
+    box-shadow: -8px 0 24px rgba(20, 24, 30, 0.08);
+  }
+
+  /* The same treatment on the other edge: too narrow for three
+   * columns, so the narration pane floats over the canvas rather than
+   * squeezing the graph out of readability. */
+  .narration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    width: min(var(--narration-width), 88vw);
+    flex-basis: auto;
+    box-shadow: 8px 0 24px rgba(20, 24, 30, 0.08);
+  }
+
+  .legend {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------- reduced motion */
+
+/* Every transition above is a functional state change, so with
+ * prefers-reduced-motion the state still changes — it just arrives
+ * instantly. Nothing is animated for decoration, so nothing is lost. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* The beat is information, so it survives here; only its motion
+   * does not. A new component is simply there, a removed one is
+   * simply gone, a rewritten one wears a heavier outline — and the
+   * highlight ring is drawn STATICALLY, taken away by the same timer
+   * that ends the animated version. Every transition stays
+   * perceivable without motion (truth language §11). */
+  .node[data-delta="added"] {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .node.is-removing {
+    animation: none !important;
+    opacity: 0;
+    transform: none;
+  }
+
+  .node[data-delta="changed"] .node-glyph {
+    animation: none !important;
+    stroke-width: 2.6;
+  }
+
+  .beat-ring {
+    animation: none !important;
+    opacity: 1;
+  }
+}

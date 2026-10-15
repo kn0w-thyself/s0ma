@@ -1,0 +1,22 @@
+nerve orphan_nerve :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "A nerve without a module declaration"
+    expects: "nothing"
+    guarantees: "nothing"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def orphan_nerve():
+        pass

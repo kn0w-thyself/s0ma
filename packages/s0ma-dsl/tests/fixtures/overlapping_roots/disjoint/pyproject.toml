@@ -1,0 +1,11 @@
+[project]
+name = "disjoint"
+version = "0.0.1"
+
+# G2 (feedback 5–6 cleanup) fixture: the control case. source_roots
+# and test_roots are disjoint top-level peers; the detector returns
+# an empty list and the project loads cleanly.
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = ["tests"]
+build_dir = "disjoint_build"

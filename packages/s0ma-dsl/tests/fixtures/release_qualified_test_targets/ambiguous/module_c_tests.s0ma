@@ -1,0 +1,21 @@
+module module_c_tests
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Third module that references SharedNerve via a bare target — ambiguous because both module_a and module_b declare it."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_shared_nerve_ambiguous :: DOMAIN
+    intent: "Bare reference to SharedNerve — this is ambiguous and must trigger AMBIGUOUS_TEST_TARGET."
+    tests: [SharedNerve]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_shared_nerve_ambiguous():
+        assert True

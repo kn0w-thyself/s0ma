@@ -1,0 +1,170 @@
+module application
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "The documentation application: the one place that says which sources s0ma's documentation is composed from, which gates it must pass, and what it renders. The machinery is general and ships in the s0ma-dsl wheel; what is here is this repository's own use of it, registered as components so that s0ma knows how it documents itself the same way it knows anything else about itself."
+    requires: [s0ma_dsl.docs_model.application:Artifact, s0ma_dsl.docs_model.application:Build, s0ma_dsl.docs_model.application:build, s0ma_dsl.docs_model.providers:Finding, pathlib.Path]
+    exports: [COMPOSED_SNAPSHOT, DOCUMENTATION_ROOT, GENERATED_INVENTORIES, LEARNING_COLLECTION, SOURCES_COMPOSED, compose_documentation, documentation_artifacts, documentation_findings]
+
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+doc-ref documentation_application_reference
+    intent: "Generated reference to the documentation application's own public surface: the three calls that compose a snapshot, ask it what is wrong, and ask it what it renders to. Rendered from the registry rather than written, so the page a contributor reads and the code the gate runs cannot say different things."
+    format: markdown
+    output: reference/documentation-application.md
+    covers: [nerve where visibility == PUBLIC]
+    sections: [intent, expects, guarantees, forbids]
+
+cell DOCUMENTATION_ROOT :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Where the documentation application lives, relative to the checkout. Every provider addresses its sources against the checkout, so this name is fixed rather than configurable: renaming it would rename them too."
+    schema: "str constant. Value: docs."
+    invariants: none
+    covered_by: [test_the_application_names_its_own_places]
+    ---
+    DOCUMENTATION_ROOT: str = "docs"
+
+cell COMPOSED_SNAPSHOT :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The composed snapshot's place under the documentation root. It sits in the machine-readable directory because a program reads it and a person does not; reader-facing pages never share a path with it."
+    schema: "str constant, a forward-slashed relative path. Value: _generated/s0ma-docs-model.json."
+    invariants: none
+    covered_by: [test_the_application_names_its_own_places]
+    ---
+    COMPOSED_SNAPSHOT: str = "_generated/s0ma-docs-model.json"
+
+cell GENERATED_INVENTORIES :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The nineteen files this application decides to render besides the snapshot. Seven are read by a program rather than by a person — three inventories of what s0ma knows about itself, the teaching content s0ma-core carries inside its own wheel, which is generated here and mirrored into that package so that an installed copy can answer a question about s0ma with this repository nowhere in sight, the coverage report, which states how much of what this build is required to cover it does cover and names every standing exception with the ledger that grants it, the quick reference written as data, so that a coding agent can read every line of every kind of declaration without reading a page laid out for a person, and the manifest of what this build is: the version it describes, the sources it read, the digest of the model it composed, and every file it wrote with the hash of what each one says. The other twelve are pages a person opens — an index of the concepts, an index of the capabilities, README.md (the map of every document this repository keeps), a reference for each family of capability the product serves (the command line, the settings a project can declare, the reports s0ma can make, the servers it answers agents on, and the viewer it shows a project through), a page naming the distributions this workspace ships, an index of every registered component behind all of them, the quick reference, which puts every kind of declaration and every line each one may carry on a single page and is rendered from the same value as its data twin so that the two cannot disagree, and architecture/docs-application.md, which turns that same treatment on this application: the readings it composes from, the gates it runs, what this module registers, and every file it writes, so that the account of how s0ma documents itself is generated from the build rather than written beside it and can be compared byte for byte like anything else here. The snapshot is named separately above, because it is the composed model itself rather than a listing taken from it; the two together are everything the composition decides to write, and the learning collection beside them is computed rather than decided, so it is named in its own cell below. One further page leaves this project and is deliberately absent from this list — reference/documentation-application.md, which the documentation emitter renders from the doc-ref declared at the top of this module rather than from the composed snapshot. It is named there, where the declaration that produces it is, because a list of what one command writes should not quietly include what another one does; it is also the reason the composed page above is called docs-application rather than documentation-application, since two pages one letter apart in two directories is a distinction a reader should not have to make."
+    schema: "tuple[str, ...] constant of forward-slashed relative paths. Value: (_generated/inventory-concepts.json, _generated/inventory-surfaces.json, _generated/inventory-components.json, reference/concepts-index.md, reference/surfaces-index.md, README.md, reference/cli.md, reference/configuration.md, reference/diagnostics.md, reference/mcp.md, reference/studi0.md, reference/packages.md, architecture/component-index.md, architecture/docs-application.md, _generated/core-teaching-slice.json, _generated/coverage-report.json, reference/quick-reference-readable.md, _generated/quick-reference-machine.json, _generated/docs-manifest.json)."
+    invariants: none
+    covered_by: [test_the_application_names_its_own_places]
+    ---
+    GENERATED_INVENTORIES: tuple[str, ...] = (
+        "_generated/inventory-concepts.json",
+        "_generated/inventory-surfaces.json",
+        "_generated/inventory-components.json",
+        "reference/concepts-index.md",
+        "reference/surfaces-index.md",
+        "README.md",
+        "reference/cli.md",
+        "reference/configuration.md",
+        "reference/diagnostics.md",
+        "reference/mcp.md",
+        "reference/studi0.md",
+        "reference/packages.md",
+        "architecture/component-index.md",
+        "architecture/docs-application.md",
+        "_generated/core-teaching-slice.json",
+        "_generated/coverage-report.json",
+        "reference/quick-reference-readable.md",
+        "_generated/quick-reference-machine.json",
+        "_generated/docs-manifest.json",
+    )
+
+cell LEARNING_COLLECTION :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Where the learning collection is written, relative to the documentation root: one page for every concept the composition holds, a glossary over all of them, and the anatomy of a .s0ma file. The pages are not listed here, and that is the decision this cell records — which concepts exist is authored in the concept files, so the set is computed from the composed model each build. A list of them here would be a second inventory somebody had to keep, and the day a concept was written it would ship with no page until somebody remembered this file."
+    schema: "str constant, a forward-slashed relative directory. Value: learn."
+    invariants: none
+    covered_by: [test_the_application_names_its_own_places]
+    ---
+    LEARNING_COLLECTION: str = "learn"
+
+cell SOURCES_COMPOSED :: APPLICATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The eleven readings this repository's documentation is composed from, in the order a person would meet them. Five say what s0ma is: what the framework registers about itself, what the repository's governing documents say, the two files of authored teaching vocabulary, and the catalog of every document that exists. Five say what s0ma serves: its command line, the diagnostics it can report, the keys a project can be configured with, the server it answers agents on, and the viewer it shows a project through. The last says how a person gets from one to the other: the authored paths through those capabilities, step by step."
+    schema: "tuple[str, ...] constant of provider ids. Value: (core, repo, concepts-language, concepts-product, catalog, cli, diagnostics, config, mcp, studi0, journeys)."
+    invariants: none
+    covered_by: [test_the_application_names_its_own_places]
+    ---
+    SOURCES_COMPOSED: tuple[str, ...] = (
+        "core",
+        "repo",
+        "concepts-language",
+        "concepts-product",
+        "catalog",
+        "cli",
+        "diagnostics",
+        "config",
+        "mcp",
+        "studi0",
+        "journeys",
+    )
+
+nerve compose_documentation :: APPLICATION
+    kind: ORCHESTRATOR
+    visibility: PUBLIC
+    intent: "Reads every source once and settles them into a single picture of what s0ma knows about itself, which then stays the same for the rest of the build."
+    expects: "the path of a s0ma checkout, holding the catalog and the authored concept files the composition reads"
+    guarantees: "returns one settled composition. The same checkout always produces the same one: nothing is read from an earlier run, no clock or network is consulted, and the order the sources are read in cannot change the answer."
+    forbids: "Never reads anything from an earlier run, and never consults a clock or the network."
+    evaluates_at: SUBSYSTEM
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: [test_composing_twice_settles_the_same_way]
+    ---
+    def compose_documentation(root: Path) -> Build:
+        return build(root)
+
+nerve documentation_findings :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Everything wrong with a composition, all of it at once. A run that stopped at the first problem would make somebody fix the documentation one line per run."
+    expects: "a settled composition"
+    guarantees: "returns every finding the gates produced, in reporting order, with an empty result meaning nothing is wrong. Each finding says where to go and what to write instead."
+    forbids: "Never alters or rebuilds the composition it is given."
+    evaluates_at: SUBSYSTEM
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: [test_a_clean_composition_reports_nothing]
+    ---
+    def documentation_findings(composed: Build) -> tuple[Finding, ...]:
+        return composed.findings
+
+nerve documentation_artifacts :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "What a composition renders to, held in memory rather than written down, so that the command that writes the files and the command that checks them are looking at the same bytes."
+    expects: "a settled composition"
+    guarantees: "returns every rendered artifact with its place under the documentation root and its whole content. Nothing is read from or written to the filesystem to produce them."
+    forbids: "Never reads from or writes to the filesystem, and never alters or rebuilds the composition it is given."
+    evaluates_at: SUBSYSTEM
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: [test_a_clean_composition_reports_nothing]
+    ---
+    def documentation_artifacts(composed: Build) -> tuple[Artifact, ...]:
+        return composed.artifacts

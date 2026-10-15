@@ -1,0 +1,865 @@
+{
+  "components": [
+    {
+      "canonical_id": "studi0_state::STATE_SCHEMA",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the state document's frozen key set"
+          ]
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: s0ma-studi0-state@2."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The versioned name of the document GET /api/state answers with, stamped on every response so a page that outlives a studi0 upgrade can tell whether it still understands what it is being told. Version 2 added the narration block — the frozen key set grew, so the stamp moved with it rather than letting a v1 reader meet a document it was never promised."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 22,
+        "start_line": 14
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::GRAPH_SCHEMA",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the graph document's frozen key set"
+          ]
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: s0ma-studi0-graph@1."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The versioned name of the ENVELOPE GET /api/graph answers with — the seq-stamped wrapper studi0 puts around the graph document. The graph document inside it carries its own, separate schema string (s0ma-graph@2, stamped by s0ma_dsl.graph_export); the two version independently on purpose, because the transport and the graph contract change for different reasons."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 32,
+        "start_line": 24
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::CARRIED_GRAPH_SCHEMA",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the graph document's frozen key set"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "studi0 never writes this value into a document it serves. It is the contract studi0 reads; a graph arriving under a different one is a mismatch to report, not a value to overwrite."
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: s0ma-graph@2. Stamped by s0ma_dsl.graph_export, never by studi0."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The versioned name of the graph document that rides INSIDE the /api/graph envelope — the one s0ma_dsl.graph_export stamps on its own output. studi0 neither produces it nor rewrites it; naming it here is how this package states which graph contract this build was written against, so a page, a test and a documentation build read one answer instead of three copies of a string that can drift apart."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 42,
+        "start_line": 34
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::STATE_DOCUMENT_KEYS",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the state document's frozen key set"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Sorted, so two readings of the contract are the same bytes. The set is exact: a document carrying a key not named here, or missing one that is, is a contract change and moves STATE_SCHEMA with it."
+        },
+        "schema": {
+          "state": "value",
+          "value": "tuple[str, ...] constant, sorted. Value: ('build_status', 'narration', 'schema', 'seq', 'stale_modules')."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Every key GET /api/state answers with, and no others — the frozen shape a page built against this API is built against. Declared in the package rather than written out in a test, so the contract has exactly one owner: whoever asks what studi0 serves gets the package's own answer, and the test that pins the served document compares against this instead of against a second copy of it."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 58,
+        "start_line": 44
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::NARRATION_BLOCK_KEYS",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the state document's frozen key set"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Sorted. The block is always present, even for a session nobody narrated in — an empty window and two zeros is a fact, not an absence to fill in."
+        },
+        "schema": {
+          "state": "value",
+          "value": "tuple[str, ...] constant, sorted. Value: ('entries', 'invalid', 'total')."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Every key the narration block of GET /api/state answers with. It is a nested block with a frozen shape of its own precisely because self-report must never sit at the same level as build truth — and a shape stated here is a shape a reader can check, rather than one inferred from whichever session happened to be running."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 72,
+        "start_line": 60
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::GRAPH_DOCUMENT_KEYS",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the graph document's frozen key set"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Sorted. The set is exact, and it describes the envelope alone: nothing here constrains the graph document the envelope carries."
+        },
+        "schema": {
+          "state": "value",
+          "value": "tuple[str, ...] constant, sorted. Value: ('graph', 'schema', 'seq')."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: three keys that say which reading this is and what it carries."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 86,
+        "start_line": 74
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::BUILD_STATUS_MISSING",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — an unbuilt project reports missing"
+          ]
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: missing. One of the three statuses in the frozen /api/state contract (fresh | stale | missing)."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The build status studi0 reports when it cannot find a build to judge: nothing is built, or the build manifest is unreadable, so freshness is a question studi0 has no evidence to answer. The other two statuses — fresh and stale — are never decided here; they arrive verbatim from the graph document's own freshness block, which is the only place source hashes are compared."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 96,
+        "start_line": 88
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::Studi0Snapshot",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — seq advances only on a real change"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "seq is a monotonic counter, never a timestamp and never derived from one (INV-5). stale_modules is empty unless build_status is stale. narration is agent self-report and never a canonical graph fact — the two never merge."
+        },
+        "schema": {
+          "state": "value",
+          "value": "Frozen dataclass. seq: int — the reading's identity; graph: dict[str, Any] | None — a full s0ma-graph@2 graph document, or None when the project has no build artifacts at all; build_status: str — fresh | stale | missing; stale_modules: tuple[str, ...] — the module names whose sources no longer hash to what the build recorded, sorted; narration: tuple[dict[str, Any], ...] — the most recent accepted narrations in file order, bounded by NARRATION_WINDOW; narrated: int — every narration accepted this session; unreadable: int — session-log lines seen and refused."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "One consistent reading of a project's truth: the sequence number that identifies it, the graph document it carries, the build's status, the modules whose sources have moved on since the build, and — kept deliberately separate from all of those — what an agent has said it is doing. Frozen, so a request thread holding a snapshot is holding a reading that cannot shift underneath it while it answers."
+      },
+      "kind": "MODEL",
+      "location": {
+        "end_line": 137,
+        "start_line": 98
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::Studi0Session",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the API's two endpoints agree on seq"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "studi0 writes nothing under project_root except its own .s0ma/studi0/active.json presence marker — never a source, never a build artifact. Only the publish path mutates a session; readers take snapshot and let go."
+        },
+        "schema": {
+          "state": "value",
+          "value": "Mutable dataclass. project_root: Path — the project being shown, opened read-only apart from studi0's own presence marker; snapshot: Studi0Snapshot — the current reading, replaced as one whole object; narration: NarrationLog — the session's place in the narration log, advanced by the same refresh that re-reads the graph; seeded: bool — whether a first reading has been published (False means the seq must not advance yet); publish_lock: threading.Lock — held only across the compare-and-publish step."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "One studi0 viewing session: the project being shown, the current reading of it, and how far into that project's narration log the session has read. The reading is replaced whole rather than edited in place, so a reader never observes a half-updated session, and a lock serialises publishers so two of them cannot both claim the same sequence number."
+      },
+      "kind": "MODEL",
+      "location": {
+        "end_line": 174,
+        "start_line": 139
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::read_graph",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — /api/graph equals collect_graph's own output"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "value",
+          "value": [
+            "s0ma_dsl.graph_export.NoIRArtifactsError"
+          ]
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a path to the project being shown — a project root, a build directory, or a single IR artifact, whatever graph_export accepts"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never writes to the project, never reads its graph any way but through s0ma_dsl.graph_export, and never alters what that returns."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the graph document graph_export produced, passed through untouched (state wrappers included), or None when the target holds no IR artifacts at all. Never writes to the project."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Reads one project's whole component graph the only way studi0 is allowed to: by asking s0ma_dsl.graph_export for that project's full s0ma-graph@2 graph document. A project with no build artifacts is not an error here — it is the answer 'nothing is built', reported as None so the caller can say so plainly instead of showing an empty graph and letting a viewer read it as an empty project."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 235,
+        "start_line": 194
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::create_session",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — seq starts at 1"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is the root of the project to show"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never touches a file: opening a session reads and writes nothing on disk."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns an unseeded session at seq 1 whose snapshot reports build_status missing and carries no graph; performs no file access"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Opens a viewing session on a project without reading anything yet: a session that knows which project it is for and admits, until its first reading lands, that it has nothing to show. Construction touches no files, so binding a server can never be delayed or defeated by the project's state on disk."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 281,
+        "start_line": 237
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::refresh_session",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — stale flip bumps seq; tests/test_watcher.py — an unchanged project never bumps seq"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "session is a session opened by create_session; the caller accepts that reading a project mid-build can raise"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never publishes a reading it failed to take or one that changed nothing, and never records a narration as a fact of the graph."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Either publishes a new snapshot and returns True, or leaves the session exactly as it was and returns False. seq advances by exactly one per published change, and never on the first publish. Failures propagate unchanged — this function never publishes a guess."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Takes a fresh reading of the project and publishes it only if it says something new. This is the one place a sequence number advances, and it advances on evidence alone: an identical graph, an identical status, an identical stale set, and an unmoved narration log mean nothing happened, whatever ran in between. A new narration is evidence like any other — it is why the page repaints — but it enters as its own field and never as a graph fact. A first reading publishes at seq 1 rather than advancing to 2, so a client's first answer is never seq 2 for a project that never changed."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 365,
+        "start_line": 283
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::read_snapshot",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the API's two endpoints agree on seq"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "session is a session opened by create_session"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the snapshot published at the moment of the call; the returned object is frozen and will not change afterwards"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Hands a caller the session's current reading as one object, so everything it answers from — the sequence number, the graph, the status — comes from a single moment. Two documents built from one snapshot can never disagree about seq, however many builds land while the response is being written."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 394,
+        "start_line": 367
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::state_document",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the state document's frozen key set"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "snapshot is a reading taken from a session"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never puts what an agent says it is doing among the build's own facts; narration stays in its own nested, named block."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible document carrying exactly the frozen key set schema, seq, build_status, stale_modules, narration; the module list is a plain list, ordered as the graph document's freshness block ordered it, and the narration entries are in file order, oldest first"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Renders the answer to GET /api/state: which reading this is, whether the build still matches the sources it was built from, which modules have moved on since — and, in its own block, what an agent has said it is doing. The narration block is a block precisely so that no reader can mistake self-report for build truth: it is nested, named, and carries its own counts. This is the small, cheap document the page polls; the graph itself is fetched only when the sequence number says it is worth fetching."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 438,
+        "start_line": 396
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::graph_document",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — /api/graph equals collect_graph's own output"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "snapshot is a reading taken from a session"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never trims, summarises or drops a field of the graph it wraps, and never offers an empty graph when nothing is built."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible document carrying exactly the frozen key set schema, seq, graph — with graph identical to the graph document the snapshot holds — or None when the snapshot carries no graph"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 478,
+        "start_line": 440
+      },
+      "visibility": "PUBLIC"
+    }
+  ],
+  "doc_guides": [],
+  "doc_refs": [],
+  "edges": {
+    "authored": [
+      {
+        "carries": "the status of a session that has read nothing yet",
+        "coupling": "TIGHT",
+        "intent": "create_session READS BUILD_STATUS_MISSING: the status of a session that has read nothing yet",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_state::create_session",
+        "target": "studi0_state::BUILD_STATUS_MISSING"
+      },
+      {
+        "carries": "the envelope's schema stamp",
+        "coupling": "TIGHT",
+        "intent": "graph_document READS GRAPH_SCHEMA: the envelope's schema stamp",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_state::graph_document",
+        "target": "studi0_state::GRAPH_SCHEMA"
+      },
+      {
+        "carries": "the project root to read",
+        "coupling": "TIGHT",
+        "intent": "refresh_session CALLS read_graph: the project root to read",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "studi0_state::refresh_session",
+        "target": "studi0_state::read_graph"
+      },
+      {
+        "carries": "the document's schema stamp",
+        "coupling": "TIGHT",
+        "intent": "state_document READS STATE_SCHEMA: the document's schema stamp",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_state::state_document",
+        "target": "studi0_state::STATE_SCHEMA"
+      }
+    ],
+    "derived": [
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::create_session",
+        "target": "studi0_state::Studi0Session"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::create_session",
+        "target": "studi0_state::Studi0Snapshot"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::graph_document",
+        "target": "studi0_state::Studi0Snapshot"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::read_snapshot",
+        "target": "studi0_state::Studi0Session"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::read_snapshot",
+        "target": "studi0_state::Studi0Snapshot"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::refresh_session",
+        "target": "studi0_narration::narration_snapshot"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::refresh_session",
+        "target": "studi0_narration::read_narrations"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::refresh_session",
+        "target": "studi0_state::Studi0Session"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::refresh_session",
+        "target": "studi0_state::Studi0Snapshot"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_state::state_document",
+        "target": "studi0_state::Studi0Snapshot"
+      }
+    ],
+    "verification": []
+  },
+  "examples": [],
+  "exports": {
+    "state": "value",
+    "value": [
+      "STATE_SCHEMA",
+      "GRAPH_SCHEMA",
+      "CARRIED_GRAPH_SCHEMA",
+      "STATE_DOCUMENT_KEYS",
+      "NARRATION_BLOCK_KEYS",
+      "GRAPH_DOCUMENT_KEYS",
+      "BUILD_STATUS_MISSING",
+      "Studi0Snapshot",
+      "Studi0Session",
+      "read_graph",
+      "create_session",
+      "refresh_session",
+      "read_snapshot",
+      "state_document",
+      "graph_document"
+    ]
+  },
+  "helpers": [
+    {
+      "body": {
+        "state": "value",
+        "value": "def _freshness_facts(graph: dict[str, Any] | None) -> tuple[str, tuple[str, ...]]:\n    \"\"\"The (build_status, stale_modules) pair a graph document testifies to.\"\"\"\n    if graph is None:\n        return (BUILD_STATUS_MISSING, ())\n    freshness = graph.get(\"freshness\")\n    if not isinstance(freshness, dict):\n        # No freshness block means graph_export found no readable\n        # manifest, which is exactly the \"missing\" case (plan §3.2).\n        return (BUILD_STATUS_MISSING, ())\n    status = str(freshness.get(\"status\", BUILD_STATUS_MISSING))\n    recorded = freshness.get(\"stale_modules\")\n    if not isinstance(recorded, list):\n        return (status, ())\n    return (status, tuple(str(name) for name in recorded))"
+      },
+      "body_kind": "function",
+      "canonical_id": "studi0_state::_freshness_facts",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Reads the two facts /api/state reports — the build status and the stale module names — out of a graph document's freshness block, and answers 'missing' for every shape that carries no verdict: no graph document at all, no freshness key (the graph document's way of saying no manifest was found), or a freshness block that is not the record it should be."
+      },
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 192,
+        "start_line": 176
+      },
+      "module": "studi0_state",
+      "name": "_freshness_facts",
+      "tags": []
+    }
+  ],
+  "imports": {
+    "deferred_requires": {
+      "state": "none"
+    },
+    "privileged": [],
+    "requires": {
+      "state": "value",
+      "value": [
+        "threading",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "pathlib.Path",
+        "typing.Any",
+        "s0ma_dsl.graph_export.DETAIL_FULL",
+        "s0ma_dsl.graph_export.NoIRArtifactsError",
+        "s0ma_dsl.graph_export.collect_graph"
+      ]
+    },
+    "runtime_only_requires": {
+      "state": "none"
+    },
+    "soft_requires": {
+      "state": "none"
+    },
+    "uses": {
+      "state": "value",
+      "value": [
+        "studi0_narration.NarrationLog",
+        "studi0_narration.narration_snapshot",
+        "studi0_narration.read_narrations"
+      ]
+    }
+  },
+  "integrations": [],
+  "module": {
+    "content_hash": "sha256:95dcec896ac1ad109b4a91c40b45018c5dbdbca63b8f3855358b43eaf1491604",
+    "exports_helpers": {
+      "state": "none"
+    },
+    "intent": {
+      "state": "value",
+      "value": "What one studi0 session knows about one project: the component graph read from that project's build artifacts, how fresh that build is against the sources it was built from, whatever an agent has said it is doing, and a sequence number that advances only when something really changed. Every graph fact enters studi0 here and only here — through s0ma_dsl.graph_export, never by opening IR JSON directly — so studi0 can never drift into a second, quieter answer about what a project contains. Narration enters through studi0_narration and stays in its own fields the whole way out: it is the agent's account of its work, never evidence about the project."
+    },
+    "layer": "APPLICATION",
+    "name": "studi0_state",
+    "source_file": "s0ma_src/studi0_state.s0ma",
+    "tags": [],
+    "transpiled_file": "studi0_state.py",
+    "version": "0.19.1"
+  },
+  "schema_version": "3.0.0",
+  "source_hash": "sha256:95dcec896ac1ad10",
+  "transpiler_version": "1.0.0"
+}

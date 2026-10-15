@@ -1,0 +1,37 @@
+module order_service
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Application-layer service orchestrating Order processing — references the sibling domain root via uses:."
+    uses: [order_model.Order, order_model.build_order]
+    exports: [process_order]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve process_order :: APPLICATION
+    kind: SERVICE
+    visibility: PUBLIC
+    intent: "Validates a string id and returns 'queued' or 'rejected' for the resulting Order."
+    expects: "A string id; empty string is rejected."
+    guarantees: "Returns one of 'queued' or 'rejected'."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def process_order(id: str) -> str:
+        order: Order = build_order(id)
+        if not order.id:
+            return "rejected"
+        return "queued"

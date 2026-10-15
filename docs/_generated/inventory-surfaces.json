@@ -1,0 +1,4322 @@
+{
+  "counts": {
+    "by_binding": {
+      "bound": 92,
+      "exception": 169
+    },
+    "by_channel": {
+      "cli": 44,
+      "config": 19,
+      "diagnostic": 114,
+      "mcp_prompt": 5,
+      "mcp_resource": 24,
+      "mcp_tool": 27,
+      "python": 9,
+      "rest": 14,
+      "studi0": 5
+    },
+    "by_side_effect": {
+      "approval": 5,
+      "credential": 1,
+      "network": 7,
+      "none": 141,
+      "read": 82,
+      "subprocess": 6,
+      "write": 29
+    },
+    "surfaces": 261,
+    "undeclared_side_effects": 29
+  },
+  "entries": [
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/adopt",
+      "intent": "Retrofit an existing codebase: `adopt scan` reads a tree and plans the conversion, `adopt init` makes it a s0ma project, `adopt draft` converts one module, `adopt baseline` and `adopt verify-parity` prove the conversion kept its promises, `adopt status` says where you are and what to run next; `adopt file <path>` registers one real (non-generated) file into the self-model",
+      "public_name": "s0ma adopt",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/adopt/baseline",
+      "intent": "Record what a module's Python offers today, before you convert it — and long before you delete it",
+      "public_name": "s0ma adopt baseline",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/adopt/draft",
+      "intent": "Turn one Python module into a .s0ma draft. The Python file is read and never changed",
+      "public_name": "s0ma adopt draft",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "cli",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/adopt/file",
+      "intent": "Record one pre-existing file as interim migration intake; newly-written code starts from intent with author_module",
+      "public_name": "s0ma adopt file",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/adopt/init",
+      "intent": "Make an existing codebase a s0ma project. Touches no application file",
+      "public_name": "s0ma adopt init",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/adopt/scan",
+      "intent": "Read an existing codebase and say what is in it and what to convert first. Writes nothing",
+      "public_name": "s0ma adopt scan",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/adopt/status",
+      "intent": "Where this retrofit stands, and the one command to run next. Writes nothing",
+      "public_name": "s0ma adopt status",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/adopt/verify-parity",
+      "intent": "Compare a built module with the baseline taken from the Python it replaced, and name every difference",
+      "public_name": "s0ma adopt verify-parity",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/build",
+      "intent": "Full project build with cross-module resolution",
+      "public_name": "s0ma build",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/check",
+      "intent": "Validate .s0ma file(s) without generating output",
+      "public_name": "s0ma check",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/deferred-surface",
+      "intent": "List every deferred:-marked declaration in the project (POST-12f).",
+      "public_name": "s0ma deferred-surface",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs",
+      "intent": "Learn how s0ma works: run `s0ma docs` for the learning map, or list/show/search one topic. Also renders and gates this project's own documentation (render, verify, check-drift, compose, check)",
+      "public_name": "s0ma docs",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.docs_commands.cmd_docs_check"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs/check",
+      "intent": "Compose the documentation snapshot and byte-compare it against the committed outputs, writing nothing",
+      "public_name": "s0ma docs check",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.docs_commands.cmd_docs_check_drift"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs/check-drift",
+      "intent": "Re-render every doc and byte-compare against committed output files",
+      "public_name": "s0ma docs check-drift",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.docs_commands.cmd_docs_compose"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs/compose",
+      "intent": "Compose the documentation snapshot and write its declared outputs",
+      "public_name": "s0ma docs compose",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.docs_commands.cmd_docs_list"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs/list",
+      "intent": "List every topic in one part of the documentation, or in all five",
+      "public_name": "s0ma docs list",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.docs_commands.cmd_docs_render"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs/render",
+      "intent": "Render every doc-ref/doc-guide to its declared output: path",
+      "public_name": "s0ma docs render",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.docs_commands.cmd_docs_search"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs/search",
+      "intent": "Find every topic a word or phrase could mean, strongest match first",
+      "public_name": "s0ma docs search",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.docs_commands.cmd_docs_show"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs/show",
+      "intent": "Show one topic in full, by its id or by a name it goes by",
+      "public_name": "s0ma docs show",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.docs_commands.cmd_docs_verify"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/docs/verify",
+      "intent": "Run doc-subsystem validation layers without rendering",
+      "public_name": "s0ma docs verify",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/doctor",
+      "intent": "Environment and project health report: package versions, project detection, build freshness, MCP registration hint. Diagnoses, does not gate — exit 0 with findings; non-zero only when the environment itself is broken. License/update sections are offline placeholders in this version.",
+      "public_name": "s0ma doctor",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/examples",
+      "intent": "Run registered .s0ma example declarations",
+      "public_name": "s0ma examples",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.examples_commands.cmd_examples_run"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/examples/run",
+      "intent": "Run every example, or one named example",
+      "public_name": "s0ma examples run",
+      "side_effects": [
+        "read",
+        "subprocess",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/feedback",
+      "intent": "Send feedback about s0ma, and manage the reports you have sent",
+      "public_name": "s0ma feedback",
+      "side_effects": [
+        "approval",
+        "network",
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "cli",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/feedback/delete",
+      "intent": "Delete one of your feedback reports, or all of them",
+      "public_name": "s0ma feedback delete",
+      "side_effects": [
+        "approval",
+        "network",
+        "read"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "cli",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/feedback/drafts",
+      "intent": "List the reports written here but not yet sent",
+      "public_name": "s0ma feedback drafts",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "cli",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/feedback/enroll",
+      "intent": "Connect this machine to your s0ma account so it can send feedback",
+      "public_name": "s0ma feedback enroll",
+      "side_effects": [
+        "credential",
+        "network",
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "cli",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/feedback/list",
+      "intent": "List the feedback reports you have sent",
+      "public_name": "s0ma feedback list",
+      "side_effects": [
+        "network",
+        "read"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "cli",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/feedback/submit",
+      "intent": "Show a saved draft again and send it if you approve",
+      "public_name": "s0ma feedback submit",
+      "side_effects": [
+        "approval",
+        "network",
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/graph",
+      "intent": "Emit dependency graph data for a module or project",
+      "public_name": "s0ma graph",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/inspect",
+      "intent": "Query the self-model of a compiled module or project",
+      "public_name": "s0ma inspect",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/migrate",
+      "intent": "Plan or apply a versioned source-grammar migration.",
+      "public_name": "s0ma migrate",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/migrate-ext",
+      "intent": "One-shot migration from the pre-2.0.0 letter-o extension family to .s0ma / .s0ma.json / .s0ma.map (build manifest build.s0ma.json): renames files, rewrites the legacy [tool.*] config table to [tool.s0ma], and removes legacy cache directories. Idempotent; refuses to overwrite existing targets.",
+      "public_name": "s0ma migrate-ext",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/migrate-layout",
+      "intent": "One-shot migration: clean legacy __s0ma_cache__/ and per-layer subdirs from the project's build directory, then run a fresh `s0ma build`. Idempotent.",
+      "public_name": "s0ma migrate-layout",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "cli",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/migrate/grammar",
+      "intent": "Materialise explicit semantic state. Dry-run by default; use --apply for an atomic whole-project rewrite.",
+      "public_name": "s0ma migrate grammar",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/new",
+      "intent": "Scaffold a new .s0ma file from a template, or initialize a whole project (`s0ma new project <dir>`)",
+      "public_name": "s0ma new",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/score",
+      "intent": "Self-knowledge score: a single number + a three-faculty breakdown for a s0ma project (text or --format json).",
+      "public_name": "s0ma score",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/studi0",
+      "intent": "Serve the studi0 viewer for a built s0ma project on loopback",
+      "public_name": "s0ma studi0",
+      "side_effects": [
+        "network",
+        "read",
+        "subprocess"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/test",
+      "intent": "Discover the project, build source + tests, run pytest (args after `--` pass through to pytest)",
+      "public_name": "s0ma test",
+      "side_effects": [
+        "read",
+        "subprocess",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/test-conftest",
+      "intent": "Generate a conftest.py that mocks the s0ma runtime for testing",
+      "public_name": "s0ma test-conftest",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/topo",
+      "intent": "Print the project's topological module import order, one module per line",
+      "public_name": "s0ma topo",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/transpile",
+      "intent": "Transpile .s0ma file(s) to .py + .s0ma.json + .s0ma.map",
+      "public_name": "s0ma transpile",
+      "side_effects": [
+        "read",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/verify",
+      "intent": "Check transpiled files for drift from .s0ma sources (fast, no transpile needed)",
+      "public_name": "s0ma verify",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "cli",
+      "component_refs": [
+        "component:s0ma_dsl.cli.main.S0maCLI"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "cli:s0ma/verify-host",
+      "intent": "Explicitly import built production modules under the host application's Python (executes trusted project code)",
+      "public_name": "s0ma verify-host",
+      "side_effects": [
+        "read",
+        "subprocess"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=[]",
+        "type=unstated"
+      ],
+      "governed_by": [],
+      "id": "config:adoption_exempt",
+      "intent": "Project-local adoption classifications.",
+      "public_name": "[tool.s0ma].adoption_exempt",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default={}",
+        "type=table (mapping)",
+        "values=exactly_one_per_page,unique_in_project,warn_on_duplicate"
+      ],
+      "governed_by": [],
+      "id": "config:attribute_budgets",
+      "intent": "Project-level budgets for ``declares_attributes:`` namespaces.",
+      "public_name": "[tool.s0ma].attribute_budgets",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default='on'",
+        "type=string",
+        "values=off,on"
+      ],
+      "governed_by": [],
+      "id": "config:authoring",
+      "intent": "The project's authoring posture, read from ``[tool.s0ma].authoring``.",
+      "public_name": "[tool.s0ma].authoring",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=[]",
+        "rule=CONFLICTING_PACKAGE_DECLARATION",
+        "type=list of strings"
+      ],
+      "governed_by": [],
+      "id": "config:bootstrap_files",
+      "intent": "Absolute paths to plain-Python files that are intentional bootstrap exceptions and should not be flagged by drift / missing-IR checks.",
+      "public_name": "[tool.s0ma].bootstrap_files",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=computed",
+        "rule=INVALID_PROJECT_NAME_FOR_BUILD_DIR",
+        "type=string"
+      ],
+      "governed_by": [],
+      "id": "config:build_dir",
+      "intent": "Absolute directory for transpiled build artifacts.",
+      "public_name": "[tool.s0ma].build_dir",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default={}",
+        "rule=_RUNBOOK_ENV_FIELDS",
+        "type=unstated"
+      ],
+      "governed_by": [],
+      "id": "config:env",
+      "intent": "The environment variables the built application reads, keyed by name, each carrying its :class:`RunbookEnvVar` contract (required / fail_fast / default).",
+      "public_name": "[tool.s0ma].env",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=None",
+        "type=table (mapping)",
+        "values=json,ndjson,yaml"
+      ],
+      "governed_by": [],
+      "id": "config:fixtures_format",
+      "intent": "The expected format for non-``.s0ma`` test fixtures.",
+      "public_name": "[tool.s0ma].fixtures_format",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=None",
+        "type=string"
+      ],
+      "governed_by": [],
+      "id": "config:health_command",
+      "intent": "The command that checks the running application's health, verbatim as authored under ``[tool.s0ma].health_command`` (e.g. ``\"curl -fsS localhost:8080/health\"``).",
+      "public_name": "[tool.s0ma].health_command",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=None",
+        "type=string",
+        "values=dev,migration,release,strict"
+      ],
+      "governed_by": [],
+      "id": "config:mode",
+      "intent": "The project's declared strictness mode, read from ``[tool.s0ma].mode``.",
+      "public_name": "[tool.s0ma].mode",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=[]",
+        "rule=CONFLICTING_PACKAGE_DECLARATION",
+        "type=list of strings"
+      ],
+      "governed_by": [],
+      "id": "config:package_markers",
+      "intent": "Absolute paths to ``__init__.py`` files that the author explicitly classifies as package markers.",
+      "public_name": "[tool.s0ma].package_markers",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=None",
+        "type=string"
+      ],
+      "governed_by": [],
+      "id": "config:run_command",
+      "intent": "The command that runs the built application, verbatim as authored under ``[tool.s0ma].run_command`` (e.g. ``\"uv run myapp\"``).",
+      "public_name": "[tool.s0ma].run_command",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=()",
+        "type=unstated"
+      ],
+      "governed_by": [],
+      "id": "config:runbook_notes",
+      "intent": "Free-form operational notes authored under ``[tool.s0ma].runbook_notes`` — either a single string (one note) or a list of strings (several).",
+      "public_name": "[tool.s0ma].runbook_notes",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=['src']",
+        "rule=_detect_overlapping_roots",
+        "type=list of strings"
+      ],
+      "governed_by": [],
+      "id": "config:source_roots",
+      "intent": "Absolute directories holding ``.s0ma`` source modules.",
+      "public_name": "[tool.s0ma].source_roots",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=[]",
+        "type=list of strings"
+      ],
+      "governed_by": [],
+      "id": "config:state_paths",
+      "intent": "Project-relative paths (verbatim as authored under ``[tool.s0ma].state_paths``) that hold **runtime state** — data the running application produces and owns, NOT derivable from source.",
+      "public_name": "[tool.s0ma].state_paths",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default='strict'",
+        "type=string",
+        "values=permissive,strict"
+      ],
+      "governed_by": [],
+      "id": "config:test_layering",
+      "intent": "Cross-module layer-reachability stance for test-context modules.",
+      "public_name": "[tool.s0ma].test_layering",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=False",
+        "type=bool"
+      ],
+      "governed_by": [],
+      "id": "config:test_module_name_prefix_by_dir",
+      "intent": "Whether to auto-prefix test modules by parent directory when checking for ``MODULE_NAME_COLLISION``.",
+      "public_name": "[tool.s0ma].test_module_name_prefix_by_dir",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=['tests']",
+        "rule=_detect_overlapping_roots",
+        "type=list of strings"
+      ],
+      "governed_by": [],
+      "id": "config:test_roots",
+      "intent": "Absolute directories holding ``.s0ma`` test modules.",
+      "public_name": "[tool.s0ma].test_roots",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default='pytest'",
+        "type=string",
+        "values=pytest"
+      ],
+      "governed_by": [],
+      "id": "config:test_runner",
+      "intent": "The test runner this project uses, named once for the whole project.",
+      "public_name": "[tool.s0ma].test_runner",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "config",
+      "component_refs": [],
+      "errors": [
+        "default=None",
+        "type=string"
+      ],
+      "governed_by": [],
+      "id": "config:venv_path",
+      "intent": "Project-relative host virtual-environment path for ``verify-host``.",
+      "public_name": "[tool.s0ma].venv_path",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:ADOPTED_CHURN",
+      "intent": "A roster file has been re-adopted at least three times; componentize it instead of repeatedly refreshing interim migration telemetry.",
+      "public_name": "ADOPTED_CHURN",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:ADOPT_PLACEHOLDER_INTENT",
+      "intent": "A field still carries the `FIXME(adopt):` placeholder `s0ma adopt draft` left for a person to replace; write the sentence in your own words, because a draft derives structure and never invents meaning.",
+      "public_name": "ADOPT_PLACEHOLDER_INTENT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:ADOPT_UNPLACED_CODE",
+      "intent": "A module still carries an `adopt: unplaced` quarantine cell holding source text the draft could not place; move the text into the declaration it belongs to, or delete it, and delete the cell.",
+      "public_name": "ADOPT_UNPLACED_CODE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:AMBIGUOUS_TEST_TARGET",
+      "intent": "A bare `tests:` entry resolves to components in two or more modules.",
+      "public_name": "AMBIGUOUS_TEST_TARGET",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:ASSERT_FAILED",
+      "intent": "A doc-guide `asserts:` expression evaluated to false.",
+      "public_name": "ASSERT_FAILED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:ASSERT_SYNTAX_ERROR",
+      "intent": "A doc-guide `asserts:` expression falls outside the narrow assert grammar.",
+      "public_name": "ASSERT_SYNTAX_ERROR",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:ASSERT_UNEVALUABLE",
+      "intent": "A doc-guide `asserts:` expression references a field or entity that cannot be evaluated.",
+      "public_name": "ASSERT_UNEVALUABLE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:ATTRIBUTE_BUDGET_VIOLATION",
+      "intent": "A nerve's `declares_attributes:` entry violates a project-configured `[tool.s0ma.attribute_budgets]` rule.",
+      "public_name": "ATTRIBUTE_BUDGET_VIOLATION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:BARE_IMPORT",
+      "intent": "A nerve or test body contains a bare `import` statement. The fix is one edit with two parts: declare the dependency in the module header — `requires:` for Python imports, `deferred_requires:` for a call-time import, `uses:` for s0ma components — and delete the import line from the body. The transpiler writes the import lines from the declarations.",
+      "public_name": "BARE_IMPORT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:BUILD_DIR_OVERRIDE_CONFLICT",
+      "intent": "`s0ma build --output-dir <path>` was invoked with a path that disagrees with the resolved `[tool.s0ma].build_dir`. Drop `--output-dir` to let the project model resolve the build dir, or pass `--force-output-dir` to proceed with the override (a one-line stderr notice is emitted).",
+      "public_name": "BUILD_DIR_OVERRIDE_CONFLICT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:CIRCULAR_DEPENDENCY",
+      "intent": "The four-phase resolver's DFS detected a cycle in the declared cross-module architecture edges (`uses:` entries plus qualified `depends_on:` targets).",
+      "public_name": "CIRCULAR_DEPENDENCY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:CLASS_BODY_IN_NERVE",
+      "intent": "A nerve body contains a `class` definition (nerves must be functions).",
+      "public_name": "CLASS_BODY_IN_NERVE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:CONFLICTING_PACKAGE_DECLARATION",
+      "intent": "A file path appears in both `[tool.s0ma].bootstrap_files` and `[tool.s0ma].package_markers`.",
+      "public_name": "CONFLICTING_PACKAGE_DECLARATION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:CONSTANT_NAME_MISMATCH",
+      "intent": "A `kind: CONSTANT` cell's declaration name does not match the Python identifier its body assigns to.",
+      "public_name": "CONSTANT_NAME_MISMATCH",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:CONSUMES_VIA_DICT_INVALID",
+      "intent": "A nerve's `consumes_via_dict:` entry names a `contract:` that resolves to no known cell or `uses:` target, or a `param:` that is not a parameter of the nerve body's outer function. The field declares a real dependency, so both halves must exist: declare the contract, or correct the param name.",
+      "public_name": "CONSUMES_VIA_DICT_INVALID",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:COVERED_BY_EMPTY",
+      "intent": "A `covered_by:` field is present with an empty list, or an entry is empty/whitespace — the field is the release gate's external test-evidence credit and an empty claim credits coverage with no auditable evidence.",
+      "public_name": "COVERED_BY_EMPTY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:CROSS_LAYER_DEPENDENCY",
+      "intent": "A `uses:` entry targets a module at a layer not in the source layer's reachable set.",
+      "public_name": "CROSS_LAYER_DEPENDENCY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:CROSS_MODULE_USES_ASYMMETRY",
+      "intent": "A module's `uses:` declarations import two or more entries from the same parent module but the bodies only reference a subset. Suggests the unreferenced entries be trimmed from `uses:`. Narrower than `VESTIGIAL_IMPORT`: only fires when ≥2 siblings from the same parent module are declared together.",
+      "public_name": "CROSS_MODULE_USES_ASYMMETRY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DEFERRED_IMPORT_MODULE_SCOPE",
+      "intent": "A `deferred_requires:` name is consumed at a module-scope execution position (cell body, class-scope statement, decorator expression, parameter default, or annotation) — those run at import time, before any injected in-body import could; move the entry back to `requires:` or restructure the consumer into a function body.",
+      "public_name": "DEFERRED_IMPORT_MODULE_SCOPE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DOC_RENDER_ERROR",
+      "intent": "The doc renderer raised `DocRenderError` while emitting a `doc-ref` or `doc-guide`.",
+      "public_name": "DOC_RENDER_ERROR",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DOC_SOURCE_FORMAT_UNSUPPORTED",
+      "intent": "A `doc-ref` requests a `format:` its derived `covers: { source: ... }` does not declare; widen the source's registration or change the format.",
+      "public_name": "DOC_SOURCE_FORMAT_UNSUPPORTED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DOES_NOT_EXIST",
+      "intent": "A `uses:` entry, `depends_on:` target, or qualified `depends_on:` target (`module.declaration`) references a component or module that does not exist in the project.",
+      "public_name": "DOES_NOT_EXIST",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DRIFT_DETECTED",
+      "intent": "A re-render of a `doc-ref` or `doc-guide` produces bytes that differ from the on-disk doc artifact.",
+      "public_name": "DRIFT_DETECTED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DUPLICATE_AXON",
+      "intent": "The same axon relationship is declared twice (inline and standalone, or duplicated derived).",
+      "public_name": "DUPLICATE_AXON",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DUPLICATE_DECLARATION",
+      "intent": "Two top-level declarations share the same name in one module.",
+      "public_name": "DUPLICATE_DECLARATION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DUPLICATE_INNER_FUNCTION",
+      "intent": "A body contains two `def` declarations with the same name inside one enclosing function scope (e.g. a SERVICE factory body redefines its inner `def foo()` twice). Python silently shadows the first binding; the returned surface ends up keyed to a function the author did not intend.",
+      "public_name": "DUPLICATE_INNER_FUNCTION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DUPLICATE_PROVIDES_NAME",
+      "intent": "A nerve's structured `provides:` block lists the same operation name twice — each entry must be unique.",
+      "public_name": "DUPLICATE_PROVIDES_NAME",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:DUPLICATE_REQUIRES_ENTRY",
+      "intent": "The same import target appears in `deferred_requires:` and another requires-family list of the same module header — module-top import and call-time deferral are different failure-time choices; one target, one list.",
+      "public_name": "DUPLICATE_REQUIRES_ENTRY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:EMBEDDED_FILE_NOT_FOUND",
+      "intent": "A `cell ... content: @file(\"path\")` directive references a missing or unreadable file.",
+      "public_name": "EMBEDDED_FILE_NOT_FOUND",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:EMPTY_BLOCK_LIST",
+      "intent": "A YAML-style block list ('- item' per line) on uses/requires/exports/raises has no items — use the inline form ``field: []`` instead.",
+      "public_name": "EMPTY_BLOCK_LIST",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:EMPTY_DOC_FILTER",
+      "intent": "A `doc-ref`'s `covers:` filter materialises to zero entities.",
+      "public_name": "EMPTY_DOC_FILTER",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:EMPTY_OBSERVES",
+      "intent": "A ganglion's `observes:` glob pattern resolves to zero matching nerves.",
+      "public_name": "EMPTY_OBSERVES",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:ENTITY_KIND_MISMATCH",
+      "intent": "A `{{kind::name}}` token references an entity of a different kind than declared.",
+      "public_name": "ENTITY_KIND_MISMATCH",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:EXPORTED_HELPER_NOT_FOUND",
+      "intent": "A module's `exports_helpers:` entry names an identifier that is not a `helper` declaration in this module.",
+      "public_name": "EXPORTED_HELPER_NOT_FOUND",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:FIELD_NOT_FOUND",
+      "intent": "A `{{kind::name.field}}` token references a field that does not exist on the entity.",
+      "public_name": "FIELD_NOT_FOUND",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:FIXTURE_FORMAT_INVALID",
+      "intent": "A non-`.s0ma` fixture file under a configured `test_roots` directory matches a glob declared in `[tool.s0ma].fixtures_format` but fails its declared format (e.g. an invalid line in a `.jsonl` file or a malformed `.yaml` document).",
+      "public_name": "FIXTURE_FORMAT_INVALID",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GENERATED_FILE_DRIFT",
+      "intent": "A generated .py was hand-edited after transpilation (its embedded `# s0ma-output-hash` no longer matches its content). A build will not overwrite it until the .s0ma source says the same thing: move the changes into the source, or pass --force to discard them. `s0ma check` surfaces this as a warning; `s0ma build` refuses, whether or not the source changed since the last build.",
+      "public_name": "GENERATED_FILE_DRIFT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GRAMMAR_MIGRATION_APPLY_FAILED",
+      "intent": "An atomic grammar-migration replacement failed and prior replacements were restored.",
+      "public_name": "GRAMMAR_MIGRATION_APPLY_FAILED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GRAMMAR_MIGRATION_CONFLICT",
+      "intent": "A grammar-migration target changed or ceased to be a regular file after planning.",
+      "public_name": "GRAMMAR_MIGRATION_CONFLICT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GRAMMAR_MIGRATION_OUTPUT_INVALID",
+      "intent": "A proposed grammar migration rewrite failed the parser invariant before apply.",
+      "public_name": "GRAMMAR_MIGRATION_OUTPUT_INVALID",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GRAMMAR_MIGRATION_PARSE_ERROR",
+      "intent": "Whole-project grammar migration preflight could not parse one authored source.",
+      "public_name": "GRAMMAR_MIGRATION_PARSE_ERROR",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GRAMMAR_MIGRATION_ROLLBACK_FAILED",
+      "intent": "The grammar migrator could not restore one or more files after an apply failure.",
+      "public_name": "GRAMMAR_MIGRATION_ROLLBACK_FAILED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:HELPER_NAME_COLLISION",
+      "intent": "Two test bodies in one module define a same-named top-level `def` / `async def`.",
+      "public_name": "HELPER_NAME_COLLISION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:HELPER_PRIVATE_TO_MODULE",
+      "intent": "A production module attempts to consume a `helper` declaration from another module via `uses:`.",
+      "public_name": "HELPER_PRIVATE_TO_MODULE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:HOLLOW_MODEL",
+      "intent": "Verification found zero modeled s0ma modules; roster adoption verifies bytes but cannot answer semantic questions about the code.",
+      "public_name": "HOLLOW_MODEL",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=warning",
+        "strict=warning"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:HOST_RUNTIME_UNDECLARED",
+      "intent": "Generated Python imports s0ma-core and s0ma-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved.",
+      "public_name": "HOST_RUNTIME_UNDECLARED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INCONSISTENT_BLOCK_LIST_INDENT",
+      "intent": "Items in a YAML-style block list use different indentation columns; all '- item' lines under a field must share the same indent.",
+      "public_name": "INCONSISTENT_BLOCK_LIST_INDENT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INTEGRATION_FACTORY_NOT_FOUND",
+      "intent": "An `integration` declaration's `factory:` field names a nerve that does not exist in the same module.",
+      "public_name": "INTEGRATION_FACTORY_NOT_FOUND",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INTEGRATION_FACTORY_NOT_SERVICE",
+      "intent": "An `integration` declaration's `factory:` field names a nerve whose `kind:` is not `SERVICE`.",
+      "public_name": "INTEGRATION_FACTORY_NOT_SERVICE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INTEGRATION_INVALID_MANIFEST_KEY",
+      "intent": "An `integration` declaration's `manifest:` map carries an invalid key or value (keys must be Python identifiers; values must be JSON-serialisable primitives).",
+      "public_name": "INTEGRATION_INVALID_MANIFEST_KEY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INTEGRATION_SMOKE_TEST_NOT_FOUND",
+      "intent": "An `integration` declaration's `smoke_test_primary:` field names a target that is neither a nerve in the same module nor a reachable `uses:` entry.",
+      "public_name": "INTEGRATION_SMOKE_TEST_NOT_FOUND",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INTERFACE_ON_NON_ABSTRACT",
+      "intent": "A nerve declares `interface:` but is not marked `abstract: true`.",
+      "public_name": "INTERFACE_ON_NON_ABSTRACT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INVALID_AXON_RELATION",
+      "intent": "An axon uses a relation outside the allowed set (CALLS, READS, CONSTRUCTS, CONFIGURES, PRODUCES, CONSUMES).",
+      "public_name": "INVALID_AXON_RELATION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INVALID_DATACLASS_INVARIANT",
+      "intent": "A MODEL cell's `dataclass_invariants:` entry is not a syntactically valid Python boolean expression (fails `ast.parse(expr, mode=\"eval\")`). Invariants are metadata for downstream introspection only and are not runtime-evaluated by s0ma, but the parser syntax-checks each entry so malformed expressions are caught at check time rather than crashing a downstream consumer that tries to evaluate them.",
+      "public_name": "INVALID_DATACLASS_INVARIANT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INVALID_KIND",
+      "intent": "A declaration's `kind:` value is not valid for its declaration type.",
+      "public_name": "INVALID_KIND",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INVALID_PROJECT_NAME_FOR_BUILD_DIR",
+      "intent": "The project's `[project].name` cannot be turned into a valid Python identifier for the build dir.",
+      "public_name": "INVALID_PROJECT_NAME_FOR_BUILD_DIR",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INVALID_RAISES_TARGET",
+      "intent": "A nerve's `raises:` references a `requires:` import (must be a component-ref).",
+      "public_name": "INVALID_RAISES_TARGET",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:INVALID_VERSION",
+      "intent": "A module's `version:` value is not valid semver.",
+      "public_name": "INVALID_VERSION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:LAYER_MISMATCH",
+      "intent": "A component's declared layer does not match its module's layer.",
+      "public_name": "LAYER_MISMATCH",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:METADATA_INVALID_KEY",
+      "intent": "A `metadata:` key is not identifier-shaped, or the same key is authored twice in one map.",
+      "public_name": "METADATA_INVALID_KEY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:METADATA_INVALID_VALUE",
+      "intent": "A `metadata:` value is outside the shape set (quoted string | int | float | bool | list of strings) — nested maps, null entries, unquoted bare tokens, and the inline `metadata: {...}` form are rejected.",
+      "public_name": "METADATA_INVALID_VALUE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:METADATA_RESERVED_KEY",
+      "intent": "A `metadata:` key collides with a reserved registration-metadata key the emitter writes (see `RESERVED_COMPONENT_METADATA_KEYS`); set the owning declaration field instead.",
+      "public_name": "METADATA_RESERVED_KEY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=not_applicable",
+        "migration=not_applicable",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=not_applicable"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MISSING_EMBEDDED_EXAMPLE",
+      "intent": "A registered `example` is not embedded in any `doc-guide` (release-mode only).",
+      "public_name": "MISSING_EMBEDDED_EXAMPLE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MISSING_FIELD",
+      "intent": "A required field on a declaration is absent.",
+      "public_name": "MISSING_FIELD",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MISSING_INTERFACE_METHODS",
+      "intent": "A concrete nerve `CONSTRUCTS` an abstract but does not define every method in the abstract's `interface:` list.",
+      "public_name": "MISSING_INTERFACE_METHODS",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MISSING_PACKAGE",
+      "intent": "A `requires:` entry references a Python module that is not importable in the project's environment.",
+      "public_name": "MISSING_PACKAGE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MISSING_PROVIDED_FUNCTION",
+      "intent": "A nerve declares `provides:` names but its body does not define every name as a `def`.",
+      "public_name": "MISSING_PROVIDED_FUNCTION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=not_applicable",
+        "migration=not_applicable",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=not_applicable"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MISSING_PUBLIC_DOC_REF",
+      "intent": "A PUBLIC nerve is not covered by any `doc-ref` (release-mode only).",
+      "public_name": "MISSING_PUBLIC_DOC_REF",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MISSING_RETURN_KEY",
+      "intent": "A nerve declares `returns:` keys but its body's terminal `return {...}` literal omits one or more.",
+      "public_name": "MISSING_RETURN_KEY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=not_applicable",
+        "migration=not_applicable",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=not_applicable"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MISSING_TEST_COVERAGE",
+      "intent": "A PUBLIC nerve has no `test` declaration covering it (release-mode only).",
+      "public_name": "MISSING_TEST_COVERAGE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MIXED_PROVIDES_FORMS",
+      "intent": "A nerve's `provides:` block mixes the flat form ('- name') and the structured form ('- name:' with indented returns:/expects:/guarantees: sub-fields). Pick one form per block.",
+      "public_name": "MIXED_PROVIDES_FORMS",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MOCK_KEY_MISMATCH",
+      "intent": "A `test` declaration's `mocks: [<NerveName>]` target's mock-shape dict in the body exposes a key set that does not match the target nerve's `provides:` (missing or extra keys).",
+      "public_name": "MOCK_KEY_MISMATCH",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MODULE_DEPENDENCY_CYCLE",
+      "intent": "Topological sort detected a cycle in the project module `uses:` graph.",
+      "public_name": "MODULE_DEPENDENCY_CYCLE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MODULE_NAME_COLLISION",
+      "intent": "Two source files declare the same `module <name>` in one project. Rename one with a descriptive suffix — `<name>_test`, `<name>_lib`, `<dir>_<name>`. For test-context modules under a `test_roots` directory, `[tool.s0ma].test_module_name_prefix_by_dir = true` prefixes them by their parent directory instead of a hand-rename.",
+      "public_name": "MODULE_NAME_COLLISION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MODULE_NAME_STEM_MISMATCH",
+      "intent": "The source filename's stem does not match the declared `module <name>`.",
+      "public_name": "MODULE_NAME_STEM_MISMATCH",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MODULE_SHADOWS_STDLIB",
+      "intent": "A module's declared name shadows a Python stdlib module (io, json, csv, …). The stdlib module is already loaded, so the built module cannot be imported by its bare name and cross-module `uses:` resolution fails at runtime — rename the module (and its file) to a non-stdlib name.",
+      "public_name": "MODULE_SHADOWS_STDLIB",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MODULE_SUBSCRIPT",
+      "intent": "A body subscripts a bare `uses: [mod]` module object (`mod[\"key\"]`). A bare uses entry imports the whole module, not a component, so the subscript raises `TypeError: 'module' object is not subscriptable` at runtime — import the symbol with `uses: [mod.symbol]` (emits `from mod import symbol`) instead.",
+      "public_name": "MODULE_SUBSCRIPT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MUTABLE_DEFAULT",
+      "intent": "A body calls `dataclasses.field(default=[...])` or `dataclasses.field(default={...})` with a mutable collection literal as the `default=` argument. Python evaluates `default` once at class-body time and shares the same object across instances. Use `default_factory=list` / `default_factory=dict` instead so each instance gets a fresh collection.",
+      "public_name": "MUTABLE_DEFAULT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:NAMESPACE_COLLISION",
+      "intent": "Two names collide in the same namespace within a module.",
+      "public_name": "NAMESPACE_COLLISION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=warning",
+        "strict=warning"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:NEW_FILE_ROSTER_ONLY",
+      "intent": "A Python file first seen after the project's s0ma baseline is only roster-adopted; author it as a canonical component with author_module.",
+      "public_name": "NEW_FILE_ROSTER_ONLY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:NOT_EXPORTED",
+      "intent": "A `uses:` entry or qualified `depends_on:` target references a component that is not in its module's exports list.",
+      "public_name": "NOT_EXPORTED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:NO_PAGE_COMPOSER_DECLARED",
+      "intent": "The project configures an `exactly_one_per_page` budget but no nerve carries `is_page_composer: true`.",
+      "public_name": "NO_PAGE_COMPOSER_DECLARED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:OVERLAPPING_DISCOVERY_ROOTS",
+      "intent": "The project's `[tool.s0ma].source_roots` and `[tool.s0ma].test_roots` overlap structurally.",
+      "public_name": "OVERLAPPING_DISCOVERY_ROOTS",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:PARSE_DOC_REF_BODY_PROHIBITED",
+      "intent": "A `doc-ref` declaration carries a `---` body (its content is renderer-synthesised).",
+      "public_name": "PARSE_DOC_REF_BODY_PROHIBITED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:PARSE_ERROR",
+      "intent": "Source file failed to parse as a valid .s0ma module.",
+      "public_name": "PARSE_ERROR",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:PARSE_GRAMMAR_FORWARD_INCOMPAT",
+      "intent": "A body authors Python 3.12-only grammar (PEP 701 nested-quote f-string, walrus-in-comprehension, or PEP 695 type-parameter / type-alias) while `[project].requires-python` still admits 3.11.",
+      "public_name": "PARSE_GRAMMAR_FORWARD_INCOMPAT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:PLACEHOLDER_NOT_FOUND",
+      "intent": "A CONSTANT cell's `placeholders:` field declares a marker string (e.g. `__SYSTEM_NAME__`) that is absent from the `content: @file(...)` embedded file's content.",
+      "public_name": "PLACEHOLDER_NOT_FOUND",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=warning"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:POSSIBLE_UNRESOLVED_REFERENCE",
+      "intent": "A backtick-quoted identifier-shaped span in a `doc-guide` body is outside `{{...}}` and may be an unresolved reference.",
+      "public_name": "POSSIBLE_UNRESOLVED_REFERENCE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:PROHIBITED_CONSTRUCT",
+      "intent": "A body uses `exec()`, `eval()`, `__import__()`, or another prohibited dynamic-execution construct.",
+      "public_name": "PROHIBITED_CONSTRUCT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:PROSE_RAW_CODE_BLOCK",
+      "intent": "A `doc-guide` body contains a raw fenced code block (use `{{example::X}}` instead).",
+      "public_name": "PROSE_RAW_CODE_BLOCK",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:PROVIDES_KEY_MISMATCH",
+      "intent": "A nerve declares `provides: [...]` (flat or structured) and its body's terminal `return {...}` literal-string keys do not exactly match the `provides:` set.",
+      "public_name": "PROVIDES_KEY_MISMATCH",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=warning",
+        "strict=warning"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:REQUIRES_DOTTED_LOWERCASE_HINT",
+      "intent": "A `requires:` entry like `uuid.uuid4` is authored in dotted form with a lowercase last segment, while the body uses the last segment as a bare identifier (e.g. `uuid4()`). Suggests the colon-override shape (e.g. `uuid:uuid4`) so the parser emits `from uuid import uuid4` deterministically.",
+      "public_name": "REQUIRES_DOTTED_LOWERCASE_HINT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SEMANTIC_DERIVED_FIELD_AUTHORED",
+      "intent": "Authored source attempted to set a field owned by parsing, resolution, or emission.",
+      "public_name": "SEMANTIC_DERIVED_FIELD_AUTHORED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SEMANTIC_NONE_NOT_ALLOWED",
+      "intent": "A declaration field used none where the normative field matrix requires a value.",
+      "public_name": "SEMANTIC_NONE_NOT_ALLOWED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SEMANTIC_PENDING_DEBT",
+      "intent": "A semantic declaration field is explicitly pending with an authored reason; it earns zero completeness credit and blocks strict/release acceptance.",
+      "public_name": "SEMANTIC_PENDING_DEBT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SEMANTIC_PENDING_INVALID",
+      "intent": "A pending semantic-state value is malformed; use pending with one quoted reason.",
+      "public_name": "SEMANTIC_PENDING_INVALID",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SEMANTIC_PENDING_NOT_ALLOWED",
+      "intent": "A structural or otherwise non-deferrable declaration field used pending.",
+      "public_name": "SEMANTIC_PENDING_NOT_ALLOWED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SEMANTIC_PENDING_REASON_EMPTY",
+      "intent": "A pending semantic-state value has an empty or whitespace-only reason.",
+      "public_name": "SEMANTIC_PENDING_REASON_EMPTY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SEMANTIC_REQUIRED_STATE_OMITTED",
+      "intent": "A semantic-required declaration field was omitted instead of carrying an explicit value, none, or reasoned pending state.",
+      "public_name": "SEMANTIC_REQUIRED_STATE_OMITTED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SERVES_AS_COLLISION",
+      "intent": "Two declarations carry the same `serves_as:` value (served names form one flat namespace, validated per module and per project build).",
+      "public_name": "SERVES_AS_COLLISION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:SERVES_AS_INVALID",
+      "intent": "A `serves_as:` value is not identifier-shaped — the served name becomes the emitted callable's `__name__`.",
+      "public_name": "SERVES_AS_INVALID",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:STALE_GENERATED_CONFTEST",
+      "intent": "The project's generated `conftest.py` was emitted by an older s0ma-dsl version and may have diverged from the runtime contract.",
+      "public_name": "STALE_GENERATED_CONFTEST",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:TEMPLATE_SYNTAX_ERROR",
+      "intent": "A template expression `{{...}}` or `covers:` filter fails the narrow doc-subsystem grammar.",
+      "public_name": "TEMPLATE_SYNTAX_ERROR",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:TEST_NOT_COLLECTED",
+      "intent": "A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`.",
+      "public_name": "TEST_NOT_COLLECTED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:TEST_VISIBILITY_VIOLATION",
+      "intent": "A production module attempts to `uses:` a `visibility: TEST` component cross-module.",
+      "public_name": "TEST_VISIBILITY_VIOLATION",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNDECLARED_PLACEHOLDER",
+      "intent": "A CONSTANT cell's `content: @file(...)` embedded content contains a placeholder-shaped string matching `__[A-Z][A-Z0-9_]*__` that is not listed in the cell's `placeholders:` field.",
+      "public_name": "UNDECLARED_PLACEHOLDER",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNKNOWN_FIELD",
+      "intent": "A declaration carries a field that kind of declaration does not have — usually a misspelt name, or a field that belongs to another kind. s0ma does not read the line, so whatever it was meant to say is not said; correct the name or remove the line.",
+      "public_name": "UNKNOWN_FIELD",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNRECOGNIZED_LINE",
+      "intent": "A line inside a declaration's description is not a field, not part of a block, and not a comment — usually a field indented by the wrong number of spaces. s0ma does not read the line; start a field with exactly four spaces, or remove the line.",
+      "public_name": "UNRECOGNIZED_LINE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNREGISTERED_EXAMPLE",
+      "intent": "An `examples:` entry or `{{example::X}}` token references an unregistered example.",
+      "public_name": "UNREGISTERED_EXAMPLE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNREGISTERED_SURFACE",
+      "intent": "A caller-discovered declaration or source module is absent from the canonical component registry.",
+      "public_name": "UNREGISTERED_SURFACE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNRESOLVED_REFERENCE",
+      "intent": "A `{{kind::name}}` token references an entity that does not exist in the project registry.",
+      "public_name": "UNRESOLVED_REFERENCE",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNSUPPORTED_IR_SCHEMA_MAJOR",
+      "intent": "A canonical IR reader received an unsupported schema major and requires migration and rebuild.",
+      "public_name": "UNSUPPORTED_IR_SCHEMA_MAJOR",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:VESTIGIAL_IMPORT",
+      "intent": "A declared `uses:` or `requires:` entry has no evidence of use in the consuming module's bodies.",
+      "public_name": "VESTIGIAL_IMPORT",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:VISIBILITY_MISMATCH",
+      "intent": "A component's visibility does not match its module's exports list.",
+      "public_name": "VISIBILITY_MISMATCH",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_prompt",
+      "component_refs": [
+        "component:s0ma_mcp.prompts.author_module_prompt"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:prompt/author_module",
+      "intent": "Author a new s0ma module end to end.",
+      "public_name": "author_module",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_prompt",
+      "component_refs": [
+        "component:s0ma_mcp.prompts.diagnose_fault_prompt"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:prompt/diagnose_fault",
+      "intent": "Diagnose an observed runtime fault from self-knowledge first.",
+      "public_name": "diagnose_fault",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_prompt",
+      "component_refs": [
+        "component:s0ma_mcp.prompts.feedback_prompt"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:prompt/feedback",
+      "intent": "Send the user's feedback about s0ma to the s0ma team.",
+      "public_name": "feedback",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_prompt",
+      "component_refs": [
+        "component:s0ma_mcp.prompts.fix_check_failures_prompt"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:prompt/fix_check_failures",
+      "intent": "Diagnose and fix s0ma check failures until the project is clean.",
+      "public_name": "fix_check_failures",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_prompt",
+      "component_refs": [
+        "component:s0ma_mcp.prompts.migrate_project_prompt"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:prompt/migrate_project",
+      "intent": "Migrate a pre-consolidation project to the current s0ma surface.",
+      "public_name": "migrate_project",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_resource",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://docs/architecture",
+      "intent": "How s0ma's own architecture is documented, and where to read it.",
+      "public_name": "s0ma://docs/architecture",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_resource",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://docs/compliance-rules",
+      "intent": "Compliance rules (Appendix C) — every rule for s0ma-compliant code.",
+      "public_name": "s0ma://docs/compliance-rules",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.docs_concepts_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://docs/concepts",
+      "intent": "Every s0ma concept, one line each.",
+      "public_name": "s0ma://docs/concepts",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.docs_index_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://docs/index",
+      "intent": "What s0ma can be asked about, and how to ask.",
+      "public_name": "s0ma://docs/index",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.docs_journeys_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://docs/journeys",
+      "intent": "Every worked path through s0ma, step by step.",
+      "public_name": "s0ma://docs/journeys",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_resource",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://docs/registered-docs",
+      "intent": "Every registered doc-ref, doc-guide, and example.",
+      "public_name": "s0ma://docs/registered-docs",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_resource",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://docs/user-guide",
+      "intent": "The complete s0ma user guide — how to build applications with s0ma.",
+      "public_name": "s0ma://docs/user-guide",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.errors_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://guide/errors",
+      "intent": "The s0ma diagnostic error catalog (FR-MCP-10).",
+      "public_name": "s0ma://guide/errors",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.getting_started_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://guide/getting-started",
+      "intent": "What s0ma is, who it fits, and how to prove its value.",
+      "public_name": "s0ma://guide/getting-started",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.patterns_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://guide/patterns",
+      "intent": "The s0ma DSL patterns guide — idioms for real applications.",
+      "public_name": "s0ma://guide/patterns",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.quick_reference_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://guide/quick-reference",
+      "intent": "The s0ma quick reference: every declaration, line by line.",
+      "public_name": "s0ma://guide/quick-reference",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.quick_reference_machine_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://guide/quick-reference.json",
+      "intent": "The s0ma quick reference as data (JSON, schema s0ma-quick-reference@1).",
+      "public_name": "s0ma://guide/quick-reference.json",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.self_prompting_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://guide/self-prompting",
+      "intent": "Runtime self-prompting and verified self_inspect wiring.",
+      "public_name": "s0ma://guide/self-prompting",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.survival_card_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://guide/survival-card",
+      "intent": "The s0ma survival card (under 4 KB) — read this FIRST, hold it in context.",
+      "public_name": "s0ma://guide/survival-card",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.system_prompt_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://guide/system-prompt",
+      "intent": "The s0ma DSL coding-agent system prompt.",
+      "public_name": "s0ma://guide/system-prompt",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.changelog_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://meta/changelog",
+      "intent": "The s0ma platform changelog — what's new, per version (FR-MCP-10).",
+      "public_name": "s0ma://meta/changelog",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.version_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://meta/version",
+      "intent": "The installed s0ma toolchain versions as JSON (FR-MCP-10).",
+      "public_name": "s0ma://meta/version",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_resource",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://model/component-template",
+      "intent": "A real component from the registry formatted as a copyable template.",
+      "public_name": "s0ma://model/component-template",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_resource",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://model/docs-for/{component}",
+      "intent": "Doc-refs and doc-guides covering ``component``.",
+      "public_name": "s0ma://model/docs-for/{component}",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_resource",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://model/examples-for/{component}",
+      "intent": "Canonical examples demonstrating ``component``.",
+      "public_name": "s0ma://model/examples-for/{component}",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_resource",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://model/registry-summary",
+      "intent": "Live system overview from the self-model.",
+      "public_name": "s0ma://model/registry-summary",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.runbook_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://project/runbook",
+      "intent": "The project's operational runbook (O1) as markdown.",
+      "public_name": "s0ma://project/runbook",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.self_model_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://self/model",
+      "intent": "The authoring server's live self-model (FR-MCP-7) as JSON.",
+      "public_name": "s0ma://self/model",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_resource",
+      "component_refs": [
+        "component:s0ma_mcp.resources.spec_resource"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:resource/s0ma://spec/current",
+      "intent": "The current s0ma DSL language specification (normative).",
+      "public_name": "s0ma://spec/current",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.adopt_file_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/adopt_file",
+      "intent": "When migrating old Python, record it as interim roster debt.",
+      "public_name": "adopt_file",
+      "side_effects": [
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.build_project_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/build_project",
+      "intent": "After check is clean, build the complete configured project.",
+      "public_name": "build_project",
+      "side_effects": [
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.check_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/check",
+      "intent": "After editing intent or code, validate before building.",
+      "public_name": "check",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/check_health",
+      "intent": "Get the system's current health status and anomalies.",
+      "public_name": "check_health",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.describe_server_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/describe_server",
+      "intent": "When you do not know which s0ma surface fits, ask the server.",
+      "public_name": "describe_server",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/describe_system",
+      "intent": "Get a natural language overview of the system architecture.",
+      "public_name": "describe_system",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/explain_dependency",
+      "intent": "Explain why component 'source' depends on component 'target'.",
+      "public_name": "explain_dependency",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/find_component",
+      "intent": "Get detailed information about a specific component.",
+      "public_name": "find_component",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/get_compliance_checklist",
+      "intent": "Get the quick compliance checklist for creating/modifying components.",
+      "public_name": "get_compliance_checklist",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/get_component_example",
+      "intent": "Get a real component from the registry as a copyable template.",
+      "public_name": "get_component_example",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/get_examples_for",
+      "intent": "List canonical examples demonstrating a component.",
+      "public_name": "get_examples_for",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/get_extension_points",
+      "intent": "Find where new components can be added safely.",
+      "public_name": "get_extension_points",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/get_impact",
+      "intent": "Analyze what would be affected if a component changes.",
+      "public_name": "get_impact",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.init_project_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/init_project",
+      "intent": "When project_status says false, add the canonical project table.",
+      "public_name": "init_project",
+      "side_effects": [
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.inspect_module_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/inspect_module",
+      "intent": "Before grepping for where X is handled, inspect the self-model.",
+      "public_name": "inspect_module",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/learn_about_s0ma",
+      "intent": "Learn how to use the s0ma framework.",
+      "public_name": "learn_about_s0ma",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.learn_s0ma_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/learn_s0ma",
+      "intent": "Ask s0ma one question about s0ma, and get a short answer back.",
+      "public_name": "learn_s0ma",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.migrate_ext_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/migrate_ext",
+      "intent": "When legacy extension names remain, preview and apply their migration.",
+      "public_name": "migrate_ext",
+      "side_effects": [
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.prepare_feedback_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/prepare_feedback",
+      "intent": "Write up feedback about s0ma for the user to review — read-only.",
+      "public_name": "prepare_feedback",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.project_status_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/project_status",
+      "intent": "When landing in a tree or diagnosing it, orient in one call.",
+      "public_name": "project_status",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/query_system",
+      "intent": "Ask a natural language question about the system.",
+      "public_name": "query_system",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.run_example_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/run_example",
+      "intent": "When documentation claims behavior, run its executable example.",
+      "public_name": "run_example",
+      "side_effects": [
+        "subprocess",
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.scaffold_module_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/scaffold_module",
+      "intent": "When starting new behavior, create a valid intent-first component.",
+      "public_name": "scaffold_module",
+      "side_effects": [
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.submit_feedback_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/submit_feedback",
+      "intent": "Ask the user to approve this exact feedback data, then send it.",
+      "public_name": "submit_feedback",
+      "side_effects": [
+        "approval",
+        "network",
+        "write"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "mcp_tool",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/suggest_fix",
+      "intent": "Given an anomaly description, suggest how to fix it.",
+      "public_name": "suggest_fix",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.transpile_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/transpile",
+      "intent": "When iterating on one source, emit its Python, IR, and source map.",
+      "public_name": "transpile",
+      "side_effects": [
+        "write"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "mcp_tool",
+      "component_refs": [
+        "component:s0ma_mcp.tools.verify_host_tool"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "mcp:tool/verify_host",
+      "intent": "After static checks pass, prove imports in the app's real Python.",
+      "public_name": "verify_host",
+      "side_effects": [
+        "approval",
+        "subprocess",
+        "write"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.HASH_ALGORITHM_VERSION",
+      "intent": "",
+      "public_name": "s0ma.HASH_ALGORITHM_VERSION",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.__version__",
+      "intent": "",
+      "public_name": "s0ma.__version__",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.canonicalize",
+      "intent": "Produce deterministic bytes for ``value``.",
+      "public_name": "s0ma.canonicalize",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.content_hash",
+      "intent": "Compute the transitive content hash for a doc registration.",
+      "public_name": "s0ma.content_hash",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.initialize",
+      "intent": "Initialize the s0ma framework.",
+      "public_name": "s0ma.initialize",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.register_doc_guide",
+      "intent": "Register a ``doc-guide`` declaration in the global registry.",
+      "public_name": "s0ma.register_doc_guide",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.register_doc_ref",
+      "intent": "Register a ``doc-ref`` declaration in the global registry.",
+      "public_name": "s0ma.register_doc_ref",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.register_example",
+      "intent": "Register an ``example`` declaration in the global registry.",
+      "public_name": "s0ma.register_example",
+      "side_effects": []
+    },
+    {
+      "binding": "exception",
+      "channel": "python",
+      "component_refs": [],
+      "errors": [],
+      "governed_by": [],
+      "id": "python:s0ma.verify",
+      "intent": "Run the full verification suite.",
+      "public_name": "s0ma.verify",
+      "side_effects": []
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/anomalies",
+      "intent": "Get current verification anomalies (code-model discrepancies).",
+      "public_name": "GET /self/anomalies",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry",
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/component/{name}",
+      "intent": "Get detailed information about a specific component.",
+      "public_name": "GET /self/component/{name}",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/components",
+      "intent": "List all registered components with their metadata.",
+      "public_name": "GET /self/components",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry",
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/doc/{name}",
+      "intent": "Detailed view of a single doc-ref or doc-guide. Looks up ``name`` first in the doc-ref store, then in the doc-guide store. Returns 404 if the name is not registered as either.",
+      "public_name": "GET /self/doc/{name}",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry",
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/docs",
+      "intent": "List every registered doc-ref, doc-guide, and example. Combines the three documentation-subsystem stores into a single natural-language overview plus structured data.",
+      "public_name": "GET /self/docs",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry",
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/drift",
+      "intent": "Recompute the transitive content hash for every registered doc-ref and doc-guide, compare it against the stored hash, and report divergence as drift. Degrades to a hash-presence report when nothing is hashed yet.",
+      "public_name": "GET /self/drift",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/example/{name}",
+      "intent": "Detailed view of a single example registration, including its body and the entities it demonstrates. Returns 404 if the name is not a registered example.",
+      "public_name": "GET /self/example/{name}",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/examples",
+      "intent": "List every registered example with its ``runs_in`` mode and the entities it demonstrates.",
+      "public_name": "GET /self/examples",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry",
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/extensions",
+      "intent": "Find where new components can be added safely.",
+      "public_name": "GET /self/extensions",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/graph",
+      "intent": "Get the full dependency graph in both JSON adjacency list and Graphviz DOT format.",
+      "public_name": "GET /self/graph",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/health",
+      "intent": "Get the system's current health status and verification results.",
+      "public_name": "GET /self/health",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry",
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/impact/{name}",
+      "intent": "Analyze what would be affected if a component changes.",
+      "public_name": "GET /self/impact/{name}",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.registry.ComponentRegistry",
+        "component:s0ma.self_model.interface.SelfModelInterface"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:GET:/self/overview",
+      "intent": "Get a natural language overview of the system architecture.",
+      "public_name": "GET /self/overview",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "rest",
+      "component_refs": [
+        "component:s0ma.api.query_engine.QueryEngine"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "rest:POST:/self/query",
+      "intent": "Ask a natural language question about the system. Supports questions about components, dependencies, health, impact, extension points, and more.",
+      "public_name": "POST /self/query",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "studi0",
+      "component_refs": [
+        "component:s0ma_studi0.studi0_server.route_request",
+        "component:s0ma_studi0.studi0_state.graph_document",
+        "component:s0ma_studi0.studi0_state.read_snapshot"
+      ],
+      "errors": [
+        "NOT_BUILT"
+      ],
+      "governed_by": [
+        "authority:declared/studi0.serving-contract",
+        "authority:declared/studi0.watch-contract",
+        "authority:declared/studi0.wire-graph"
+      ],
+      "id": "studi0:action/api/graph",
+      "intent": "The whole component graph of the project being shown, wrapped in the sequence number it belongs to, fetched only when the sequence number says it is worth fetching.",
+      "public_name": "/api/graph",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "studi0",
+      "component_refs": [
+        "component:s0ma_studi0.studi0_server.route_request",
+        "component:s0ma_studi0.studi0_state.read_snapshot",
+        "component:s0ma_studi0.studi0_state.state_document"
+      ],
+      "errors": [],
+      "governed_by": [
+        "authority:declared/studi0.serving-contract",
+        "authority:declared/studi0.watch-contract",
+        "authority:declared/studi0.wire-state"
+      ],
+      "id": "studi0:action/api/state",
+      "intent": "The cheap poll: which reading this is, whether the build still matches the sources it was built from, which modules have moved on, and what an agent has said it is doing.",
+      "public_name": "/api/state",
+      "side_effects": [
+        "read"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "studi0",
+      "component_refs": [
+        "component:s0ma_studi0.sh0w_assets.APP_CSS",
+        "component:s0ma_studi0.studi0_server.route_request"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "studi0:action/assets/app.css",
+      "intent": "The sh0w page's stylesheet, served as the build embedded it.",
+      "public_name": "/assets/app.css",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "studi0",
+      "component_refs": [
+        "component:s0ma_studi0.sh0w_assets.APP_JS",
+        "component:s0ma_studi0.studi0_server.route_request"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "studi0:action/assets/app.js",
+      "intent": "The sh0w page's script, served as the build embedded it — the whole of the viewer's behaviour.",
+      "public_name": "/assets/app.js",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "bound",
+      "channel": "studi0",
+      "component_refs": [
+        "component:s0ma_studi0.sh0w_assets.INDEX_HTML",
+        "component:s0ma_studi0.studi0_server.route_request"
+      ],
+      "errors": [],
+      "governed_by": [],
+      "id": "studi0:action/index",
+      "intent": "The sh0w page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API.",
+      "public_name": "/",
+      "side_effects": [
+        "none"
+      ]
+    }
+  ],
+  "inventory": "surfaces",
+  "schema": "s0ma-docs-inventory@1",
+  "source": {
+    "model_schema": "s0ma-docs-model@1",
+    "release_version": "0.19.1",
+    "snapshot_hash": "sha256:46cb0cce5f7c07cf"
+  }
+}

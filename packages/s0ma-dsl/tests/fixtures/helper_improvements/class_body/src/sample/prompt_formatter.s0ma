@@ -1,0 +1,51 @@
+module prompt_formatter
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Format prompts with a module-private cache helper whose body is a class."
+    exports: [format_prompt]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+helper _LocalCache :: APPLICATION
+    intent: "Module-private cache for formatted prompts."
+    ---
+    class _LocalCache:
+        def __init__(self):
+            self._data = {}
+        def get(self, key):
+            return self._data.get(key)
+        def set(self, key, value):
+            self._data[key] = value
+
+nerve format_prompt :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Format a prompt, caching results in a module-private _LocalCache."
+    expects: "A template and a topic."
+    guarantees: "Returns the formatted prompt string."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def format_prompt(template: str, topic: str) -> str:
+        cache = _LocalCache()
+        cached = cache.get(topic)
+        if cached is not None:
+            return cached
+        result = template.format(topic=topic)
+        cache.set(topic, result)
+        return result

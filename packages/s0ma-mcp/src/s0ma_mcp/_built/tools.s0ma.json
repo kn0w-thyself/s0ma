@@ -1,0 +1,2526 @@
+{
+  "components": [
+    {
+      "canonical_id": "tools::_ToolFn",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "typing.TypeVar bound to Callable[..., dict[str, Any]]."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "TypeVar bound to the tool-callable shape so the _safe boundary decorator preserves each tool's exact signature under mypy --strict."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 21,
+        "start_line": 13
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::_ARTIFACT_SUFFIXES",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "tuple[str, ...] constant. Value: ('.py', '.s0ma.json', '.s0ma.map')."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Artifact suffixes a successful transpile emits per .s0ma source, used to locate emitted files for the transpile tool's artifacts list."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 31,
+        "start_line": 23
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::_MANIFEST_NAME",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: build.s0ma.json."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The build manifest filename (INV-3) the artifact collector and manifest finder resolve inside candidate build directories."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 41,
+        "start_line": 33
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::_TOOL_RESULT_SCHEMA",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant. Value: s0ma-tool-result@1."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The frozen common MCP tool-body result schema stamped on every successful or failed tool-body response before it reaches FastMCP."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 51,
+        "start_line": 43
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::_DERIVED_BANNER",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant, fixed word for word: an acceptance test pins its exact text."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The exact authority warning inspect_module places beside every static roster-derived draft so a client cannot mistake it for canonical IR."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 63,
+        "start_line": 53
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::_TOOLCHAIN_NOTE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant carried as the 'note' key of project_status results."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "One-sentence orientation note project_status attaches to every answer: in agent environments these MCP tools ARE the toolchain, so an agent verifies its .s0ma edits through check and build_project instead of shelling out to the s0ma CLI, which is usually not on PATH there, and then editing without verification."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 77,
+        "start_line": 65
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::_SURVIVAL_RULES",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "tuple[str, ...] constant carried through _survival_rules() as the 'rules' key of the init_project, scaffold_module, describe_server and project_status results; project_status carries it because it is the tool a fresh agent reaches for first. _survival_rules() appends the docs line (_DOCS_RULE) to every rendered list, and at most two conditional lines around it: the feedback-offer line, above the docs line, while the project the call names declares [tool.s0ma] feedback = suggest, and the narration line, last, while a live studi0 is watching that project; with neither condition met the rendered list is exactly this tuple followed by the docs line."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The survival rules, inline: the literal few-line ruleset init_project, scaffold_module, describe_server and project_status embed in their result dicts, so the rules travel in the answer the agent already has and not only behind the s0ma://guide/survival-card URI. Rule 1 cites the enforced GENERATED_FILE_DRIFT guard; the ops rule forbids restoring committed versions of runtime data; the diagnose-from-observations rule keeps an agent that reads runbook_declared: false from blaming a live fault on the undeclared runbook; the check-attribution rule makes a NEW check failure after an edit the editing agent's to fix or justify, since check labels each failure NEW or PRE-EXISTING against the last green baseline and 'pre-existing' is claimable only when the output says so; and the durable-state-migration rule asks for a migration of existing data whenever durable-state shape changes, because a change made only in the creation path (CREATE TABLE IF NOT EXISTS) never reaches a store that already exists — the patterns guide carries its full case."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 125,
+        "start_line": 79
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::_DOCS_RULE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant, one line, at most 319 bytes as UTF-8. Appended by _survival_rules() to every rules-bearing tool result; deliberately NOT part of _SURVIVAL_RULES, which is also the text of static artifacts served where no MCP tool exists."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The one line every rules-bearing tool result carries about s0ma's own documentation: the topic query, one worked id, and the index to start from when you do not know what to ask for. It rides the tool result because a rule carried there reaches the agent where the same text served as a resource does not, and arriving is not the same as being read, so the line is bounded (319 bytes, the declared budget) and sits below the conditional feedback line and above the frozen narration line."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 141,
+        "start_line": 127
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::_run_cli",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "argv is a complete s0ma CLI argument vector"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never lets a SystemExit raised by the in-process CLI propagate to the tool that called it."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns (exit_code, stdout, stderr) with SystemExit captured, never propagated"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "wraps": "s0ma_dsl.cli.main.S0maCLI"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Invokes the s0ma DSL CLI in-process with captured stdout/stderr so tools receive the toolchain's own structured JSON diagnostics byte-for-byte"
+      },
+      "kind": "ADAPTER",
+      "location": {
+        "end_line": 529,
+        "start_line": 493
+      },
+      "visibility": "INTERNAL"
+    },
+    {
+      "canonical_id": "tools::check_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "path (file or directory) or project_root or both are provided"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never emits artifacts while it validates source, and never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Check s0ma source"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "check"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Validates .s0ma source without emitting artifacts and returns structured diagnostics with per-finding remediation — the agent's inner loop"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 872,
+        "start_line": 724
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::verify_host_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a real built s0ma project; python, when supplied, identifies an executable host interpreter"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never presents the project code it imports as sandboxed, and never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns s0ma-host-verification@1 evidence and never raises across the MCP boundary; imported trusted project code may perform arbitrary side effects"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=true",
+            "idempotentHint=false",
+            "openWorldHint=true"
+          ],
+          "mcp_tool_title": "Verify imports in the app's Python"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "verify_host"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Explicitly executes each built production module under the host application's selected Python and reports interpreter, dependency, and isolated import evidence without pretending project code is sandboxed"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 967,
+        "start_line": 874
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::inspect_module_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a directory; module, when given, names a built module"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key and preserves canonical semantic-state tags; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Inspect the self-model"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "inspect_module"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Surfaces a built module's tagged .s0ma.json IR self-model (value/none/pending states preserved), or a per-module survey of the whole project when no module is named"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1133,
+        "start_line": 1045
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::describe_server_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the s0ma_mcp self-model registry is importable"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never describes a component graph that can drift from the MCP surface this server serves, and never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_dependency": [
+            "self_registry"
+          ],
+          "mcp_tool_annotations": [
+            "readOnlyHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Describe this server"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "describe_server"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Answers 'what is this server and what can it do' from the live self-model: the registered component graph plus an LLM-ready text rendering"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1180,
+        "start_line": 1135
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::learn_s0ma_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "topic is a non-empty question — a topic id, a term, or a category word"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never calls a model or reaches the network to answer, and never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary; offline and deterministic — the same question returns the same answer from the same build, with no model and no network in the path"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_dependency": [
+            "s0ma://docs/index",
+            "s0ma://docs/concepts",
+            "s0ma://docs/journeys"
+          ],
+          "mcp_tool_annotations": [
+            "readOnlyHint=true",
+            "openWorldHint=false",
+            "idempotentHint=true"
+          ],
+          "mcp_tool_title": "Ask about s0ma"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "learn_s0ma"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Answers one question about s0ma itself from the documentation snapshot packaged with this release: resolves the asked-for topic by exact id, then by name, then by category, renders the bounded answer with its own build identity, and names both the committed page and the resource carrying the rest"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1376,
+        "start_line": 1274
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::transpile_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "source_path exists; source_path and any output_dir lie inside the project tree"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=false",
+            "idempotentHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Transpile one source file"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "transpile"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Compiles .s0ma source (one file or directory) into .py plus .s0ma.json IR plus .s0ma.map artifacts via the DSL pipeline"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1529,
+        "start_line": 1443
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::build_project_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a directory"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=false",
+            "idempotentHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Build the project"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "build_project"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Runs a full cross-module s0ma build into the project's build dir and reports the build.s0ma.json manifest summary"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1666,
+        "start_line": 1548
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::adopt_file_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a directory"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never records a file without a non-empty, one-line authored intent, and never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=false",
+            "idempotentHint=false",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Record a legacy Python file"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "adopt_file"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Records a pre-existing non-generated file as interim migration intake with mandatory authored intent, then points to author_module because roster adoption is not a semantic component model"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1758,
+        "start_line": 1668
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::migrate_ext_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a directory"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never changes the project unless the caller turns the default dry run off, never clobbers an existing file, and never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=false",
+            "idempotentHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Migrate old file extensions"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "migrate_ext"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Migrates a pre-consolidation project to the .s0ma extension family and [tool.s0ma] config — dry-run by default, refuse-don't-clobber"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1822,
+        "start_line": 1760
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::scaffold_module_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a directory; module_name is non-empty; any output_dir lies inside the project tree"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=false",
+            "idempotentHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Start a new component"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "scaffold_module"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Emits a minimal known-valid .s0ma module skeleton from the DSL's own template and validates it with check before returning"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 1961,
+        "start_line": 1824
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::init_project_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a directory; any existing pyproject.toml is valid TOML"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never rewrites a project that is already initialized, and never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary; idempotent — an already-initialized project is an ok answer with changed: false and nothing is rewritten"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "composes": [
+            "s0ma_dsl.cli.new_project._tool_s0ma_table",
+            "s0ma_dsl.project.S0maProject.discover"
+          ],
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=false",
+            "idempotentHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Set up a s0ma project"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "init_project"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Makes a directory a s0ma project by writing the [tool.s0ma] table into its pyproject.toml (creating a minimal pyproject when none exists) — the bootstrap step no other tool performs, so an agent is never left scaffolding modules into a directory that is not a project"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 2135,
+        "start_line": 1963
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::project_status_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a directory"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key and semantic_debt inventory; never raises across the MCP boundary; a non-project directory is a valid ok answer, not an error"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "composes": [
+            "s0ma_dsl.project.S0maProject.discover",
+            "s0ma_dsl.codegen.build_manifest.load_manifest",
+            "s0ma_dsl.codegen.build_manifest.compute_file_hash",
+            "s0ma_dsl.codegen.build_manifest.BuildManifest.resolve_source",
+            "s0ma_dsl.cache.extract_module_name",
+            "s0ma_dsl.cli.main._discover_s0ma_files"
+          ],
+          "mcp_tool_annotations": [
+            "readOnlyHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Project status"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "project_status"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Answers one-call orientation: is this a s0ma project, which mode and authoring posture, what is built or stale, which tagged pending semantic states block release, and the suggested next action"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 2567,
+        "start_line": 2261
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::run_example_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is a directory; source_path, when given, exists"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never runs an example in the server's own process or without a timeout, and never raises across the MCP boundary."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "composes": [
+            "s0ma.examples.ExampleRunner",
+            "s0ma.registry.ComponentRegistry",
+            "s0ma_dsl.cli.docs_commands._parse_and_validate_project"
+          ],
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=true",
+            "idempotentHint=false",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Run a documented example"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "run_example"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Discovers example declarations and executes each in its own timeout-guarded subprocess via core's isolated example runner"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 2706,
+        "start_line": 2569
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::prepare_feedback_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "packages/s0ma-mcp/tests/test_feedback_tools.py — purity (no ~/.s0ma writes, sockets blocked), redaction report, and hash continuity into submit_feedback"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "summary, category and impact carry the user's own account of the problem; mcp_client is supplied by the bootstrap binding layer, never by the caller"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never writes to disk, mints the installation pseudonym or opens a socket."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Never writes to disk — the installation pseudonym is read, never minted, so the read-only claim is literal — never opens a socket, and returns the redacted report byte-identical to what submit_feedback will hash, show, and send"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=true",
+            "openWorldHint=false"
+          ],
+          "mcp_tool_title": "Prepare feedback for review"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "prepare_feedback"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Composes and locally redacts one s0ma-feedback@1 report from the user's own words and returns the exact data plus its fingerprint — the review step of the feedback journey, and deliberately the only one that is pure: it saves nothing and contacts nothing"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 2953,
+        "start_line": 2796
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::submit_feedback_tool",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "packages/s0ma-mcp/tests/test_feedback_tools.py — accept/decline/cancel, absent elicitation capability, hash mismatch, and transport failure over an in-process client session"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "envelope and payload_sha256 are the unmodified pair prepare_feedback returned; mcp_approval carries the user's decision and is supplied by the bootstrap binding layer, never by the caller"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never sends a report the user has not explicitly accepted, or one it has not proved is the report prepare_feedback produced."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Sends only on an explicit accept, reports a receipt only when its payload_sha256 matches what was approved, and saves a draft on refusal, cancellation, absent approval, and transport failure alike"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "mcp_tool_annotations": [
+            "readOnlyHint=false",
+            "destructiveHint=false",
+            "idempotentHint=true",
+            "openWorldHint=true"
+          ],
+          "mcp_tool_title": "Send approved feedback"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        },
+        "serves_as": "submit_feedback"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Proves the report it was handed is the one prepare_feedback produced, obtains the user's own approval through the client's approval interaction, and only then sends it — saving a local draft on every other outcome so nothing a user wrote is ever lost and nothing they did not approve is ever sent"
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 3163,
+        "start_line": 2955
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "tools::test_read_only_tools_answer_structurally",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "check_tool",
+            "inspect_module_tool",
+            "describe_server_tool",
+            "project_status_tool",
+            "prepare_feedback_tool"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) of the FR-MCP-2 boundary on the read-only tools: live and invalid inputs alike come back as structured ok-keyed dicts with actionable error text, never an exception — exercised on the built module pytest imports. prepare_feedback belongs here because it is genuinely read-only: an unsendable report is refused structurally without writing a byte of the user's state, which is also what makes it safe to run in the ordinary suite on every CI OS."
+      },
+      "kind": null,
+      "location": {
+        "end_line": 3193,
+        "start_line": 3165
+      },
+      "visibility": null
+    },
+    {
+      "canonical_id": "tools::test_learn_s0ma_answers_one_topic_within_its_budget",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "learn_s0ma_tool"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that the topic query resolves an exact id, a bare term and a category word to the same kind of bounded answer, that the answer carries the build it came from and stays inside the declared 750-byte channel budget, that the page and the resource it points at are named, and that a question this build cannot place comes back with the nearest ids rather than a guess — exercised on the built module pytest imports."
+      },
+      "kind": null,
+      "location": {
+        "end_line": 3233,
+        "start_line": 3195
+      },
+      "visibility": null
+    },
+    {
+      "canonical_id": "tools::test_writing_tools_refuse_invalid_targets",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "transpile_tool",
+            "build_project_tool",
+            "adopt_file_tool",
+            "scaffold_module_tool",
+            "init_project_tool",
+            "migrate_ext_tool",
+            "run_example_tool",
+            "verify_host_tool",
+            "submit_feedback_tool"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) of the FR-MCP-2 boundary on the writing/executing tools: missing roots, missing sources, and a feedback report that is not the one prepare_feedback produced all produce structured refusals without raising and without touching disk — exercised on the built module pytest imports. submit_feedback refuses on that path before it reads a token, asks anyone to approve anything, or saves a draft, so this covers its boundary without a network or a state directory."
+      },
+      "kind": null,
+      "location": {
+        "end_line": 3265,
+        "start_line": 3235
+      },
+      "visibility": null
+    }
+  ],
+  "doc_guides": [
+    {
+      "asserts": {
+        "state": "value",
+        "value": [
+          {
+            "lhs": {
+              "field_path": [
+                "visibility"
+              ],
+              "kind": "nerve",
+              "name": "describe_server_tool"
+            },
+            "operator": "==",
+            "rhs": "PUBLIC",
+            "type": "comparison"
+          },
+          {
+            "lhs": {
+              "field_path": [
+                "visibility"
+              ],
+              "kind": "nerve",
+              "name": "self_model_resource"
+            },
+            "operator": "==",
+            "rhs": "PUBLIC",
+            "type": "comparison"
+          }
+        ]
+      },
+      "body": {
+        "state": "value",
+        "value": "    # The server that describes itself\n\n    Every tool, resource, and prompt this MCP server exposes is authored as a declaration in a s0ma module, transpiled to Python, and registered as a component when the package imports. The FastMCP surface is then derived from that registry: a component carrying MCP metadata is served because it is registered, so the served surface and the self-model cannot drift apart.\n\n    Two surfaces let you watch it happen. The {{nerve::describe_server_tool}} tool answers with the live component graph plus a text rendering an agent can read directly, and the {{nerve::self_model_resource}} resource serves the same graph as a JSON document.\n\n    {{example::describe_the_running_server}}\n\n    The assertion in the example is the whole point: the server you are talking to is the one describing itself, from the same registry its own build registered."
+      },
+      "content_hash": "",
+      "covers": {
+        "state": "value",
+        "value": [
+          {
+            "field_path": [],
+            "kind": "nerve",
+            "name": "describe_server_tool"
+          },
+          {
+            "field_path": [],
+            "kind": "nerve",
+            "name": "self_model_resource"
+          }
+        ]
+      },
+      "examples": {
+        "state": "value",
+        "value": [
+          {
+            "field_path": [],
+            "kind": "example",
+            "name": "describe_the_running_server"
+          }
+        ]
+      },
+      "format": "markdown",
+      "intent": {
+        "state": "value",
+        "value": "How the s0ma authoring MCP server hosts itself: its tools, resources, and prompts are authored as s0ma modules, registered at bootstrap, served from the self-model registry — and the running server will tell you so."
+      },
+      "location": {
+        "end_line": 3302,
+        "start_line": 3286
+      },
+      "module": "tools",
+      "name": "selfhost_walkthrough",
+      "output": "docs/selfhost_walkthrough.md",
+      "tags": []
+    }
+  ],
+  "doc_refs": [
+    {
+      "content_hash": "",
+      "covers": {
+        "state": "value",
+        "value": [
+          {
+            "group_by": null,
+            "kind": "nerve",
+            "ordered_by": [],
+            "predicate": {
+              "lhs": [
+                "visibility"
+              ],
+              "operator": "==",
+              "rhs": "PUBLIC",
+              "type": "comparison"
+            }
+          }
+        ]
+      },
+      "covers_source": null,
+      "format": "markdown",
+      "intent": {
+        "state": "value",
+        "value": "Generated reference of every PUBLIC nerve the s0ma authoring MCP server registers — served tools, resource providers, and prompt renderers with their contracts — rendered from the registry so it cannot drift from the served surface."
+      },
+      "location": {
+        "end_line": 3272,
+        "start_line": 3267
+      },
+      "module": "tools",
+      "name": "mcp_public_surface_reference",
+      "output": "docs/mcp_public_surface_reference.md",
+      "sections": {
+        "state": "value",
+        "value": [
+          {
+            "field_name": "intent",
+            "iteration": null
+          },
+          {
+            "field_name": "expects",
+            "iteration": null
+          },
+          {
+            "field_name": "guarantees",
+            "iteration": null
+          },
+          {
+            "field_name": "forbids",
+            "iteration": null
+          }
+        ]
+      },
+      "tags": []
+    }
+  ],
+  "edges": {
+    "authored": [
+      {
+        "carries": "s0ma adopt file argv",
+        "coupling": "TIGHT",
+        "intent": "adopt_file_tool CALLS _run_cli: s0ma adopt file argv",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::adopt_file_tool",
+        "target": "tools::_run_cli"
+      },
+      {
+        "carries": "s0ma build argv",
+        "coupling": "TIGHT",
+        "intent": "build_project_tool CALLS _run_cli: s0ma build argv",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::build_project_tool",
+        "target": "tools::_run_cli"
+      },
+      {
+        "carries": "s0ma check argv",
+        "coupling": "TIGHT",
+        "intent": "check_tool CALLS _run_cli: s0ma check argv",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::check_tool",
+        "target": "tools::_run_cli"
+      },
+      {
+        "carries": "s0ma inspect argv",
+        "coupling": "TIGHT",
+        "intent": "inspect_module_tool CALLS _run_cli: s0ma inspect argv",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::inspect_module_tool",
+        "target": "tools::_run_cli"
+      },
+      {
+        "carries": "s0ma migrate-ext argv",
+        "coupling": "TIGHT",
+        "intent": "migrate_ext_tool CALLS _run_cli: s0ma migrate-ext argv",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::migrate_ext_tool",
+        "target": "tools::_run_cli"
+      },
+      {
+        "carries": "s0ma new module argv",
+        "coupling": "TIGHT",
+        "intent": "scaffold_module_tool CALLS _run_cli: s0ma new module argv",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::scaffold_module_tool",
+        "target": "tools::_run_cli"
+      },
+      {
+        "carries": "generated module path",
+        "coupling": "TIGHT",
+        "intent": "scaffold_module_tool CALLS check_tool: generated module path",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::scaffold_module_tool",
+        "target": "tools::check_tool"
+      },
+      {
+        "carries": "s0ma transpile argv",
+        "coupling": "TIGHT",
+        "intent": "transpile_tool CALLS _run_cli: s0ma transpile argv",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::transpile_tool",
+        "target": "tools::_run_cli"
+      },
+      {
+        "carries": "s0ma verify-host argv",
+        "coupling": "TIGHT",
+        "intent": "verify_host_tool CALLS _run_cli: s0ma verify-host argv",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "tools::verify_host_tool",
+        "target": "tools::_run_cli"
+      }
+    ],
+    "derived": [],
+    "verification": [
+      {
+        "origin": "tests_field",
+        "test": "tools::test_learn_s0ma_answers_one_topic_within_its_budget",
+        "validates": "tools::learn_s0ma_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_read_only_tools_answer_structurally",
+        "validates": "tools::check_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_read_only_tools_answer_structurally",
+        "validates": "tools::describe_server_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_read_only_tools_answer_structurally",
+        "validates": "tools::inspect_module_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_read_only_tools_answer_structurally",
+        "validates": "tools::prepare_feedback_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_read_only_tools_answer_structurally",
+        "validates": "tools::project_status_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::adopt_file_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::build_project_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::init_project_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::migrate_ext_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::run_example_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::scaffold_module_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::submit_feedback_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::transpile_tool"
+      },
+      {
+        "origin": "tests_field",
+        "test": "tools::test_writing_tools_refuse_invalid_targets",
+        "validates": "tools::verify_host_tool"
+      }
+    ]
+  },
+  "examples": [
+    {
+      "body": {
+        "state": "value",
+        "value": "from s0ma_mcp import tools\n\ndescribed = tools.describe_server_tool()\nassert described[\"ok\"] is True\nassert described[\"server\"][\"name\"] == \"s0ma-authoring\"\nprint(f\"self-model components: {described['component_count']}\")"
+      },
+      "demonstrates": {
+        "state": "value",
+        "value": [
+          {
+            "field_path": [],
+            "kind": "nerve",
+            "name": "describe_server_tool"
+          }
+        ]
+      },
+      "intent": {
+        "state": "value",
+        "value": "Asks the self-hosted authoring server what it is: the describe_server tool answers from the live self-model registry that the package's own built modules populate at import."
+      },
+      "location": {
+        "end_line": 3284,
+        "start_line": 3274
+      },
+      "module": "tools",
+      "name": "describe_the_running_server",
+      "runs_in": "standalone",
+      "tags": []
+    }
+  ],
+  "exports": {
+    "state": "value",
+    "value": [
+      "check_tool",
+      "verify_host_tool",
+      "inspect_module_tool",
+      "describe_server_tool",
+      "learn_s0ma_tool",
+      "transpile_tool",
+      "build_project_tool",
+      "adopt_file_tool",
+      "scaffold_module_tool",
+      "init_project_tool",
+      "migrate_ext_tool",
+      "project_status_tool",
+      "run_example_tool",
+      "prepare_feedback_tool",
+      "submit_feedback_tool"
+    ]
+  },
+  "helpers": [
+    {
+      "body": {
+        "state": "value",
+        "value": "def _process_alive(pid: int) -> bool:\n    \"\"\"True when ``pid`` names a process that exists right now.\n\n    POSIX: signal 0 is the documented existence probe — it runs the\n    kernel's permission and existence checks and delivers nothing.\n    ``PermissionError`` means the process exists and belongs to\n    someone else (alive); ``ProcessLookupError`` — and every other\n    ``OSError`` — is read as absent, which is the answer that\n    suppresses narration, so an unanswerable probe never invents a\n    watcher.\n\n    Windows: ``os.kill`` must NOT be used here. CPython routes every\n    signal other than CTRL_C_EVENT/CTRL_BREAK_EVENT to\n    ``TerminateProcess``, so ``os.kill(pid, 0)`` would kill the very\n    studi0 it was asked about. The Win32 probe is the correct\n    equivalent: open the process for limited query\n    (PROCESS_QUERY_LIMITED_INFORMATION, 0x1000) and read its exit\n    code, where STILL_ACTIVE (259) means running. A failed open with\n    ERROR_ACCESS_DENIED (5) means the pid exists but may not be\n    looked at, which is alive; any other failure is absent. A\n    process that really exited with code 259 reads as alive — the\n    documented, unavoidable ambiguity of that API, and the harmless\n    direction to be wrong in here.\n    \"\"\"\n    if pid <= 0:\n        return False\n    if sys.platform == \"win32\":\n        kernel32 = ctypes.windll.kernel32\n        handle = kernel32.OpenProcess(0x1000, False, pid)\n        if not handle:\n            return int(ctypes.GetLastError()) == 5\n        try:\n            code = ctypes.c_ulong(0)\n            if int(kernel32.GetExitCodeProcess(handle, ctypes.byref(code))) == 0:\n                return True\n            return code.value == 259\n        finally:\n            kernel32.CloseHandle(handle)\n    try:\n        os.kill(pid, 0)\n    except PermissionError:\n        return True\n    except OSError:\n        return False\n    return True"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_process_alive",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Answers whether one process id is running right now, using only the standard library and without disturbing the process it asks about. This is what makes a leftover studi0 presence file readable as leftover: an unclean shutdown leaves the marker behind, and a dead pid is the evidence that says so."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 190,
+        "start_line": 143
+      },
+      "module": "tools",
+      "name": "_process_alive",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _studi0_watching(root: Path | None) -> bool:\n    \"\"\"True when a live studi0 is watching the project at ``root``.\n\n    Checked per rules render, never cached: a session can start or\n    stop studi0 in the middle of a conversation, and the next tool\n    result should tell the truth about that rather than about the\n    moment the server booted. The cost is one stat-and-read of a\n    small file per rules-bearing call.\n\n    ``root`` is None for a rules-bearing call that names no project\n    (describe_server takes no project_root): no root means no\n    presence to check, so the rules come back canonical.\n    \"\"\"\n    if root is None:\n        return False\n    try:\n        record = json.loads(\n            (root / \".s0ma\" / \"studi0\" / \"active.json\").read_text(encoding=\"utf-8\")\n        )\n    except (OSError, ValueError):\n        return False\n    if not isinstance(record, dict):\n        return False\n    port = record.get(\"port\")\n    pid = record.get(\"pid\")\n    if isinstance(port, bool) or not isinstance(port, int):\n        return False\n    if isinstance(pid, bool) or not isinstance(pid, int):\n        return False\n    return _process_alive(pid)"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_studi0_watching",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Answers the one question the conditional survival rule turns on: is a live studi0 watching THIS project right now? The evidence is studi0's own presence marker, .s0ma/studi0/active.json under the project root, and it counts only when it parses as a JSON object carrying a port and a pid whose process is still running. Every other reading — no file, no directory, unreadable bytes, malformed JSON, a missing key, a dead pid from an unclean shutdown — is absent, and absent is never an error a tool result reports: with no studi0 there is no need for narration, and no complaint about its absence either."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 224,
+        "start_line": 192
+      },
+      "module": "tools",
+      "name": "_studi0_watching",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _feedback_offers_enabled(root: Path | None) -> bool:\n    \"\"\"True when the project at ``root`` opted into feedback offers.\n\n    Read per rules render for the same reason the studi0 marker is:\n    a user can edit ``[tool.s0ma] feedback`` mid-conversation and the\n    next tool result should tell the truth about the setting as it\n    now stands. ``root`` is None for a rules-bearing call that names\n    no project (describe_server), and no project means no project\n    setting to honor.\n    \"\"\"\n    if root is None:\n        return False\n    try:\n        with (root / \"pyproject.toml\").open(\"rb\") as fh:\n            data = tomllib.load(fh)\n    except (OSError, ValueError):\n        return False\n    tool_table = data.get(\"tool\") if isinstance(data, dict) else None\n    s0ma_table = tool_table.get(\"s0ma\") if isinstance(tool_table, dict) else None\n    setting = s0ma_table.get(\"feedback\") if isinstance(s0ma_table, dict) else None\n    return setting == \"suggest\""
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_feedback_offers_enabled",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Answers the one question the conditional feedback-offer rule turns on: has THIS project asked its agents to offer feedback drafting? The evidence is the project's own [tool.s0ma] feedback key, and it counts only when it reads exactly suggest — the value the beta scaffold writes. Every other reading — no pyproject, no table, no key, the documented off value, an unrecognized value, unreadable or malformed TOML — is absent, and absent is never an error a tool result reports: off silences agent-initiated OFFERS only, and recognizing feedback a user asks for out loud is unconditional and lives in the server instructions, which no project setting can switch off."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 249,
+        "start_line": 226
+      },
+      "module": "tools",
+      "name": "_feedback_offers_enabled",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _survival_rules(root: Path | None = None) -> list[str]:\n    \"\"\"The survival rules one tool result carries, for ``root``.\n\n    The docs line (F7) is unconditional and lives here rather than in\n    :data:`_SURVIVAL_RULES`, on purpose. It names a tool of THIS\n    server, and ``_SURVIVAL_RULES`` is also the text of static,\n    channel-agnostic artifacts — the survival-card guide resource,\n    the self-prompt card — that reach readers who have no MCP server\n    in front of them at all. A rule telling those readers to call\n    ``learn_s0ma`` would be a rule they cannot follow, so the pointer\n    rides the channel where the tool exists and the static artifacts\n    stay exactly as they were.\n\n    The other two extra lines are dynamic by construction: one exists\n    only while the presence marker says a studi0 is watching, the\n    other only while the project's own config asks for feedback\n    offers.\n    \"\"\"\n    rules = list(_SURVIVAL_RULES)\n    if _feedback_offers_enabled(root):\n        rules.append(\n            \"When s0ma itself is the obstacle — a confusing \"\n            \"diagnostic, a missing capability, a workaround you keep \"\n            \"repeating — you may offer to draft feedback for the s0ma \"\n            \"team: one specific, non-blocking offer, and \"\n            \"prepare_feedback only after the user agrees. The user \"\n            \"approves the exact feedback data before anything is sent.\"\n        )\n    rules.append(_DOCS_RULE)\n    if not _studi0_watching(root):\n        return rules\n    return [\n        *rules,\n        \"studi0 is watching this session: narrate each MAIN MOVEMENT \"\n        \"(starting a task, moving to a different part of the system, \"\n        \"completing a meaningful checkpoint — movements, not \"\n        \"keystrokes) by appending ONE line to \"\n        \".s0ma/studi0/session.jsonl before or as you start it: \"\n        '{\"type\": \"work.narrated\", \"movement\": \"<what you are '\n        'doing>\", \"why\": \"<why>\", \"subjects\": [\"module::Name\"], '\n        '\"phase\": \"orient|author|verify|move_on\"}',\n    ]"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_survival_rules",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Builds the rules list one tool result carries: the canonical survival rules, then the docs line every call gets, plus at most two conditional lines — the feedback-offer line while the project this call names declares [tool.s0ma] feedback = suggest, and the narration line while a live studi0 is watching that same project. Every ask rides the tool result, the channel known to arrive where the same content served as a guide resource does not. The narration line's wording is frozen — a reworded line is an unmeasured line — and it stays LAST so the measured line keeps the measured position; the docs line therefore sits ABOVE it and below the conditional feedback line. One line each and no more (NFR-5 context economy)."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 295,
+        "start_line": 251
+      },
+      "module": "tools",
+      "name": "_survival_rules",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _tool_arguments(\n    fn: _ToolFn,\n    args: tuple[Any, ...],\n    kwargs: dict[str, Any],\n) -> dict[str, Any]:\n    \"\"\"Return a partial signature binding for one tool-body call.\"\"\"\n    try:\n        return dict(inspect.signature(fn).bind_partial(*args, **kwargs).arguments)\n    except TypeError:\n        return dict(kwargs)"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_tool_arguments",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Binds a tool body's positional and keyword arguments to its declared signature so the common result finalizer can construct schema-valid next actions without guessing argument positions."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 309,
+        "start_line": 297
+      },
+      "module": "tools",
+      "name": "_tool_arguments",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _default_next_actions(\n    tool_name: str,\n    result: dict[str, Any],\n    arguments: dict[str, Any],\n) -> list[dict[str, Any]]:\n    \"\"\"Default structured breadcrumbs for one tool-body result.\"\"\"\n    if tool_name in {\"prepare_feedback\", \"submit_feedback\"}:\n        return []\n    root = arguments.get(\"project_root\")\n    root_args = {\"project_root\": root} if isinstance(root, str) else None\n    if result.get(\"ok\") is not True:\n        return [{\n            \"tool\": \"describe_server\",\n            \"arguments\": {},\n            \"reason\": (\n                \"Review the live tool map and worked argument shapes, \"\n                \"correct this call, then retry.\"\n            ),\n        }]\n    if tool_name == \"describe_server\":\n        return []\n    if root_args is None:\n        return [{\n            \"tool\": \"describe_server\",\n            \"arguments\": {},\n            \"reason\": \"Choose the next journey from the live situation-to-tool map.\",\n        }]\n    if tool_name == \"check\":\n        return [{\n            \"tool\": \"build_project\",\n            \"arguments\": root_args,\n            \"reason\": \"Build only after the static diagnostics are clean.\",\n        }]\n    if tool_name in {\"transpile\", \"build_project\"}:\n        return [{\n            \"tool\": \"inspect_module\",\n            \"arguments\": root_args,\n            \"reason\": \"Inspect the emitted canonical self-model before grepping code.\",\n        }]\n    if tool_name == \"adopt_file\":\n        path = arguments.get(\"path\")\n        module_name = Path(path).stem if isinstance(path, str) else \"legacy_module\"\n        return [{\n            \"tool\": \"scaffold_module\",\n            \"arguments\": {**root_args, \"module_name\": module_name},\n            \"reason\": (\n                \"Replace interim roster intake with an intent-authored component; \"\n                \"the author_module prompt provides the longer journey.\"\n            ),\n        }]\n    if tool_name == \"migrate_ext\":\n        return [{\n            \"tool\": \"check\",\n            \"arguments\": root_args,\n            \"reason\": \"Validate migrated sources before rebuilding artifacts.\",\n        }]\n    if tool_name == \"scaffold_module\":\n        return [{\n            \"tool\": \"check\",\n            \"arguments\": root_args,\n            \"reason\": \"Validate the intent-authored scaffold after editing it.\",\n        }]\n    if tool_name == \"init_project\":\n        return [{\n            \"tool\": \"project_status\",\n            \"arguments\": root_args,\n            \"reason\": \"Re-orient now that the project configuration exists.\",\n        }]\n    if tool_name == \"project_status\":\n        if result.get(\"is_project\") is False:\n            return [{\n                \"tool\": \"init_project\",\n                \"arguments\": root_args,\n                \"reason\": str(result.get(\"suggested_next_action\") or (\n                    \"Initialize the project before authoring components.\"\n                )),\n            }]\n        return [{\n            \"tool\": \"check\",\n            \"arguments\": root_args,\n            \"reason\": str(result.get(\"suggested_next_action\") or (\n                \"Run the static authoring check for the current project.\"\n            )),\n        }]\n    if tool_name == \"run_example\":\n        return [{\n            \"tool\": \"project_status\",\n            \"arguments\": root_args,\n            \"reason\": \"Reconcile observed example behavior with project runtime context.\",\n        }]\n    if tool_name == \"inspect_module\":\n        return [{\n            \"tool\": \"check\",\n            \"arguments\": root_args,\n            \"reason\": \"Validate any intent or dependency edit suggested by inspection.\",\n        }]\n    return []"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_default_next_actions",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Chooses a small schema-valid breadcrumb for a tool-body result when the body did not provide a more specific action, using only live tool names and arguments already present in the call; the feedback pair opts out because its journey is the user's, not the toolchain's — a generic 'call describe_server' breadcrumb under a declined approval or a delivered receipt would be noise, so those bodies author every action they want and get none by default."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 410,
+        "start_line": 311
+      },
+      "module": "tools",
+      "name": "_default_next_actions",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _finalize_tool_result(\n    tool_name: str,\n    raw: dict[str, Any],\n    arguments: dict[str, Any],\n) -> dict[str, Any]:\n    \"\"\"Apply the frozen common tool-result contract.\"\"\"\n    result = dict(raw)\n    actions_raw = result.pop(\"next_actions\", None)\n    legacy_text = result.pop(\"suggested_next_action\", None)\n    if result.get(\"schema\") == \"s0ma-host-verification@1\":\n        host_verification = dict(result)\n        ok = bool(host_verification.get(\"ok\"))\n        result = {\n            \"ok\": ok,\n            \"host_verification\": host_verification,\n        }\n    else:\n        result[\"ok\"] = bool(result.get(\"ok\"))\n    result[\"schema\"] = _TOOL_RESULT_SCHEMA\n\n    actions: list[dict[str, Any]] = []\n    if isinstance(actions_raw, list):\n        for action in actions_raw:\n            if not isinstance(action, dict):\n                continue\n            normalized = dict(action)\n            if normalized.get(\"tool\") == \"author_module\":\n                root = arguments.get(\"project_root\")\n                path = arguments.get(\"path\")\n                if isinstance(root, str):\n                    normalized[\"tool\"] = \"scaffold_module\"\n                    normalized[\"arguments\"] = {\n                        \"project_root\": root,\n                        \"module_name\": (\n                            Path(path).stem\n                            if isinstance(path, str)\n                            else \"legacy_module\"\n                        ),\n                    }\n            actions.append(normalized)\n    if not actions:\n        actions = _default_next_actions(tool_name, result, arguments)\n    if isinstance(legacy_text, str) and legacy_text and actions:\n        actions[0] = {**actions[0], \"reason\": legacy_text}\n    result[\"next_actions\"] = actions\n    result[\"suggested_next_action\"] = (\n        str(actions[0][\"reason\"]) if actions else None\n    )\n    if result[\"ok\"] is not True:\n        result[\"tool_map\"] = live_tool_map()\n    return result"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_finalize_tool_result",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Normalizes every value returned from a tool body into s0ma-tool-result@1, preserves host evidence as one nested authoritative document, renders deprecated prose from structured actions, and attaches the live tool map to body failures."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 465,
+        "start_line": 412
+      },
+      "module": "tools",
+      "name": "_finalize_tool_result",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _safe(fn: _ToolFn) -> _ToolFn:\n    \"\"\"Convert any escaped exception into a structured ``{ok: False}`` result.\n\n    The DSL CLI already maps internal exceptions to exit code 3 with a\n    one-line message; this wrapper is the last-resort net so no raw\n    traceback ever crosses the MCP boundary (FR-MCP-2).\n    \"\"\"\n\n    @functools.wraps(fn)\n    def wrapper(*args: Any, **kwargs: Any) -> dict[str, Any]:\n        tool_name = fn.__name__.removesuffix(\"_tool\")\n        arguments = _tool_arguments(fn, args, kwargs)\n        try:\n            raw = fn(*args, **kwargs)\n        except (Exception, SystemExit) as exc:  # noqa: BLE001 — boundary net\n            raw = {\n                \"ok\": False,\n                \"error\": f\"{type(exc).__name__}: {exc}\",\n            }\n        return _finalize_tool_result(tool_name, raw, arguments)\n\n    return cast(\"_ToolFn\", wrapper)"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_safe",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Converts any escaped exception into a structured {ok: False} result so no raw traceback ever crosses the MCP boundary (FR-MCP-2) — the last-resort net above the DSL CLI's own exit-code-3 mapping."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 491,
+        "start_line": 467
+      },
+      "module": "tools",
+      "name": "_safe",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _parse_json_payload(stdout: str) -> Any | None:\n    \"\"\"Extract the JSON document from captured CLI stdout.\n\n    JSON-mode commands print exactly one document, but a defensive\n    ``raw_decode`` from the first bracket tolerates stray prose lines.\n    Returns ``None`` when no JSON document is present.\n    \"\"\"\n    starts = [i for i in (stdout.find(\"{\"), stdout.find(\"[\")) if i != -1]\n    if not starts:\n        return None\n    try:\n        payload, _ = json.JSONDecoder().raw_decode(stdout[min(starts):])\n    except json.JSONDecodeError:\n        return None\n    return payload"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_parse_json_payload",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Extracts the JSON document from captured CLI stdout via a defensive raw_decode from the first bracket, tolerating stray prose lines; returns None when no JSON document is present."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 548,
+        "start_line": 531
+      },
+      "module": "tools",
+      "name": "_parse_json_payload",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _resolve_root(project_root: str) -> tuple[Path | None, dict[str, Any] | None]:\n    \"\"\"Validate ``project_root``; return ``(path, None)`` or ``(None, error)``.\"\"\"\n    root = Path(project_root).expanduser()\n    if not root.is_dir():\n        return None, {\n            \"ok\": False,\n            \"error\": f\"project_root is not a directory: {project_root}\",\n        }\n    return root.resolve(), None"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_resolve_root",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Validates a client-supplied project_root string, returning (resolved path, None) for a directory or (None, structured error) otherwise."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 561,
+        "start_line": 550
+      },
+      "module": "tools",
+      "name": "_resolve_root",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _contained(root: Path, candidate: Path) -> bool:\n    \"\"\"True when ``candidate`` resolves inside ``root`` (NFR-6 write fence).\"\"\"\n    try:\n        return candidate.expanduser().resolve().is_relative_to(root)\n    except OSError:\n        return False"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_contained",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "True when a candidate path resolves inside the given root — the NFR-6 write fence every writing tool consults before touching disk."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 571,
+        "start_line": 563
+      },
+      "module": "tools",
+      "name": "_contained",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _outside_tree_error(what: str, path: Path, root: Path) -> dict[str, Any]:\n    \"\"\"The structured ``{ok: False}`` refusal for an out-of-tree path.\"\"\"\n    return {\n        \"ok\": False,\n        \"error\": (\n            f\"{what} {path} is outside the given project root {root}; \"\n            \"s0ma-mcp tools never write outside the project tree (PRD NFR-6).\"\n        ),\n    }"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_outside_tree_error",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Shapes the structured refusal returned when a path falls outside the given project root (PRD NFR-6: tools never write outside the project tree)."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 584,
+        "start_line": 573
+      },
+      "module": "tools",
+      "name": "_outside_tree_error",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _diagnostic_codes(diagnostics: Any) -> list[str]:\n    \"\"\"Sorted distinct ``code`` values across a diagnostics document.\"\"\"\n    if not isinstance(diagnostics, dict):\n        return []\n    codes = {\n        str(finding[\"code\"])\n        for key in (\"errors\", \"warnings\")\n        for finding in diagnostics.get(key, [])\n        if isinstance(finding, dict) and finding.get(\"code\")\n    }\n    return sorted(codes)"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_diagnostic_codes",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Collects the sorted distinct diagnostic codes from a --format json diagnostics document so failing results can cite the exact error-catalog entries to read."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 599,
+        "start_line": 586
+      },
+      "module": "tools",
+      "name": "_diagnostic_codes",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _lead_with_cause(text: str) -> str:\n    \"\"\"Reorder captured CLI output so the cause leads, warnings trail.\n\n    Non-empty lines are partitioned into advisory ``warning:`` lines\n    and everything else; the non-advisory cause lines are emitted\n    first, the warnings after. Empty or all-warning input is returned\n    stripped and unreordered.\n    \"\"\"\n    lines = [line.strip() for line in text.splitlines() if line.strip()]\n    warnings = [line for line in lines if line.lower().startswith(\"warning\")]\n    causes = [line for line in lines if not line.lower().startswith(\"warning\")]\n    return \"\\n\".join(causes + warnings)"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_lead_with_cause",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Reorders captured CLI text so the actual cause leads and any advisory 'warning:' lines trail: the DSL CLI can open stderr with an advisory line (e.g. 'Operating without project discovery') that, surfaced verbatim, buries the real error. Generalizes the lead-with-cause split scaffold_module does inline so every tool that surfaces raw CLI output stays cause-first."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 615,
+        "start_line": 601
+      },
+      "module": "tools",
+      "name": "_lead_with_cause",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _diagnostics_result(\n    code: int,\n    stdout: str,\n    stderr: str,\n    **extra: Any,\n) -> dict[str, Any]:\n    \"\"\"Shape a result for a ``--format json`` diagnostics command.\"\"\"\n    diagnostics = _parse_json_payload(stdout)\n    result: dict[str, Any] = {\n        \"ok\": code == 0,\n        \"exit_code\": code,\n        \"diagnostics\": diagnostics,\n        **extra,\n    }\n    if diagnostics is None and stdout.strip():\n        result[\"output\"] = stdout.strip()\n    if code != 0:\n        summary = (\n            diagnostics.get(\"summary\") if isinstance(diagnostics, dict) else None\n        )\n        if summary:\n            result[\"error\"] = (\n                f\"{summary.get('errors', '?')} error(s), \"\n                f\"{summary.get('warnings', '?')} warning(s) \"\n                f\"in {summary.get('files_processed', '?')} file(s)\"\n            )\n        else:\n            # P2: lead with the actual cause, not an advisory line.\n            result[\"error\"] = (\n                _lead_with_cause(stderr or stdout) or f\"exit code {code}\"\n            )\n        codes = _diagnostic_codes(diagnostics)\n        if codes:\n            # D1: a per-code deep anchor into the error catalog, so a\n            # failing diagnostic points at its own entry — the exact\n            # code is findable at that anchor in the served\n            # s0ma://guide/errors text (a flat code table).\n            anchors = \", \".join(\n                f\"s0ma://guide/errors#{code_name}\" for code_name in codes\n            )\n            result[\"error_help\"] = (\n                \"Apply each diagnostic's remediation, then look each \"\n                f\"code up at its own anchor in the error catalog: \"\n                f\"{anchors}. Compact authoring rules: \"\n                \"s0ma://guide/survival-card.\"\n            )\n    return result"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_diagnostics_result",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Shapes the shared {ok, exit_code, diagnostics, ...} result for a --format json diagnostics command, summarizing error/warning counts on failure and citing the error-catalog resource for the exact codes returned, so a failing result points the agent at the catalog entries that explain it."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 666,
+        "start_line": 617
+      },
+      "module": "tools",
+      "name": "_diagnostics_result",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _attach_finding_owners(\n    diagnostics: Any,\n    root: Path,\n) -> None:\n    \"\"\"Annotate parseable check findings with owner and intent in place.\"\"\"\n    if not isinstance(diagnostics, dict):\n        return\n    parsed_by_path: dict[Path, Any] = {}\n    for bucket in (\"errors\", \"warnings\"):\n        for finding in diagnostics.get(bucket, []):\n            if not isinstance(finding, dict):\n                continue\n            raw_file = finding.get(\"file\")\n            raw_line = finding.get(\"line\")\n            if not isinstance(raw_file, str) or not isinstance(raw_line, int):\n                continue\n            candidate = Path(raw_file)\n            if not candidate.is_absolute():\n                candidate = root / candidate\n            candidate = candidate.resolve()\n            if not candidate.is_file() or not candidate.is_relative_to(root):\n                continue\n            if candidate not in parsed_by_path:\n                try:\n                    parsed_by_path[candidate] = parse_s0ma(\n                        candidate.read_text(encoding=\"utf-8\"),\n                        filename=str(candidate),\n                    )\n                except Exception:  # noqa: BLE001 — check owns parse errors\n                    parsed_by_path[candidate] = None\n            parsed = parsed_by_path[candidate]\n            if parsed is None:\n                continue\n            declarations = [parsed.module, *parsed.all_declarations]\n            owners = [\n                declaration\n                for declaration in declarations\n                if declaration.location is not None\n                and declaration.location.start_line <= raw_line\n                <= declaration.location.end_line\n            ]\n            if not owners:\n                continue\n            owner = min(\n                owners,\n                key=lambda declaration: (\n                    declaration.location.end_line\n                    - declaration.location.start_line\n                ),\n            )\n            finding[\"owner\"] = f\"{parsed.module.name}::{owner.name}\"\n            finding[\"owner_intent\"] = str(owner.intent)"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_attach_finding_owners",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Adds the narrowest resolvable module/component owner and authored intent to check findings by matching each source line against the parsed declaration spans, leaving unparsable findings unchanged."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 722,
+        "start_line": 668
+      },
+      "module": "tools",
+      "name": "_attach_finding_owners",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _module_neighbor_actions(\n    root: Path,\n    module: str,\n) -> list[dict[str, Any]]:\n    \"\"\"Return canonical module-neighbor inspection actions.\"\"\"\n    try:\n        project = S0maProject.discover(root)\n        manifest = load_manifest(Path(project.build_dir))\n    except Exception:  # noqa: BLE001 — inspection fallback stays available\n        return []\n    module_names = {str(entry.name) for entry in manifest.modules}\n    dependencies: dict[str, set[str]] = {name: set() for name in module_names}\n    for entry in manifest.modules:\n        try:\n            document = json.loads(\n                (Path(project.build_dir) / entry.ir).read_text(encoding=\"utf-8\")\n            )\n        except (OSError, json.JSONDecodeError):\n            continue\n        uses = document.get(\"imports\", {}).get(\"uses\", {})\n        raw_values = uses.get(\"value\", []) if uses.get(\"state\") == \"value\" else []\n        if not isinstance(raw_values, list):\n            continue\n        for raw in raw_values:\n            if not isinstance(raw, str):\n                continue\n            target = raw.replace(\"::\", \".\").split(\".\", 1)[0]\n            if target in module_names and target != entry.name:\n                dependencies[str(entry.name)].add(target)\n\n    actions: list[dict[str, Any]] = []\n    for target in sorted(dependencies.get(module, set())):\n        actions.append({\n            \"tool\": \"inspect_module\",\n            \"arguments\": {\"project_root\": str(root), \"module\": target},\n            \"reason\": f\"Inspect dependency neighbor {target} before changing {module}.\",\n            \"relationship\": \"depends_on\",\n        })\n    for target in sorted(\n        name for name, deps in dependencies.items() if module in deps\n    ):\n        actions.append({\n            \"tool\": \"inspect_module\",\n            \"arguments\": {\"project_root\": str(root), \"module\": target},\n            \"reason\": f\"Inspect dependent neighbor {target} before changing {module}.\",\n            \"relationship\": \"depended_by\",\n        })\n    return actions"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_module_neighbor_actions",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Reads the canonical build manifest and IR imports to turn one inspected module's depends-on and depended-by project neighbors into structured inspect_module next actions."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1019,
+        "start_line": 969
+      },
+      "module": "tools",
+      "name": "_module_neighbor_actions",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _derived_adopted_surface(\n    root: Path,\n    module: str,\n) -> dict[str, Any] | None:\n    \"\"\"Return the named adopted module's static draft, if rostered.\"\"\"\n    try:\n        project = S0maProject.discover(root)\n        records = load_adopted_files(Path(project.root))\n    except (S0maProjectNotFound, AdoptedRecordError, ValueError):\n        return None\n    for record in records.values():\n        source = (Path(project.root) / record.path).resolve()\n        candidate_name = source.parent.name if source.name == \"__init__.py\" else source.stem\n        if candidate_name != module:\n            continue\n        try:\n            return derive_python_surface(Path(project.root), source)\n        except DerivedSurfaceError:\n            return None\n    return None"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_derived_adopted_surface",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Finds a named roster-adopted Python record and asks the DSL static deriver for its provenance-marked draft, never importing the target and never presenting the result as canonical IR."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1043,
+        "start_line": 1021
+      },
+      "module": "tools",
+      "name": "_derived_adopted_surface",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _related_topics(index: Any, view: Any) -> list[str]:\n    \"\"\"The topics ``view`` names, in the order its facts name them.\"\"\"\n    found: list[str] = []\n    for value in view.topical().values():\n        parts = value if isinstance(value, tuple) else (value,)\n        for part in parts:\n            for word in str(part).split():\n                candidate = word.strip(\"`'\\\",.;:()[]<>\")\n                if (\n                    \":\" not in candidate\n                    or candidate.startswith(\"authority:\")\n                    or candidate == view.id\n                    or candidate in found\n                    or candidate not in index.views\n                ):\n                    continue\n                found.append(candidate)\n    return found[:6]"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_related_topics",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Finds the topics one topic names, by reading the ids out of its own facts and keeping the ones this build actually addresses. Derived rather than authored: a concept names the concepts it relates to, a journey names the surfaces it walks and the concepts it teaches, a document names what it covers — so 'what should I read next' is already written in the record and does not need a second list beside it that somebody has to keep in step. Authority ids are skipped because they ride the answer's own 'Decided by' line, and the id must be in the index before it is offered: a pointer to something this build cannot answer about is worse than no pointer."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1202,
+        "start_line": 1182
+      },
+      "module": "tools",
+      "name": "_related_topics",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _docs_resource_for(group: str) -> str:\n    \"\"\"The docs resource a reader of one ``group`` topic should hold.\"\"\"\n    if group == \"concepts\":\n        return \"s0ma://docs/concepts\"\n    if group == \"journeys\":\n        return \"s0ma://docs/journeys\"\n    return \"s0ma://docs/index\""
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_docs_resource_for",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Names the s0ma://docs resource that carries the group a topic belongs to, so an answer about one concept can point at the resource that lists them all. Three groups have a resource of their own and everything else starts at the index — which is exactly what the index says about itself, so the two accounts cannot disagree."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1213,
+        "start_line": 1204
+      },
+      "module": "tools",
+      "name": "_docs_resource_for",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _topic_not_resolved(\n    index: Any,\n    asked: str,\n    resolution: Any,\n) -> dict[str, Any]:\n    \"\"\"The answer to a question that named no one topic.\"\"\"\n    state = resolution.state()\n    if state == \"ambiguous\":\n        candidates = [\n            {\"topic_id\": item.id, \"category\": item.group, \"why\": item.reason}\n            for item in resolution.candidates\n        ]\n        return {\n            \"ok\": False,\n            \"state\": state,\n            \"asked\": asked,\n            \"error\": (\n                f\"{asked!r} could mean {len(candidates)} different topics, \"\n                f\"and choosing between equals would be a guess.\"\n            ),\n            \"candidates\": candidates,\n            \"remediation\": (\n                \"Ask again with the id of the one you meant — every \"\n                \"candidate above carries it.\"\n            ),\n            \"next_actions\": [{\n                \"tool\": \"learn_s0ma\",\n                \"arguments\": {\"topic\": candidates[0][\"topic_id\"]},\n                \"reason\": (\n                    f\"{candidates[0]['topic_id']} is the first of the \"\n                    f\"topics {asked!r} could have meant.\"\n                ),\n            }],\n        }\n    finding = resolution.finding\n    near = list(nearest(index, asked))\n    answer: dict[str, Any] = {\n        \"ok\": False,\n        \"state\": state,\n        \"asked\": asked,\n        \"code\": finding.code if finding is not None else \"\",\n        \"error\": finding.message if finding is not None else \"\",\n        \"remediation\": finding.remediation if finding is not None else \"\",\n        \"nearest\": near,\n    }\n    if near:\n        answer[\"next_actions\"] = [{\n            \"tool\": \"learn_s0ma\",\n            \"arguments\": {\"topic\": near[0]},\n            \"reason\": (\n                f\"{near[0]} is the nearest thing this build \"\n                f\"addresses to {asked!r}.\"\n            ),\n        }]\n    return answer"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_topic_not_resolved",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Answers the two shapes a question that reached no single topic takes, and answers them differently because they are different facts: several candidates of equal standing, which the resolver returns rather than picks because picking between equals is a guess; or nothing at all, which comes back with the nearest ids this build does address so the next ask is a real one. Both carry a next action, so a miss is a step rather than a dead end."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1272,
+        "start_line": 1215
+      },
+      "module": "tools",
+      "name": "_topic_not_resolved",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _collect_artifacts(\n    root: Path,\n    sources: list[Path],\n    out_dir: Path | None,\n) -> list[str]:\n    \"\"\"Locate the artifacts a successful transpile emitted for ``sources``.\n\n    The CLI resolves its output directory as: explicit ``--output-dir``,\n    else the resolved project's ``[tool.s0ma].build_dir`` (flat layout\n    keyed by *declared module name*), else alongside each source. The\n    build manifest, when present, is the authoritative record — entries\n    are matched back to our input sources; a stem-based scan of the\n    candidate directories covers manifest-less cases.\n    \"\"\"\n    wanted = {s.expanduser().resolve() for s in sources}\n    candidate_dirs: list[Path] = []\n    if out_dir is not None:\n        candidate_dirs.append(out_dir)\n    else:\n        try:\n            project = S0maProject.discover(root)\n            candidate_dirs.append(Path(project.build_dir))\n        except Exception:  # noqa: BLE001 — no [tool.s0ma] table\n            pass\n    candidate_dirs.extend(source.parent for source in sources)\n\n    found: dict[str, None] = {}  # ordered de-dup\n    for directory in candidate_dirs:\n        manifest_path = directory / _MANIFEST_NAME\n        if manifest_path.is_file():\n            try:\n                manifest = json.loads(manifest_path.read_text(encoding=\"utf-8\"))\n            except (OSError, json.JSONDecodeError):\n                manifest = {}\n            for entry in manifest.get(\"modules\", []):\n                # SH-M1 (INV-5): project-resolved builds record sources\n                # project-root-relative (POSIX) — resolve those against\n                # the tool's project root, not the server's CWD. DSL-M3\n                # (F-M1-1): the recipe is the one shared dsl helper\n                # ``BuildManifest.resolve_source`` (accepts the raw dict\n                # entry directly). ``resolve()`` can raise OSError on\n                # some platforms, so the comparison stays guarded.\n                try:\n                    matches = (\n                        BuildManifest.resolve_source(entry, root) in wanted\n                    )\n                except OSError:\n                    matches = False\n                if not matches:\n                    continue\n                for field in (\"output\", \"ir\", \"source_map\"):\n                    name = entry.get(field)\n                    if name and (directory / str(name)).is_file():\n                        found[str(directory / str(name))] = None\n        for source in sources:\n            stem = source.name[: -len(\".s0ma\")]\n            for suffix in _ARTIFACT_SUFFIXES:\n                candidate = directory / f\"{stem}{suffix}\"\n                if candidate.is_file():\n                    found[str(candidate)] = None\n    return list(found)"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_collect_artifacts",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Locates the artifacts a successful transpile emitted for the given sources — the build manifest, when present, is the authoritative record, with a stem-based scan of candidate directories covering manifest-less cases."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1441,
+        "start_line": 1378
+      },
+      "module": "tools",
+      "name": "_collect_artifacts",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _find_manifest(root: Path) -> Path | None:\n    \"\"\"Locate ``build.s0ma.json`` via the resolved project's build dir.\"\"\"\n    build_dir: Path | None\n    try:\n        build_dir = Path(S0maProject.discover(root).build_dir)\n    except Exception:  # noqa: BLE001 — synthetic/legacy projects\n        build_dir = None\n    candidates = [build_dir / _MANIFEST_NAME] if build_dir is not None else []\n    candidates.append(root / _MANIFEST_NAME)\n    for candidate in candidates:\n        if candidate.is_file():\n            return candidate\n    return None"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_find_manifest",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Locates build.s0ma.json for a project root via the resolved project's build dir, falling back to the root itself for synthetic and legacy layouts."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 1546,
+        "start_line": 1531
+      },
+      "module": "tools",
+      "name": "_find_manifest",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _declared_mode(project_root: Path) -> str:\n    \"\"\"The project's declared ``[tool.s0ma].mode``, defaulting to ``\"dev\"``.\n\n    The dsl's :class:`~s0ma_dsl.project.S0maProject` model does not (yet)\n    carry a mode field — the CLI takes ``--mode`` per command — but the\n    ``[tool.s0ma]`` table may declare the project's default authoring\n    mode (``s0ma new project`` writes ``mode = \"dev\"`` per FR-DSL-5).\n    Read that one key from the pyproject the discovery already resolved;\n    absent or malformed maps to the documented default ``\"dev\"``.\n    \"\"\"\n    try:\n        with (project_root / \"pyproject.toml\").open(\"rb\") as fh:\n            data = tomllib.load(fh)\n    except (OSError, tomllib.TOMLDecodeError):\n        return \"dev\"\n    mode = data.get(\"tool\", {}).get(\"s0ma\", {}).get(\"mode\")\n    return mode if isinstance(mode, str) and mode else \"dev\""
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_declared_mode",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Reads the project's declared [tool.s0ma].mode for the project_status answer, defaulting to dev when the key is absent or malformed (the dsl's project model does not yet carry a mode field — the CLI takes --mode per command)."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 2156,
+        "start_line": 2137
+      },
+      "module": "tools",
+      "name": "_declared_mode",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _runtime_section(project: Any) -> dict[str, Any]:\n    \"\"\"Shape the ``runtime`` section of a ``project_status`` result (O1).\n\n    Reads the resolved project's ops-runbook fields plus the LIVE\n    process environment — presence only, by variable name. A declared\n    default or a live value is NEVER read into the result (names only:\n    the no-secret-leak posture). ``missing_required`` lists the\n    required variables absent from ``os.environ``. When no runbook key\n    is declared the section still returns, carrying a ``hint`` naming\n    what to declare and pointing at the ``s0ma://project/runbook``\n    resource.\n    \"\"\"\n    env_declared: list[dict[str, Any]] = []\n    missing_required: list[str] = []\n    for var_name in sorted(project.env):\n        spec = project.env[var_name]\n        env_declared.append({\n            \"name\": var_name,\n            \"required\": bool(spec.required),\n            \"fail_fast\": bool(spec.fail_fast),\n            \"has_default\": spec.default is not None,\n        })\n        if spec.required and var_name not in os.environ:\n            missing_required.append(var_name)\n\n    declared = bool(\n        project.run_command\n        or project.health_command\n        or project.env\n        or project.state_paths\n        or project.runbook_notes\n    )\n    section: dict[str, Any] = {\n        \"runbook_declared\": declared,\n        \"run_command\": project.run_command,\n        \"health_command\": project.health_command,\n        \"env\": env_declared,\n        \"missing_required_env\": missing_required,\n        \"state_paths\": list(project.state_paths),\n        \"runbook_notes\": list(project.runbook_notes),\n        \"runbook_resource\": \"s0ma://project/runbook\",\n    }\n    if not declared:\n        section[\"hint\"] = (\n            \"no ops runbook declared — this is a documentation gap, \"\n            \"never a service fault: an undeclared runbook cannot break \"\n            \"or degrade a running service, so a live failure is never \"\n            \"caused by a missing runbook. Diagnose from observed \"\n            \"behavior, configuration, and environment; then add \"\n            \"run_command / health_command / state_paths / \"\n            \"[tool.s0ma.env.*] under [tool.s0ma] and read \"\n            \"s0ma://project/runbook. state_paths mark runtime state \"\n            \"that must never be reverted, restored from git, or \"\n            \"regenerated.\"\n        )\n    return section"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_runtime_section",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Builds the project_status `runtime` section: the declared run/health commands, the env contract summary (declared / required / missing-required, read from the LIVE process environment by NAME only — never leaking a value), the runtime state_paths that must never be reverted, and whether any runbook is declared; an undeclared runbook yields a teaching hint pointing at s0ma://project/runbook that LEADS with the not-a-fault disclaimer so a mid-diagnosis agent cannot read runbook_declared: false as a service defect."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 2216,
+        "start_line": 2158
+      },
+      "module": "tools",
+      "name": "_runtime_section",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _current_roster_module_row(\n    root: Path,\n    record: Any,\n) -> dict[str, Any] | None:\n    \"\"\"Return the current plain-Python module row, or no row.\n\n    The adoption ledger is historical and remains fully visible through\n    ``adopted_files``. The module map is current surface truth: missing\n    records, non-Python text, root escapes, unreadable files, and files\n    that now carry both transpiler hash headers are not roster modules.\n    Content drift alone deliberately remains roster debt, matching score.\n    \"\"\"\n    relative = Path(record.path)\n    if relative.suffix != \".py\":\n        return None\n    try:\n        root_resolved = root.resolve()\n        candidate = (root / relative).resolve()\n        if not candidate.is_relative_to(root_resolved) or not candidate.is_file():\n            return None\n        content = candidate.read_text(encoding=\"utf-8\")\n    except (OSError, UnicodeDecodeError):\n        return None\n    if (\n        \"# s0ma-source-hash:\" in content\n        and \"# s0ma-output-hash:\" in content\n    ):\n        return None\n    return {\n        \"name\": (\n            relative.parent.name\n            if relative.name == \"__init__.py\"\n            else relative.stem\n        ),\n        \"source\": str(root / relative),\n        \"status\": \"roster\",\n        \"registration\": \"roster_adopted\",\n        \"mapped\": False,\n    }"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_current_roster_module_row",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Classifies an adoption-ledger record as a current handwritten Python module row only when the file still exists inside the project and has not become a transpiler-owned artifact."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 2259,
+        "start_line": 2218
+      },
+      "module": "tools",
+      "name": "_current_roster_module_row",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _feedback_shaped(payload: dict[str, Any]) -> bool:\n    \"\"\"Whether *payload* carries the field types the schema declares.\"\"\"\n    if any(\n        not isinstance(payload.get(key), str)\n        for key in (\"schema\", \"category\", \"impact\", \"summary\")\n    ):\n        return False\n    for key in (\"expected\", \"actual\", \"details\"):\n        value = payload.get(key)\n        if value is not None and not isinstance(value, str):\n            return False\n    steps = payload.get(\"reproduction\")\n    if steps is not None and (\n        not isinstance(steps, list)\n        or any(not isinstance(step, str) for step in steps)\n    ):\n        return False\n    context = payload.get(\"context\")\n    if context is not None and not isinstance(context, dict):\n        return False\n    block = payload.get(\"privacy\")\n    if block is None:\n        return True\n    counts = block.get(\"redacted\") if isinstance(block, dict) else None\n    return isinstance(counts, dict) and all(\n        isinstance(key, str) and isinstance(value, int)\n        for key, value in counts.items()\n    )"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_feedback_shaped",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Answers whether a JSON object has the field types an s0ma-feedback@1 report has, so submit_feedback can rebuild it as a typed report without the rebuild itself raising on hostile input; deliberately types no parameter as the engine's envelope, because a signature executes at import time and one such annotation would pull the whole feedback engine to module top."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 2738,
+        "start_line": 2708
+      },
+      "module": "tools",
+      "name": "_feedback_shaped",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _feedback_approval_request(\n    payload: dict[str, Any],\n    contact_default: bool,\n) -> dict[str, Any]:\n    \"\"\"The approval question, its labels, and the report it is about.\"\"\"\n    lines = [\n        \"Send exactly this feedback data to the kn0wthyself team?\",\n        \"\",\n        f\"Category: {payload['category']} — impact: {payload['impact']}\",\n        f\"Summary: {payload['summary']}\",\n    ]\n    for label, key in (\n        (\"What you expected\", \"expected\"),\n        (\"What happened instead\", \"actual\"),\n        (\"More detail\", \"details\"),\n    ):\n        if payload.get(key):\n            lines.append(f\"{label}: {payload[key]}\")\n    steps = payload.get(\"reproduction\") or []\n    if steps:\n        lines.append(\"Steps to reproduce:\")\n        lines.extend(\n            f\"  {number}. {step}\" for number, step in enumerate(steps, 1)\n        )\n    lines.extend([\n        \"\",\n        \"Sent with it, and nothing else: the s0ma, Python and \"\n        \"operating-system versions, your coding client's name, and a \"\n        \"random installation id that is not tied to you or to this \"\n        \"machine. No source code, no file contents, none of this \"\n        \"conversation.\",\n    ])\n    block = payload.get(\"privacy\") or {}\n    counts = block.get(\"redacted\") or {}\n    removed = sum(int(number) for number in counts.values())\n    if removed:\n        detail = \", \".join(\n            f\"{kind}: {number}\" for kind, number in sorted(counts.items())\n        )\n        lines.append(\n            f\"{removed} sensitive value was replaced with a placeholder \"\n            f\"before you saw this ({detail}).\"\n            if removed == 1\n            else f\"{removed} sensitive values were replaced with \"\n            f\"placeholders before you saw this ({detail}).\"\n        )\n    return {\n        \"message\": \"\\n\".join(lines),\n        \"send_label\": \"Yes — send this feedback data now\",\n        \"contact_label\": \"May kn0wthyself contact you about this report?\",\n        \"contact_default\": contact_default,\n    }"
+      },
+      "body_kind": "function",
+      "canonical_id": "tools::_feedback_approval_request",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Renders the exact-report approval copy that the bootstrap's binding layer shows the user through MCP elicitation: the whole report verbatim from the very object that will be hashed and sent, an honest statement of the metadata travelling with it, and how many values the local redactor replaced — so the user approves what is actually sent, never a summary of something hidden. Every word is written for an intelligent non-programmer and says 'feedback data' or 'feedback report', never 'payload'."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 2794,
+        "start_line": 2740
+      },
+      "module": "tools",
+      "name": "_feedback_approval_request",
+      "tags": []
+    }
+  ],
+  "imports": {
+    "deferred_requires": {
+      "state": "value",
+      "value": [
+        "s0ma.examples.ExampleRunner",
+        "s0ma.registry.ComponentRegistry",
+        "s0ma_dsl.adoption.AdoptedRecordError",
+        "s0ma_dsl.adoption.load_adopted_files",
+        "s0ma_dsl.cache.extract_module_name",
+        "s0ma_dsl.cli.main.S0maCLI",
+        "s0ma_dsl.cli.main._discover_s0ma_files",
+        "s0ma_dsl.cli.main._snake_case",
+        "s0ma_dsl.cli.new_project._tool_s0ma_table",
+        "s0ma_dsl.cli.docs_commands._parse_and_validate_project",
+        "s0ma_dsl.codegen.build_manifest.BuildManifest",
+        "s0ma_dsl.codegen.build_manifest.MANIFEST_FILENAME",
+        "s0ma_dsl.codegen.build_manifest.ManifestSchemaError",
+        "s0ma_dsl.codegen.build_manifest.compute_file_hash",
+        "s0ma_dsl.codegen.build_manifest.load_manifest",
+        "s0ma_dsl.codegen.doc_emitter.compute_doc_hashes",
+        "s0ma_dsl.codegen.doc_emitter.registrations.build_example_registration",
+        "s0ma_dsl.config.StrictnessMode",
+        "s0ma_dsl.derived_surface.DerivedSurfaceError",
+        "s0ma_dsl.derived_surface.derive_python_surface",
+        "s0ma_dsl.docs_model.render_agent.AGENT_BYTE_BUDGET",
+        "s0ma_dsl.docs_model.render_agent.check_budget",
+        "s0ma_dsl.docs_model.render_agent.render_agent",
+        "s0ma_dsl.docs_model.resolve.nearest",
+        "s0ma_dsl.docs_model.resolve.resolve",
+        "s0ma_mcp.resources",
+        "s0ma_dsl.errors.S0maProjectNotFound",
+        "s0ma_dsl.feedback.REDACTION_PROFILE",
+        "s0ma_dsl.feedback.ClientInfo",
+        "s0ma_dsl.feedback.FeedbackEnvelope",
+        "s0ma_dsl.feedback.FeedbackPrivacy",
+        "s0ma_dsl.feedback.SurfaceInfo",
+        "s0ma_dsl.feedback.append_receipt",
+        "s0ma_dsl.feedback.build_context",
+        "s0ma_dsl.feedback.build_envelope",
+        "s0ma_dsl.feedback.delete_draft",
+        "s0ma_dsl.feedback.installation_id",
+        "s0ma_dsl.feedback.new_idempotency_key",
+        "s0ma_dsl.feedback.read_installation_id",
+        "s0ma_dsl.feedback.read_token",
+        "s0ma_dsl.feedback.redact_envelope",
+        "s0ma_dsl.feedback.save_draft",
+        "s0ma_dsl.feedback.submit",
+        "s0ma_dsl.feedback.validate_envelope",
+        "s0ma_dsl.parser.parse_s0ma",
+        "s0ma_dsl.project.S0maProject"
+      ]
+    },
+    "privileged": [],
+    "requires": {
+      "state": "value",
+      "value": [
+        "contextlib",
+        "ctypes",
+        "functools",
+        "inspect",
+        "io",
+        "json",
+        "os",
+        "sys",
+        "tomllib",
+        "collections.abc.Callable",
+        "pathlib.Path",
+        "typing.Any",
+        "typing.Literal",
+        "typing.TypeVar",
+        "typing.cast",
+        "s0ma_mcp.live_tool_map",
+        "s0ma_mcp.self_model_document",
+        "s0ma_mcp.self_model_text",
+        "s0ma_mcp.tool_journey_map"
+      ]
+    },
+    "runtime_only_requires": {
+      "state": "none"
+    },
+    "soft_requires": {
+      "state": "none"
+    },
+    "uses": {
+      "state": "none"
+    }
+  },
+  "integrations": [],
+  "module": {
+    "content_hash": "sha256:e55b6b456f902bea5b5e48f859d3da50b3660c2db18e7414255a41c77f645ff4",
+    "exports_helpers": {
+      "state": "none"
+    },
+    "intent": {
+      "state": "value",
+      "value": "Tool implementations for the s0ma authoring MCP server: every tool wraps the s0ma DSL toolchain through its own command surface (the CLI invoked in-process with captured stdout/stderr and --format json, so agents receive the DSL's structured diagnostics byte-for-byte — FR-MCP-2, NFR-5) or composes the dsl's Python APIs directly; the dsl/core machinery imports are deferred to call time so the server starts even in a degraded toolchain environment and each tool call surfaces the import failure as a structured result instead of an import-time crash; every tool returns a JSON-compatible dict with an ok bool key, never raises across the MCP boundary, takes an explicit project root, and refuses writes outside the project tree (NFR-6); CLI exit codes forward as exit_code (0 success, 1 validation errors, 2 usage error, 3 internal error); the feedback pair composes the s0ma_dsl.feedback engine instead of the CLI, deferred like every other dsl import (its typed envelope is deliberately absent from every helper signature — a signature is a module-scope position, and one eager annotation would have pulled the engine to module top and cost the whole module its start-degraded property); it receives its MCP interaction facts — the calling client's identity, and the user's own approval decision — through mcp_-prefixed parameters the bootstrap's binding layer supplies and hides from the served schema, so a coding agent can never fabricate the approval a user alone can give."
+    },
+    "layer": "PRESENTATION",
+    "name": "tools",
+    "source_file": "s0ma_src/tools.s0ma",
+    "tags": [],
+    "transpiled_file": "tools.py",
+    "version": "0.7.0"
+  },
+  "schema_version": "3.0.0",
+  "source_hash": "sha256:e55b6b456f902bea",
+  "transpiler_version": "1.0.0"
+}

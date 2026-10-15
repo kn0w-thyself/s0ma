@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "bookshelf"
+version = "1.4.0"
+description = "The Fennel Street Library lending service."
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/bookshelf"]
+
+[tool.pytest.ini_options]
+# `python -m pytest` from this directory finds the package under src/ and
+# runs the suite in tests/. Nothing else is needed to try the service out.
+testpaths = ["tests"]
+pythonpath = ["src"]

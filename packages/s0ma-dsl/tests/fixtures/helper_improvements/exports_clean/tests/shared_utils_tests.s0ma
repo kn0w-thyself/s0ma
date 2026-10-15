@@ -1,0 +1,33 @@
+module shared_utils_tests
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Tests for shared_utils that exercise cross-module helper reach via exports_helpers."
+    uses: [shared_utils._compare, shared_utils._render_markdown, shared_utils.render_attendee]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_compare_returns_true_for_equal_values :: APPLICATION
+    intent: "Verify _compare returns True for equal values."
+    tests: [shared_utils._compare]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_compare_returns_true_for_equal_values():
+        assert _compare(1, 1) is True
+        assert _compare("foo", "foo") is True
+        assert _compare(1, 2) is False
+
+test test_render_markdown_returns_bold :: APPLICATION
+    intent: "Verify _render_markdown wraps text in bold markers."
+    tests: [shared_utils._render_markdown]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_render_markdown_returns_bold():
+        assert _render_markdown("hello") == "**hello**"

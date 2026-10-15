@@ -1,0 +1,34 @@
+module primary_nav
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Renders a primary <nav> landmark — duplicates exist but no budget configured so the field is purely descriptive."
+    exports: [render_primary_nav]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render_primary_nav :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Renders the primary navigation landmark."
+    expects: "No arguments."
+    guarantees: "Returns a string starting with '<nav'."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    declares_attributes: [landmark:nav]
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    covered_by: none
+    ---
+    def render_primary_nav() -> str:
+        return "<nav>Primary</nav>"

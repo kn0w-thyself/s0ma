@@ -1,0 +1,24 @@
+module adopt_unplaced_code
+    layer: INFRASTRUCTURE
+    version: 1.0.0
+    intent: "A draft that still carries one quarantine of source it could not place."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell ADOPT_UNPLACED_0010_0011 :: INFRASTRUCTURE
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "Source the retrofit could not place. Move it into a declaration, then delete this."
+    schema: "adopt: unplaced - src/example/storage.py lines 10-11 - a module-level assignment"
+    invariants: none
+    covered_by: none
+    ---
+    ADOPT_UNPLACED_0010_0011 = r"""logger = logging.getLogger(__name__)
+    logger.addHandler(logging.NullHandler())
+    """

@@ -1,0 +1,17 @@
+module doc_ref_missing_intent
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture with a doc-ref missing the mandatory intent field."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-ref bad_ref
+    format: markdown
+    output: docs/bad.md
+    covers: [nerve]
+    sections: [intent]

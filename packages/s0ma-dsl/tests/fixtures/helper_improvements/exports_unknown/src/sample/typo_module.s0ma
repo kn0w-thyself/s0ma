@@ -1,0 +1,40 @@
+module typo_module
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Module whose exports_helpers references a non-existent helper (typo). Must trigger EXPORTED_HELPER_NOT_FOUND."
+    exports: [render]
+    exports_helpers: [_typoo_helper]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+helper _typo_helper :: APPLICATION
+    intent: "The helper that actually exists — note the missing 'o' that the exports_helpers entry has."
+    ---
+    def _typo_helper(value):
+        return value
+
+nerve render :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Render a value using the helper."
+    expects: "A value."
+    guarantees: "Returns the rendered value."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render(value):
+        return _typo_helper(value)

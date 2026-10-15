@@ -1,0 +1,277 @@
+# adopt_source: src/bookshelf/api.py@sha256:fc00ffbb7aa13c96040a7d47faa5fe8ead1e7ef36d047d0f2beec309c3da5ff4
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module api` rather than
+#   `bookshelf.api`. Every module name in a project must be unique; rename the draft if
+#   another module already carries this name.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+# note: `bookshelf.catalog` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.errors` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.lending` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.models` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+# note: `bookshelf.storage` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+module api
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'The handlers behind the counter screen.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports:
+      - add_title
+      - borrow_title
+      - build_services
+      - list_titles
+      - overdue_report
+      - return_title
+      - title_detail
+
+    requires:
+      - bookshelf.catalog:Catalog
+      - bookshelf.errors:BookshelfError
+      - bookshelf.lending:LoanRegister
+      - bookshelf.lending:overdue_loans
+      - bookshelf.models:Book
+      - bookshelf.storage:JsonStore
+      - datetime:date
+      - pathlib:Path
+      - typing:Any
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+nerve build_services :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def build_services(data_dir: str | Path) -> tuple[Catalog, LoanRegister]:
+        """The catalogue and the loan register, both over one data directory."""
+        store = JsonStore(Path(data_dir))
+        return Catalog(store), LoanRegister(store)
+
+nerve list_titles :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def list_titles(catalog: Catalog) -> list[dict[str, Any]]:
+        """Every title the library owns, as records fit for a screen."""
+        return [_title_summary(catalog, book) for book in catalog.books()]
+
+nerve title_detail :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def title_detail(catalog: Catalog, isbn: str) -> dict[str, Any]:
+        """One title, with how many copies are free right now."""
+        return _title_summary(catalog, catalog.find(isbn))
+
+nerve add_title :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def add_title(catalog: Catalog, isbn: str, title: str, author: str, copies: int) -> dict[str, Any]:
+        """Put a new title in the catalogue and return how it now reads."""
+        catalog.add(Book(isbn=isbn, title=title, author=author, copies=copies))
+        return title_detail(catalog, isbn)
+
+nerve borrow_title :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def borrow_title(
+        register: LoanRegister, isbn: str, card_number: str, today: date | None = None
+    ) -> dict[str, Any]:
+        """Lend one copy to one member and return the loan as a record."""
+        loan = register.borrow(isbn, card_number, today or date.today())
+        return {
+            "isbn": loan.isbn, "card_number": loan.card_number,
+            "due": loan.window.due.isoformat(), "renewals": loan.renewals,
+        }
+
+nerve return_title :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def return_title(register: LoanRegister, isbn: str, card_number: str) -> dict[str, Any]:
+        """Take one copy back from one member."""
+        register.give_back(isbn, card_number)
+        return {"isbn": isbn, "card_number": card_number, "returned": True}
+
+nerve overdue_report :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def overdue_report(register: LoanRegister, today: date | None = None) -> list[dict[str, Any]]:
+        """The list of late loans that is read out at the counter each morning."""
+        judged = today or date.today()
+        return [
+            {"isbn": loan.isbn, "card_number": loan.card_number, "days_late": -loan.days_left(judged)}
+            for loan in overdue_loans(register, judged)
+        ]
+
+nerve describe_failure :: DOMAIN
+    kind: FUNCTION
+    visibility: INTERNAL
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def describe_failure(error: Exception) -> dict[str, str]:
+        """Turn a failure into something that can be put in front of a person.
+
+        Errors raised on purpose carry a message worth showing; anything else
+        gets a flat apology rather than an internal detail.
+        """
+        expected = isinstance(error, BookshelfError)
+        return {
+            "error": type(error).__name__,
+            "message": str(error) if expected else "something went wrong at our end",
+        }
+
+helper _title_summary :: DOMAIN
+    intent: "FIXME(adopt): say in one sentence why this module-private helper exists and which declaration in this module uses it."
+    ---
+    def _title_summary(catalog: Catalog, book: Book) -> dict[str, Any]:
+        return {
+            "isbn": book.isbn, "label": book.label, "copies": book.copies,
+            "available": catalog.copies_available(book.isbn),
+            "availability": catalog.availability(book.isbn).value,
+        }

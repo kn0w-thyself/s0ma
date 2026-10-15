@@ -1,0 +1,359 @@
+{
+  "mappings": {
+    "declarations": [
+      {
+        "body_output": {
+          "end_line": 33,
+          "start_line": 33
+        },
+        "body_source": {
+          "end_line": 22,
+          "start_line": 22
+        },
+        "name": "NARRATION_TYPE",
+        "output": {
+          "end_line": 40,
+          "start_line": 33
+        },
+        "source": {
+          "end_line": 22,
+          "start_line": 14
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 42,
+          "start_line": 42
+        },
+        "body_source": {
+          "end_line": 32,
+          "start_line": 32
+        },
+        "name": "NARRATION_PHASES",
+        "output": {
+          "end_line": 49,
+          "start_line": 42
+        },
+        "source": {
+          "end_line": 32,
+          "start_line": 24
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 51,
+          "start_line": 51
+        },
+        "body_source": {
+          "end_line": 42,
+          "start_line": 42
+        },
+        "name": "NARRATION_WINDOW",
+        "output": {
+          "end_line": 58,
+          "start_line": 51
+        },
+        "source": {
+          "end_line": 42,
+          "start_line": 34
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 60,
+          "start_line": 60
+        },
+        "body_source": {
+          "end_line": 52,
+          "start_line": 52
+        },
+        "name": "PRESENCE_PATH_PARTS",
+        "output": {
+          "end_line": 67,
+          "start_line": 60
+        },
+        "source": {
+          "end_line": 52,
+          "start_line": 44
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 69,
+          "start_line": 69
+        },
+        "body_source": {
+          "end_line": 62,
+          "start_line": 62
+        },
+        "name": "SESSION_LOG_PATH_PARTS",
+        "output": {
+          "end_line": 76,
+          "start_line": 69
+        },
+        "source": {
+          "end_line": 62,
+          "start_line": 54
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 110,
+          "start_line": 86
+        },
+        "body_source": {
+          "end_line": 97,
+          "start_line": 72
+        },
+        "decorator_output": {
+          "end_line": 84,
+          "start_line": 78
+        },
+        "name": "NarrationLog",
+        "output": {
+          "end_line": 110,
+          "start_line": 78
+        },
+        "source": {
+          "end_line": 97,
+          "start_line": 64
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 128,
+          "start_line": 126
+        },
+        "body_source": {
+          "end_line": 122,
+          "start_line": 120
+        },
+        "decorator_output": {
+          "end_line": 124,
+          "start_line": 112
+        },
+        "name": "presence_path",
+        "output": {
+          "end_line": 128,
+          "start_line": 112
+        },
+        "source": {
+          "end_line": 122,
+          "start_line": 99
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 146,
+          "start_line": 144
+        },
+        "body_source": {
+          "end_line": 147,
+          "start_line": 145
+        },
+        "decorator_output": {
+          "end_line": 142,
+          "start_line": 130
+        },
+        "name": "session_log_path",
+        "output": {
+          "end_line": 146,
+          "start_line": 130
+        },
+        "source": {
+          "end_line": 147,
+          "start_line": 124
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 186,
+          "start_line": 162
+        },
+        "body_source": {
+          "end_line": 195,
+          "start_line": 170
+        },
+        "decorator_output": {
+          "end_line": 160,
+          "start_line": 148
+        },
+        "name": "write_presence",
+        "output": {
+          "end_line": 186,
+          "start_line": 148
+        },
+        "source": {
+          "end_line": 195,
+          "start_line": 149
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 220,
+          "start_line": 202
+        },
+        "body_source": {
+          "end_line": 237,
+          "start_line": 218
+        },
+        "decorator_output": {
+          "end_line": 200,
+          "start_line": 188
+        },
+        "name": "clear_presence",
+        "output": {
+          "end_line": 220,
+          "start_line": 188
+        },
+        "source": {
+          "end_line": 237,
+          "start_line": 197
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 252,
+          "start_line": 224
+        },
+        "body_source": {
+          "end_line": 270,
+          "start_line": 242
+        },
+        "name": "_projected_narration",
+        "output": {
+          "end_line": 252,
+          "start_line": 222
+        },
+        "source": {
+          "end_line": 270,
+          "start_line": 239
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 261,
+          "start_line": 256
+        },
+        "body_source": {
+          "end_line": 280,
+          "start_line": 275
+        },
+        "name": "_reset_log",
+        "output": {
+          "end_line": 261,
+          "start_line": 254
+        },
+        "source": {
+          "end_line": 280,
+          "start_line": 272
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 287,
+          "start_line": 265
+        },
+        "body_source": {
+          "end_line": 307,
+          "start_line": 285
+        },
+        "name": "_consume",
+        "output": {
+          "end_line": 287,
+          "start_line": 263
+        },
+        "source": {
+          "end_line": 307,
+          "start_line": 282
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 347,
+          "start_line": 303
+        },
+        "body_source": {
+          "end_line": 375,
+          "start_line": 330
+        },
+        "decorator_output": {
+          "end_line": 301,
+          "start_line": 289
+        },
+        "name": "read_narrations",
+        "output": {
+          "end_line": 347,
+          "start_line": 289
+        },
+        "source": {
+          "end_line": 375,
+          "start_line": 309
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 370,
+          "start_line": 361
+        },
+        "body_source": {
+          "end_line": 406,
+          "start_line": 397
+        },
+        "decorator_output": {
+          "end_line": 359,
+          "start_line": 349
+        },
+        "name": "narration_snapshot",
+        "output": {
+          "end_line": 370,
+          "start_line": 349
+        },
+        "source": {
+          "end_line": 406,
+          "start_line": 377
+        },
+        "type": "nerve"
+      }
+    ],
+    "module_header": {
+      "output_all": {
+        "end_line": 23,
+        "start_line": 23
+      },
+      "output_header": {
+        "end_line": 5,
+        "start_line": 1
+      },
+      "output_imports": {
+        "end_line": 21,
+        "start_line": 6
+      },
+      "output_registration": {
+        "end_line": 31,
+        "start_line": 25
+      },
+      "source": {
+        "end_line": 12,
+        "start_line": 1
+      }
+    }
+  },
+  "output_file": "studi0_narration.py",
+  "source_file": "s0ma_src/studi0_narration.s0ma",
+  "version": "1.0.0"
+}

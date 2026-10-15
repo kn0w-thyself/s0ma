@@ -1,0 +1,35 @@
+module order_view
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Presentation-layer formatter that reaches across two sibling source roots (application + domain)."
+    uses: [order_service.process_order]
+    exports: [format_status]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve format_status :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Formats the result of process_order(id) as a human-readable string."
+    expects: "A string id."
+    guarantees: "Returns 'order <id>: <status>' where status is queued or rejected."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def format_status(id: str) -> str:
+        status: str = process_order(id)
+        return f"order {id}: {status}"

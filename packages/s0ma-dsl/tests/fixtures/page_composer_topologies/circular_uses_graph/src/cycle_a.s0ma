@@ -1,0 +1,35 @@
+module cycle_a
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Cycle node A — uses: B, declares landmark:header, marked is_page_composer: true."
+    uses: [cycle_b.touch_b]
+    exports: [touch_a]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve touch_a :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Cycle node A's nerve: the explicit page composer for the cycle test."
+    expects: "No arguments."
+    guarantees: "Returns a string."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    declares_attributes: [landmark:header]
+    is_page_composer: true
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    covered_by: none
+    ---
+    def touch_a() -> str:
+        return "a:" + touch_b()

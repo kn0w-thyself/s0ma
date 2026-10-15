@@ -1,0 +1,206 @@
+{
+  "record": {
+    "channel": "cli",
+    "covers": [
+      "cli:s0ma/build",
+      "cli:s0ma/check",
+      "cli:s0ma/graph",
+      "cli:s0ma/inspect",
+      "cli:s0ma/new"
+    ],
+    "id": "example:transcript/first-project",
+    "intent": "Walk the whole first-project path for real: make a project, ask whether it holds together, add a module, get it wrong once and see what the toolchain says, put it right, build what was checked, and ask the project what it now contains.",
+    "journey": "journey:first-project",
+    "not_covered": [],
+    "scaffold": {
+      "argv": [
+        "s0ma",
+        "new",
+        "project",
+        "demo",
+        "--name",
+        "demo"
+      ],
+      "kind": "new-project",
+      "workdir": "demo"
+    },
+    "steps": [
+      {
+        "argv": [
+          "s0ma",
+          "check"
+        ],
+        "exit_code": 0,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "3 file(s) checked. No errors."
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "new",
+          "module",
+          "greeting",
+          "-o",
+          "src"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Created src/greeting.s0ma"
+          },
+          {
+            "match": "line",
+            "text": "Validation passed."
+          }
+        ]
+      },
+      {
+        "path": "src/greeting.s0ma",
+        "text": "module greeting\n    layer: domain\n    version: 0.1.0\n    intent: \"Greet the person using this project, by name.\"\n    exports: [greet]\n    requires: []\n    uses: []\n\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\nnerve greet :: DOMAIN\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Return a greeting for the name it is given.\"\n    expects: \"A name, as text.\"\n    guarantees: \"Returns a greeting that contains the name.\"\n    forbids: none\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def greet(name: str) -> str:\n        \"\"\"Return a greeting for the name it is given.\"\"\"\n        return f\"Hello, {name}!\"\n"
+      },
+      {
+        "argv": [
+          "s0ma",
+          "check"
+        ],
+        "exit_code": 1,
+        "stderr": [
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "[NEW] {project}/src/greeting.s0ma:1: ERROR [PARSE_ERROR]"
+          },
+          {
+            "match": "line",
+            "text": "  Invalid layer: 'domain'"
+          },
+          {
+            "match": "line",
+            "text": "  Remediation: Valid layers are: DOMAIN, APPLICATION, INFRASTRUCTURE, PRESENTATION, FRAMEWORK"
+          },
+          {
+            "match": "line",
+            "text": "Results: 1 error(s), 0 warning(s) [mode: dev]"
+          }
+        ]
+      },
+      {
+        "path": "src/greeting.s0ma",
+        "text": "module greeting\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"Greet the person using this project, by name.\"\n    exports: [greet]\n    requires: []\n    uses: []\n\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\nnerve greet :: DOMAIN\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Return a greeting for the name it is given.\"\n    expects: \"A name, as text.\"\n    guarantees: \"Returns a greeting that contains the name.\"\n    forbids: none\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def greet(name: str) -> str:\n        \"\"\"Return a greeting for the name it is given.\"\"\"\n        return f\"Hello, {name}!\"\n"
+      },
+      {
+        "argv": [
+          "s0ma",
+          "check"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "4 file(s) checked. No errors."
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "build",
+          "src"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "{project}/pyproject.toml:1: WARNING [HOST_RUNTIME_UNDECLARED]"
+          },
+          {
+            "match": "line",
+            "text": "Results: 0 error(s), 1 warning(s) [mode: dev]"
+          },
+          {
+            "match": "line",
+            "text": "Build complete: 3 module(s) → {project}/build (manifest: build.s0ma.json)"
+          },
+          {
+            "match": "contains",
+            "text": "{project}/build/greeting.py"
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "inspect",
+          "."
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Module: greeting"
+          },
+          {
+            "match": "line",
+            "text": "  Layer: DOMAIN"
+          },
+          {
+            "match": "line",
+            "text": "  Intent: Greet the person using this project, by name."
+          },
+          {
+            "match": "contains",
+            "text": "greeting::greet [PUBLIC FUNCTION nerve]"
+          },
+          {
+            "match": "line",
+            "text": "Exports: greet"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "graph",
+          "."
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Dependency Graph"
+          },
+          {
+            "match": "line",
+            "text": "Nodes: 3"
+          }
+        ]
+      }
+    ]
+  },
+  "schema": "s0ma-docs-evidence@1"
+}

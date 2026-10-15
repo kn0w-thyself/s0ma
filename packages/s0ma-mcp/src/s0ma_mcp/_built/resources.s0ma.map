@@ -1,0 +1,1015 @@
+{
+  "mappings": {
+    "declarations": [
+      {
+        "body_output": {
+          "end_line": 36,
+          "start_line": 36
+        },
+        "body_source": {
+          "end_line": 21,
+          "start_line": 21
+        },
+        "name": "SERVER_NAME",
+        "output": {
+          "end_line": 43,
+          "start_line": 36
+        },
+        "source": {
+          "end_line": 21,
+          "start_line": 13
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 71,
+          "start_line": 53
+        },
+        "body_source": {
+          "end_line": 50,
+          "start_line": 31
+        },
+        "decorator_output": {
+          "end_line": 51,
+          "start_line": 45
+        },
+        "name": "GuideDoc",
+        "output": {
+          "end_line": 71,
+          "start_line": 45
+        },
+        "source": {
+          "end_line": 50,
+          "start_line": 23
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 137,
+          "start_line": 73
+        },
+        "body_source": {
+          "end_line": 124,
+          "start_line": 60
+        },
+        "name": "GUIDE_DOCS",
+        "output": {
+          "end_line": 144,
+          "start_line": 73
+        },
+        "source": {
+          "end_line": 124,
+          "start_line": 52
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 179,
+          "start_line": 159
+        },
+        "body_source": {
+          "end_line": 168,
+          "start_line": 147
+        },
+        "decorator_output": {
+          "end_line": 157,
+          "start_line": 146
+        },
+        "name": "load_doc",
+        "output": {
+          "end_line": 179,
+          "start_line": 146
+        },
+        "source": {
+          "end_line": 168,
+          "start_line": 126
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 200,
+          "start_line": 194
+        },
+        "body_source": {
+          "end_line": 200,
+          "start_line": 193
+        },
+        "decorator_output": {
+          "end_line": 192,
+          "start_line": 181
+        },
+        "name": "system_prompt_resource",
+        "output": {
+          "end_line": 200,
+          "start_line": 181
+        },
+        "source": {
+          "end_line": 200,
+          "start_line": 170
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 222,
+          "start_line": 215
+        },
+        "body_source": {
+          "end_line": 233,
+          "start_line": 225
+        },
+        "decorator_output": {
+          "end_line": 213,
+          "start_line": 202
+        },
+        "name": "getting_started_resource",
+        "output": {
+          "end_line": 222,
+          "start_line": 202
+        },
+        "source": {
+          "end_line": 233,
+          "start_line": 202
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 248,
+          "start_line": 237
+        },
+        "body_source": {
+          "end_line": 270,
+          "start_line": 258
+        },
+        "decorator_output": {
+          "end_line": 235,
+          "start_line": 224
+        },
+        "name": "survival_card_resource",
+        "output": {
+          "end_line": 248,
+          "start_line": 224
+        },
+        "source": {
+          "end_line": 270,
+          "start_line": 235
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 270,
+          "start_line": 263
+        },
+        "body_source": {
+          "end_line": 303,
+          "start_line": 295
+        },
+        "decorator_output": {
+          "end_line": 261,
+          "start_line": 250
+        },
+        "name": "self_prompting_resource",
+        "output": {
+          "end_line": 270,
+          "start_line": 250
+        },
+        "source": {
+          "end_line": 303,
+          "start_line": 272
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 298,
+          "start_line": 285
+        },
+        "body_source": {
+          "end_line": 343,
+          "start_line": 329
+        },
+        "decorator_output": {
+          "end_line": 283,
+          "start_line": 272
+        },
+        "name": "quick_reference_resource",
+        "output": {
+          "end_line": 298,
+          "start_line": 272
+        },
+        "source": {
+          "end_line": 343,
+          "start_line": 305
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 323,
+          "start_line": 313
+        },
+        "body_source": {
+          "end_line": 380,
+          "start_line": 369
+        },
+        "decorator_output": {
+          "end_line": 311,
+          "start_line": 300
+        },
+        "name": "quick_reference_machine_resource",
+        "output": {
+          "end_line": 323,
+          "start_line": 300
+        },
+        "source": {
+          "end_line": 380,
+          "start_line": 345
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 345,
+          "start_line": 338
+        },
+        "body_source": {
+          "end_line": 413,
+          "start_line": 405
+        },
+        "decorator_output": {
+          "end_line": 336,
+          "start_line": 325
+        },
+        "name": "patterns_resource",
+        "output": {
+          "end_line": 345,
+          "start_line": 325
+        },
+        "source": {
+          "end_line": 413,
+          "start_line": 382
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 366,
+          "start_line": 360
+        },
+        "body_source": {
+          "end_line": 445,
+          "start_line": 438
+        },
+        "decorator_output": {
+          "end_line": 358,
+          "start_line": 347
+        },
+        "name": "spec_resource",
+        "output": {
+          "end_line": 366,
+          "start_line": 347
+        },
+        "source": {
+          "end_line": 445,
+          "start_line": 415
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 390,
+          "start_line": 381
+        },
+        "body_source": {
+          "end_line": 480,
+          "start_line": 470
+        },
+        "decorator_output": {
+          "end_line": 379,
+          "start_line": 368
+        },
+        "name": "errors_resource",
+        "output": {
+          "end_line": 390,
+          "start_line": 368
+        },
+        "source": {
+          "end_line": 480,
+          "start_line": 447
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 413,
+          "start_line": 405
+        },
+        "body_source": {
+          "end_line": 514,
+          "start_line": 505
+        },
+        "decorator_output": {
+          "end_line": 403,
+          "start_line": 392
+        },
+        "name": "changelog_resource",
+        "output": {
+          "end_line": 413,
+          "start_line": 392
+        },
+        "source": {
+          "end_line": 514,
+          "start_line": 482
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 422,
+          "start_line": 417
+        },
+        "body_source": {
+          "end_line": 524,
+          "start_line": 519
+        },
+        "name": "_dist_version",
+        "output": {
+          "end_line": 422,
+          "start_line": 415
+        },
+        "source": {
+          "end_line": 524,
+          "start_line": 516
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 454,
+          "start_line": 438
+        },
+        "body_source": {
+          "end_line": 564,
+          "start_line": 547
+        },
+        "decorator_output": {
+          "end_line": 436,
+          "start_line": 424
+        },
+        "name": "version_document",
+        "output": {
+          "end_line": 454,
+          "start_line": 424
+        },
+        "source": {
+          "end_line": 564,
+          "start_line": 526
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 481,
+          "start_line": 470
+        },
+        "body_source": {
+          "end_line": 602,
+          "start_line": 590
+        },
+        "decorator_output": {
+          "end_line": 468,
+          "start_line": 456
+        },
+        "name": "version_resource",
+        "output": {
+          "end_line": 481,
+          "start_line": 456
+        },
+        "source": {
+          "end_line": 602,
+          "start_line": 566
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 507,
+          "start_line": 496
+        },
+        "body_source": {
+          "end_line": 639,
+          "start_line": 627
+        },
+        "decorator_output": {
+          "end_line": 494,
+          "start_line": 483
+        },
+        "name": "self_model_resource",
+        "output": {
+          "end_line": 507,
+          "start_line": 483
+        },
+        "source": {
+          "end_line": 639,
+          "start_line": 604
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 722,
+          "start_line": 511
+        },
+        "body_source": {
+          "end_line": 852,
+          "start_line": 644
+        },
+        "name": "_render_runbook",
+        "output": {
+          "end_line": 722,
+          "start_line": 509
+        },
+        "source": {
+          "end_line": 852,
+          "start_line": 641
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 750,
+          "start_line": 736
+        },
+        "body_source": {
+          "end_line": 892,
+          "start_line": 877
+        },
+        "decorator_output": {
+          "end_line": 734,
+          "start_line": 724
+        },
+        "name": "runbook_resource",
+        "output": {
+          "end_line": 750,
+          "start_line": 724
+        },
+        "source": {
+          "end_line": 892,
+          "start_line": 854
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 752,
+          "start_line": 752
+        },
+        "body_source": {
+          "end_line": 902,
+          "start_line": 902
+        },
+        "name": "DOCS_MODEL_FILENAME",
+        "output": {
+          "end_line": 759,
+          "start_line": 752
+        },
+        "source": {
+          "end_line": 902,
+          "start_line": 894
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 761,
+          "start_line": 761
+        },
+        "body_source": {
+          "end_line": 912,
+          "start_line": 912
+        },
+        "name": "DOCS_MODEL_SOURCE",
+        "output": {
+          "end_line": 768,
+          "start_line": 761
+        },
+        "source": {
+          "end_line": 912,
+          "start_line": 904
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 770,
+          "start_line": 770
+        },
+        "body_source": {
+          "end_line": 922,
+          "start_line": 922
+        },
+        "name": "DOCS_ROOT",
+        "output": {
+          "end_line": 777,
+          "start_line": 770
+        },
+        "source": {
+          "end_line": 922,
+          "start_line": 914
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 779,
+          "start_line": 779
+        },
+        "body_source": {
+          "end_line": 932,
+          "start_line": 932
+        },
+        "name": "DOCS_MAP_PAGE",
+        "output": {
+          "end_line": 786,
+          "start_line": 779
+        },
+        "source": {
+          "end_line": 932,
+          "start_line": 924
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 788,
+          "start_line": 788
+        },
+        "body_source": {
+          "end_line": 942,
+          "start_line": 942
+        },
+        "name": "DOCS_SURFACES_PAGE",
+        "output": {
+          "end_line": 795,
+          "start_line": 788
+        },
+        "source": {
+          "end_line": 942,
+          "start_line": 934
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 809,
+          "start_line": 797
+        },
+        "body_source": {
+          "end_line": 964,
+          "start_line": 952
+        },
+        "name": "DOCS_CATEGORY_WORDS",
+        "output": {
+          "end_line": 816,
+          "start_line": 797
+        },
+        "source": {
+          "end_line": 964,
+          "start_line": 944
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 843,
+          "start_line": 831
+        },
+        "body_source": {
+          "end_line": 1000,
+          "start_line": 987
+        },
+        "decorator_output": {
+          "end_line": 829,
+          "start_line": 818
+        },
+        "name": "load_docs_model",
+        "output": {
+          "end_line": 843,
+          "start_line": 818
+        },
+        "source": {
+          "end_line": 1000,
+          "start_line": 966
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 851,
+          "start_line": 847
+        },
+        "body_source": {
+          "end_line": 1008,
+          "start_line": 1005
+        },
+        "name": "_docs_bundle_cached",
+        "output": {
+          "end_line": 851,
+          "start_line": 845
+        },
+        "source": {
+          "end_line": 1008,
+          "start_line": 1002
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 860,
+          "start_line": 855
+        },
+        "body_source": {
+          "end_line": 1017,
+          "start_line": 1013
+        },
+        "name": "_docs_index_cached",
+        "output": {
+          "end_line": 860,
+          "start_line": 853
+        },
+        "source": {
+          "end_line": 1017,
+          "start_line": 1010
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 882,
+          "start_line": 875
+        },
+        "body_source": {
+          "end_line": 1047,
+          "start_line": 1039
+        },
+        "decorator_output": {
+          "end_line": 873,
+          "start_line": 862
+        },
+        "name": "docs_bundle",
+        "output": {
+          "end_line": 882,
+          "start_line": 862
+        },
+        "source": {
+          "end_line": 1047,
+          "start_line": 1019
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 903,
+          "start_line": 896
+        },
+        "body_source": {
+          "end_line": 1077,
+          "start_line": 1069
+        },
+        "decorator_output": {
+          "end_line": 894,
+          "start_line": 884
+        },
+        "name": "docs_topic_index",
+        "output": {
+          "end_line": 903,
+          "start_line": 884
+        },
+        "source": {
+          "end_line": 1077,
+          "start_line": 1049
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 939,
+          "start_line": 919
+        },
+        "body_source": {
+          "end_line": 1121,
+          "start_line": 1100
+        },
+        "decorator_output": {
+          "end_line": 917,
+          "start_line": 905
+        },
+        "name": "docs_snapshot_identity",
+        "output": {
+          "end_line": 939,
+          "start_line": 905
+        },
+        "source": {
+          "end_line": 1121,
+          "start_line": 1079
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 1001,
+          "start_line": 955
+        },
+        "body_source": {
+          "end_line": 1191,
+          "start_line": 1147
+        },
+        "decorator_output": {
+          "end_line": 953,
+          "start_line": 941
+        },
+        "name": "docs_page_for",
+        "output": {
+          "end_line": 1001,
+          "start_line": 941
+        },
+        "source": {
+          "end_line": 1191,
+          "start_line": 1123
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 1036,
+          "start_line": 1016
+        },
+        "body_source": {
+          "end_line": 1235,
+          "start_line": 1214
+        },
+        "decorator_output": {
+          "end_line": 1014,
+          "start_line": 1003
+        },
+        "name": "docs_journey_steps",
+        "output": {
+          "end_line": 1036,
+          "start_line": 1003
+        },
+        "source": {
+          "end_line": 1235,
+          "start_line": 1193
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 1069,
+          "start_line": 1051
+        },
+        "body_source": {
+          "end_line": 1277,
+          "start_line": 1258
+        },
+        "decorator_output": {
+          "end_line": 1049,
+          "start_line": 1038
+        },
+        "name": "docs_journey_recovery",
+        "output": {
+          "end_line": 1069,
+          "start_line": 1038
+        },
+        "source": {
+          "end_line": 1277,
+          "start_line": 1237
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 1090,
+          "start_line": 1073
+        },
+        "body_source": {
+          "end_line": 1299,
+          "start_line": 1282
+        },
+        "name": "_docs_category_lines",
+        "output": {
+          "end_line": 1090,
+          "start_line": 1071
+        },
+        "source": {
+          "end_line": 1299,
+          "start_line": 1279
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 1107,
+          "start_line": 1094
+        },
+        "body_source": {
+          "end_line": 1317,
+          "start_line": 1304
+        },
+        "name": "_docs_alias_lines",
+        "output": {
+          "end_line": 1107,
+          "start_line": 1092
+        },
+        "source": {
+          "end_line": 1317,
+          "start_line": 1301
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 1174,
+          "start_line": 1123
+        },
+        "body_source": {
+          "end_line": 1396,
+          "start_line": 1344
+        },
+        "decorator_output": {
+          "end_line": 1121,
+          "start_line": 1109
+        },
+        "name": "docs_index_resource",
+        "output": {
+          "end_line": 1174,
+          "start_line": 1109
+        },
+        "source": {
+          "end_line": 1396,
+          "start_line": 1319
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 1213,
+          "start_line": 1189
+        },
+        "body_source": {
+          "end_line": 1448,
+          "start_line": 1423
+        },
+        "decorator_output": {
+          "end_line": 1187,
+          "start_line": 1176
+        },
+        "name": "docs_concepts_resource",
+        "output": {
+          "end_line": 1213,
+          "start_line": 1176
+        },
+        "source": {
+          "end_line": 1448,
+          "start_line": 1398
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 1266,
+          "start_line": 1228
+        },
+        "body_source": {
+          "end_line": 1515,
+          "start_line": 1476
+        },
+        "decorator_output": {
+          "end_line": 1226,
+          "start_line": 1215
+        },
+        "name": "docs_journeys_resource",
+        "output": {
+          "end_line": 1266,
+          "start_line": 1215
+        },
+        "source": {
+          "end_line": 1515,
+          "start_line": 1450
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 1292,
+          "start_line": 1270
+        },
+        "body_source": {
+          "end_line": 1546,
+          "start_line": 1524
+        },
+        "name": "test_guide_resources_serve_packaged_documents",
+        "output": {
+          "end_line": 1299,
+          "start_line": 1268
+        },
+        "source": {
+          "end_line": 1546,
+          "start_line": 1517
+        },
+        "type": "test"
+      },
+      {
+        "body_output": {
+          "end_line": 1313,
+          "start_line": 1303
+        },
+        "body_source": {
+          "end_line": 1565,
+          "start_line": 1555
+        },
+        "name": "test_meta_resources_render_live_documents",
+        "output": {
+          "end_line": 1320,
+          "start_line": 1301
+        },
+        "source": {
+          "end_line": 1565,
+          "start_line": 1548
+        },
+        "type": "test"
+      },
+      {
+        "body_output": {
+          "end_line": 1332,
+          "start_line": 1324
+        },
+        "body_source": {
+          "end_line": 1582,
+          "start_line": 1574
+        },
+        "name": "test_runbook_resource_serves",
+        "output": {
+          "end_line": 1339,
+          "start_line": 1322
+        },
+        "source": {
+          "end_line": 1582,
+          "start_line": 1567
+        },
+        "type": "test"
+      },
+      {
+        "body_output": {
+          "end_line": 1356,
+          "start_line": 1343
+        },
+        "body_source": {
+          "end_line": 1674,
+          "start_line": 1591
+        },
+        "name": "test_docs_snapshot_surfaces_answer_from_package_data",
+        "output": {
+          "end_line": 1433,
+          "start_line": 1341
+        },
+        "source": {
+          "end_line": 1674,
+          "start_line": 1584
+        },
+        "type": "test"
+      }
+    ],
+    "module_header": {
+      "output_all": {
+        "end_line": 26,
+        "start_line": 26
+      },
+      "output_header": {
+        "end_line": 5,
+        "start_line": 1
+      },
+      "output_imports": {
+        "end_line": 24,
+        "start_line": 6
+      },
+      "output_registration": {
+        "end_line": 34,
+        "start_line": 28
+      },
+      "source": {
+        "end_line": 12,
+        "start_line": 1
+      }
+    }
+  },
+  "output_file": "resources.py",
+  "source_file": "s0ma_src/resources.s0ma",
+  "version": "1.0.0"
+}

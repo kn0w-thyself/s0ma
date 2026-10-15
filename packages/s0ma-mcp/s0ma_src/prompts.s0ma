@@ -1,0 +1,443 @@
+module prompts
+    layer: PRESENTATION
+    version: 0.7.0
+    intent: "Authoring and operational journey prompts for the s0ma MCP server: author a module, fix check failures, migrate a legacy project, diagnose an observed runtime fault from project self-knowledge before broad code search, or carry the user's own feedback about s0ma to the s0ma team through the prepare-review-approve path they control. A prompt whose flow IS a journey the documentation model records renders that journey's steps from the record instead of keeping a second copy of them in its text (PROMPT_JOURNEYS); each prompt whose flow is not a recorded journey stays authored and says why in PROMPT_WITHOUT_JOURNEY rather than leaving a reader to guess whether the binding was forgotten."
+    exports: [PROMPT_JOURNEYS, PROMPT_WITHOUT_JOURNEY, journey_ladder, author_module_prompt, fix_check_failures_prompt, migrate_project_prompt, diagnose_fault_prompt, feedback_prompt]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: [s0ma_mcp:resources]
+    exports_helpers: none
+cell PROMPT_JOURNEYS :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Which served prompt walks which recorded journey: a prompt named here renders its steps from the journey record, so adding, removing or rewording a step in the model is the only way to change what the prompt says."
+    schema: "dict[str, str] mapping served prompt name to the journey id whose steps it renders; every value must be a journey the packaged snapshot records."
+    invariants: none
+    covered_by: none
+    ---
+    PROMPT_JOURNEYS: dict[str, str] = {
+        "author_module": "journey:mcp-authoring-loop",
+    }
+
+cell PROMPT_WITHOUT_JOURNEY :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Why each of the other served prompts is still authored rather than bound to a journey. Written down because 'this prompt is not bound' and 'somebody forgot to bind this prompt' look identical from outside, and only one of them is a decision."
+    schema: "dict[str, str] mapping served prompt name to the reason its flow is not one of the recorded journeys; together with PROMPT_JOURNEYS the keys are exactly the served prompts."
+    invariants: none
+    covered_by: none
+    ---
+    PROMPT_WITHOUT_JOURNEY: dict[str, str] = {
+        "fix_check_failures": (
+            "No journey records it, and that is right: a journey is a path "
+            "to an outcome, and this is the recovery loop journeys point "
+            "INTO — journey:mcp-authoring-loop names this very prompt as "
+            "the recovery for MISSING_PROVIDED_FUNCTION. Binding it to a "
+            "journey would make the loop a step in itself."
+        ),
+        "migrate_project": (
+            "The pre-consolidation migration is a one-time path off the "
+            "supported ladder. No journey records it, and inventing one "
+            "would put a legacy path into the teaching corpus, where it "
+            "would be taught to people who never had the old layout."
+        ),
+        "diagnose_fault": (
+            "The look-inward-first fault path is an operating journey, and "
+            "the six recorded journeys are authoring and viewing ones. "
+            "Until the model records it, its steps live here."
+        ),
+        "feedback": (
+            "journey:studi0-feedback reaches the same outcome by a "
+            "different channel: it walks the studi0 viewer and the s0ma "
+            "feedback command line. This prompt walks prepare_feedback and "
+            "submit_feedback through the client's own approval form, which "
+            "is the only path an agent with no terminal can take. Binding "
+            "them would tell an agent to run commands it cannot run."
+        ),
+    }
+
+helper _step_call :: PRESENTATION
+    intent: "Says how one journey step is taken, in the words of the channel that takes it: a tool is called, a prompt is used, a command is run. Derived from the surface id's own class rather than from a table beside it, so a journey that grows a step on a new channel names that step rather than silently rendering a raw id."
+    ---
+    def _step_call(surface: str) -> str:
+        """How to take the step ``surface`` names, said as an instruction."""
+        channel, _, name = surface.partition("/")
+        if channel == "mcp:tool":
+            return f"Call {name}"
+        if channel == "mcp:prompt":
+            return f"Use the {name} prompt"
+        if channel == "cli:s0ma":
+            spelled = name.replace("/", " ")
+            return f"Run s0ma {spelled}"
+        return f"Use {surface}"
+
+nerve journey_ladder :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Renders one recorded journey as the numbered ladder a prompt teaches: each step's call, why it is taken and what a good result looks like, any approval it needs, then the named things that can go wrong and what to do about each"
+    expects: "journey_id names a journey the packaged documentation snapshot records"
+    guarantees: "Returns the steps in walking order, every word of them read from the record; a journey this build does not record renders as nothing rather than as an invented path"
+    forbids: "Never invents a step, or a path for a journey the packaged documentation snapshot does not record."
+    evaluates_at: FUNCTION_BOUNDARY
+    metadata:
+        mcp_dependency: ["s0ma://docs/journeys"]
+    depends_on: none
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def journey_ladder(journey_id: str) -> str:
+        """One recorded journey, as the ladder a prompt walks.
+
+        The whole of the F7 prompt binding: the steps a journey prompt
+        teaches are read from the journey record, so the prompt cannot
+        say a path the model does not hold, and a step edited in the
+        model reaches the prompt without anybody editing the prompt.
+        """
+        lines: list[str] = []
+        for position, step in enumerate(
+            resources.docs_journey_steps(journey_id), start=1
+        ):
+            lines.append(
+                f"{position}. {_step_call(step['surface'])} — {step['purpose']}"
+            )
+            lines.append(f"   A good result: {step['expected_outcome']}")
+            if step["approval_boundary"]:
+                lines.append(f"   Ask first: {step['approval_boundary']}")
+        recovery = resources.docs_journey_recovery(journey_id)
+        if recovery:
+            lines.append("")
+            lines.append("When one of these comes back instead:")
+            for path in recovery:
+                lines.append(
+                    f"- {path['when']}: {path['action']} "
+                    f"({_step_call(path['next_surface'])})"
+                )
+        return "\n".join(lines)
+
+cell AUTHOR_MODULE_TEMPLATE :: PRESENTATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "The author-a-new-module journey's framing: the golden rule, the survival card, the argument shapes the journey record does not carry, and the edit-and-recheck work that happens between the recorded steps. The steps themselves are NOT here — __JOURNEY_STEPS__ is where journey:mcp-authoring-loop renders in, from the record."
+    schema: "str constant embedded from prompts/author_module.txt; markers __PROJECT_ROOT__, __MODULE_NAME__, __KIND_ARG__, and __JOURNEY_STEPS__ are substituted at render time."
+    content: @file("prompts/author_module.txt")
+    placeholders: [__PROJECT_ROOT__, __MODULE_NAME__, __KIND_ARG__, __JOURNEY_STEPS__]
+
+    invariants: none
+    covered_by: none
+cell FIX_CHECK_FAILURES_TEMPLATE :: PRESENTATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "The fix-check-failures journey's prompt copy: run check, group structured diagnostics by code, look codes up in the error catalog, apply remediations in severity order, re-check until clean."
+    schema: "str constant embedded from prompts/fix_check_failures.txt; the __PROJECT_ROOT__ marker is substituted at render time."
+    content: @file("prompts/fix_check_failures.txt")
+    placeholders: [__PROJECT_ROOT__]
+
+    invariants: none
+    covered_by: none
+cell MIGRATE_PROJECT_TEMPLATE :: PRESENTATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "The migrate-a-legacy-project journey's prompt copy: migrate_ext dry-run plan, present, apply, rebuild, and check until clean."
+    schema: "str constant embedded from prompts/migrate_project.txt; the __PROJECT_ROOT__ marker is substituted at render time."
+    content: @file("prompts/migrate_project.txt")
+    placeholders: [__PROJECT_ROOT__]
+
+    invariants: none
+    covered_by: none
+cell DIAGNOSE_FAULT_TEMPLATE :: PRESENTATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "The look-inward-first runtime fault journey: observed symptom, project_status runtime context, runbook, suspect and dependency-neighbor inspection, host evidence when needed, and a live-behavior probe that preserves durable state."
+    schema: "str constant embedded from prompts/diagnose_fault.txt; markers __PROJECT_ROOT__ and __FAULT__ are substituted at render time."
+    content: @file("prompts/diagnose_fault.txt")
+    placeholders: [__PROJECT_ROOT__, __FAULT__]
+
+    invariants: none
+    covered_by: none
+cell FEEDBACK_TEMPLATE :: PRESENTATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "The send-feedback-to-the-s0ma-team journey's prompt copy: identify what the user is actually reporting, confirm it is meant for s0ma when their words never named it, draft from evidence and nothing else, prepare, show the exact feedback data and what redaction removed, submit only through the client's approval form, and relay the receipt or the saved draft."
+    schema: "str constant embedded from prompts/feedback.txt; the __MESSAGE__ marker is substituted at render time."
+    content: @file("prompts/feedback.txt")
+    placeholders: [__MESSAGE__]
+
+    invariants: none
+    covered_by: none
+nerve author_module_prompt :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Walks an agent through authoring one new module end to end, rendering the steps of journey:mcp-authoring-loop from the record rather than from a copy in the prompt text, wrapped in the framing the record does not carry: the golden rule, the survival card, the argument shapes, and the editing that happens between steps"
+    expects: "project_root and module_name are non-empty; kind, when given, is a scaffold-recognized nerve kind"
+    guarantees: "Returns the rendered journey text with every placeholder marker substituted, its numbered steps identical to the ones journey:mcp-authoring-loop records"
+    forbids: "Never renders the authoring steps from a copy in its own text instead of the journey:mcp-authoring-loop record."
+    evaluates_at: FUNCTION_BOUNDARY
+    serves_as: author_module
+    metadata:
+        mcp_prompt_title: "Author a new s0ma module"
+        mcp_dependency: ["s0ma://guide/quick-reference", "s0ma://docs/journeys", "scaffold_module", "check", "transpile", "build_project", "inspect_module"]
+    depends_on:
+        AUTHOR_MODULE_TEMPLATE: {relation: READS, carries: "journey prompt copy", coupling: TIGHT}
+        PROMPT_JOURNEYS: {relation: READS, carries: "the journey this prompt walks", coupling: TIGHT}
+        journey_ladder: {relation: CALLS, carries: "the recorded journey id", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def author_module_prompt(
+        project_root: str,
+        module_name: str,
+        kind: str | None = None,
+    ) -> str:
+        """Author a new s0ma module end to end.
+
+        From nothing to a built, registered module: read the survival
+        card, then walk journey:mcp-authoring-loop — scaffold a
+        known-valid skeleton, edit through the check loop (diagnostics
+        carry the fix instructions), build, then read the module's
+        components back out of the self-model. The numbered steps are
+        rendered from that journey's record, so this prompt teaches the
+        path the model holds rather than a second copy of it.
+        """
+        kind_arg = f', kind="{kind}"' if kind else ""
+        return (
+            AUTHOR_MODULE_TEMPLATE.replace("__PROJECT_ROOT__", project_root)
+            .replace("__MODULE_NAME__", module_name)
+            .replace("__KIND_ARG__", kind_arg)
+            .replace(
+                "__JOURNEY_STEPS__",
+                journey_ladder(PROMPT_JOURNEYS["author_module"]),
+            )
+        )
+
+nerve fix_check_failures_prompt :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Walks an agent through diagnosing and clearing check failures: group structured diagnostics by code, fix highest severity first via each remediation, re-check until clean"
+    expects: "project_root is non-empty"
+    guarantees: "Returns the rendered journey text with the project root substituted"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    serves_as: fix_check_failures
+    metadata:
+        mcp_prompt_title: "Fix s0ma check failures"
+        mcp_dependency: ["check", "s0ma://guide/errors"]
+    depends_on:
+        FIX_CHECK_FAILURES_TEMPLATE: {relation: READS, carries: "journey prompt copy", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def fix_check_failures_prompt(project_root: str) -> str:
+        """Diagnose and fix s0ma check failures until the project is clean.
+
+        Runs check for structured diagnostics, groups findings by code,
+        looks unfamiliar codes up in the error catalog, and applies each
+        diagnostic's remediation — highest severity first — re-checking
+        until ok.
+        """
+        return FIX_CHECK_FAILURES_TEMPLATE.replace(
+            "__PROJECT_ROOT__", project_root
+        )
+
+nerve migrate_project_prompt :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Walks an agent through migrating a pre-consolidation project: migrate_ext dry-run, present the plan, apply, rebuild, and check until clean"
+    expects: "project_root is non-empty"
+    guarantees: "Returns the rendered journey text with the project root substituted"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    serves_as: migrate_project
+    metadata:
+        mcp_prompt_title: "Migrate a legacy s0ma project"
+        mcp_dependency: ["migrate_ext", "build_project", "check"]
+    depends_on:
+        MIGRATE_PROJECT_TEMPLATE: {relation: READS, carries: "journey prompt copy", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def migrate_project_prompt(project_root: str) -> str:
+        """Migrate a pre-consolidation project to the current s0ma surface.
+
+        Plans the migration with a migrate_ext dry run, presents the plan,
+        applies it (refuse-don't-clobber), rebuilds — legacy caches are
+        removed and the build regenerates everything — then checks until
+        clean.
+        """
+        return MIGRATE_PROJECT_TEMPLATE.replace(
+            "__PROJECT_ROOT__", project_root
+        )
+
+nerve diagnose_fault_prompt :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Guides an agent from an observed runtime fault through project_status, declared runtime/runbook context, suspect and dependency-neighbor inspection, host evidence when needed, and a state-preserving live behavior probe."
+    expects: "project_root and fault are non-empty"
+    guarantees: "Returns the look-inward-first diagnostic journey with the project root and observed fault substituted"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    serves_as: diagnose_fault
+    metadata:
+        mcp_prompt_title: "Diagnose an observed runtime fault"
+        mcp_dependency: ["project_status", "s0ma://project/runbook", "inspect_module", "verify_host"]
+    depends_on:
+        DIAGNOSE_FAULT_TEMPLATE: {relation: READS, carries: "diagnostic journey prompt copy", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def diagnose_fault_prompt(project_root: str, fault: str) -> str:
+        """Diagnose an observed runtime fault from self-knowledge first.
+
+        Captures the symptom, orients with project_status, reads declared
+        runtime/runbook context, inspects suspects and dependency neighbors,
+        requests host evidence when applicable, then tests the smallest
+        hypothesis against observed behavior without reverting durable state.
+        """
+        return (
+            DIAGNOSE_FAULT_TEMPLATE.replace("__PROJECT_ROOT__", project_root)
+            .replace("__FAULT__", fault)
+        )
+
+nerve feedback_prompt :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Walks an agent through carrying one piece of the user's own feedback to the s0ma team: identify it, confirm it is about s0ma when the user never said so, draft from evidence, prepare, show the exact feedback data and what redaction removed, submit only through the client's approval form, and relay the receipt or the saved draft"
+    expects: "message, when given, is the user's own account of what they want reported; an absent message means the journey opens by asking for it"
+    guarantees: "Returns the rendered journey text with no placeholder marker left behind, whether or not a message was supplied"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    serves_as: feedback
+    metadata:
+        mcp_prompt_title: "Send feedback to the s0ma team"
+        mcp_dependency: ["prepare_feedback", "submit_feedback"]
+    depends_on:
+        FEEDBACK_TEMPLATE: {relation: READS, carries: "journey prompt copy", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def feedback_prompt(message: str | None = None) -> str:
+        """Send the user's feedback about s0ma to the s0ma team.
+
+        Identifies what is being reported, confirms it is meant for s0ma
+        when the user never named it, drafts from evidence alone, prepares
+        and shows the exact feedback data, submits only through the
+        client's approval form, and relays the receipt or the saved draft.
+        """
+        said = message.strip() if message else ""
+        return FEEDBACK_TEMPLATE.replace(
+            "__MESSAGE__",
+            said
+            or "(nothing yet — ask for it in ONE short question, then continue)",
+        )
+
+test test_prompts_render_with_arguments_substituted :: PRESENTATION
+    intent: "Release-gate verification (FR-DSL-6 coverage) that every journey prompt renders its embedded template with the client's arguments substituted and no placeholder marker left behind — the rendering nerves' guarantee, exercised on the built module pytest imports; the feedback journey additionally renders with its one argument absent, the case whose whole point is that the agent is told to ask rather than to invent; and the PROMPT_JOURNEYS binding is proved from the record, so a journey step edited in the model reaches the served prompt or turns this red."
+    tests: [author_module_prompt, fix_check_failures_prompt, migrate_project_prompt, diagnose_fault_prompt, feedback_prompt, journey_ladder]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_prompts_render_with_arguments_substituted() -> None:
+        with_kind = author_module_prompt("/work/app", "billing", kind="SERVICE")
+        assert 'kind="SERVICE"' in with_kind
+        without_kind = author_module_prompt("/work/app", "billing")
+        assert "billing" in without_kind
+        assert "__KIND_ARG__" not in without_kind
+        for rendered in (
+            with_kind,
+            without_kind,
+            fix_check_failures_prompt("/work/app"),
+            migrate_project_prompt("/work/app"),
+            diagnose_fault_prompt("/work/app", "checkout returns 500"),
+        ):
+            assert "/work/app" in rendered
+            assert "__PROJECT_ROOT__" not in rendered
+            assert "__MODULE_NAME__" not in rendered
+            assert "__FAULT__" not in rendered
+        with_message = feedback_prompt("the remediation was unclear")
+        assert "the remediation was unclear" in with_message
+        without_message = feedback_prompt()
+        assert "ask for it in ONE short question" in without_message
+        for rendered in (with_message, without_message, feedback_prompt("   ")):
+            assert "__MESSAGE__" not in rendered
+            assert "prepare_feedback" in rendered
+            assert "submit_feedback" in rendered
+
+        # The binding, proved against the record rather than against a
+        # copy of it: every step of the bound journey appears in the
+        # served prompt, in the order the model walks it. Reword a step
+        # in the journey and the prompt changes; drop the binding and
+        # this fails.
+        journey_id = PROMPT_JOURNEYS["author_module"]
+        steps = resources.docs_journey_steps(journey_id)
+        assert steps, journey_id
+        assert journey_ladder(journey_id) in with_kind
+        position = -1
+        for step in steps:
+            assert step["purpose"] in with_kind, step["surface"]
+            found = with_kind.index(step["purpose"])
+            assert found > position, step["surface"]
+            position = found
+            assert step["expected_outcome"] in with_kind, step["surface"]
+        for path in resources.docs_journey_recovery(journey_id):
+            assert path["when"] in with_kind
+            assert path["action"] in with_kind
+        # And every served prompt is either bound or says why it is not.
+        assert set(PROMPT_JOURNEYS) | set(PROMPT_WITHOUT_JOURNEY) == {
+            "author_module", "fix_check_failures", "migrate_project",
+            "diagnose_fault", "feedback",
+        }
+        assert not set(PROMPT_JOURNEYS) & set(PROMPT_WITHOUT_JOURNEY)
+        for reason in PROMPT_WITHOUT_JOURNEY.values():
+            assert len(reason) > 80, reason
+        assert journey_ladder("journey:nothing-called-this") == ""

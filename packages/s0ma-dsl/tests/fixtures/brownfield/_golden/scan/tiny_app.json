@@ -1,0 +1,457 @@
+{
+  "classification": null,
+  "effort": {
+    "bands": [
+      [
+        "small",
+        2
+      ],
+      [
+        "medium",
+        1
+      ],
+      [
+        "large",
+        0
+      ]
+    ],
+    "basis": "Bands come from four things that can be seen without running anything — how many lines of real code a module has, how many things it defines, how much of it runs the moment it is imported, and whether it is tangled in an import cycle — so they sort the work from easiest to hardest and are not hours, not a schedule and not a promise.",
+    "per_module": [
+      [
+        "inventory",
+        "medium"
+      ],
+      [
+        "report",
+        "small"
+      ],
+      [
+        "run",
+        "small"
+      ]
+    ]
+  },
+  "graph": {
+    "cycles": [],
+    "deferred_edges": [],
+    "edges": [
+      [
+        "report",
+        "inventory"
+      ],
+      [
+        "run",
+        "inventory"
+      ],
+      [
+        "run",
+        "report"
+      ]
+    ],
+    "fan_in": [
+      [
+        "inventory",
+        2
+      ],
+      [
+        "report",
+        1
+      ],
+      [
+        "run",
+        0
+      ]
+    ],
+    "fan_out": [
+      [
+        "inventory",
+        0
+      ],
+      [
+        "report",
+        1
+      ],
+      [
+        "run",
+        2
+      ]
+    ],
+    "order": [
+      "inventory",
+      "report",
+      "run"
+    ]
+  },
+  "modules": [
+    {
+      "content_hash": "sha256:c82b750f9db1c70928d1243b6f6d30556b41b8ec98e84b1b3ab4620b2ce7485c",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 5,
+          "name": "LOW_STOCK_THRESHOLD",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 6,
+          "name": "CURRENCY_CODE",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 9,
+          "name": "add_item",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 16,
+          "name": "remove_item",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 30,
+          "name": "low_stock",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 35,
+          "name": "total_units",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "FUNCTION",
+          "line": 40,
+          "name": "_is_low",
+          "public": false,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        }
+      ],
+      "lines": 41,
+      "parse_error": null,
+      "sloc": 28,
+      "source": {
+        "module": "inventory",
+        "path": "inventory.py",
+        "role": "app",
+        "source_root": "."
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:3ced8a2e96ba3fa07b441810062a9acfb0f4f8a4643094a78cbf1313526825bf",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "CLASS",
+          "line": 8,
+          "name": "StockReport",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 23,
+          "name": "render",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "inventory",
+          "names": [],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": true,
+          "line": 25,
+          "module": "textwrap",
+          "names": [
+            "indent"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        }
+      ],
+      "lines": 30,
+      "parse_error": null,
+      "sloc": 20,
+      "source": {
+        "module": "report",
+        "path": "report.py",
+        "role": "app",
+        "source_root": "."
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:a5ac6d4042a9dae62c2fc6453e67777a508c6386e4357a9183eb222e4d51cb15",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 10,
+          "name": "DEFAULT_STOCK",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 13,
+          "name": "build_parser",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 27,
+          "name": "apply_changes",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 40,
+          "name": "main",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": true,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "argparse",
+          "names": [],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "inventory",
+          "names": [],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 8,
+          "module": "report",
+          "names": [],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 49,
+      "parse_error": null,
+      "sloc": 37,
+      "source": {
+        "module": "run",
+        "path": "run.py",
+        "role": "script",
+        "source_root": "."
+      },
+      "top_level_effects": 0
+    }
+  ],
+  "perimeter": {
+    "bootstrap_files": [
+      "run.py"
+    ],
+    "mode": "migration",
+    "notes": [],
+    "package_markers": [],
+    "source_roots": [
+      "."
+    ]
+  },
+  "project": {
+    "has_s0ma_config": false,
+    "mode": null,
+    "name": null
+  },
+  "proposals": [
+    {
+      "confidence": "medium",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          2
+        ],
+        [
+          "FUNCTION",
+          5
+        ]
+      ],
+      "layer": "DOMAIN",
+      "module": "inventory",
+      "reasons": [
+        "it defines things of its own and imports nothing — not another module of this project, not a library that reaches outside the program — which is what a piece of self-contained domain logic looks like."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [
+        [
+          "FUNCTION",
+          1
+        ],
+        [
+          "SERVICE",
+          1
+        ]
+      ],
+      "layer": null,
+      "module": "report",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "medium",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          1
+        ],
+        [
+          "FUNCTION",
+          3
+        ]
+      ],
+      "layer": "PRESENTATION",
+      "module": "run",
+      "reasons": [
+        "it imports `argparse` (the command-line argument reader), which is how a program gets reached from outside — that is presentation work.",
+        "nothing else in the project imports it and it can be run on its own, which makes it one of the ways in to the program."
+      ]
+    }
+  ],
+  "schema": "s0ma-adopt-scan@1",
+  "scope": {
+    "directories_outside": [],
+    "origin": "inferred",
+    "outside_files": 0,
+    "outside_tests": 0,
+    "reason": null,
+    "source_roots": [
+      "."
+    ],
+    "test_directories": []
+  },
+  "summary": {
+    "cycles": 0,
+    "lines": 120,
+    "modules": 3,
+    "outside_files": 0,
+    "packages": 0,
+    "parse_errors": 0,
+    "public_entities": 12,
+    "registered_entities": 0,
+    "sloc": 85,
+    "test_files": 0
+  },
+  "warnings": []
+}

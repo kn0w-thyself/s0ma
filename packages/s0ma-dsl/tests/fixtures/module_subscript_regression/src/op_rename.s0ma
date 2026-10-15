@@ -1,0 +1,44 @@
+module op_rename
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "Correctly-authored op that imports the registry nerve by symbol."
+    exports: [op_rename]
+    requires: []
+    uses: [registry.registry]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve op_rename :: DOMAIN
+    kind: SERVICE
+    visibility: PUBLIC
+    intent: "Rename columns using a mapping"
+    expects: "Registry and a rename step config"
+    guarantees: "Registers a rename op via the registry's register function"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def op_rename():
+        # Correct pattern: `uses: [registry.registry]` emits
+        # `from registry import registry`, binding the NERVE (a function).
+        # Calling it returns the dict; subscripting the LOCAL dict is fine.
+        reg_funcs = registry()
+        register = reg_funcs["register"]
+
+        def apply(mapping):
+            return mapping
+
+        register("rename", apply)
+        return {"apply": apply}

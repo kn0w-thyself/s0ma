@@ -1,0 +1,23 @@
+module common_errors
+    layer: DOMAIN
+    version: 1.0.0
+    intent: |
+        Derived-docs source: the in-repo `doc-ref` declaration that
+        emits the Common Errors table, `docs/_generated/common_errors.md`,
+        which the authoring server serves to agents as `s0ma://guide/errors`.
+
+        `s0ma docs render docs/_generators/` renders it, and a consistency
+        test catches any hand edit to the generated artifact.
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-ref CommonErrorsTable
+    intent: "Derived table of every s0ma-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
+    format: markdown
+    output: _generated/common_errors.md
+    covers: { source: error_codes }

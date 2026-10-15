@@ -1,0 +1,57 @@
+module formatter
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Application-layer wrapper that uses calculator and formats results."
+    uses: [calculator.add, calculator.multiply]
+    exports: [format_sum, format_product]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve format_sum :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Formats the sum of two ints as a labelled string."
+    expects: "Two integer arguments."
+    guarantees: "Returns a string of the form 'sum: <a+b>'."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def format_sum(a: int, b: int) -> str:
+        return f"sum: {add(a, b)}"
+
+nerve format_product :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Formats the product of two ints as a labelled string."
+    expects: "Two integer arguments."
+    guarantees: "Returns a string of the form 'product: <a*b>'."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def format_product(a: int, b: int) -> str:
+        return f"product: {multiply(a, b)}"

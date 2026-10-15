@@ -1,0 +1,79 @@
+{
+  "record": {
+    "concepts_required": [
+      "concept:authored-vs-generated-boundary",
+      "concept:check-and-build-loop",
+      "concept:doc-guide",
+      "concept:doc-ref"
+    ],
+    "concepts_taught": [
+      "concept:drift",
+      "concept:drift-gate",
+      "concept:strictness-mode"
+    ],
+    "evidence": [
+      {
+        "id": "example:transcript/drift-recovery",
+        "source": "docs/s0ma_src/evidence/drift-recovery.json"
+      }
+    ],
+    "id": "journey:drift-recovery",
+    "intent": "Meet the two refusals a working project runs into — a file the toolchain owns that somebody edited, and a promise left unwritten before a release — and get back to a clean run from each without guessing.",
+    "recovery_paths": [
+      {
+        "action": "Two honest answers and no third: move the hand-written change into the source it belongs in and build again, or accept losing it and build with --force. The build stops until you pick one, because the two copies cannot both be right.",
+        "next_surface": "cli:s0ma/build",
+        "when": "GENERATED_FILE_DRIFT"
+      },
+      {
+        "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-core and s0ma-dsl in the project's own list of dependencies.",
+        "next_surface": "cli:s0ma/doctor",
+        "when": "HOST_RUNTIME_UNDECLARED"
+      },
+      {
+        "action": "Write the value the field is waiting for and ask again, or leave the note where it is and stop asking for the release reading until you are ready. A written-down debt is allowed; it earns nothing, and it will not let a release through.",
+        "next_surface": "cli:s0ma/check",
+        "when": "SEMANTIC_PENDING_DEBT"
+      }
+    ],
+    "steps": [
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One line saying how many files were read and that nothing in them was refused.",
+        "purpose": "Ask whether the project holds together, so that everything after this is measured against a run that was clean.",
+        "surface": "cli:s0ma/check"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The build stops, names the file and the failure, and writes nothing — so the hand-written line is still there to read.",
+        "purpose": "Build again once a line has been added by hand to a file under build, which is a folder the toolchain writes and owns.",
+        "surface": "cli:s0ma/build"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "A clean build, and the file back to what the source says it should be — the hand-written line gone, as asked.",
+        "purpose": "Say out loud which of the two copies survives: rebuild from the written source and let the hand-written line go.",
+        "surface": "cli:s0ma/build"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The finding that was a warning a moment ago is now the reason the run fails, and the last line names the reading you got.",
+        "purpose": "Ask the same question at release strictness, once a promise in the source has deliberately been left unwritten.",
+        "surface": "cli:s0ma/check"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The clean line again, this time earned under the reading that refuses a debt.",
+        "purpose": "Write the promise the field was waiting for and ask once more, at the strictness a release has to pass.",
+        "surface": "cli:s0ma/check"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "What is installed, what this project is set to, whether the build is fresh, and one thing to do next.",
+        "purpose": "When you cannot tell which of these you are in, ask for the health report before changing anything.",
+        "surface": "cli:s0ma/doctor"
+      }
+    ]
+  },
+  "schema": "s0ma-docs-journeys@1"
+}

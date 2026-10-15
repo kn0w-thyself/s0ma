@@ -1,0 +1,83 @@
+{
+  "record": {
+    "concepts_required": [
+      "concept:s0ma"
+    ],
+    "concepts_taught": [
+      "concept:intent",
+      "concept:layer",
+      "concept:module",
+      "concept:s0ma-file",
+      "concept:strictness-mode",
+      "concept:check-and-build-loop",
+      "concept:registry-snapshot",
+      "concept:self-model",
+      "concept:authored-vs-generated-boundary"
+    ],
+    "evidence": [
+      {
+        "id": "example:transcript/first-project",
+        "source": "docs/s0ma_src/evidence/first-project.json"
+      }
+    ],
+    "id": "journey:first-project",
+    "intent": "Go from an installed toolchain to a project that checks clean, builds, and can tell you what it contains — a first session with s0ma, start to finish.",
+    "recovery_paths": [
+      {
+        "action": "Your file asked for something this environment cannot import. Ask for the health report: it says which s0ma packages are installed here and whether it can see your project at all, which is the question a missing import raises. If something is genuinely absent, install it again by the route you first used.",
+        "next_surface": "cli:s0ma/doctor",
+        "when": "MISSING_PACKAGE"
+      },
+      {
+        "action": "The check stopped before it could read the file and named it, along with the value it would not accept. Repair that value in the source you wrote and ask the same question again — nothing is built from a file the toolchain cannot read, so there is nothing else to undo.",
+        "next_surface": "cli:s0ma/check",
+        "when": "PARSE_ERROR"
+      }
+    ],
+    "steps": [
+      {
+        "approval_boundary": "",
+        "expected_outcome": "A new folder, each file named as it is written, and a note that the first build has already run.",
+        "purpose": "Turn an empty folder into a project: source you can read, a starter feature, and a first build, from one command.",
+        "surface": "cli:s0ma/new"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One line saying how many files were read and that nothing in them was refused.",
+        "purpose": "Ask the toolchain whether what is in the project holds together, before anything is built from it.",
+        "surface": "cli:s0ma/check"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "A new file in the folder you chose, and a line saying the file it has just written is already valid.",
+        "purpose": "Add a module of your own, so that the project holds something you wrote rather than only what came with it.",
+        "surface": "cli:s0ma/new"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The same clean line with one more file counted — or the file, and the value it could not accept, quoted back at you.",
+        "purpose": "Say what your module is for in the places the file leaves for it, then ask the same question again.",
+        "surface": "cli:s0ma/check"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "How many modules were written, where they went, and the name of the list that accounts for them.",
+        "purpose": "Turn the source you have just checked into ordinary Python, next to the record of what the project contains.",
+        "surface": "cli:s0ma/build"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "Every module with its band, its purpose and the parts inside it, the one you wrote among them.",
+        "purpose": "Ask the project what it now knows about itself, and read your own sentence back out of it.",
+        "surface": "cli:s0ma/inspect"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The number of nodes the graph holds, and how many connections have been declared between them — none, so far.",
+        "purpose": "Look at how the pieces are wired to one another, which in a project this young is mostly a count.",
+        "surface": "cli:s0ma/graph"
+      }
+    ]
+  },
+  "schema": "s0ma-docs-journeys@1"
+}

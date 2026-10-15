@@ -1,0 +1,60 @@
+module lazy_tools
+    layer: APPLICATION
+    version: 0.1.0
+    intent: "Proves the deferred_requires per-call failure semantics (ADR-011 (c)): the named dependency is deliberately absent in every environment, the built module still imports, and each call of the consuming nerve raises ImportError at the injected in-body import."
+    deferred_requires: [s0ma_m2_nonexistent_dep_proof:missing_symbol]
+    exports: [lazy_probe, eager_probe]
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    exports_helpers: none
+    ---
+
+nerve lazy_probe :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Consumes the deferred missing_symbol binding at call time only."
+    expects: "nothing"
+    guarantees: "raises ImportError per call while the dependency is absent"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def lazy_probe():
+        """Per-call deferred-import probe; the import lands below this docstring."""
+        return missing_symbol()
+
+nerve eager_probe :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Consumes nothing deferred - proves non-consuming defs receive no injected import."
+    expects: "nothing"
+    guarantees: "returns a static marker dict"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def eager_probe():
+        """Static probe with no deferred consumption."""
+        return {"ok": True}

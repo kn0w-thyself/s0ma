@@ -1,0 +1,296 @@
+{
+  "primary_capabilities": [
+    {
+      "id": "ask-the-self-model",
+      "journeys": [
+        "journey:first-module",
+        "journey:first-project",
+        "journey:mcp-authoring-loop",
+        "journey:studi0-viewing"
+      ],
+      "surfaces": [
+        "cli:s0ma/deferred-surface",
+        "cli:s0ma/graph",
+        "cli:s0ma/inspect",
+        "cli:s0ma/score",
+        "cli:s0ma/topo",
+        "mcp:tool/describe_system",
+        "mcp:tool/explain_dependency",
+        "mcp:tool/find_component",
+        "mcp:tool/get_component_example",
+        "mcp:tool/get_examples_for",
+        "mcp:tool/get_extension_points",
+        "mcp:tool/get_impact",
+        "mcp:tool/inspect_module",
+        "mcp:tool/query_system"
+      ],
+      "title": "Ask the project what it already knows about itself.",
+      "why_primary": "The reason somebody adopts s0ma at all: the project holds a model of its own parts and can answer questions about them, so a person or an agent stops guessing from file names. One module's declared intent, the whole dependency graph, what a change would reach, where a new part can safely go — the same want on two channels."
+    },
+    {
+      "id": "author-a-module",
+      "journeys": [
+        "journey:mcp-authoring-loop"
+      ],
+      "surfaces": [
+        "mcp:prompt/author_module",
+        "mcp:tool/scaffold_module"
+      ],
+      "title": "Write a new part of the system, starting from what it is for.",
+      "why_primary": "Authoring is the act s0ma exists to change: a module is written intent first, and the tools that scaffold one are where a newcomer meets that idea in practice rather than in a definition. Somebody who cannot get a first module written has not adopted anything."
+    },
+    {
+      "id": "build-a-project",
+      "journeys": [
+        "journey:drift-recovery",
+        "journey:first-module",
+        "journey:first-project",
+        "journey:mcp-authoring-loop"
+      ],
+      "surfaces": [
+        "cli:s0ma/build",
+        "cli:s0ma/transpile",
+        "mcp:tool/build_project",
+        "mcp:tool/transpile"
+      ],
+      "title": "Turn the sources into the code that actually runs.",
+      "why_primary": "Nothing a person writes in s0ma runs until it is built, so this is the step between having written something and having it. It is also where the determinism promise is either kept or broken, which is why every path that teaches authoring has to end here rather than at a passing check."
+    },
+    {
+      "id": "check-a-project",
+      "journeys": [
+        "journey:drift-recovery",
+        "journey:first-module",
+        "journey:first-project",
+        "journey:mcp-authoring-loop"
+      ],
+      "surfaces": [
+        "cli:s0ma/check",
+        "cli:s0ma/verify",
+        "mcp:prompt/fix_check_failures",
+        "mcp:tool/check",
+        "mcp:tool/suggest_fix"
+      ],
+      "title": "Find out whether what you wrote holds together, before building it.",
+      "why_primary": "The loop everyone lives in. Checking is how s0ma tells somebody that what they declared and what they wrote disagree, and it is the first place a newcomer meets a diagnostic and has to decide what to do about it. A product whose check step is untaught is a product people run and do not read."
+    },
+    {
+      "id": "diagnose-and-recover",
+      "journeys": [
+        "journey:drift-recovery",
+        "journey:first-project"
+      ],
+      "surfaces": [
+        "cli:s0ma/doctor",
+        "mcp:prompt/diagnose_fault",
+        "mcp:tool/check_health"
+      ],
+      "title": "Work out why something is wrong and get back to a green project.",
+      "why_primary": "The moment a person decides whether a tool is worth keeping. Everything else here is a path taken when things go well; this is the path taken when they do not, and a reader who meets a failure with no route out of it is a reader who stops. Recovery is documented as a walk, not as a list of error codes."
+    },
+    {
+      "id": "orient-in-a-project",
+      "journeys": [
+        "journey:mcp-authoring-loop"
+      ],
+      "surfaces": [
+        "mcp:tool/describe_server",
+        "mcp:tool/get_compliance_checklist",
+        "mcp:tool/learn_about_s0ma",
+        "mcp:tool/project_status"
+      ],
+      "title": "Land in an unfamiliar tree and find out where you are.",
+      "why_primary": "An agent arriving in somebody's repository has to establish what this is and what it may do here before it touches anything, and getting that wrong is how an assistant does damage. The orientation step is first in the authoring loop for that reason, and it is a capability in its own right rather than a preamble to another one."
+    },
+    {
+      "id": "retrofit-existing-codebase",
+      "journeys": [
+        "journey:retrofit-existing-codebase"
+      ],
+      "surfaces": [
+        "cli:s0ma/adopt/baseline",
+        "cli:s0ma/adopt/draft",
+        "cli:s0ma/adopt/file",
+        "cli:s0ma/adopt/init",
+        "cli:s0ma/adopt/scan",
+        "cli:s0ma/adopt/status",
+        "cli:s0ma/adopt/verify-parity"
+      ],
+      "title": "Turn a Python codebase you already have into a s0ma application.",
+      "why_primary": "Almost nobody starts from an empty folder. The codebase that most needs an accurate account of itself is the one that already exists, is already being used, and cannot be stopped and rewritten to get one — so the way across from plain Python is a capability in its own right and not a footnote to starting something new. It is also a path rather than a command: it is walked over weeks, a rung at a time, and every rung ends in a number that says whether it was reached. That shape is what a journey teaches and what a reference entry, however complete, cannot. `s0ma adopt file` sits here too, though the journey does not step through it: recording a file that will stay plain Python for a while is the optional second rung of this same ladder, and the ledger row that used to excuse it — that teaching adoption would put the exception before the rule — was written when no path taught adoption at all."
+    },
+    {
+      "id": "send-feedback",
+      "journeys": [
+        "journey:studi0-feedback"
+      ],
+      "surfaces": [
+        "cli:s0ma/feedback",
+        "cli:s0ma/feedback/delete",
+        "cli:s0ma/feedback/drafts",
+        "cli:s0ma/feedback/enroll",
+        "cli:s0ma/feedback/list",
+        "cli:s0ma/feedback/submit",
+        "mcp:prompt/feedback",
+        "mcp:tool/prepare_feedback",
+        "mcp:tool/submit_feedback"
+      ],
+      "title": "Tell the s0ma team what happened, after reading exactly what will be sent.",
+      "why_primary": "The only capability here that sends anything off the machine, which is what makes it one a path has to walk rather than a page a person can be pointed at. What a reader needs taught is the review step: the report is written, shown in full, and goes nowhere until they say so."
+    },
+    {
+      "id": "start-a-project",
+      "journeys": [
+        "journey:first-project"
+      ],
+      "surfaces": [
+        "cli:s0ma/new",
+        "mcp:tool/init_project"
+      ],
+      "title": "Turn a folder into a project s0ma can check and build.",
+      "why_primary": "The first thing anybody does, and the step that decides whether they do a second. Everything else in this policy assumes a project already exists, so a path through this one is the entry every other path depends on."
+    },
+    {
+      "id": "view-the-project",
+      "journeys": [
+        "journey:studi0-feedback",
+        "journey:studi0-viewing"
+      ],
+      "surfaces": [
+        "cli:s0ma/studi0",
+        "studi0:action/api/graph",
+        "studi0:action/api/state",
+        "studi0:action/assets/app.css",
+        "studi0:action/assets/app.js",
+        "studi0:action/index"
+      ],
+      "title": "Look at the system you have built instead of reading about it.",
+      "why_primary": "The viewer is how the self-model stops being an abstraction: a person opens a page and sees the parts and the lines between them. The routes are listed with the command because they are one capability — a reader comes for the picture, and the page, the graph feed and the poll are how it arrives."
+    }
+  ],
+  "reference_only_channels": [
+    {
+      "channel": "config",
+      "reason": "A configuration key is a value in a table the loader reads, not a way anybody reaches the product — the same reading validate.CHANNEL_EFFECTS already records by classifying this channel as one that names a thing rather than an invocation. Nineteen keys are nineteen settings a reader looks up while doing something else, and the generated configuration reference is where they look."
+    },
+    {
+      "channel": "diagnostic",
+      "reason": "A diagnostic is a label on a report, emitted by the surfaces the journeys already walk rather than served over a channel of its own. A reader arrives at one by hitting it, so what they need is its reference entry and a recovery path — and the recovery paths of the authored journeys name these codes directly, which is journey coverage arriving from the other end."
+    },
+    {
+      "channel": "mcp_resource",
+      "reason": "A resource is fetched by address. An agent reads one because a tool result, a prompt or a listing gave it the address, so the thing worth teaching is the step that hands the address over, and that step is already inside the authoring and orientation capabilities. Resources are addressed, not walked."
+    },
+    {
+      "channel": "python",
+      "reason": "These are the module-level names a program imports from s0ma. An import is not a path a person follows: the caller is code, the reader is whoever is writing that code, and a complete reference entry with the signature is the whole of what they need at the moment they need it."
+    },
+    {
+      "channel": "rest",
+      "reason": "The self-knowledge routes are served by a host application that has already embedded a built project, and their caller is that application rather than a person at a terminal. The audience is an integrator reading route and response shapes; the step that gets them there — building the project — is taught, and past it there is no walk, only an API."
+    }
+  ],
+  "reference_only_surfaces": [
+    {
+      "reason": "`s0ma adopt` is the parent of the adoption family, which registers code that already exists rather than code somebody is writing now. Its audience arrives with a brownfield tree and a migration decision already taken, not from any of the six paths here, and the reference entry is what tells them the family exists.",
+      "surface": "cli:s0ma/adopt"
+    },
+    {
+      "reason": "`s0ma docs` is the parent of the documentation-subsystem commands. Their reader is somebody generating documentation from their own project's self-model, which is a separate subject from authoring and building one; the guide that teaches it is documentation about documentation, written once rather than threaded through six unrelated paths.",
+      "surface": "cli:s0ma/docs"
+    },
+    {
+      "reason": "`s0ma docs check` composes the documentation snapshot and compares it against what is committed, writing nothing. A contributor's gate rather than an author's step: it is run by a checkout that already has documentation to verify, and what its reader needs is the reference entry and the exit codes.",
+      "surface": "cli:s0ma/docs/check"
+    },
+    {
+      "reason": "`s0ma docs check-drift` re-renders every document and compares bytes. The same reader and the same moment as the command above, at the older granularity that predates the documentation application; a path walking both would be teaching one question asked twice.",
+      "surface": "cli:s0ma/docs/check-drift"
+    },
+    {
+      "reason": "`s0ma docs compose` writes the documentation snapshot's declared outputs. The write half of the checking pair, run by whoever has just changed a source the documentation is derived from — an editing loop of its own, not a step inside any of the authoring or viewing paths here.",
+      "surface": "cli:s0ma/docs/compose"
+    },
+    {
+      "reason": "`s0ma docs list` is the documentation's own access layer: it lists the topics every other capability's teaching flows through. The F9 discovery contract tests it end to end; a journey teaching how to read the docs would teach the thing the reader is already doing.",
+      "surface": "cli:s0ma/docs/list"
+    },
+    {
+      "reason": "`s0ma docs render` writes each registered doc-ref and doc-guide to its declared output path. Reached by somebody who has declared documentation on their own components and now wants the files; the declaration is the thing worth teaching, and it is taught where declarations are.",
+      "surface": "cli:s0ma/docs/render"
+    },
+    {
+      "reason": "`s0ma docs search` is the documentation's own access layer: deterministic search over the composed snapshot. Covered end to end by the F9 discovery contract rather than a journey — the reader who needs it is already inside the read surface it serves.",
+      "surface": "cli:s0ma/docs/search"
+    },
+    {
+      "reason": "`s0ma docs show` is the documentation's own access layer: it renders one topic in full with its deep link. The F9 discovery contract proves every entry point reaches it; a journey would restate the discovery contract as prose.",
+      "surface": "cli:s0ma/docs/show"
+    },
+    {
+      "reason": "`s0ma docs verify` runs the documentation validation layers without rendering anything. A narrower form of the check above, for the same reader, and the reference entry saying which layers run is the whole of what distinguishes it from its neighbours.",
+      "surface": "cli:s0ma/docs/verify"
+    },
+    {
+      "reason": "`s0ma examples` is the parent of the example-running family. An example is attached to a component by whoever wrote that component, so this is reached from a component's own documentation rather than from a path: the reader is already looking at the thing the example is about.",
+      "surface": "cli:s0ma/examples"
+    },
+    {
+      "reason": "`s0ma examples run` runs one registered example, or every one of them. The proof that a documented claim still holds, which is exactly why it belongs beside the claim in the reference rather than at a fixed point in somebody's first hour with the product.",
+      "surface": "cli:s0ma/examples/run"
+    },
+    {
+      "reason": "`s0ma migrate` plans or applies a versioned source-grammar migration. Its reader has a project written against an older s0ma and a release note in front of them; the migration guide for that release owns the sequence, and it is written per release rather than once for all of them.",
+      "surface": "cli:s0ma/migrate"
+    },
+    {
+      "reason": "`s0ma migrate-ext` is a one-shot rename from the pre-2.0.0 extension family to the current one. It runs once in a project's life and never again, and its audience is the specific set of projects that already existed before one particular release.",
+      "surface": "cli:s0ma/migrate-ext"
+    },
+    {
+      "reason": "`s0ma migrate-layout` clears the legacy build-directory layout and rebuilds once. The same audience and the same once-only shape as the extension migration: a path teaching it would be teaching most readers a step they must not take.",
+      "surface": "cli:s0ma/migrate-layout"
+    },
+    {
+      "reason": "`s0ma migrate grammar` materialises explicit semantic state across a whole project, dry-run until asked otherwise. The most invasive of the migrations and the one most tied to a particular release's notes, which is where the sequence and the review it needs are written down.",
+      "surface": "cli:s0ma/migrate/grammar"
+    },
+    {
+      "reason": "`s0ma test` builds the project and hands off to pytest, passing arguments through. The s0ma-specific half of that is the build, which the building capability already teaches; the rest is the host test toolchain, and a reference entry for the flags is what a reader actually needs here.",
+      "surface": "cli:s0ma/test"
+    },
+    {
+      "reason": "`s0ma test-conftest` generates a conftest.py that mocks the runtime so tests can import built modules. A one-line setup step inside somebody's existing test arrangement, reached from the testing reference rather than walked to.",
+      "surface": "cli:s0ma/test-conftest"
+    },
+    {
+      "reason": "`s0ma verify-host` imports the built modules under the host application's own Python, which executes project code. It belongs to integrating a built project into an application that already exists — an audience past the end of every path here, whose first question is what the command is allowed to run.",
+      "surface": "cli:s0ma/verify-host"
+    },
+    {
+      "reason": "`migrate_project` is the agent-side companion to the migration commands, and reference-only for the same reason they are: it is offered to an agent working in a project written against an older release, and the sequence it should follow belongs to that release's migration guide.",
+      "surface": "mcp:prompt/migrate_project"
+    },
+    {
+      "reason": "`adopt_file` is the agent-side form of recording existing code as interim debt, and carries the same ruling: adoption is the brownfield entry, and teaching it inside the authoring loop would put the exception in front of the rule an agent is supposed to follow.",
+      "surface": "mcp:tool/adopt_file"
+    },
+    {
+      "reason": "`learn_s0ma` is the agent-side documentation access layer: one bounded question, one identity-stamped answer, a pointer to the page with the rest. The F9 discovery contract and the server instructions teach agents to reach it; it is how journeys are found, not a step inside one.",
+      "surface": "mcp:tool/learn_s0ma"
+    },
+    {
+      "reason": "`migrate_ext` previews and applies the legacy extension migration on an agent's behalf. Once-only, tied to one past release, and reached because a project turned out to be old rather than because anybody set out to do it.",
+      "surface": "mcp:tool/migrate_ext"
+    },
+    {
+      "reason": "`run_example` runs the executable example attached to a documented claim. An agent reaches it from the claim, which is the point of attaching examples to components at all; a path that scheduled it would be teaching the wrong trigger for it.",
+      "surface": "mcp:tool/run_example"
+    },
+    {
+      "reason": "`verify_host` proves that built modules import under the host application's real Python. The agent-side form of the host-integration step above, with the same audience and the same caveat: it executes the project's own code, and that is a fact for the reference entry to state plainly.",
+      "surface": "mcp:tool/verify_host"
+    }
+  ],
+  "schema": "s0ma-docs-coverage-policy@1"
+}

@@ -1,0 +1,191 @@
+{
+  "mappings": {
+    "declarations": [
+      {
+        "body_output": {
+          "end_line": 43,
+          "start_line": 41
+        },
+        "body_source": {
+          "end_line": 24,
+          "start_line": 22
+        },
+        "decorator_output": {
+          "end_line": 39,
+          "start_line": 33
+        },
+        "name": "Studi0WatchConfig",
+        "output": {
+          "end_line": 43,
+          "start_line": 33
+        },
+        "source": {
+          "end_line": 24,
+          "start_line": 14
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 71,
+          "start_line": 53
+        },
+        "body_source": {
+          "end_line": 53,
+          "start_line": 34
+        },
+        "decorator_output": {
+          "end_line": 51,
+          "start_line": 45
+        },
+        "name": "Studi0Watcher",
+        "output": {
+          "end_line": 71,
+          "start_line": 45
+        },
+        "source": {
+          "end_line": 53,
+          "start_line": 26
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 86,
+          "start_line": 75
+        },
+        "body_source": {
+          "end_line": 69,
+          "start_line": 58
+        },
+        "name": "_report_failure",
+        "output": {
+          "end_line": 86,
+          "start_line": 73
+        },
+        "source": {
+          "end_line": 69,
+          "start_line": 55
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 93,
+          "start_line": 90
+        },
+        "body_source": {
+          "end_line": 77,
+          "start_line": 74
+        },
+        "name": "_watch_loop",
+        "output": {
+          "end_line": 93,
+          "start_line": 88
+        },
+        "source": {
+          "end_line": 77,
+          "start_line": 71
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 129,
+          "start_line": 108
+        },
+        "body_source": {
+          "end_line": 121,
+          "start_line": 99
+        },
+        "decorator_output": {
+          "end_line": 106,
+          "start_line": 95
+        },
+        "name": "poll_once",
+        "output": {
+          "end_line": 129,
+          "start_line": 95
+        },
+        "source": {
+          "end_line": 121,
+          "start_line": 79
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 162,
+          "start_line": 144
+        },
+        "body_source": {
+          "end_line": 163,
+          "start_line": 144
+        },
+        "decorator_output": {
+          "end_line": 142,
+          "start_line": 131
+        },
+        "name": "start_watcher",
+        "output": {
+          "end_line": 162,
+          "start_line": 131
+        },
+        "source": {
+          "end_line": 163,
+          "start_line": 123
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 182,
+          "start_line": 177
+        },
+        "body_source": {
+          "end_line": 191,
+          "start_line": 186
+        },
+        "decorator_output": {
+          "end_line": 175,
+          "start_line": 164
+        },
+        "name": "stop_watcher",
+        "output": {
+          "end_line": 182,
+          "start_line": 164
+        },
+        "source": {
+          "end_line": 191,
+          "start_line": 165
+        },
+        "type": "nerve"
+      }
+    ],
+    "module_header": {
+      "output_all": {
+        "end_line": 23,
+        "start_line": 23
+      },
+      "output_header": {
+        "end_line": 5,
+        "start_line": 1
+      },
+      "output_imports": {
+        "end_line": 21,
+        "start_line": 6
+      },
+      "output_registration": {
+        "end_line": 31,
+        "start_line": 25
+      },
+      "source": {
+        "end_line": 12,
+        "start_line": 1
+      }
+    }
+  },
+  "output_file": "studi0_watch.py",
+  "source_file": "s0ma_src/studi0_watch.s0ma",
+  "version": "1.0.0"
+}

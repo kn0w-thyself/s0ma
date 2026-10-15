@@ -1,0 +1,63 @@
+#!/bin/sh
+# s0ma-launch - reach the s0ma launcher from a command line inside Claude.
+#
+# Claude Code adds this plugin's bin/ directory to the PATH of the commands it
+# runs through its Bash tool, so `s0ma-launch status` works in a conversation.
+# The ${CLAUDE_PLUGIN_ROOT} variable that MCP servers get is NOT set there, so
+# this script works out where it lives from its own path and finds the launcher
+# beside it.
+#
+# POSIX sh only - no bashisms, nothing that assumes a particular shell.
+
+set -eu
+
+# Where is this file? $0 may have been found on the PATH, and it may be a
+# symlink (or a chain of them) pointing somewhere else entirely.
+self=$0
+case $self in
+    */*) ;;
+    *) self=$(command -v "$self" || printf '%s\n' "$self") ;;
+esac
+
+hops=0
+while [ -L "$self" ]; do
+    hops=$((hops + 1))
+    if [ "$hops" -gt 40 ]; then
+        printf '%s\n' "s0ma cannot work out where it is installed: the shortcuts leading to $0 point round in a circle." >&2
+        exit 1
+    fi
+    target=$(readlink "$self")
+    case $target in
+        /*) self=$target ;;
+        *) self=$(dirname "$self")/$target ;;
+    esac
+done
+
+here=$(cd "$(dirname "$self")" && pwd -P)
+launcher=$here/../launcher/s0ma_launch.py
+
+if [ ! -f "$launcher" ]; then
+    printf '%s\n' "s0ma is missing a file it needs, $launcher - installing the s0ma plugin again should put it back." >&2
+    exit 1
+fi
+
+# Find uv the way the plugin's MCP server does: whatever the PATH offers first,
+# then the places uv's own installers put it.
+uv=
+if command -v uv >/dev/null 2>&1; then
+    uv=$(command -v uv)
+else
+    for dir in "${HOME:-/nonexistent}/.local/bin" "${HOME:-/nonexistent}/.cargo/bin" /opt/homebrew/bin /usr/local/bin; do
+        if [ -x "$dir/uv" ]; then
+            uv=$dir/uv
+            break
+        fi
+    done
+fi
+
+if [ -z "$uv" ]; then
+    printf '%s\n' "s0ma needs a small program called uv, and it is not on this computer yet - install it with: curl -LsSf https://astral.sh/uv/install.sh | sh" >&2
+    exit 7
+fi
+
+exec "$uv" run --script "$launcher" "$@"

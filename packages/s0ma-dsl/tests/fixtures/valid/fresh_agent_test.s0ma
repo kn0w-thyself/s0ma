@@ -1,0 +1,61 @@
+module fresh_agent_test
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Handles user authentication and token validation"
+    requires: [hashlib, time]
+    exports: [authenticate, AuthToken]
+
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell AuthToken :: APPLICATION
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "Represents a validated authentication token with expiry"
+    schema: "Class with user_id: str, token: str, expires_at: float"
+    invariants: none
+    covered_by: none
+    ---
+    class AuthToken:
+        def __init__(self, user_id: str, token: str, expires_at: float):
+            self.user_id = user_id
+            self.token = token
+            self.expires_at = expires_at
+
+cell TOKEN_TTL_SECONDS :: APPLICATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "Default time-to-live for authentication tokens in seconds"
+    schema: "int constant = 3600"
+    invariants: none
+    covered_by: none
+    ---
+    TOKEN_TTL_SECONDS = 3600
+
+nerve authenticate :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Authenticates a user by ID and returns a signed token"
+    expects: "user_id is a non-empty string"
+    guarantees: "Returns a valid AuthToken with TTL-based expiry"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    latency_ms: 100
+    depends_on:
+        TOKEN_TTL_SECONDS: {relation: READS, carries: "token lifetime", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def authenticate(user_id: str) -> AuthToken:
+        token_str = hashlib.sha256(user_id.encode()).hexdigest()
+        expires = time.time() + TOKEN_TTL_SECONDS
+        return AuthToken(user_id=user_id, token=token_str, expires_at=expires)

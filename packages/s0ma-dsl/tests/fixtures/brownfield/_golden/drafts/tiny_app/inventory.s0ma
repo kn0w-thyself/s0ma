@@ -1,0 +1,159 @@
+# adopt_source: inventory.py@sha256:c82b750f9db1c70928d1243b6f6d30556b41b8ec98e84b1b3ab4620b2ce7485c
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+module inventory
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'Stock keeping for the corner-shop script; nothing here mutates its input.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports:
+      - LOW_STOCK_THRESHOLD
+      - CURRENCY_CODE
+      - add_item
+      - remove_item
+      - low_stock
+      - total_units
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell LOW_STOCK_THRESHOLD :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    LOW_STOCK_THRESHOLD = 5
+
+cell CURRENCY_CODE :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    CURRENCY_CODE = "GBP"
+
+nerve add_item :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def add_item(stock: dict[str, int], name: str, quantity: int) -> dict[str, int]:
+        """Return a copy of ``stock`` holding ``quantity`` more of ``name``."""
+        updated = dict(stock)
+        updated[name] = updated.get(name, 0) + quantity
+        return updated
+
+nerve remove_item :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def remove_item(stock: dict[str, int], name: str, quantity: int) -> dict[str, int]:
+        """Return a copy of ``stock`` holding ``quantity`` fewer of ``name``.
+
+        An item that falls to zero is dropped rather than kept at a negative.
+        """
+        updated = dict(stock)
+        remaining = updated.get(name, 0) - quantity
+        if remaining <= 0:
+            updated.pop(name, None)
+        else:
+            updated[name] = remaining
+        return updated
+
+nerve low_stock :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def low_stock(stock: dict[str, int]) -> list[str]:
+        """The names that have fallen to or below the low-stock threshold."""
+        return sorted(name for name, count in stock.items() if _is_low(count))
+
+nerve total_units :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def total_units(stock: dict[str, int]) -> int:
+        """How many individual units the shop is holding altogether."""
+        return sum(stock.values())
+
+helper _is_low :: DOMAIN
+    intent: "FIXME(adopt): say in one sentence why this module-private helper exists and which declaration in this module uses it."
+    ---
+    def _is_low(count: int) -> bool:
+        return count <= LOW_STOCK_THRESHOLD

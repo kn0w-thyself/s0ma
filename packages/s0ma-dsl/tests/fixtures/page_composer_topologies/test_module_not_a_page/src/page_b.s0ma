@@ -1,0 +1,34 @@
+module page_b
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Page B renderer for the test-module-not-a-page fixture; declares landmark:header."
+    exports: [render_page_b]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render_page_b :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Render page B with its own header landmark."
+    expects: "No arguments."
+    guarantees: "Returns a string with a header."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    declares_attributes: [landmark:header]
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    covered_by: none
+    ---
+    def render_page_b() -> str:
+        return "<header>B</header>"

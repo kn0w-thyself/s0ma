@@ -1,0 +1,45 @@
+module registry
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "Central registry for transform operations with self-registration."
+    exports: [registry]
+    requires: []
+    uses: []
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve registry :: DOMAIN
+    kind: SERVICE
+    visibility: PUBLIC
+    intent: "Registry of available operations"
+    expects: "No preconditions"
+    guarantees: "Returns dict with register, list_ops, and get_op functions"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def registry():
+        ops = {}
+
+        def register(name, apply_fn):
+            ops[name] = apply_fn
+
+        def list_ops():
+            return list(ops.keys())
+
+        def get_op(name):
+            return ops[name]
+
+        return {"register": register, "list_ops": list_ops, "get_op": get_op}

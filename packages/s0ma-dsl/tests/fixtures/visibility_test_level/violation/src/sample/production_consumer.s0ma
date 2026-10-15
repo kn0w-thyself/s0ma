@@ -1,0 +1,35 @@
+module production_consumer
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Production module that incorrectly tries to consume a TEST-visibility nerve from another module — must trigger TEST_VISIBILITY_VIOLATION."
+    uses: [text_helpers.escape_text]
+    exports: [render_quoted]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render_quoted :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Render a quoted span using escape_text — but this is a production module, so the TEST-visibility import must be rejected."
+    expects: "A non-empty string."
+    guarantees: "Returns the escaped text wrapped in double quotes."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render_quoted(text: str) -> str:
+        escaped = escape_text(text)
+        return '"' + escaped + '"'

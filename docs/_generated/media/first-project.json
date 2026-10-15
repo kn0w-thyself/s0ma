@@ -1,0 +1,252 @@
+{
+  "identity": {
+    "channel": "preview",
+    "journey": "journey:first-project",
+    "published_by": "doc:guide/first-project",
+    "release": "0.19.1 (preview)",
+    "snapshot": "sha256:46cb0cce5f7c07cf"
+  },
+  "package": {
+    "audience": [
+      "user"
+    ],
+    "cautions": [
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "1",
+        "surface": "cli:s0ma/new",
+        "surface_name": "s0ma new"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "2",
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "3",
+        "surface": "cli:s0ma/new",
+        "surface_name": "s0ma new"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "4",
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "5",
+        "surface": "cli:s0ma/build",
+        "surface_name": "s0ma build"
+      }
+    ],
+    "chapters": [
+      {
+        "caption": "Turn an empty folder into a project: source you can read, a starter feature, and a first build, from one command.",
+        "ordinal": "1",
+        "step": "1",
+        "title": "s0ma new"
+      },
+      {
+        "caption": "Ask the toolchain whether what is in the project holds together, before anything is built from it.",
+        "ordinal": "2",
+        "step": "2",
+        "title": "s0ma check"
+      },
+      {
+        "caption": "Add a module of your own, so that the project holds something you wrote rather than only what came with it.",
+        "ordinal": "3",
+        "step": "3",
+        "title": "s0ma new"
+      },
+      {
+        "caption": "Say what your module is for in the places the file leaves for it, then ask the same question again.",
+        "ordinal": "4",
+        "step": "4",
+        "title": "s0ma check"
+      },
+      {
+        "caption": "Turn the source you have just checked into ordinary Python, next to the record of what the project contains.",
+        "ordinal": "5",
+        "step": "5",
+        "title": "s0ma build"
+      },
+      {
+        "caption": "Ask the project what it now knows about itself, and read your own sentence back out of it.",
+        "ordinal": "6",
+        "step": "6",
+        "title": "s0ma inspect"
+      },
+      {
+        "caption": "Look at how the pieces are wired to one another, which in a project this young is mostly a count.",
+        "ordinal": "7",
+        "step": "7",
+        "title": "s0ma graph"
+      }
+    ],
+    "consent": [],
+    "evidence": [
+      {
+        "id": "example:transcript/first-project",
+        "source": "docs/s0ma_src/evidence/first-project.json"
+      }
+    ],
+    "outcome": "Go from an installed toolchain to a project that checks clean, builds, and can tell you what it contains — a first session with s0ma, start to finish.",
+    "prerequisites": [
+      {
+        "concept": "concept:s0ma",
+        "term": "s0ma"
+      }
+    ],
+    "recovery": [
+      {
+        "action": "Your file asked for something this environment cannot import. Ask for the health report: it says which s0ma packages are installed here and whether it can see your project at all, which is the question a missing import raises. If something is genuinely absent, install it again by the route you first used.",
+        "next_surface": "cli:s0ma/doctor",
+        "next_surface_name": "s0ma doctor",
+        "when": "MISSING_PACKAGE"
+      },
+      {
+        "action": "The check stopped before it could read the file and named it, along with the value it would not accept. Repair that value in the source you wrote and ask the same question again — nothing is built from a file the toolchain cannot read, so there is nothing else to undo.",
+        "next_surface": "cli:s0ma/check",
+        "next_surface_name": "s0ma check",
+        "when": "PARSE_ERROR"
+      }
+    ],
+    "steps": [
+      {
+        "channel": "cli",
+        "expected_visible_state": "A new folder, each file named as it is written, and a note that the first build has already run.",
+        "ordinal": "1",
+        "purpose": "Turn an empty folder into a project: source you can read, a starter feature, and a first build, from one command.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/new",
+        "surface_name": "s0ma new"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "One line saying how many files were read and that nothing in them was refused.",
+        "ordinal": "2",
+        "purpose": "Ask the toolchain whether what is in the project holds together, before anything is built from it.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "A new file in the folder you chose, and a line saying the file it has just written is already valid.",
+        "ordinal": "3",
+        "purpose": "Add a module of your own, so that the project holds something you wrote rather than only what came with it.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/new",
+        "surface_name": "s0ma new"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The same clean line with one more file counted — or the file, and the value it could not accept, quoted back at you.",
+        "ordinal": "4",
+        "purpose": "Say what your module is for in the places the file leaves for it, then ask the same question again.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/check",
+        "surface_name": "s0ma check"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "How many modules were written, where they went, and the name of the list that accounts for them.",
+        "ordinal": "5",
+        "purpose": "Turn the source you have just checked into ordinary Python, next to the record of what the project contains.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/build",
+        "surface_name": "s0ma build"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "Every module with its band, its purpose and the parts inside it, the one you wrote among them.",
+        "ordinal": "6",
+        "purpose": "Ask the project what it now knows about itself, and read your own sentence back out of it.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/inspect",
+        "surface_name": "s0ma inspect"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The number of nodes the graph holds, and how many connections have been declared between them — none, so far.",
+        "ordinal": "7",
+        "purpose": "Look at how the pieces are wired to one another, which in a project this young is mostly a count.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/graph",
+        "surface_name": "s0ma graph"
+      }
+    ],
+    "teaches": [
+      {
+        "concept": "concept:intent",
+        "term": "intent"
+      },
+      {
+        "concept": "concept:layer",
+        "term": "layer"
+      },
+      {
+        "concept": "concept:module",
+        "term": "module"
+      },
+      {
+        "concept": "concept:s0ma-file",
+        "term": ".s0ma file"
+      },
+      {
+        "concept": "concept:strictness-mode",
+        "term": "strictness mode"
+      },
+      {
+        "concept": "concept:check-and-build-loop",
+        "term": "check and build loop"
+      },
+      {
+        "concept": "concept:registry-snapshot",
+        "term": "registry snapshot"
+      },
+      {
+        "concept": "concept:self-model",
+        "term": "self-model"
+      },
+      {
+        "concept": "concept:authored-vs-generated-boundary",
+        "term": "authored-vs-generated boundary"
+      }
+    ],
+    "title": "Your first project, from install to graph"
+  },
+  "schema": "s0ma-docs-model@1"
+}

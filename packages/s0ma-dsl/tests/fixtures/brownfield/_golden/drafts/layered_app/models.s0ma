@@ -1,0 +1,162 @@
+# adopt_source: src/bookshelf/models.py@sha256:8dd709a199153e10f09f13b5e461b7af280aa91d88627dd70acc63792c2b5a17
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module models` rather than
+#   `bookshelf.models`. Every module name in a project must be unique; rename the draft if
+#   another module already carries this name.
+# note: The imports under `if TYPE_CHECKING:` on lines 13-14 come only from Python's standard
+#   library, so they were moved into the module header's requires: list; importing them when
+#   the module loads costs nothing and cannot create an import cycle.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+# note: Imported but never used, so left out of the header: typing:TYPE_CHECKING.
+module models
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'The nouns of the lending service: titles, members and loans.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports:
+      - Availability
+      - BookRecord
+      - LoanWindow
+      - Book
+      - Member
+      - Loan
+
+    requires:
+      - dataclasses:dataclass
+      - datetime:date
+      - enum:Enum
+      - typing:Any
+      - typing:NamedTuple
+      - typing:TypedDict
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell Availability :: DOMAIN
+    kind: ENUM
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class Availability(Enum):
+        """Whether a copy of a title can be borrowed right now."""
+
+        ON_SHELF = "on_shelf"
+        ON_LOAN = "on_loan"
+        WITHDRAWN = "withdrawn"
+
+cell BookRecord :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class BookRecord(TypedDict):
+        """The shape one title takes when it is stored on disk."""
+
+        isbn: str
+        title: str
+        author: str
+        copies: int
+
+cell LoanWindow :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class LoanWindow(NamedTuple):
+        """The two dates that bound a loan."""
+
+        start: date
+        due: date
+
+cell Book :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    @dataclass(frozen=True)
+    class Book:
+        """A title the library owns, and how many copies it holds."""
+
+        isbn: str
+        title: str
+        author: str
+        copies: int = 1
+
+        @property
+        def label(self) -> str:
+            """A one-line description fit for a shelf edge or a screen."""
+            return f"{self.title} by {self.author}"
+
+        @classmethod
+        def from_record(cls, record: dict[str, Any]) -> Book:
+            """Build a title from the dictionary shape used on disk."""
+            return cls(
+                isbn=str(record["isbn"]), title=str(record["title"]),
+                author=str(record["author"]), copies=int(record["copies"]),
+            )
+
+        def as_record(self) -> BookRecord:
+            """Return the dictionary shape used on disk."""
+            return {
+                "isbn": self.isbn, "title": self.title,
+                "author": self.author, "copies": self.copies,
+            }
+
+cell Member :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    @dataclass(frozen=True)
+    class Member:
+        """Someone the library has issued a card to."""
+
+        card_number: str
+        name: str
+        email: str
+
+cell Loan :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    @dataclass(frozen=True)
+    class Loan:
+        """One member's hold on one title, for a window of dates."""
+
+        isbn: str
+        card_number: str
+        window: LoanWindow
+        renewals: int = 0
+
+        def is_overdue(self, today: date) -> bool:
+            """True when ``today`` has passed the loan's due date."""
+            return today > self.window.due
+
+        def days_left(self, today: date) -> int:
+            """Days left before the loan falls due; negative once it is late."""
+            return (self.window.due - today).days

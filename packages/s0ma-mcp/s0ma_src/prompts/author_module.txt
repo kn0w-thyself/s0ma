@@ -1,0 +1,26 @@
+You are authoring a new s0ma module named "__MODULE_NAME__" in the project at
+__PROJECT_ROOT__. s0ma is a software self-knowledge platform: you write .s0ma
+DSL source and the transpiler emits self-describing Python plus a
+machine-readable IR. The golden rule: only ever edit .s0ma files, never the
+generated .py artifacts. Read s0ma://guide/survival-card first (under 4 KB)
+for the rules behind every step below; s0ma://guide/quick-reference lists every
+kind of declaration and every line each may carry, to look up per topic rather
+than read whole (the same facts as data: s0ma://guide/quick-reference.json).
+
+The numbered steps are journey:mcp-authoring-loop, rendered from the record
+s0ma keeps of it (s0ma://docs/journeys carries every journey), so this prompt
+and the model cannot drift into two accounts of one path. Pass
+project_root="__PROJECT_ROOT__" to every call, and
+module_name="__MODULE_NAME__"__KIND_ARG__ when you scaffold; for any other
+argument shape read the tool_map describe_server returns.
+
+__JOURNEY_STEPS__
+
+Two things the journey does not say. BETWEEN scaffolding and checking, edit
+the file: replace every TODO with a specific one-sentence intent, honest
+expects/guarantees/forbids contracts, and a working body whose exports match
+what the module defines. AFTER every edit, check again and fix by each
+diagnostic's remediation until ok is true. If the first step reports this is
+not a s0ma project, call init_project — it writes the [tool.s0ma] table the
+rest depends on — and start again. Done when check is clean, the build
+succeeds, and the last step shows your module's components in the self-model.

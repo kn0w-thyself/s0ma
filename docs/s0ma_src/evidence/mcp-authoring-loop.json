@@ -1,0 +1,359 @@
+{
+  "record": {
+    "channel": "mcp",
+    "covers": [
+      "mcp:tool/build_project",
+      "mcp:tool/check",
+      "mcp:tool/inspect_module",
+      "mcp:tool/project_status",
+      "mcp:tool/scaffold_module"
+    ],
+    "id": "example:transcript/mcp-authoring-loop",
+    "intent": "Drive the whole agent loop against the real authoring server: ask the tree what it is, write a component into it, have the toolchain check what was written, build it, and read the built component back out of the self-model.",
+    "journey": "journey:mcp-authoring-loop",
+    "not_covered": [],
+    "scaffold": {
+      "argv": [
+        "s0ma",
+        "new",
+        "project",
+        "demo",
+        "--name",
+        "demo"
+      ],
+      "kind": "new-project",
+      "workdir": "demo"
+    },
+    "steps": [
+      {
+        "arguments": {
+          "project_root": "{project}"
+        },
+        "fields": [
+          {
+            "equals": true,
+            "path": "is_project"
+          },
+          {
+            "equals": "dev",
+            "path": "mode"
+          },
+          {
+            "equals": "on",
+            "path": "authoring"
+          },
+          {
+            "equals": 3,
+            "path": "module_registration.mapped"
+          },
+          {
+            "equals": "core_domain",
+            "path": "modules.1.name"
+          },
+          {
+            "equals": true,
+            "path": "build.built"
+          },
+          {
+            "equals": "{version}",
+            "path": "build.transpiler_version"
+          },
+          {
+            "equals": false,
+            "path": "semantic_debt.blocks_release"
+          },
+          {
+            "equals": "check",
+            "path": "next_actions.0.tool"
+          },
+          {
+            "equals": "s0ma-tool-result@1",
+            "path": "schema"
+          }
+        ],
+        "text": [
+          {
+            "match": "contains",
+            "text": "\"is_project\": true"
+          },
+          {
+            "match": "contains",
+            "text": "\"project_root\": \"{project}\""
+          },
+          {
+            "match": "contains",
+            "text": "\"authoring\": \"on\""
+          },
+          {
+            "match": "contains",
+            "text": "\"rules\": ["
+          },
+          {
+            "match": "contains",
+            "text": "After editing a src/*.s0ma file: run check, then build_project."
+          },
+          {
+            "match": "contains",
+            "text": "\"suggested_next_action\""
+          }
+        ],
+        "tool": "project_status"
+      },
+      {
+        "arguments": {
+          "kind": "SERVICE",
+          "layer": "DOMAIN",
+          "module_name": "greeting",
+          "project_root": "{project}"
+        },
+        "fields": [
+          {
+            "equals": true,
+            "path": "ok"
+          },
+          {
+            "equals": 0,
+            "path": "exit_code"
+          },
+          {
+            "equals": "{project}/src/greeting.s0ma",
+            "path": "path"
+          },
+          {
+            "equals": true,
+            "path": "check.ok"
+          },
+          {
+            "equals": "strict",
+            "path": "check.diagnostics.summary.mode"
+          },
+          {
+            "equals": 1,
+            "path": "check.diagnostics.summary.files_processed"
+          },
+          {
+            "equals": "check",
+            "path": "next_actions.0.tool"
+          }
+        ],
+        "text": [
+          {
+            "match": "contains",
+            "text": "module greeting"
+          },
+          {
+            "match": "contains",
+            "text": "nerve greeting :: DOMAIN"
+          },
+          {
+            "match": "contains",
+            "text": "kind: SERVICE"
+          },
+          {
+            "match": "contains",
+            "text": "visibility: PUBLIC"
+          },
+          {
+            "match": "contains",
+            "text": "\"suggested_next_action\": \"Validate the intent-authored scaffold after editing it.\""
+          }
+        ],
+        "tool": "scaffold_module"
+      },
+      {
+        "arguments": {
+          "mode": "dev",
+          "project_root": "{project}"
+        },
+        "fields": [
+          {
+            "equals": true,
+            "path": "ok"
+          },
+          {
+            "equals": 0,
+            "path": "exit_code"
+          },
+          {
+            "equals": 0,
+            "path": "diagnostics.summary.errors"
+          },
+          {
+            "equals": 0,
+            "path": "diagnostics.summary.warnings"
+          },
+          {
+            "equals": 4,
+            "path": "diagnostics.summary.files_processed"
+          },
+          {
+            "equals": "dev",
+            "path": "diagnostics.summary.mode"
+          },
+          {
+            "equals": "build_project",
+            "path": "next_actions.0.tool"
+          }
+        ],
+        "text": [
+          {
+            "match": "contains",
+            "text": "\"exit_code\": 0"
+          },
+          {
+            "match": "contains",
+            "text": "\"files_processed\": 4"
+          },
+          {
+            "match": "contains",
+            "text": "Build only after the static diagnostics are clean."
+          }
+        ],
+        "tool": "check"
+      },
+      {
+        "arguments": {
+          "mode": "dev",
+          "project_root": "{project}"
+        },
+        "fields": [
+          {
+            "equals": true,
+            "path": "ok"
+          },
+          {
+            "equals": 0,
+            "path": "exit_code"
+          },
+          {
+            "equals": 0,
+            "path": "diagnostics.summary.errors"
+          },
+          {
+            "equals": "demo",
+            "path": "manifest.project"
+          },
+          {
+            "equals": "build",
+            "path": "manifest.build_dir"
+          },
+          {
+            "equals": "greeting",
+            "path": "manifest.modules.3"
+          },
+          {
+            "equals": "{version}",
+            "path": "manifest.transpiler_version"
+          },
+          {
+            "equals": "inspect_module",
+            "path": "next_actions.0.tool"
+          }
+        ],
+        "text": [
+          {
+            "match": "contains",
+            "text": "\"code\": \"HOST_RUNTIME_UNDECLARED\""
+          },
+          {
+            "match": "contains",
+            "text": "\"manifest\": {"
+          },
+          {
+            "match": "contains",
+            "text": "\"topological_import_order\": ["
+          },
+          {
+            "match": "contains",
+            "text": "Inspect the emitted canonical self-model before grepping code."
+          }
+        ],
+        "tool": "build_project"
+      },
+      {
+        "arguments": {
+          "module": "greeting",
+          "project_root": "{project}"
+        },
+        "fields": [
+          {
+            "equals": true,
+            "path": "ok"
+          },
+          {
+            "equals": 0,
+            "path": "exit_code"
+          },
+          {
+            "equals": "greeting",
+            "path": "module"
+          },
+          {
+            "equals": "greeting::greeting",
+            "path": "ir.components.0.canonical_id"
+          },
+          {
+            "equals": "nerve",
+            "path": "ir.components.0.declaration_type"
+          },
+          {
+            "equals": "SERVICE",
+            "path": "ir.components.0.kind"
+          },
+          {
+            "equals": "PUBLIC",
+            "path": "ir.components.0.visibility"
+          },
+          {
+            "equals": "DOMAIN",
+            "path": "ir.module.layer"
+          },
+          {
+            "equals": "greeting",
+            "path": "ir.module.name"
+          },
+          {
+            "equals": "src/greeting.s0ma",
+            "path": "ir.module.source_file"
+          },
+          {
+            "equals": "check",
+            "path": "next_actions.0.tool"
+          }
+        ],
+        "text": [
+          {
+            "match": "contains",
+            "text": "\"canonical_id\": \"greeting::greeting\""
+          },
+          {
+            "match": "contains",
+            "text": "\"declaration_type\": \"nerve\""
+          },
+          {
+            "match": "contains",
+            "text": "\"provides_contracts\": ["
+          },
+          {
+            "match": "contains",
+            "text": "\"kind\": \"SERVICE\""
+          },
+          {
+            "match": "contains",
+            "text": "\"visibility\": \"PUBLIC\""
+          },
+          {
+            "match": "contains",
+            "text": "\"layer\": \"DOMAIN\""
+          },
+          {
+            "match": "contains",
+            "text": "Validate any intent or dependency edit suggested by inspection."
+          }
+        ],
+        "tool": "inspect_module"
+      }
+    ]
+  },
+  "schema": "s0ma-docs-evidence@1"
+}

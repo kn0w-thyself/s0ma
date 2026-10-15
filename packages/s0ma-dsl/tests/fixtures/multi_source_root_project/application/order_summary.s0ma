@@ -1,0 +1,36 @@
+module order_summary
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Sibling application module that summarises an order — exists so the application source root has more than one module, forcing the cross-module resolver to run."
+    uses: [order_model.Order, order_model.build_order, order_service.process_order]
+    exports: [summarise]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve summarise :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Returns a tuple of (id, status) for a built order."
+    expects: "A string id."
+    guarantees: "Returns ('id', 'status') with status from process_order."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def summarise(id: str) -> tuple[str, str]:
+        order: Order = build_order(id)
+        status: str = process_order(order.id)
+        return (order.id, status)

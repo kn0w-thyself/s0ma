@@ -1,0 +1,1561 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>sh0w dev harness — fixture payload</title>
+    <!-- Dev harness for M4: renders the checked-in fixture payload with no
+         server and no fetch, so the frontend can be worked on (and looked
+         at) before the live API exists. Open this file directly, or serve
+         packages/s0ma-studi0 over a static server and browse to
+         /tests/fixtures/dev_harness.html.
+
+         app.css / app.js are loaded from the real asset directory by
+         relative path — this harness never holds a copy of them. -->
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../../s0ma_src/assets/app.css" />
+  </head>
+  <body>
+    <div id="s0ma-sh0w" class="sh0w-mount"></div>
+    <script id="sh0w-fixture" type="application/json">
+{
+  "components": {
+    "console::AGENDA_TEMPLATE": {
+      "canonical_id": "console::AGENDA_TEMPLATE",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "placeholders": {
+          "state": "value",
+          "value": [
+            "__PERSON__",
+            "__ROWS__"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "str constant embedded from copy/agenda.txt; the markers __PERSON__ and __ROWS__ are substituted at render time."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The agenda screen's copy: one line per due reminder, with markers for the person's name and the rendered reminder rows."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 24,
+        "file": "s0ma_src/console.s0ma",
+        "line": 11,
+        "start_line": 11
+      },
+      "module": "console",
+      "visibility": "INTERNAL"
+    },
+    "console::render_agenda": {
+      "canonical_id": "console::render_agenda",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "value",
+          "value": [
+            "AGENDA_TEMPLATE",
+            "scheduling.due_reminders"
+          ]
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "person is a non-empty display name; window is a SchedulingWindow"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the agenda text with every marker substituted; returns the empty-agenda line when no reminder is due"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "value",
+          "value": "str"
+        },
+        "serves_as": "agenda"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Renders the agenda screen for one person from the reminders the scheduler reports as due, substituting them into the agenda copy."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 68,
+        "file": "s0ma_src/console.s0ma",
+        "line": 31,
+        "start_line": 31
+      },
+      "module": "console",
+      "visibility": "PUBLIC"
+    },
+    "console::summarise_overdue": {
+      "canonical_id": "console::summarise_overdue",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "rows is a list of Reminder records"
+        },
+        "guarantees": {
+          "reason": "the overdue boundary is still under discussion with the owner",
+          "state": "pending"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "value",
+          "value": "int"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Counts the overdue reminders in an agenda row set so the agenda header can state the number without recomputing urgency."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 92,
+        "file": "s0ma_src/console.s0ma",
+        "line": 74,
+        "start_line": 74
+      },
+      "module": "console",
+      "visibility": "INTERNAL"
+    },
+    "console::test_agenda_lists_every_due_reminder": {
+      "canonical_id": "console::test_agenda_lists_every_due_reminder",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "value",
+          "value": [
+            "scheduling.due_reminders"
+          ]
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "render_agenda",
+            "summarise_overdue"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Checks that the rendered agenda contains one row per due reminder and leaves no template marker behind."
+      },
+      "kind": null,
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 131,
+        "file": "s0ma_src/console.s0ma",
+        "line": 98,
+        "start_line": 98
+      },
+      "module": "console",
+      "visibility": null
+    },
+    "delivery::CHANNEL_TIMEOUT_MS": {
+      "canonical_id": "delivery::CHANNEL_TIMEOUT_MS",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "int milliseconds"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "How long a channel waits for the gateway before it reports the send as unfinished."
+      },
+      "kind": "CONSTANT",
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 20,
+        "file": "s0ma_src/delivery.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "delivery",
+      "visibility": "INTERNAL"
+    },
+    "delivery::ChannelUnavailable": {
+      "canonical_id": "delivery::ChannelUnavailable",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "channel: str, detail: str — the external system's own wording"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Raised when a channel could not reach its external system inside the declared timeout."
+      },
+      "kind": "MODEL",
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 226,
+        "file": "s0ma_src/delivery.s0ma",
+        "line": 214,
+        "start_line": 214
+      },
+      "module": "delivery",
+      "visibility": "PUBLIC"
+    },
+    "delivery::EmailChannel": {
+      "canonical_id": "delivery::EmailChannel",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "value",
+          "value": [
+            "CHANNEL_TIMEOUT_MS"
+          ]
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "guarantees": {
+          "reason": "the relay's delivery semantics are not settled yet",
+          "state": "pending"
+        },
+        "interface": {
+          "state": "value",
+          "value": [
+            "send"
+          ]
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "reason": "waiting on the owner's decision about which mail relay this wraps",
+        "state": "pending"
+      },
+      "kind": "ADAPTER",
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 138,
+        "file": "s0ma_src/delivery.s0ma",
+        "line": 101,
+        "start_line": 101
+      },
+      "module": "delivery",
+      "visibility": "PUBLIC"
+    },
+    "delivery::PushChannel": {
+      "canonical_id": "delivery::PushChannel",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "value",
+          "value": [
+            "CHANNEL_TIMEOUT_MS",
+            "platform.RetryBudget"
+          ]
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "reminder carries a person the gateway has a device token for"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the gateway's own acceptance record, or raises ChannelUnavailable; never retries beyond the declared budget"
+        },
+        "interface": {
+          "state": "value",
+          "value": [
+            "send",
+            "describe"
+          ]
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "metadata": {
+          "external_system": "push gateway",
+          "requires_env": [
+            "PUSH_TOKEN"
+          ]
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "value",
+          "value": [
+            "ChannelUnavailable"
+          ]
+        },
+        "returns": {
+          "state": "value",
+          "value": "DeliveryReceipt"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Sends one reminder through the push gateway and reports what the gateway returned; it does not decide whether the person saw it."
+      },
+      "kind": "ADAPTER",
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 95,
+        "file": "s0ma_src/delivery.s0ma",
+        "line": 26,
+        "start_line": 26
+      },
+      "module": "delivery",
+      "visibility": "PUBLIC"
+    },
+    "delivery::test_push_channel_reports_gateway_refusal": {
+      "canonical_id": "delivery::test_push_channel_reports_gateway_refusal",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "value",
+          "value": [
+            "PushGateway"
+          ]
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "PushChannel"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Checks that a refused send surfaces the gateway's own refusal instead of a generic failure."
+      },
+      "kind": null,
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 208,
+        "file": "s0ma_src/delivery.s0ma",
+        "line": 179,
+        "start_line": 179
+      },
+      "module": "delivery",
+      "visibility": null
+    },
+    "delivery::watch_channel_failures": {
+      "canonical_id": "delivery::watch_channel_failures",
+      "declaration_type": "ganglion",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "observes": {
+          "state": "value",
+          "value": [
+            "PushChannel.send",
+            "EmailChannel.send"
+          ]
+        },
+        "on_anomaly": {
+          "state": "value",
+          "value": "Report the channel name and the number of consecutive failures observed; take no corrective action"
+        },
+        "priors": {
+          "state": "none"
+        },
+        "scope": {
+          "state": "value",
+          "value": "SUBSYSTEM"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Watches consecutive channel failures and reports the run of them; the decision to stop sending stays with the scheduler."
+      },
+      "kind": null,
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 173,
+        "file": "s0ma_src/delivery.s0ma",
+        "line": 144,
+        "start_line": 144
+      },
+      "module": "delivery",
+      "visibility": "PUBLIC"
+    },
+    "platform::RetryBudget": {
+      "canonical_id": "platform::RetryBudget",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": [
+            "attempts >= 1",
+            "backoff_ms >= 0"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "attempts: int, backoff_ms: int"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "How many attempts a caller may spend on one outbound operation, and how long it waits between them."
+      },
+      "kind": "MODEL",
+      "layer": "FRAMEWORK",
+      "location": {
+        "end_line": 27,
+        "file": "s0ma_src/platform.s0ma",
+        "line": 10,
+        "start_line": 10
+      },
+      "module": "platform",
+      "visibility": "INTERNAL"
+    },
+    "platform::clock_now": {
+      "canonical_id": "platform::clock_now",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a timezone-aware instant in UTC"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "value",
+          "value": "datetime"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The single reading of the wall clock the rest of the project shares, so a test can substitute one instant everywhere."
+      },
+      "kind": "FUNCTION",
+      "layer": "FRAMEWORK",
+      "location": {
+        "end_line": 48,
+        "file": "s0ma_src/platform.s0ma",
+        "line": 33,
+        "start_line": 33
+      },
+      "module": "platform",
+      "visibility": "INTERNAL"
+    },
+    "reminders::Reminder": {
+      "canonical_id": "reminders::Reminder",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "test_urgency_rules_hold"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": [
+            "text is non-empty",
+            "recurrence in {daily, weekly, monthly, once}",
+            "last_run is none or <= now"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "text: str, person: str, recurrence: str, last_run: datetime | None"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "One reminder as the domain knows it: what to say, who to say it to, when it recurs, and when it last ran."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 44,
+        "file": "s0ma_src/reminders.s0ma",
+        "line": 12,
+        "start_line": 12
+      },
+      "module": "reminders",
+      "visibility": "PUBLIC"
+    },
+    "reminders::URGENCY_BANDS": {
+      "canonical_id": "reminders::URGENCY_BANDS",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "tuple[tuple[str, int], ...] of (band name, hours until due)"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The declared urgency bands, in the order the classifier applies them: overdue, due today, upcoming."
+      },
+      "kind": "CONSTANT",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 61,
+        "file": "s0ma_src/reminders.s0ma",
+        "line": 50,
+        "start_line": 50
+      },
+      "module": "reminders",
+      "visibility": "INTERNAL"
+    },
+    "reminders::classify_urgency": {
+      "canonical_id": "reminders::classify_urgency",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "test_urgency_rules_hold"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "value",
+          "value": [
+            "URGENCY_BANDS",
+            "Reminder"
+          ]
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "reminder.last_run is none or an instant at or before now"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns exactly one declared band name; the same inputs always return the same band"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "value",
+          "value": "str"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Places one reminder in an urgency band from its next run instant and the instant the pass started."
+      },
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 108,
+        "file": "s0ma_src/reminders.s0ma",
+        "line": 67,
+        "start_line": 67
+      },
+      "module": "reminders",
+      "visibility": "PUBLIC"
+    },
+    "reminders::notify_delivery_link": {
+      "canonical_id": "reminders::notify_delivery_link",
+      "declaration_type": "axon",
+      "fields": {
+        "carries": {
+          "state": "value",
+          "value": "classified reminder with its urgency band"
+        },
+        "coupling": {
+          "state": "value",
+          "value": "LOOSE"
+        },
+        "relation": {
+          "state": "value",
+          "value": "PRODUCES"
+        },
+        "source": {
+          "state": "value",
+          "value": "classify_urgency"
+        },
+        "target": {
+          "state": "value",
+          "value": "delivery.PushChannel"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The declared route from an urgency decision to the delivery channels: the domain names the band, delivery decides the wire format."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 121,
+        "file": "s0ma_src/reminders.s0ma",
+        "line": 114,
+        "start_line": 114
+      },
+      "module": "reminders",
+      "visibility": null
+    },
+    "reminders::test_urgency_rules_hold": {
+      "canonical_id": "reminders::test_urgency_rules_hold",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "the band table is the one declared in URGENCY_BANDS"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "classify_urgency",
+            "Reminder"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Checks each declared urgency band against a reminder placed on either side of its boundary."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 168,
+        "file": "s0ma_src/reminders.s0ma",
+        "line": 127,
+        "start_line": 127
+      },
+      "module": "reminders",
+      "visibility": null
+    },
+    "scheduling::ScheduleService": {
+      "canonical_id": "scheduling::ScheduleService",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "value",
+          "value": [
+            "_channels",
+            "_window"
+          ]
+        },
+        "depends_on": {
+          "state": "value",
+          "value": [
+            "reminders.classify_urgency",
+            "delivery.PushChannel"
+          ]
+        },
+        "evaluates_at": "SUBSYSTEM",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "channels is a non-empty list of channel adapters"
+        },
+        "guarantees": {
+          "reason": "retry semantics for a channel that reports a partial send are undecided",
+          "state": "pending"
+        },
+        "interface": {
+          "state": "value",
+          "value": [
+            "run_pass",
+            "due_reminders"
+          ]
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "value",
+          "value": [
+            "scheduling_pass"
+          ]
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Holds the scheduling pass: reads the reminder set, asks the domain for urgency, and hands the due set to the delivery channels."
+      },
+      "kind": "SERVICE",
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 118,
+        "file": "s0ma_src/scheduling.s0ma",
+        "line": 39,
+        "start_line": 39
+      },
+      "module": "scheduling",
+      "visibility": "PUBLIC"
+    },
+    "scheduling::SchedulingWindow": {
+      "canonical_id": "scheduling::SchedulingWindow",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": [
+            "start < end",
+            "end - start <= 31 days"
+          ]
+        },
+        "schema": {
+          "state": "value",
+          "value": "start: datetime, end: datetime, timezone: str"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The half-open time window a scheduling pass considers: everything due from the start instant up to, but not including, the end instant."
+      },
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 33,
+        "file": "s0ma_src/scheduling.s0ma",
+        "line": 14,
+        "start_line": 14
+      },
+      "module": "scheduling",
+      "visibility": "PUBLIC"
+    },
+    "scheduling::UnknownRecurrence": {
+      "canonical_id": "scheduling::UnknownRecurrence",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "rule: str — the unrecognised recurrence rule, verbatim"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Raised when a reminder carries a recurrence rule the planner has no declared handling for."
+      },
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 266,
+        "file": "s0ma_src/scheduling.s0ma",
+        "line": 255,
+        "start_line": 255
+      },
+      "module": "scheduling",
+      "visibility": "PUBLIC"
+    },
+    "scheduling::due_reminders": {
+      "canonical_id": "scheduling::due_reminders",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "value",
+          "value": [
+            "SchedulingWindow",
+            "reminders.Reminder"
+          ]
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "window is a SchedulingWindow; reminders is a list of Reminder"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a list ordered by due instant ascending; never returns a reminder whose next run is outside the window"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "value",
+          "value": 50
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "value",
+          "value": "list[Reminder]"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Returns the reminders whose next run falls inside the given window, in ascending due order."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 166,
+        "file": "s0ma_src/scheduling.s0ma",
+        "line": 124,
+        "start_line": 124
+      },
+      "module": "scheduling",
+      "visibility": "PUBLIC"
+    },
+    "scheduling::plan_next_run": {
+      "canonical_id": "scheduling::plan_next_run",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "reminder.recurrence is one of daily, weekly, monthly, once"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns an instant strictly after last_run; returns none for a once-only reminder that has already run"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "value",
+          "value": [
+            "UnknownRecurrence"
+          ]
+        },
+        "returns": {
+          "state": "value",
+          "value": "datetime | None"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Computes the next run instant for one reminder from its recurrence rule and the instant it last ran."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 214,
+        "file": "s0ma_src/scheduling.s0ma",
+        "line": 172,
+        "start_line": 172
+      },
+      "module": "scheduling",
+      "visibility": "INTERNAL"
+    },
+    "scheduling::watch_backlog_growth": {
+      "canonical_id": "scheduling::watch_backlog_growth",
+      "declaration_type": "ganglion",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "value",
+          "value": [
+            "ScheduleService"
+          ]
+        },
+        "observes": {
+          "state": "value",
+          "value": [
+            "ScheduleService.run_pass",
+            "delivery.PushChannel.send"
+          ]
+        },
+        "on_anomaly": {
+          "state": "value",
+          "value": "Report the backlog size and the pass it was observed in; take no corrective action"
+        },
+        "priors": {
+          "state": "value",
+          "value": [
+            "a backlog above 500 has always followed a channel outage"
+          ]
+        },
+        "scope": {
+          "state": "value",
+          "value": "SUBSYSTEM"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Watches the size of the undelivered backlog across scheduling passes and reports growth that outruns the delivery rate."
+      },
+      "kind": null,
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 249,
+        "file": "s0ma_src/scheduling.s0ma",
+        "line": 220,
+        "start_line": 220
+      },
+      "module": "scheduling",
+      "visibility": "PUBLIC"
+    }
+  },
+  "edges": {
+    "authored": [
+      {
+        "carries": "agenda screen copy",
+        "coupling": "TIGHT",
+        "intent": "render_agenda READS AGENDA_TEMPLATE: agenda screen copy",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "console::render_agenda",
+        "target": "console::AGENDA_TEMPLATE"
+      },
+      {
+        "carries": "the reminders due in the requested window",
+        "coupling": "LOOSE",
+        "intent": "render_agenda CALLS scheduling.due_reminders: the reminders due in the requested window",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "console::render_agenda",
+        "target": "scheduling::due_reminders"
+      },
+      {
+        "carries": "reminder rows to count",
+        "coupling": "LOOSE",
+        "intent": "summarise_overdue READS reminders.Reminder: reminder rows to count",
+        "origin": "standalone_axon",
+        "relation": "READS",
+        "source": "console::summarise_overdue",
+        "target": "reminders::Reminder"
+      },
+      {
+        "carries": "one reminder's urgency band",
+        "coupling": "LOOSE",
+        "intent": "ScheduleService CALLS reminders.classify_urgency: one reminder's urgency band",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "scheduling::ScheduleService",
+        "target": "reminders::classify_urgency"
+      },
+      {
+        "carries": "the push channel used for this pass",
+        "coupling": "TIGHT",
+        "intent": "ScheduleService CONSTRUCTS delivery.PushChannel: the push channel used for this pass",
+        "origin": "inline_depends_on",
+        "relation": "CONSTRUCTS",
+        "source": "scheduling::ScheduleService",
+        "target": "delivery::PushChannel"
+      },
+      {
+        "carries": "the reminder set to filter",
+        "coupling": "LOOSE",
+        "intent": "due_reminders READS reminders.Reminder: the reminder set to filter",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "scheduling::due_reminders",
+        "target": "reminders::Reminder"
+      },
+      {
+        "carries": "the window boundaries",
+        "coupling": "TIGHT",
+        "intent": "due_reminders READS SchedulingWindow: the window boundaries",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "scheduling::due_reminders",
+        "target": "scheduling::SchedulingWindow"
+      },
+      {
+        "carries": "backlog size per pass",
+        "coupling": "LOOSE",
+        "intent": "watch_backlog_growth READS ScheduleService: backlog size per pass",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "scheduling::watch_backlog_growth",
+        "target": "scheduling::ScheduleService"
+      },
+      {
+        "carries": "the declared band table",
+        "coupling": "TIGHT",
+        "intent": "classify_urgency READS URGENCY_BANDS: the declared band table",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "reminders::classify_urgency",
+        "target": "reminders::URGENCY_BANDS"
+      },
+      {
+        "carries": "classified reminder with its urgency band",
+        "coupling": "LOOSE",
+        "intent": "classify_urgency PRODUCES delivery.PushChannel: classified reminder with its urgency band",
+        "origin": "standalone_axon",
+        "relation": "PRODUCES",
+        "source": "reminders::classify_urgency",
+        "target": "delivery::PushChannel"
+      },
+      {
+        "carries": "the gateway wait ceiling",
+        "coupling": "TIGHT",
+        "intent": "PushChannel READS CHANNEL_TIMEOUT_MS: the gateway wait ceiling",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "delivery::PushChannel",
+        "target": "delivery::CHANNEL_TIMEOUT_MS"
+      },
+      {
+        "carries": "attempts and backoff for one send",
+        "coupling": "LOOSE",
+        "intent": "PushChannel CONFIGURES platform.RetryBudget: attempts and backoff for one send",
+        "origin": "inline_depends_on",
+        "relation": "CONFIGURES",
+        "source": "delivery::PushChannel",
+        "target": "platform::RetryBudget"
+      },
+      {
+        "carries": "the relay wait ceiling",
+        "coupling": "TIGHT",
+        "intent": "EmailChannel READS CHANNEL_TIMEOUT_MS: the relay wait ceiling",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "delivery::EmailChannel",
+        "target": "delivery::CHANNEL_TIMEOUT_MS"
+      },
+      {
+        "carries": "consecutive send failures",
+        "coupling": "LOOSE",
+        "intent": "watch_channel_failures READS PushChannel: consecutive send failures",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "delivery::watch_channel_failures",
+        "target": "delivery::PushChannel"
+      },
+      {
+        "carries": "the pass instant",
+        "coupling": "LOOSE",
+        "intent": "plan_next_run CALLS platform.clock_now: the pass instant",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "scheduling::plan_next_run",
+        "target": "platform::clock_now"
+      }
+    ],
+    "derived": [
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "console::render_agenda",
+        "target": "scheduling::SchedulingWindow"
+      },
+      {
+        "origin": "raises_field",
+        "relation": "RAISES",
+        "source": "delivery::PushChannel",
+        "target": "delivery::ChannelUnavailable"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "delivery::PushChannel",
+        "target": "platform::RetryBudget"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "scheduling::ScheduleService",
+        "target": "scheduling::SchedulingWindow"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "scheduling::due_reminders",
+        "target": "reminders::Reminder"
+      },
+      {
+        "origin": "raises_field",
+        "relation": "RAISES",
+        "source": "scheduling::plan_next_run",
+        "target": "scheduling::UnknownRecurrence"
+      }
+    ],
+    "verification": [
+      {
+        "origin": "tests_field",
+        "test": "console::test_agenda_lists_every_due_reminder",
+        "validates": "console::render_agenda"
+      },
+      {
+        "origin": "tests_field",
+        "test": "console::test_agenda_lists_every_due_reminder",
+        "validates": "console::summarise_overdue"
+      },
+      {
+        "origin": "tests_field",
+        "test": "delivery::test_push_channel_reports_gateway_refusal",
+        "validates": "delivery::PushChannel"
+      },
+      {
+        "origin": "tests_field",
+        "test": "reminders::test_urgency_rules_hold",
+        "validates": "reminders::Reminder"
+      },
+      {
+        "origin": "tests_field",
+        "test": "reminders::test_urgency_rules_hold",
+        "validates": "reminders::classify_urgency"
+      }
+    ]
+  },
+  "freshness": {
+    "basis": "build.s0ma.json",
+    "manifest_found": true,
+    "stale_modules": [
+      "delivery"
+    ],
+    "status": "stale",
+    "transpiler_version": "0.15.1"
+  },
+  "integrations": [
+    {
+      "canonical_id": "delivery::PushGateway",
+      "factory": {
+        "state": "value",
+        "value": "PushChannel"
+      },
+      "intent": {
+        "state": "value",
+        "value": "The push gateway this project sends through: one external system, wrapped by one adapter, with its own smoke test."
+      },
+      "layer": "INFRASTRUCTURE",
+      "manifest": {
+        "state": "value",
+        "value": {
+          "provides": [
+            "push_delivery"
+          ],
+          "requires_env": [
+            "PUSH_TOKEN",
+            "PUSH_ENDPOINT"
+          ],
+          "requires_oauth": false
+        }
+      },
+      "module": "delivery",
+      "name": "PushGateway",
+      "smoke_test_primary": {
+        "state": "value",
+        "value": "describe_gateway"
+      },
+      "version": "1.2.0"
+    }
+  ],
+  "modules": [
+    {
+      "components": [
+        "console::AGENDA_TEMPLATE",
+        "console::render_agenda",
+        "console::summarise_overdue",
+        "console::test_agenda_lists_every_due_reminder"
+      ],
+      "intent": {
+        "state": "value",
+        "value": "The agenda screen: turns the reminders a scheduling pass reports as due into the text a person reads."
+      },
+      "layer": "PRESENTATION",
+      "name": "console"
+    },
+    {
+      "components": [
+        "delivery::CHANNEL_TIMEOUT_MS",
+        "delivery::ChannelUnavailable",
+        "delivery::EmailChannel",
+        "delivery::PushChannel",
+        "delivery::test_push_channel_reports_gateway_refusal",
+        "delivery::watch_channel_failures"
+      ],
+      "intent": {
+        "state": "value",
+        "value": "The outbound channels: each one wraps a single external system and reports what that system returned."
+      },
+      "layer": "INFRASTRUCTURE",
+      "name": "delivery"
+    },
+    {
+      "components": [
+        "platform::RetryBudget",
+        "platform::clock_now"
+      ],
+      "intent": {
+        "state": "value",
+        "value": "Project-wide primitives the other modules share: the clock reading and the retry budget."
+      },
+      "layer": "FRAMEWORK",
+      "name": "platform"
+    },
+    {
+      "components": [
+        "reminders::Reminder",
+        "reminders::URGENCY_BANDS",
+        "reminders::classify_urgency",
+        "reminders::notify_delivery_link",
+        "reminders::test_urgency_rules_hold"
+      ],
+      "intent": {
+        "state": "value",
+        "value": "What a reminder is and how urgent it is — the rules that hold regardless of how reminders are stored or sent."
+      },
+      "layer": "DOMAIN",
+      "name": "reminders"
+    },
+    {
+      "components": [
+        "scheduling::ScheduleService",
+        "scheduling::SchedulingWindow",
+        "scheduling::UnknownRecurrence",
+        "scheduling::due_reminders",
+        "scheduling::plan_next_run",
+        "scheduling::watch_backlog_growth"
+      ],
+      "intent": {
+        "state": "value",
+        "value": "The scheduling pass: decides which reminders are due in a window and hands them to the delivery channels."
+      },
+      "layer": "APPLICATION",
+      "name": "scheduling"
+    }
+  ],
+  "nodes": [
+    "console::AGENDA_TEMPLATE",
+    "console::render_agenda",
+    "console::summarise_overdue",
+    "console::test_agenda_lists_every_due_reminder",
+    "delivery::CHANNEL_TIMEOUT_MS",
+    "delivery::ChannelUnavailable",
+    "delivery::EmailChannel",
+    "delivery::PushChannel",
+    "delivery::test_push_channel_reports_gateway_refusal",
+    "delivery::watch_channel_failures",
+    "platform::RetryBudget",
+    "platform::clock_now",
+    "reminders::Reminder",
+    "reminders::URGENCY_BANDS",
+    "reminders::classify_urgency",
+    "reminders::notify_delivery_link",
+    "reminders::test_urgency_rules_hold",
+    "scheduling::ScheduleService",
+    "scheduling::SchedulingWindow",
+    "scheduling::UnknownRecurrence",
+    "scheduling::due_reminders",
+    "scheduling::plan_next_run",
+    "scheduling::watch_backlog_growth"
+  ],
+  "schema": "s0ma-graph@2"
+}
+    </script>
+    <script id="sh0w-narration" type="application/json">
+{
+  "entries": [
+    {
+      "movement": "Reading the agenda screen before changing anything",
+      "n": 1,
+      "phase": "orient",
+      "subjects": [
+        "console::render_agenda"
+      ],
+      "why": "the overdue count is wrong on the agenda header"
+    },
+    {
+      "movement": "Wiring the overdue boundary into the urgency classifier",
+      "n": 2,
+      "phase": "author",
+      "subjects": [
+        "reminders::classify_urgency",
+        "reminders::URGENCY_BANDS"
+      ],
+      "why": "the band table is the only place the boundary is declared"
+    },
+    {
+      "movement": "Checking the push channel against the gateway's refusal path",
+      "n": 3,
+      "phase": "verify",
+      "subjects": [
+        "delivery::PushChannel"
+      ],
+      "why": null
+    },
+    {
+      "movement": "Moving on to the billing side of the invoice total",
+      "n": 4,
+      "phase": "move_on",
+      "subjects": [
+        "billing::charge_invoice"
+      ],
+      "why": "the agenda work is finished and checked"
+    }
+  ],
+  "invalid": 1,
+  "total": 4
+}
+    </script>
+    <script>
+      window.__S0MA_FIXTURE__ = JSON.parse(
+        document.getElementById("sh0w-fixture").textContent
+      );
+      window.__S0MA_NARRATION__ = JSON.parse(
+        document.getElementById("sh0w-narration").textContent
+      );
+    </script>
+    <script src="../../s0ma_src/assets/app.js"></script>
+  </body>
+</html>

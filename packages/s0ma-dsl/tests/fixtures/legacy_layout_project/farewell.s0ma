@@ -1,0 +1,34 @@
+module farewell
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Farewell helper for the legacy-layout migration fixture."
+    exports: [say_goodbye]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve say_goodbye :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Returns a goodbye string for a given name."
+    expects: "A non-empty name string."
+    guarantees: "Returns 'goodbye, <name>' as a string."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def say_goodbye(name: str) -> str:
+        return f"goodbye, {name}"

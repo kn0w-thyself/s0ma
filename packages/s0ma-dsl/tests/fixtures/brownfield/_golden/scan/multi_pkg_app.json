@@ -1,0 +1,894 @@
+{
+  "classification": null,
+  "effort": {
+    "bands": [
+      [
+        "small",
+        4
+      ],
+      [
+        "medium",
+        3
+      ],
+      [
+        "large",
+        0
+      ]
+    ],
+    "basis": "Bands come from four things that can be seen without running anything — how many lines of real code a module has, how many things it defines, how much of it runs the moment it is imported, and whether it is tangled in an import cycle — so they sort the work from easiest to hardest and are not hours, not a schedule and not a promise.",
+    "per_module": [
+      [
+        "evallib",
+        "small"
+      ],
+      [
+        "evallib.scoring",
+        "medium"
+      ],
+      [
+        "harnesslib",
+        "small"
+      ],
+      [
+        "harnesslib.__main__",
+        "small"
+      ],
+      [
+        "harnesslib.runner",
+        "medium"
+      ],
+      [
+        "metrics",
+        "small"
+      ],
+      [
+        "metrics.counters",
+        "medium"
+      ]
+    ]
+  },
+  "graph": {
+    "cycles": [],
+    "deferred_edges": [],
+    "edges": [
+      [
+        "evallib",
+        "evallib.scoring"
+      ],
+      [
+        "evallib.scoring",
+        "harnesslib.runner"
+      ],
+      [
+        "evallib.scoring",
+        "metrics.counters"
+      ],
+      [
+        "harnesslib",
+        "harnesslib.runner"
+      ],
+      [
+        "harnesslib.__main__",
+        "harnesslib.runner"
+      ],
+      [
+        "harnesslib.runner",
+        "metrics.counters"
+      ],
+      [
+        "metrics",
+        "metrics.counters"
+      ]
+    ],
+    "fan_in": [
+      [
+        "evallib",
+        0
+      ],
+      [
+        "evallib.scoring",
+        1
+      ],
+      [
+        "harnesslib",
+        0
+      ],
+      [
+        "harnesslib.__main__",
+        0
+      ],
+      [
+        "harnesslib.runner",
+        3
+      ],
+      [
+        "metrics",
+        0
+      ],
+      [
+        "metrics.counters",
+        3
+      ]
+    ],
+    "fan_out": [
+      [
+        "evallib",
+        1
+      ],
+      [
+        "evallib.scoring",
+        2
+      ],
+      [
+        "harnesslib",
+        1
+      ],
+      [
+        "harnesslib.__main__",
+        1
+      ],
+      [
+        "harnesslib.runner",
+        1
+      ],
+      [
+        "metrics",
+        1
+      ],
+      [
+        "metrics.counters",
+        0
+      ]
+    ],
+    "order": [
+      "metrics.counters",
+      "harnesslib.runner",
+      "evallib.scoring",
+      "evallib",
+      "harnesslib",
+      "harnesslib.__main__",
+      "metrics"
+    ]
+  },
+  "modules": [
+    {
+      "content_hash": "sha256:07da7a8de8fe21c78aa2f9ca53fda3266b942652d957066516621a7d647faa6d",
+      "dunder_all": [
+        "PASS_WEIGHT",
+        "Verdict",
+        "rank_suites",
+        "score_suite"
+      ],
+      "entities": [],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "evallib.scoring",
+          "names": [
+            "PASS_WEIGHT",
+            "Verdict",
+            "rank_suites",
+            "score_suite"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 5,
+      "parse_error": null,
+      "sloc": 3,
+      "source": {
+        "module": "evallib",
+        "path": "evallib/__init__.py",
+        "role": "package_marker",
+        "source_root": "evallib"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:eaa97b00ba96340742374709c027950a883fa300fc67c756081b20943365a76d",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 10,
+          "name": "PASS_WEIGHT",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 11,
+          "name": "SPEED_WEIGHT",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 12,
+          "name": "SLOW_SECONDS",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [
+            "dataclass(frozen=True)"
+          ],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 16,
+          "name": "Verdict",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 29,
+          "name": "_speed",
+          "public": false,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 39,
+          "name": "score_suite",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 51,
+          "name": "rank_suites",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "dataclasses",
+          "names": [
+            "dataclass"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "harnesslib.runner",
+          "names": [
+            "run_suite"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 8,
+          "module": "metrics.counters",
+          "names": [
+            "percentile"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 54,
+      "parse_error": null,
+      "sloc": 40,
+      "source": {
+        "module": "evallib.scoring",
+        "path": "evallib/scoring.py",
+        "role": "app",
+        "source_root": "evallib"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:a6c168bcada99a74aa3757b3fa15f685a7582f37fbefd8259f455e5c483ae6ce",
+      "dunder_all": [
+        "CaseResult",
+        "Runner",
+        "run_case",
+        "run_suite"
+      ],
+      "entities": [],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "harnesslib.runner",
+          "names": [
+            "CaseResult",
+            "Runner",
+            "run_case",
+            "run_suite"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 5,
+      "parse_error": null,
+      "sloc": 3,
+      "source": {
+        "module": "harnesslib",
+        "path": "harnesslib/__init__.py",
+        "role": "package_marker",
+        "source_root": "harnesslib"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:dcb7765737f92cfacf08958f5e30518c67b5814305ff9b7f77f8932e00af97e5",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 10,
+          "name": "main",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": true,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "argparse",
+          "names": [],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "harnesslib.runner",
+          "names": [
+            "run_suite"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 25,
+      "parse_error": null,
+      "sloc": 17,
+      "source": {
+        "module": "harnesslib.__main__",
+        "path": "harnesslib/__main__.py",
+        "role": "app",
+        "source_root": "harnesslib"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:c4115ac7fb0c920e377924514694fcd8b3ea64b2936e83b68319127c0ac69154",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 9,
+          "name": "DEFAULT_ATTEMPTS",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 10,
+          "name": "CASE_PASSED",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 11,
+          "name": "CASE_FAILED",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [
+            "dataclass(frozen=True)"
+          ],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 15,
+          "name": "CaseResult",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 28,
+          "name": "_cost",
+          "public": false,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 33,
+          "name": "run_case",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "CLASS",
+          "line": 45,
+          "name": "Runner",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 67,
+          "name": "run_suite",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "dataclasses",
+          "names": [
+            "dataclass"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 7,
+          "module": "metrics.counters",
+          "names": [
+            "Tally",
+            "mean"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 76,
+      "parse_error": null,
+      "sloc": 57,
+      "source": {
+        "module": "harnesslib.runner",
+        "path": "harnesslib/runner.py",
+        "role": "app",
+        "source_root": "harnesslib"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:71fb634b6184fc3094f0187de46c98a97dbffdc768f229d6ffa0f1db573d30d0",
+      "dunder_all": [
+        "DEFAULT_PRECISION",
+        "Tally",
+        "mean",
+        "percentile",
+        "total"
+      ],
+      "entities": [],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "metrics.counters",
+          "names": [
+            "DEFAULT_PRECISION",
+            "Tally",
+            "mean",
+            "percentile",
+            "total"
+          ],
+          "origin": "first_party",
+          "type_checking": false
+        }
+      ],
+      "lines": 5,
+      "parse_error": null,
+      "sloc": 3,
+      "source": {
+        "module": "metrics",
+        "path": "metrics/__init__.py",
+        "role": "package_marker",
+        "source_root": "metrics"
+      },
+      "top_level_effects": 0
+    },
+    {
+      "content_hash": "sha256:9711394b686abe0a051e0739c2fe6f25c107379fb16b5c6b2235c7371582fe27",
+      "dunder_all": null,
+      "entities": [
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 7,
+          "name": "DEFAULT_PRECISION",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "constant",
+          "decorators": [],
+          "has_docstring": false,
+          "kind_hint": "CONSTANT",
+          "line": 8,
+          "name": "EMPTY_LABEL",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 11,
+          "name": "total",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 16,
+          "name": "mean",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 23,
+          "name": "percentile",
+          "public": true,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "function",
+          "decorators": [],
+          "has_docstring": true,
+          "kind_hint": "FUNCTION",
+          "line": 34,
+          "name": "_label",
+          "public": false,
+          "registered": false
+        },
+        {
+          "bases": [],
+          "category": "class",
+          "decorators": [
+            "dataclass"
+          ],
+          "has_docstring": true,
+          "kind_hint": "MODEL",
+          "line": 42,
+          "name": "Tally",
+          "public": true,
+          "registered": false
+        }
+      ],
+      "has_main_guard": false,
+      "imports": [
+        {
+          "deferred": false,
+          "line": 3,
+          "module": "__future__",
+          "names": [
+            "annotations"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        },
+        {
+          "deferred": false,
+          "line": 5,
+          "module": "dataclasses",
+          "names": [
+            "dataclass",
+            "field"
+          ],
+          "origin": "stdlib",
+          "type_checking": false
+        }
+      ],
+      "lines": 65,
+      "parse_error": null,
+      "sloc": 48,
+      "source": {
+        "module": "metrics.counters",
+        "path": "metrics/counters.py",
+        "role": "app",
+        "source_root": "metrics"
+      },
+      "top_level_effects": 0
+    }
+  ],
+  "perimeter": {
+    "bootstrap_files": [
+      "harnesslib/__main__.py"
+    ],
+    "mode": "migration",
+    "notes": [],
+    "package_markers": [
+      "evallib/__init__.py",
+      "harnesslib/__init__.py",
+      "metrics/__init__.py"
+    ],
+    "source_roots": [
+      "evallib",
+      "harnesslib",
+      "metrics"
+    ]
+  },
+  "project": {
+    "has_s0ma_config": false,
+    "mode": null,
+    "name": null
+  },
+  "proposals": [
+    {
+      "confidence": "low",
+      "kind_mix": [],
+      "layer": null,
+      "module": "evallib",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          3
+        ],
+        [
+          "FUNCTION",
+          3
+        ],
+        [
+          "MODEL",
+          1
+        ]
+      ],
+      "layer": null,
+      "module": "evallib.scoring",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [],
+      "layer": null,
+      "module": "harnesslib",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "medium",
+      "kind_mix": [
+        [
+          "FUNCTION",
+          1
+        ]
+      ],
+      "layer": "PRESENTATION",
+      "module": "harnesslib.__main__",
+      "reasons": [
+        "it imports `argparse` (the command-line argument reader), which is how a program gets reached from outside — that is presentation work.",
+        "nothing else in the project imports it and it can be run on its own, which makes it one of the ways in to the program."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          3
+        ],
+        [
+          "FUNCTION",
+          3
+        ],
+        [
+          "MODEL",
+          1
+        ],
+        [
+          "SERVICE",
+          1
+        ]
+      ],
+      "layer": null,
+      "module": "harnesslib.runner",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "low",
+      "kind_mix": [],
+      "layer": null,
+      "module": "metrics",
+      "reasons": [
+        "nothing in its name, its imports or its place in the project points at a layer, so this one is yours to choose."
+      ]
+    },
+    {
+      "confidence": "medium",
+      "kind_mix": [
+        [
+          "CONSTANT",
+          2
+        ],
+        [
+          "FUNCTION",
+          4
+        ],
+        [
+          "MODEL",
+          1
+        ]
+      ],
+      "layer": "DOMAIN",
+      "module": "metrics.counters",
+      "reasons": [
+        "it defines things of its own and imports nothing — not another module of this project, not a library that reaches outside the program — which is what a piece of self-contained domain logic looks like."
+      ]
+    }
+  ],
+  "schema": "s0ma-adopt-scan@1",
+  "scope": {
+    "directories_outside": [
+      {
+        "directory": "samples",
+        "files": 3
+      },
+      {
+        "directory": "tests_suite",
+        "files": 3
+      }
+    ],
+    "origin": "proposed",
+    "outside_files": 6,
+    "outside_tests": 3,
+    "reason": "`evallib`, `harnesslib` and `metrics` are what this project packages (`[tool.setuptools].packages` and `[project.scripts]` in pyproject.toml name them)",
+    "source_roots": [
+      "evallib",
+      "harnesslib",
+      "metrics"
+    ],
+    "test_directories": [
+      "tests_suite"
+    ]
+  },
+  "summary": {
+    "cycles": 0,
+    "lines": 235,
+    "modules": 7,
+    "outside_files": 6,
+    "packages": 3,
+    "parse_errors": 0,
+    "public_entities": 20,
+    "registered_entities": 0,
+    "sloc": 171,
+    "test_files": 3
+  },
+  "warnings": []
+}

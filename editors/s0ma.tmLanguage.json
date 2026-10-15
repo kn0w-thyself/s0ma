@@ -1,0 +1,208 @@
+{
+  "name": "s0ma",
+  "scopeName": "source.s0ma",
+  "fileTypes": ["s0ma"],
+  "information_for_contributors": [
+    "TextMate grammar for the s0ma DSL (.s0ma files).",
+    "Ground truth: packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md (lexical/grammar sections)",
+    "and the declaration-header regexes in packages/s0ma-dsl/src/s0ma_dsl/parser/s0ma_parser.py.",
+    "The declaration keyword set is drift-guarded by packages/s0ma-dsl/tests/test_editor_grammar.py:",
+    "if you add a declaration type to the spec, that test fails until the three declaration rules",
+    "and the body-fence end pattern below are updated."
+  ],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#body-fence" },
+    { "include": "#declaration-layered" },
+    { "include": "#declaration-axon" },
+    { "include": "#declaration-unlayered" },
+    { "include": "#field" },
+    { "include": "#block-list-item" },
+    { "include": "#nested-key" },
+    { "include": "#string" },
+    { "include": "#inline-map" },
+    { "include": "#file-directive" },
+    { "include": "#qualified-reference" },
+    { "include": "#constants" },
+    { "include": "#block-scalar" },
+    { "include": "#number" }
+  ],
+  "repository": {
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.s0ma",
+          "match": "^\\s*#.*$"
+        },
+        {
+          "name": "comment.line.number-sign.s0ma",
+          "match": "(?<=\\s)#.*$"
+        }
+      ]
+    },
+    "body-fence": {
+      "comment": "The --- separator opens an embedded Python body that runs to the next column-0 declaration header or EOF. The parser accepts an indented separator (_SEPARATOR_RE = ^\\s*---\\s*$), so the begin pattern does too. Known limitation: doc-guide prose bodies are also scoped as Python.",
+      "name": "meta.embedded.block.python",
+      "begin": "^(\\s*)(---)\\s*$",
+      "beginCaptures": {
+        "2": { "name": "punctuation.section.embedded.begin.s0ma" }
+      },
+      "end": "^(?=(?:nerve|cell|ganglion|test|helper|integration)\\s+\\w+\\s*::\\s*\\w+\\s*$|(?:module|doc-ref|doc-guide|example)\\s+\\w+\\s*$|axon\\s+\\w+\\s*->\\s*\\w+\\s*$)",
+      "patterns": [
+        { "include": "source.python" }
+      ]
+    },
+    "declaration-layered": {
+      "comment": "nerve|cell|ganglion|test|helper|integration <name> :: <LAYER>",
+      "match": "^(nerve|cell|ganglion|test|helper|integration)\\s+(\\w+)\\s*(::)\\s*(\\w+)\\s*$",
+      "captures": {
+        "1": { "name": "storage.type.declaration.s0ma" },
+        "2": { "name": "entity.name.function.s0ma" },
+        "3": { "name": "keyword.operator.layer.s0ma" },
+        "4": { "name": "constant.language.layer.s0ma" }
+      }
+    },
+    "declaration-axon": {
+      "comment": "axon <source> -> <target>",
+      "match": "^(axon)\\s+(\\w+)\\s*(->)\\s*(\\w+)\\s*$",
+      "captures": {
+        "1": { "name": "storage.type.declaration.s0ma" },
+        "2": { "name": "entity.name.function.s0ma" },
+        "3": { "name": "keyword.operator.arrow.s0ma" },
+        "4": { "name": "entity.name.function.s0ma" }
+      }
+    },
+    "declaration-unlayered": {
+      "comment": "module|doc-ref|doc-guide|example <name> (no :: LAYER qualifier)",
+      "match": "^(module|doc-ref|doc-guide|example)\\s+(\\w+)\\s*$",
+      "captures": {
+        "1": { "name": "storage.type.declaration.s0ma" },
+        "2": { "name": "entity.name.function.s0ma" }
+      }
+    },
+    "field": {
+      "comment": "Top-level metadata fields sit at exactly four spaces of indent (_FIELD_RE). Known keys harvested from spec v0.17.0 (the §4.14.5 field table, generated from FIELD_CLASSIFICATIONS, plus the 0.15/0.16/0.17 field sections).",
+      "patterns": [
+        {
+          "match": "^( {4})(abstract|asserts|carries|category|consumes_via_dict|content|coupling|covered_by|covers|dataclass_invariants|declares_attributes|deferred_requires|deferred|demonstrates|depends_on|evaluates_at|examples|expected_exceptions|expects|exports|exports_helpers|factory|forbids|format|guarantees|helpers|intent|interface|internal|invariants|is_page_composer|kind|latency_ms|layer|manifest|metadata|mocks|observes|on_anomaly|output|placeholders|priors|provides|raises|relation|requires|returns|runs_in|runtime_only_requires|schema|scope|sections|serves_as|smoke_test_primary|soft_requires|tags|tests|uses|version|visibility)(:)(?=\\s|$)",
+          "captures": {
+            "2": { "name": "keyword.other.field.s0ma" },
+            "3": { "name": "punctuation.separator.key-value.s0ma" }
+          }
+        },
+        {
+          "match": "^( {4})([A-Za-z_]\\w*)(:)",
+          "captures": {
+            "2": { "name": "variable.other.field.s0ma" },
+            "3": { "name": "punctuation.separator.key-value.s0ma" }
+          }
+        }
+      ]
+    },
+    "block-list-item": {
+      "comment": "YAML-style block-list item marker (0.14.0 block-form lists).",
+      "match": "^\\s+(-)\\s+",
+      "captures": {
+        "1": { "name": "punctuation.definition.list.begin.s0ma" }
+      }
+    },
+    "nested-key": {
+      "comment": "Nested mapping keys (depends_on targets, manifest sub-keys, consumes_via_dict entries) indented past the field column.",
+      "match": "^( {5,})([A-Za-z_][\\w.]*)(:)(?=\\s|$)",
+      "captures": {
+        "2": { "name": "variable.other.member.s0ma" },
+        "3": { "name": "punctuation.separator.key-value.s0ma" }
+      }
+    },
+    "string": {
+      "comment": "Double-quoted strings; field strings may span lines via 8-space continuations, so this is a begin/end block.",
+      "name": "string.quoted.double.s0ma",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.s0ma",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "inline-map": {
+      "comment": "Inline mapping values, e.g. depends_on entries: {relation: CALLS, carries: \"x\", coupling: TIGHT}.",
+      "name": "meta.braces.s0ma",
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.braces.begin.s0ma" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.braces.end.s0ma" }
+      },
+      "patterns": [
+        {
+          "match": "\\b(relation|carries|coupling|contract|param|provides|required_env|requires_oauth)(:)",
+          "captures": {
+            "1": { "name": "keyword.other.field.s0ma" },
+            "2": { "name": "punctuation.separator.key-value.s0ma" }
+          }
+        },
+        {
+          "match": "\\b([A-Za-z_]\\w*)(:)",
+          "captures": {
+            "1": { "name": "variable.other.member.s0ma" },
+            "2": { "name": "punctuation.separator.key-value.s0ma" }
+          }
+        },
+        { "include": "#string" },
+        { "include": "#constants" },
+        { "include": "#number" }
+      ]
+    },
+    "file-directive": {
+      "comment": "@file(\"path\") embedded-content directive on CONSTANT cells (spec 4.2.2).",
+      "match": "(@file)(?=\\s*\\()",
+      "captures": {
+        "1": { "name": "support.function.directive.s0ma" }
+      }
+    },
+    "qualified-reference": {
+      "comment": "Qualified references in field values: module::component, kind::name, LAYER::*.",
+      "match": "\\b([A-Za-z_]\\w*)(::)([A-Za-z_]\\w*|\\*)",
+      "captures": {
+        "1": { "name": "entity.name.type.s0ma" },
+        "2": { "name": "punctuation.accessor.s0ma" },
+        "3": { "name": "entity.name.function.s0ma" }
+      }
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.layer.s0ma",
+          "match": "\\b(DOMAIN|APPLICATION|INFRASTRUCTURE|PRESENTATION|FRAMEWORK)\\b"
+        },
+        {
+          "name": "constant.language.kind.s0ma",
+          "match": "\\b(SERVICE|FUNCTION|ADAPTER|ORCHESTRATOR|MODEL|CONSTANT|CONFIG|ENUM|EXCEPTION|TYPE)\\b"
+        },
+        {
+          "name": "constant.language.enum.s0ma",
+          "match": "\\b(PUBLIC|INTERNAL|TEST|CALLS|CONSTRUCTS|READS|CONFIGURES|PRODUCES|CONSUMES|TIGHT|LOOSE|FUNCTION_BOUNDARY|SUBSYSTEM|SYSTEM)\\b"
+        },
+        {
+          "name": "constant.language.boolean.s0ma",
+          "match": "\\b(true|false)\\b"
+        }
+      ]
+    },
+    "block-scalar": {
+      "comment": "YAML literal-block-scalar marker on a field value (M14).",
+      "match": "(?<=:)\\s+(\\|)\\s*$",
+      "captures": {
+        "1": { "name": "storage.modifier.block-scalar.s0ma" }
+      }
+    },
+    "number": {
+      "name": "constant.numeric.s0ma",
+      "match": "\\b\\d+(?:\\.\\d+)*\\b"
+    }
+  }
+}

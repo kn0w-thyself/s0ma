@@ -1,0 +1,1038 @@
+{
+  "aliases": {
+    "concept:contracts": "concept:contract",
+    "concept:evaluator": "concept:ganglion",
+    "concept:executable-demonstration": "concept:example",
+    "concept:external-system-adapter": "concept:integration",
+    "concept:file-level-declaration": "concept:module",
+    "concept:inter-component-connection": "concept:axon",
+    "concept:ir": "concept:canonical-ir",
+    "concept:module-private-function": "concept:helper",
+    "concept:observable-function": "concept:nerve",
+    "concept:strictness": "concept:strictness-mode",
+    "concept:structural-component": "concept:cell",
+    "concept:structural-projection": "concept:doc-ref",
+    "concept:verification-component": "concept:test"
+  },
+  "authorities": [
+    {
+      "heading": "4.4 `axon` (Inter-Component Connection)",
+      "id": "authority:spec/axon-declaration",
+      "section": "4.4",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.9 The `---` Separator",
+      "id": "authority:spec/body-separator",
+      "section": "4.9",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "2.1 Build Pipeline",
+      "id": "authority:spec/build-pipeline",
+      "section": "2.1",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.14.5 Semantic State and Canonical IR 3.0.0 (0.14 M3A)",
+      "id": "authority:spec/canonical-ir",
+      "section": "4.14.5",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.2 `cell` (Structural Component)",
+      "id": "authority:spec/cell-declaration",
+      "section": "4.2",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4. Declaration Types",
+      "id": "authority:spec/declaration-types",
+      "section": "4",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.5.1 The Dependency Categories",
+      "id": "authority:spec/dependency-categories",
+      "section": "4.5.1",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.12.2 `doc-guide` (Narrative With Registry-Bound References)",
+      "id": "authority:spec/doc-guide-declaration",
+      "section": "4.12.2",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.12.1 `doc-ref` (Structural Projection)",
+      "id": "authority:spec/doc-ref-declaration",
+      "section": "4.12.1",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.12.4 Validation Layers",
+      "id": "authority:spec/doc-validation-layers",
+      "section": "4.12.4",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.12 Documentation Declarations",
+      "id": "authority:spec/documentation-declarations",
+      "section": "4.12",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.12.5 Content Hashing and the Drift Check",
+      "id": "authority:spec/drift-check",
+      "section": "4.12.5",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.12.3 `example` (Executable Demonstration)",
+      "id": "authority:spec/example-declaration",
+      "section": "4.12.3",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.3 `ganglion` (Evaluator)",
+      "id": "authority:spec/ganglion-declaration",
+      "section": "4.3",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.4a `helper` (Module-Private Function)",
+      "id": "authority:spec/helper-declaration",
+      "section": "4.4a",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.4b `integration` (External-System Adapter)",
+      "id": "authority:spec/integration-declaration",
+      "section": "4.4b",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.10.5 The `.s0ma.json` Intermediate Representation",
+      "id": "authority:spec/intermediate-representation",
+      "section": "4.10.5",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "3.1 The `kind` Taxonomy",
+      "id": "authority:spec/kind-taxonomy",
+      "section": "3.1",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.0.1 Layer Consistency Rule",
+      "id": "authority:spec/layer-consistency",
+      "section": "4.0.1",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.0.2 Cross-Module Layer Reachability Rule",
+      "id": "authority:spec/layer-reachability",
+      "section": "4.0.2",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.5 `module` (File-Level Declaration)",
+      "id": "authority:spec/module-declaration",
+      "section": "4.5",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.10.1 The Namespace Model",
+      "id": "authority:spec/namespace-model",
+      "section": "4.10.1",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.1 `nerve` (Observable Function)",
+      "id": "authority:spec/nerve-declaration",
+      "section": "4.1",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "3. Primitive Vocabulary",
+      "id": "authority:spec/primitive-vocabulary",
+      "section": "3",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.10.4 Registry Storage",
+      "id": "authority:spec/registry-storage",
+      "section": "4.10.4",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "2.4 Strictness Modes",
+      "id": "authority:spec/strictness-modes",
+      "section": "2.4",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.8 `test` (Verification Component)",
+      "id": "authority:spec/test-declaration",
+      "section": "4.8",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.15 Test Execution",
+      "id": "authority:spec/test-execution",
+      "section": "4.15",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "4.16 Validation Command (`s0ma check`)",
+      "id": "authority:spec/validation-command",
+      "section": "4.16",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "heading": "5. The Visibility System",
+      "id": "authority:spec/visibility-system",
+      "section": "5",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    }
+  ],
+  "domain": "language",
+  "external_ids": [],
+  "records": [
+    {
+      "do_not_use_when": "Do not write an axon for something the build already works out for itself, such as which errors a part raises or which types it mentions; the language refuses those outright. Do not write two for one relationship either — one connection, one declaration.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/axon-declaration"
+      ],
+      "id": "concept:axon",
+      "plain_definition": "An axon is a declared connection from one part of a system to another. It names the two ends, says what kind of dependence it is — one part calls another, builds it, reads settings from it, configures it, produces it, or consumes it — explains why the connection exists, says what travels along it, and records whether the two are tightly or loosely bound. A person writes it because it is a decision, not something a reader of the code could reliably work out.",
+      "purpose": "It captures the architecture a codebase would otherwise only imply. Connections a machine can work out for itself — which errors a part may raise, which types it mentions — are worked out automatically and may never be written by hand, so an axon is reserved for the choices somebody made and the recorded graph is a record of decisions rather than a transcript of syntax.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:uses"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ]
+      ],
+      "summary": "A written-down dependency between two parts: which one leans on which, why, and how tightly.",
+      "syntax": [
+        "axon <source> -> <target>",
+        "    relation: <CALLS | CONSTRUCTS | READS | CONFIGURES | PRODUCES | CONSUMES>",
+        "    intent: \"<why this connection exists>\"",
+        "    carries: \"<what travels along it>\"",
+        "    coupling: <TIGHT | LOOSE>"
+      ],
+      "term": "axon",
+      "use_when": "Write an axon for a dependency that crosses a file boundary, where the build requires one, and for any dependency inside a single file that is architecturally significant enough that a reader should be told why it is there."
+    },
+    {
+      "do_not_use_when": "Do not hand-edit it. The build writes it and rewrites it on every build, so an edit is lost at best and misleading in the meantime; the source file is where a person writes, and this record is what the build made of what they wrote.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/canonical-ir",
+        "authority:spec/intermediate-representation"
+      ],
+      "id": "concept:canonical-ir",
+      "plain_definition": "When the build turns a source file into Python it also writes a second file: a normalised record of everything that file declared, with every name in its full form, every shorthand expanded, every pattern resolved, every automatically-derived connection filled in, and a fingerprint of the whole. It says exactly what the source says, with none of the ambiguity, which is why it is the form tools and agents read.",
+      "purpose": "It is the interface between a s0ma system and anything that wants to reason about it: a tool reading source has to parse a language, while a tool reading this record just reads structured data and every such tool sees the same picture. It also has room for honesty about what is not settled yet — a field can be recorded as deliberately absent, or as pending with a written reason, rather than simply being missing.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:registry-snapshot"
+        ]
+      ],
+      "summary": "The normalised record of one file's declarations that the build writes beside the code, for tools to read.",
+      "syntax": [],
+      "term": "canonical IR",
+      "use_when": "Read this record whenever a tool needs the structure of a system rather than its behaviour: building a reference page, answering a question about a part, or working out what a change would touch."
+    },
+    {
+      "do_not_use_when": "Do not use a cell for anything that computes, decides, fetches, or serves — that is a nerve, even when it is three lines long. A method that keeps a data structure internally consistent belongs on a cell; a method that acts on the system around it does not.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/cell-declaration"
+      ],
+      "id": "concept:cell",
+      "plain_definition": "A cell is a part of a system that holds a shape or a value rather than doing work. Data models, configuration objects, fixed constants, enumerations, type names and error types are all cells. Like every other part it declares why it exists and what it represents, so a system can describe its own vocabulary and not only its own actions.",
+      "purpose": "It draws the line between what a system is made of and what a system does. A tool asking what data a program handles reads the cells; a tool asking what a program does reads the nerves. Keeping structure out of the behaviour declarations is what makes both questions answerable at all.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:nerve"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:kind"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ],
+        [
+          "requires",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "A declared piece of structure — a data shape, a fixed value, a setting, a type, or an error kind — rather than a piece of behaviour.",
+      "syntax": [
+        "cell <Name> :: <LAYER>",
+        "    kind: <KIND>",
+        "    visibility: <PUBLIC | INTERNAL | TEST>",
+        "    intent: \"<why this component exists>\"",
+        "    schema: \"<what data this represents>\"",
+        "    ---",
+        "    <Python class, constant, or type definition>"
+      ],
+      "term": "cell",
+      "use_when": "Use a cell for a data structure, a fixed value, a configuration object, an enumeration, a type name, or an error type. The test is whether the logic inside serves the data's own rules rather than the wider system's work."
+    },
+    {
+      "do_not_use_when": "Do not skip the check and go straight to a build hoping to save time. The check exists so that mistakes are found before anything is written, and the build runs the same validation anyway — so skipping it buys nothing and costs you the earlier, cheaper failure.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/build-pipeline",
+        "authority:spec/test-execution",
+        "authority:spec/validation-command"
+      ],
+      "id": "concept:check-and-build-loop",
+      "plain_definition": "Working in this language is a short loop. You check the source, which validates everything and generates none of the build output — it keeps only one bookkeeping note of what it has already told you about — so it is cheap enough to run constantly. You build, which turns the source into ordinary Python together with the record of the system's own structure. You run the verifications. Then you ask the built system what it contains, which is how you confirm that the parts you meant to declare really are declared.",
+      "purpose": "The loop is what keeps the description and the code in step. Because checking writes nothing it costs almost nothing to run, and because building produces the code and the record together the two cannot fall out of date with respect to each other.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:strictness-mode"
+        ]
+      ],
+      "summary": "The everyday cycle: check the source, build it, run the verifications, then ask the system what it now contains.",
+      "syntax": [],
+      "term": "check and build loop",
+      "use_when": "Check constantly while writing, build when you want the output, verify before you share the change, and look at what the system now contains whenever you want to see what it believes about itself."
+    },
+    {
+      "do_not_use_when": "Do not put a contract on a structural part; a data shape says what it represents and what must always be true of it instead. Do not put one on a private helper either — helpers are scaffolding for the parts that carry contracts, and the check reports the fields when a helper carries them. And do not word a promise as a prohibition: what the part delivers belongs with what it guarantees, and only what it must never do, on any path, belongs in the third part.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/nerve-declaration",
+        "authority:spec/primitive-vocabulary"
+      ],
+      "id": "concept:contract",
+      "plain_definition": "A contract is the three-part agreement a working part carries: what must be true before it is called, what it guarantees once it has finished, and what it must never do, however it is called and whatever happens while it runs. All three are fields of the declaration, sitting alongside the reason the part exists, and a working part cannot be declared without them; when there is nothing to rule out, the third says so with the word none rather than being left off. Two related fields sit beside them — which errors the part may raise, and how long it may acceptably take. A watcher carries the third part as well: what it must never do while it watches.",
+      "purpose": "It makes the agreement between caller and called a fact the system holds rather than something each reader reconstructs. A watcher can compare what actually happened against the promise, an agent can decide whether a part fits the situation in front of it — including what the part will never do — and a reviewer can see a promise or a prohibition change in a diff.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:intent"
+        ],
+        [
+          "part-of",
+          "concept:nerve"
+        ]
+      ],
+      "summary": "What a working part needs before it runs, what it promises afterwards, and what it must never do, declared beside the code that has to keep all three.",
+      "syntax": [
+        "nerve <name> :: <LAYER>",
+        "    expects: \"<what must be true before it runs>\"",
+        "    guarantees: \"<what is true once it has run>\"",
+        "    forbids: \"<what it must never do>\"",
+        "    raises: [<error types it may raise>]"
+      ],
+      "term": "contract",
+      "use_when": "State all three parts on every working part: the condition a caller has to satisfy, the outcome the part will produce if that condition holds, and what it must never do, however it is called. When there is genuinely nothing to rule out, write none as the third part's answer."
+    },
+    {
+      "do_not_use_when": "Do not use a doc-guide for material that is purely a listing — a page assembled from the parts needs no author and is a doc-ref. Do not use one for conceptual writing that names no part of the system either; that is ordinary hand-written material, and this machinery would have nothing to check.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/doc-guide-declaration"
+      ],
+      "id": "concept:doc-guide",
+      "plain_definition": "A doc-guide is a hand-written explanation — a walkthrough, a conceptual piece, a migration note — with one rule attached: wherever it names a part of the system it must do so through a marker the build resolves, embed a registered example, or state a claim the build can evaluate against what the system says about itself. Ordinary prose stays ordinary prose; it is the factual claims that are held to the system.",
+      "purpose": "It is the concession that some things genuinely need explaining, made safe. Narrative usually rots because nothing checks it; here a guide that names a part which has since been renamed or removed fails the build, so the only claims that survive a merge are the true ones.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:doc-ref"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:executable-evidence"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ]
+      ],
+      "summary": "A written guide whose every factual claim about a named part is checked against the system rather than trusted.",
+      "syntax": [
+        "doc-guide <name>",
+        "    intent: \"<why this guide exists>\"",
+        "    format: <markdown | html | json>",
+        "    output: <relative file path>",
+        "    covers: [<entity references>]",
+        "    asserts: [<claims the build can check>]",
+        "    examples: [example::<name>]",
+        "    ---",
+        "    <prose, naming parts through {{nerve::X}} style references>"
+      ],
+      "term": "doc-guide",
+      "use_when": "Use a doc-guide for task-oriented walkthroughs, conceptual explanations and migration notes that name real parts of the system."
+    },
+    {
+      "do_not_use_when": "Do not use a doc-ref where a reader has to be walked through something. It cannot hold narrative, and forcing one will produce a table where an explanation was needed; that is what a doc-guide is for.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/doc-ref-declaration"
+      ],
+      "id": "concept:doc-ref",
+      "plain_definition": "A doc-ref is a declaration that produces a page of reference material by selecting parts of the system and printing named fields of each. It has no body and almost no writing: you say which parts it covers, which of their declared fields to show, and which file to write. Everything a reader sees comes from the parts themselves.",
+      "purpose": "It removes the largest single source of stale documentation, the hand-written catalogue. A page assembled from the parts cannot describe a part that no longer exists, cannot miss one that was added, and cannot quote an old promise, because it holds a copy of none of that.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:doc-guide"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:executable-evidence"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ]
+      ],
+      "summary": "A reference page assembled entirely from what the system already knows about itself, carrying no prose of its own.",
+      "syntax": [
+        "doc-ref <name>",
+        "    intent: \"<why this reference exists>\"",
+        "    format: <markdown | html | json>",
+        "    output: <relative file path>",
+        "    covers: [<filter expression>]",
+        "    sections: [<field names to show>]"
+      ],
+      "term": "doc-ref",
+      "use_when": "Use a doc-ref for anything that is a list or a table of what the system contains: an interface reference, an error-code table, a catalogue of the parts in one layer."
+    },
+    {
+      "do_not_use_when": "Drift is not a word for a document that is badly written, out of date in its judgement, or missing a section. Those are editorial problems and a fingerprint cannot see them. Drift is the narrow, mechanical case where the source a document was built from has changed and the document has not been rebuilt.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/drift-check"
+      ],
+      "id": "concept:drift",
+      "plain_definition": "Drift is what happens when a description and the thing it describes stop agreeing: the written record still says one thing while the code has quietly moved on. s0ma turns that disagreement into something a machine can notice. Every generated document carries a fingerprint of everything it was built from, and recomputing that fingerprint says at once whether the two still match.",
+      "purpose": "Drift is the failure the whole product exists to prevent. Naming it, fingerprinting it, and rechecking it on every merge is what turns \"the documentation is accurate\" from a claim somebody makes into a fact the build can prove.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:doc-guide"
+        ],
+        [
+          "requires",
+          "concept:doc-ref"
+        ]
+      ],
+      "summary": "The gap that opens when a written description and the thing it describes stop agreeing.",
+      "syntax": [],
+      "term": "drift",
+      "use_when": "Ask for the drift check whenever you need to know whether the written record still matches the system: before a release, in the merge gate, and after any change to something a document describes."
+    },
+    {
+      "do_not_use_when": "Do not use an example as a substitute for a verification. Verifications exist to catch mistakes and may be as long and as thorough as they need to be; examples exist to be understood, and passing is a side effect of being honest rather than the point of the exercise.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/example-declaration"
+      ],
+      "id": "concept:example",
+      "plain_definition": "An example is a small piece of code written to be read, declared as a part of the system in its own right. It says what it teaches, names the parts it demonstrates, and says where it runs. The build runs it, and an example that has stopped working fails the build exactly the way a broken verification does.",
+      "purpose": "It closes the gap between sample code and real code. Because the example is registered against the parts it demonstrates, anyone editing one of those parts can ask which examples teach it and fix them in the same change — and because it executes, a demonstration that quietly stopped being true cannot survive.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:test"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:executable-evidence"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ]
+      ],
+      "summary": "A short runnable demonstration, registered against the parts it teaches, that has to keep working.",
+      "syntax": [
+        "example <name>",
+        "    intent: \"<what this example teaches>\"",
+        "    demonstrates: [<entity references>]",
+        "    runs_in: <standalone | pytest | integration>",
+        "    ---",
+        "    <Python body>"
+      ],
+      "term": "example",
+      "use_when": "Write an example when a reader needs to see a part in use, and keep it short: it will be read, and length is what makes a demonstration stop teaching."
+    },
+    {
+      "do_not_use_when": "The standard does not reach writing that names no part of the system. Conceptual and teaching material — the language specification among it — is hand-written and deliberately outside this machinery, because there is nothing in it for the build to check.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/doc-validation-layers",
+        "authority:spec/documentation-declarations"
+      ],
+      "id": "concept:executable-evidence",
+      "plain_definition": "Executable evidence is the standard the documentation machinery holds every claim to. A statement about a named part of the system may exist in exactly three forms: printed from what that part declares, written as a claim the build evaluates against the system, or demonstrated by a registered example that is actually run. There is no fourth form, and a claim in none of the three is refused.",
+      "purpose": "It makes documentation a projection of the system rather than a second description competing with it. A printed claim cannot be wrong, a checked claim fails loudly the moment it becomes wrong, and a demonstration that runs cannot quietly stop being true — so nothing survives on the strength of having once been correct.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:registry-snapshot"
+        ]
+      ],
+      "summary": "The rule that every factual claim in a document is printed from the system, checked against it, or demonstrated by code that runs.",
+      "syntax": [],
+      "term": "executable evidence",
+      "use_when": "Apply the standard whenever a document names a real part of the system: reach for a printed field first, a checked claim where a field alone will not say it, and a running demonstration where a reader needs to see the part in use."
+    },
+    {
+      "do_not_use_when": "Do not use a ganglion to do the work it is watching; a watcher that also acts is two parts wearing one name. Do not use one to confirm a fixed expected result either — that is a verification, which runs on demand and either passes or fails, while a ganglion runs alongside the system and forms an opinion about it.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/ganglion-declaration"
+      ],
+      "id": "concept:ganglion",
+      "plain_definition": "A ganglion is a part whose job is to watch other parts. It names which ones it observes — individually, or by a pattern covering a whole file or a whole layer — states what it expects normal behaviour to look like, says what should happen when what it sees does not match, and says what it must never do while it watches. It is the part of a s0ma system that forms judgements about the rest of it.",
+      "purpose": "It is how a system notices its own trouble instead of waiting to be told about it. Because the watching relationship is declared, anyone can ask which parts of a system are watched, by what, and against which expectation — a question no ordinary monitoring setup can answer from the code.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:test"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ],
+        [
+          "requires",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "A declared watcher: it observes named parts of the system and judges what it sees against what it expected.",
+      "syntax": [
+        "ganglion <name> :: <LAYER>",
+        "    visibility: <PUBLIC | INTERNAL | TEST>",
+        "    intent: \"<what this evaluator assesses>\"",
+        "    observes: [<part names or patterns>]",
+        "    scope: <FUNCTION_BOUNDARY | SUBSYSTEM | SYSTEM>",
+        "    priors: \"<what normal is expected to look like>\"",
+        "    on_anomaly: \"<what to do when it is not>\"",
+        "    forbids: \"<what it must never do while it watches>\"",
+        "    ---",
+        "    def <name>(signal: Signal) -> EvaluationResult:",
+        "        <body>"
+      ],
+      "term": "ganglion",
+      "use_when": "Use a ganglion when something has to assess behaviour rather than produce it: timing and promise-keeping at a single part, patterns across a file, or judgements that span the whole system."
+    },
+    {
+      "do_not_use_when": "Do not use a helper for anything another file needs; nothing outside the file can reach it and the build refuses the attempt. Do not use one for something with a real promise to keep either — the moment you want to say what it expects and guarantees, it is a nerve.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/helper-declaration"
+      ],
+      "id": "concept:helper",
+      "plain_definition": "A helper is a function that exists to keep other declarations readable and never leaves the file it is written in. It declares why it exists and nothing else: no promises, no visibility setting, no dependency list, because the parts it serves are the ones that carry those. Other files cannot reach it and the system's list of components does not include it — though the file's own record still shows it, so nothing in a file is invisible.",
+      "purpose": "It gives ordinary scaffolding a home. Without it a private twenty-line routine has to be either buried inside a larger part, where nobody can see it, or promoted to a full component with promises it does not deserve. The helper is the honest third answer, and it keeps the component list meaningful by keeping scaffolding out of it.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:nerve"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "A small private function inside one file, described but deliberately not registered as a part of the system.",
+      "syntax": [
+        "helper _<name> :: <LAYER>",
+        "    intent: \"<why this helper exists>\"",
+        "    ---",
+        "    def _<name>(...) -> ...:",
+        "        <body>"
+      ],
+      "term": "helper",
+      "use_when": "Use a helper for a routine only this file calls and that carries no promise of its own: formatting, small shared setup, a recorder class several verifications reuse."
+    },
+    {
+      "do_not_use_when": "Do not use an integration for a dependency inside your own program, and do not place one outside the infrastructure layer — talking to the outside world is an infrastructure job by definition, and the build refuses any other layer.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/integration-declaration"
+      ],
+      "id": "concept:integration",
+      "plain_definition": "An integration is the declaration that describes a connection to something outside the program — a calendar service, a payment provider, a message queue. It names the part that builds the connection, the part that checks the connection is alive, and a short record of what the integration offers and what the environment has to supply, such as which settings must be present. From that declaration the build writes the routine wiring for you.",
+      "purpose": "Every outside connection used to be assembled by hand in roughly the same shape, and hand-assembled shapes drift apart. Making it a declaration lets the build check the named pieces really exist, produce the same access points every time, and lets anyone ask what a system depends on beyond itself.",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "A declared adapter to an outside system, naming how to build it, how to check it is alive, and what it needs to run.",
+      "syntax": [
+        "integration <Name> :: INFRASTRUCTURE",
+        "    version: <MAJOR.MINOR.PATCH>",
+        "    intent: \"<why this integration exists>\"",
+        "    factory: <FactoryNerveName>",
+        "    smoke_test_primary: <SmokeTestNerveName>",
+        "    manifest:",
+        "      provides: [<operation names>]",
+        "      required_env: [<setting names>]"
+      ],
+      "term": "integration",
+      "use_when": "Use an integration when your program talks to a service you do not control, and you want that fact, its readiness check and its requirements declared in one place."
+    },
+    {
+      "do_not_use_when": "Do not leave it to be inferred from a name, and do not use it to record how something works. The how belongs in the code and, where a promise is involved, in the contract fields beside it.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/primitive-vocabulary"
+      ],
+      "id": "concept:intent",
+      "plain_definition": "Intent is the sentence that says why a part exists. Every declared part carries one; no kind of code is exempt. It is not a comment and not a docstring bolted on afterwards — it is a field of the declaration, so it cannot be left out, cannot drift away from the code it belongs to, and travels with that code wherever the description is read.",
+      "purpose": "It is the smallest unit of a system's self-knowledge and the one the rest depends on. Reference pages assembled from the parts, searches across a system, and an agent asking what something is for all read this field, which is why a system where every part states its reason can answer questions an ordinary codebase cannot.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:contract"
+        ]
+      ],
+      "summary": "The declared reason a part exists, required on every part without exception.",
+      "syntax": [
+        "nerve <name> :: <LAYER>",
+        "    intent: \"<why this component exists>\""
+      ],
+      "term": "intent",
+      "use_when": "Write an intent on every declaration, and write the reason rather than the mechanics — what the part is for, not a restatement of what its code does."
+    },
+    {
+      "do_not_use_when": "Do not expect a kind on the declarations that have only one role. A verification, a private helper, a connection between parts and the three documentation declarations carry none, because there is nothing to choose between.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/kind-taxonomy"
+      ],
+      "id": "concept:kind",
+      "plain_definition": "Every working part and every structural part declares a kind, which says which archetype it belongs to. A working part is a plain computation, a coordinator of other parts, an adapter to something outside, or a long-running service. A structural part is a data shape, a fixed value, a settings object, an enumeration, a type name, or an error type. Which kinds are available depends on what sort of declaration you are writing, and the build refuses a mismatch.",
+      "purpose": "It lets a system group its own parts by role rather than by name. Asking for every adapter, or every fixed value, or every long-running service is a question the system answers directly — which is what makes a reference page assembled from the parts possible at all.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:layer"
+        ],
+        [
+          "contrasts-with",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "The functional archetype of a part: what sort of working logic it is, or what sort of structure it holds.",
+      "syntax": [
+        "nerve <name> :: <LAYER>",
+        "    kind: <SERVICE | FUNCTION | ADAPTER | ORCHESTRATOR>",
+        "cell <Name> :: <LAYER>",
+        "    kind: <MODEL | CONSTANT | CONFIG | ENUM | EXCEPTION | TYPE>"
+      ],
+      "term": "kind",
+      "use_when": "Choose a kind for every working part and every structural part, picking the archetype that describes what it is rather than what it happens to be called."
+    },
+    {
+      "do_not_use_when": "Do not mix layers within one file; the language requires them to match exactly. And when two files in different bands need to share something, do not reach across: move the shared thing down into a band both can reach, or have the lower band publish an interface the higher one fills in.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/layer-consistency",
+        "authority:spec/layer-reachability"
+      ],
+      "id": "concept:layer",
+      "plain_definition": "Every s0ma file declares one layer and every part inside the file shares it. The five bands are the subject matter itself, the work that coordinates it, the two edges where a program meets people and meets other systems, and the band s0ma keeps for its own machinery. A fixed table says which band may reach which: the subject matter reaches only itself and the framework, the two edges reach inward but never each other, and nothing reaches outward.",
+      "purpose": "It stops a codebase turning into a web where anything may call anything. Because the band is declared and the reachable pairs are fixed, an accidental dependency from the subject matter out to a screen or a database is refused at build time rather than discovered years later.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:kind"
+        ],
+        [
+          "contrasts-with",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "The architectural band a file and everything in it belongs to, and the rule about which bands may depend on which.",
+      "syntax": [
+        "module <name>",
+        "    layer: <DOMAIN | APPLICATION | INFRASTRUCTURE | PRESENTATION | FRAMEWORK>"
+      ],
+      "term": "layer",
+      "use_when": "Choose the layer when you create a file, and choose it for the file rather than for one part — the layer applies to everything the file contains."
+    },
+    {
+      "do_not_use_when": "Do not use the header to describe a single function or value; that belongs to the declaration for that part. And do not list a name among the published parts unless the part itself is marked public — the header and the part have to agree about what other files may reach.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/module-declaration"
+      ],
+      "id": "concept:module",
+      "plain_definition": "A module declaration is the first thing in a s0ma source file and it speaks for the whole file: it gives the file a name, places it in one architectural band, states what the file is responsible for, and lists both the outside code it draws on and the parts of itself it lets other files use. Nothing enters or leaves the file without appearing in one of those lists.",
+      "purpose": "It makes a file's dependencies a declared fact instead of a scatter of import lines. Because the header is the only door in and out, a tool can answer what a file needs and what it offers by reading one block, and the build can refuse a file that reaches for something it never declared.",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "The header every s0ma source file opens with, naming the file and declaring everything that enters and leaves it.",
+      "syntax": [
+        "module <name>",
+        "    layer: <LAYER>",
+        "    version: <MAJOR.MINOR.PATCH>",
+        "    intent: \"<what this module is responsible for>\"",
+        "    exports: [<public component names>]"
+      ],
+      "term": "module",
+      "use_when": "Write one at the top of every s0ma file, before any other declaration. There is no such thing as a s0ma file without one."
+    },
+    {
+      "do_not_use_when": "Do not use a nerve for something that only holds a shape or a value — a fixed value, a data structure, or a type belongs in a cell. Do not use one for the part that watches other parts and draws conclusions about them; that is a ganglion. And do not use one for a small private routine nobody outside the file calls; that is a helper.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/nerve-declaration"
+      ],
+      "id": "concept:nerve",
+      "plain_definition": "A nerve is a piece of working logic that carries a description of itself. You write the function — or, for a long-running service, the class — as you normally would, and above it you state what it is for, what it needs from its caller, what it promises in return, and what it must never do. Those statements are part of the declaration rather than a comment beside it, so they travel with the code from then on.",
+      "purpose": "Nerves are how a s0ma system knows what its own moving parts do. Because the description is declared rather than remembered, the system can be asked what it contains and answer from the code itself, instead of from a document somebody hopefully kept up to date.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:cell"
+        ],
+        [
+          "contrasts-with",
+          "concept:helper"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:contract"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:kind"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ],
+        [
+          "requires",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "A piece of working logic that carries its own account of what it does, what it needs, and what it promises.",
+      "syntax": [
+        "nerve <name> :: <LAYER>",
+        "    kind: <KIND>",
+        "    visibility: <PUBLIC | INTERNAL | TEST>",
+        "    intent: \"<why this component exists>\"",
+        "    expects: \"<preconditions>\"",
+        "    guarantees: \"<postconditions>\"",
+        "    forbids: \"<what it must never do>\"",
+        "    evaluates_at: <FUNCTION_BOUNDARY | SUBSYSTEM | SYSTEM>",
+        "    ---",
+        "    def <name>(<args>) -> <return type>:",
+        "        <body>"
+      ],
+      "term": "nerve",
+      "use_when": "Use a nerve for anything that acts: a step that computes, decides, fetches, or serves. If you would reach for a function or a service class, reach for a nerve."
+    },
+    {
+      "do_not_use_when": "Do not read presence in the index as permission to call something. The index answers what exists and what may be observed; what may be called across files is the separate question the publish list and the visibility setting answer.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/namespace-model",
+        "authority:spec/registry-storage"
+      ],
+      "id": "concept:registry-snapshot",
+      "plain_definition": "When a s0ma system starts, every declared part registers itself in one index under a full name that joins the file's name and the part's own. Because the name is qualified, two files may each contain a part called the same thing without either shadowing the other. The index is what the system consults when anything asks what it contains, and it is complete — it includes the parts no other file is allowed to call.",
+      "purpose": "It makes self-knowledge a running fact rather than only a build-time one. The watchers, the verifications and the documentation machinery all resolve names against this index rather than against the shorter list of what a file publishes, which is how a system can describe every part of itself while keeping most of them private to call.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:canonical-ir"
+        ]
+      ],
+      "summary": "The live index of every part in a running system, each held under the full name that joins its file and itself.",
+      "syntax": [],
+      "term": "registry snapshot",
+      "use_when": "Reach for the index when you want to know what a running system actually contains, as opposed to what one file publishes to its neighbours."
+    },
+    {
+      "do_not_use_when": "Do not use it for parts of your own project written in this language; those belong in the uses list. And do not expect these names in the declaration fields themselves — those fields may only name things the system is able to describe.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/dependency-categories"
+      ],
+      "id": "concept:requires",
+      "plain_definition": "The requires list names the outside code a file needs: standard library modules, installed packages, and specific names from either. The build turns each entry into the right import line. Sibling lists cover the variations — one for packages that may not be installed, one for imports a running system supplies in a way no checker can see, and one for imports deferred until the moment they are first used.",
+      "purpose": "It puts outside dependencies in the same declared place as everything else, so a file's needs can be read in one block instead of searched for. It also lets the build confirm that what a file claims to need is really installed, and say so when a file claims something it never uses.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:uses"
+        ],
+        [
+          "part-of",
+          "concept:module"
+        ]
+      ],
+      "summary": "The module header's list of code from outside the project — the ordinary Python imports, declared.",
+      "syntax": [
+        "module <name>",
+        "    requires: [<module>, <package.Name>, <package:name>]",
+        "    soft_requires: [<packages that may not be installed>]"
+      ],
+      "term": "requires:",
+      "use_when": "List an entry for every outside module or name the file's code refers to, and choose the sibling list that matches how the dependency should fail: quietly absent, invisible to the checker, or deferred to the first call."
+    },
+    {
+      "do_not_use_when": "Do not leave code in a file outside a declaration, and do not use the three-hyphen line anywhere but between a declaration's description and its code. The two declarations that carry no code — a connection between parts and the module header — leave the separator out entirely.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/body-separator",
+        "authority:spec/declaration-types"
+      ],
+      "id": "concept:s0ma-file",
+      "plain_definition": "A s0ma source file has a fixed anatomy. It opens with the module header that speaks for the whole file, then carries one or more declarations, and every piece of code in it belongs to exactly one of them — the language refuses a block that belongs to none. Inside a declaration the description comes first and the code comes after, with a line of exactly three hyphens at the left margin between them.",
+      "purpose": "The fixed shape is what lets both people and machines read a file with no guesswork: the header always says what the file is, the description always comes before the code it describes, and the separator always marks where one stops and the other starts. Nothing about a file's meaning depends on convention or on where a reader happens to look.",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:module"
+        ]
+      ],
+      "summary": "One source file: a module header first, then declarations, each separated from its code by a line of three hyphens.",
+      "syntax": [
+        "module <name>",
+        "    layer: <LAYER>",
+        "    version: <MAJOR.MINOR.PATCH>",
+        "    intent: \"<what this module is responsible for>\"",
+        "    exports: [<public component names>]",
+        "# then one or more declarations, in any order:",
+        "<declaration header>",
+        "    <description fields>",
+        "    ---",
+        "    <code>"
+      ],
+      "term": ".s0ma file",
+      "use_when": "Every file you write in this language has this shape; there is no other arrangement to choose between."
+    },
+    {
+      "do_not_use_when": "Do not reach for a forgiving mode to get a release out. The extra release requirements are the ones that keep a published system honest, and turning them off does not make the problems they name go away.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/strictness-modes"
+      ],
+      "id": "concept:strictness-mode",
+      "plain_definition": "A strictness mode decides whether a finding is a warning or a refusal. The most forgiving mode exists for bringing an existing codebase across, where nearly everything is a warning. The everyday mode is balanced. The strict mode makes nearly everything a refusal and is meant for automated checks before a merge. The release mode adds requirements of its own: every public working part verified or explicitly claimed as covered elsewhere, every file carrying a real version, and every cross-file connection explained in a person's own words.",
+      "purpose": "It lets one set of rules serve a codebase at every stage of its life. Silence would be the wrong default in a system built on explicitness, so nothing is ever ignored; what changes is whether a finding stops you now or is recorded for later.",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:check-and-build-loop"
+        ]
+      ],
+      "summary": "How severely the build treats its own findings, from forgiving during adoption to unforgiving before a release.",
+      "syntax": [],
+      "term": "strictness mode",
+      "use_when": "Use the forgiving mode while adopting the language, the balanced one day to day, the strict one in the automated checks before merging, and the release one when shipping. Which mode applies is decided in this order: the `--mode` flag on the command, else the project's `mode` setting in `pyproject.toml`, else the command's own default, which is `strict` for `s0ma check` and `dev` for the rest."
+    },
+    {
+      "do_not_use_when": "Do not use a test to show how something is used — a reader learns from an example, which is written to be read, while a test is written to catch mistakes. Do not use one where the real verification lives in an outside suite either; say so in the part's own coverage claim instead.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/test-declaration"
+      ],
+      "id": "concept:test",
+      "plain_definition": "A test in s0ma is a declaration like any other. It says what behaviour it verifies and, crucially, names the parts it is verifying, so the link between a check and the thing checked is recorded rather than guessed from a file name. The build turns it into an ordinary runnable test, and the system can be asked which of its parts are covered and by what.",
+      "purpose": "It turns coverage from a number into a structure. Because each test names its targets, a system can list the public parts nobody verifies, and the strictest mode refuses a release while any public working part has neither a test nor a written claim that an outside suite covers it.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:example"
+        ],
+        [
+          "contrasts-with",
+          "concept:ganglion"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "A verification written as a declared part of the system, naming exactly which parts it checks.",
+      "syntax": [
+        "test test_<name> :: <LAYER>",
+        "    intent: \"<what behaviour this verifies>\"",
+        "    tests: [<component names this verifies>]",
+        "    ---",
+        "    def test_<name>():",
+        "        <body>"
+      ],
+      "term": "test",
+      "use_when": "Write a test declaration for behaviour you want verified inside the language, where the coverage should become part of the system's own record of itself."
+    },
+    {
+      "do_not_use_when": "Do not use it for code from outside the project; that is the requires list. And do not leave an entry in place once nothing in the file refers to it — an unused entry is reported, because a declared dependency nobody exercises is a claim that is no longer true.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/dependency-categories"
+      ],
+      "id": "concept:uses",
+      "plain_definition": "The uses list names every part in another s0ma file that this file refers to — whether it calls it, builds it, raises it, or merely names it in a type. Each entry has to be something the other file has published, and each has to satisfy the layer rule, so a file's reach across the project is a declared and checked list rather than a set of import lines nobody audits.",
+      "purpose": "It turns the dependency graph between files into a declared fact. Because it covers every kind of reference and not only calls, the recorded graph is complete — which is what makes it safe to ask what a change to one file would affect.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:axon"
+        ],
+        [
+          "contrasts-with",
+          "concept:requires"
+        ],
+        [
+          "part-of",
+          "concept:module"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "The module header's list of parts in other s0ma files that this file is allowed to reach.",
+      "syntax": [
+        "module <name>",
+        "    uses: [<other_module.component>, <other_module.component as alias>]"
+      ],
+      "term": "uses:",
+      "use_when": "Add an entry whenever this file refers to something in another s0ma file, by any means at all."
+    },
+    {
+      "do_not_use_when": "Do not mark something public purely so a verification can reach it; that is exactly the workaround the third setting exists to retire. And do not read internal as hidden — an internal part is fully visible to watchers, verifications, and anything asking the system what it contains.",
+      "examples": [],
+      "governed_by": [
+        "authority:spec/visibility-system"
+      ],
+      "id": "concept:visibility",
+      "plain_definition": "Every working and structural part declares a visibility. Public means other files may use it, provided the module header lists it too. Internal means only the file it lives in may call it. The third setting opens a part to verification code anywhere in the project without putting it on the public surface. Visibility governs calling and nothing else: watchers, verifications and the documentation machinery reach every part regardless, because a system that cannot see all of itself cannot describe itself.",
+      "purpose": "It separates two questions that are usually tangled: who may depend on this, and who may look at it. Making the first restrictive and the second total is what lets a s0ma system keep a small public surface and a complete self-description at the same time.",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:kind"
+        ],
+        [
+          "contrasts-with",
+          "concept:layer"
+        ],
+        [
+          "requires",
+          "concept:module"
+        ]
+      ],
+      "summary": "Who may call a part from another file: everyone, nobody, or verification code only.",
+      "syntax": [
+        "nerve <name> :: <LAYER>",
+        "    visibility: <PUBLIC | INTERNAL | TEST>"
+      ],
+      "term": "visibility",
+      "use_when": "Mark a part public when other files are meant to use it, internal when it is an implementation detail, and use the third setting for a detail that verification code genuinely has to exercise directly."
+    }
+  ],
+  "schema": "s0ma-docs-concepts@1",
+  "sources": [
+    {
+      "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
+      "sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44"
+    }
+  ]
+}

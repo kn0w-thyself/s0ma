@@ -1,0 +1,15 @@
+{
+  "description": "s0ma from kn0wthyself - a living self-model your software carries, and the tools Claude uses to read it.",
+  "name": "kn0wthyself",
+  "owner": {
+    "name": "kn0wthyself",
+    "url": "https://kn0wthyself.ai"
+  },
+  "plugins": [
+    {
+      "description": "Gives Claude a living model of what your project is made of - what each part is for, what it depends on, and why - so answers about your software come from the software itself.",
+      "name": "s0ma",
+      "source": "./plugin"
+    }
+  ]
+}

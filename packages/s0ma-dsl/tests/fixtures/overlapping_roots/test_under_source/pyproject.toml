@@ -1,0 +1,13 @@
+[project]
+name = "test_under_source"
+version = "0.0.1"
+
+# G2 (feedback 5–6 cleanup) fixture: tests live nested inside the
+# source root. This is the kn0wthyself-website-2 shape that hit the
+# opaque ``MODULE_NAME_COLLISION``-against-itself failure in M20. The
+# G2 detector must surface ``OVERLAPPING_DISCOVERY_ROOTS`` at project
+# load time, before any subcommand runs.
+[tool.s0ma]
+source_roots = ["src/myproject"]
+test_roots = ["src/myproject/tests"]
+build_dir = "test_under_source_build"

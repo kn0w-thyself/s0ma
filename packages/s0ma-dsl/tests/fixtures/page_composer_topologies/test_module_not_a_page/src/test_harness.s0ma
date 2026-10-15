@@ -1,0 +1,34 @@
+module test_harness
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Test harness that uses both production page modules and carries no is_page_composer marker, so it is not a page even though it sits at the top of the uses graph."
+    uses: [page_a.render_page_a, page_b.render_page_b]
+    exports: [exercise_pages]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve exercise_pages :: PRESENTATION
+    kind: FUNCTION
+    visibility: TEST
+    intent: "Exercise both production renderers as a test harness — not a page itself."
+    expects: "No arguments."
+    guarantees: "Returns the concatenated output of both renderers."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def exercise_pages() -> str:
+        return render_page_a() + render_page_b()

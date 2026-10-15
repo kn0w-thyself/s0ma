@@ -1,0 +1,184 @@
+# adopt_source: src/bookshelf/notifications.py@sha256:5b5d60573d36a1fccf510bf17d462b5069db198521a8ad1c6166c08dd049d0e1
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module notifications` rather than
+#   `bookshelf.notifications`. Every module name in a project must be unique; rename the
+#   draft if another module already carries this name.
+# note: `RecordingNotifier` is a plain class, so the draft calls it a cell of kind MODEL. If it
+#   is really a service or an adapter over something outside the program, make it a nerve of
+#   kind SERVICE or ADAPTER instead.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+# note: `bookshelf.config` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+module notifications
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'How the library tells members about the books they are holding.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports:
+      - REMINDER_WINDOW_DAYS
+      - Notifier
+      - RecordingNotifier
+      - due_soon_message
+      - remind_member
+
+    requires: [bookshelf.config:LIBRARY_NAME, dataclasses:dataclass, typing:Protocol, typing:TYPE_CHECKING]
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell ADOPT_UNPLACED_0010_0013 :: DOMAIN
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "Source the retrofit could not place. Move it into a declaration, then delete this."
+    schema: "adopt: unplaced - src/bookshelf/notifications.py lines 10-13 - imports guarded by TYPE_CHECKING, kept here because `.models` is a relative import, so it reaches another module of this project; s0ma declares imports in the module header and they always run, so check for an import cycle before moving these to requires: or uses:"
+    invariants: none
+    covered_by: none
+    ---
+    ADOPT_UNPLACED_0010_0013 = r"""if TYPE_CHECKING:
+        from datetime import date
+
+        from .models import Loan, Member
+    """
+
+cell REMINDER_WINDOW_DAYS :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    REMINDER_WINDOW_DAYS = 3
+
+cell Notifier :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it. The draft wrote kind: MODEL here because a cell of kind TYPE may not hold a class, and this body is a class. Change the kind once you have decided what this really is."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class Notifier(Protocol):
+        """Anything that can put one message in front of one member."""
+
+        def send(self, member: Member, subject: str, body: str) -> None:
+            """Deliver the message, however this channel delivers messages."""
+
+cell _RecordedMessage :: DOMAIN
+    kind: MODEL
+    visibility: INTERNAL
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    @dataclass
+    class _RecordedMessage:
+        """One message a :class:`RecordingNotifier` was asked to send."""
+
+        card_number: str
+        subject: str
+        body: str
+
+cell RecordingNotifier :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class RecordingNotifier:
+        """A notifier that keeps messages in memory instead of sending them.
+
+        What the service runs on until a real channel is configured.
+        """
+
+        def __init__(self) -> None:
+            self._sent: list[_RecordedMessage] = []
+
+        @property
+        def sent(self) -> list[_RecordedMessage]:
+            """Every message this notifier has been handed, oldest first."""
+            return list(self._sent)
+
+        def send(self, member: Member, subject: str, body: str) -> None:
+            """Record the message instead of delivering it anywhere."""
+            self._sent.append(_RecordedMessage(member.card_number, subject, body))
+
+        def clear(self) -> None:
+            """Forget everything recorded so far."""
+            self._sent.clear()
+
+nerve due_soon_message :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def due_soon_message(loan: Loan, days_left: int) -> tuple[str, str]:
+        """The subject and body of the reminder sent before a loan falls due."""
+        subject = f"{LIBRARY_NAME}: a book is due back in {days_left} days"
+        body = (
+            f"ISBN {loan.isbn} is due back on {loan.window.due.isoformat()}. "
+            "You can renew it at the counter or on the library's website."
+        )
+        return subject, body
+
+nerve remind_member :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    async def remind_member(
+        notifier: Notifier, member: Member, loans: list[Loan], today: date
+    ) -> int:
+        """Send one reminder per loan that is nearly due, and count what was sent.
+
+        This is a coroutine because a real channel would wait on the network.
+        The in-memory notifier finishes without waiting for anything.
+        """
+        sent = 0
+        for loan in loans:
+            days_left = loan.days_left(today)
+            if 0 <= days_left <= REMINDER_WINDOW_DAYS:
+                subject, body = due_soon_message(loan, days_left)
+                notifier.send(member, subject, body)
+                sent += 1
+        return sent

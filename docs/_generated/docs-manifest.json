@@ -1,0 +1,931 @@
+{
+  "artifacts": [
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:b5c31ac7c026bd77",
+      "format": "markdown",
+      "id": "artifact:README.md",
+      "path_or_uri": "docs/README.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/map-of-record",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:e2d464c4f569bc37",
+      "format": "package_data",
+      "id": "artifact:_generated/core-teaching-slice.json",
+      "path_or_uri": "docs/_generated/core-teaching-slice.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:280e1c2953716e58",
+      "format": "json",
+      "id": "artifact:_generated/coverage-report.json",
+      "path_or_uri": "docs/_generated/coverage-report.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:bdabcddb2f696ef2",
+      "format": "json",
+      "id": "artifact:_generated/inventory-components.json",
+      "path_or_uri": "docs/_generated/inventory-components.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:e5ce40ac4a4f1e3c",
+      "format": "json",
+      "id": "artifact:_generated/inventory-concepts.json",
+      "path_or_uri": "docs/_generated/inventory-concepts.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:b3e713096b4ea738",
+      "format": "json",
+      "id": "artifact:_generated/inventory-surfaces.json",
+      "path_or_uri": "docs/_generated/inventory-surfaces.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:2de5569630db2d8f",
+      "format": "media_manifest",
+      "id": "artifact:_generated/media/drift-recovery.json",
+      "path_or_uri": "docs/_generated/media/drift-recovery.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:b3d53dec74454688",
+      "format": "media_manifest",
+      "id": "artifact:_generated/media/first-module.json",
+      "path_or_uri": "docs/_generated/media/first-module.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:cb454a2ad8452124",
+      "format": "media_manifest",
+      "id": "artifact:_generated/media/first-project.json",
+      "path_or_uri": "docs/_generated/media/first-project.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:608d6f815ad2c6b5",
+      "format": "media_manifest",
+      "id": "artifact:_generated/media/mcp-authoring-loop.json",
+      "path_or_uri": "docs/_generated/media/mcp-authoring-loop.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:e6f5b84ad273f6fe",
+      "format": "media_manifest",
+      "id": "artifact:_generated/media/retrofit-existing-codebase.json",
+      "path_or_uri": "docs/_generated/media/retrofit-existing-codebase.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:d07f4e5f601ff4ff",
+      "format": "media_manifest",
+      "id": "artifact:_generated/media/studi0-feedback.json",
+      "path_or_uri": "docs/_generated/media/studi0-feedback.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:5e3aa2b2ae3da2ae",
+      "format": "json",
+      "id": "artifact:_generated/quick-reference-machine.json",
+      "path_or_uri": "docs/_generated/quick-reference-machine.json",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/quick-reference-machine",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:899c73efa8daf5a6",
+      "format": "json",
+      "id": "artifact:_generated/s0ma-docs-model.json",
+      "path_or_uri": "docs/_generated/s0ma-docs-model.json",
+      "release_version": "0.19.1",
+      "source_document": "",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:dc32c0170e11040d",
+      "format": "markdown",
+      "id": "artifact:architecture/component-index.md",
+      "path_or_uri": "docs/architecture/component-index.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/component-index",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:0763f0095aef0856",
+      "format": "markdown",
+      "id": "artifact:architecture/docs-application.md",
+      "path_or_uri": "docs/architecture/docs-application.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/docs-application",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:050c93c37bd83e07",
+      "format": "markdown",
+      "id": "artifact:learn/adoption-ladder.md",
+      "path_or_uri": "docs/learn/adoption-ladder.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-adoption-ladder",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:8db89617caef4c3d",
+      "format": "markdown",
+      "id": "artifact:learn/anatomy-of-a-s0ma-file.md",
+      "path_or_uri": "docs/learn/anatomy-of-a-s0ma-file.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-anatomy",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:021f7bb6362d3ef3",
+      "format": "markdown",
+      "id": "artifact:learn/authored-vs-generated-boundary.md",
+      "path_or_uri": "docs/learn/authored-vs-generated-boundary.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-authored-vs-generated-boundary",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:f494c5600d41de54",
+      "format": "markdown",
+      "id": "artifact:learn/axon.md",
+      "path_or_uri": "docs/learn/axon.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-axon",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:8f67df96af9d611f",
+      "format": "markdown",
+      "id": "artifact:learn/canonical-ir.md",
+      "path_or_uri": "docs/learn/canonical-ir.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-canonical-ir",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:a3d933dd45712477",
+      "format": "markdown",
+      "id": "artifact:learn/cell.md",
+      "path_or_uri": "docs/learn/cell.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-cell",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:959c1a2b8291d243",
+      "format": "markdown",
+      "id": "artifact:learn/check-and-build-loop.md",
+      "path_or_uri": "docs/learn/check-and-build-loop.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-check-and-build-loop",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:27fff61b1322451d",
+      "format": "markdown",
+      "id": "artifact:learn/contract.md",
+      "path_or_uri": "docs/learn/contract.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-contract",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:5da7940ebbdde73f",
+      "format": "markdown",
+      "id": "artifact:learn/doc-guide.md",
+      "path_or_uri": "docs/learn/doc-guide.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-doc-guide",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:83162e985b2af2f8",
+      "format": "markdown",
+      "id": "artifact:learn/doc-ref.md",
+      "path_or_uri": "docs/learn/doc-ref.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-doc-ref",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:573a0e73f53eba00",
+      "format": "markdown",
+      "id": "artifact:learn/drift-gate.md",
+      "path_or_uri": "docs/learn/drift-gate.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-drift-gate",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:9f1f060cb13d2cdb",
+      "format": "markdown",
+      "id": "artifact:learn/drift.md",
+      "path_or_uri": "docs/learn/drift.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-drift",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:2b674be91182c49d",
+      "format": "markdown",
+      "id": "artifact:learn/embodiment.md",
+      "path_or_uri": "docs/learn/embodiment.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-embodiment",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:91765bb885f1e858",
+      "format": "markdown",
+      "id": "artifact:learn/example.md",
+      "path_or_uri": "docs/learn/example.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-example",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:79a89b75d315ed6e",
+      "format": "markdown",
+      "id": "artifact:learn/executable-evidence.md",
+      "path_or_uri": "docs/learn/executable-evidence.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-executable-evidence",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:f66ee7a018d0a4ac",
+      "format": "markdown",
+      "id": "artifact:learn/feedback.md",
+      "path_or_uri": "docs/learn/feedback.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-feedback",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:b035d537aee3e6a5",
+      "format": "markdown",
+      "id": "artifact:learn/ganglion.md",
+      "path_or_uri": "docs/learn/ganglion.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-ganglion",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:e1ce9536dee2d56e",
+      "format": "markdown",
+      "id": "artifact:learn/glossary.md",
+      "path_or_uri": "docs/learn/glossary.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-glossary",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:93300411d362ba99",
+      "format": "markdown",
+      "id": "artifact:learn/helper.md",
+      "path_or_uri": "docs/learn/helper.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-helper",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:56874e15c520c62f",
+      "format": "markdown",
+      "id": "artifact:learn/integration.md",
+      "path_or_uri": "docs/learn/integration.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-integration",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:751cafdb50c95881",
+      "format": "markdown",
+      "id": "artifact:learn/intent.md",
+      "path_or_uri": "docs/learn/intent.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-intent",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:1289d28f6031fcf1",
+      "format": "markdown",
+      "id": "artifact:learn/interoception.md",
+      "path_or_uri": "docs/learn/interoception.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-interoception",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:8e0d168abd77451a",
+      "format": "markdown",
+      "id": "artifact:learn/kind.md",
+      "path_or_uri": "docs/learn/kind.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-kind",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:41a12e4d29cf1054",
+      "format": "markdown",
+      "id": "artifact:learn/layer.md",
+      "path_or_uri": "docs/learn/layer.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-layer",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:589d3ff96e649ec6",
+      "format": "markdown",
+      "id": "artifact:learn/metacognition.md",
+      "path_or_uri": "docs/learn/metacognition.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-metacognition",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:095bccbf48af3e9a",
+      "format": "markdown",
+      "id": "artifact:learn/mirror.md",
+      "path_or_uri": "docs/learn/mirror.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-mirror",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:7b1733acd50f41a9",
+      "format": "markdown",
+      "id": "artifact:learn/module.md",
+      "path_or_uri": "docs/learn/module.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-module",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:86a69b1ce758c0ee",
+      "format": "markdown",
+      "id": "artifact:learn/nerve.md",
+      "path_or_uri": "docs/learn/nerve.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-nerve",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:2f386fa1f0679b11",
+      "format": "markdown",
+      "id": "artifact:learn/perimeter.md",
+      "path_or_uri": "docs/learn/perimeter.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-perimeter",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:b7439584c8b159ea",
+      "format": "markdown",
+      "id": "artifact:learn/proprioception.md",
+      "path_or_uri": "docs/learn/proprioception.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-proprioception",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:02081ab335f188ca",
+      "format": "markdown",
+      "id": "artifact:learn/registry-snapshot.md",
+      "path_or_uri": "docs/learn/registry-snapshot.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-registry-snapshot",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:13ae9f84ce9687c7",
+      "format": "markdown",
+      "id": "artifact:learn/release-channel.md",
+      "path_or_uri": "docs/learn/release-channel.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-release-channel",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:844a69c1e493d908",
+      "format": "markdown",
+      "id": "artifact:learn/requires.md",
+      "path_or_uri": "docs/learn/requires.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-requires",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:32df7e48b418529d",
+      "format": "markdown",
+      "id": "artifact:learn/s0ma-file.md",
+      "path_or_uri": "docs/learn/s0ma-file.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-s0ma-file",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:cd3edd1e55bf5f02",
+      "format": "markdown",
+      "id": "artifact:learn/s0ma.md",
+      "path_or_uri": "docs/learn/s0ma.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-s0ma",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:405ddd6a9ed46d9b",
+      "format": "markdown",
+      "id": "artifact:learn/self-knowledge.md",
+      "path_or_uri": "docs/learn/self-knowledge.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-self-knowledge",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:319eb079231ac8fd",
+      "format": "markdown",
+      "id": "artifact:learn/self-model.md",
+      "path_or_uri": "docs/learn/self-model.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-self-model",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:07d89615380129da",
+      "format": "markdown",
+      "id": "artifact:learn/strictness-mode.md",
+      "path_or_uri": "docs/learn/strictness-mode.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-strictness-mode",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:afa9e1dec40e8cb3",
+      "format": "markdown",
+      "id": "artifact:learn/test.md",
+      "path_or_uri": "docs/learn/test.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-test",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:ebbca2672ce2d128",
+      "format": "markdown",
+      "id": "artifact:learn/uses.md",
+      "path_or_uri": "docs/learn/uses.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-uses",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:a0f07b6c21c036ee",
+      "format": "markdown",
+      "id": "artifact:learn/visibility.md",
+      "path_or_uri": "docs/learn/visibility.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/learn-visibility",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:57f87fc2a46cf908",
+      "format": "markdown",
+      "id": "artifact:reference/cli.md",
+      "path_or_uri": "docs/reference/cli.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/cli-reference",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:2529d2fd98826422",
+      "format": "markdown",
+      "id": "artifact:reference/concepts-index.md",
+      "path_or_uri": "docs/reference/concepts-index.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/concepts-index",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:d27cdaceb11ba90a",
+      "format": "markdown",
+      "id": "artifact:reference/configuration.md",
+      "path_or_uri": "docs/reference/configuration.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/configuration-reference",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:d2237bc411c961ff",
+      "format": "markdown",
+      "id": "artifact:reference/diagnostics.md",
+      "path_or_uri": "docs/reference/diagnostics.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/diagnostics-reference",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:1d447609f269bf91",
+      "format": "markdown",
+      "id": "artifact:reference/mcp.md",
+      "path_or_uri": "docs/reference/mcp.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/mcp-reference",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:a8a74c8e2b7441ed",
+      "format": "markdown",
+      "id": "artifact:reference/packages.md",
+      "path_or_uri": "docs/reference/packages.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/packages-reference",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:bf95194ecac93a9d",
+      "format": "markdown",
+      "id": "artifact:reference/quick-reference-readable.md",
+      "path_or_uri": "docs/reference/quick-reference-readable.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/quick-reference",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:65c74b9467ddceca",
+      "format": "markdown",
+      "id": "artifact:reference/studi0.md",
+      "path_or_uri": "docs/reference/studi0.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/studi0-reference",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    },
+    {
+      "build_channel": "preview",
+      "content_hash": "sha256:cdc97cbf147fefe4",
+      "format": "markdown",
+      "id": "artifact:reference/surfaces-index.md",
+      "path_or_uri": "docs/reference/surfaces-index.md",
+      "release_version": "0.19.1",
+      "source_document": "doc:generated/surfaces-index",
+      "source_snapshot": "sha256:46cb0cce5f7c07cf"
+    }
+  ],
+  "build_channel": "preview",
+  "package_versions": [
+    {
+      "distribution": "s0ma-core",
+      "version": "0.19.1"
+    },
+    {
+      "distribution": "s0ma-dsl",
+      "version": "0.19.1"
+    },
+    {
+      "distribution": "s0ma-mcp",
+      "version": "0.19.1"
+    },
+    {
+      "distribution": "s0ma-studi0",
+      "version": "0.19.1"
+    }
+  ],
+  "product_version": "0.19.1",
+  "provider_schemas": [
+    {
+      "provider_id": "catalog",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "cli",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "concepts-language",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "concepts-product",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "config",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "core",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "diagnostics",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "journeys",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "mcp",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "repo",
+      "schema_version": "s0ma-docs-model@1"
+    },
+    {
+      "provider_id": "studi0",
+      "schema_version": "s0ma-docs-model@1"
+    }
+  ],
+  "schema": "s0ma-docs-model@1",
+  "snapshot_hash": "sha256:46cb0cce5f7c07cf",
+  "source_commit": "sha256:77796f09a90e5cce",
+  "source_hashes": [
+    {
+      "sha256": "3d28d60bbf0762ea30e7920105844ce782d29ea957574f0d59287141564821e1",
+      "source": "CHANGELOG.md"
+    },
+    {
+      "sha256": "181ff4af86405ba8f8a03f17a84a6981874c9e227dded86d62cfdd7220aed49a",
+      "source": "docs/adr/ADR-001-0.14-gate-integrity-and-value-loop.md"
+    },
+    {
+      "sha256": "188ed447992c879dff471618e3f121fc55aa1547586e7d978c9207833dfd86d4",
+      "source": "docs/adr/ADR-002-self-context-authored-data-boundary.md"
+    },
+    {
+      "sha256": "f94bfb678833683b970857b48b59ff01685fe827c80fc180932bf438c1b7a713",
+      "source": "docs/adr/ADR-003-hardware-embodiment-foundation.md"
+    },
+    {
+      "sha256": "97134f1d7364ff443996484f97af18458758d3b25277001d3d91f4fd1e86364a",
+      "source": "docs/adr/ADR-004-feedback-architecture.md"
+    },
+    {
+      "sha256": "99a95e6891bebfe36658853de47b70f780f9b62d8f19254c3f486ec7abf2c6c1",
+      "source": "docs/adr/ADR-012-docs-application.md"
+    },
+    {
+      "sha256": "da0045c2f3bad13b97f74d2a274281f15580c7b1e954506cbb23bfbf6fe6cfe5",
+      "source": "docs/adr/ADR-013-derived-source-registry.md"
+    },
+    {
+      "sha256": "50cbad46d174dff623e4cab4f28686e09b39d21857fb640e1c7561a6ca560bf5",
+      "source": "docs/adr/ADR-014-the-forbids-line.md"
+    },
+    {
+      "sha256": "875823b67a7b4947207b21c342859ab63c4fcb4c42baa2ed1f64a25e3add75e8",
+      "source": "docs/contracts/0.14.0-schema-and-surface-budget.md"
+    },
+    {
+      "sha256": "3396c44ad9779b8c4e36d2c2c717dcbc7a07193f98fa2cc804bcdf4993d9fcf8",
+      "source": "docs/contracts/feedback-v1.md"
+    },
+    {
+      "sha256": "b67b8c6caa6998d57e0cd2639b79533bd5351aee373c5bef70eabb7c5641b2d9",
+      "source": "docs/s0ma_src/catalog.json"
+    },
+    {
+      "sha256": "c3a38f27be3b096288a52581ecbc1995887c7a12f29049c9c3ba4b0228051e9a",
+      "source": "docs/s0ma_src/concepts/language.json"
+    },
+    {
+      "sha256": "1a2b6d0cc0ebd032e2bc08e29ee042d2e1b700fe562b37b7d6e38b547e3594b1",
+      "source": "docs/s0ma_src/concepts/product.json"
+    },
+    {
+      "sha256": "89fdeefa82507e519922ad28a2cecf83294a901dde83eb2e5ff01b23ec838738",
+      "source": "docs/s0ma_src/journeys/drift-recovery.json"
+    },
+    {
+      "sha256": "7ff65fd0b7154720014d130c90f496b0f73d44a330392247ede21c8eb0cf5f1a",
+      "source": "docs/s0ma_src/journeys/first-module.json"
+    },
+    {
+      "sha256": "6352df899584ba902b2901e2b0217d9486c2000d47573b25fafa6da1b246ef15",
+      "source": "docs/s0ma_src/journeys/first-project.json"
+    },
+    {
+      "sha256": "73cecd6bd5665b13a4c18c9fe576604e2d0f19ddaf0287e4301e45a2b9d5a884",
+      "source": "docs/s0ma_src/journeys/mcp-authoring-loop.json"
+    },
+    {
+      "sha256": "ee9f3dcd47cddc4b7ab4780bd5c0792a5a6cf52c891b747488ddd0ac9e59164e",
+      "source": "docs/s0ma_src/journeys/retrofit-existing-codebase.json"
+    },
+    {
+      "sha256": "f4c2cecbad068ac2c9d4fb376656d4afaf31bfb8a7ac1298e277b3bdf95767ce",
+      "source": "docs/s0ma_src/journeys/studi0-feedback.json"
+    },
+    {
+      "sha256": "9dc0eaf3e6ffd1dc9d57f79ea9f0c9a9d2009a45623dffd215980339bc75828a",
+      "source": "docs/s0ma_src/journeys/studi0-viewing.json"
+    },
+    {
+      "sha256": "9cbf8aaac281dd4077cb2d1c9259a25e1b66413fb877f18df334ddbdca8141a7",
+      "source": "packages/s0ma-core/pyproject.toml"
+    },
+    {
+      "sha256": "716fdea091f813be0144df58e05faa139d4fbb5cdc1ccb0fcb8c183862ae5775",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-001-build-pipeline.md"
+    },
+    {
+      "sha256": "43226684a674319b8feb98c155ecd7b3396b18610c7023be6f1c1888a91f5457",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-002-runtime-expansion.md"
+    },
+    {
+      "sha256": "9ab7761aee718ffe002288ad7351a7f69c303c2f36f07cf9f87749ebfe8be96c",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-003-source-map-format.md"
+    },
+    {
+      "sha256": "a0fbafd79e6dee7fdb56d032e066ac4c17e004b627af223fe5f012f3ef7cf3da",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-004-separate-project.md"
+    },
+    {
+      "sha256": "c22de78f03ccd80d55d09eaf6017ada2c083d10cf09a432524af1572ece09e4d",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-005-project-discovery.md"
+    },
+    {
+      "sha256": "5fe9e64f00f7fb8c297a08d75f496504b032bee061a7c982355bda3c515eb5a0",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-006-canonical-module-identity.md"
+    },
+    {
+      "sha256": "81c0e66d00daa33e55db0588a71433b5c00f7781b9481f655282d7243db11c11",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-007-single-build-layout.md"
+    },
+    {
+      "sha256": "b2380fc4fd655916d521dc53e3d9e345c61ca16a46a63aa29edc78edbb25aee5",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-008-test-visibility.md"
+    },
+    {
+      "sha256": "409c376c12346287601640344d69d9aee2ccaa6c24b2649ce8c77d84761828a9",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-009-canonical-body-storage.md"
+    },
+    {
+      "sha256": "3ac4fee0a05d350a22bee23e4f1e291807cdf07bb9bac5faeedaf2a297adafed",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-010-derived-doc-targets.md"
+    },
+    {
+      "sha256": "a20076a34b9df9ce043eb8e15c0e80bb90042e3024b1c94097e4530dd1e3aa8d",
+      "source": "packages/s0ma-dsl/docs/adr/ADR-011-declaration-metadata-and-language-surface-batch.md"
+    },
+    {
+      "sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md"
+    },
+    {
+      "sha256": "dc68747cccef09c9626c4a885331c874db810831ed83b9ba04667688a36bdea6",
+      "source": "packages/s0ma-dsl/pyproject.toml"
+    },
+    {
+      "sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde",
+      "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py"
+    },
+    {
+      "sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69",
+      "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py"
+    },
+    {
+      "sha256": "25f7349ad47cd6d6b7e9414da4340beab69f2a410e5234d8a2836802166960e6",
+      "source": "packages/s0ma-mcp/docs/adr/ADR-001-selfhost-layout.md"
+    },
+    {
+      "sha256": "a1eee23c2343f4133175d62b2b63e6ba7a3b38aa09593d19dcf215d9b94dcb89",
+      "source": "packages/s0ma-mcp/pyproject.toml"
+    },
+    {
+      "sha256": "ee31fb700998b441354d49fbc16170c88e2e74fe8ce293677197e888244f5c31",
+      "source": "packages/s0ma-studi0/pyproject.toml"
+    },
+    {
+      "sha256": "3d9c114d0087e9497fed118a1c8f553f57bf4f041e7a8794ff5bb37dc87974f4",
+      "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_narration.py"
+    },
+    {
+      "sha256": "2ab7c59c5278d2718260dc1a4b6bbde9c3b16ec7331deb9a3966374559fa22ad",
+      "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py"
+    },
+    {
+      "sha256": "c4699713b2c192098a7bce908d76b023f6418ee94e5adc9efa04bb3bd17ccb1f",
+      "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_state.py"
+    },
+    {
+      "sha256": "a9303529b34308e87a006211bc457e36dadf46b622385e249dab14a9d88063e2",
+      "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_watch.py"
+    },
+    {
+      "sha256": "e8add4cb772aef1576e8d9fc08ee2c615bfbd4894f8848b5455cef7e326d8d14",
+      "source": "python:s0ma.__all__"
+    },
+    {
+      "sha256": "2ba548fc6ddbe54ddd4490c135399f17b9f4caa25eba1a1fff9981d524ea99d4",
+      "source": "python:s0ma.api.mcp_server.create_mcp_server"
+    },
+    {
+      "sha256": "2f787187e5b9d4e3b0bcd13055ae0f4b652af871b9043c6526ef99dbf1ca3686",
+      "source": "python:s0ma.api.rest.create_app"
+    },
+    {
+      "sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415",
+      "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser"
+    },
+    {
+      "sha256": "aeb9d76dc2c4d5904c7ed88d0c51c1908a8905f8a377174189ccd6f846860dc0",
+      "source": "python:s0ma_mcp.create_server"
+    },
+    {
+      "sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "source": "references/s0ma-prd.md"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+module order_model
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Domain-layer model module that incorrectly reaches up into the APPLICATION layer to import process_order — must trigger CROSS_LAYER_DEPENDENCY."
+    uses: [order_service.process_order]
+    exports: [Order]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell Order :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "Plain order data model with an id field."
+    schema: |
+        id: str
+
+    invariants: none
+    covered_by: none
+    ---
+    class Order:
+        def __init__(self, id: str) -> None:
+            self.id = id
+
+        def submit(self) -> str:
+            # Domain layer reaches up to APPLICATION — architecturally wrong.
+            return process_order(self.id)

@@ -1,0 +1,13 @@
+Topic: concept:self-knowledge
+Release: 0.18.1 (preview)
+Snapshot: sha256:7730325659b12fd5
+Examples: none recorded
+Decided by: authority:prd/glossary.self-knowledge, authority:prd/section.vision
+
+In short:
+  The umbrella faculty: a system's ability to hold an accurate,
+  queryable model of itself.
+
+Read more:
+  the full page for concept:self-knowledge carries every fact left out
+  here, word for word.

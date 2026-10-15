@@ -1,0 +1,46 @@
+{
+  "identity": {
+    "authorities": [
+      "authority:spec/nerve-declaration"
+    ],
+    "examples": [],
+    "release": "0.18.1 (preview)",
+    "snapshot": "sha256:7730325659b12fd5",
+    "topic": "concept:nerve"
+  },
+  "schema": "s0ma-docs-model@1",
+  "topic": {
+    "decided_in": [
+      "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md#4.1"
+    ],
+    "definition": "A nerve is a piece of working logic that carries a description of itself. You write the function — or, for a long-running service, the class — as you normally would, and above it you state what it is for, what it needs from its caller, what it promises in return, and what it must never do. Those statements are part of the declaration rather than a comment beside it, so they travel with the code from then on.",
+    "do_not_use_when": "Do not use a nerve for something that only holds a shape or a value — a fixed value, a data structure, or a type belongs in a cell. Do not use one for the part that watches other parts and draws conclusions about them; that is a ganglion. And do not use one for a small private routine nobody outside the file calls; that is a helper.",
+    "purpose": "Nerves are how a s0ma system knows what its own moving parts do. Because the description is declared rather than remembered, the system can be asked what it contains and answer from the code itself, instead of from a document somebody hopefully kept up to date.",
+    "related": [
+      "contrasts-with concept:cell",
+      "contrasts-with concept:helper",
+      "part-of concept:s0ma-file",
+      "requires concept:contract",
+      "requires concept:intent",
+      "requires concept:kind",
+      "requires concept:layer",
+      "requires concept:visibility"
+    ],
+    "summary": "A piece of working logic that carries its own account of what it does, what it needs, and what it promises.",
+    "syntax": [
+      "nerve <name> :: <LAYER>",
+      "    kind: <KIND>",
+      "    visibility: <PUBLIC | INTERNAL | TEST>",
+      "    intent: \"<why this component exists>\"",
+      "    expects: \"<preconditions>\"",
+      "    guarantees: \"<postconditions>\"",
+      "    forbids: \"<what it must never do>\"",
+      "    evaluates_at: <FUNCTION_BOUNDARY | SUBSYSTEM | SYSTEM>",
+      "    ---",
+      "    def <name>(<args>) -> <return type>:",
+      "        <body>"
+    ],
+    "term": "nerve",
+    "use_when": "Use a nerve for anything that acts: a step that computes, decides, fetches, or serves. If you would reach for a function or a service class, reach for a nerve."
+  }
+}

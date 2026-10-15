@@ -1,0 +1,34 @@
+module island_c
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Island C — declares landmark:footer but does not use: any other module."
+    exports: [render_island_c]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render_island_c :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Render island C's footer in isolation."
+    expects: "No arguments."
+    guarantees: "Returns a string with a footer."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    declares_attributes: [landmark:footer]
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    covered_by: none
+    ---
+    def render_island_c() -> str:
+        return "<footer>C</footer>"

@@ -1,0 +1,34 @@
+module cycle_b
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Cycle node B — uses: C, declares landmark:main, no page-composer marker."
+    uses: [cycle_c.touch_c]
+    exports: [touch_b]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve touch_b :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Cycle node B's nerve — reachable from A's page."
+    expects: "No arguments."
+    guarantees: "Returns a string."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    declares_attributes: [landmark:main]
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    covered_by: none
+    ---
+    def touch_b() -> str:
+        return "b:" + touch_c()

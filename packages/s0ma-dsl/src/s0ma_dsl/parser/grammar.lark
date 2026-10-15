@@ -1,0 +1,140 @@
+// s0ma DSL Grammar — Field Value Parsing
+// Lark LALR(1) grammar for parsing structured field values within .s0ma declarations.
+//
+// The outer declaration structure (declaration boundaries, field extraction, body capture)
+// is handled by the line-based preprocessor in s0ma_parser.py. This grammar parses
+// the structured values within fields: lists, depends_on entries, import entries, etc.
+
+// ============================================================================
+// Entry points — one per structured value type
+// ============================================================================
+
+// A list of names: [name1, name2, qualified.name]
+name_list: "[" "]"                                    -> empty_list
+         | "[" name_list_item ("," name_list_item)* "]" -> populated_list
+
+?name_list_item: QUALIFIED_NAME -> qualified_item
+               | NAME           -> simple_item
+
+// An import list with optional alias support: [mod.Name as alias, other.thing]
+// The colon form (package:name) forces a from-import: from package import name
+import_list: "[" "]"                                      -> empty_import_list
+           | "[" import_entry ("," import_entry)* "]"     -> populated_import_list
+
+import_entry: COLON_IMPORT "as" NAME             -> aliased_colon_import
+            | COLON_IMPORT                        -> colon_import
+            | (QUALIFIED_NAME | NAME) "as" NAME   -> aliased_import
+            | QUALIFIED_NAME                      -> qualified_import
+            | NAME                                -> simple_import
+
+// Colon-separated from-import: package:name or package.sub:name
+COLON_IMPORT: /[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*:[a-zA-Z_][a-zA-Z0-9_]*/
+
+// A single depends_on entry: target: {relation: REL, carries: "data", coupling: COUP}
+// DSL-M2 (0.8.0, ADR-011 (d)): the target accepts the qualified in-project
+// form `module.declaration` — exactly ONE dot, because module names are flat
+// (ADR-006); deeper dotting is a parse error. The dot is the established
+// s0ma-component-space qualifier (entity_ref / field_path use the same shape);
+// the colon stays the Python-import override marker on the requires: side.
+depends_on_entry: dep_target ":" "{" depends_on_fields "}"
+
+dep_target: NAME ("." NAME)?
+
+depends_on_fields: depends_on_field ("," depends_on_field)*
+
+depends_on_field: "relation:" RELATION    -> dep_relation
+               | "carries:" QUOTED_STRING -> dep_carries
+               | "coupling:" COUPLING     -> dep_coupling
+
+// ============================================================================
+// Documentation subsystem: entity references, template expressions, asserts
+// (Milestone 2 — doc subsystem grammars)
+//
+// Design §8.2: these grammars are deliberately narrow. Any construct outside
+// them is a TEMPLATE_SYNTAX_ERROR or ASSERT_SYNTAX_ERROR. Do not widen.
+// ============================================================================
+
+// Each doc-subsystem list field (covers/sections/examples/demonstrates/asserts)
+// is first split at its top-level commas by ``_split_bracketed_list`` in
+// ``s0ma_parser.py``. Each element is then parsed by the matching rule below.
+// We do *not* define list-level rules here: the LALR(1) grammar cannot
+// disambiguate ``[filter_expr, filter_expr]`` where filter_expr itself
+// contains an ``ordered_by NAME, NAME`` tail.
+
+// A single entity reference with optional field-access chain.
+//   nerve::X, cell::Y.schema, module::chat, example::E.body
+entity_ref: ENTITY_KIND "::" NAME ("." NAME)*
+
+// A filter expression:
+//   nerves [where <predicate>] [ordered_by <fields>] [group_by <field>]
+// Accepts both singular and plural surface forms of the kind.
+filter_expr: ENTITY_KIND filter_where? filter_ordered_by? filter_group_by?
+
+filter_where:      "where" predicate
+filter_ordered_by: "ordered_by" NAME ("," NAME)*
+filter_group_by:   "group_by" NAME
+
+// Predicate grammar (precedence: not > and > or).
+?predicate:     or_pred
+?or_pred:       and_pred ("or" and_pred)*            -> or_pred
+?and_pred:      not_pred ("and" not_pred)*           -> and_pred
+?not_pred:      "not" not_pred                        -> not_pred
+              | comparison
+comparison:   field_path CMP_OP value               -> binary_comparison
+            | field_path "in" value_list            -> in_comparison
+
+field_path:   NAME ("." NAME)*
+?value:       NAME                                  -> value_name
+            | QUOTED_STRING                         -> value_quoted
+
+value_list:   "[" "]"                                                     -> empty_value_list
+            | "[" value ("," value)* "]"                                  -> populated_value_list
+
+// A section entry: either a simple field name or an iteration construct.
+// Iteration: ``for <var> in <collection> [ordered_by ...] [group_by ...]``
+// where <collection> is a filter_expr (bare kind or kind-with-predicate).
+// Entity-reference collections are not supported as iteration sources in
+// v1 — iteration implies a set, entity refs are singletons.
+section_entry: "for" NAME "in" filter_expr              -> section_iteration
+             | NAME                                     -> section_field
+
+// Assert expression: narrower grammar — no iteration / ordering / grouping.
+//   nerve::X.field == VALUE, nerve::X.field in [A, B], composition with and/or/not
+?assert_pred:     assert_or
+?assert_or:       assert_and ("or" assert_and)*             -> assert_or
+?assert_and:      assert_not ("and" assert_not)*            -> assert_and
+?assert_not:      "not" assert_not                           -> assert_not
+                | assert_comparison
+assert_comparison: entity_ref CMP_OP value                 -> assert_binary_comparison
+                 | entity_ref "in" value_list              -> assert_in_comparison
+
+// ============================================================================
+// Terminals
+// ============================================================================
+
+// Enum value terminals
+RELATION: "CALLS" | "CONSTRUCTS" | "READS" | "CONFIGURES" | "PRODUCES" | "CONSUMES"
+COUPLING: "TIGHT" | "LOOSE"
+
+// Documentation-subsystem entity kinds. Both singular and plural surface
+// forms are accepted; the transformer normalises to singular for the
+// structured AST. Longer alternatives come first so the lexer prefers them.
+ENTITY_KIND: "nerves" | "nerve"
+           | "cells" | "cell"
+           | "ganglia" | "ganglion"
+           | "modules" | "module"
+           | "examples" | "example"
+           | "tests" | "test"
+
+// Comparison operator terminal for template & assert grammars.
+CMP_OP: "==" | "!="
+
+// Names
+NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+QUALIFIED_NAME: /[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)+/
+
+// Quoted string
+QUOTED_STRING: "\"" /[^"]*/ "\""
+
+%import common.WS
+%ignore WS

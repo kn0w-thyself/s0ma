@@ -1,0 +1,20 @@
+module doc_ref_with_body
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture with a doc-ref that illegally has a --- body."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-ref bad_ref
+    intent: "doc-ref with a prohibited body."
+    format: markdown
+    output: docs/bad.md
+    covers: [nerve]
+    sections: [intent]
+    ---
+    This prose body is not allowed on a doc-ref.

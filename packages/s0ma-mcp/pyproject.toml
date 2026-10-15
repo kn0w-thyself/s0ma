@@ -1,0 +1,136 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "s0ma-mcp"
+version = "0.19.1"
+description = "The s0ma authoring MCP server — exposes the s0ma DSL self-knowledge toolchain and agent guides to coding agents over the Model Context Protocol."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [
+    { name = "kn0wthyself", email = "support@kn0wthyself.ai" },
+]
+keywords = ["s0ma", "mcp", "agents", "dsl", "self-model", "self-knowledge"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Compilers",
+    "Typing :: Typed",
+]
+dependencies = [
+    # Raised to 0.19.1 on evidence: a CONSTANT or TYPE cell registers with a
+    # qualified name only from that core, so a build that declares one reads
+    # HEALTHY only there; and the runtime bridge every emitted module imports
+    # declares dependencies on core components that an older core's global
+    # registry does not yet hold at import time, which it logs as warnings.
+    "s0ma-core[mcp] >= 0.19.1",
+    # Hard floor (DSL-M7): the committed _built/ output is REPRODUCED only by the
+    # 0.8.0 dsl emitter — its registrations carry metadata=/serves_as= stamps, its
+    # bodies carry cleandoc-normalized docstrings and per-call deferred imports, and
+    # its rendered docs dropped the front-matter transpiler_version (DSL-M1..M4). A
+    # 0.7.0 dsl would emit different bytes, so the selfhost-build equality gate is red
+    # against anything below 0.8.0. (Pure runtime LOADING of the committed build needs
+    # only core's already-shipped ComponentSpec.metadata, not dsl >= 0.8.0 — but the
+    # package ships its build as a first-class artifact, so the floor guarantees the
+    # declared toolchain regenerates it byte-for-byte, the SH-M6 precedent's reasoning.)
+    # Raised to 0.19.0 on evidence (owner-ratified 2026-10-05): the documentation
+    # resources and the `learn_s0ma` tool import `s0ma_dsl.docs_model`, which first
+    # ships in 0.19.0. With an older dsl the server starts and those answers fail on
+    # first use.
+    "s0ma-dsl >= 0.19.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest >= 7.0",
+    "pytest-cov >= 4.0",
+    "ruff >= 0.4",
+]
+
+[project.scripts]
+# Since SH-M4 the factory and entry point live in the single bootstrap
+# module (the package __init__); a runtime alias keeps any installed shim
+# still targeting the pre-0.7.0 "s0ma_mcp.server:main" working too.
+s0ma-mcp = "s0ma_mcp:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/s0ma_mcp"]
+# The committed build output (src/s0ma_mcp/_built/) ships in the wheel as-is
+# (FR-MCP-11). Only the regenerable incremental-build cache is excluded — it
+# is gitignored too and never present on CI (the selfhost-build stage builds
+# with --no-cache), but a local cached build must not leak into a wheel.
+exclude = ["src/s0ma_mcp/_built/.s0ma.cache"]
+
+[tool.uv.sources]
+s0ma-core = { workspace = true }
+s0ma-dsl = { workspace = true }
+
+# Self-hosting (FR-MCP-11, selfhost plan SH-M1 / ADR-001): this package is a
+# real s0ma project. .s0ma sources live in s0ma_src/; `s0ma build` emits the
+# committed build output into src/s0ma_mcp/_built/ (the generated subpackage
+# the runtime bootstraps from). The `mode` key is declarative (D-6 ramp
+# complete: dev -> strict at M3 -> release at M5); pass --mode explicitly to
+# the CLI. Release mode additionally gates doc coverage: every PUBLIC nerve
+# carries a doc-ref and a test declaration, and the registered example is
+# embedded in a doc-guide (the rendered docs land under _built/docs/ and are
+# byte-gated like every other build artifact).
+# bootstrap_files is the handwritten-module inventory (`s0ma verify` shows
+# them as BOOTSTRAP, not UNKNOWN) — the D-1 burn-down ended at SH-M4: the
+# package __init__ is the SINGLE handwritten bootstrap module (M2 removed
+# prompts.py, M3 removed tools.py, M4 retired components.py + server.py;
+# the FastMCP surface is derived from the self-model registry, and a test
+# enforces the count by reading the filesystem).
+[tool.s0ma]
+mode = "release"
+source_roots = ["s0ma_src"]
+test_roots = ["tests"]
+build_dir = "src/s0ma_mcp/_built"
+bootstrap_files = [
+    "src/s0ma_mcp/__init__.py",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+# Generated code (the committed s0ma build output) is exempt from human
+# line-length/style rules — the DSL emits registered strings on single long
+# lines by design (authoring rule A-6). mypy --strict does NOT exclude it:
+# emitted code meets the same typing gate as handwritten code (D-2/INV-8).
+extend-exclude = ["src/s0ma_mcp/_built"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "A", "C4", "SIM", "TCH"]
+
+[tool.mypy]
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
+python_version = "3.11"
+
+# (The pre-SH-M4 disallow_untyped_decorators override for s0ma_mcp.server
+# is gone with the module: the derived factory invokes FastMCP's typed
+# decorator factories as plain calls, which mypy --strict accepts.)
+
+# s0ma-core ships py.typed since 0.7.0 (selfhost plan M0) and s0ma-dsl
+# ships it since 0.8.0 (DSL improvements plan M5 — the package reached
+# mypy --strict cleanliness), so both s0ma.* and s0ma_dsl.* imports
+# resolve with their real types here and need no override. The former
+# ``s0ma_dsl.*`` ignore-missing-imports override (the F-M0-4 deferral)
+# is gone: mypy-mcp now type-checks the bootstrap module's bridge and
+# the runtime_bridge registration calls inside emitted modules against
+# dsl's real types, with no untyped-decorator exposure (@component comes
+# from typed s0ma-core).
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+markers = [
+    "m0_contract: quarantined strict-XFAIL acceptance contracts for the 0.14 value-loop wave",
+]

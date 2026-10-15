@@ -1,0 +1,80 @@
+module task_service
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Core task processing service with validation and execution"
+    requires: [logging, uuid.UUID]
+    uses: [data_models.TaskModel, data_models.Priority, data_models.TaskError, data_models.MAX_RETRIES, data_models.TaskConfig]
+    exports: [validate_task, execute_task]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve validate_task :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Validates a task model before execution"
+    expects: "A TaskModel instance with non-empty title"
+    guarantees: "Returns True if valid, raises TaskError if invalid"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    raises: [TaskError]
+    depends_on:
+        TaskModel: {relation: READS, carries: "task data for validation", coupling: LOOSE}
+        MAX_RETRIES: {relation: READS, carries: "retry limit constant", coupling: TIGHT}
+    provides: none
+    returns: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def validate_task(task: TaskModel) -> bool:
+        if not task.title:
+            raise TaskError("Task title cannot be empty", task_id="unknown")
+        if len(task.title) > 200:
+            raise TaskError("Task title too long", task_id="unknown")
+        return True
+
+nerve execute_task :: APPLICATION
+    kind: SERVICE
+    visibility: PUBLIC
+    intent: "Executes a validated task and returns the result"
+    expects: "A validated TaskModel instance"
+    guarantees: "Returns a dict with execution result and trace ID"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    latency_ms: 500
+    raises: [TaskError]
+    depends_on:
+        validate_task: {relation: CALLS, carries: "pre-execution validation", coupling: TIGHT}
+        TaskModel: {relation: READS, carries: "task data", coupling: LOOSE}
+        TaskConfig: {relation: READS, carries: "execution config", coupling: LOOSE}
+        Priority: {relation: READS, carries: "priority level check", coupling: LOOSE}
+    provides: none
+    returns: none
+    interface: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def execute_task(task: TaskModel, config: TaskConfig = None) -> dict:
+        validate_task(task)
+        trace_id = str(UUID(int=0))
+        logging.info("Executing task: %s [%s]", task.title, trace_id)
+        return {"status": "completed", "trace_id": trace_id}
+
+cell _internal_helper :: APPLICATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "Internal counter for task execution tracking"
+    schema: "int constant = 0"
+    invariants: none
+    covered_by: none
+    ---
+    _internal_helper = 0

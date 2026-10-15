@@ -1,0 +1,22 @@
+module test_not_collected
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "A test whose function the test runner would never run."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+test sums_are_right :: DOMAIN
+    intent: "Two and two make four."
+    tests: [sums.add]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def sums_are_right() -> None:
+        assert 2 + 2 == 4

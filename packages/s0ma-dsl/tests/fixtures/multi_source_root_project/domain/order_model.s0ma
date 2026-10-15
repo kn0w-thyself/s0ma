@@ -1,0 +1,48 @@
+module order_model
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Domain-layer model used by the application layer (sibling source root)."
+    exports: [Order, build_order]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell Order :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "Plain order data model with an id field."
+    schema: |
+        id: str
+
+    invariants: none
+    covered_by: none
+    ---
+    class Order:
+        def __init__(self, id: str) -> None:
+            self.id = id
+
+nerve build_order :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Constructs an Order from a string id."
+    expects: "A non-empty string id."
+    guarantees: "Returns an Order whose id field equals the argument."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def build_order(id: str) -> Order:
+        return Order(id)

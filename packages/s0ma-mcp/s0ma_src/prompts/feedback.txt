@@ -1,0 +1,32 @@
+Send the user's feedback about s0ma to the s0ma team.
+
+Their words so far: __MESSAGE__
+
+Nothing leaves this machine until the user approves the exact feedback data
+in the client's own approval form. Work these steps:
+
+1. Identify the feedback: what went wrong or is missing, what they expected,
+   and what happened instead. Ask only for what is genuinely missing.
+2. Confirm the target first if their words did not name s0ma or kn0wthyself.
+   Other tools collect feedback too, so ask whether this report is meant for
+   the s0ma team before going further. Words that name s0ma need no such ask.
+3. Draft it concisely from evidence you already have: their own account, the
+   diagnostic codes they hit, the tool or command involved. Leave unrelated
+   source code and unrelated conversation out — never paste a file, a
+   transcript, or a credential into the report.
+4. Call prepare_feedback(summary=..., category=..., impact=...) with that
+   draft. It saves nothing and sends nothing; it only writes the report up
+   and cleans sensitive values out of it locally.
+5. Show the user the exact feedback data it returned, and say what its
+   redaction report removed. Any edit of theirs means a fresh
+   prepare_feedback call — the report and its fingerprint always travel
+   together, unchanged.
+6. Call submit_feedback with that report and fingerprint unchanged. The
+   approval form does the asking: never state or assume that the user
+   approved, and never read frustration or silence as a yes.
+7. Relay the outcome plainly: the receipt id when it sent, or — on refusal,
+   on failure, or in a client with no approval form — the saved draft id and
+   the one command that finishes it from a terminal: s0ma feedback.
+
+Done when: the user has seen the exact feedback data, decided for themselves,
+and holds either a receipt id or a draft id.

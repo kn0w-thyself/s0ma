@@ -1,0 +1,35 @@
+module page_composer
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Page composer marked is_page_composer: true that transitively reaches two landmark:nav nerves, so it violates the per-page budget on purpose."
+    uses: [primary_nav.render_primary_nav, secondary_nav.render_secondary_nav]
+    exports: [compose_page]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve compose_page :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Compose a page that reaches both nav renderers — illegal under the per-page budget."
+    expects: "No arguments."
+    guarantees: "Returns a string with two nav elements (which is the violation)."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    is_page_composer: true
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def compose_page() -> str:
+        return render_primary_nav() + render_secondary_nav()

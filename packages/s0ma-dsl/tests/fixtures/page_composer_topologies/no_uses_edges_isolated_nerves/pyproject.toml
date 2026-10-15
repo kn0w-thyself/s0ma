@@ -1,0 +1,19 @@
+[project]
+name = "no_uses_edges_isolated_nerves"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = []
+build_dir = "no_uses_edges_isolated_nerves_build"
+bootstrap_files = []
+
+# F3 stress fixture: every nerve is independent (no inter-module uses:
+# edges). Pre-F3 the heuristic flagged every module as a top-level
+# page, producing per-page violations even though the project author
+# never declared anything as a page. Post-F3, no nerve carries
+# is_page_composer: true, so the explicit logic fires the project-
+# level NO_PAGE_COMPOSER_DECLARED error — the author has to choose
+# whether the project is page-scoped at all.
+[tool.s0ma.attribute_budgets]
+landmark = "exactly_one_per_page"

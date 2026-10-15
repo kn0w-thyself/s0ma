@@ -1,0 +1,46 @@
+module authored_raises_axon
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Module with an authored RAISES axon which is prohibited"
+    exports: [my_nerve]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell MyError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "A test exception"
+    schema: "Exception subclass"
+    invariants: none
+    covered_by: none
+    ---
+    class MyError(Exception):
+        pass
+
+nerve my_nerve :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "A nerve that tries to author a RAISES dependency"
+    expects: "nothing"
+    guarantees: "nothing"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        MyError: {relation: RAISES, carries: "exception edge", coupling: LOOSE}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def my_nerve():
+        pass

@@ -1,0 +1,9 @@
+[project]
+name = "embed_html_fixture"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["."]
+test_roots = []
+build_dir = "embed_html_build"
+bootstrap_files = []

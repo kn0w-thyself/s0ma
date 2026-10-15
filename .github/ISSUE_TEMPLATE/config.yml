@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem privately
+    url: https://github.com/kn0w-thyself/s0ma/security/advisories/new
+    about: >-
+      Never in a public issue. This opens a private thread with the maintainer.
+      SECURITY.md says what to include and what to expect.
+
+  - name: Ask a question, say what you are building, or tell us about s0ma itself
+    url: https://github.com/kn0w-thyself/s0ma/discussions
+    about: >-
+      Discussions are where questions get answered and stay findable. Most
+      things that are not a bug belong here — something confusing, something
+      missing, something you loved. Nothing to set up.

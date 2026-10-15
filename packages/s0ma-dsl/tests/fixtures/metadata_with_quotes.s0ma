@@ -1,0 +1,61 @@
+module metadata_with_quotes
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "render escapes &, <, >, \", and ' in text"
+    exports: [render]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve render :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "escape \" and ' for HTML attributes"
+    expects: "non-null input with possible \" or ' characters"
+    guarantees: "returns a string with \", ', <, > replaced by entities"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render(value: str) -> str:
+        return value.replace('"', '&quot;').replace("'", '&#39;')
+
+cell HTML_ENTITY_TABLE :: PRESENTATION
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "lookup table mapping \" and ' characters to HTML entities"
+    schema: "dict mapping char (\" or ') to entity string (&quot; / &#39;)"
+    invariants: none
+    covered_by: none
+    ---
+    HTML_ENTITY_TABLE: dict[str, str] = {
+        '"': "&quot;",
+        "'": "&#39;",
+    }
+
+ganglion entity_observer :: PRESENTATION
+    visibility: INTERNAL
+    scope: SUBSYSTEM
+    intent: "observe escapes for the \" and ' characters"
+    observes: [render]
+    priors: "expect render to escape \" and ' in any input"
+    on_anomaly: "log render output containing raw \" or ' as drift"
+    forbids: none
+    depends_on: none
+    covered_by: none
+    ---
+    def entity_observer(signal):
+        return signal

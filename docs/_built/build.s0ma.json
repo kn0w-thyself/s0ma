@@ -1,0 +1,33 @@
+{
+  "build_dir": "_built",
+  "modules": [
+    {
+      "ir": "application.s0ma.json",
+      "logical_path": "application.s0ma",
+      "name": "application",
+      "output": "application.py",
+      "output_hash": "sha256:9c43dbfa4348139269ca2bb8dcdba30885a543432216f6ff45f02d3745fea3b9",
+      "role": "source",
+      "source": "s0ma_src/application.s0ma",
+      "source_hash": "sha256:ae081cc1fff656c36f42353ebdfd3fcafe994ba84c199100f152f76c19206802",
+      "source_map": "application.s0ma.map",
+      "source_root": "s0ma_src"
+    }
+  ],
+  "project": "s0ma-docs",
+  "schema": "s0ma-build-manifest@1",
+  "self_context": {
+    "json": {
+      "path": "self_context.json",
+      "sha256": "sha256:23df00e1cbf03e75c0dd4609a7b187d789b92a4d8184d8c324de4cbcd414e641"
+    },
+    "prompt_card": {
+      "path": "self_prompt_card.md",
+      "sha256": "sha256:48ecfd6cb990656abccccd1316b628703554b41c973b137fa4964a64bbf3a4b7"
+    }
+  },
+  "topological_import_order": [
+    "application"
+  ],
+  "transpiler_version": "0.19.1"
+}

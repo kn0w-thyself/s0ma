@@ -1,0 +1,21 @@
+[project]
+name = "test_module_not_a_page"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = []
+build_dir = "test_module_not_a_page_build"
+bootstrap_files = []
+
+# F3 stress fixture: a "test harness" module has uses: edges to two
+# production modules that each declare landmark:header. Pre-F3, the
+# heuristic ("top-level in uses graph") would have flagged the test
+# harness as a page composer (because nothing references it) and the
+# resolver would have observed two landmark:header entries reachable
+# from a single "page" — false positive. Post-F3, no nerve is marked
+# is_page_composer: true, so the explicit-only logic emits the
+# project-level NO_PAGE_COMPOSER_DECLARED error instead. The author
+# can then either mark the real composer or change the budget shape.
+[tool.s0ma.attribute_budgets]
+landmark = "exactly_one_per_page"

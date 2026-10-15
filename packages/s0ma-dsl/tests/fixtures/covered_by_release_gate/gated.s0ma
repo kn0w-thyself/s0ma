@@ -1,0 +1,42 @@
+module gated
+    layer: APPLICATION
+    version: 0.1.0
+    intent: "Release-gate credit fixture (ADR-011 (e)): the public nerve carries covered_by and has no tests: coverage anywhere, so release mode must pass on the external-evidence credit alone."
+    exports: [served_tool]
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+    ---
+
+nerve served_tool :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Public nerve with external coverage evidence and no in-language test."
+    expects: "nothing"
+    guarantees: "a marker dict"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    covered_by: ["tests/test_served.py — external boundary suite"]
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    ---
+    def served_tool():
+        return {"ok": True}
+
+doc-ref PublicSurface
+    intent: "Generated reference for every public nerve."
+    format: markdown
+    output: docs/public_surface.md
+    covers: [nerves where visibility == PUBLIC]
+    sections: [intent]

@@ -1,0 +1,20 @@
+module minimal_example
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture module hosting a minimal example declaration."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+example greet_example
+    intent: "Demonstrates calling the greet nerve with a sample username."
+    demonstrates: [nerve::greet]
+    runs_in: standalone
+    ---
+    from minimal_example import greet
+
+    print(greet("Ada"))

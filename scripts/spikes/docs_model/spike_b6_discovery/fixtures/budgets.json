@@ -1,0 +1,53 @@
+{
+  "budgets": [
+    {
+      "artifact": "agents_snippet",
+      "budget_bytes": 514,
+      "channel": "generated AGENTS.md",
+      "divisor": 1,
+      "file": "agents_snippet.txt",
+      "max_columns": 0,
+      "max_lines": 0,
+      "measurement": "generated_agents_md_longest_bullet",
+      "recorded_bytes": 514,
+      "rule": "No longer than the longest bullet already in the file it joins. The generated AGENTS.md is 5017 bytes over twelve bullets; a thirteenth that is not the longest one there cannot be the reason the file stopped being read."
+    },
+    {
+      "artifact": "docs_navigation_stub",
+      "budget_bytes": 1920,
+      "channel": "bare `s0ma docs` navigation output",
+      "divisor": 1,
+      "file": "docs_navigation_stub.txt",
+      "max_columns": 80,
+      "max_lines": 24,
+      "measurement": "declared_terminal_screen",
+      "recorded_bytes": 1920,
+      "rule": "One 80x24 terminal screen, which is the unscrollable unit a person actually sees. The only artifact of the four with no live product comparandum: `s0ma --help` would be the obvious one, but argparse renders it at the running terminal's width, so it is not a fixed number (40 columns gives 5256 bytes, 200 gives 3436). A navigation stub that must be byte-deterministic has to be authored at a fixed width rather than formatted by argparse."
+    },
+    {
+      "artifact": "project_status_footer",
+      "budget_bytes": 319,
+      "channel": "project_status `rules` list",
+      "divisor": 1,
+      "file": "project_status_footer.txt",
+      "max_columns": 0,
+      "max_lines": 1,
+      "measurement": "project_status_conditional_rule_min",
+      "recorded_bytes": 319,
+      "rule": "One line, no longer than the shorter of the two conditional lines already riding this channel (the feedback-offer line at 319 bytes, the narration line at 413). The longest line on the channel is also the only one measured under-complying — the narration line lands at 44% — so a documentation pointer may not become the new longest thing here."
+    },
+    {
+      "artifact": "server_instructions",
+      "budget_bytes": 527,
+      "channel": "MCP server instructions",
+      "divisor": 5,
+      "file": "server_instructions.txt",
+      "max_columns": 0,
+      "max_lines": 0,
+      "measurement": "mcp_server_instructions",
+      "recorded_bytes": 2639,
+      "rule": "At most a fifth of the served instructions blob. Every session pays for this text once, whatever it does next, so no single concern may claim more than a fifth of it."
+    }
+  ],
+  "schema": "spike-b6@0"
+}

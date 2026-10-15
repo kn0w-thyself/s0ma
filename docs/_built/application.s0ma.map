@@ -1,0 +1,215 @@
+{
+  "mappings": {
+    "declarations": [
+      {
+        "name": "documentation_application_reference",
+        "output": {
+          "end_line": 52,
+          "start_line": 34
+        },
+        "source": {
+          "end_line": 19,
+          "start_line": 14
+        },
+        "type": "doc-ref"
+      },
+      {
+        "body_output": {
+          "end_line": 54,
+          "start_line": 54
+        },
+        "body_source": {
+          "end_line": 29,
+          "start_line": 29
+        },
+        "name": "DOCUMENTATION_ROOT",
+        "output": {
+          "end_line": 61,
+          "start_line": 54
+        },
+        "source": {
+          "end_line": 29,
+          "start_line": 21
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 63,
+          "start_line": 63
+        },
+        "body_source": {
+          "end_line": 39,
+          "start_line": 39
+        },
+        "name": "COMPOSED_SNAPSHOT",
+        "output": {
+          "end_line": 70,
+          "start_line": 63
+        },
+        "source": {
+          "end_line": 39,
+          "start_line": 31
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 92,
+          "start_line": 72
+        },
+        "body_source": {
+          "end_line": 69,
+          "start_line": 49
+        },
+        "name": "GENERATED_INVENTORIES",
+        "output": {
+          "end_line": 99,
+          "start_line": 72
+        },
+        "source": {
+          "end_line": 69,
+          "start_line": 41
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 101,
+          "start_line": 101
+        },
+        "body_source": {
+          "end_line": 79,
+          "start_line": 79
+        },
+        "name": "LEARNING_COLLECTION",
+        "output": {
+          "end_line": 108,
+          "start_line": 101
+        },
+        "source": {
+          "end_line": 79,
+          "start_line": 71
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 122,
+          "start_line": 110
+        },
+        "body_source": {
+          "end_line": 101,
+          "start_line": 89
+        },
+        "name": "SOURCES_COMPOSED",
+        "output": {
+          "end_line": 129,
+          "start_line": 110
+        },
+        "source": {
+          "end_line": 101,
+          "start_line": 81
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 145,
+          "start_line": 144
+        },
+        "body_source": {
+          "end_line": 124,
+          "start_line": 123
+        },
+        "decorator_output": {
+          "end_line": 142,
+          "start_line": 131
+        },
+        "name": "compose_documentation",
+        "output": {
+          "end_line": 145,
+          "start_line": 131
+        },
+        "source": {
+          "end_line": 124,
+          "start_line": 103
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 161,
+          "start_line": 160
+        },
+        "body_source": {
+          "end_line": 147,
+          "start_line": 146
+        },
+        "decorator_output": {
+          "end_line": 158,
+          "start_line": 147
+        },
+        "name": "documentation_findings",
+        "output": {
+          "end_line": 161,
+          "start_line": 147
+        },
+        "source": {
+          "end_line": 147,
+          "start_line": 126
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 177,
+          "start_line": 176
+        },
+        "body_source": {
+          "end_line": 170,
+          "start_line": 169
+        },
+        "decorator_output": {
+          "end_line": 174,
+          "start_line": 163
+        },
+        "name": "documentation_artifacts",
+        "output": {
+          "end_line": 177,
+          "start_line": 163
+        },
+        "source": {
+          "end_line": 170,
+          "start_line": 149
+        },
+        "type": "nerve"
+      }
+    ],
+    "module_header": {
+      "output_all": {
+        "end_line": 22,
+        "start_line": 22
+      },
+      "output_header": {
+        "end_line": 5,
+        "start_line": 1
+      },
+      "output_imports": {
+        "end_line": 20,
+        "start_line": 6
+      },
+      "output_registration": {
+        "end_line": 30,
+        "start_line": 24
+      },
+      "source": {
+        "end_line": 12,
+        "start_line": 1
+      }
+    }
+  },
+  "output_file": "application.py",
+  "source_file": "s0ma_src/application.s0ma",
+  "version": "1.0.0"
+}

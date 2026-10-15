@@ -1,0 +1,360 @@
+{
+  "mappings": {
+    "declarations": [
+      {
+        "body_output": {
+          "end_line": 27,
+          "start_line": 25
+        },
+        "body_source": {
+          "end_line": 23,
+          "start_line": 21
+        },
+        "name": "PROMPT_JOURNEYS",
+        "output": {
+          "end_line": 34,
+          "start_line": 25
+        },
+        "source": {
+          "end_line": 23,
+          "start_line": 13
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 63,
+          "start_line": 36
+        },
+        "body_source": {
+          "end_line": 60,
+          "start_line": 33
+        },
+        "name": "PROMPT_WITHOUT_JOURNEY",
+        "output": {
+          "end_line": 70,
+          "start_line": 36
+        },
+        "source": {
+          "end_line": 60,
+          "start_line": 25
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 84,
+          "start_line": 74
+        },
+        "body_source": {
+          "end_line": 75,
+          "start_line": 65
+        },
+        "name": "_step_call",
+        "output": {
+          "end_line": 84,
+          "start_line": 72
+        },
+        "source": {
+          "end_line": 75,
+          "start_line": 62
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 126,
+          "start_line": 99
+        },
+        "body_source": {
+          "end_line": 126,
+          "start_line": 99
+        },
+        "decorator_output": {
+          "end_line": 97,
+          "start_line": 86
+        },
+        "name": "journey_ladder",
+        "output": {
+          "end_line": 126,
+          "start_line": 86
+        },
+        "source": {
+          "end_line": 126,
+          "start_line": 77
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 154,
+          "start_line": 128
+        },
+        "body_source_file": "s0ma_src/prompts/author_module.txt",
+        "body_source_lines": {
+          "end_line": 27,
+          "start_line": 1
+        },
+        "name": "AUTHOR_MODULE_TEMPLATE",
+        "output": {
+          "end_line": 161,
+          "start_line": 128
+        },
+        "source": {
+          "end_line": 137,
+          "start_line": 128
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 186,
+          "start_line": 163
+        },
+        "body_source_file": "s0ma_src/prompts/fix_check_failures.txt",
+        "body_source_lines": {
+          "end_line": 24,
+          "start_line": 1
+        },
+        "name": "FIX_CHECK_FAILURES_TEMPLATE",
+        "output": {
+          "end_line": 193,
+          "start_line": 163
+        },
+        "source": {
+          "end_line": 147,
+          "start_line": 138
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 219,
+          "start_line": 195
+        },
+        "body_source_file": "s0ma_src/prompts/migrate_project.txt",
+        "body_source_lines": {
+          "end_line": 25,
+          "start_line": 1
+        },
+        "name": "MIGRATE_PROJECT_TEMPLATE",
+        "output": {
+          "end_line": 226,
+          "start_line": 195
+        },
+        "source": {
+          "end_line": 157,
+          "start_line": 148
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 248,
+          "start_line": 228
+        },
+        "body_source_file": "s0ma_src/prompts/diagnose_fault.txt",
+        "body_source_lines": {
+          "end_line": 21,
+          "start_line": 1
+        },
+        "name": "DIAGNOSE_FAULT_TEMPLATE",
+        "output": {
+          "end_line": 255,
+          "start_line": 228
+        },
+        "source": {
+          "end_line": 167,
+          "start_line": 158
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 289,
+          "start_line": 257
+        },
+        "body_source_file": "s0ma_src/prompts/feedback.txt",
+        "body_source_lines": {
+          "end_line": 33,
+          "start_line": 1
+        },
+        "name": "FEEDBACK_TEMPLATE",
+        "output": {
+          "end_line": 296,
+          "start_line": 257
+        },
+        "source": {
+          "end_line": 177,
+          "start_line": 168
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 338,
+          "start_line": 312
+        },
+        "body_source": {
+          "end_line": 229,
+          "start_line": 205
+        },
+        "decorator_output": {
+          "end_line": 310,
+          "start_line": 298
+        },
+        "name": "author_module_prompt",
+        "output": {
+          "end_line": 338,
+          "start_line": 298
+        },
+        "source": {
+          "end_line": 229,
+          "start_line": 178
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 365,
+          "start_line": 353
+        },
+        "body_source": {
+          "end_line": 266,
+          "start_line": 256
+        },
+        "decorator_output": {
+          "end_line": 351,
+          "start_line": 340
+        },
+        "name": "fix_check_failures_prompt",
+        "output": {
+          "end_line": 365,
+          "start_line": 340
+        },
+        "source": {
+          "end_line": 266,
+          "start_line": 231
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 392,
+          "start_line": 380
+        },
+        "body_source": {
+          "end_line": 303,
+          "start_line": 293
+        },
+        "decorator_output": {
+          "end_line": 378,
+          "start_line": 367
+        },
+        "name": "migrate_project_prompt",
+        "output": {
+          "end_line": 392,
+          "start_line": 367
+        },
+        "source": {
+          "end_line": 303,
+          "start_line": 268
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 420,
+          "start_line": 407
+        },
+        "body_source": {
+          "end_line": 341,
+          "start_line": 330
+        },
+        "decorator_output": {
+          "end_line": 405,
+          "start_line": 394
+        },
+        "name": "diagnose_fault_prompt",
+        "output": {
+          "end_line": 420,
+          "start_line": 394
+        },
+        "source": {
+          "end_line": 341,
+          "start_line": 305
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 450,
+          "start_line": 435
+        },
+        "body_source": {
+          "end_line": 381,
+          "start_line": 368
+        },
+        "decorator_output": {
+          "end_line": 433,
+          "start_line": 422
+        },
+        "name": "feedback_prompt",
+        "output": {
+          "end_line": 450,
+          "start_line": 422
+        },
+        "source": {
+          "end_line": 381,
+          "start_line": 343
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 479,
+          "start_line": 454
+        },
+        "body_source": {
+          "end_line": 443,
+          "start_line": 390
+        },
+        "name": "test_prompts_render_with_arguments_substituted",
+        "output": {
+          "end_line": 515,
+          "start_line": 452
+        },
+        "source": {
+          "end_line": 443,
+          "start_line": 383
+        },
+        "type": "test"
+      }
+    ],
+    "module_header": {
+      "output_all": {
+        "end_line": 15,
+        "start_line": 15
+      },
+      "output_header": {
+        "end_line": 5,
+        "start_line": 1
+      },
+      "output_imports": {
+        "end_line": 13,
+        "start_line": 6
+      },
+      "output_registration": {
+        "end_line": 23,
+        "start_line": 17
+      },
+      "source": {
+        "end_line": 12,
+        "start_line": 1
+      }
+    }
+  },
+  "output_file": "prompts.py",
+  "source_file": "s0ma_src/prompts.s0ma",
+  "version": "1.0.0"
+}

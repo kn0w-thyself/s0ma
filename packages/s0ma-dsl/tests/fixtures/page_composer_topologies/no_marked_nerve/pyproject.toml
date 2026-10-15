@@ -1,0 +1,15 @@
+[project]
+name = "no_marked_nerve"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = []
+build_dir = "no_marked_nerve_build"
+bootstrap_files = []
+
+# F3 stress fixture: a budget is configured but no nerve is marked
+# is_page_composer: true. The resolver must emit
+# NO_PAGE_COMPOSER_DECLARED — silent no-op is forbidden.
+[tool.s0ma.attribute_budgets]
+landmark = "exactly_one_per_page"

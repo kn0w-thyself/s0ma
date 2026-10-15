@@ -1,0 +1,10 @@
+[project]
+name = "test_runner_pytest"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/test_runner_pytest"]
+test_roots = ["tests"]
+build_dir = "test_runner_pytest_build"
+bootstrap_files = []
+test_runner = "pytest"

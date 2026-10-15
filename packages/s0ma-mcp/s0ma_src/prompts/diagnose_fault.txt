@@ -1,0 +1,20 @@
+Diagnose the observed runtime fault in __PROJECT_ROOT__: __FAULT__
+
+Look inward first. Do not begin with a broad grep or blame a missing runbook.
+
+1. Record the exact observed symptom, triggering input, live instance, and
+   durable state that must be preserved.
+2. Call project_status(project_root="__PROJECT_ROOT__"). Use its runtime and
+   diagnose_journey fields; a missing declaration is documentation debt, not a
+   service defect.
+3. Read s0ma://project/runbook for run/health commands, environment contracts,
+   state_paths, and operational notes.
+4. Call inspect_module(project_root="__PROJECT_ROOT__", module="<suspect>")
+   before grepping. Follow its structured depends_on and depended_by actions to
+   inspect neighboring intents and contracts.
+5. If the fault is an import/dependency failure, get approval and run
+   verify_host. Resolve DECLARED_DEP_NOT_INSTALLED, HOST_RUNTIME_UNDECLARED, or
+   HOST_IMPORT_FAILED from that evidence.
+6. Test the smallest hypothesis against observed behavior on the live durable
+   instance. Never restore runtime state from git. Record what changed, then
+   close any runbook gap as a separate follow-up.

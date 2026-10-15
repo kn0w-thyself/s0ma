@@ -1,0 +1,191 @@
+module studi0_watch
+    layer: APPLICATION
+    version: 0.19.1
+    intent: "The poll that keeps a studi0 session honest between builds: roughly four times a second it re-reads the project's build artifacts and republishes the session's reading only when the project actually said something new. It runs on a daemon thread so an interrupted studi0 dies with its server; it treats a build caught half-written as a reason to keep the last good reading and look again, not as a reason to fall over; and it reports each distinct failure to stderr once, never once per tick."
+    exports: [Studi0WatchConfig, Studi0Watcher, poll_once, start_watcher, stop_watcher]
+
+    requires: [sys, threading, dataclasses.dataclass, dataclasses.field]
+    uses: [studi0_state.Studi0Session, studi0_state.refresh_session]
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell Studi0WatchConfig :: APPLICATION
+    kind: CONFIG
+    visibility: PUBLIC
+    intent: "The watch's two timings: how long it waits between readings of the project, and how long a shutdown waits for the watching thread to notice it was asked to stop."
+    schema: "Class-level constants — poll_seconds: float (the gap between readings), join_seconds: float (the bound on a shutdown's wait)."
+    invariants: "poll_seconds is comfortably shorter than the page's own 1000 ms poll, so a change is already published by the time the page next asks about it."
+    covered_by: ["tests/test_watcher.py — a change is published within the poll cadence"]
+    ---
+    class Studi0WatchConfig:
+        poll_seconds: float = 0.75
+        join_seconds: float = 5.0
+
+cell Studi0Watcher :: APPLICATION
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "One running watch: the session it keeps current, the way it is asked to stop, the thread doing the looking, and the failures it has already spoken about. The last of those is what keeps a broken project from filling a console with the same sentence four times a second."
+    schema: "Mutable dataclass. session: Studi0Session — the session being refreshed; stop_requested: threading.Event — set to ask the loop to end, and waited on between ticks so a stop is noticed at once; reported_failures: set[str] — failure signatures already written to stderr; thread: threading.Thread | None — the daemon thread, None until start_watcher starts it."
+    invariants: "The thread is always a daemon: studi0 is a viewer, and a viewer must never be the reason a process refuses to exit."
+    covered_by: ["tests/test_watcher.py — a repeated failure is reported once"]
+    ---
+    @dataclass
+    class Studi0Watcher:
+        """One running watch over one session.
+
+        Attributes:
+            session: The session this watch keeps current.
+            stop_requested: Set to ask the loop to end. The loop waits
+                on it between ticks, so a stop is noticed immediately
+                rather than after one more full poll interval.
+            reported_failures: Signatures of failures already written
+                to stderr, so a persistently broken project is
+                described once instead of on every tick.
+            thread: The daemon thread running the loop; None until
+                ``start_watcher`` starts it.
+        """
+
+        session: Studi0Session
+        stop_requested: threading.Event = field(default_factory=threading.Event)
+        reported_failures: set[str] = field(default_factory=set)
+        thread: threading.Thread | None = None
+
+helper _report_failure :: APPLICATION
+    intent: "Says once, on stderr, that studi0 could not read the project this time — and stays silent every later time the same thing goes wrong, so a console watching a broken project stays readable. Distinctness is the exception's type and message together: a different file failing, or the same file failing differently, is a different thing worth hearing about."
+    ---
+    def _report_failure(watcher: Studi0Watcher, error: BaseException) -> None:
+        """Report ``error`` on stderr unless this watch already has."""
+        signature = f"{type(error).__name__}: {error}"
+        if signature in watcher.reported_failures:
+            return
+        watcher.reported_failures.add(signature)
+        print(
+            f"studi0: could not read the project's build artifacts, "
+            f"keeping the last good view — {signature}",
+            file=sys.stderr,
+            flush=True,
+        )
+
+helper _watch_loop :: APPLICATION
+    intent: "The body of the watching thread: wait out the poll interval, take a reading, repeat — and end the moment a stop is requested. Waiting on the stop event rather than sleeping is what makes a shutdown immediate instead of up-to-one-tick slow."
+    ---
+    def _watch_loop(watcher: Studi0Watcher) -> None:
+        """Poll until asked to stop."""
+        while not watcher.stop_requested.wait(Studi0WatchConfig.poll_seconds):
+            poll_once(watcher)
+
+nerve poll_once :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "One reading of the project, taken safely. A build that lands while studi0 is looking leaves half-written artifacts behind it for a moment; reading one of those must cost the viewer nothing more than this tick, so every failure is caught, spoken about once, and answered by keeping the last good reading and trying again in three-quarters of a second."
+    expects: "watcher is a watch whose session is the one to refresh"
+    guarantees: "Never raises, whatever the project's files are doing. Returns True only when a new reading was actually published; on failure the session keeps its last good reading untouched and the failure is reported at most once per watch."
+    forbids: "Never lets a failed reading replace or change the last good reading the session holds."
+    evaluates_at: FUNCTION_BOUNDARY
+    expected_exceptions: [Exception]
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_watcher.py — a half-written artifact never crashes the watch"]
+    depends_on: none
+    ---
+    def poll_once(watcher: Studi0Watcher) -> bool:
+        """Take one reading; report failure once; never raise.
+
+        The catch is deliberately total. This runs on a background
+        thread whose only job is to keep a read-only view current: any
+        exception that escapes it would kill the watch silently and
+        leave the page showing a graph that quietly stopped updating —
+        the one failure mode a truthful viewer must not have. Every
+        caught failure is reported (once) and answered by keeping the
+        last good reading.
+
+        Args:
+            watcher: The watch whose session to refresh.
+
+        Returns:
+            True when this reading published a change, False when
+            nothing changed or the reading failed.
+        """
+        try:
+            return refresh_session(watcher.session)
+        except Exception as error:
+            _report_failure(watcher, error)
+            return False
+
+nerve start_watcher :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Starts watching a project, taking the session's first reading before it returns so that whatever is served next is already true. The first reading goes through the same guarded tick as every later one, which is why a project that cannot be read at all still yields a running studi0 that says so rather than a studi0 that refuses to start."
+    expects: "session is a session opened by studi0_state.create_session"
+    guarantees: "The session carries its first reading by the time this returns; a daemon thread is running and will keep the session current until stop_watcher is called; starting never raises because of the project's contents"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_watcher.py — the first reading lands before serving"]
+    depends_on:
+        poll_once: {relation: CALLS, carries: "the first reading", coupling: TIGHT}
+    ---
+    def start_watcher(session: Studi0Session) -> Studi0Watcher:
+        """Take the first reading, then keep it current on a daemon thread.
+
+        Args:
+            session: The session to keep current.
+
+        Returns:
+            The running watch. Stop it with ``stop_watcher``.
+        """
+        watcher = Studi0Watcher(session=session)
+        poll_once(watcher)
+        thread = threading.Thread(
+            target=_watch_loop,
+            args=(watcher,),
+            name="studi0-watch",
+            daemon=True,
+        )
+        watcher.thread = thread
+        thread.start()
+        return watcher
+
+nerve stop_watcher :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Asks a watch to stop and waits, briefly, for it to finish the tick it is in — so a studi0 that has exited is not still reading the project behind the console prompt. The wait is bounded because the thread is a daemon: worst case it is abandoned, never awaited forever."
+    expects: "watcher is a watch returned by start_watcher, or one that was never started"
+    guarantees: "The watch will take no further readings after this returns; waits at most Studi0WatchConfig.join_seconds; never raises, and is safe to call more than once"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_watcher.py — a stopped watch stops reading"]
+    depends_on:
+        Studi0WatchConfig: {relation: READS, carries: "the bound on the shutdown wait", coupling: TIGHT}
+    ---
+    def stop_watcher(watcher: Studi0Watcher) -> None:
+        """Ask the watch to stop, and wait briefly for it to."""
+        watcher.stop_requested.set()
+        thread = watcher.thread
+        if thread is not None:
+            thread.join(timeout=Studi0WatchConfig.join_seconds)

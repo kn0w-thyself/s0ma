@@ -1,0 +1,383 @@
+{
+  "mappings": {
+    "declarations": [
+      {
+        "body_output": {
+          "end_line": 39,
+          "start_line": 39
+        },
+        "body_source": {
+          "end_line": 22,
+          "start_line": 22
+        },
+        "name": "STATE_SCHEMA",
+        "output": {
+          "end_line": 46,
+          "start_line": 39
+        },
+        "source": {
+          "end_line": 22,
+          "start_line": 14
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 48,
+          "start_line": 48
+        },
+        "body_source": {
+          "end_line": 32,
+          "start_line": 32
+        },
+        "name": "GRAPH_SCHEMA",
+        "output": {
+          "end_line": 55,
+          "start_line": 48
+        },
+        "source": {
+          "end_line": 32,
+          "start_line": 24
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 57,
+          "start_line": 57
+        },
+        "body_source": {
+          "end_line": 42,
+          "start_line": 42
+        },
+        "name": "CARRIED_GRAPH_SCHEMA",
+        "output": {
+          "end_line": 64,
+          "start_line": 57
+        },
+        "source": {
+          "end_line": 42,
+          "start_line": 34
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 72,
+          "start_line": 66
+        },
+        "body_source": {
+          "end_line": 58,
+          "start_line": 52
+        },
+        "name": "STATE_DOCUMENT_KEYS",
+        "output": {
+          "end_line": 79,
+          "start_line": 66
+        },
+        "source": {
+          "end_line": 58,
+          "start_line": 44
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 85,
+          "start_line": 81
+        },
+        "body_source": {
+          "end_line": 72,
+          "start_line": 68
+        },
+        "name": "NARRATION_BLOCK_KEYS",
+        "output": {
+          "end_line": 92,
+          "start_line": 81
+        },
+        "source": {
+          "end_line": 72,
+          "start_line": 60
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 98,
+          "start_line": 94
+        },
+        "body_source": {
+          "end_line": 86,
+          "start_line": 82
+        },
+        "name": "GRAPH_DOCUMENT_KEYS",
+        "output": {
+          "end_line": 105,
+          "start_line": 94
+        },
+        "source": {
+          "end_line": 86,
+          "start_line": 74
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 107,
+          "start_line": 107
+        },
+        "body_source": {
+          "end_line": 96,
+          "start_line": 96
+        },
+        "name": "BUILD_STATUS_MISSING",
+        "output": {
+          "end_line": 114,
+          "start_line": 107
+        },
+        "source": {
+          "end_line": 96,
+          "start_line": 88
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 154,
+          "start_line": 124
+        },
+        "body_source": {
+          "end_line": 137,
+          "start_line": 106
+        },
+        "decorator_output": {
+          "end_line": 122,
+          "start_line": 116
+        },
+        "name": "Studi0Snapshot",
+        "output": {
+          "end_line": 154,
+          "start_line": 116
+        },
+        "source": {
+          "end_line": 137,
+          "start_line": 98
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 190,
+          "start_line": 164
+        },
+        "body_source": {
+          "end_line": 174,
+          "start_line": 147
+        },
+        "decorator_output": {
+          "end_line": 162,
+          "start_line": 156
+        },
+        "name": "Studi0Session",
+        "output": {
+          "end_line": 190,
+          "start_line": 156
+        },
+        "source": {
+          "end_line": 174,
+          "start_line": 139
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 207,
+          "start_line": 194
+        },
+        "body_source": {
+          "end_line": 192,
+          "start_line": 179
+        },
+        "name": "_freshness_facts",
+        "output": {
+          "end_line": 207,
+          "start_line": 192
+        },
+        "source": {
+          "end_line": 192,
+          "start_line": 176
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 242,
+          "start_line": 222
+        },
+        "body_source": {
+          "end_line": 235,
+          "start_line": 214
+        },
+        "decorator_output": {
+          "end_line": 220,
+          "start_line": 209
+        },
+        "name": "read_graph",
+        "output": {
+          "end_line": 242,
+          "start_line": 209
+        },
+        "source": {
+          "end_line": 235,
+          "start_line": 194
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 280,
+          "start_line": 258
+        },
+        "body_source": {
+          "end_line": 281,
+          "start_line": 258
+        },
+        "decorator_output": {
+          "end_line": 256,
+          "start_line": 244
+        },
+        "name": "create_session",
+        "output": {
+          "end_line": 280,
+          "start_line": 244
+        },
+        "source": {
+          "end_line": 281,
+          "start_line": 237
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 356,
+          "start_line": 296
+        },
+        "body_source": {
+          "end_line": 365,
+          "start_line": 304
+        },
+        "decorator_output": {
+          "end_line": 294,
+          "start_line": 282
+        },
+        "name": "refresh_session",
+        "output": {
+          "end_line": 356,
+          "start_line": 282
+        },
+        "source": {
+          "end_line": 365,
+          "start_line": 283
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 376,
+          "start_line": 370
+        },
+        "body_source": {
+          "end_line": 394,
+          "start_line": 387
+        },
+        "decorator_output": {
+          "end_line": 368,
+          "start_line": 358
+        },
+        "name": "read_snapshot",
+        "output": {
+          "end_line": 376,
+          "start_line": 358
+        },
+        "source": {
+          "end_line": 394,
+          "start_line": 367
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 412,
+          "start_line": 392
+        },
+        "body_source": {
+          "end_line": 438,
+          "start_line": 417
+        },
+        "decorator_output": {
+          "end_line": 390,
+          "start_line": 378
+        },
+        "name": "state_document",
+        "output": {
+          "end_line": 412,
+          "start_line": 378
+        },
+        "source": {
+          "end_line": 438,
+          "start_line": 396
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 444,
+          "start_line": 428
+        },
+        "body_source": {
+          "end_line": 478,
+          "start_line": 461
+        },
+        "decorator_output": {
+          "end_line": 426,
+          "start_line": 414
+        },
+        "name": "graph_document",
+        "output": {
+          "end_line": 444,
+          "start_line": 414
+        },
+        "source": {
+          "end_line": 478,
+          "start_line": 440
+        },
+        "type": "nerve"
+      }
+    ],
+    "module_header": {
+      "output_all": {
+        "end_line": 29,
+        "start_line": 29
+      },
+      "output_header": {
+        "end_line": 5,
+        "start_line": 1
+      },
+      "output_imports": {
+        "end_line": 27,
+        "start_line": 6
+      },
+      "output_registration": {
+        "end_line": 37,
+        "start_line": 31
+      },
+      "source": {
+        "end_line": 12,
+        "start_line": 1
+      }
+    }
+  },
+  "output_file": "studi0_state.py",
+  "source_file": "s0ma_src/studi0_state.s0ma",
+  "version": "1.0.0"
+}

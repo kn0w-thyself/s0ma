@@ -1,0 +1,52 @@
+module test_cross_root
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "End-to-end test that imports across all three sibling source roots — verifies `uses:` resolves cross-source-root in the test-root build pass."
+    uses: [order_view.format_status, order_service.process_order, order_model.build_order]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_format_status_queued :: PRESENTATION
+    intent: "Verifies the presentation-layer formatter reaches application + domain layers cleanly."
+    tests: [order_view.format_status]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_format_status_queued():
+        assert format_status("ord-1") == "order ord-1: queued"
+
+test test_format_status_rejected :: PRESENTATION
+    intent: "Verifies that an empty id is rejected — exercises the application-layer branch through the formatter."
+    tests: [order_view.format_status]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_format_status_rejected():
+        assert format_status("") == "order : rejected"
+
+test test_application_via_uses :: PRESENTATION
+    intent: "Cross-source-root uses: from test (presentation) into application root resolves and runs."
+    tests: [order_service.process_order]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_application_via_uses():
+        assert process_order("ord-2") == "queued"
+
+test test_domain_via_uses :: PRESENTATION
+    intent: "Cross-source-root uses: from test (presentation) into domain root resolves and runs."
+    tests: [order_model.build_order]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_domain_via_uses():
+        order = build_order("ord-3")
+        assert order.id == "ord-3"

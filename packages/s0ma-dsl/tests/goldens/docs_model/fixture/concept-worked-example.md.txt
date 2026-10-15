@@ -1,0 +1,52 @@
+# worked example
+
+## In short
+
+A small, runnable illustration of an idea, kept beside the idea itself.
+
+## What it is
+
+A worked example is a small piece of real, running code that shows one idea doing its job. It is kept beside the idea rather than in a separate collection, so that a reader who has just been told what something is can see it work without going looking.
+
+## Why it exists
+
+An example that is run by the same machinery that runs everything else cannot quietly stop being true, which is what makes it worth more than a snippet somebody pasted into a page.
+
+## When to use it
+
+Reach for a worked example when an idea is easier to recognize than to describe.
+
+## When not to use it
+
+Do not use one as the definition. An example shows one case; the definition has to cover the ones nobody wrote an example for.
+
+## How it is written
+
+```text
+example <name> :: PRESENTATION
+    intent: "<what it shows>"
+```
+
+## Related ideas
+
+- `part-of journey:first-project`
+
+## Worked examples
+
+- `example:first_project_walkthrough`
+
+## What decides this
+
+- `authority:spec/fixture-journey`
+
+## Where to read the decision
+
+- `tests/test_docs_resolve_render.py#fixtures`
+
+---
+
+## Identity
+
+- Topic id: `concept:worked-example`
+- Release: `0.18.1 (preview)`
+- Documentation snapshot: `sha256:2af357cac6cb8a5a`

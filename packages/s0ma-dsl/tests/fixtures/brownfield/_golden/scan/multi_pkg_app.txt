@@ -1,0 +1,33 @@
+Scanned: 7 modules across 3 packages, 235 lines, 171 of them code.
+20 public things to convert; none of them are registered with s0ma yet.
+3 test files seen and left out of the numbers above.
+
+Perimeter it would declare (`s0ma adopt init` writes this):
+  source roots    evallib, harnesslib, metrics
+  bootstrap files harnesslib/__main__.py
+  package markers evallib/__init__.py, harnesslib/__init__.py, metrics/__init__.py
+  mode            migration
+  Those roots because `evallib`, `harnesslib` and `metrics` are what this project
+  packages (`[tool.setuptools].packages` and `[project.scripts]` in pyproject.toml name
+  them).
+  6 other Python files are outside them and not in this scan, 3 of them tests: samples/
+  3, tests_suite/ 3. Name them with --source-root if they are this project's code.
+
+Convert in this order, leaves first (6 modules):
+  module                             size   proposed layer
+  metrics.counters                   medium DOMAIN (medium confidence)
+  harnesslib.runner                  medium yours to choose
+  evallib.scoring                    medium yours to choose
+  evallib                            small  package marker — nothing to convert
+  harnesslib                         small  package marker — nothing to convert
+  metrics                            small  package marker — nothing to convert
+  Not in that list: harnesslib/__main__.py — declared above under `bootstrap_files`, so
+  it stays plain Python; a s0ma project names its entry points.
+
+Import cycles: none at load time. Every module can be converted after the ones it
+  imports, which is what makes the order above a plan rather than a suggestion.
+
+Nothing else worth flagging.
+
+Next: `s0ma adopt init` — it writes the perimeter above into pyproject.toml and touches
+  no application file.

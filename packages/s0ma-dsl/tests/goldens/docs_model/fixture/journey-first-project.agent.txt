@@ -1,0 +1,13 @@
+Topic: journey:first-project
+Release: 0.18.1 (preview)
+Snapshot: sha256:2af357cac6cb8a5a
+Examples: example:first_project_walkthrough
+Decided by: none recorded
+
+What this path is for:
+  Take somebody who has never written a s0ma project from an empty
+  folder to a first check they can trust.
+
+Read more:
+  the full page for journey:first-project carries every fact left out
+  here, word for word.

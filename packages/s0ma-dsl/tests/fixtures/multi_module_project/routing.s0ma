@@ -1,0 +1,37 @@
+module routing
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Presentation-layer dispatcher for the flat-build-layout fixture project."
+    uses: [processing.process_user, models.UserModel]
+    exports: [handle_request]
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve handle_request :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Builds a UserModel from name and routes through process_user."
+    expects: "A non-empty user name string."
+    guarantees: "Returns the string from process_user for the constructed user."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        process_user: {relation: CALLS, carries: "request data", coupling: TIGHT}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def handle_request(name: str) -> str:
+        user = UserModel()
+        user.name = name
+        return process_user(user)

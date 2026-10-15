@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>s0ma studi0 — sh0w</title>
+    <!-- Self-contained by contract (FR-STUDI0-7): every byte this page needs
+         is served by studi0 itself. No CDN, no web font, no remote asset. -->
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/assets/app.css" />
+  </head>
+  <body>
+    <div id="s0ma-sh0w" class="sh0w-mount"></div>
+    <noscript>
+      <p class="sh0w-noscript">
+        sh0w draws the component graph with JavaScript in this page. With
+        scripting off, the graph cannot be drawn. The same data is available
+        from the command line: <code>s0ma graph &lt;project&gt; --format json
+        --detail full</code>.
+      </p>
+    </noscript>
+    <script type="module" src="/assets/app.js"></script>
+  </body>
+</html>

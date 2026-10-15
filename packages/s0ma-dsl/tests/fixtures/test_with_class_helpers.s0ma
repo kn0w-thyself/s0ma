@@ -1,0 +1,43 @@
+module test_with_class_helpers
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "regression for HELPER_NAME_COLLISION false positives on class methods"
+    uses: [some_target.do_thing]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_block_one :: APPLICATION
+    intent: "first block defines a class with __init__"
+    tests: [some_target.do_thing]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_block_one():
+        class _Recorder:
+            def __init__(self, name): self.name = name
+            async def __aenter__(self): return self
+            async def __aexit__(self, *exc): return None
+            def request(self, *args, **kwargs): return None
+        r = _Recorder("a")
+        assert r.name == "a"
+
+test test_block_two :: APPLICATION
+    intent: "second block defines another class with __init__"
+    tests: [some_target.do_thing]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_block_two():
+        class _Recorder:
+            def __init__(self, name): self.name = name
+            async def __aenter__(self): return self
+            async def __aexit__(self, *exc): return None
+            def request(self, *args, **kwargs): return None
+        r = _Recorder("b")
+        assert r.name == "b"

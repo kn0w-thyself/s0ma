@@ -1,0 +1,18 @@
+module minimal_doc_ref
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture module hosting a minimal doc-ref declaration."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-ref api_reference
+    intent: "Generated reference for every public nerve in the module."
+    format: markdown
+    output: docs/api_reference.md
+    covers: [nerve where visibility == PUBLIC]
+    sections: [intent, expects, guarantees]

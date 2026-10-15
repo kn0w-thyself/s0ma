@@ -1,0 +1,99 @@
+{
+  "build_dir": "src/s0ma_studi0/_built",
+  "external_content_files": {
+    "sh0w_assets::APP_CSS": {
+      "hash": "sha256:8b2d523aa6844e29e26c5aba7277160852e650748f38f476b27e5e0575fb4abb",
+      "path": "assets/app.css"
+    },
+    "sh0w_assets::APP_JS": {
+      "hash": "sha256:80c3b16b662bbb4ba7e4bbe1b1542cda190a0445c3b530e60d515fa4afd345c6",
+      "path": "assets/app.js"
+    },
+    "sh0w_assets::INDEX_HTML": {
+      "hash": "sha256:553f6c7939edb8dba6ddaa1f5779a46eee2b96c08480687b1a3724132ec50f25",
+      "path": "assets/index.html"
+    }
+  },
+  "modules": [
+    {
+      "ir": "sh0w_assets.s0ma.json",
+      "logical_path": "sh0w_assets.s0ma",
+      "name": "sh0w_assets",
+      "output": "sh0w_assets.py",
+      "output_hash": "sha256:b2bdbb28b8cb7292a7ddfe54019b57697698e40cc04d58723b896bf7e0bc23b2",
+      "role": "source",
+      "source": "s0ma_src/sh0w_assets.s0ma",
+      "source_hash": "sha256:6f75a09fb9671fad57c5b0631a30425bf78b8d6b8806dba222e2c7131ddddd2f",
+      "source_map": "sh0w_assets.s0ma.map",
+      "source_root": "s0ma_src"
+    },
+    {
+      "ir": "studi0_narration.s0ma.json",
+      "logical_path": "studi0_narration.s0ma",
+      "name": "studi0_narration",
+      "output": "studi0_narration.py",
+      "output_hash": "sha256:3d9c114d0087e9497fed118a1c8f553f57bf4f041e7a8794ff5bb37dc87974f4",
+      "role": "source",
+      "source": "s0ma_src/studi0_narration.s0ma",
+      "source_hash": "sha256:fd30ff2405b2086f335839f8f3181c4fc7f5ab253c4b63cd56778f3ed600e98c",
+      "source_map": "studi0_narration.s0ma.map",
+      "source_root": "s0ma_src"
+    },
+    {
+      "ir": "studi0_server.s0ma.json",
+      "logical_path": "studi0_server.s0ma",
+      "name": "studi0_server",
+      "output": "studi0_server.py",
+      "output_hash": "sha256:2ab7c59c5278d2718260dc1a4b6bbde9c3b16ec7331deb9a3966374559fa22ad",
+      "role": "source",
+      "source": "s0ma_src/studi0_server.s0ma",
+      "source_hash": "sha256:37411718abe3a55a3bf43f13a59f1e0596869115233b2f4af8e6030bfcc259a9",
+      "source_map": "studi0_server.s0ma.map",
+      "source_root": "s0ma_src"
+    },
+    {
+      "ir": "studi0_state.s0ma.json",
+      "logical_path": "studi0_state.s0ma",
+      "name": "studi0_state",
+      "output": "studi0_state.py",
+      "output_hash": "sha256:c4699713b2c192098a7bce908d76b023f6418ee94e5adc9efa04bb3bd17ccb1f",
+      "role": "source",
+      "source": "s0ma_src/studi0_state.s0ma",
+      "source_hash": "sha256:95dcec896ac1ad109b4a91c40b45018c5dbdbca63b8f3855358b43eaf1491604",
+      "source_map": "studi0_state.s0ma.map",
+      "source_root": "s0ma_src"
+    },
+    {
+      "ir": "studi0_watch.s0ma.json",
+      "logical_path": "studi0_watch.s0ma",
+      "name": "studi0_watch",
+      "output": "studi0_watch.py",
+      "output_hash": "sha256:a9303529b34308e87a006211bc457e36dadf46b622385e249dab14a9d88063e2",
+      "role": "source",
+      "source": "s0ma_src/studi0_watch.s0ma",
+      "source_hash": "sha256:7ff9fb055b8dffacbe16731b116cc96dc3e6fd4e254b49bcf939d023d218e79c",
+      "source_map": "studi0_watch.s0ma.map",
+      "source_root": "s0ma_src"
+    }
+  ],
+  "project": "s0ma-studi0",
+  "schema": "s0ma-build-manifest@1",
+  "self_context": {
+    "json": {
+      "path": "self_context.json",
+      "sha256": "sha256:64a060df4f01ec21393185014ae52bb0471fd14b13f75123792ecc781f912582"
+    },
+    "prompt_card": {
+      "path": "self_prompt_card.md",
+      "sha256": "sha256:2de3029457a76d0a32abb52c1d71ef9cb8cfe61f9236df8afaf22713dd8106ad"
+    }
+  },
+  "topological_import_order": [
+    "studi0_server",
+    "studi0_state",
+    "studi0_watch",
+    "sh0w_assets",
+    "studi0_narration"
+  ],
+  "transpiler_version": "0.19.1"
+}

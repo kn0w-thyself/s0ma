@@ -1,0 +1,32 @@
+module test_formatter
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Cross-module integration tests for formatter that import from calculator."
+    uses: [formatter.format_sum, formatter.format_product, calculator.add]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_format_sum_imports_calculator :: APPLICATION
+    intent: "Verifies that the formatter test can import both formatter and calculator modules cross-module."
+    tests: [formatter.format_sum]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_format_sum_imports_calculator():
+        assert format_sum(2, 3) == "sum: 5"
+        assert format_sum(2, 3) == f"sum: {add(2, 3)}"
+
+test test_format_product_uses_calculator :: APPLICATION
+    intent: "Verifies that format_product correctly uses calculator.multiply via the runtime bridge."
+    tests: [formatter.format_product]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_format_product_uses_calculator():
+        assert format_product(3, 4) == "product: 12"

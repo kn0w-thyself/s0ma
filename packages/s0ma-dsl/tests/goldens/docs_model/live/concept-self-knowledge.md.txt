@@ -1,0 +1,47 @@
+# self-knowledge
+
+## In short
+
+The umbrella faculty: a system's ability to hold an accurate, queryable model of itself.
+
+## What it is
+
+Self-knowledge is a system's ability to maintain an accurate, queryable, machine-readable model of itself: its structure, its behaviour while it runs, and the reasoning that can be done over both. It is the umbrella term, and it spans three faculties that answer different questions — proprioception asks what the system is made of, interoception asks how it is behaving against what it declared, and metacognition reasons over the model itself.
+
+## Why it exists
+
+The word gives the product one name for the whole capability, so that the three faculties can be discussed separately without any one of them being mistaken for the entire idea. Before it, the structural third carried the name of the whole, which quietly hid the other two.
+
+## When to use it
+
+Use self-knowledge whenever the whole capability is meant, or when the particular faculty does not matter to the sentence.
+
+## When not to use it
+
+Do not use self-knowledge where one faculty is meant; the specific words exist and say more. Do not use it for the record itself either: the artifact is the self-model, and self-knowledge is what having one lets a system do.
+
+## Related ideas
+
+- `requires concept:self-model`
+
+## Worked examples
+
+- none recorded
+
+## What decides this
+
+- `authority:prd/glossary.self-knowledge`
+- `authority:prd/section.vision`
+
+## Where to read the decision
+
+- `references/s0ma-prd.md#1`
+- `references/s0ma-prd.md#11. Glossary`
+
+---
+
+## Identity
+
+- Topic id: `concept:self-knowledge`
+- Release: `0.18.1 (preview)`
+- Documentation snapshot: `sha256:7730325659b12fd5`

@@ -1,0 +1,40 @@
+module sh0w_assets
+    layer: PRESENTATION
+    version: 0.19.1
+    intent: "The sh0w page itself, carried inside studi0's own self-model. The three files a browser needs — the document, its stylesheet, its script — are authored in their native syntax under assets/ and embedded here by reference, so the page studi0 serves is part of the build rather than a directory the server happens to find next to it (FR-STUDI0-8). One installed artifact, no loose files, nothing fetched from anywhere."
+    exports: [INDEX_HTML, APP_CSS, APP_JS]
+
+    requires: []
+    uses: []
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell INDEX_HTML :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The document served at the root: a standalone HTML5 page that mounts sh0w and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7)."
+    schema: "str constant — one standalone HTML5 document, embedded verbatim from assets/index.html."
+    content: @file("assets/index.html")
+    invariants: "Served byte-for-byte as embedded: studi0 substitutes nothing into this page at request time, so what a browser receives is exactly what the build recorded."
+    covered_by: ["tests/test_integration_live.py — GET / serves the embedded document"]
+
+cell APP_CSS :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The stylesheet served at /assets/app.css: the whole visual language of sh0w — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth."
+    schema: "str constant — one CSS stylesheet, embedded verbatim from assets/app.css."
+    content: @file("assets/app.css")
+    invariants: "Served byte-for-byte as embedded."
+    covered_by: ["tests/test_integration_live.py — GET /assets/app.css serves the embedded stylesheet"]
+
+cell APP_JS :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, and the narration pane that shows what an agent says it is doing beside it. One file, no imports, no build step."
+    schema: "str constant — one JavaScript file, embedded verbatim from assets/app.js."
+    content: @file("assets/app.js")
+    placeholders: [__S0MA_FIXTURE__, __S0MA_NARRATION__]
+    invariants: "Served byte-for-byte as embedded: studi0 substitutes nothing at request time. The declared placeholders are not substitution targets but the names of the two JavaScript globals the fixture boot mode reads, the graph document and the optional narration block the dev harness supplies, declared here only so the cell's marker set matches the file's actual content."
+    covered_by: ["tests/test_integration_live.py — GET /assets/app.js serves the embedded script"]

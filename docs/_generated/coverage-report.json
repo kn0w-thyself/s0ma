@@ -1,0 +1,1247 @@
+{
+  "complete": true,
+  "discovery_routes": [
+    {
+      "audience": "agent",
+      "clause": "architecture §9.6.1",
+      "id": "agent-1",
+      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestInstructionsNameTheQuery",
+      "route": "server instructions name the query and index"
+    },
+    {
+      "audience": "agent",
+      "clause": "architecture §9.6.2",
+      "id": "agent-2",
+      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestToolDescriptionsSayWhen",
+      "route": "tool descriptions say when to consult"
+    },
+    {
+      "audience": "agent",
+      "clause": "architecture §9.6.3",
+      "id": "agent-3",
+      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestHighTrafficResultsCarryAPointer",
+      "route": "high-traffic results carry a pointer"
+    },
+    {
+      "audience": "agent",
+      "clause": "architecture §9.6.4",
+      "id": "agent-4",
+      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestFailingDiagnosticsDeepLink",
+      "route": "failing diagnostics deep-link"
+    },
+    {
+      "audience": "agent",
+      "clause": "architecture §9.6.5",
+      "id": "agent-5",
+      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestPromptsNameTheirDependencies",
+      "route": "prompts name their dependencies"
+    },
+    {
+      "audience": "agent",
+      "clause": "architecture §9.6.6",
+      "id": "agent-6",
+      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestGeneratedAgentsMd",
+      "route": "generated AGENTS.md establishes both"
+    },
+    {
+      "audience": "agent",
+      "clause": "architecture §9.6.7",
+      "id": "agent-7",
+      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestTheIndexDescribesItself",
+      "route": "the index describes its own retrieval"
+    },
+    {
+      "audience": "human",
+      "clause": "architecture §9.3.1",
+      "id": "human-1",
+      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestRootReadmeRoute",
+      "route": "root README has one Start-here route"
+    },
+    {
+      "audience": "human",
+      "clause": "architecture §9.3.2",
+      "id": "human-2",
+      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestHelpAdvertisesLearning",
+      "route": "--help advertises learning"
+    },
+    {
+      "audience": "human",
+      "clause": "architecture §9.3.3",
+      "id": "human-3",
+      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestBareDocsNavigates",
+      "route": "bare `s0ma docs` navigates"
+    },
+    {
+      "audience": "human",
+      "clause": "architecture §9.3.4",
+      "id": "human-4",
+      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestSetupResultsNameANextStep",
+      "route": "setup results name a next step"
+    },
+    {
+      "audience": "human",
+      "clause": "architecture §9.3.5",
+      "id": "human-5",
+      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestDiagnosticsPointAtTheirTopic",
+      "route": "diagnostics point at their topic"
+    },
+    {
+      "audience": "human",
+      "clause": "architecture §9.3.6",
+      "id": "human-6",
+      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestGeneratedInstructions",
+      "route": "generated instructions name both routes"
+    },
+    {
+      "audience": "human",
+      "clause": "architecture §9.3.7",
+      "id": "human-7",
+      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestInstalledBundlesNeedNoCheckout",
+      "route": "installed bundles need no checkout"
+    }
+  ],
+  "exception_kinds": {
+    "binding": 169,
+    "not a document": 4,
+    "reference-only channel": 5,
+    "reference-only surface": 25
+  },
+  "schema": "s0ma-docs-coverage@1",
+  "sets": [
+    {
+      "ceilings": {},
+      "complete": true,
+      "covered": 39,
+      "enforced_by": [
+        "resolve.check_coverage"
+      ],
+      "exception_count": 0,
+      "exceptions": [],
+      "measured_by": "the learning collection's own walk of the concepts, which is the renderer's list rather than the model's — a concept the collection stopped emitting a page for is short here",
+      "question": "Every concept this build composed is taught on a page a person can open.",
+      "reports": [
+        "DOC_CONCEPT_UNCOVERED"
+      ],
+      "required": 39,
+      "set": "concepts",
+      "uncovered": []
+    },
+    {
+      "ceilings": {
+        "unbound": {
+          "ceiling": 175,
+          "used": 169
+        }
+      },
+      "complete": true,
+      "covered": 92,
+      "enforced_by": [
+        "validate.check_surface_binding",
+        "application.check_surface_index"
+      ],
+      "exception_count": 169,
+      "exceptions": [
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
+          "member": "cli:s0ma/adopt/file"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
+          "member": "cli:s0ma/feedback/delete"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
+          "member": "cli:s0ma/feedback/drafts"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
+          "member": "cli:s0ma/feedback/enroll"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
+          "member": "cli:s0ma/feedback/list"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
+          "member": "cli:s0ma/feedback/submit"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
+          "member": "cli:s0ma/migrate/grammar"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:adoption_exempt"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:attribute_budgets"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:authoring"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:bootstrap_files"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:build_dir"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:env"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:fixtures_format"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:health_command"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:mode"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:package_markers"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:run_command"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:runbook_notes"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:source_roots"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:state_paths"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:test_layering"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:test_module_name_prefix_by_dir"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:test_roots"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:test_runner"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
+          "member": "config:venv_path"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:ADOPTED_CHURN"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:ADOPT_PLACEHOLDER_INTENT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:ADOPT_UNPLACED_CODE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:AMBIGUOUS_TEST_TARGET"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:ASSERT_FAILED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:ASSERT_SYNTAX_ERROR"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:ASSERT_UNEVALUABLE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:ATTRIBUTE_BUDGET_VIOLATION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:BARE_IMPORT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:BUILD_DIR_OVERRIDE_CONFLICT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:CIRCULAR_DEPENDENCY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:CLASS_BODY_IN_NERVE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:CONFLICTING_PACKAGE_DECLARATION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:CONSTANT_NAME_MISMATCH"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:CONSUMES_VIA_DICT_INVALID"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:COVERED_BY_EMPTY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:CROSS_LAYER_DEPENDENCY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:CROSS_MODULE_USES_ASYMMETRY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DEFERRED_IMPORT_MODULE_SCOPE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DOC_RENDER_ERROR"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DOC_SOURCE_FORMAT_UNSUPPORTED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DOES_NOT_EXIST"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DRIFT_DETECTED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DUPLICATE_AXON"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DUPLICATE_DECLARATION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DUPLICATE_INNER_FUNCTION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DUPLICATE_PROVIDES_NAME"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:DUPLICATE_REQUIRES_ENTRY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:EMBEDDED_FILE_NOT_FOUND"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:EMPTY_BLOCK_LIST"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:EMPTY_DOC_FILTER"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:EMPTY_OBSERVES"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:ENTITY_KIND_MISMATCH"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:EXPORTED_HELPER_NOT_FOUND"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:FIELD_NOT_FOUND"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:FIXTURE_FORMAT_INVALID"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:GENERATED_FILE_DRIFT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:GRAMMAR_MIGRATION_APPLY_FAILED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:GRAMMAR_MIGRATION_CONFLICT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:GRAMMAR_MIGRATION_OUTPUT_INVALID"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:GRAMMAR_MIGRATION_PARSE_ERROR"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:GRAMMAR_MIGRATION_ROLLBACK_FAILED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:HELPER_NAME_COLLISION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:HELPER_PRIVATE_TO_MODULE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:HOLLOW_MODEL"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:HOST_RUNTIME_UNDECLARED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INCONSISTENT_BLOCK_LIST_INDENT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INTEGRATION_FACTORY_NOT_FOUND"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INTEGRATION_FACTORY_NOT_SERVICE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INTEGRATION_INVALID_MANIFEST_KEY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INTEGRATION_SMOKE_TEST_NOT_FOUND"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INTERFACE_ON_NON_ABSTRACT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INVALID_AXON_RELATION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INVALID_DATACLASS_INVARIANT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INVALID_KIND"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INVALID_PROJECT_NAME_FOR_BUILD_DIR"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INVALID_RAISES_TARGET"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:INVALID_VERSION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:LAYER_MISMATCH"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:METADATA_INVALID_KEY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:METADATA_INVALID_VALUE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:METADATA_RESERVED_KEY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MISSING_EMBEDDED_EXAMPLE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MISSING_FIELD"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MISSING_INTERFACE_METHODS"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MISSING_PACKAGE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MISSING_PROVIDED_FUNCTION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MISSING_PUBLIC_DOC_REF"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MISSING_RETURN_KEY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MISSING_TEST_COVERAGE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MIXED_PROVIDES_FORMS"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MOCK_KEY_MISMATCH"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MODULE_DEPENDENCY_CYCLE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MODULE_NAME_COLLISION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MODULE_NAME_STEM_MISMATCH"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MODULE_SHADOWS_STDLIB"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MODULE_SUBSCRIPT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MUTABLE_DEFAULT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:NAMESPACE_COLLISION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:NEW_FILE_ROSTER_ONLY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:NOT_EXPORTED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:NO_PAGE_COMPOSER_DECLARED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:OVERLAPPING_DISCOVERY_ROOTS"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:PARSE_DOC_REF_BODY_PROHIBITED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:PARSE_ERROR"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:PARSE_GRAMMAR_FORWARD_INCOMPAT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:PLACEHOLDER_NOT_FOUND"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:POSSIBLE_UNRESOLVED_REFERENCE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:PROHIBITED_CONSTRUCT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:PROSE_RAW_CODE_BLOCK"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:PROVIDES_KEY_MISMATCH"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:REQUIRES_DOTTED_LOWERCASE_HINT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SEMANTIC_DERIVED_FIELD_AUTHORED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SEMANTIC_NONE_NOT_ALLOWED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SEMANTIC_PENDING_DEBT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SEMANTIC_PENDING_INVALID"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SEMANTIC_PENDING_NOT_ALLOWED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SEMANTIC_PENDING_REASON_EMPTY"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SEMANTIC_REQUIRED_STATE_OMITTED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SERVES_AS_COLLISION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:SERVES_AS_INVALID"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:STALE_GENERATED_CONFTEST"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:TEMPLATE_SYNTAX_ERROR"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:TEST_NOT_COLLECTED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:TEST_VISIBILITY_VIOLATION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:UNDECLARED_PLACEHOLDER"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:UNKNOWN_FIELD"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:UNRECOGNIZED_LINE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:UNREGISTERED_EXAMPLE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:UNREGISTERED_SURFACE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:UNRESOLVED_REFERENCE"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:UNSUPPORTED_IR_SCHEMA_MAJOR"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:VESTIGIAL_IMPORT"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:VISIBILITY_MISMATCH"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:resource/s0ma://docs/architecture"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:resource/s0ma://docs/compliance-rules"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:resource/s0ma://docs/registered-docs"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:resource/s0ma://docs/user-guide"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:resource/s0ma://model/component-template"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:resource/s0ma://model/docs-for/{component}"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:resource/s0ma://model/examples-for/{component}"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:resource/s0ma://model/registry-summary"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/check_health"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/describe_system"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/explain_dependency"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/find_component"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/get_compliance_checklist"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/get_component_example"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/get_examples_for"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/get_extension_points"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/get_impact"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/learn_about_s0ma"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/query_system"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.api.mcp_server.create_mcp_server",
+          "member": "mcp:tool/suggest_fix"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.HASH_ALGORITHM_VERSION"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.__version__"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.canonicalize"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.content_hash"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.initialize"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.register_doc_guide"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.register_doc_ref"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.register_example"
+        },
+        {
+          "kind": "binding",
+          "ledger": "python:s0ma.__all__",
+          "member": "python:s0ma.verify"
+        }
+      ],
+      "measured_by": "a per-record classification of the composed surfaces — a surface either names a component reference or it does not, so the unbound count is a measurement and not an absence of one",
+      "question": "Every served capability resolves to a registered component, or carries a written exception saying why it cannot.",
+      "reports": [
+        "DOC_SURFACE_UNBOUND",
+        "DOC_SURFACE_UNCOVERED"
+      ],
+      "required": 261,
+      "set": "surfaces",
+      "uncovered": []
+    },
+    {
+      "ceilings": {
+        "reference_only_surfaces": {
+          "ceiling": 30,
+          "used": 25
+        }
+      },
+      "complete": true,
+      "covered": 17,
+      "enforced_by": [
+        "validate.check_journeys",
+        "resolve.check_journey_coverage"
+      ],
+      "exception_count": 30,
+      "exceptions": [
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/adopt"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs/check"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs/check-drift"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs/compose"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs/list"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs/render"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs/search"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs/show"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/docs/verify"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/examples"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/examples/run"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/migrate"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/migrate-ext"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/migrate-layout"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/migrate/grammar"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/test"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/test-conftest"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "cli:s0ma/verify-host"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "mcp:prompt/migrate_project"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "mcp:tool/adopt_file"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "mcp:tool/learn_s0ma"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "mcp:tool/migrate_ext"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "mcp:tool/run_example"
+        },
+        {
+          "kind": "reference-only surface",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "mcp:tool/verify_host"
+        },
+        {
+          "kind": "reference-only channel",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "channel:config"
+        },
+        {
+          "kind": "reference-only channel",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "channel:diagnostic"
+        },
+        {
+          "kind": "reference-only channel",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "channel:mcp_resource"
+        },
+        {
+          "kind": "reference-only channel",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "channel:python"
+        },
+        {
+          "kind": "reference-only channel",
+          "ledger": "docs/s0ma_src/coverage-policy.json",
+          "member": "channel:rest"
+        }
+      ],
+      "measured_by": "each journey's own evidence field, and the authored coverage policy read against the composed surfaces — two files, one comparison, neither seeded from the other",
+      "question": "Every primary capability is walked by a journey with executable evidence, and every other served surface is classified as reference-only with a reason.",
+      "reports": [
+        "DOC_CAPABILITY_UNCOVERED",
+        "DOC_JOURNEY_UNRESOLVED",
+        "DOC_JOURNEY_UNTESTED"
+      ],
+      "required": 17,
+      "set": "journeys",
+      "uncovered": []
+    },
+    {
+      "ceilings": {},
+      "complete": true,
+      "covered": 14,
+      "enforced_by": [
+        "s0ma-dsl tests/test_docs_discovery_contract.py",
+        "s0ma-mcp tests/test_docs_discovery_mcp.py"
+      ],
+      "exception_count": 0,
+      "exceptions": [],
+      "measured_by": "nothing in this build — and that is the honest answer. These routes are properties of the running product's output, which no build-time gate has in front of it, so each row names the contract clause and the suite that runs it instead of a count this artifact could have made up",
+      "question": "Every guaranteed route by which a person or an agent finds out this documentation exists still resolves.",
+      "reports": [],
+      "required": 14,
+      "set": "discovery",
+      "uncovered": []
+    },
+    {
+      "ceilings": {},
+      "complete": true,
+      "covered": 170,
+      "enforced_by": [
+        "providers_catalog.check_completeness"
+      ],
+      "exception_count": 4,
+      "exceptions": [
+        {
+          "kind": "not a document",
+          "ledger": "docs/s0ma_src/catalog.json",
+          "member": "docs/_built/reference/documentation-application.md"
+        },
+        {
+          "kind": "not a document",
+          "ledger": "docs/s0ma_src/catalog.json",
+          "member": "packages/s0ma-dsl/tests/fixtures/golden/docs/greetings.md"
+        },
+        {
+          "kind": "not a document",
+          "ledger": "docs/s0ma_src/catalog.json",
+          "member": "packages/s0ma-dsl/tests/fixtures/golden/docs/walkthrough.md"
+        },
+        {
+          "kind": "not a document",
+          "ledger": "docs/s0ma_src/catalog.json",
+          "member": "packages/s0ma-dsl/tests/fixtures/legacy_layout_project/README.md"
+        }
+      ],
+      "measured_by": "the catalog provider's walk of the tracked corpus against the authored rows — the comparison check_completeness makes, reported here as the composition holds its result",
+      "question": "Every living or normative document this repository tracks has one catalog row naming its canonical source.",
+      "reports": [
+        "DOC_DOCUMENT_UNCATALOGED"
+      ],
+      "required": 170,
+      "set": "catalog",
+      "uncovered": []
+    }
+  ],
+  "source": {
+    "build_channel": "preview",
+    "model_schema": "s0ma-docs-model@1",
+    "release_version": "0.19.1",
+    "snapshot_hash": "sha256:46cb0cce5f7c07cf"
+  },
+  "totals": {
+    "covered": 332,
+    "exceptions": 203,
+    "required": 501,
+    "sets": 5,
+    "uncovered": 0
+  }
+}

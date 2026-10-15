@@ -1,0 +1,36 @@
+module adopt_placeholder_intent
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "A draft whose nerve still carries the placeholder the draft tool left."
+    exports: [drafted]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+nerve drafted :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "Nothing: the caller passes no arguments at all."
+    guarantees: "Returns the one number this example exists to return."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def drafted() -> int:
+        """Return the one number this example exists to return."""
+        return 1

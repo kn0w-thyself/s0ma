@@ -1,0 +1,16 @@
+# All text files are LF in every working tree, on every OS — the drift
+# gates and wheel builds must see the same bytes CI sees (no committed
+# file is CRLF today; this is a no-op normalization, INV-safe).
+* text=auto eol=lf
+
+# Explicit for the formats the gates and packaging touch.
+*.py    text eol=lf
+*.s0ma  text eol=lf
+*.md    text eol=lf
+*.json  text eol=lf
+*.map   text eol=lf
+*.toml  text eol=lf
+*.yml   text eol=lf
+*.lock  text eol=lf
+
+# No binaries are committed today; add e.g. `*.png binary` when they appear.

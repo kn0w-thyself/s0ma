@@ -1,0 +1,251 @@
+{
+  "identity": {
+    "channel": "preview",
+    "journey": "journey:retrofit-existing-codebase",
+    "published_by": "doc:guide/retrofit-existing-codebase",
+    "release": "0.19.1 (preview)",
+    "snapshot": "sha256:46cb0cce5f7c07cf"
+  },
+  "package": {
+    "audience": [
+      "agent",
+      "user"
+    ],
+    "cautions": [
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "2",
+        "surface": "cli:s0ma/adopt/init",
+        "surface_name": "s0ma adopt init"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "6",
+        "surface": "cli:s0ma/adopt/baseline",
+        "surface_name": "s0ma adopt baseline"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "7",
+        "surface": "cli:s0ma/adopt/draft",
+        "surface_name": "s0ma adopt draft"
+      }
+    ],
+    "chapters": [
+      {
+        "caption": "Read the whole codebase without changing any of it, and get back the order to convert it in.",
+        "ordinal": "1",
+        "step": "1",
+        "title": "s0ma adopt scan"
+      },
+      {
+        "caption": "Make the tree a s0ma project by declaring its perimeter, and stop there.",
+        "ordinal": "2",
+        "step": "2",
+        "title": "s0ma adopt init"
+      },
+      {
+        "caption": "Ask whether the toolchain and the project now agree that this is a project at all.",
+        "ordinal": "3",
+        "step": "3",
+        "title": "s0ma doctor"
+      },
+      {
+        "caption": "Read back the honest backlog — every file that is neither converted nor declared as deliberately exempt.",
+        "ordinal": "4",
+        "step": "4",
+        "title": "s0ma verify"
+      },
+      {
+        "caption": "Turn the same facts into one number, so that the work has something to move.",
+        "ordinal": "5",
+        "step": "5",
+        "title": "s0ma score"
+      },
+      {
+        "caption": "Write down what the module promises, while the Python that promises it is still there to read.",
+        "ordinal": "6",
+        "step": "6",
+        "title": "s0ma adopt baseline"
+      },
+      {
+        "caption": "Take the first module on that order and turn it into a draft you can finish.",
+        "ordinal": "7",
+        "step": "7",
+        "title": "s0ma adopt draft"
+      },
+      {
+        "caption": "Ask whether the module s0ma built still promises what the Python promised, before anything is deleted.",
+        "ordinal": "8",
+        "step": "8",
+        "title": "s0ma adopt verify-parity"
+      },
+      {
+        "caption": "Come back to a retrofit that is only part way up the ladder and find out where it stands and what to do next.",
+        "ordinal": "9",
+        "step": "9",
+        "title": "s0ma adopt status"
+      }
+    ],
+    "consent": [],
+    "evidence": [
+      {
+        "id": "example:transcript/retrofit-existing-codebase",
+        "source": "docs/s0ma_src/evidence/retrofit-existing-codebase.json"
+      }
+    ],
+    "outcome": "Take a Python application that already works and walk it up the adoption ladder: read what is there without changing a line of it, set the perimeter, write down what a module promises, convert that module, and prove the promise survived.",
+    "prerequisites": [
+      {
+        "concept": "concept:intent",
+        "term": "intent"
+      },
+      {
+        "concept": "concept:s0ma",
+        "term": "s0ma"
+      }
+    ],
+    "recovery": [
+      {
+        "action": "At the perimeter this is the true reading, not a fault: nothing has been converted yet, so the self-model has nothing to answer with. It is the number the work exists to move. Ask for the conversion order again — now that the project has a perimeter, the same reading also says how the project classifies its own files — and convert the first module on it.",
+        "next_surface": "cli:s0ma/adopt/scan",
+        "next_surface_name": "s0ma adopt scan",
+        "when": "HOLLOW_MODEL"
+      }
+    ],
+    "steps": [
+      {
+        "channel": "cli",
+        "expected_visible_state": "One screen: what was found, the perimeter it would declare, the first ten modules of a leaves-first conversion order with a proposed layer each, anything worth knowing about the imports, and the next command to run.",
+        "ordinal": "1",
+        "purpose": "Read the whole codebase without changing any of it, and get back the order to convert it in.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/adopt/scan",
+        "surface_name": "s0ma adopt scan"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "Exactly two things written and both quoted back at you: a [tool.s0ma] table appended to the pyproject.toml you already had, and one marked block added to AGENTS.md. No application file is touched, and --dry-run prints the same thing and writes nothing.",
+        "ordinal": "2",
+        "purpose": "Make the tree a s0ma project by declaring its perimeter, and stop there.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/adopt/init",
+        "surface_name": "s0ma adopt init"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The versions installed here, the project root and the strictness mode it is in, and one finding saying nothing has been built yet — which is the truth at the perimeter.",
+        "ordinal": "3",
+        "purpose": "Ask whether the toolchain and the project now agree that this is a project at all.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/doctor",
+        "surface_name": "s0ma doctor"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "One line per file: the entry point and the package marker recognised by name and by the setting that exempted them, every application file listed as UNKNOWN, and the counts underneath.",
+        "ordinal": "4",
+        "purpose": "Read back the honest backlog — every file that is neither converted nor declared as deliberately exempt.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/verify",
+        "surface_name": "s0ma verify"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "Nought per cent for structure, which is correct on the first day, the strictness mode you are in, and the exempt files listed by name so what sits outside s0ma is a reading rather than a matter of trust.",
+        "ordinal": "5",
+        "purpose": "Turn the same facts into one number, so that the work has something to move.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/score",
+        "surface_name": "s0ma score"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "One committed file at the project root, adopt-baseline.s0ma.json, holding what that module's Python offers its callers today: every public name, how each one is called, the type each one declares, what each one says about itself. The closing message says where the record is and asks you to commit it, because once the Python file is gone it cannot be taken again.",
+        "ordinal": "6",
+        "purpose": "Write down what the module promises, while the Python that promises it is still there to read.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/adopt/baseline",
+        "surface_name": "s0ma adopt baseline"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "One new file beside the module it came from, and a count of the work left in it: the structure is derived from your Python and every field that says what something is for arrives as a line for you to write. The Python file is read and not changed — it is still the code that runs — and because the baseline is already taken, the closing message names one command after this one rather than two.",
+        "ordinal": "7",
+        "purpose": "Take the first module on that order and turn it into a draft you can finish.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/adopt/draft",
+        "surface_name": "s0ma adopt draft"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "One line per module saying the surface is the same, or one line per difference: the name it is about, what moved in plain words, and the text before and after. What the build adds around your code — the registration, the generated header and import block, the order of __all__ — is not a difference. It exits non-zero on any finding, writes nothing anywhere, and ends by sending you to the project's own tests, which are the check it stands in for — and, while the Python file is still there, by printing the three things that finish the conversion: the lines that bind the module's old name to the built one, computed for this project's own layout, that the s0ma runtime has to be declared and installed, and that the build directory ships with the application from now on.",
+        "ordinal": "8",
+        "purpose": "Ask whether the module s0ma built still promises what the Python promised, before anything is deleted.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/adopt/verify-parity",
+        "surface_name": "s0ma adopt verify-parity"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "One screen, for somebody who has not read any of this: which rung of the ladder the project is on in plain words, how many of its modules are converted, half drafted, registered where they stand or still plain Python, how many baselines have been taken and what the comparison says about what has been built, which module is part way through, and one command to run next. Where more than one module is half converted the step is for the one furthest along, because finishing what is started beats starting another. It writes nothing.",
+        "ordinal": "9",
+        "purpose": "Come back to a retrofit that is only part way up the ladder and find out where it stands and what to do next.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "cli:s0ma/adopt/status",
+        "surface_name": "s0ma adopt status"
+      }
+    ],
+    "teaches": [
+      {
+        "concept": "concept:layer",
+        "term": "layer"
+      },
+      {
+        "concept": "concept:module",
+        "term": "module"
+      },
+      {
+        "concept": "concept:strictness-mode",
+        "term": "strictness mode"
+      },
+      {
+        "concept": "concept:adoption-ladder",
+        "term": "adoption ladder"
+      },
+      {
+        "concept": "concept:perimeter",
+        "term": "perimeter"
+      }
+    ],
+    "title": "Retrofitting an existing codebase"
+  },
+  "schema": "s0ma-docs-model@1"
+}

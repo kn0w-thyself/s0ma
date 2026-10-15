@@ -1,0 +1,39 @@
+Scanned: 11 modules across 1 package, 712 lines, 526 of them code.
+43 public things to convert; none of them are registered with s0ma yet.
+5 test files seen and left out of the numbers above.
+
+Perimeter it would declare (`s0ma adopt init` writes this):
+  source roots    src
+  bootstrap files src/bookshelf/__main__.py
+  package markers src/bookshelf/__init__.py
+  mode            migration
+
+Convert in this order, leaves first (10 modules):
+  module                             size   proposed layer
+  bookshelf.config                   medium DOMAIN (medium confidence)
+  bookshelf.errors                   medium DOMAIN (medium confidence)
+  bookshelf.models                   medium DOMAIN (high confidence)
+  bookshelf.notifications            medium yours to choose
+  bookshelf.storage                  medium INFRASTRUCTURE (low confidence)
+  bookshelf.catalog                  small  yours to choose
+  bookshelf.lending                  small  yours to choose
+  bookshelf                          small  package marker — nothing to convert
+  bookshelf.api                      medium PRESENTATION (low confidence)
+  bookshelf.cli                      small  PRESENTATION (high confidence)
+  Not in that list: src/bookshelf/__main__.py — declared above under `bootstrap_files`,
+  so it stays plain Python; a s0ma project names its entry points.
+
+Import cycles: none at load time. Every module can be converted after the ones it
+  imports, which is what makes the order above a plan rather than a suggestion.
+
+Worth knowing (1):
+  ADOPT_SCAN_DEFERRED_CYCLE · bookshelf.catalog — `bookshelf.catalog` and
+    `bookshelf.lending` refer to each other, and the only reason that is not a circle is
+    that `bookshelf.catalog` does its import inside a function instead of at the top of
+    the file. It has to stay that way: when you convert `bookshelf.catalog`, the import
+    belongs under `deferred_requires:` and not under `requires:`. Moving it up — or
+    letting a draft write it as an ordinary requirement — makes a circle the build will
+    refuse.
+
+Next: `s0ma adopt init` — it writes the perimeter above into pyproject.toml and touches
+  no application file.

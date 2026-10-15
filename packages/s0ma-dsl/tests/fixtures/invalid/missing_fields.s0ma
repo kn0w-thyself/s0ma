@@ -1,0 +1,30 @@
+module missing_fields
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Module with a nerve missing required fields"
+    exports: [broken_nerve]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve broken_nerve :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    expects: none
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def broken_nerve():
+        pass

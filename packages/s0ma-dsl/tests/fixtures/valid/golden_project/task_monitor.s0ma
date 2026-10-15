@@ -1,0 +1,41 @@
+module task_monitor
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Monitors task execution health and detects anomalies"
+    uses: [task_service.validate_task, task_service.execute_task, task_adapter.parse_task_json]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+ganglion watch_tasks :: APPLICATION
+    visibility: INTERNAL
+    intent: "Observes task processing nerves for anomaly detection"
+    observes: [validate_task, execute_task]
+    scope: SYSTEM
+    priors: "Task execution should complete within configured latency bounds"
+    on_anomaly: "Log warning and increment anomaly counter"
+    forbids: none
+    depends_on: none
+    covered_by: none
+    ---
+    def watch_tasks(signals: list) -> dict:
+        anomalies = [s for s in signals if s.get("latency_ms", 0) > 500]
+        return {"anomaly_count": len(anomalies), "total": len(signals)}
+
+ganglion watch_adapters :: APPLICATION
+    visibility: INTERNAL
+    intent: "Observes adapter nerves for format parsing errors"
+    observes: [parse_task_json]
+    scope: SUBSYSTEM
+    priors: "JSON parsing errors indicate upstream data quality issues"
+    on_anomaly: "Alert on parsing failure rate exceeding threshold"
+    forbids: none
+    depends_on: none
+    covered_by: none
+    ---
+    def watch_adapters(signals: list) -> dict:
+        failures = [s for s in signals if s.get("error")]
+        return {"failure_count": len(failures)}

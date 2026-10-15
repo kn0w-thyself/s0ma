@@ -1,0 +1,17 @@
+module example_missing_demonstrates
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Fixture with an example missing the mandatory demonstrates field."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+example bad_example
+    intent: "Example without demonstrates."
+    runs_in: standalone
+    ---
+    print("hello")

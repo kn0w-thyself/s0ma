@@ -1,0 +1,35 @@
+module class_in_nerve
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Module with a class body in a FUNCTION nerve declaration"
+    exports: [class_nerve]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve class_nerve :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FUNCTION nerve with a class body which is prohibited"
+    expects: "nothing"
+    guarantees: "nothing"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    class class_nerve:
+        def execute(self):
+            pass

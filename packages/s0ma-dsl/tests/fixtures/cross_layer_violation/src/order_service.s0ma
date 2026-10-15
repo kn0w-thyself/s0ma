@@ -1,0 +1,36 @@
+module order_service
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Application-layer service that orchestrates order processing logic and exposes the public process_order entry point."
+    exports: [process_order]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve process_order :: APPLICATION
+    kind: SERVICE
+    visibility: PUBLIC
+    intent: "Orchestrates the steps required to process a single order, returning a status string."
+    expects: "A non-empty order id string."
+    guarantees: "Returns one of 'queued' or 'rejected'."
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def process_order(order_id: str) -> str:
+        if not order_id:
+            return "rejected"
+        return "queued"

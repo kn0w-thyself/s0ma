@@ -1,0 +1,27 @@
+module constant_name_multiple_assignments
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Regression fixture for the CONSTANT_NAME_MISMATCH check
+        when a CONSTANT cell body holds several top-level assignments:
+        the cell name matches one of them, so the check passes, because
+        computed-constant patterns that assign to a private helper
+        before the public name are common and must not trip it."
+    requires: []
+    uses: []
+    exports: [FOO]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell FOO :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "A constant computed from a private helper value."
+    schema: "int constant — sum of two private base values"
+    invariants: none
+    covered_by: none
+    ---
+    _X = 21
+    _Y = 21
+    FOO: int = _X + _Y

@@ -1,0 +1,10 @@
+[project]
+name = "cache_pollution_project"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/cache_pollution_project"]
+test_roots = ["tests"]
+build_dir = "cache_pollution_project_build"
+bootstrap_files = []
+test_runner = "pytest"

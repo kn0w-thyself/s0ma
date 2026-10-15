@@ -1,0 +1,57 @@
+module duplicate_declaration
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Module with two declarations sharing the same name"
+    exports: [my_func]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve my_func :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "First declaration of my_func"
+    expects: "nothing"
+    guarantees: "nothing"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def my_func():
+        return 1
+
+nerve my_func :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Second declaration of my_func — duplicate name"
+    expects: "nothing"
+    guarantees: "nothing"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def my_func():
+        return 2

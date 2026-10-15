@@ -1,0 +1,947 @@
+{
+  "counts": {
+    "concepts": 39,
+    "with_examples": 0,
+    "with_related_concepts": 39,
+    "with_syntax": 19
+  },
+  "entries": [
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-DSL-6",
+        "authority:prd/FR-DSL-8",
+        "authority:prd/P-8",
+        "authority:prd/glossary.adoption-ladder"
+      ],
+      "id": "concept:adoption-ladder",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma"
+        ],
+        [
+          "requires",
+          "concept:strictness-mode"
+        ]
+      ],
+      "summary": "The five-rung path a working Python codebase takes to become a s0ma application, one rung at a time.",
+      "syntax_forms": 0,
+      "term": "adoption ladder"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-DSL-2",
+        "authority:prd/P-2",
+        "authority:prd/glossary.derived-edge"
+      ],
+      "id": "concept:authored-vs-generated-boundary",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:self-model"
+        ]
+      ],
+      "summary": "The line between what a person writes and what the build works out for itself, with no fact living on both sides of it.",
+      "syntax_forms": 0,
+      "term": "authored-vs-generated boundary"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/axon-declaration"
+      ],
+      "id": "concept:axon",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:uses"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ]
+      ],
+      "summary": "A written-down dependency between two parts: which one leans on which, why, and how tightly.",
+      "syntax_forms": 5,
+      "term": "axon"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/canonical-ir",
+        "authority:spec/intermediate-representation"
+      ],
+      "id": "concept:canonical-ir",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:registry-snapshot"
+        ]
+      ],
+      "summary": "The normalised record of one file's declarations that the build writes beside the code, for tools to read.",
+      "syntax_forms": 0,
+      "term": "canonical IR"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/cell-declaration"
+      ],
+      "id": "concept:cell",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:nerve"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:kind"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ],
+        [
+          "requires",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "A declared piece of structure — a data shape, a fixed value, a setting, a type, or an error kind — rather than a piece of behaviour.",
+      "syntax_forms": 7,
+      "term": "cell"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/build-pipeline",
+        "authority:spec/test-execution",
+        "authority:spec/validation-command"
+      ],
+      "id": "concept:check-and-build-loop",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:strictness-mode"
+        ]
+      ],
+      "summary": "The everyday cycle: check the source, build it, run the verifications, then ask the system what it now contains.",
+      "syntax_forms": 0,
+      "term": "check and build loop"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/nerve-declaration",
+        "authority:spec/primitive-vocabulary"
+      ],
+      "id": "concept:contract",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:intent"
+        ],
+        [
+          "part-of",
+          "concept:nerve"
+        ]
+      ],
+      "summary": "What a working part needs before it runs, what it promises afterwards, and what it must never do, declared beside the code that has to keep all three.",
+      "syntax_forms": 5,
+      "term": "contract"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/doc-guide-declaration"
+      ],
+      "id": "concept:doc-guide",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:doc-ref"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:executable-evidence"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ]
+      ],
+      "summary": "A written guide whose every factual claim about a named part is checked against the system rather than trusted.",
+      "syntax_forms": 9,
+      "term": "doc-guide"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/doc-ref-declaration"
+      ],
+      "id": "concept:doc-ref",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:doc-guide"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:executable-evidence"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ]
+      ],
+      "summary": "A reference page assembled entirely from what the system already knows about itself, carrying no prose of its own.",
+      "syntax_forms": 6,
+      "term": "doc-ref"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/drift-check"
+      ],
+      "id": "concept:drift",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:doc-guide"
+        ],
+        [
+          "requires",
+          "concept:doc-ref"
+        ]
+      ],
+      "summary": "The gap that opens when a written description and the thing it describes stop agreeing.",
+      "syntax_forms": 0,
+      "term": "drift"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-DSL-5",
+        "authority:prd/FR-DSL-7",
+        "authority:prd/P-3",
+        "authority:prd/P-4",
+        "authority:prd/section.problem-statement"
+      ],
+      "id": "concept:drift-gate",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma"
+        ],
+        [
+          "requires",
+          "concept:authored-vs-generated-boundary"
+        ],
+        [
+          "requires",
+          "concept:drift"
+        ]
+      ],
+      "summary": "The build step that refuses a change when the written record and the system it describes have parted.",
+      "syntax_forms": 0,
+      "term": "drift-gate"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:adr/repo.ADR-003",
+        "authority:prd/FR-CORE-1",
+        "authority:prd/FR-X-4",
+        "authority:prd/P-1",
+        "authority:prd/glossary.component",
+        "authority:prd/glossary.embodiment"
+      ],
+      "id": "concept:embodiment",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:cell"
+        ],
+        [
+          "requires",
+          "concept:integration"
+        ],
+        [
+          "requires",
+          "concept:nerve"
+        ],
+        [
+          "requires",
+          "concept:self-model"
+        ]
+      ],
+      "summary": "Bringing the physical parts of a machine inside the boundary of what a system knows about itself, as ordinary declared parts.",
+      "syntax_forms": 0,
+      "term": "embodiment"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/example-declaration"
+      ],
+      "id": "concept:example",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:test"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:executable-evidence"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ]
+      ],
+      "summary": "A short runnable demonstration, registered against the parts it teaches, that has to keep working.",
+      "syntax_forms": 6,
+      "term": "example"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/doc-validation-layers",
+        "authority:spec/documentation-declarations"
+      ],
+      "id": "concept:executable-evidence",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:registry-snapshot"
+        ]
+      ],
+      "summary": "The rule that every factual claim in a document is printed from the system, checked against it, or demonstrated by code that runs.",
+      "syntax_forms": 0,
+      "term": "executable evidence"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-FB-1",
+        "authority:prd/FR-FB-11",
+        "authority:prd/FR-FB-2",
+        "authority:prd/FR-FB-3",
+        "authority:prd/FR-FB-8",
+        "authority:prd/NFR-6"
+      ],
+      "id": "concept:feedback",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma"
+        ]
+      ],
+      "summary": "A report to the people who make s0ma, shown to you in full and sent only after you approve that exact report.",
+      "syntax_forms": 0,
+      "term": "feedback"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/ganglion-declaration"
+      ],
+      "id": "concept:ganglion",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:test"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ],
+        [
+          "requires",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "A declared watcher: it observes named parts of the system and judges what it sees against what it expected.",
+      "syntax_forms": 11,
+      "term": "ganglion"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/helper-declaration"
+      ],
+      "id": "concept:helper",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:nerve"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "A small private function inside one file, described but deliberately not registered as a part of the system.",
+      "syntax_forms": 5,
+      "term": "helper"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/integration-declaration"
+      ],
+      "id": "concept:integration",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "A declared adapter to an outside system, naming how to build it, how to check it is alive, and what it needs to run.",
+      "syntax_forms": 8,
+      "term": "integration"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/primitive-vocabulary"
+      ],
+      "id": "concept:intent",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:contract"
+        ]
+      ],
+      "summary": "The declared reason a part exists, required on every part without exception.",
+      "syntax_forms": 2,
+      "term": "intent"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-CORE-4",
+        "authority:prd/glossary.interoception",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:interoception",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:metacognition"
+        ],
+        [
+          "contrasts-with",
+          "concept:proprioception"
+        ],
+        [
+          "part-of",
+          "concept:self-knowledge"
+        ]
+      ],
+      "summary": "The runtime-state faculty: a system's sense of how it is behaving against how it said it would.",
+      "syntax_forms": 0,
+      "term": "interoception"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/kind-taxonomy"
+      ],
+      "id": "concept:kind",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:layer"
+        ],
+        [
+          "contrasts-with",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "The functional archetype of a part: what sort of working logic it is, or what sort of structure it holds.",
+      "syntax_forms": 4,
+      "term": "kind"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/layer-consistency",
+        "authority:spec/layer-reachability"
+      ],
+      "id": "concept:layer",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:kind"
+        ],
+        [
+          "contrasts-with",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "The architectural band a file and everything in it belongs to, and the rule about which bands may depend on which.",
+      "syntax_forms": 2,
+      "term": "layer"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-CORE-6",
+        "authority:prd/P-6",
+        "authority:prd/glossary.metacognition",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:metacognition",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:interoception"
+        ],
+        [
+          "contrasts-with",
+          "concept:proprioception"
+        ],
+        [
+          "part-of",
+          "concept:self-knowledge"
+        ],
+        [
+          "requires",
+          "concept:self-model"
+        ]
+      ],
+      "summary": "The reasoning faculty: answering questions by working over the system's own model rather than over its code.",
+      "syntax_forms": 0,
+      "term": "metacognition"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-MCP-10",
+        "authority:prd/FR-MCP-3",
+        "authority:prd/P-2",
+        "authority:prd/glossary.mirror"
+      ],
+      "id": "concept:mirror",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:authored-vs-generated-boundary"
+        ],
+        [
+          "requires",
+          "concept:drift-gate"
+        ]
+      ],
+      "summary": "A committed copy of a document, held identical to its one source by a check that fails when they part.",
+      "syntax_forms": 0,
+      "term": "mirror"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/module-declaration"
+      ],
+      "id": "concept:module",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "The header every s0ma source file opens with, naming the file and declaring everything that enters and leaves it.",
+      "syntax_forms": 5,
+      "term": "module"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/nerve-declaration"
+      ],
+      "id": "concept:nerve",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:cell"
+        ],
+        [
+          "contrasts-with",
+          "concept:helper"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:contract"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:kind"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ],
+        [
+          "requires",
+          "concept:visibility"
+        ]
+      ],
+      "summary": "A piece of working logic that carries its own account of what it does, what it needs, and what it promises.",
+      "syntax_forms": 11,
+      "term": "nerve"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-DSL-5",
+        "authority:prd/FR-DSL-8",
+        "authority:prd/P-8",
+        "authority:prd/glossary.perimeter"
+      ],
+      "id": "concept:perimeter",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:adoption-ladder"
+        ],
+        [
+          "requires",
+          "concept:strictness-mode"
+        ]
+      ],
+      "summary": "The line a project draws around the code s0ma answers for, and the files it deliberately leaves outside.",
+      "syntax_forms": 0,
+      "term": "perimeter"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-CORE-2",
+        "authority:prd/glossary.proprioception",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:proprioception",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:interoception"
+        ],
+        [
+          "contrasts-with",
+          "concept:metacognition"
+        ],
+        [
+          "part-of",
+          "concept:self-knowledge"
+        ]
+      ],
+      "summary": "The structural faculty: a system's sense of what it is made of and how it is wired together.",
+      "syntax_forms": 0,
+      "term": "proprioception"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/namespace-model",
+        "authority:spec/registry-storage"
+      ],
+      "id": "concept:registry-snapshot",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:canonical-ir"
+        ]
+      ],
+      "summary": "The live index of every part in a running system, each held under the full name that joins its file and itself.",
+      "syntax_forms": 0,
+      "term": "registry snapshot"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/FR-COM-4",
+        "authority:prd/FR-X-3",
+        "authority:prd/FR-X-5",
+        "authority:prd/NFR-3",
+        "authority:prd/glossary.release-channel"
+      ],
+      "id": "concept:release-channel",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:drift"
+        ]
+      ],
+      "summary": "Which build a page came from — a released version, a preview of work in progress, or a record kept for a version that has passed.",
+      "syntax_forms": 0,
+      "term": "release channel"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/dependency-categories"
+      ],
+      "id": "concept:requires",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:uses"
+        ],
+        [
+          "part-of",
+          "concept:module"
+        ]
+      ],
+      "summary": "The module header's list of code from outside the project — the ordinary Python imports, declared.",
+      "syntax_forms": 3,
+      "term": "requires:"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/INV-1",
+        "authority:prd/INV-2",
+        "authority:prd/section.product-thesis",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:s0ma",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:self-knowledge"
+        ]
+      ],
+      "summary": "The platform built on one idea: software should carry an accurate, queryable model of itself.",
+      "syntax_forms": 0,
+      "term": "s0ma"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/body-separator",
+        "authority:spec/declaration-types"
+      ],
+      "id": "concept:s0ma-file",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:module"
+        ]
+      ],
+      "summary": "One source file: a module header first, then declarations, each separated from its code by a line of three hyphens.",
+      "syntax_forms": 10,
+      "term": ".s0ma file"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/glossary.self-knowledge",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:self-knowledge",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:self-model"
+        ]
+      ],
+      "summary": "The umbrella faculty: a system's ability to hold an accurate, queryable model of itself.",
+      "syntax_forms": 0,
+      "term": "self-knowledge"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:prd/P-1",
+        "authority:prd/glossary.self-model",
+        "authority:prd/section.vision"
+      ],
+      "id": "concept:self-model",
+      "related_concepts": [
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:registry-snapshot"
+        ]
+      ],
+      "summary": "The queryable record of a system's parts, their relationships, and the documentation and examples attached to them.",
+      "syntax_forms": 0,
+      "term": "self-model"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/strictness-modes"
+      ],
+      "id": "concept:strictness-mode",
+      "related_concepts": [
+        [
+          "part-of",
+          "concept:check-and-build-loop"
+        ]
+      ],
+      "summary": "How severely the build treats its own findings, from forgiving during adoption to unforgiving before a release.",
+      "syntax_forms": 0,
+      "term": "strictness mode"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/test-declaration"
+      ],
+      "id": "concept:test",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:example"
+        ],
+        [
+          "contrasts-with",
+          "concept:ganglion"
+        ],
+        [
+          "part-of",
+          "concept:s0ma-file"
+        ],
+        [
+          "requires",
+          "concept:intent"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "A verification written as a declared part of the system, naming exactly which parts it checks.",
+      "syntax_forms": 6,
+      "term": "test"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/dependency-categories"
+      ],
+      "id": "concept:uses",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:axon"
+        ],
+        [
+          "contrasts-with",
+          "concept:requires"
+        ],
+        [
+          "part-of",
+          "concept:module"
+        ],
+        [
+          "requires",
+          "concept:layer"
+        ]
+      ],
+      "summary": "The module header's list of parts in other s0ma files that this file is allowed to reach.",
+      "syntax_forms": 2,
+      "term": "uses:"
+    },
+    {
+      "examples": [],
+      "governed_by": [
+        "authority:spec/visibility-system"
+      ],
+      "id": "concept:visibility",
+      "related_concepts": [
+        [
+          "contrasts-with",
+          "concept:kind"
+        ],
+        [
+          "contrasts-with",
+          "concept:layer"
+        ],
+        [
+          "requires",
+          "concept:module"
+        ]
+      ],
+      "summary": "Who may call a part from another file: everyone, nobody, or verification code only.",
+      "syntax_forms": 2,
+      "term": "visibility"
+    }
+  ],
+  "inventory": "concepts",
+  "schema": "s0ma-docs-inventory@1",
+  "source": {
+    "model_schema": "s0ma-docs-model@1",
+    "release_version": "0.19.1",
+    "snapshot_hash": "sha256:46cb0cce5f7c07cf"
+  }
+}

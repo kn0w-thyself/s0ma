@@ -1,0 +1,38 @@
+# adopt_source: src/bookshelf/__main__.py@sha256:50fd328dfe5b5339a9958444940e9ce45b9764dbb7b130cc25f3a966ccb706a8
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module __main__` rather than
+#   `bookshelf.__main__`. Every module name in a project must be unique; rename the draft if
+#   another module already carries this name.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+# note: `bookshelf.cli` is another module of this project that is not a .s0ma module yet, so it
+#   is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+module __main__
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports: none
+
+    requires: [bookshelf.cli:main]
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell ADOPT_UNPLACED_0005_0006 :: DOMAIN
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "Source the retrofit could not place. Move it into a declaration, then delete this."
+    schema: "adopt: unplaced - src/bookshelf/__main__.py lines 5-6 - the `if __name__` guard that runs this file as a script; a s0ma project names its entry points in [tool.s0ma] bootstrap_files instead"
+    invariants: none
+    covered_by: none
+    ---
+    ADOPT_UNPLACED_0005_0006 = r"""if __name__ == "__main__":
+        raise SystemExit(main())
+    """

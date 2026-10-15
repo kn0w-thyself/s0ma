@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "author": {
+    "name": "kn0wthyself",
+    "url": "https://kn0wthyself.ai"
+  },
+  "description": "Gives Claude a living model of what your project is made of - what each part is for, what it depends on, and why - so answers about your software come from the software itself.",
+  "homepage": "https://kn0wthyself.ai",
+  "keywords": [
+    "s0ma",
+    "self-knowledge",
+    "self-model",
+    "architecture",
+    "documentation",
+    "python"
+  ],
+  "license": "Apache-2.0",
+  "name": "s0ma",
+  "repository": "https://github.com/kn0w-thyself/claude-plugins",
+  "userConfig": {
+    "license_key": {
+      "description": "Your key from account.kn0wthyself.ai. It is kept in this computer's secure storage, never written into a settings file, and never shown in a conversation. Leave it empty if you run s0ma from its source code.",
+      "required": false,
+      "sensitive": true,
+      "title": "s0ma license key",
+      "type": "string"
+    },
+    "update": {
+      "default": "auto",
+      "description": "auto: fetch a newer s0ma in the background and start using it next time. notify: say when a newer one exists and leave the choice to you. off: never look.",
+      "title": "How s0ma keeps itself current",
+      "type": "string"
+    },
+    "uv_path": {
+      "default": "uv",
+      "description": "Only needed if s0ma cannot find uv by itself. Run `command -v uv` in a terminal and paste what it prints.",
+      "title": "Where uv lives on this computer",
+      "type": "string"
+    }
+  },
+  "version": "0.19.1"
+}

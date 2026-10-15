@@ -1,0 +1,12 @@
+[project]
+name = "project_with_bootstrap"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/sample_app"]
+test_roots = ["tests"]
+build_dir = "project_with_bootstrap_build"
+bootstrap_files = [
+    "src/sample_app/main.py",
+    "src/sample_app/bootstrap/startup.py",
+]

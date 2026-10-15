@@ -1,0 +1,9 @@
+[project]
+name = "cross_layer_violation"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = []
+build_dir = "cross_layer_violation_build"
+bootstrap_files = []

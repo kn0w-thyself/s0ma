@@ -1,0 +1,77 @@
+# adopt_source: report.py@sha256:3ced8a2e96ba3fa07b441810062a9acfb0f4f8a4643094a78cbf1313526825bf
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: `StockReport` is a plain class, so the draft calls it a cell of kind MODEL. If it is
+#   really a service or an adapter over something outside the program, make it a nerve of
+#   kind SERVICE or ADAPTER instead.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+# note: `inventory` is another module of this project that is not a .s0ma module yet, so it is
+#   declared as a plain Python import rather than as a uses: entry. Convert leaf-first and
+#   move it to uses: once that module is converted.
+module report
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'Plain-text stock reports for the corner-shop script.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports: [StockReport, render]
+
+    requires: [inventory]
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: [textwrap:indent]
+    exports_helpers: none
+
+cell StockReport :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class StockReport:
+        """A formatted view of one stock table."""
+
+        def __init__(self, stock: dict[str, int]) -> None:
+            self.stock = dict(stock)
+
+        def lines(self) -> list[str]:
+            """One ``name: count`` line per item, in alphabetical order."""
+            return [f"{name}: {count}" for name, count in sorted(self.stock.items())]
+
+        def warnings(self) -> list[str]:
+            """One line per item that has fallen to the low-stock threshold."""
+            return [f"low stock: {name}" for name in inventory.low_stock(self.stock)]
+
+nerve render :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def render(stock: dict[str, int]) -> str:
+        """Render the whole report; no date, so the same stock reads the same."""
+        from textwrap import indent
+
+        report = StockReport(stock)
+        body = "\n".join([*report.lines(), *report.warnings()])
+        heading = f"Stock report ({inventory.total_units(stock)} units, {inventory.CURRENCY_CODE})"
+        return heading + "\n" + indent(body, "  ")

@@ -1,0 +1,430 @@
+# s0ma release workflow (M6). Runs on every `v*` tag push.
+#
+#   check   — the same full gate as CI (`scripts/check.py`: ruff,
+#             mypy --strict on all four packages, all four test
+#             suites, INV-1 spelling guard) on the Python
+#             3.11/3.12/3.13 matrix, against the tagged commit.
+#   verify-docs-identity
+#           — opens the wheels this tag would ship and requires the
+#             documentation inside them to be the documentation this
+#             commit composed (doc-function-1 H2). It gates `release`,
+#             so a disagreement stops the tag before ANYTHING is
+#             published or mirrored. Verification only: it builds
+#             wheels into a temporary directory, reads them, and
+#             uploads nothing. ARMED BY THE OWNER — see the job.
+#   release — guards that the tag matches the lockstep package version
+#             (INV-4), builds wheels + sdists for every workspace
+#             package, extracts the matching `## [<version>]` section
+#             from the root CHANGELOG.md, and creates a GitHub Release
+#             with the artifacts attached and that section as the
+#             release notes. A missing CHANGELOG section fails the
+#             release — stamp before tagging (see docs/RELEASING.md).
+#
+# PyPI publishing is deliberately NOT enabled — see the commented-out
+# stub at the bottom of this file.
+#
+# uv is pinned to the version the repo was consolidated with; bump it
+# deliberately, together with the lockfile (keep in sync with ci.yml).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv (Python ${{ matrix.python-version }})
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          version: "0.9.21"
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - name: Sync workspace (all packages, all extras)
+        run: uv sync --all-packages --all-extras
+
+      # The tag, stated to the gate as a value. This workflow fires only on
+      # `v*` tag pushes, so `github.ref_name` is always the tag this run is
+      # for and there is no branch case to guard. The `docs-application`
+      # stage follows the committed manifest's own claim (doc-function-1
+      # H2c): a release-composed tree gates only where the release tag is
+      # stated, and a tag push is where it is stated. Nothing looks a tag
+      # up. `ci.yml` needs no counterpart to this and deliberately has
+      # none — its trees are main and pull requests, they claim `preview`,
+      # and an absent variable is the correct answer there.
+      - name: Run the unified check pipeline
+        env:
+          S0MA_HEAD_TAG: ${{ github.ref_name }}
+        run: uv run python scripts/check.py
+
+  verify-docs-identity:
+    name: verify the wheels carry this release's documentation
+    runs-on: ubuntu-latest
+    needs: check
+    # Read-only by construction: no `permissions:` beyond the workflow's
+    # `contents: read`, no secrets, no registry, no bucket. It builds the
+    # four wheels into a temporary directory, opens them, and compares what
+    # they carry with `docs/_generated/docs-manifest.json` from this same
+    # checkout. Nothing it does is visible outside the runner.
+    steps:
+      - uses: actions/checkout@v6
+
+      # The same shape as the `mirror-r2` and `verify-served` gates below,
+      # and for the same reason: the JOB always runs so that everything
+      # downstream of it keeps running, and a switch decides whether the
+      # verification steps do. A job skipped by `if:` skips its dependents
+      # too, which would take the whole release with it.
+      #
+      # ☐ OWNER — arming this is one action; its prerequisite is now met.
+      #   The prerequisite was that a release compose declare the channel
+      #   it is composing in, so that a tagged commit's documentation says
+      #   `release` rather than `preview`. It does: `s0ma docs compose
+      #   --head-tag vX.Y.Z` states the tag as a value (H2b), and the
+      #   `check` job above states the same tag to `scripts/check.py`, whose
+      #   documentation stage follows the committed manifest's claim (H2c).
+      #   A cut that follows docs/RELEASING.md step 4 therefore produces a
+      #   release manifest that passes both gates. A tagged commit whose
+      #   documentation was composed as a preview still fails here, which
+      #   is what this gate is for. The action: set the repository variable
+      #   `S0MA_DOCS_IDENTITY_GATE` to `on` (Settings -> Secrets and
+      #   variables -> Actions -> Variables). Unset it to disarm.
+      - name: Check whether the documentation-identity gate is armed
+        id: armed
+        env:
+          GATE: ${{ vars.S0MA_DOCS_IDENTITY_GATE }}
+        run: |
+          if [ "${GATE:-}" = "on" ]; then
+            echo "on=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "on=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Documentation-identity gate not armed::S0MA_DOCS_IDENTITY_GATE is not set to 'on', so nothing checked that the wheels this tag ships carry the documentation this commit composed. The wheels may embed a teaching slice and a served snapshot from an earlier build, and every identity line they serve may name a release this is not. Run it locally to see what it would say: uv run python scripts/wheel_smoke.py --docs-identity-only --head-tag ${GITHUB_REF_NAME}. Arming it is described in docs/RELEASING.md."
+          fi
+
+      - name: Install uv
+        if: steps.armed.outputs.on == 'true'
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          version: "0.9.21"
+          python-version: "3.12"
+
+      - name: Sync workspace (all packages, all extras)
+        if: steps.armed.outputs.on == 'true'
+        run: uv sync --all-packages --all-extras
+
+      # Three assertions, all against docs/_generated/docs-manifest.json in
+      # this checkout (doc-function-1 H2, architecture §13.1):
+      #
+      #   1. the s0ma-core wheel's embedded teaching slice names the
+      #      manifest's snapshot_hash, and its bytes are the manifest's
+      #      core-teaching-slice.json artifact;
+      #   2. the s0ma-mcp wheel's s0ma_mcp/_docs payload is the cataloged
+      #      sources — the two the build reads are bound by their full
+      #      digest in source_hashes, the rest by byte equality with the
+      #      cataloged source and by catalog membership in the snapshot the
+      #      wheel itself carries;
+      #   3. every wheel is at the manifest's product_version, no artifact
+      #      row comes from another build, and the identity line the
+      #      payloads render is this release's.
+      #
+      # The tag is passed as a VALUE (`--head-tag`): the channel rule is a
+      # pure function of the version and the tag, and nothing in the
+      # verification looks a tag up. A tagged commit whose documentation
+      # was composed as a preview fails here — see the arming note above.
+      - name: Verify the wheels carry this release's documentation
+        if: steps.armed.outputs.on == 'true'
+        run: |
+          uv run python scripts/wheel_smoke.py \
+            --docs-identity-only \
+            --head-tag "${GITHUB_REF_NAME}"
+
+  release:
+    name: build + GitHub Release
+    runs-on: ubuntu-latest
+    # `verify-docs-identity` is listed alongside `check` rather than in
+    # place of it: the transitive dependency would run the same jobs, and
+    # naming both says out loud that a release passes the full gate AND
+    # proves its wheels describe themselves before it publishes anything.
+    needs: [check, verify-docs-identity]
+    permissions:
+      contents: write # create the GitHub Release and attach assets
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          version: "0.9.21"
+          python-version: "3.12"
+
+      - name: Verify the tag matches the lockstep version (INV-4)
+        run: |
+          uv run --no-project python - "${GITHUB_REF_NAME}" <<'EOF'
+          import pathlib
+          import sys
+          import tomllib
+
+          tag = sys.argv[1]
+          version = tag.removeprefix("v")
+          mismatches = []
+          for pkg in ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0"):
+              pyproject = pathlib.Path("packages", pkg, "pyproject.toml")
+              with pyproject.open("rb") as fh:
+                  found = tomllib.load(fh)["project"]["version"]
+              if found != version:
+                  mismatches.append(f"{pyproject}: {found} != {version}")
+          if mismatches:
+              sys.exit("tag/version mismatch (INV-4):\n  " + "\n  ".join(mismatches))
+          print(f"tag {tag} matches lockstep version {version} in all four packages")
+          EOF
+
+      - name: Build every workspace package (wheel + sdist into dist/)
+        run: uv build --all-packages
+
+      - name: Assert all four packages built at the tag version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          for pkg in s0ma_core s0ma_dsl s0ma_mcp s0ma_studi0; do
+            ls "dist/${pkg}-${version}-py3-none-any.whl" "dist/${pkg}-${version}.tar.gz"
+          done
+
+      - name: Extract release notes from the root CHANGELOG
+        run: |
+          uv run --no-project python - "${GITHUB_REF_NAME#v}" <<'EOF' > release-notes.md
+          import pathlib
+          import re
+          import sys
+
+          version = sys.argv[1]
+          text = pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8")
+          # The section starts at `## [<version>]` and runs to the next `## [` heading.
+          pattern = rf"^## \[{re.escape(version)}\][^\n]*\n(.*?)(?=^## \[|\Z)"
+          match = re.search(pattern, text, flags=re.MULTILINE | re.DOTALL)
+          if match is None:
+              sys.exit(
+                  f"CHANGELOG.md has no `## [{version}]` section — "
+                  "stamp the changelog before tagging (docs/RELEASING.md)."
+              )
+          print(match.group(1).strip())
+          EOF
+          echo "--- release-notes.md ---"
+          cat release-notes.md
+
+      - name: Create the GitHub Release (artifacts attached, CHANGELOG as notes)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --title "s0ma ${GITHUB_REF_NAME#v}" \
+            --notes-file release-notes.md \
+            --verify-tag
+
+  mirror-r2:
+    name: mirror wheels + manifest to R2 (s0ma-dist)
+    runs-on: ubuntu-latest
+    # Depends on a GREEN wheel build + GitHub Release (HOST-H5). Only fires on a
+    # real tag release: the workflow's `on: push: tags: ["v*"]` trigger already
+    # guarantees that, and this `if` makes the tag gating explicit (never runs
+    # for a branch ref, a dry-run, or a PR).
+    needs: release
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v6
+
+      # The R2 push is a MANUAL gate today: `CF_API_TOKEN` is deliberately not
+      # set, which used to fail this job red on every tag. A permanently-red job
+      # is indistinguishable from a genuinely broken mirror, so detect the
+      # missing secret up front and skip the R2-specific steps with a loud
+      # notice instead. The wheel build + four-wheel assertion below still run
+      # on every tag, so a tag never silently stops proving the wheels build.
+      - name: Check for R2 credentials
+        id: r2creds
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: |
+          if [ -n "${CF_API_TOKEN:-}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=R2 mirror skipped::CF_API_TOKEN is not set, so the wheels were NOT mirrored to R2 and prod still serves the previous latest. Run scripts/mirror_to_r2.sh manually, or set the CF_API_TOKEN repo secret to mirror automatically on every tag."
+          fi
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          version: "0.9.21"
+          python-version: "3.12"
+
+      # Rebuild the wheels here (deterministic from the tagged commit) so the
+      # mirror job has the four artifacts locally. The build is the same
+      # `uv build --all-packages` the `release` job ran and verified green.
+      - name: Build every workspace package (wheel + sdist into dist/)
+        run: uv build --all-packages
+
+      - name: Assert all four wheels built at the tag version
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          for pkg in s0ma_core s0ma_dsl s0ma_mcp s0ma_studi0; do
+            ls "dist/${pkg}-${version}-py3-none-any.whl"
+          done
+
+      - name: Install Wrangler (R2 upload client)
+        if: steps.r2creds.outputs.present == 'true'
+        # Wrangler v4 is REQUIRED: mirror_to_r2.sh passes `--remote` on every
+        # r2 object command, a v4-only flag. Under v3 the unknown-flag error
+        # went to stderr, r2_get's `|| true` swallowed it, and the guard
+        # (correctly) refused the resulting empty manifest read (v0.18.0
+        # first-fire, run 33202570095).
+        run: npm install -g wrangler@4
+
+      # Mirror the four wheels + a merged manifest.json into R2 bucket
+      # `s0ma-dist`, in the exact HOST-H4 object layout the control-plane
+      # distribution endpoint serves. Idempotent + immutable: existing
+      # `dist/<version>/` wheels are never overwritten; the only re-run mutation
+      # is rewriting `dist/manifest.json` (merge this version, set `latest`).
+      #
+      # OWNER ACTION: set the `CF_API_TOKEN` GitHub Actions secret to a
+      # Cloudflare **User API Token** with `Account -> Workers R2 Storage ->
+      # Edit`. NOT a token from the R2 dashboard's "Manage R2 API Tokens"
+      # flow: those are S3-compatible credentials and fail every r2 REST call
+      # with a 403 code 10000, even when the dashboard shows Object Read &
+      # Write on the correct bucket (verified 2026-08-18). This is broader
+      # than plan D-8's bucket-only intent; see scripts/mirror_to_r2.sh for
+      # why D-8 is not achievable via `wrangler r2 object put`. The script
+      # exports it as CLOUDFLARE_API_TOKEN for Wrangler.
+      - name: Mirror wheels + manifest to R2
+        if: steps.r2creds.outputs.present == 'true'
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          # A least-privilege R2-scoped token cannot auto-discover its account,
+          # so Wrangler needs the account id explicitly (otherwise the R2 put
+          # fails to resolve the account in CI). Account ids are not
+          # secrets, but this repository is public, so the id comes from a
+          # repository variable rather than being written here. Create it
+          # before the first release cut: `gh variable set
+          # CLOUDFLARE_ACCOUNT_ID`.
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          scripts/mirror_to_r2.sh \
+            --version "${GITHUB_REF_NAME#v}" \
+            --dist-dir dist \
+            --bucket s0ma-dist
+
+  verify-served:
+    name: verify what prod actually serves
+    runs-on: ubuntu-latest
+    # The mirror job proves the upload ran; nothing proved the RESULT. This
+    # job asks the control plane, from the outside and with a real tester
+    # key, what it now serves: the manifest's `latest`, the four wheels'
+    # bytes, and the publicly served installer. Tag refs only, for the same
+    # reason mirror-r2 is tag-gated (never a branch ref, dry run, or PR).
+    needs: mirror-r2
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v6
+
+      # Same shape as the mirror job's `r2creds` gate above: `S0MA_SMOKE_KEY`
+      # is an owner-provisioned secret that may not be set yet, and a
+      # permanently-red job is indistinguishable from a genuinely broken
+      # release. Detect the missing secret up front and skip the check with a
+      # loud notice instead.
+      - name: Check for the smoke-tester key
+        id: smokekey
+        env:
+          S0MA_SMOKE_KEY: ${{ secrets.S0MA_SMOKE_KEY }}
+        run: |
+          if [ -n "${S0MA_SMOKE_KEY:-}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Served-release verification skipped::S0MA_SMOKE_KEY is not set, so nothing checked what account.kn0wthyself.ai actually serves for this tag — a green release here does not mean testers can install it. Provision the smoke tester and store its license key as the S0MA_SMOKE_KEY repository secret (owner runbook: docs/hosting-getting-started.md section 6), or run scripts/verify_served.sh locally."
+          fi
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.2.0
+        with:
+          version: "0.9.21"
+          python-version: "3.12"
+
+      # The wheels are rebuilt only to give the verifier a local side to
+      # compare the SERVED bytes against (--dist-dir). Unlike mirror-r2, this
+      # build is gated on the secret: with no key there is nothing to compare
+      # it with, and the release + mirror jobs already proved the build.
+      - name: Build every workspace package (wheel + sdist into dist/)
+        if: steps.smokekey.outputs.present == 'true'
+        run: uv build --all-packages
+
+      # Installer drift (exit 2) is DOWNGRADED to a notice: control-plane
+      # deploys are manual (hardening plan R10/R11), so a stale served
+      # installer is an owner to-do, not a broken release. Every other
+      # non-zero class — manifest/auth (3), wrong latest (4), wheel list (5),
+      # wheel bytes (6), unfetchable installer (7) — fails this job red.
+      # `set +e` is needed because the default shell is `bash -eo pipefail`.
+      - name: Verify the served manifest, wheels, and installer
+        if: steps.smokekey.outputs.present == 'true'
+        env:
+          S0MA_SMOKE_KEY: ${{ secrets.S0MA_SMOKE_KEY }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          set +e
+          scripts/verify_served.sh --version "$version" --dist-dir dist
+          rc=$?
+          set -e
+          case "$rc" in
+            0)
+              echo "prod serves ${version}: manifest, all four wheels, and the installer verified."
+              ;;
+            2)
+              echo "::notice title=Served installer drift::CP deploy pending — served installer differs from canon. The release itself verified (manifest latest is ${version} and all four wheels match). Control-plane deploys are manual (R10/R11): deploy the control-plane site, then re-run scripts/verify_served.sh to confirm the drift is gone."
+              ;;
+            *)
+              echo "::error title=Prod does not serve this release::scripts/verify_served.sh exited ${rc} — see the failing check above (exit classes are documented in the script header)."
+              exit "$rc"
+              ;;
+          esac
+
+  # TODO: enable after PyPI account/trusted-publisher setup
+  # (https://docs.pypi.org/trusted-publishers/). Owner ruling O-5, 2026-09-18:
+  # All four packages are published, starting with the first release cut
+  # from the PUBLIC repository, and nothing built from the private source tree
+  # is ever published — the documentation snapshot inside a wheel built there
+  # lists private planning documents by title, and only the public export
+  # strips them. So this job publishes the four packages, and only when
+  # it runs in the public repository. Register all four projects with
+  # that repository + this workflow + the `pypi` environment, then uncomment;
+  # OIDC means no long-lived token. The bare name `s0ma` is to be held by an
+  # umbrella distribution (PRD NFR-8); add it to this job when it exists.
+  #
+  # publish-pypi:
+  #   name: publish the four packages to PyPI
+  #   if: github.repository == 'kn0w-thyself/s0ma'
+  #   runs-on: ubuntu-latest
+  #   needs: release
+  #   environment: pypi
+  #   permissions:
+  #     id-token: write # OIDC for trusted publishing
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #
+  #     - name: Install uv
+  #       uses: astral-sh/setup-uv@v8.2.0
+  #       with:
+  #         version: "0.9.21"
+  #         python-version: "3.12"
+  #
+  #     - name: Build every workspace package
+  #       run: uv build --all-packages
+  #
+  #     - name: Publish the four distributions, and only those
+  #       run: uv publish dist/s0ma_core-* dist/s0ma_dsl-* dist/s0ma_mcp-* dist/s0ma_studi0-*

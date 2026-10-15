@@ -1,0 +1,13 @@
+Topic: concept:nerve
+Release: 0.18.1 (preview)
+Snapshot: sha256:7730325659b12fd5
+Examples: none recorded
+Decided by: authority:spec/nerve-declaration
+
+In short:
+  A piece of working logic that carries its own account of what it does,
+  what it needs, and what it promises.
+
+Read more:
+  the full page for concept:nerve carries every fact left out here, word
+  for word.

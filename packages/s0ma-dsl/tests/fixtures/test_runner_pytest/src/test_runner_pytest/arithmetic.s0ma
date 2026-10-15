@@ -1,0 +1,59 @@
+module arithmetic
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Tiny arithmetic helpers used by the test-runner-discovery fixture."
+    exports: [add, divide]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve add :: DOMAIN
+    kind: FUNCTION
+    intent: "Return the sum of two integers."
+    expects: "two ints a, b"
+    guarantees: "returns int(a + b)"
+    forbids: none
+    visibility: PUBLIC
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def add(a: int, b: int) -> int:
+        return a + b
+
+nerve divide :: DOMAIN
+    kind: FUNCTION
+    intent: "Return integer quotient; raises ValueError on divide-by-zero (built-in)."
+    expects: "two ints a, b"
+    guarantees: "returns int(a // b) or raises ValueError"
+    forbids: none
+    visibility: PUBLIC
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def divide(a: int, b: int) -> int:
+        if b == 0:
+            raise ValueError("divide by zero")
+        return a // b

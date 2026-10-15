@@ -1,0 +1,23 @@
+module constant_name_match
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Smoke fixture for the CONSTANT_NAME_MISMATCH check: the
+        cell declaration name and the body's top-level assignment target
+        agree, so the validator must emit zero diagnostics for this code."
+    requires: []
+    uses: []
+    exports: [VIZ_TEMPLATE]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell VIZ_TEMPLATE :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "A small HTML5 template embedded inline."
+    schema: "string of HTML5 markup"
+    invariants: none
+    covered_by: none
+    ---
+    VIZ_TEMPLATE = """<!doctype html><html><body><h1>ok</h1></body></html>"""

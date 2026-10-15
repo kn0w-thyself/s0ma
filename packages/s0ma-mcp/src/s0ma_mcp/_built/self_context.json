@@ -1,0 +1,1708 @@
+{
+  "build_health": {
+    "basis": "live runtime facts are not observed during deterministic build",
+    "status": "unknown"
+  },
+  "components": [
+    {
+      "dependencies": [],
+      "id": "prompts::AUTHOR_MODULE_TEMPLATE",
+      "intent": {
+        "state": "value",
+        "value": "The author-a-new-module journey's framing: the golden rule, the survival card, the argument shapes the journey record does not carry, and the edit-and-recheck work that happens between the recorded steps. The steps themselves are NOT here — __JOURNEY_STEPS__ is where journey:mcp-authoring-loop renders in, from the record."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "id": "prompts::DIAGNOSE_FAULT_TEMPLATE",
+      "intent": {
+        "state": "value",
+        "value": "The look-inward-first runtime fault journey: observed symptom, project_status runtime context, runbook, suspect and dependency-neighbor inspection, host evidence when needed, and a live-behavior probe that preserves durable state."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "id": "prompts::FEEDBACK_TEMPLATE",
+      "intent": {
+        "state": "value",
+        "value": "The send-feedback-to-the-s0ma-team journey's prompt copy: identify what the user is actually reporting, confirm it is meant for s0ma when their words never named it, draft from evidence and nothing else, prepare, show the exact feedback data and what redaction removed, submit only through the client's approval form, and relay the receipt or the saved draft."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "id": "prompts::FIX_CHECK_FAILURES_TEMPLATE",
+      "intent": {
+        "state": "value",
+        "value": "The fix-check-failures journey's prompt copy: run check, group structured diagnostics by code, look codes up in the error catalog, apply remediations in severity order, re-check until clean."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "id": "prompts::MIGRATE_PROJECT_TEMPLATE",
+      "intent": {
+        "state": "value",
+        "value": "The migrate-a-legacy-project journey's prompt copy: migrate_ext dry-run plan, present, apply, rebuild, and check until clean."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "id": "prompts::PROMPT_JOURNEYS",
+      "intent": {
+        "state": "value",
+        "value": "Which served prompt walks which recorded journey: a prompt named here renders its steps from the journey record, so adding, removing or rewording a step in the model is the only way to change what the prompt says."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "id": "prompts::PROMPT_WITHOUT_JOURNEY",
+      "intent": {
+        "state": "value",
+        "value": "Why each of the other served prompts is still authored rather than bound to a journey. Written down because 'this prompt is not bound' and 'somebody forgot to bind this prompt' look identical from outside, and only one of them is a decision."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "prompts"
+    },
+    {
+      "dependencies": [
+        "prompts::AUTHOR_MODULE_TEMPLATE",
+        "prompts::PROMPT_JOURNEYS",
+        "prompts::journey_ladder"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root and module_name are non-empty; kind, when given, is a scaffold-recognized nerve kind"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never renders the authoring steps from a copy in its own text instead of the journey:mcp-authoring-loop record."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the rendered journey text with every placeholder marker substituted, its numbered steps identical to the ones journey:mcp-authoring-loop records"
+      },
+      "id": "prompts::author_module_prompt",
+      "intent": {
+        "state": "value",
+        "value": "Walks an agent through authoring one new module end to end, rendering the steps of journey:mcp-authoring-loop from the record rather than from a copy in the prompt text, wrapped in the framing the record does not carry: the golden rule, the survival card, the argument shapes, and the editing that happens between steps"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_dependency": [
+          "s0ma://guide/quick-reference",
+          "s0ma://docs/journeys",
+          "scaffold_module",
+          "check",
+          "transpile",
+          "build_project",
+          "inspect_module"
+        ],
+        "mcp_prompt_title": "Author a new s0ma module"
+      },
+      "module": "prompts"
+    },
+    {
+      "dependencies": [
+        "prompts::DIAGNOSE_FAULT_TEMPLATE"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root and fault are non-empty"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the look-inward-first diagnostic journey with the project root and observed fault substituted"
+      },
+      "id": "prompts::diagnose_fault_prompt",
+      "intent": {
+        "state": "value",
+        "value": "Guides an agent from an observed runtime fault through project_status, declared runtime/runbook context, suspect and dependency-neighbor inspection, host evidence when needed, and a state-preserving live behavior probe."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_dependency": [
+          "project_status",
+          "s0ma://project/runbook",
+          "inspect_module",
+          "verify_host"
+        ],
+        "mcp_prompt_title": "Diagnose an observed runtime fault"
+      },
+      "module": "prompts"
+    },
+    {
+      "dependencies": [
+        "prompts::FEEDBACK_TEMPLATE"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "message, when given, is the user's own account of what they want reported; an absent message means the journey opens by asking for it"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the rendered journey text with no placeholder marker left behind, whether or not a message was supplied"
+      },
+      "id": "prompts::feedback_prompt",
+      "intent": {
+        "state": "value",
+        "value": "Walks an agent through carrying one piece of the user's own feedback to the s0ma team: identify it, confirm it is about s0ma when the user never said so, draft from evidence, prepare, show the exact feedback data and what redaction removed, submit only through the client's approval form, and relay the receipt or the saved draft"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_dependency": [
+          "prepare_feedback",
+          "submit_feedback"
+        ],
+        "mcp_prompt_title": "Send feedback to the s0ma team"
+      },
+      "module": "prompts"
+    },
+    {
+      "dependencies": [
+        "prompts::FIX_CHECK_FAILURES_TEMPLATE"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is non-empty"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the rendered journey text with the project root substituted"
+      },
+      "id": "prompts::fix_check_failures_prompt",
+      "intent": {
+        "state": "value",
+        "value": "Walks an agent through diagnosing and clearing check failures: group structured diagnostics by code, fix highest severity first via each remediation, re-check until clean"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_dependency": [
+          "check",
+          "s0ma://guide/errors"
+        ],
+        "mcp_prompt_title": "Fix s0ma check failures"
+      },
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "journey_id names a journey the packaged documentation snapshot records"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never invents a step, or a path for a journey the packaged documentation snapshot does not record."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the steps in walking order, every word of them read from the record; a journey this build does not record renders as nothing rather than as an invented path"
+      },
+      "id": "prompts::journey_ladder",
+      "intent": {
+        "state": "value",
+        "value": "Renders one recorded journey as the numbered ladder a prompt teaches: each step's call, why it is taken and what a good result looks like, any approval it needs, then the named things that can go wrong and what to do about each"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_dependency": [
+          "s0ma://docs/journeys"
+        ]
+      },
+      "module": "prompts"
+    },
+    {
+      "dependencies": [
+        "prompts::MIGRATE_PROJECT_TEMPLATE"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is non-empty"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the rendered journey text with the project root substituted"
+      },
+      "id": "prompts::migrate_project_prompt",
+      "intent": {
+        "state": "value",
+        "value": "Walks an agent through migrating a pre-consolidation project: migrate_ext dry-run, present the plan, apply, rebuild, and check until clean"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_dependency": [
+          "migrate_ext",
+          "build_project",
+          "check"
+        ],
+        "mcp_prompt_title": "Migrate a legacy s0ma project"
+      },
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "id": "prompts::test_prompts_render_with_arguments_substituted",
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that every journey prompt renders its embedded template with the client's arguments substituted and no placeholder marker left behind — the rendering nerves' guarantee, exercised on the built module pytest imports; the feedback journey additionally renders with its one argument absent, the case whose whole point is that the agent is told to ask rather than to invent; and the PROMPT_JOURNEYS binding is proved from the record, so a journey step edited in the model reaches the served prompt or turns this red."
+      },
+      "kind": "test",
+      "layer": "PRESENTATION",
+      "module": "prompts"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::DOCS_CATEGORY_WORDS",
+      "intent": {
+        "state": "value",
+        "value": "What each id prefix in the snapshot is, in one reader's phrase — the only authored words in the docs index, because the snapshot records categories by prefix and says nothing about what a prefix means. Counts, prefixes and page paths beside them are all read from the snapshot; a prefix with no phrase here still gets its own line, so a new category can never go missing from the index unnoticed."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::DOCS_MAP_PAGE",
+      "intent": {
+        "state": "value",
+        "value": "The generated map of record — the page that lists every current document — used as the last-resort answer to 'where do I read more' for a topic no single page is written about."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::DOCS_MODEL_FILENAME",
+      "intent": {
+        "state": "value",
+        "value": "The packaged documentation snapshot's filename inside s0ma_mcp/_docs, so a wheel install answers documentation questions from the release it is, not from a checkout it does not have."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::DOCS_MODEL_SOURCE",
+      "intent": {
+        "state": "value",
+        "value": "The in-repo snapshot the packaged copy is a byte mirror of, named once here so the drift gate and the refresh instruction cannot disagree about which file to copy."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::DOCS_ROOT",
+      "intent": {
+        "state": "value",
+        "value": "The documentation root the committed pages are written under, which is the tree every page path this server hands out is relative to."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::DOCS_SURFACES_PAGE",
+      "intent": {
+        "state": "value",
+        "value": "The generated index of everything s0ma can do — the page that lists every served capability by id — where a surface with no reference page of its own is documented."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::GUIDE_DOCS",
+      "intent": {
+        "state": "value",
+        "value": "Keyed registry of every packaged document the server serves: key, URI, packaged filename, and the in-repo source the drift gate byte-compares."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::GuideDoc",
+      "intent": {
+        "state": "value",
+        "value": "One packaged document (agent guide or meta resource): its loader key, MCP resource URI, packaged filename, and drift-gate source path."
+      },
+      "kind": "MODEL",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::SERVER_NAME",
+      "intent": {
+        "state": "value",
+        "value": "The MCP server name (FR-MCP-1) in the version document."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the changelog copy is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full changelog text"
+      },
+      "id": "resources::changelog_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the monorepo's canonical changelog so agents and humans can read what changed in the installed toolchain version"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_uri": "s0ma://meta/changelog"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "the packaged snapshot is present and carries a schema version this build of the model reads"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never reaches the network or consults anything but package data."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the same DocsBundle object on every call in a process; offline, and it consults nothing but package data"
+      },
+      "id": "resources::docs_bundle",
+      "intent": {
+        "state": "value",
+        "value": "Hands out the packaged documentation snapshot as records — the one reading every documentation surface of this server answers from"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::docs_bundle",
+        "resources::docs_snapshot_identity"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the packaged snapshot is present and readable"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns one line per recorded concept, each carrying the summary the concept itself declares, word for word"
+      },
+      "id": "resources::docs_concepts_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the whole concept vocabulary in one read: every concept this build records, its id, its term and its authored one-sentence summary, in id order"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_mime_type": "text/markdown",
+        "mcp_uri": "s0ma://docs/concepts"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::docs_snapshot_identity",
+        "resources::docs_topic_index"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the packaged snapshot is present and readable"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never states a count or a category that is written down rather than read from the packaged snapshot."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the index text, every count and category read from the snapshot rather than written down"
+      },
+      "id": "resources::docs_index_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the documentation index: which build this is, every category of topic it addresses with a count and an example id, how to ask for one, how many earlier names still answer, where the full pages are, and which s0ma://docs addresses belong to the other server"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_mime_type": "text/markdown",
+        "mcp_uri": "s0ma://docs/index"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::docs_bundle"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "journey_id names a journey this build records"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns one entry per recorded recovery path, in the order the journey records them; an unknown id returns nothing rather than raising"
+      },
+      "id": "resources::docs_journey_recovery",
+      "intent": {
+        "state": "value",
+        "value": "Reads one journey's recovery paths out of the packaged snapshot: the named thing that can go wrong, what to do about it, and the surface that does it — so a prompt that teaches a journey teaches its recoveries from the same record rather than from a second account of them"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::docs_bundle"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "journey_id names a journey this build records"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns one entry per recorded step, in walking order, each carrying the surface it calls, why, what a good result looks like, and any approval the step needs; an unknown id returns nothing rather than raising"
+      },
+      "id": "resources::docs_journey_steps",
+      "intent": {
+        "state": "value",
+        "value": "Reads one journey's steps out of the packaged snapshot in the order they are walked, so a prompt that teaches a journey renders the steps the model records rather than a second copy somebody has to keep in step with them"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::docs_bundle",
+        "resources::docs_journey_steps",
+        "resources::docs_snapshot_identity"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the packaged snapshot is present and readable"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns one section per recorded journey with its steps in walking order, read from the same records the journey-shaped prompts render"
+      },
+      "id": "resources::docs_journeys_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves every worked path this build records, step by step: what the path is for, each step's surface, why it is taken, what a good result looks like, any approval it needs, and what to do when a named thing goes wrong"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_mime_type": "text/markdown",
+        "mcp_uri": "s0ma://docs/journeys"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::DOCS_MAP_PAGE",
+        "resources::DOCS_ROOT",
+        "resources::DOCS_SURFACES_PAGE",
+        "resources::docs_bundle"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "topic_id is an id this build addresses"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never answers with a machine path or an invented page path."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a non-empty repository-relative page path, never a machine path and never an invented one"
+      },
+      "id": "resources::docs_page_for",
+      "intent": {
+        "state": "value",
+        "value": "Answers 'where is this written down in full' for one topic id, as a path in the s0ma repository — the reference pages' anchored deep link where the id class has one, the concept's own learning page, the page whose declared coverage names the topic, a document's or an authority clause's own source, and failing all of those the index that does list it"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::docs_bundle"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the packaged snapshot is present and carries a build stamp"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never gives the version a reader meets without its channel label when the build is not a release."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns exactly the three identity keys, all non-empty"
+      },
+      "id": "resources::docs_snapshot_identity",
+      "intent": {
+        "state": "value",
+        "value": "States which build of the documentation an answer came from: the release it describes, that release as a reader meets it (labelled when the build is not a release), and the snapshot digest of the records it was read out of"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "the packaged snapshot is present and readable"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the same TopicIndex object on every call in a process"
+      },
+      "id": "resources::docs_topic_index",
+      "intent": {
+        "state": "value",
+        "value": "Hands out the resolver's index over the packaged snapshot: everything this build can be asked about, and the ways of asking"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the generated error catalog is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full error-catalog text"
+      },
+      "id": "resources::errors_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_uri": "s0ma://guide/errors"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the canonical getting-started guide is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the same getting-started Markdown embedded in the root README"
+      },
+      "id": "resources::getting_started_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the canonical outcome-first cold-start journey: product fit, project creation, model orientation, dependency inspection, drift and release-gate proof, and explicit host verification."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_uri": "s0ma://guide/getting-started"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::GUIDE_DOCS"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "key is one of the GUIDE_DOCS loader keys"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the packaged document's full UTF-8 text"
+      },
+      "id": "resources::load_doc",
+      "intent": {
+        "state": "value",
+        "value": "Resolves the packaged agent-guide documents from s0ma_mcp/_docs package data via importlib.resources so they load from an installed wheel"
+      },
+      "kind": "ADAPTER",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::DOCS_MODEL_FILENAME"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the snapshot is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the snapshot's full UTF-8 text, byte-identical to the in-repo snapshot it was copied from"
+      },
+      "id": "resources::load_docs_model",
+      "intent": {
+        "state": "value",
+        "value": "Reads the packaged documentation snapshot out of s0ma_mcp/_docs package data, so the documentation read surfaces answer identically from a wheel and from a checkout"
+      },
+      "kind": "ADAPTER",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the patterns guide is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full patterns-guide text"
+      },
+      "id": "resources::patterns_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the DSL patterns guide of worked idioms and recipes for structuring non-trivial s0ma applications"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_uri": "s0ma://guide/patterns"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the quick reference data twin is packaged under s0ma_mcp/_docs as a byte-identical copy of docs/_generated/quick-reference-machine.json"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full quick-reference document as JSON text"
+      },
+      "id": "resources::quick_reference_machine_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the generated s0ma quick reference as data (schema s0ma-quick-reference@1): the same facts as the page, rendered from the same value, so that a coding agent can read every line of every kind of declaration without reading a page laid out for a person"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_mime_type": "application/json",
+        "mcp_uri": "s0ma://guide/quick-reference.json"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the quick reference page is packaged under s0ma_mcp/_docs as a byte-identical copy of docs/reference/quick-reference-readable.md"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full quick-reference page as Markdown"
+      },
+      "id": "resources::quick_reference_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the generated s0ma quick reference, the page written for a reader: every kind of declaration, every line each may carry with whether it must be written, the words a line chooses from, a checked sample of each kind, the everyday commands, the strictness modes and the basic rules, rendered by the documentation build from the language the check enforces"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_mime_type": "text/markdown",
+        "mcp_uri": "s0ma://guide/quick-reference"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "the server's working directory is at or under the target project (the blessed per-project `uv run s0ma-mcp` registration); absent that, the teaching variant renders"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the runbook markdown text; never raises and never empty — an unresolved project yields the teaching variant"
+      },
+      "id": "resources::runbook_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the per-project operational runbook: run/health commands, env contracts, runtime state_paths that must never be reverted, module inventory, and the ops rules — rendered from the project's [tool.s0ma] keys, or a teaching variant naming what to declare when they are absent"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_mime_type": "text/markdown",
+        "mcp_uri": "s0ma://project/runbook"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "the s0ma_mcp self-model registry is importable"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never serves a component graph that can drift from the MCP surface this server serves."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the live component graph as pretty-printed JSON text"
+      },
+      "id": "resources::self_model_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves this server's own live component graph as JSON — every tool, resource, prompt, and factory with kind, layer, intent, and dependencies, the same registry the served surface is derived from (FR-MCP-7)"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_mime_type": "application/json",
+        "mcp_uri": "s0ma://self/model"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the runtime self-prompting guide is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full runtime self-prompting guide text"
+      },
+      "id": "resources::self_prompting_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the runtime self-prompting guide: verified companion loading, self_inspect adapter wiring, a ContextAssembler concierge-shaped example, and the recommended host prompt trust block."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_uri": "s0ma://guide/self-prompting"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the language spec is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full specification text"
+      },
+      "id": "resources::spec_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the current normative s0ma DSL language specification — the authority when the guides are not enough"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_uri": "s0ma://spec/current"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the survival card is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full survival-card text (deliberately under a few KB)"
+      },
+      "id": "resources::survival_card_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the survival card (under 4 KB): the bootstrap loop, the three body rules, one minimal valid module, and the recovery moves for the top diagnostic codes — deliberately small enough to hold in context"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_uri": "s0ma://guide/survival-card"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::load_doc"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "the agent system prompt is packaged under s0ma_mcp/_docs"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the full prompt text"
+      },
+      "id": "resources::system_prompt_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the drop-in coding-agent system prompt that teaches an LLM how to author .s0ma files"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_uri": "s0ma://guide/system-prompt"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::test_docs_snapshot_surfaces_answer_from_package_data",
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that the packaged documentation snapshot loads from s0ma_mcp/_docs, indexes to the topics it records, states one build identity, resolves every topic to a page path that names a real category of committed page, reads a journey's steps in walking order, and serves all three s0ma://docs resources with their counts read from the snapshot rather than written down — exercised on the built module pytest imports."
+      },
+      "kind": "test",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::test_guide_resources_serve_packaged_documents",
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that every packaged document loads from s0ma_mcp/_docs package data and serves substantial platform text, that each guide provider returns exactly its registered document, and that the survival card keeps its context-economy contract (under 4 KB) — exercised on the built module pytest imports."
+      },
+      "kind": "test",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::test_meta_resources_render_live_documents",
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that the version surface and the self-model resource render live JSON documents carrying the server identity, the installed-version keys, and a non-empty component graph — exercised on the built module pytest imports."
+      },
+      "kind": "test",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "resources::test_runbook_resource_serves",
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that the project runbook resource always serves non-empty markdown carrying the ops rule, the runtime-state semantics, and the declare-the-runbook teaching — whichever project variant the server's working directory resolves — exercised on the built module pytest imports."
+      },
+      "kind": "test",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::SERVER_NAME"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "importlib.metadata can see the installed distributions"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never reads a version from a packaged file or reaches the network; each one comes live from the running environment."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a dict with server, s0ma_core, s0ma_dsl, s0ma_mcp, s0ma_studi0, mcp_sdk, and python keys; None marks a distribution that is not installed"
+      },
+      "id": "resources::version_document",
+      "intent": {
+        "state": "value",
+        "value": "Builds the version surface as a JSON-compatible dict, rendered live from importlib.metadata with no file reads and no network (FR-MCP-10, P-6)"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "resources"
+    },
+    {
+      "dependencies": [
+        "resources::version_document"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "version_document renders the installed distributions"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never reaches the network to report the installed versions."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the version document as pretty-printed JSON text"
+      },
+      "id": "resources::version_resource",
+      "intent": {
+        "state": "value",
+        "value": "Serves the installed toolchain versions (server, the four s0ma distributions, MCP SDK, Python) live from importlib.metadata — offline by design"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_mime_type": "application/json",
+        "mcp_uri": "s0ma://meta/version"
+      },
+      "module": "resources"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::_ARTIFACT_SUFFIXES",
+      "intent": {
+        "state": "value",
+        "value": "Artifact suffixes a successful transpile emits per .s0ma source, used to locate emitted files for the transpile tool's artifacts list."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::_DERIVED_BANNER",
+      "intent": {
+        "state": "value",
+        "value": "The exact authority warning inspect_module places beside every static roster-derived draft so a client cannot mistake it for canonical IR."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::_DOCS_RULE",
+      "intent": {
+        "state": "value",
+        "value": "The one line every rules-bearing tool result carries about s0ma's own documentation: the topic query, one worked id, and the index to start from when you do not know what to ask for. It rides the tool result because a rule carried there reaches the agent where the same text served as a resource does not, and arriving is not the same as being read, so the line is bounded (319 bytes, the declared budget) and sits below the conditional feedback line and above the frozen narration line."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::_MANIFEST_NAME",
+      "intent": {
+        "state": "value",
+        "value": "The build manifest filename (INV-3) the artifact collector and manifest finder resolve inside candidate build directories."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::_SURVIVAL_RULES",
+      "intent": {
+        "state": "value",
+        "value": "The survival rules, inline: the literal few-line ruleset init_project, scaffold_module, describe_server and project_status embed in their result dicts, so the rules travel in the answer the agent already has and not only behind the s0ma://guide/survival-card URI. Rule 1 cites the enforced GENERATED_FILE_DRIFT guard; the ops rule forbids restoring committed versions of runtime data; the diagnose-from-observations rule keeps an agent that reads runbook_declared: false from blaming a live fault on the undeclared runbook; the check-attribution rule makes a NEW check failure after an edit the editing agent's to fix or justify, since check labels each failure NEW or PRE-EXISTING against the last green baseline and 'pre-existing' is claimable only when the output says so; and the durable-state-migration rule asks for a migration of existing data whenever durable-state shape changes, because a change made only in the creation path (CREATE TABLE IF NOT EXISTS) never reaches a store that already exists — the patterns guide carries its full case."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::_TOOLCHAIN_NOTE",
+      "intent": {
+        "state": "value",
+        "value": "One-sentence orientation note project_status attaches to every answer: in agent environments these MCP tools ARE the toolchain, so an agent verifies its .s0ma edits through check and build_project instead of shelling out to the s0ma CLI, which is usually not on PATH there, and then editing without verification."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::_TOOL_RESULT_SCHEMA",
+      "intent": {
+        "state": "value",
+        "value": "The frozen common MCP tool-body result schema stamped on every successful or failed tool-body response before it reaches FastMCP."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::_ToolFn",
+      "intent": {
+        "state": "value",
+        "value": "TypeVar bound to the tool-callable shape so the _safe boundary decorator preserves each tool's exact signature under mypy --strict."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "argv is a complete s0ma CLI argument vector"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never lets a SystemExit raised by the in-process CLI propagate to the tool that called it."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns (exit_code, stdout, stderr) with SystemExit captured, never propagated"
+      },
+      "id": "tools::_run_cli",
+      "intent": {
+        "state": "value",
+        "value": "Invokes the s0ma DSL CLI in-process with captured stdout/stderr so tools receive the toolchain's own structured JSON diagnostics byte-for-byte"
+      },
+      "kind": "ADAPTER",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "wraps": "s0ma_dsl.cli.main.S0maCLI"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [
+        "tools::_run_cli"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a directory"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never records a file without a non-empty, one-line authored intent, and never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+      },
+      "id": "tools::adopt_file_tool",
+      "intent": {
+        "state": "value",
+        "value": "Records a pre-existing non-generated file as interim migration intake with mandatory authored intent, then points to author_module because roster adoption is not a semantic component model"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=false",
+          "idempotentHint=false",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Record a legacy Python file"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [
+        "tools::_run_cli"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a directory"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+      },
+      "id": "tools::build_project_tool",
+      "intent": {
+        "state": "value",
+        "value": "Runs a full cross-module s0ma build into the project's build dir and reports the build.s0ma.json manifest summary"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=false",
+          "idempotentHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Build the project"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [
+        "tools::_run_cli"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "path (file or directory) or project_root or both are provided"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never emits artifacts while it validates source, and never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+      },
+      "id": "tools::check_tool",
+      "intent": {
+        "state": "value",
+        "value": "Validates .s0ma source without emitting artifacts and returns structured diagnostics with per-finding remediation — the agent's inner loop"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Check s0ma source"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "the s0ma_mcp self-model registry is importable"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never describes a component graph that can drift from the MCP surface this server serves, and never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+      },
+      "id": "tools::describe_server_tool",
+      "intent": {
+        "state": "value",
+        "value": "Answers 'what is this server and what can it do' from the live self-model: the registered component graph plus an LLM-ready text rendering"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_dependency": [
+          "self_registry"
+        ],
+        "mcp_tool_annotations": [
+          "readOnlyHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Describe this server"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a directory; any existing pyproject.toml is valid TOML"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never rewrites a project that is already initialized, and never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary; idempotent — an already-initialized project is an ok answer with changed: false and nothing is rewritten"
+      },
+      "id": "tools::init_project_tool",
+      "intent": {
+        "state": "value",
+        "value": "Makes a directory a s0ma project by writing the [tool.s0ma] table into its pyproject.toml (creating a minimal pyproject when none exists) — the bootstrap step no other tool performs, so an agent is never left scaffolding modules into a directory that is not a project"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "composes": [
+          "s0ma_dsl.cli.new_project._tool_s0ma_table",
+          "s0ma_dsl.project.S0maProject.discover"
+        ],
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=false",
+          "idempotentHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Set up a s0ma project"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [
+        "tools::_run_cli"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a directory; module, when given, names a built module"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key and preserves canonical semantic-state tags; never raises across the MCP boundary"
+      },
+      "id": "tools::inspect_module_tool",
+      "intent": {
+        "state": "value",
+        "value": "Surfaces a built module's tagged .s0ma.json IR self-model (value/none/pending states preserved), or a per-module survey of the whole project when no module is named"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Inspect the self-model"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "topic is a non-empty question — a topic id, a term, or a category word"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never calls a model or reaches the network to answer, and never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary; offline and deterministic — the same question returns the same answer from the same build, with no model and no network in the path"
+      },
+      "id": "tools::learn_s0ma_tool",
+      "intent": {
+        "state": "value",
+        "value": "Answers one question about s0ma itself from the documentation snapshot packaged with this release: resolves the asked-for topic by exact id, then by name, then by category, renders the bounded answer with its own build identity, and names both the committed page and the resource carrying the rest"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_dependency": [
+          "s0ma://docs/index",
+          "s0ma://docs/concepts",
+          "s0ma://docs/journeys"
+        ],
+        "mcp_tool_annotations": [
+          "readOnlyHint=true",
+          "openWorldHint=false",
+          "idempotentHint=true"
+        ],
+        "mcp_tool_title": "Ask about s0ma"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [
+        "tools::_run_cli"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a directory"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never changes the project unless the caller turns the default dry run off, never clobbers an existing file, and never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+      },
+      "id": "tools::migrate_ext_tool",
+      "intent": {
+        "state": "value",
+        "value": "Migrates a pre-consolidation project to the .s0ma extension family and [tool.s0ma] config — dry-run by default, refuse-don't-clobber"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=false",
+          "idempotentHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Migrate old file extensions"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "summary, category and impact carry the user's own account of the problem; mcp_client is supplied by the bootstrap binding layer, never by the caller"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never writes to disk, mints the installation pseudonym or opens a socket."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Never writes to disk — the installation pseudonym is read, never minted, so the read-only claim is literal — never opens a socket, and returns the redacted report byte-identical to what submit_feedback will hash, show, and send"
+      },
+      "id": "tools::prepare_feedback_tool",
+      "intent": {
+        "state": "value",
+        "value": "Composes and locally redacts one s0ma-feedback@1 report from the user's own words and returns the exact data plus its fingerprint — the review step of the feedback journey, and deliberately the only one that is pure: it saves nothing and contacts nothing"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Prepare feedback for review"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a directory"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key and semantic_debt inventory; never raises across the MCP boundary; a non-project directory is a valid ok answer, not an error"
+      },
+      "id": "tools::project_status_tool",
+      "intent": {
+        "state": "value",
+        "value": "Answers one-call orientation: is this a s0ma project, which mode and authoring posture, what is built or stale, which tagged pending semantic states block release, and the suggested next action"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "composes": [
+          "s0ma_dsl.project.S0maProject.discover",
+          "s0ma_dsl.codegen.build_manifest.load_manifest",
+          "s0ma_dsl.codegen.build_manifest.compute_file_hash",
+          "s0ma_dsl.codegen.build_manifest.BuildManifest.resolve_source",
+          "s0ma_dsl.cache.extract_module_name",
+          "s0ma_dsl.cli.main._discover_s0ma_files"
+        ],
+        "mcp_tool_annotations": [
+          "readOnlyHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Project status"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a directory; source_path, when given, exists"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never runs an example in the server's own process or without a timeout, and never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+      },
+      "id": "tools::run_example_tool",
+      "intent": {
+        "state": "value",
+        "value": "Discovers example declarations and executes each in its own timeout-guarded subprocess via core's isolated example runner"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "composes": [
+          "s0ma.examples.ExampleRunner",
+          "s0ma.registry.ComponentRegistry",
+          "s0ma_dsl.cli.docs_commands._parse_and_validate_project"
+        ],
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=true",
+          "idempotentHint=false",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Run a documented example"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [
+        "tools::_run_cli",
+        "tools::check_tool"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a directory; module_name is non-empty; any output_dir lies inside the project tree"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+      },
+      "id": "tools::scaffold_module_tool",
+      "intent": {
+        "state": "value",
+        "value": "Emits a minimal known-valid .s0ma module skeleton from the DSL's own template and validates it with check before returning"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=false",
+          "idempotentHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Start a new component"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "expects": {
+        "state": "value",
+        "value": "envelope and payload_sha256 are the unmodified pair prepare_feedback returned; mcp_approval carries the user's decision and is supplied by the bootstrap binding layer, never by the caller"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never sends a report the user has not explicitly accepted, or one it has not proved is the report prepare_feedback produced."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Sends only on an explicit accept, reports a receipt only when its payload_sha256 matches what was approved, and saves a draft on refusal, cancellation, absent approval, and transport failure alike"
+      },
+      "id": "tools::submit_feedback_tool",
+      "intent": {
+        "state": "value",
+        "value": "Proves the report it was handed is the one prepare_feedback produced, obtains the user's own approval through the client's approval interaction, and only then sends it — saving a local draft on every other outcome so nothing a user wrote is ever lost and nothing they did not approve is ever sent"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=false",
+          "idempotentHint=true",
+          "openWorldHint=true"
+        ],
+        "mcp_tool_title": "Send approved feedback"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::test_learn_s0ma_answers_one_topic_within_its_budget",
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) that the topic query resolves an exact id, a bare term and a category word to the same kind of bounded answer, that the answer carries the build it came from and stays inside the declared 750-byte channel budget, that the page and the resource it points at are named, and that a question this build cannot place comes back with the nearest ids rather than a guess — exercised on the built module pytest imports."
+      },
+      "kind": "test",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::test_read_only_tools_answer_structurally",
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) of the FR-MCP-2 boundary on the read-only tools: live and invalid inputs alike come back as structured ok-keyed dicts with actionable error text, never an exception — exercised on the built module pytest imports. prepare_feedback belongs here because it is genuinely read-only: an unsendable report is refused structurally without writing a byte of the user's state, which is also what makes it safe to run in the ordinary suite on every CI OS."
+      },
+      "kind": "test",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [],
+      "id": "tools::test_writing_tools_refuse_invalid_targets",
+      "intent": {
+        "state": "value",
+        "value": "Release-gate verification (FR-DSL-6 coverage) of the FR-MCP-2 boundary on the writing/executing tools: missing roots, missing sources, and a feedback report that is not the one prepare_feedback produced all produce structured refusals without raising and without touching disk — exercised on the built module pytest imports. submit_feedback refuses on that path before it reads a token, asks anyone to approve anything, or saves a draft, so this covers its boundary without a network or a state directory."
+      },
+      "kind": "test",
+      "layer": "PRESENTATION",
+      "module": "tools"
+    },
+    {
+      "dependencies": [
+        "tools::_run_cli"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "source_path exists; source_path and any output_dir lie inside the project tree"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns a JSON-compatible dict with an ok bool key; never raises across the MCP boundary"
+      },
+      "id": "tools::transpile_tool",
+      "intent": {
+        "state": "value",
+        "value": "Compiles .s0ma source (one file or directory) into .py plus .s0ma.json IR plus .s0ma.map artifacts via the DSL pipeline"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=false",
+          "idempotentHint=true",
+          "openWorldHint=false"
+        ],
+        "mcp_tool_title": "Transpile one source file"
+      },
+      "module": "tools"
+    },
+    {
+      "dependencies": [
+        "tools::_run_cli"
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is a real built s0ma project; python, when supplied, identifies an executable host interpreter"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never presents the project code it imports as sandboxed, and never raises across the MCP boundary."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns s0ma-host-verification@1 evidence and never raises across the MCP boundary; imported trusted project code may perform arbitrary side effects"
+      },
+      "id": "tools::verify_host_tool",
+      "intent": {
+        "state": "value",
+        "value": "Explicitly executes each built production module under the host application's selected Python and reports interpreter, dependency, and isolated import evidence without pretending project code is sandboxed"
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "metadata": {
+        "mcp_tool_annotations": [
+          "readOnlyHint=false",
+          "destructiveHint=true",
+          "idempotentHint=false",
+          "openWorldHint=true"
+        ],
+        "mcp_tool_title": "Verify imports in the app's Python"
+      },
+      "module": "tools"
+    }
+  ],
+  "generation_version": "1",
+  "provenance": {
+    "authored_text_trust": "untrusted_project_data",
+    "authority": "canonical_ir",
+    "live_health": false
+  },
+  "schema": "s0ma-self-context@1",
+  "source_ir": [
+    {
+      "path": "prompts.s0ma.json",
+      "sha256": "sha256:3e404334b5124006378ddfbeb295a3e3dcbfe1f35dffc52aba03ae1afbcb20fc"
+    },
+    {
+      "path": "resources.s0ma.json",
+      "sha256": "sha256:5e85297c2d007dcc82a677a223297a1cce28e351ccc85aa4e37a0b110d9aa9dd"
+    },
+    {
+      "path": "tools.s0ma.json",
+      "sha256": "sha256:05e0755708b7931618993c2cc07e8513aef916a8102b549268387741ab7d8955"
+    }
+  ]
+}

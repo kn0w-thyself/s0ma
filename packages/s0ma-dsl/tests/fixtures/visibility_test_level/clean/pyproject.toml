@@ -1,0 +1,9 @@
+[project]
+name = "visibility_test_level_clean"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/sample"]
+test_roots = ["tests"]
+build_dir = "visibility_test_level_clean_build"
+bootstrap_files = []

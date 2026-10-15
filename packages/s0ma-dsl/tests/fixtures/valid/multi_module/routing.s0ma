@@ -1,0 +1,38 @@
+module routing
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Routes user operations to appropriate processors"
+    requires: [logging]
+    uses: [processing.process_user, models.UserModel]
+    exports: [route_request]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve route_request :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Routes an incoming request to the correct processor"
+    expects: "A valid request dict with user data"
+    guarantees: "Returns processed result from the appropriate handler"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        process_user: {relation: CALLS, carries: "user operation", coupling: LOOSE}
+        UserModel: {relation: READS, carries: "user data", coupling: LOOSE}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def route_request(request: dict) -> dict:
+        user = UserModel(name=request["name"], role=request["role"])
+        logging.info("Routing request for %s", user.name)
+        return process_user(user)

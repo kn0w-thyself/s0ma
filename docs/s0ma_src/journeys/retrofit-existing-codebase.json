@@ -1,0 +1,87 @@
+{
+  "record": {
+    "concepts_required": [
+      "concept:intent",
+      "concept:s0ma"
+    ],
+    "concepts_taught": [
+      "concept:layer",
+      "concept:module",
+      "concept:strictness-mode",
+      "concept:adoption-ladder",
+      "concept:perimeter"
+    ],
+    "evidence": [
+      {
+        "id": "example:transcript/retrofit-existing-codebase",
+        "source": "docs/s0ma_src/evidence/retrofit-existing-codebase.json"
+      }
+    ],
+    "id": "journey:retrofit-existing-codebase",
+    "intent": "Take a Python application that already works and walk it up the adoption ladder: read what is there without changing a line of it, set the perimeter, write down what a module promises, convert that module, and prove the promise survived.",
+    "recovery_paths": [
+      {
+        "action": "At the perimeter this is the true reading, not a fault: nothing has been converted yet, so the self-model has nothing to answer with. It is the number the work exists to move. Ask for the conversion order again — now that the project has a perimeter, the same reading also says how the project classifies its own files — and convert the first module on it.",
+        "next_surface": "cli:s0ma/adopt/scan",
+        "when": "HOLLOW_MODEL"
+      }
+    ],
+    "steps": [
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One screen: what was found, the perimeter it would declare, the first ten modules of a leaves-first conversion order with a proposed layer each, anything worth knowing about the imports, and the next command to run.",
+        "purpose": "Read the whole codebase without changing any of it, and get back the order to convert it in.",
+        "surface": "cli:s0ma/adopt/scan"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "Exactly two things written and both quoted back at you: a [tool.s0ma] table appended to the pyproject.toml you already had, and one marked block added to AGENTS.md. No application file is touched, and --dry-run prints the same thing and writes nothing.",
+        "purpose": "Make the tree a s0ma project by declaring its perimeter, and stop there.",
+        "surface": "cli:s0ma/adopt/init"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "The versions installed here, the project root and the strictness mode it is in, and one finding saying nothing has been built yet — which is the truth at the perimeter.",
+        "purpose": "Ask whether the toolchain and the project now agree that this is a project at all.",
+        "surface": "cli:s0ma/doctor"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One line per file: the entry point and the package marker recognised by name and by the setting that exempted them, every application file listed as UNKNOWN, and the counts underneath.",
+        "purpose": "Read back the honest backlog — every file that is neither converted nor declared as deliberately exempt.",
+        "surface": "cli:s0ma/verify"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "Nought per cent for structure, which is correct on the first day, the strictness mode you are in, and the exempt files listed by name so what sits outside s0ma is a reading rather than a matter of trust.",
+        "purpose": "Turn the same facts into one number, so that the work has something to move.",
+        "surface": "cli:s0ma/score"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One committed file at the project root, adopt-baseline.s0ma.json, holding what that module's Python offers its callers today: every public name, how each one is called, the type each one declares, what each one says about itself. The closing message says where the record is and asks you to commit it, because once the Python file is gone it cannot be taken again.",
+        "purpose": "Write down what the module promises, while the Python that promises it is still there to read.",
+        "surface": "cli:s0ma/adopt/baseline"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One new file beside the module it came from, and a count of the work left in it: the structure is derived from your Python and every field that says what something is for arrives as a line for you to write. The Python file is read and not changed — it is still the code that runs — and because the baseline is already taken, the closing message names one command after this one rather than two.",
+        "purpose": "Take the first module on that order and turn it into a draft you can finish.",
+        "surface": "cli:s0ma/adopt/draft"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One line per module saying the surface is the same, or one line per difference: the name it is about, what moved in plain words, and the text before and after. What the build adds around your code — the registration, the generated header and import block, the order of __all__ — is not a difference. It exits non-zero on any finding, writes nothing anywhere, and ends by sending you to the project's own tests, which are the check it stands in for — and, while the Python file is still there, by printing the three things that finish the conversion: the lines that bind the module's old name to the built one, computed for this project's own layout, that the s0ma runtime has to be declared and installed, and that the build directory ships with the application from now on.",
+        "purpose": "Ask whether the module s0ma built still promises what the Python promised, before anything is deleted.",
+        "surface": "cli:s0ma/adopt/verify-parity"
+      },
+      {
+        "approval_boundary": "",
+        "expected_outcome": "One screen, for somebody who has not read any of this: which rung of the ladder the project is on in plain words, how many of its modules are converted, half drafted, registered where they stand or still plain Python, how many baselines have been taken and what the comparison says about what has been built, which module is part way through, and one command to run next. Where more than one module is half converted the step is for the one furthest along, because finishing what is started beats starting another. It writes nothing.",
+        "purpose": "Come back to a retrofit that is only part way up the ladder and find out where it stands and what to do next.",
+        "surface": "cli:s0ma/adopt/status"
+      }
+    ]
+  },
+  "schema": "s0ma-docs-journeys@1"
+}

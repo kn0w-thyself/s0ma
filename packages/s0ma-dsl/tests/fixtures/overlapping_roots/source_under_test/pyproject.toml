@@ -1,0 +1,13 @@
+[project]
+name = "source_under_test"
+version = "0.0.1"
+
+# G2 (feedback 5–6 cleanup) fixture: the source root is nested inside
+# the test root (the opposite-direction overlap). Less common in the
+# wild, but the detector has to symmetrically reject every nesting
+# direction so a future consumer that lays things out this way still
+# gets a clean diagnostic.
+[tool.s0ma]
+source_roots = ["tests/myproject/src"]
+test_roots = ["tests"]
+build_dir = "source_under_test_build"

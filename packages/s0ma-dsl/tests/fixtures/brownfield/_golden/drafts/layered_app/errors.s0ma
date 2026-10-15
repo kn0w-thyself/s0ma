@@ -1,0 +1,175 @@
+# adopt_source: src/bookshelf/errors.py@sha256:671053c4b0840a801925b88a7882c8587c06f291a3b172e7cdc0b33369f8851e
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module errors` rather than
+#   `bookshelf.errors`. Every module name in a project must be unique; rename the draft if
+#   another module already carries this name.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+module errors
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'Every error the lending service raises on purpose, in one hierarchy.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports:
+      - BookshelfError
+      - CatalogError
+      - BookNotFoundError
+      - DuplicateBookError
+      - StorageCorruptError
+      - LendingError
+      - BookUnavailableError
+      - LoanNotFoundError
+      - LoanLimitReachedError
+      - RenewalRefusedError
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell BookshelfError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class BookshelfError(Exception):
+        """Base class for every error the lending service raises."""
+
+cell CatalogError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class CatalogError(BookshelfError):
+        """Something is wrong with the catalogue or with a record in it."""
+
+cell BookNotFoundError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class BookNotFoundError(CatalogError):
+        """No title in the catalogue carries the requested ISBN."""
+
+        def __init__(self, isbn: str) -> None:
+            super().__init__(f"no title with ISBN {isbn} is in the catalogue")
+            self.isbn = isbn
+
+cell DuplicateBookError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class DuplicateBookError(CatalogError):
+        """A title with this ISBN is already in the catalogue."""
+
+        def __init__(self, isbn: str) -> None:
+            super().__init__(f"ISBN {isbn} is already in the catalogue")
+            self.isbn = isbn
+
+cell StorageCorruptError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class StorageCorruptError(BookshelfError):
+        """A stored table could not be read back as a list of records."""
+
+        def __init__(self, table: str, reason: str) -> None:
+            super().__init__(f"the {table} table could not be read: {reason}")
+            self.table = table
+            self.reason = reason
+
+cell LendingError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class LendingError(BookshelfError):
+        """A loan could not be made, renewed or returned."""
+
+cell BookUnavailableError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class BookUnavailableError(LendingError):
+        """Every copy of this title is already out on loan."""
+
+        def __init__(self, isbn: str) -> None:
+            super().__init__(f"every copy of ISBN {isbn} is out on loan")
+            self.isbn = isbn
+
+cell LoanNotFoundError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class LoanNotFoundError(LendingError):
+        """This member does not have this title out on loan."""
+
+        def __init__(self, isbn: str, card_number: str) -> None:
+            super().__init__(f"card {card_number} does not have ISBN {isbn} on loan")
+            self.isbn = isbn
+            self.card_number = card_number
+
+cell LoanLimitReachedError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class LoanLimitReachedError(LendingError):
+        """This member is already holding as many books as the rules allow."""
+
+        def __init__(self, card_number: str, limit: int) -> None:
+            super().__init__(f"card {card_number} already holds the limit of {limit} books")
+            self.card_number = card_number
+            self.limit = limit
+
+cell RenewalRefusedError :: DOMAIN
+    kind: EXCEPTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class RenewalRefusedError(LendingError):
+        """This loan has been renewed as often as the rules allow."""
+
+        def __init__(self, isbn: str, limit: int) -> None:
+            super().__init__(f"ISBN {isbn} has already been renewed {limit} times")
+            self.isbn = isbn
+            self.limit = limit

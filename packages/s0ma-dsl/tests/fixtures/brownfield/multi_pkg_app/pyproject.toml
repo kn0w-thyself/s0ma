@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orchard-bench"
+version = "2.1.0"
+description = "A small benchmarking toolkit: three packages, plus sample applications to run against."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+orchard = "harnesslib.__main__:main"
+
+[tool.setuptools]
+packages = ["harnesslib", "evallib", "metrics"]
+
+[tool.pytest.ini_options]
+# `python -m pytest` from this directory puts the repository root on the path
+# so the three packages import without a PYTHONPATH dance, and collects only
+# the toolkit's own suite — never the sample applications under samples/.
+testpaths = ["tests_suite"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+# The sample applications are input data, not this project's code: they carry
+# their own style on purpose and a repository-wide sweep would couple the two.
+extend-exclude = ["samples"]

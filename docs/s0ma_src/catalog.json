@@ -1,0 +1,2897 @@
+{
+  "documents": [
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/cli.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/cli-reference",
+      "kind": "reference",
+      "prose_locator": "docs/reference/cli.md",
+      "status": "generated",
+      "title": "The s0ma command line"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/architecture/component-index.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/component-index",
+      "kind": "reference",
+      "prose_locator": "docs/architecture/component-index.md",
+      "status": "generated",
+      "title": "Component index"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/concepts-index.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/concepts-index",
+      "kind": "reference",
+      "prose_locator": "docs/reference/concepts-index.md",
+      "status": "generated",
+      "title": "Concepts index"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/configuration.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/configuration-reference",
+      "kind": "reference",
+      "prose_locator": "docs/reference/configuration.md",
+      "status": "generated",
+      "title": "Project settings"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/diagnostics.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/diagnostics-reference",
+      "kind": "reference",
+      "prose_locator": "docs/reference/diagnostics.md",
+      "status": "generated",
+      "title": "Reports s0ma can make"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/architecture/docs-application.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/docs-application",
+      "kind": "reference",
+      "prose_locator": "docs/architecture/docs-application.md",
+      "status": "generated",
+      "title": "The documentation application"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "docs/_built/self_prompt_card.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/docs-application-self-prompt-card",
+      "kind": "reference",
+      "prose_locator": "docs/_built/self_prompt_card.md",
+      "status": "generated",
+      "title": "docs application self-prompt card"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/documentation-application.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/documentation-application",
+      "kind": "reference",
+      "prose_locator": "docs/s0ma_src/application.s0ma#doc-ref:documentation_application_reference",
+      "status": "generated",
+      "title": "The documentation application's public surface"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/adoption-ladder.md",
+      "covers": [
+        "concept:adoption-ladder"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-adoption-ladder",
+      "kind": "guide",
+      "prose_locator": "docs/learn/adoption-ladder.md",
+      "status": "generated",
+      "title": "adoption ladder, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/anatomy-of-a-s0ma-file.md",
+      "covers": [
+        "concept:axon",
+        "concept:cell",
+        "concept:doc-guide",
+        "concept:doc-ref",
+        "concept:example",
+        "concept:ganglion",
+        "concept:helper",
+        "concept:integration",
+        "concept:module",
+        "concept:nerve",
+        "concept:s0ma-file",
+        "concept:test"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-anatomy",
+      "kind": "guide",
+      "prose_locator": "docs/learn/anatomy-of-a-s0ma-file.md",
+      "status": "generated",
+      "title": "Anatomy of a .s0ma file"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/authored-vs-generated-boundary.md",
+      "covers": [
+        "concept:authored-vs-generated-boundary"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-authored-vs-generated-boundary",
+      "kind": "guide",
+      "prose_locator": "docs/learn/authored-vs-generated-boundary.md",
+      "status": "generated",
+      "title": "authored-vs-generated boundary, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/axon.md",
+      "covers": [
+        "concept:axon"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-axon",
+      "kind": "guide",
+      "prose_locator": "docs/learn/axon.md",
+      "status": "generated",
+      "title": "axon, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/canonical-ir.md",
+      "covers": [
+        "concept:canonical-ir"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-canonical-ir",
+      "kind": "guide",
+      "prose_locator": "docs/learn/canonical-ir.md",
+      "status": "generated",
+      "title": "canonical IR, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/cell.md",
+      "covers": [
+        "concept:cell"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-cell",
+      "kind": "guide",
+      "prose_locator": "docs/learn/cell.md",
+      "status": "generated",
+      "title": "cell, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/check-and-build-loop.md",
+      "covers": [
+        "concept:check-and-build-loop"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-check-and-build-loop",
+      "kind": "guide",
+      "prose_locator": "docs/learn/check-and-build-loop.md",
+      "status": "generated",
+      "title": "check and build loop, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/contract.md",
+      "covers": [
+        "concept:contract"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-contract",
+      "kind": "guide",
+      "prose_locator": "docs/learn/contract.md",
+      "status": "generated",
+      "title": "contract, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/doc-guide.md",
+      "covers": [
+        "concept:doc-guide"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-doc-guide",
+      "kind": "guide",
+      "prose_locator": "docs/learn/doc-guide.md",
+      "status": "generated",
+      "title": "doc-guide, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/doc-ref.md",
+      "covers": [
+        "concept:doc-ref"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-doc-ref",
+      "kind": "guide",
+      "prose_locator": "docs/learn/doc-ref.md",
+      "status": "generated",
+      "title": "doc-ref, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/drift.md",
+      "covers": [
+        "concept:drift"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-drift",
+      "kind": "guide",
+      "prose_locator": "docs/learn/drift.md",
+      "status": "generated",
+      "title": "drift, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/drift-gate.md",
+      "covers": [
+        "concept:drift-gate"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-drift-gate",
+      "kind": "guide",
+      "prose_locator": "docs/learn/drift-gate.md",
+      "status": "generated",
+      "title": "drift-gate, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/embodiment.md",
+      "covers": [
+        "concept:embodiment"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-embodiment",
+      "kind": "guide",
+      "prose_locator": "docs/learn/embodiment.md",
+      "status": "generated",
+      "title": "embodiment, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/example.md",
+      "covers": [
+        "concept:example"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-example",
+      "kind": "guide",
+      "prose_locator": "docs/learn/example.md",
+      "status": "generated",
+      "title": "example, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/executable-evidence.md",
+      "covers": [
+        "concept:executable-evidence"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-executable-evidence",
+      "kind": "guide",
+      "prose_locator": "docs/learn/executable-evidence.md",
+      "status": "generated",
+      "title": "executable evidence, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/feedback.md",
+      "covers": [
+        "concept:feedback"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-feedback",
+      "kind": "guide",
+      "prose_locator": "docs/learn/feedback.md",
+      "status": "generated",
+      "title": "feedback, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/ganglion.md",
+      "covers": [
+        "concept:ganglion"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-ganglion",
+      "kind": "guide",
+      "prose_locator": "docs/learn/ganglion.md",
+      "status": "generated",
+      "title": "ganglion, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/glossary.md",
+      "covers": [
+        "concept:adoption-ladder",
+        "concept:authored-vs-generated-boundary",
+        "concept:axon",
+        "concept:canonical-ir",
+        "concept:cell",
+        "concept:check-and-build-loop",
+        "concept:contract",
+        "concept:doc-guide",
+        "concept:doc-ref",
+        "concept:drift",
+        "concept:drift-gate",
+        "concept:embodiment",
+        "concept:example",
+        "concept:executable-evidence",
+        "concept:feedback",
+        "concept:ganglion",
+        "concept:helper",
+        "concept:integration",
+        "concept:intent",
+        "concept:interoception",
+        "concept:kind",
+        "concept:layer",
+        "concept:metacognition",
+        "concept:mirror",
+        "concept:module",
+        "concept:nerve",
+        "concept:perimeter",
+        "concept:proprioception",
+        "concept:registry-snapshot",
+        "concept:release-channel",
+        "concept:requires",
+        "concept:s0ma",
+        "concept:s0ma-file",
+        "concept:self-knowledge",
+        "concept:self-model",
+        "concept:strictness-mode",
+        "concept:test",
+        "concept:uses",
+        "concept:visibility"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-glossary",
+      "kind": "reference",
+      "prose_locator": "docs/learn/glossary.md",
+      "status": "generated",
+      "title": "Glossary"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/helper.md",
+      "covers": [
+        "concept:helper"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-helper",
+      "kind": "guide",
+      "prose_locator": "docs/learn/helper.md",
+      "status": "generated",
+      "title": "helper, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/integration.md",
+      "covers": [
+        "concept:integration"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-integration",
+      "kind": "guide",
+      "prose_locator": "docs/learn/integration.md",
+      "status": "generated",
+      "title": "integration, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/intent.md",
+      "covers": [
+        "concept:intent"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-intent",
+      "kind": "guide",
+      "prose_locator": "docs/learn/intent.md",
+      "status": "generated",
+      "title": "intent, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/interoception.md",
+      "covers": [
+        "concept:interoception"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-interoception",
+      "kind": "guide",
+      "prose_locator": "docs/learn/interoception.md",
+      "status": "generated",
+      "title": "interoception, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/kind.md",
+      "covers": [
+        "concept:kind"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-kind",
+      "kind": "guide",
+      "prose_locator": "docs/learn/kind.md",
+      "status": "generated",
+      "title": "kind, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/layer.md",
+      "covers": [
+        "concept:layer"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-layer",
+      "kind": "guide",
+      "prose_locator": "docs/learn/layer.md",
+      "status": "generated",
+      "title": "layer, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/metacognition.md",
+      "covers": [
+        "concept:metacognition"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-metacognition",
+      "kind": "guide",
+      "prose_locator": "docs/learn/metacognition.md",
+      "status": "generated",
+      "title": "metacognition, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/mirror.md",
+      "covers": [
+        "concept:mirror"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-mirror",
+      "kind": "guide",
+      "prose_locator": "docs/learn/mirror.md",
+      "status": "generated",
+      "title": "mirror, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/module.md",
+      "covers": [
+        "concept:module"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-module",
+      "kind": "guide",
+      "prose_locator": "docs/learn/module.md",
+      "status": "generated",
+      "title": "module, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/nerve.md",
+      "covers": [
+        "concept:nerve"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-nerve",
+      "kind": "guide",
+      "prose_locator": "docs/learn/nerve.md",
+      "status": "generated",
+      "title": "nerve, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/perimeter.md",
+      "covers": [
+        "concept:perimeter"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-perimeter",
+      "kind": "guide",
+      "prose_locator": "docs/learn/perimeter.md",
+      "status": "generated",
+      "title": "perimeter, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/proprioception.md",
+      "covers": [
+        "concept:proprioception"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-proprioception",
+      "kind": "guide",
+      "prose_locator": "docs/learn/proprioception.md",
+      "status": "generated",
+      "title": "proprioception, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/registry-snapshot.md",
+      "covers": [
+        "concept:registry-snapshot"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-registry-snapshot",
+      "kind": "guide",
+      "prose_locator": "docs/learn/registry-snapshot.md",
+      "status": "generated",
+      "title": "registry snapshot, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/release-channel.md",
+      "covers": [
+        "concept:release-channel"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-release-channel",
+      "kind": "guide",
+      "prose_locator": "docs/learn/release-channel.md",
+      "status": "generated",
+      "title": "release channel, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/requires.md",
+      "covers": [
+        "concept:requires"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-requires",
+      "kind": "guide",
+      "prose_locator": "docs/learn/requires.md",
+      "status": "generated",
+      "title": "requires:, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/s0ma.md",
+      "covers": [
+        "concept:s0ma"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-s0ma",
+      "kind": "guide",
+      "prose_locator": "docs/learn/s0ma.md",
+      "status": "generated",
+      "title": "s0ma, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/s0ma-file.md",
+      "covers": [
+        "concept:s0ma-file"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-s0ma-file",
+      "kind": "guide",
+      "prose_locator": "docs/learn/s0ma-file.md",
+      "status": "generated",
+      "title": ".s0ma file, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/self-knowledge.md",
+      "covers": [
+        "concept:self-knowledge"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-self-knowledge",
+      "kind": "guide",
+      "prose_locator": "docs/learn/self-knowledge.md",
+      "status": "generated",
+      "title": "self-knowledge, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/self-model.md",
+      "covers": [
+        "concept:self-model"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-self-model",
+      "kind": "guide",
+      "prose_locator": "docs/learn/self-model.md",
+      "status": "generated",
+      "title": "self-model, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/strictness-mode.md",
+      "covers": [
+        "concept:strictness-mode"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-strictness-mode",
+      "kind": "guide",
+      "prose_locator": "docs/learn/strictness-mode.md",
+      "status": "generated",
+      "title": "strictness mode, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/test.md",
+      "covers": [
+        "concept:test"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-test",
+      "kind": "guide",
+      "prose_locator": "docs/learn/test.md",
+      "status": "generated",
+      "title": "test, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/uses.md",
+      "covers": [
+        "concept:uses"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-uses",
+      "kind": "guide",
+      "prose_locator": "docs/learn/uses.md",
+      "status": "generated",
+      "title": "uses:, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/learn/visibility.md",
+      "covers": [
+        "concept:visibility"
+      ],
+      "governed_by": [],
+      "id": "doc:generated/learn-visibility",
+      "kind": "guide",
+      "prose_locator": "docs/learn/visibility.md",
+      "status": "generated",
+      "title": "visibility, explained"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/map-of-record",
+      "kind": "reference",
+      "prose_locator": "docs/README.md",
+      "status": "generated",
+      "title": "The s0ma documentation: the map of record"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_built/docs/mcp_public_surface_reference.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/mcp-public-surface-reference",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-mcp/s0ma_src/tools.s0ma#doc-ref:mcp_public_surface_reference",
+      "status": "generated",
+      "title": "The s0ma authoring MCP surface"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/mcp.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/mcp-reference",
+      "kind": "reference",
+      "prose_locator": "docs/reference/mcp.md",
+      "status": "generated",
+      "title": "The MCP servers"
+    },
+    {
+      "audiences": [
+        "contributor",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/packages.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/packages-reference",
+      "kind": "reference",
+      "prose_locator": "docs/reference/packages.md",
+      "status": "generated",
+      "title": "The distributions s0ma ships"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/quick-reference-readable.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/quick-reference",
+      "kind": "reference",
+      "prose_locator": "docs/reference/quick-reference-readable.md",
+      "status": "generated",
+      "title": "s0ma quick reference"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "docs/_generated/quick-reference-machine.json",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/quick-reference-machine",
+      "kind": "reference",
+      "prose_locator": "docs/_generated/quick-reference-machine.json",
+      "status": "generated",
+      "title": "s0ma quick reference, as data"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/_generated/common_errors.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/s0ma-dsl-common-errors",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/_generators/common_errors.s0ma#doc-ref:CommonErrorsTable",
+      "status": "generated",
+      "title": "Common s0ma-dsl errors"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_built/self_prompt_card.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/s0ma-mcp-self-prompt-card",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-mcp/src/s0ma_mcp/_built/self_prompt_card.md",
+      "status": "generated",
+      "title": "s0ma self-prompt card"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_built/docs/selfhost_walkthrough.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/s0ma-mcp-selfhost-walkthrough",
+      "kind": "tutorial",
+      "prose_locator": "packages/s0ma-mcp/s0ma_src/tools.s0ma#doc-guide:selfhost_walkthrough",
+      "status": "generated",
+      "title": "The server that describes itself"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-studi0/src/s0ma_studi0/_built/self_prompt_card.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/s0ma-studi0-self-prompt-card",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-studi0/src/s0ma_studi0/_built/self_prompt_card.md",
+      "status": "generated",
+      "title": "s0ma self-prompt card"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/studi0.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/studi0-reference",
+      "kind": "reference",
+      "prose_locator": "docs/reference/studi0.md",
+      "status": "generated",
+      "title": "studi0, the viewer"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/reference/surfaces-index.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:generated/surfaces-index",
+      "kind": "reference",
+      "prose_locator": "docs/reference/surfaces-index.md",
+      "status": "generated",
+      "title": "What s0ma can do"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "CHANGELOG.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/changelog",
+      "kind": "reference",
+      "prose_locator": "CHANGELOG.md",
+      "status": "living",
+      "title": "Changelog"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/claude-integration.md",
+      "covers": [
+        "cli:s0ma/doctor",
+        "cli:s0ma/feedback",
+        "cli:s0ma/new",
+        "concept:s0ma",
+        "concept:self-model"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/claude-integration",
+      "kind": "guide",
+      "prose_locator": "docs/guides/claude-integration.md",
+      "status": "living",
+      "title": "s0ma in Claude"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/doctor/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-doctor",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/doctor/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:doctor skill — diagnose s0ma"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/feedback/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-feedback",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/feedback/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:feedback skill — send feedback about s0ma"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/new/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-new",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/new/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:new skill — start a new s0ma project"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/retrofit/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-retrofit",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/retrofit/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:retrofit skill — the adoption ladder"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/setup/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-setup",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/setup/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:setup skill — set s0ma up in Claude"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/update/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-update",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/update/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:update skill — update or pin s0ma"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "CODE_OF_CONDUCT.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/code-of-conduct",
+      "kind": "contributing",
+      "prose_locator": "CODE_OF_CONDUCT.md",
+      "status": "living",
+      "title": "Code of conduct"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "CONTRIBUTING.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/contributing",
+      "kind": "contributing",
+      "prose_locator": "CONTRIBUTING.md",
+      "status": "living",
+      "title": "Contributing to s0ma"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/design/0.15-runtime-free-emission.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/design-0-15-runtime-free-emission",
+      "kind": "contributing",
+      "prose_locator": "docs/design/0.15-runtime-free-emission.md",
+      "status": "living",
+      "title": "0.15 Design Note: Runtime-Free Emission"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/operations/docs-maintenance.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/docs-maintenance",
+      "kind": "operations",
+      "prose_locator": "docs/operations/docs-maintenance.md",
+      "status": "living",
+      "title": "Maintaining the documentation"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/documentation-subsystem.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/docs",
+        "cli:s0ma/docs/check",
+        "cli:s0ma/docs/check-drift",
+        "cli:s0ma/docs/compose",
+        "cli:s0ma/docs/list",
+        "cli:s0ma/docs/render",
+        "cli:s0ma/docs/search",
+        "cli:s0ma/docs/show",
+        "cli:s0ma/docs/verify",
+        "cli:s0ma/examples/run",
+        "concept:canonical-ir",
+        "concept:doc-guide",
+        "concept:doc-ref",
+        "concept:drift",
+        "concept:drift-gate",
+        "concept:example",
+        "concept:mirror",
+        "concept:module",
+        "concept:registry-snapshot",
+        "concept:release-channel",
+        "concept:s0ma",
+        "concept:self-model",
+        "concept:strictness-mode",
+        "config:build_dir",
+        "config:source_roots",
+        "diagnostic:ASSERT_FAILED",
+        "diagnostic:COVERED_BY_EMPTY",
+        "diagnostic:DRIFT_DETECTED",
+        "diagnostic:EMPTY_DOC_FILTER",
+        "diagnostic:ENTITY_KIND_MISMATCH",
+        "diagnostic:FIELD_NOT_FOUND",
+        "diagnostic:MISSING_EMBEDDED_EXAMPLE",
+        "diagnostic:MISSING_PUBLIC_DOC_REF",
+        "diagnostic:MISSING_TEST_COVERAGE",
+        "diagnostic:PROSE_RAW_CODE_BLOCK",
+        "diagnostic:UNRESOLVED_REFERENCE",
+        "mcp:resource/s0ma://docs/registered-docs",
+        "mcp:resource/s0ma://model/docs-for/{component}",
+        "mcp:resource/s0ma://model/examples-for/{component}",
+        "mcp:tool/get_examples_for",
+        "python:s0ma.HASH_ALGORITHM_VERSION",
+        "python:s0ma.canonicalize",
+        "python:s0ma.content_hash",
+        "python:s0ma.register_doc_guide",
+        "python:s0ma.register_doc_ref",
+        "python:s0ma.register_example",
+        "rest:GET:/self/doc/{name}",
+        "rest:GET:/self/docs",
+        "rest:GET:/self/drift",
+        "rest:GET:/self/example/{name}",
+        "rest:GET:/self/examples"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/documentation-subsystem",
+      "kind": "guide",
+      "prose_locator": "docs/documentation-subsystem.md",
+      "status": "living",
+      "title": "The documentation subsystem"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/drift-recovery.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/check",
+        "cli:s0ma/doctor",
+        "concept:drift",
+        "concept:drift-gate",
+        "concept:strictness-mode",
+        "journey:drift-recovery"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/drift-recovery",
+      "kind": "operations",
+      "prose_locator": "docs/guides/drift-recovery.md",
+      "status": "living",
+      "title": "When s0ma refuses, and how to get back to green"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/references/dsl_patterns_guide.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/dsl-patterns-guide",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/references/dsl_patterns_guide.md",
+      "status": "living",
+      "title": "s0ma DSL Patterns Guide"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "editors/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/editors-readme",
+      "kind": "guide",
+      "prose_locator": "editors/README.md",
+      "status": "living",
+      "title": "Editor support for `.s0ma` files"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/first-module.md",
+      "covers": [
+        "journey:first-module"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/first-module",
+      "kind": "tutorial",
+      "prose_locator": "docs/guides/first-module.md",
+      "status": "living",
+      "title": "Your first module: the anatomy of a .s0ma file"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/getting-started/first-project.md",
+      "covers": [
+        "journey:first-project"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/first-project",
+      "kind": "tutorial",
+      "prose_locator": "docs/getting-started/first-project.md",
+      "status": "living",
+      "title": "Your first project, from install to graph"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/getting-started.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/check",
+        "cli:s0ma/inspect",
+        "cli:s0ma/new",
+        "cli:s0ma/score",
+        "cli:s0ma/verify-host",
+        "concept:canonical-ir",
+        "concept:drift",
+        "concept:module",
+        "concept:s0ma",
+        "concept:self-knowledge",
+        "concept:self-model",
+        "config:venv_path",
+        "diagnostic:GENERATED_FILE_DRIFT",
+        "mcp:resource/s0ma://guide/self-prompting",
+        "mcp:tool/inspect_module",
+        "mcp:tool/project_status"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/getting-started",
+      "kind": "tutorial",
+      "prose_locator": "docs/getting-started.md",
+      "status": "living",
+      "title": "Getting started: prove the self-model is useful"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/hosting-getting-started.md",
+      "covers": [
+        "cli:s0ma/feedback",
+        "cli:s0ma/feedback/delete",
+        "cli:s0ma/feedback/drafts",
+        "cli:s0ma/feedback/enroll",
+        "cli:s0ma/feedback/list",
+        "concept:feedback",
+        "config:authoring",
+        "mcp:prompt/feedback"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/hosting-getting-started",
+      "kind": "tutorial",
+      "prose_locator": "docs/hosting-getting-started.md",
+      "status": "living",
+      "title": "s0ma — getting started as a free tester"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/s0ma_src/concepts/language.json",
+      "covers": [
+        "concept:axon",
+        "concept:canonical-ir",
+        "concept:cell",
+        "concept:check-and-build-loop",
+        "concept:contract",
+        "concept:doc-guide",
+        "concept:doc-ref",
+        "concept:drift",
+        "concept:example",
+        "concept:executable-evidence",
+        "concept:ganglion",
+        "concept:helper",
+        "concept:integration",
+        "concept:intent",
+        "concept:kind",
+        "concept:layer",
+        "concept:module",
+        "concept:nerve",
+        "concept:registry-snapshot",
+        "concept:requires",
+        "concept:s0ma-file",
+        "concept:strictness-mode",
+        "concept:test",
+        "concept:uses",
+        "concept:visibility"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/language-concepts",
+      "kind": "reference",
+      "prose_locator": "docs/s0ma_src/concepts/language.json",
+      "status": "living",
+      "title": "Language concepts"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/mcp-authoring.md",
+      "covers": [
+        "concept:authored-vs-generated-boundary",
+        "concept:check-and-build-loop",
+        "concept:metacognition",
+        "concept:registry-snapshot",
+        "concept:self-knowledge",
+        "concept:self-model",
+        "concept:strictness-mode",
+        "journey:mcp-authoring-loop"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/mcp-authoring",
+      "kind": "guide",
+      "prose_locator": "docs/guides/mcp-authoring.md",
+      "status": "living",
+      "title": "Authoring through the agent's own tool channel"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/s0ma_src/concepts/product.json",
+      "covers": [
+        "concept:authored-vs-generated-boundary",
+        "concept:drift-gate",
+        "concept:embodiment",
+        "concept:feedback",
+        "concept:interoception",
+        "concept:metacognition",
+        "concept:mirror",
+        "concept:proprioception",
+        "concept:release-channel",
+        "concept:s0ma",
+        "concept:self-knowledge",
+        "concept:self-model"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/product-concepts",
+      "kind": "reference",
+      "prose_locator": "docs/s0ma_src/concepts/product.json",
+      "status": "living",
+      "title": "Product concepts"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": ".github/PULL_REQUEST_TEMPLATE.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/pull-request-template",
+      "kind": "contributing",
+      "prose_locator": ".github/PULL_REQUEST_TEMPLATE.md",
+      "status": "living",
+      "title": "Offering a change during the beta"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/readme",
+      "kind": "guide",
+      "prose_locator": "README.md",
+      "status": "living",
+      "title": "s0ma"
+    },
+    {
+      "audiences": [
+        "owner"
+      ],
+      "authority": "",
+      "canonical_source": "docs/RELEASING.md",
+      "covers": [
+        "concept:drift",
+        "concept:mirror",
+        "python:s0ma.__version__"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/releasing",
+      "kind": "operations",
+      "prose_locator": "docs/RELEASING.md",
+      "status": "living",
+      "title": "Releasing s0ma"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/retrofit-existing-codebase.md",
+      "covers": [
+        "cli:s0ma/adopt",
+        "cli:s0ma/adopt/baseline",
+        "cli:s0ma/adopt/draft",
+        "cli:s0ma/adopt/file",
+        "cli:s0ma/adopt/init",
+        "cli:s0ma/adopt/scan",
+        "cli:s0ma/adopt/status",
+        "cli:s0ma/adopt/verify-parity",
+        "cli:s0ma/build",
+        "cli:s0ma/check",
+        "cli:s0ma/doctor",
+        "cli:s0ma/score",
+        "cli:s0ma/verify",
+        "concept:adoption-ladder",
+        "concept:authored-vs-generated-boundary",
+        "concept:cell",
+        "concept:helper",
+        "concept:intent",
+        "concept:kind",
+        "concept:layer",
+        "concept:module",
+        "concept:nerve",
+        "concept:perimeter",
+        "concept:requires",
+        "concept:s0ma",
+        "concept:s0ma-file",
+        "concept:self-model",
+        "concept:strictness-mode",
+        "concept:uses",
+        "concept:visibility",
+        "config:bootstrap_files",
+        "config:build_dir",
+        "config:mode",
+        "config:package_markers",
+        "config:source_roots",
+        "diagnostic:ADOPT_PLACEHOLDER_INTENT",
+        "diagnostic:ADOPT_UNPLACED_CODE",
+        "journey:retrofit-existing-codebase"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/retrofit-existing-codebase",
+      "kind": "guide",
+      "prose_locator": "docs/guides/retrofit-existing-codebase.md",
+      "status": "living",
+      "title": "Retrofitting an existing codebase"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/embodied_survival_card.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-core-embodied-survival-card",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-core/docs/embodied_survival_card.md",
+      "status": "living",
+      "title": "s0ma embodied survival card"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-core-readme",
+      "kind": "guide",
+      "prose_locator": "packages/s0ma-core/README.md",
+      "status": "living",
+      "title": "s0ma-core"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/s0ma_user_guide.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-core-s0ma-user-guide",
+      "kind": "guide",
+      "prose_locator": "packages/s0ma-core/docs/s0ma_user_guide.md",
+      "status": "living",
+      "title": "s0ma User Guide"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-dsl-adr-readme",
+      "kind": "contributing",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/README.md",
+      "status": "living",
+      "title": "Architecture Decision Records"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/agent_system_prompt.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-dsl-agent-system-prompt",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/agent_system_prompt.md",
+      "status": "living",
+      "title": "s0ma DSL — Coding Agent System Prompt"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/coding_agent_handbook.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-dsl-coding-agent-handbook",
+      "kind": "guide",
+      "prose_locator": "packages/s0ma-dsl/docs/coding_agent_handbook.md",
+      "status": "living",
+      "title": "Coding Agent Handbook — s0ma DSL Transpiler"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/migration_guide.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-dsl-migration-guide",
+      "kind": "guide",
+      "prose_locator": "packages/s0ma-dsl/docs/migration_guide.md",
+      "status": "living",
+      "title": "Migrating from s0ma Python to .s0ma DSL"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-dsl-readme",
+      "kind": "guide",
+      "prose_locator": "packages/s0ma-dsl/README.md",
+      "status": "living",
+      "title": "s0ma-dsl"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/self_prompting.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-dsl-self-prompting",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/self_prompting.md",
+      "status": "living",
+      "title": "Runtime self-prompting with s0ma"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/spec_traceability.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-dsl-spec-traceability",
+      "kind": "contributing",
+      "prose_locator": "packages/s0ma-dsl/docs/spec_traceability.md",
+      "status": "living",
+      "title": "Spec Traceability Matrix"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/survival_card.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-dsl-survival-card",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/survival_card.md",
+      "status": "living",
+      "title": "s0ma survival card"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-mcp-readme",
+      "kind": "guide",
+      "prose_locator": "packages/s0ma-mcp/README.md",
+      "status": "living",
+      "title": "s0ma-mcp"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-studi0/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-studi0-readme",
+      "kind": "guide",
+      "prose_locator": "packages/s0ma-studi0/README.md",
+      "status": "living",
+      "title": "s0ma-studi0"
+    },
+    {
+      "audiences": [
+        "contributor",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "SECURITY.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/security",
+      "kind": "contributing",
+      "prose_locator": "SECURITY.md",
+      "status": "living",
+      "title": "Reporting a security problem"
+    },
+    {
+      "audiences": [
+        "contributor",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/stability.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/doctor",
+        "concept:authored-vs-generated-boundary",
+        "concept:canonical-ir",
+        "concept:drift",
+        "concept:s0ma",
+        "diagnostic:GENERATED_FILE_DRIFT"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/stability",
+      "kind": "guide",
+      "prose_locator": "docs/stability.md",
+      "status": "living",
+      "title": "What can change, and how you will know"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/studi0-feedback.md",
+      "covers": [
+        "concept:feedback",
+        "concept:proprioception",
+        "journey:studi0-feedback"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/studi0-feedback",
+      "kind": "guide",
+      "prose_locator": "docs/guides/studi0-feedback.md",
+      "status": "living",
+      "title": "Seeing your system, and telling the s0ma team what you found"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/troubleshooting.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/check",
+        "cli:s0ma/docs/check-drift",
+        "cli:s0ma/docs/render",
+        "cli:s0ma/doctor",
+        "cli:s0ma/feedback",
+        "cli:s0ma/graph",
+        "cli:s0ma/studi0",
+        "concept:drift",
+        "config:mode",
+        "diagnostic:BARE_IMPORT",
+        "diagnostic:CIRCULAR_DEPENDENCY",
+        "diagnostic:CROSS_LAYER_DEPENDENCY",
+        "diagnostic:DOES_NOT_EXIST",
+        "diagnostic:DUPLICATE_DECLARATION",
+        "diagnostic:GENERATED_FILE_DRIFT",
+        "diagnostic:HOST_RUNTIME_UNDECLARED",
+        "diagnostic:MISSING_EMBEDDED_EXAMPLE",
+        "diagnostic:MISSING_FIELD",
+        "diagnostic:MISSING_PACKAGE",
+        "diagnostic:MISSING_PUBLIC_DOC_REF",
+        "diagnostic:MISSING_RETURN_KEY",
+        "diagnostic:MISSING_TEST_COVERAGE",
+        "diagnostic:MODULE_DEPENDENCY_CYCLE",
+        "diagnostic:MODULE_NAME_COLLISION",
+        "diagnostic:MODULE_NAME_STEM_MISMATCH",
+        "diagnostic:NOT_EXPORTED",
+        "diagnostic:PARSE_ERROR",
+        "diagnostic:PROVIDES_KEY_MISMATCH",
+        "diagnostic:SEMANTIC_PENDING_DEBT",
+        "diagnostic:SEMANTIC_REQUIRED_STATE_OMITTED",
+        "diagnostic:VESTIGIAL_IMPORT"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/troubleshooting",
+      "kind": "operations",
+      "prose_locator": "docs/troubleshooting.md",
+      "status": "living",
+      "title": "Troubleshooting s0ma"
+    },
+    {
+      "audiences": [
+        "contributor",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/trust-model.md",
+      "covers": [
+        "concept:authored-vs-generated-boundary",
+        "concept:example",
+        "concept:executable-evidence",
+        "concept:feedback"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/trust-model",
+      "kind": "guide",
+      "prose_locator": "docs/trust-model.md",
+      "status": "living",
+      "title": "What s0ma trusts"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/uninstall.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/doctor",
+        "cli:s0ma/feedback",
+        "cli:s0ma/feedback/drafts",
+        "cli:s0ma/feedback/enroll",
+        "cli:s0ma/studi0",
+        "concept:feedback",
+        "config:build_dir"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/uninstall",
+      "kind": "operations",
+      "prose_locator": "docs/uninstall.md",
+      "status": "living",
+      "title": "Removing s0ma"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/walkthrough.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/check",
+        "cli:s0ma/docs/check-drift",
+        "cli:s0ma/examples/run",
+        "cli:s0ma/new",
+        "cli:s0ma/test",
+        "cli:s0ma/verify",
+        "concept:axon",
+        "concept:cell",
+        "concept:doc-guide",
+        "concept:doc-ref",
+        "concept:drift",
+        "concept:ganglion",
+        "concept:intent",
+        "concept:kind",
+        "concept:layer",
+        "concept:module",
+        "concept:nerve",
+        "concept:requires",
+        "concept:self-model",
+        "concept:strictness-mode",
+        "config:mode",
+        "mcp:prompt/author_module",
+        "mcp:prompt/diagnose_fault",
+        "mcp:prompt/feedback",
+        "mcp:prompt/fix_check_failures",
+        "mcp:prompt/migrate_project",
+        "mcp:resource/s0ma://guide/quick-reference",
+        "mcp:resource/s0ma://guide/survival-card",
+        "mcp:resource/s0ma://guide/system-prompt",
+        "mcp:resource/s0ma://self/model",
+        "mcp:tool/build_project",
+        "mcp:tool/check",
+        "mcp:tool/describe_server",
+        "mcp:tool/init_project",
+        "mcp:tool/inspect_module",
+        "mcp:tool/project_status",
+        "mcp:tool/run_example",
+        "mcp:tool/scaffold_module",
+        "mcp:tool/verify_host"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/walkthrough",
+      "kind": "tutorial",
+      "prose_locator": "docs/walkthrough.md",
+      "status": "living",
+      "title": "Building an app with s0ma over MCP — walkthrough"
+    },
+    {
+      "audiences": [
+        "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/what-the-build-writes.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/verify",
+        "concept:canonical-ir",
+        "concept:drift",
+        "concept:self-model",
+        "diagnostic:GENERATED_FILE_DRIFT"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/what-the-build-writes",
+      "kind": "guide",
+      "prose_locator": "docs/guides/what-the-build-writes.md",
+      "status": "living",
+      "title": "What the build writes, and what each file is for"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/CHANGELOG.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-core-changelog",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/CHANGELOG.md",
+      "status": "historical",
+      "title": "Changelog"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/historical/s0ma-framework-feedback-3.1.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-core-historical-s0ma-framework-feedback-3-1",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/historical/s0ma-framework-feedback-3.1.md",
+      "status": "historical",
+      "title": "s0ma Framework Feedback — Report 3"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-core-spec-v0-18-1",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md",
+      "status": "historical",
+      "title": "s0ma-core — Runtime Specification & Coding Agent Rulebook (historical: v0.18.1)"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-core-spec-v0-19-0",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md",
+      "status": "historical",
+      "title": "s0ma-core — Runtime Specification & Coding Agent Rulebook (historical: v0.19.0)"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-core-spec-v0-2-0",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md",
+      "status": "historical",
+      "title": "s0ma — Framework Specification & Coding Agent Rulebook (historical: v0.2.0)"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-004",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-004-separate-project.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-adr-004-separate-project",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-004-separate-project.md",
+      "status": "historical",
+      "title": "ADR-004: Transpiler as Separate Sister Project"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/CHANGELOG.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-changelog",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/CHANGELOG.md",
+      "status": "historical",
+      "title": "Changelog"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/historical/release_walkthrough_5-6.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-historical-release-walkthrough-5-6",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/historical/release_walkthrough_5-6.md",
+      "status": "historical",
+      "title": "s0ma-dsl 0.13.0 — Consumer Walkthrough"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/historical/s0ma_build_fix.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-historical-s0ma-build-fix",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/historical/s0ma_build_fix.md",
+      "status": "historical",
+      "title": "s0ma Framework Enhancement: Cross-Project Build and Output Structure"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/historical/s0ma_feedback.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-historical-s0ma-feedback",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/historical/s0ma_feedback.md",
+      "status": "historical",
+      "title": "s0ma Framework Feedback"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/historical/s0ma_feedback-4.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-historical-s0ma-feedback-4",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/historical/s0ma_feedback-4.md",
+      "status": "historical",
+      "title": "s0ma Framework Feedback"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/historical/s0ma-feedback-findings-1-2.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-historical-s0ma-feedback-findings-1-2",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/historical/s0ma-feedback-findings-1-2.md",
+      "status": "historical",
+      "title": "s0ma-dsl Feedback Findings & Recommended Updates"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/historical/s0ma-framework-feedback-3.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-historical-s0ma-framework-feedback-3",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/historical/s0ma-framework-feedback-3.md",
+      "status": "historical",
+      "title": "s0ma Framework Feedback — Report 3"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/historical/s0ma_py_drift_fix.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-dsl-historical-s0ma-py-drift-fix",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/historical/s0ma_py_drift_fix.md",
+      "status": "historical",
+      "title": "s0ma Framework Enhancement: Transpiled `.py` Drift Detection"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/agent_system_prompt.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-agent-system-prompt",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/agent_system_prompt.md",
+      "status": "mirror",
+      "title": "s0ma DSL — Coding Agent System Prompt"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/CHANGELOG.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-changelog",
+      "kind": "reference",
+      "prose_locator": "CHANGELOG.md",
+      "status": "mirror",
+      "title": "Changelog"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/common_errors.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-common-errors",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/_generated/common_errors.md",
+      "status": "mirror",
+      "title": "Common s0ma-dsl errors"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/dsl_patterns_guide.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-dsl-patterns-guide",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/references/dsl_patterns_guide.md",
+      "status": "mirror",
+      "title": "s0ma DSL Patterns Guide"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/getting-started.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-getting-started",
+      "kind": "tutorial",
+      "prose_locator": "docs/getting-started.md",
+      "status": "mirror",
+      "title": "Getting started: prove the self-model is useful"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/quick-reference-machine.json",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-quick-reference-machine",
+      "kind": "reference",
+      "prose_locator": "docs/_generated/quick-reference-machine.json",
+      "status": "mirror",
+      "title": "s0ma quick reference, as data"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/quick-reference-readable.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-quick-reference-readable",
+      "kind": "reference",
+      "prose_locator": "docs/reference/quick-reference-readable.md",
+      "status": "mirror",
+      "title": "s0ma quick reference"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/s0ma-dsl-spec-v0.17.0.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-s0ma-dsl-spec-v0-17-0",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
+      "status": "mirror",
+      "title": "s0ma DSL — Language Specification & Coding Agent Rulebook"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/self_prompting.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-self-prompting",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/self_prompting.md",
+      "status": "mirror",
+      "title": "Runtime self-prompting with s0ma"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-mcp/src/s0ma_mcp/_docs/survival_card.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:mirror/s0ma-mcp-survival-card",
+      "kind": "reference",
+      "prose_locator": "packages/s0ma-dsl/docs/survival_card.md",
+      "status": "mirror",
+      "title": "s0ma survival card"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/repo.ADR-001",
+      "canonical_source": "docs/adr/ADR-001-0.14-gate-integrity-and-value-loop.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-001-0-14-gate-integrity-and-value-loop",
+      "kind": "normative",
+      "prose_locator": "docs/adr/ADR-001-0.14-gate-integrity-and-value-loop.md",
+      "status": "normative",
+      "title": "ADR-001: 0.14 Gate Integrity and Value-Loop Boundaries"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/repo.ADR-002",
+      "canonical_source": "docs/adr/ADR-002-self-context-authored-data-boundary.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-002-self-context-authored-data-boundary",
+      "kind": "normative",
+      "prose_locator": "docs/adr/ADR-002-self-context-authored-data-boundary.md",
+      "status": "normative",
+      "title": "ADR-002: Self-context treats authored prose as untrusted data"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/repo.ADR-003",
+      "canonical_source": "docs/adr/ADR-003-hardware-embodiment-foundation.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-003-hardware-embodiment-foundation",
+      "kind": "normative",
+      "prose_locator": "docs/adr/ADR-003-hardware-embodiment-foundation.md",
+      "status": "normative",
+      "title": "ADR-003: Hardware embodiment foundation — physical-facts vocabulary and runtime surfaces"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/repo.ADR-004",
+      "canonical_source": "docs/adr/ADR-004-feedback-architecture.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-004-feedback-architecture",
+      "kind": "normative",
+      "prose_locator": "docs/adr/ADR-004-feedback-architecture.md",
+      "status": "normative",
+      "title": "ADR-004: Feedback architecture — placement, consent authority, identity, and the data boundary"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/repo.ADR-012",
+      "canonical_source": "docs/adr/ADR-012-docs-application.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-012-docs-application",
+      "kind": "normative",
+      "prose_locator": "docs/adr/ADR-012-docs-application.md",
+      "status": "normative",
+      "title": "ADR-012: The documentation application — placement, build and output boundaries, snapshot semantics"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/repo.ADR-013",
+      "canonical_source": "docs/adr/ADR-013-derived-source-registry.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-013-derived-source-registry",
+      "kind": "normative",
+      "prose_locator": "docs/adr/ADR-013-derived-source-registry.md",
+      "status": "normative",
+      "title": "ADR-013: Derived-source provider registry — generalizing `doc-ref covers: { source: <name> }`"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/repo.ADR-014",
+      "canonical_source": "docs/adr/ADR-014-the-forbids-line.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-014-the-forbids-line",
+      "kind": "normative",
+      "prose_locator": "docs/adr/ADR-014-the-forbids-line.md",
+      "status": "normative",
+      "title": "ADR-014: The `forbids` line — what a nerve or a ganglion must never do"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "AGENTS.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/agents",
+      "kind": "normative",
+      "prose_locator": "AGENTS.md",
+      "status": "normative",
+      "title": "s0ma repository agent contract"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:frozen_contract/0.14.0-schema-and-surface-budget",
+      "canonical_source": "docs/contracts/0.14.0-schema-and-surface-budget.md",
+      "covers": [],
+      "governed_by": [
+        "authority:adr/repo.ADR-001"
+      ],
+      "id": "doc:normative/contracts-0-14-0-schema-and-surface-budget",
+      "kind": "normative",
+      "prose_locator": "docs/contracts/0.14.0-schema-and-surface-budget.md",
+      "status": "normative",
+      "title": "s0ma 0.14.0 Schema and Surface Budget"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:frozen_contract/feedback-v1",
+      "canonical_source": "docs/contracts/feedback-v1.md",
+      "covers": [],
+      "governed_by": [
+        "authority:adr/repo.ADR-004"
+      ],
+      "id": "doc:normative/contracts-feedback-v1",
+      "kind": "normative",
+      "prose_locator": "docs/contracts/feedback-v1.md",
+      "status": "normative",
+      "title": "s0ma feedback contract — `s0ma-feedback@1` (feedback-v1)"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-core-spec-v0-19-1",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md",
+      "status": "normative",
+      "title": "s0ma-core — Runtime Specification & Coding Agent Rulebook"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-001",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-001-build-pipeline.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-001-build-pipeline",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-001-build-pipeline.md",
+      "status": "normative",
+      "title": "ADR-001: Six-Stage Build Pipeline"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-002",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-002-runtime-expansion.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-002-runtime-expansion",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-002-runtime-expansion.md",
+      "status": "normative",
+      "title": "ADR-002: Runtime Expansion & Backwards Compatibility"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-003",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-003-source-map-format.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-003-source-map-format",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-003-source-map-format.md",
+      "status": "normative",
+      "title": "ADR-003: Custom .s0ma.map Source Map Format"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-005",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-005-project-discovery.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-005-project-discovery",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-005-project-discovery.md",
+      "status": "normative",
+      "title": "ADR-005: Declarative Project Discovery via `[tool.s0ma]`"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-006",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-006-canonical-module-identity.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-006-canonical-module-identity",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-006-canonical-module-identity.md",
+      "status": "normative",
+      "title": "ADR-006: `module <name>` is the Canonical Module Identity"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-007",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-007-single-build-layout.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-007-single-build-layout",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-007-single-build-layout.md",
+      "status": "normative",
+      "title": "ADR-007: Single Flat Build-Output Layout"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-008",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-008-test-visibility.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-008-test-visibility",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-008-test-visibility.md",
+      "status": "normative",
+      "title": "ADR-008: `visibility: TEST` — A Third Declarative Visibility Level"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-009",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-009-canonical-body-storage.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-009-canonical-body-storage",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-009-canonical-body-storage.md",
+      "status": "normative",
+      "title": "ADR-009: Canonical Body Storage — Dedent Once, At Parse Time"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-010",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-010-derived-doc-targets.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-010-derived-doc-targets",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-010-derived-doc-targets.md",
+      "status": "normative",
+      "title": "ADR-010: Derived Doc Targets — `doc-ref covers: { source: <name> }` Sub-Key Form"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-dsl.ADR-011",
+      "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-011-declaration-metadata-and-language-surface-batch.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-adr-011-declaration-metadata-and-language-surface-batch",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/adr/ADR-011-declaration-metadata-and-language-surface-batch.md",
+      "status": "normative",
+      "title": "ADR-011: First-Class Declaration Metadata & the 0.8.0 Language-Surface Batch (`metadata:`, `serves_as:`, `deferred_requires:`, qualified `depends_on:`, `covered_by:`)"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "authority:spec/current",
+      "canonical_source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
+      "status": "normative",
+      "title": "s0ma DSL — Language Specification & Coding Agent Rulebook"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/s0ma-mcp.ADR-001",
+      "canonical_source": "packages/s0ma-mcp/docs/adr/ADR-001-selfhost-layout.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-mcp-adr-001-selfhost-layout",
+      "kind": "normative",
+      "prose_locator": "packages/s0ma-mcp/docs/adr/ADR-001-selfhost-layout.md",
+      "status": "normative",
+      "title": "ADR-001: Self-hosting layout for `packages/s0ma-mcp` (FR-MCP-11)"
+    },
+    {
+      "audiences": [
+        "owner"
+      ],
+      "authority": "authority:prd/document",
+      "canonical_source": "references/s0ma-prd.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/s0ma-prd",
+      "kind": "normative",
+      "prose_locator": "references/s0ma-prd.md",
+      "status": "normative",
+      "title": "s0ma — Product Requirements Document"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/s0ma_src/doc-classification.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:plan/doc-classification",
+      "kind": "contributing",
+      "prose_locator": "docs/s0ma_src/doc-classification.md",
+      "status": "working-plan",
+      "title": "Documentation corpus classification — human summary"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/architecture.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-core-architecture",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/architecture.md",
+      "status": "superseded",
+      "title": "s0ma Architecture — superseded"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/references/documentation_subsystem.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-core-documentation-subsystem",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/references/documentation_subsystem.md",
+      "status": "superseded",
+      "title": "Documentation Subsystem — core's runtime symbols"
+    },
+    {
+      "audiences": [
+        "owner"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/release_checklist.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-core-release-checklist",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/release_checklist.md",
+      "status": "superseded",
+      "title": "Release Checklist — superseded"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-framework-feedback-3.1.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-core-s0ma-framework-feedback-3-1",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-framework-feedback-3.1.md",
+      "status": "superseded",
+      "title": "Moved: s0ma-framework-feedback-3.1.md"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/references/documentation_subsystem.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-dsl-documentation-subsystem",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/references/documentation_subsystem.md",
+      "status": "superseded",
+      "title": "Documentation Subsystem — superseded"
+    },
+    {
+      "audiences": [
+        "owner"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/release_checklist.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-dsl-release-checklist",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/release_checklist.md",
+      "status": "superseded",
+      "title": "Release Checklist — superseded"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/release_walkthrough_5-6.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-dsl-release-walkthrough-5-6",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/release_walkthrough_5-6.md",
+      "status": "superseded",
+      "title": "Moved: release_walkthrough_5-6.md"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/s0ma_feedback-4.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-dsl-s0ma-feedback-4",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/s0ma_feedback-4.md",
+      "status": "superseded",
+      "title": "Moved: s0ma_feedback-4.md"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/s0ma_user_guide.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-dsl-s0ma-user-guide",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/s0ma_user_guide.md",
+      "status": "superseded",
+      "title": "Moved: s0ma_user_guide.md"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/s0ma_user_guide_condensed.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-dsl-s0ma-user-guide-condensed",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/s0ma_user_guide_condensed.md",
+      "status": "superseded",
+      "title": "Retired: s0ma_user_guide_condensed.md"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.16.0.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:pointer/s0ma-dsl-spec-v0-16-0",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.16.0.md",
+      "status": "superseded",
+      "title": "Superseded: s0ma DSL specification v0.16.0"
+    }
+  ],
+  "excluded": [
+    {
+      "path": "docs/_built/reference/documentation-application.md",
+      "reason": "A build artifact, not a second document: the byte-identical copy of docs/reference/documentation-application.md that a project build writes into the build directory because declared outputs resolve against it (ADR-012 §1 addition 2, from the B1 spike's finding 6). ADR-012 records those copies as committed with the build and never linked, never read and never hand-edited, so cataloging it would put a duplicate into every reader-facing map of the corpus. It stops existing if the docs_output_dir key of ADR-012 §2.4 is ever adopted."
+    },
+    {
+      "path": "packages/s0ma-dsl/tests/fixtures/golden/docs/greetings.md",
+      "reason": "Test data, not documentation: a golden file whose exact bytes the documentation emitter's tests assert against. Nobody reads it, and editing it for a reader would break the test that owns it."
+    },
+    {
+      "path": "packages/s0ma-dsl/tests/fixtures/golden/docs/walkthrough.md",
+      "reason": "Test data, not documentation: a golden file whose exact bytes the documentation emitter's tests assert against. Nobody reads it, and editing it for a reader would break the test that owns it."
+    },
+    {
+      "path": "packages/s0ma-dsl/tests/fixtures/legacy_layout_project/README.md",
+      "reason": "Test data, not documentation: the explanatory file inside a fixture project the layout-migration tests build on. It describes the fixture to whoever maintains the test, and it ships to nobody."
+    }
+  ],
+  "schema": "s0ma-docs-catalog@1",
+  "self": {
+    "audiences": [
+      "agent",
+      "contributor"
+    ],
+    "id": "doc:catalog/document-catalog",
+    "kind": "reference",
+    "status": "living",
+    "title": "The document catalog"
+  }
+}

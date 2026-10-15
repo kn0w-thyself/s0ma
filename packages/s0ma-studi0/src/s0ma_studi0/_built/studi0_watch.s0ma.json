@@ -1,0 +1,420 @@
+{
+  "components": [
+    {
+      "canonical_id": "studi0_watch::Studi0WatchConfig",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_watcher.py — a change is published within the poll cadence"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "poll_seconds is comfortably shorter than the page's own 1000 ms poll, so a change is already published by the time the page next asks about it."
+        },
+        "schema": {
+          "state": "value",
+          "value": "Class-level constants — poll_seconds: float (the gap between readings), join_seconds: float (the bound on a shutdown's wait)."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The watch's two timings: how long it waits between readings of the project, and how long a shutdown waits for the watching thread to notice it was asked to stop."
+      },
+      "kind": "CONFIG",
+      "location": {
+        "end_line": 24,
+        "start_line": 14
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_watch::Studi0Watcher",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_watcher.py — a repeated failure is reported once"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The thread is always a daemon: studi0 is a viewer, and a viewer must never be the reason a process refuses to exit."
+        },
+        "schema": {
+          "state": "value",
+          "value": "Mutable dataclass. session: Studi0Session — the session being refreshed; stop_requested: threading.Event — set to ask the loop to end, and waited on between ticks so a stop is noticed at once; reported_failures: set[str] — failure signatures already written to stderr; thread: threading.Thread | None — the daemon thread, None until start_watcher starts it."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "One running watch: the session it keeps current, the way it is asked to stop, the thread doing the looking, and the failures it has already spoken about. The last of those is what keeps a broken project from filling a console with the same sentence four times a second."
+      },
+      "kind": "MODEL",
+      "location": {
+        "end_line": 53,
+        "start_line": 26
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_watch::poll_once",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_watcher.py — a half-written artifact never crashes the watch"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "value",
+          "value": [
+            "Exception"
+          ]
+        },
+        "expects": {
+          "state": "value",
+          "value": "watcher is a watch whose session is the one to refresh"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never lets a failed reading replace or change the last good reading the session holds."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Never raises, whatever the project's files are doing. Returns True only when a new reading was actually published; on failure the session keeps its last good reading untouched and the failure is reported at most once per watch."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "One reading of the project, taken safely. A build that lands while studi0 is looking leaves half-written artifacts behind it for a moment; reading one of those must cost the viewer nothing more than this tick, so every failure is caught, spoken about once, and answered by keeping the last good reading and trying again in three-quarters of a second."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 121,
+        "start_line": 79
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_watch::start_watcher",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_watcher.py — the first reading lands before serving"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "session is a session opened by studi0_state.create_session"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "The session carries its first reading by the time this returns; a daemon thread is running and will keep the session current until stop_watcher is called; starting never raises because of the project's contents"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Starts watching a project, taking the session's first reading before it returns so that whatever is served next is already true. The first reading goes through the same guarded tick as every later one, which is why a project that cannot be read at all still yields a running studi0 that says so rather than a studi0 that refuses to start."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 163,
+        "start_line": 123
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_watch::stop_watcher",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_watcher.py — a stopped watch stops reading"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "watcher is a watch returned by start_watcher, or one that was never started"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "The watch will take no further readings after this returns; waits at most Studi0WatchConfig.join_seconds; never raises, and is safe to call more than once"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Asks a watch to stop and waits, briefly, for it to finish the tick it is in — so a studi0 that has exited is not still reading the project behind the console prompt. The wait is bounded because the thread is a daemon: worst case it is abandoned, never awaited forever."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 191,
+        "start_line": 165
+      },
+      "visibility": "PUBLIC"
+    }
+  ],
+  "doc_guides": [],
+  "doc_refs": [],
+  "edges": {
+    "authored": [
+      {
+        "carries": "the first reading",
+        "coupling": "TIGHT",
+        "intent": "start_watcher CALLS poll_once: the first reading",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "studi0_watch::start_watcher",
+        "target": "studi0_watch::poll_once"
+      },
+      {
+        "carries": "the bound on the shutdown wait",
+        "coupling": "TIGHT",
+        "intent": "stop_watcher READS Studi0WatchConfig: the bound on the shutdown wait",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_watch::stop_watcher",
+        "target": "studi0_watch::Studi0WatchConfig"
+      }
+    ],
+    "derived": [
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "studi0_watch::poll_once",
+        "target": "studi0_state::refresh_session"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_watch::poll_once",
+        "target": "studi0_watch::Studi0Watcher"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_watch::start_watcher",
+        "target": "studi0_state::Studi0Session"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_watch::start_watcher",
+        "target": "studi0_watch::Studi0Watcher"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_watch::stop_watcher",
+        "target": "studi0_watch::Studi0Watcher"
+      }
+    ],
+    "verification": []
+  },
+  "examples": [],
+  "exports": {
+    "state": "value",
+    "value": [
+      "Studi0WatchConfig",
+      "Studi0Watcher",
+      "poll_once",
+      "start_watcher",
+      "stop_watcher"
+    ]
+  },
+  "helpers": [
+    {
+      "body": {
+        "state": "value",
+        "value": "def _report_failure(watcher: Studi0Watcher, error: BaseException) -> None:\n    \"\"\"Report ``error`` on stderr unless this watch already has.\"\"\"\n    signature = f\"{type(error).__name__}: {error}\"\n    if signature in watcher.reported_failures:\n        return\n    watcher.reported_failures.add(signature)\n    print(\n        f\"studi0: could not read the project's build artifacts, \"\n        f\"keeping the last good view — {signature}\",\n        file=sys.stderr,\n        flush=True,\n    )"
+      },
+      "body_kind": "function",
+      "canonical_id": "studi0_watch::_report_failure",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Says once, on stderr, that studi0 could not read the project this time — and stays silent every later time the same thing goes wrong, so a console watching a broken project stays readable. Distinctness is the exception's type and message together: a different file failing, or the same file failing differently, is a different thing worth hearing about."
+      },
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 69,
+        "start_line": 55
+      },
+      "module": "studi0_watch",
+      "name": "_report_failure",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _watch_loop(watcher: Studi0Watcher) -> None:\n    \"\"\"Poll until asked to stop.\"\"\"\n    while not watcher.stop_requested.wait(Studi0WatchConfig.poll_seconds):\n        poll_once(watcher)"
+      },
+      "body_kind": "function",
+      "canonical_id": "studi0_watch::_watch_loop",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "The body of the watching thread: wait out the poll interval, take a reading, repeat — and end the moment a stop is requested. Waiting on the stop event rather than sleeping is what makes a shutdown immediate instead of up-to-one-tick slow."
+      },
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 77,
+        "start_line": 71
+      },
+      "module": "studi0_watch",
+      "name": "_watch_loop",
+      "tags": []
+    }
+  ],
+  "imports": {
+    "deferred_requires": {
+      "state": "none"
+    },
+    "privileged": [],
+    "requires": {
+      "state": "value",
+      "value": [
+        "sys",
+        "threading",
+        "dataclasses.dataclass",
+        "dataclasses.field"
+      ]
+    },
+    "runtime_only_requires": {
+      "state": "none"
+    },
+    "soft_requires": {
+      "state": "none"
+    },
+    "uses": {
+      "state": "value",
+      "value": [
+        "studi0_state.Studi0Session",
+        "studi0_state.refresh_session"
+      ]
+    }
+  },
+  "integrations": [],
+  "module": {
+    "content_hash": "sha256:7ff9fb055b8dffacbe16731b116cc96dc3e6fd4e254b49bcf939d023d218e79c",
+    "exports_helpers": {
+      "state": "none"
+    },
+    "intent": {
+      "state": "value",
+      "value": "The poll that keeps a studi0 session honest between builds: roughly four times a second it re-reads the project's build artifacts and republishes the session's reading only when the project actually said something new. It runs on a daemon thread so an interrupted studi0 dies with its server; it treats a build caught half-written as a reason to keep the last good reading and look again, not as a reason to fall over; and it reports each distinct failure to stderr once, never once per tick."
+    },
+    "layer": "APPLICATION",
+    "name": "studi0_watch",
+    "source_file": "s0ma_src/studi0_watch.s0ma",
+    "tags": [],
+    "transpiled_file": "studi0_watch.py",
+    "version": "0.19.1"
+  },
+  "schema_version": "3.0.0",
+  "source_hash": "sha256:7ff9fb055b8dffac",
+  "transpiler_version": "1.0.0"
+}

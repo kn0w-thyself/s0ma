@@ -1,0 +1,56 @@
+# The documentation application (ADR-012, owner decision D-3).
+#
+# `docs/` is a s0ma project because the documentation is part of what s0ma
+# is, not a folder beside it. This file is what makes that true to the
+# toolchain: `[tool.s0ma]` below is what `s0ma build` and `s0ma check`
+# resolve when they are pointed here with `--project-root docs`.
+#
+# It is NOT a distribution and NOT a uv workspace member. The workspace
+# member glob at the checkout root is `packages/*`, which this tree is
+# outside of, so nothing installs it and no wheel depends on it
+# (ADR-012 §1, "The documentation project is not a distribution").
+[project]
+name = "s0ma-docs"
+# Deliberately not the release version. `scripts/check_version_refs.py`
+# holds the four distributions in lockstep and does not scan this tree, so
+# a release version written here would be a fifth site nothing keeps
+# current — and this project is never built, never published and never
+# depended on, so it has no version for anyone to read. `0.0.0` says that
+# out loud, and is what the B1 spike fixture carried for the same reason.
+version = "0.0.0"
+description = "The s0ma documentation application: the composition that builds what s0ma knows about itself."
+requires-python = ">=3.11"
+# Declared so the build resolves the host runtime rather than carrying a
+# standing HOST_RUNTIME_UNDECLARED warning (ADR-012 §1, addition 1). The
+# application's own machinery — the `s0ma-docs-model@1` schema, the
+# registered providers, the composition engine and the renderers — ships in the
+# s0ma-dsl wheel, and the component registry it reads ships in s0ma-core.
+dependencies = [
+    "s0ma-core >= 0.18.0",
+    "s0ma-dsl >= 0.18.0",
+]
+
+[tool.s0ma]
+# `release`, which is what ADR-012 §1 asked for, arrived at the way its C8
+# amendment said it would: when the pages it gates are real.
+#
+# C8 shipped `strict` and wrote down why — release mode's extra gate,
+# MISSING_PUBLIC_DOC_REF (one doc-ref per PUBLIC nerve), was satisfiable
+# then only by declaring an output no reader had, in a directory the F
+# phase had not laid out. Both halves of that reason have expired. The
+# directory exists and holds committed generated pages, and the three
+# PUBLIC nerves of `s0ma_src/application.s0ma` now carry a doc-ref that
+# renders `reference/documentation-application.md` — a page whose reader
+# is whoever maintains the documentation application, generated from the
+# registry so it cannot describe a surface the code does not have.
+#
+# What the raise buys, exactly: MISSING_PUBLIC_DOC_REF and
+# MISSING_EMBEDDED_EXAMPLE become errors, and EMPTY_DOC_FILTER stops
+# being survivable — so a doc-ref that stopped matching anything, or a
+# public call added without a reference entry, fails the build instead of
+# rendering a shorter page. `scripts/check.py`'s `docs-application` stage
+# runs the project build and both documentation commands, so the mode on
+# this line is the mode the gate enforces.
+mode = "release"
+source_roots = ["s0ma_src"]
+build_dir = "_built"

@@ -1,0 +1,67 @@
+module task_adapter
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Adapts external task sources into the internal task model"
+    requires: [json]
+    uses: [data_models.TaskModel, data_models.Priority, data_models.TaskError]
+    exports: [parse_task_json, format_task_output]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve parse_task_json :: APPLICATION
+    kind: ADAPTER
+    visibility: PUBLIC
+    intent: "Parses a JSON string into a TaskModel instance"
+    expects: "A valid JSON string with title and priority fields"
+    guarantees: "Returns a populated TaskModel or raises TaskError"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    raises: [TaskError]
+    depends_on:
+        TaskModel: {relation: CONSTRUCTS, carries: "task instance creation", coupling: TIGHT}
+        Priority: {relation: READS, carries: "priority validation", coupling: LOOSE}
+    provides: none
+    returns: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def parse_task_json(raw: str) -> TaskModel:
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as e:
+            raise TaskError(f"Invalid JSON: {e}")
+        return TaskModel(
+            title=data.get("title", ""),
+            priority=data.get("priority", Priority.MEDIUM),
+        )
+
+nerve format_task_output :: APPLICATION
+    kind: ADAPTER
+    visibility: PUBLIC
+    intent: "Formats a task execution result as a JSON response string"
+    expects: "A result dict from execute_task"
+    guarantees: "Returns a valid JSON string with status and trace_id"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        TaskModel: {relation: READS, carries: "task data for formatting", coupling: LOOSE}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def format_task_output(result: dict) -> str:
+        return json.dumps(result, indent=2)

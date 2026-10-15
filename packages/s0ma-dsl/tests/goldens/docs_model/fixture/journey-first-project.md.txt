@@ -1,0 +1,54 @@
+# journey:first-project
+
+## What this path is for
+
+Take somebody who has never written a s0ma project from an empty folder to a first check they can trust.
+
+## What to know before you start
+
+- `concept:first-idea`
+
+## The steps, in order
+
+- `cli:s0ma/init`
+- `cli:s0ma/check`
+- `cli:s0ma/feedback`
+
+## Why each step
+
+- Get a folder that is already a project rather than one you have to make into one.
+- Find out whether what you have written holds together before you build anything on it.
+- Say what got in your way while it is still fresh, in your own words.
+
+## What you should see
+
+- A project skeleton, and a note saying what was written where.
+- Either a clean report, or a list of what does not hold and where to look.
+- The report you wrote, sent once, and a note of where it went.
+
+## Where you are asked first
+
+- cli:s0ma/feedback: Nothing leaves your machine until you have read the report back and said yes. Decline and the draft stays where it is.
+
+## If something goes wrong
+
+- a declaration that does not hold together -> cli:s0ma/check: Read the first finding rather than the last; the ones below it are often the same mistake seen again.
+
+## What you learn on the way
+
+- `concept:worked-example`
+
+## Worked examples
+
+- `example:first_project_walkthrough`
+
+## What decides this
+
+- none recorded
+
+---
+
+## Identity
+
+- Release: `0.18.1 (preview)`
+- Documentation snapshot: `sha256:2af357cac6cb8a5a`

@@ -1,0 +1,375 @@
+{
+  "mappings": {
+    "declarations": [
+      {
+        "body_output": {
+          "end_line": 52,
+          "start_line": 49
+        },
+        "body_source": {
+          "end_line": 25,
+          "start_line": 22
+        },
+        "decorator_output": {
+          "end_line": 47,
+          "start_line": 41
+        },
+        "name": "Studi0ServerConfig",
+        "output": {
+          "end_line": 52,
+          "start_line": 41
+        },
+        "source": {
+          "end_line": 25,
+          "start_line": 14
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 100,
+          "start_line": 54
+        },
+        "body_source": {
+          "end_line": 81,
+          "start_line": 35
+        },
+        "name": "ROUTE_TABLE",
+        "output": {
+          "end_line": 107,
+          "start_line": 54
+        },
+        "source": {
+          "end_line": 81,
+          "start_line": 27
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 118,
+          "start_line": 109
+        },
+        "body_source": {
+          "end_line": 100,
+          "start_line": 91
+        },
+        "name": "NOT_BUILT_ERROR",
+        "output": {
+          "end_line": 125,
+          "start_line": 109
+        },
+        "source": {
+          "end_line": 100,
+          "start_line": 83
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 132,
+          "start_line": 127
+        },
+        "body_source": {
+          "end_line": 115,
+          "start_line": 110
+        },
+        "name": "NOT_FOUND_ERROR",
+        "output": {
+          "end_line": 139,
+          "start_line": 127
+        },
+        "source": {
+          "end_line": 115,
+          "start_line": 102
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 141,
+          "start_line": 141
+        },
+        "body_source": {
+          "end_line": 125,
+          "start_line": 125
+        },
+        "name": "_HTML_CONTENT_TYPE",
+        "output": {
+          "end_line": 148,
+          "start_line": 141
+        },
+        "source": {
+          "end_line": 125,
+          "start_line": 117
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 150,
+          "start_line": 150
+        },
+        "body_source": {
+          "end_line": 135,
+          "start_line": 135
+        },
+        "name": "_JSON_CONTENT_TYPE",
+        "output": {
+          "end_line": 157,
+          "start_line": 150
+        },
+        "source": {
+          "end_line": 135,
+          "start_line": 127
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 159,
+          "start_line": 159
+        },
+        "body_source": {
+          "end_line": 145,
+          "start_line": 145
+        },
+        "name": "_CSS_CONTENT_TYPE",
+        "output": {
+          "end_line": 166,
+          "start_line": 159
+        },
+        "source": {
+          "end_line": 145,
+          "start_line": 137
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 168,
+          "start_line": 168
+        },
+        "body_source": {
+          "end_line": 155,
+          "start_line": 155
+        },
+        "name": "_JS_CONTENT_TYPE",
+        "output": {
+          "end_line": 175,
+          "start_line": 168
+        },
+        "source": {
+          "end_line": 155,
+          "start_line": 147
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 181,
+          "start_line": 179
+        },
+        "body_source": {
+          "end_line": 162,
+          "start_line": 160
+        },
+        "name": "_json_bytes",
+        "output": {
+          "end_line": 181,
+          "start_line": 177
+        },
+        "source": {
+          "end_line": 162,
+          "start_line": 157
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 191,
+          "start_line": 185
+        },
+        "body_source": {
+          "end_line": 173,
+          "start_line": 167
+        },
+        "name": "_text_response",
+        "output": {
+          "end_line": 191,
+          "start_line": 183
+        },
+        "source": {
+          "end_line": 173,
+          "start_line": 164
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 201,
+          "start_line": 195
+        },
+        "body_source": {
+          "end_line": 184,
+          "start_line": 178
+        },
+        "name": "_json_response",
+        "output": {
+          "end_line": 201,
+          "start_line": 193
+        },
+        "source": {
+          "end_line": 184,
+          "start_line": 175
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 222,
+          "start_line": 215
+        },
+        "body_source": {
+          "end_line": 214,
+          "start_line": 206
+        },
+        "decorator_output": {
+          "end_line": 213,
+          "start_line": 203
+        },
+        "name": "project_display_name",
+        "output": {
+          "end_line": 222,
+          "start_line": 203
+        },
+        "source": {
+          "end_line": 214,
+          "start_line": 186
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 271,
+          "start_line": 238
+        },
+        "body_source": {
+          "end_line": 278,
+          "start_line": 244
+        },
+        "decorator_output": {
+          "end_line": 236,
+          "start_line": 224
+        },
+        "name": "route_request",
+        "output": {
+          "end_line": 271,
+          "start_line": 224
+        },
+        "source": {
+          "end_line": 278,
+          "start_line": 216
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 288,
+          "start_line": 285
+        },
+        "body_source": {
+          "end_line": 303,
+          "start_line": 300
+        },
+        "decorator_output": {
+          "end_line": 283,
+          "start_line": 273
+        },
+        "name": "bound_address",
+        "output": {
+          "end_line": 288,
+          "start_line": 273
+        },
+        "source": {
+          "end_line": 303,
+          "start_line": 280
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 350,
+          "start_line": 304
+        },
+        "body_source": {
+          "end_line": 374,
+          "start_line": 327
+        },
+        "decorator_output": {
+          "end_line": 302,
+          "start_line": 290
+        },
+        "name": "create_server",
+        "output": {
+          "end_line": 350,
+          "start_line": 290
+        },
+        "source": {
+          "end_line": 374,
+          "start_line": 305
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 380,
+          "start_line": 365
+        },
+        "body_source": {
+          "end_line": 413,
+          "start_line": 397
+        },
+        "decorator_output": {
+          "end_line": 363,
+          "start_line": 352
+        },
+        "name": "run_server",
+        "output": {
+          "end_line": 380,
+          "start_line": 352
+        },
+        "source": {
+          "end_line": 413,
+          "start_line": 376
+        },
+        "type": "nerve"
+      }
+    ],
+    "module_header": {
+      "output_all": {
+        "end_line": 31,
+        "start_line": 31
+      },
+      "output_header": {
+        "end_line": 5,
+        "start_line": 1
+      },
+      "output_imports": {
+        "end_line": 29,
+        "start_line": 6
+      },
+      "output_registration": {
+        "end_line": 39,
+        "start_line": 33
+      },
+      "source": {
+        "end_line": 12,
+        "start_line": 1
+      }
+    }
+  },
+  "output_file": "studi0_server.py",
+  "source_file": "s0ma_src/studi0_server.s0ma",
+  "version": "1.0.0"
+}

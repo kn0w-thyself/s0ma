@@ -1,0 +1,13 @@
+Topic: concept:drift
+Release: 0.18.1 (preview)
+Snapshot: sha256:7730325659b12fd5
+Examples: none recorded
+Decided by: authority:spec/drift-check
+
+In short:
+  The gap that opens when a written description and the thing it
+  describes stop agreeing.
+
+Read more:
+  the full page for concept:drift carries every fact left out here, word
+  for word.

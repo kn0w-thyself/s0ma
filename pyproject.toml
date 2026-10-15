@@ -1,0 +1,13 @@
+# Workspace root — not itself a package.
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "hypothesis>=6.0",
+    "mypy>=1.0",
+    "ruff>=0.4",
+    "httpx>=0.24.0",
+]

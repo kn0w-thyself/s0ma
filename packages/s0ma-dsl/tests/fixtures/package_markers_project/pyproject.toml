@@ -1,0 +1,15 @@
+[project]
+name = "package_markers_project"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src/sample_pkg"]
+test_roots = ["tests"]
+build_dir = "package_markers_project_build"
+# G1 (feedback 5–6 cleanup): only the __init__.py whose body carries
+# ``__all__`` re-exports needs explicit declaration. The empty / docstring
+# only __init__.py files are auto-classified as PACKAGE_MARKER by
+# `s0ma verify` via `is_empty_package_marker`. The ``undeclared_layer``
+# package's __init__.py also carries executable content but is left
+# undeclared on purpose so the fixture exercises the ``UNKNOWN`` path.
+package_markers = ["src/sample_pkg/declared_layer/__init__.py"]

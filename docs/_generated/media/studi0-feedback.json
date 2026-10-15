@@ -1,0 +1,220 @@
+{
+  "identity": {
+    "channel": "preview",
+    "journey": "journey:studi0-feedback",
+    "published_by": "doc:guide/studi0-feedback",
+    "release": "0.19.1 (preview)",
+    "snapshot": "sha256:46cb0cce5f7c07cf"
+  },
+  "package": {
+    "audience": [
+      "user"
+    ],
+    "cautions": [
+      {
+        "effects": [
+          "network",
+          "subprocess"
+        ],
+        "step": "1",
+        "surface": "cli:s0ma/studi0",
+        "surface_name": "s0ma studi0"
+      },
+      {
+        "effects": [
+          "network",
+          "write"
+        ],
+        "step": "3",
+        "surface": "cli:s0ma/feedback",
+        "surface_name": "s0ma feedback"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "4",
+        "surface": "cli:s0ma/feedback/drafts",
+        "surface_name": "s0ma feedback drafts"
+      },
+      {
+        "effects": [
+          "network",
+          "write"
+        ],
+        "step": "5",
+        "surface": "cli:s0ma/feedback/submit",
+        "surface_name": "s0ma feedback submit"
+      }
+    ],
+    "chapters": [
+      {
+        "caption": "Put the built project on screen, so you are looking at what it is rather than at what you remember writing.",
+        "ordinal": "1",
+        "step": "1",
+        "title": "s0ma studi0"
+      },
+      {
+        "caption": "Let the page ask for the thing it draws: every part of the project, and the wiring between the parts.",
+        "ordinal": "2",
+        "step": "2",
+        "title": "/api/graph"
+      },
+      {
+        "caption": "Write up what the picture showed you in one line, and read back the report s0ma composed from it before deciding anything.",
+        "ordinal": "3",
+        "step": "3",
+        "title": "s0ma feedback"
+      },
+      {
+        "caption": "Find the report again after answering no, or after a send that could not get through — it was saved before the question that sends anything.",
+        "ordinal": "4",
+        "step": "4",
+        "title": "s0ma feedback drafts"
+      },
+      {
+        "caption": "Read the saved report once more and finish sending it, or decide again not to.",
+        "ordinal": "5",
+        "step": "5",
+        "title": "s0ma feedback submit"
+      }
+    ],
+    "consent": [
+      {
+        "boundary": "You are approving one exact feedback report — the one printed just above the question, ending in its fingerprint. Nothing is sent until you answer yes, and answering anything else sends nothing at all.",
+        "effects": [
+          "approval",
+          "network",
+          "read",
+          "write"
+        ],
+        "step": "3",
+        "surface": "cli:s0ma/feedback",
+        "surface_name": "s0ma feedback"
+      },
+      {
+        "boundary": "The same approval as the first time, asked again on the saved report: nothing is sent until you answer yes, and answering no leaves the draft exactly where it was.",
+        "effects": [
+          "approval",
+          "network",
+          "read",
+          "write"
+        ],
+        "step": "5",
+        "surface": "cli:s0ma/feedback/submit",
+        "surface_name": "s0ma feedback submit"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "example:transcript/studi0-feedback",
+        "source": "docs/s0ma_src/evidence/studi0-feedback.json"
+      }
+    ],
+    "outcome": "Look at the system you have built, notice the thing that is wrong with it, and tell the people who make s0ma — with the whole report in front of you, and nothing leaving your machine until you say so.",
+    "prerequisites": [
+      {
+        "concept": "concept:intent",
+        "term": "intent"
+      },
+      {
+        "concept": "concept:module",
+        "term": "module"
+      },
+      {
+        "concept": "concept:registry-snapshot",
+        "term": "registry snapshot"
+      },
+      {
+        "concept": "concept:self-model",
+        "term": "self-model"
+      }
+    ],
+    "recovery": [
+      {
+        "action": "The viewer is running and there is nothing built for it to draw. Build the project once and reload the page — the viewer repaints as builds land, so nothing needs restarting.",
+        "next_surface": "cli:s0ma/build",
+        "next_surface_name": "s0ma build",
+        "when": "NOT_BUILT"
+      }
+    ],
+    "steps": [
+      {
+        "channel": "cli",
+        "expected_visible_state": "A local address on your own machine, printed and then opened in a browser. The viewer reads what the build produced; it never runs your application.",
+        "ordinal": "1",
+        "purpose": "Put the built project on screen, so you are looking at what it is rather than at what you remember writing.",
+        "side_effects": [
+          "network",
+          "read",
+          "subprocess"
+        ],
+        "surface": "cli:s0ma/studi0",
+        "surface_name": "s0ma studi0"
+      },
+      {
+        "channel": "studi0",
+        "expected_visible_state": "The whole graph the build produced, wrapped in the reading number it belongs to — the same document the graph command prints, passed on entire rather than summarised, so the picture and the build cannot disagree.",
+        "ordinal": "2",
+        "purpose": "Let the page ask for the thing it draws: every part of the project, and the wiring between the parts.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "studi0:action/api/graph",
+        "surface_name": "/api/graph"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The report on screen field by field, in the words you wrote, ending in the fingerprint that ties it to what you approve; then two questions — whether kn0wthyself may contact you, and whether to send exactly this.",
+        "ordinal": "3",
+        "purpose": "Write up what the picture showed you in one line, and read back the report s0ma composed from it before deciding anything.",
+        "side_effects": [
+          "approval",
+          "network",
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/feedback",
+        "surface_name": "s0ma feedback"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "Every report written on this machine and not yet sent, each with its short identifier and the line you wrote — or one sentence saying there are none, which is the answer when nothing was ever composed.",
+        "ordinal": "4",
+        "purpose": "Find the report again after answering no, or after a send that could not get through — it was saved before the question that sends anything.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/feedback/drafts",
+        "surface_name": "s0ma feedback drafts"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The saved report shown again in full, the contact answer you already gave repeated back to you, and the same send question — a second look at exactly what would travel.",
+        "ordinal": "5",
+        "purpose": "Read the saved report once more and finish sending it, or decide again not to.",
+        "side_effects": [
+          "approval",
+          "network",
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/feedback/submit",
+        "surface_name": "s0ma feedback submit"
+      }
+    ],
+    "teaches": [
+      {
+        "concept": "concept:proprioception",
+        "term": "proprioception"
+      },
+      {
+        "concept": "concept:feedback",
+        "term": "feedback"
+      }
+    ],
+    "title": "Seeing your system, and telling the s0ma team what you found"
+  },
+  "schema": "s0ma-docs-model@1"
+}

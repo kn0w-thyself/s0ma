@@ -1,0 +1,38 @@
+module processing
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Processes user operations based on role and permissions"
+    requires: [logging]
+    uses: [models.UserModel, models.UserRole]
+    exports: [process_user]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+nerve process_user :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Processes a user operation based on their role"
+    expects: "A valid UserModel instance"
+    guarantees: "Returns a dict with access level"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    depends_on:
+        UserModel: {relation: READS, carries: "user data", coupling: LOOSE}
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def process_user(user: UserModel) -> dict:
+        logging.info("Processing user %s", user.name)
+        if user.role == UserRole.ADMIN:
+            return {"access": "full"}
+        return {"access": "limited"}

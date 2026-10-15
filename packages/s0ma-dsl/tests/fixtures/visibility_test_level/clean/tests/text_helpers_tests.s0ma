@@ -1,0 +1,33 @@
+module text_helpers_tests
+    layer: APPLICATION
+    version: 1.0.0
+    intent: "Tests for text_helpers, demonstrating that test modules can reach TEST-visibility nerves via uses:."
+    uses: [text_helpers.escape_text, text_helpers.render_html]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_escape_text_handles_special_characters :: APPLICATION
+    intent: "Verifies escape_text replaces &, <, > with HTML entities."
+    tests: [text_helpers.escape_text]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_escape_text_handles_special_characters():
+        assert escape_text("a & b") == "a &amp; b"
+        assert escape_text("<x>") == "&lt;x&gt;"
+        assert escape_text("plain") == "plain"
+
+test test_render_html_escapes_input :: APPLICATION
+    intent: "Verifies render_html wraps the escaped text in a span element."
+    tests: [text_helpers.render_html]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_render_html_escapes_input():
+        assert render_html("a & b") == "<span>a &amp; b</span>"

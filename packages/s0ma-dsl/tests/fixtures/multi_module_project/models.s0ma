@@ -1,0 +1,22 @@
+module models
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Domain models for the flat-build-layout fixture project."
+    exports: [UserModel]
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell UserModel :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "User record with a display name."
+    schema: "Dataclass with name: str."
+    invariants: none
+    covered_by: none
+    ---
+    class UserModel:
+        name: str

@@ -1,0 +1,98 @@
+# adopt_source: src/bookshelf/storage.py@sha256:784338970fae8ff9192008bf2f3dbd3a4f042019b710d875ee61d56668a9ac93
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module storage` rather than
+#   `bookshelf.storage`. Every module name in a project must be unique; rename the draft if
+#   another module already carries this name.
+# note: `JsonStore` is a plain class, so the draft calls it a cell of kind MODEL. If it is
+#   really a service or an adapter over something outside the program, make it a nerve of
+#   kind SERVICE or ADAPTER instead.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+# note: `bookshelf.errors` is another module of this project that is not a .s0ma module yet, so
+#   it is declared as a plain Python import rather than as a uses: entry. Convert leaf-first
+#   and move it to uses: once that module is converted.
+module storage
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports: [JsonStore]
+
+    requires:
+      - bookshelf.errors:StorageCorruptError
+      - json
+      - logging
+      - pathlib:Path
+      - typing:Any
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: [os]
+    exports_helpers: none
+
+cell ADOPT_UNPLACED_0010_0013 :: DOMAIN
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "Source the retrofit could not place. Move it into a declaration, then delete this."
+    schema: "adopt: unplaced - src/bookshelf/storage.py lines 10-13 - a module-level assignment that is not an upper-case constant; a value worked out while the module is being imported has no declaration form; and a top-level statement that does something when the module is imported"
+    invariants: none
+    covered_by: none
+    ---
+    ADOPT_UNPLACED_0010_0013 = r"""logger = logging.getLogger(__name__)
+    # A library has no business configuring logging for the program that imports
+    # it; the null handler keeps "no handlers could be found" off a quiet console.
+    logger.addHandler(logging.NullHandler())
+    """
+
+cell JsonStore :: DOMAIN
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    class JsonStore:
+        """Keeps the service's tables as one JSON file per table.
+
+        A table is a list of records; nothing here knows what a record means.
+        """
+
+        def __init__(self, root: Path) -> None:
+            self.root = Path(root)
+
+        def read(self, table: str) -> list[dict[str, Any]]:
+            """Every record in ``table``; one that was never written reads empty."""
+            path = self.path_for(table)
+            if not path.exists():
+                return []
+            try:
+                records = json.loads(path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                raise StorageCorruptError(table, str(exc)) from exc
+            if not isinstance(records, list):
+                raise StorageCorruptError(table, "the stored value is not a list of records")
+            return records
+
+        def write(self, table: str, records: list[dict[str, Any]]) -> None:
+            """Replace every record in ``table``.
+
+            The new file is written beside the old one and renamed over it, so a
+            reader never sees a half-written table.
+            """
+            # Only the write path needs this, and writing is the rare case.
+            import os
+
+            self.root.mkdir(parents=True, exist_ok=True)
+            path = self.path_for(table)
+            scratch = path.with_name(path.name + ".new")
+            scratch.write_text(json.dumps(records, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            os.replace(scratch, path)
+            logger.debug("wrote %d records to %s", len(records), path.name)
+
+        def path_for(self, table: str) -> Path:
+            """Where ``table`` is kept on disk."""
+            return self.root / f"{table}.json"

@@ -1,0 +1,110 @@
+# adopt_source: src/bookshelf/config.py@sha256:24ca5b194b2b3cfed1bb51c3aa098b5fa5ff12e145f27659119e3413e0f751fc
+# note: Writing a field: the value goes in double quotes on one line, and everything between
+#   them is taken exactly as written — there are no escapes, so quote anything inside the
+#   sentence with 'single quotes' rather than a backslash.
+# note: s0ma module names are flat, so this draft declares `module config` rather than
+#   `bookshelf.config`. Every module name in a project must be unique; rename the draft if
+#   another module already carries this name.
+# note: The file's `from __future__ import annotations` line is not carried into the draft: s0ma
+#   writes the generated file's import block itself, and a future import has to be the first
+#   statement of a file. Annotations are therefore evaluated as they are written — quote any
+#   annotation that names something defined later in the file.
+module config
+    layer: DOMAIN
+    version: 0.1.0
+    intent: "FIXME(adopt): say in one sentence what this module is responsible for, and what it leaves to other modules. The Python file's docstring began: 'Settings for the lending service: no other module reads the environment.' — use that if it is true, rewrite it if it is not. Also choose this module's layer: the draft wrote DOMAIN because nothing in the file said which layer this is, and the four layers are DOMAIN, APPLICATION, INFRASTRUCTURE or PRESENTATION. A module sits at exactly one layer and every declaration in it shares that layer. The rule that settles it: a module may only use modules at its own layer or below — DOMAIN may use DOMAIN and FRAMEWORK only, APPLICATION may also use DOMAIN, and PRESENTATION and INFRASTRUCTURE may use DOMAIN and APPLICATION — so the answer is the layer that lets this module import what it already imports."
+    exports:
+      - DEFAULT_LOAN_DAYS
+      - MAX_LOANS_PER_MEMBER
+      - RENEWAL_LIMIT
+      - LIBRARY_NAME
+      - DATA_DIR
+      - loan_length_days
+
+    requires: [os]
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+cell DEFAULT_LOAN_DAYS :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    DEFAULT_LOAN_DAYS = 21
+
+cell MAX_LOANS_PER_MEMBER :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    MAX_LOANS_PER_MEMBER = 5
+
+cell RENEWAL_LIMIT :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    RENEWAL_LIMIT = 2
+
+cell LIBRARY_NAME :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    LIBRARY_NAME = "Fennel Street Library"
+
+cell DATA_DIR :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence why this exists and who reads it."
+    schema: "FIXME(adopt): say what this holds and what shape it has, in plain words."
+    invariants: none
+    covered_by: none
+    ---
+    # The data directory is the one setting that really does change between one
+    # deployment and the next, so it is the one setting read from the environment.
+    DATA_DIR = os.environ.get("BOOKSHELF_DATA_DIR", "var/bookshelf")
+
+nerve loan_length_days :: DOMAIN
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "FIXME(adopt): say in one sentence what this function is for and who calls it."
+    expects: "FIXME(adopt): say what has to be true before this is called: what each argument must hold, and anything that must already have happened."
+    guarantees: "FIXME(adopt): say what the caller gets back when this works, and name anything it refuses to do or raises an error about."
+    forbids: "FIXME(adopt): say what this must never do, however it is called; write none if there is nothing to rule out."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def loan_length_days(renewals: int) -> int:
+        """How long a loan runs, given how often it has already been renewed.
+
+        Renewed loans are shorter, so a title in demand comes back sooner.
+        """
+        if renewals <= 0:
+            return DEFAULT_LOAN_DAYS
+        return max(7, DEFAULT_LOAN_DAYS - 7 * renewals)
