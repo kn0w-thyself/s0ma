@@ -443,7 +443,7 @@
         "covered_by": {
           "state": "value",
           "value": [
-            "tests/test_launch.py — loopback-only binding, ephemeral port"
+            "tests/test_launch.py — loopback-only binding, ephemeral port, no name lookup on bind"
           ]
         },
         "declares_attributes": {
@@ -493,7 +493,7 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 374,
+        "end_line": 389,
         "start_line": 305
       },
       "visibility": "PUBLIC"
@@ -560,8 +560,8 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 413,
-        "start_line": 376
+        "end_line": 428,
+        "start_line": 391
       },
       "visibility": "PUBLIC"
     }
@@ -803,7 +803,8 @@
         "typing.Any",
         "urllib.parse.urlsplit",
         "http.server.BaseHTTPRequestHandler",
-        "http.server.ThreadingHTTPServer"
+        "http.server.ThreadingHTTPServer",
+        "socketserver.TCPServer"
       ]
     },
     "runtime_only_requires": {
@@ -828,7 +829,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:37411718abe3a55a3bf43f13a59f1e0596869115233b2f4af8e6030bfcc259a9",
+    "content_hash": "sha256:904e78299d90f9592b512e883ef4ac6b588b038a64956cbbe185b3e8d4c59ebd",
     "exports_helpers": {
       "state": "none"
     },
@@ -844,6 +845,6 @@
     "version": "0.19.1"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:37411718abe3a55a",
+  "source_hash": "sha256:904e78299d90f959",
   "transpiler_version": "1.0.0"
 }

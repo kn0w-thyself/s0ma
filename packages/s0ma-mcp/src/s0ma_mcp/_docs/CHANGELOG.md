@@ -101,6 +101,16 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Fixed
 
+- **studi0 binds its loopback socket without a reverse-DNS lookup.**
+  `HTTPServer.server_bind` resolves the bound host with `socket.getfqdn`, a
+  lookup that stalls for tens of seconds on a machine whose resolver answers
+  slowly; the public repository's first macOS CI run showed the first studi0
+  launch of the test session missing its thirty-second startup window for
+  exactly that reason, with every later launch passing once the resolver had
+  cached its answer. studi0 only ever binds the loopback literal, so the
+  lookup could never say anything the literal does not: the server now binds
+  the socket and records the address by value. One test refuses the lookup
+  and binds anyway.
 - **The `authored-lines` stage no longer fails a checkout that lacks the spike
   tree.** `scripts/spikes` is one of the six trees whose `.s0ma` fixtures the
   stage reads, and a tree with no tracked `.s0ma` file was an error, so that a

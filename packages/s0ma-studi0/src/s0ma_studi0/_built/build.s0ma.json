@@ -44,10 +44,10 @@
       "logical_path": "studi0_server.s0ma",
       "name": "studi0_server",
       "output": "studi0_server.py",
-      "output_hash": "sha256:2ab7c59c5278d2718260dc1a4b6bbde9c3b16ec7331deb9a3966374559fa22ad",
+      "output_hash": "sha256:57af06e3538a2609106bb66c0611a7ea993d5600a7c336b440be00a620a3174d",
       "role": "source",
       "source": "s0ma_src/studi0_server.s0ma",
-      "source_hash": "sha256:37411718abe3a55a3bf43f13a59f1e0596869115233b2f4af8e6030bfcc259a9",
+      "source_hash": "sha256:904e78299d90f9592b512e883ef4ac6b588b038a64956cbbe185b3e8d4c59ebd",
       "source_map": "studi0_server.s0ma.map",
       "source_root": "s0ma_src"
     },
@@ -81,7 +81,7 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:64a060df4f01ec21393185014ae52bb0471fd14b13f75123792ecc781f912582"
+      "sha256": "sha256:a9d3fef3a3bf9dc723229117371265795158524e609df3998e726f3969138c5f"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",

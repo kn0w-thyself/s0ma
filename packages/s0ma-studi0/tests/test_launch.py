@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import re
+import socket
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -50,6 +51,29 @@ def test_binds_loopback_only(launch_studi0: Callable[..., ServedStudi0]) -> None
     # And it answers there, so the binding is real rather than declared.
     status, _, _ = session.get("/")
     assert status == 200
+
+
+def test_binding_makes_no_name_lookup(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Binding never resolves the loopback literal's name.
+
+    ``HTTPServer.server_bind`` asks ``socket.getfqdn`` for the host's name,
+    a reverse-DNS lookup that can stall for tens of seconds where the
+    resolver answers slowly (GitHub's hosted macOS runners do). The host
+    is always the loopback literal, so studi0 binds without asking.
+    """
+
+    def _refuse(*_args: object) -> str:
+        raise AssertionError("server_bind looked the host's name up")
+
+    monkeypatch.setattr(socket, "getfqdn", _refuse)
+    server = studi0_server.create_server(tmp_path)
+    try:
+        assert server.server_name == "127.0.0.1"
+        assert server.server_port == server.socket.getsockname()[1]
+    finally:
+        server.server_close()
 
 
 def test_ephemeral_port_is_a_real_bound_port(
