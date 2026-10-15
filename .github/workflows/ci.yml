@@ -3,9 +3,10 @@
 #   check — the full gate (`scripts/check.py`: ruff, mypy on all four
 #           packages, all four test suites, selfhost/release integrity,
 #           INV-1 spelling guard) on an OS × Python matrix:
-#           ubuntu-latest × {3.11, 3.12, 3.13} and
+#           ubuntu-latest × {3.11, 3.12, 3.13},
 #           windows-latest × {3.11, 3.13} (NFR-7: Windows is a
-#           first-class, CI-enforced platform).
+#           first-class, CI-enforced platform), and one
+#           macos-latest leg on the newest supported Python.
 #   build — wheels + sdists for every workspace package, uploaded as
 #           artifacts. `uv build --all-packages` discovers workspace
 #           members from the root pyproject, so a new package is
@@ -37,6 +38,20 @@ jobs:
           # and halve billed Windows minutes, which are 2× Linux.
           - os: windows-latest
             python-version: "3.12"
+        include:
+          # One macOS leg, not a third column. `include` adds a single
+          # combination here (its `os` cannot be merged into an existing
+          # one), so the matrix grows by one job rather than by three.
+          # Newest supported Python, because that is where a platform
+          # incompatibility shows up first. Nothing in the gate is
+          # macOS-specific — it is green on the maintainer's macOS
+          # machine every day — so this leg exists to catch what only a
+          # clean runner can: a path, filesystem or toolchain difference
+          # nobody's laptop would reveal. It lands WITH publication:
+          # macOS minutes are billed at ten times Linux on a private
+          # repository and are free on a public one.
+          - os: macos-latest
+            python-version: "3.13"
     steps:
       - uses: actions/checkout@v6
 

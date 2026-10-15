@@ -1,0 +1,71 @@
+# What Dependabot watches in this repository, and how loudly.
+#
+# Two ecosystems, because two things here go stale on their own: the
+# actions the workflows run, and the Python dependencies `uv.lock` pins.
+# Both are GROUPED into one pull request per ecosystem per week. That is
+# the difference between a signal somebody reads and a stream of
+# notifications everybody learns to scroll past.
+#
+# What this file deliberately does NOT do:
+#
+#   * scan for credentials — that is a repository setting (secret
+#     scanning and push protection, free on a public repository), not a
+#     file. The milestone note
+#     `plans/notes/front-door-a5-ci-additions.md` carries it as an owner
+#     step;
+#   * raise security advisories — once the repository is public those
+#     arrive through the dependency graph whether this file exists or not.
+#
+# Nothing here changes what CI runs. A Dependabot pull request is an
+# ordinary pull request: it passes the same gate as everybody else's, and
+# it gets a human's yes before it merges.
+version: 2
+
+updates:
+  # 1. The actions the workflows run. A small surface, and the one place
+  #    where somebody else's release could change what this repository
+  #    executes — worth seeing as a pull request rather than not at all.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Europe/London
+    open-pull-requests-limit: 2
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: s0ma
+
+  # 2. The Python workspace. The lockfile is the root `uv.lock` and the
+  #    four packages are uv workspace members, so the workspace is one
+  #    update unit and `directory: "/"` is where its manifest lives.
+  #
+  #    UNVERIFIED, and it must be checked the day this lands: Dependabot
+  #    has a `uv` ecosystem, but whether it reads a uv WORKSPACE lockfile
+  #    (a root `uv.lock` covering `packages/*`) rather than a
+  #    single-project one could not be confirmed from this machine, which
+  #    cannot reach GitHub's documentation. How to check: Insights ->
+  #    Dependency graph -> Dependabot lists the last run for each
+  #    ecosystem and says plainly when it could not read the manifest. If
+  #    it cannot, the fallback is `package-ecosystem: pip`, which reads
+  #    the four pyproject files but will not refresh `uv.lock` — at which
+  #    point delete this entry and keep the lockfile a person's job
+  #    rather than carry a permanently failing updater.
+  - package-ecosystem: uv
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Europe/London
+    open-pull-requests-limit: 2
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
+    commit-message:
+      prefix: s0ma

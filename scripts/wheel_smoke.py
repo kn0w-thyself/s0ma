@@ -444,6 +444,9 @@ def _assert_source_posture() -> None:
     assert "os: [ubuntu-latest, windows-latest]" in ci
     assert 'python-version: ["3.11", "3.12", "3.13"]' in ci
     assert '- os: windows-latest\n            python-version: "3.12"' in ci
+    # The single macOS leg, added by `include` so it costs one job and not
+    # three (front-door A5). Newest supported Python — ci.yml says why.
+    assert '- os: macos-latest\n            python-version: "3.13"' in ci
     for expected in EXPECTED:
         project = tomllib.loads(
             (ROOT / "packages" / expected.distribution / "pyproject.toml").read_text(
