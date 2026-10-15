@@ -30,7 +30,7 @@ api = ["fastapi>=0.100.0", "uvicorn[standard]>=0.20.0", "pydantic>=2.0"]
 mcp = ["mcp>=1.0.0,<2"]
 all = ["s0ma-core[api,mcp]"]
 dev = [
-    "pytest>=7.0",
+    "pytest>=9.1.1",
     "pytest-cov>=4.0",
     "hypothesis>=6.0",
     "mypy>=1.0",
