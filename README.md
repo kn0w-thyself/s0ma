@@ -83,7 +83,7 @@ is embodied as ordinary components. The non-Python parts are in the model and
 in the dependency graph rather than left out of them. Support for more
 languages is on the development roadmap.
 
-**Probably not, if** the work is a throwaway script, or has no Python in it to
+**s0ma might not be for you, if** the work is a throwaway script, or has no Python in it to
 declare the rest from, or is a codebase that cannot accept generated Python
 files alongside the sources you write. And not if a team is unwilling to make
 each part's purpose and boundaries something a release is allowed to fail on —
