@@ -204,9 +204,21 @@ def _validate_companion(document: dict[str, Any], *, build_root: Path) -> None:
 def _live_health(
     registry: ComponentRegistry | RegistrySnapshot,
     components: list[dict[str, Any]],
+    *,
+    include_framework: bool | None = None,
 ) -> dict[str, Any]:
+    """The live overlay: what the running registry holds against the build.
+
+    The registry also holds s0ma's own framework components. They are
+    counted under ``framework_component_count`` but, by default, neither
+    counted in ``registered_component_count`` nor named in
+    ``registered_components``, so the live count agrees with the
+    companion's inventory, which never lists them. ``include_framework``
+    follows :meth:`RegistrySnapshot.visible_components`.
+    """
     snapshot = registry.snapshot() if isinstance(registry, ComponentRegistry) else registry
-    registered = sorted(snapshot.components)
+    visible = snapshot.visible_components(include_framework)
+    registered = sorted(visible)
     canonical_ids = {str(component["id"]) for component in components}
     matched = sorted(
         component_id
@@ -217,8 +229,11 @@ def _live_health(
     return {
         "status": "available",
         "basis": "explicit_runtime_registry",
-        "registered_component_count": snapshot.component_count,
+        "registered_component_count": len(visible),
         "framework_component_count": snapshot.framework_component_count,
+        "framework_components_included": any(
+            spec.is_framework for spec in visible.values()
+        ),
         "registered_components": registered,
         "canonical_components_observed": matched,
     }
@@ -228,6 +243,7 @@ def self_context(
     manifest: str | Path | None = None,
     *,
     registry: ComponentRegistry | RegistrySnapshot | None = None,
+    include_framework: bool | None = None,
 ) -> dict[str, Any]:
     """Load and verify the canonical self-context companions.
 
@@ -235,6 +251,9 @@ def self_context(
     directory.  When omitted, ``./build/build.s0ma.json`` is used.  A live
     overlay is returned only when the caller explicitly supplies a registry
     or snapshot; deterministic build artifacts never claim runtime health.
+    ``include_framework`` decides whether that overlay counts and names
+    s0ma's own framework components beside the application's; by default
+    it does not, so the live count agrees with the companion's inventory.
     """
     manifest_path = _manifest_path(manifest)
     raw_manifest = _json_object(manifest_path, label="Build manifest")
@@ -280,6 +299,7 @@ def self_context(
         result["live_health"] = _live_health(
             registry,
             [item for item in result["components"] if isinstance(item, dict)],
+            include_framework=include_framework,
         )
     return result
 
@@ -499,11 +519,16 @@ class SelfInspectAdapter:
             layers: dict[str, list[str]] = {}
             for item in components:
                 layers.setdefault(str(item["layer"]), []).append(str(item["id"]))
+            # The inventory is the build's own components; s0ma's framework
+            # components are never in it, so this count is the
+            # application's. The module count is the same inventory
+            # grouped by module.
             return {
                 "ok": True,
                 "command": "describe",
                 "schema": self.context.get("schema"),
                 "component_count": len(components),
+                "module_count": len({str(item.get("module", "")) for item in components}),
                 "components_by_layer": {
                     layer: sorted(names) for layer, names in sorted(layers.items())
                 },
@@ -610,9 +635,15 @@ def self_inspect_adapter(
     manifest: str | Path | None = None,
     *,
     registry: ComponentRegistry | RegistrySnapshot | None = None,
+    include_framework: bool | None = None,
 ) -> SelfInspectAdapter:
-    """Create an app-registerable adapter from verified companions."""
-    return SelfInspectAdapter(self_context(manifest, registry=registry))
+    """Create an app-registerable adapter from verified companions.
+
+    The arguments are :func:`self_context`'s.
+    """
+    return SelfInspectAdapter(
+        self_context(manifest, registry=registry, include_framework=include_framework)
+    )
 
 
 __all__ = [

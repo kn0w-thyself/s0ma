@@ -1076,13 +1076,47 @@ class RegistrySnapshot:
         result["snapshot_at"] = self.snapshot_at.isoformat()
         return result
 
-    def describe(self) -> str:
+    @property
+    def application_component_count(self) -> int:
+        """How many registered components are the application's own, not s0ma's."""
+        return self.component_count - self.framework_component_count
+
+    def visible_components(
+        self, include_framework: bool | None = None
+    ) -> dict[str, ComponentSpec]:
+        """The components a describe surface lists.
+
+        s0ma registers its own framework components beside the
+        application's (``is_framework``). An application's self-description
+        is about the application, so by default (``None``) the framework's
+        components are left out whenever the application registered any of
+        its own, and listed only when they are all there is, which is the
+        framework describing itself. ``True`` lists everything; ``False``
+        lists the application's components alone, even when that is
+        nothing. The counts on the snapshot itself always cover both.
+        """
+        if include_framework is True:
+            return dict(self.components)
+        application = {
+            name: spec for name, spec in self.components.items() if not spec.is_framework
+        }
+        if include_framework is False or application:
+            return application
+        return dict(self.components)
+
+    def describe(self, *, include_framework: bool | None = None) -> str:
         """Produce a human-readable description of the system.
 
         This is the output the bootstrap test validates. It must be
         accurate enough that a fresh reader (human or LLM) can understand
         the system's architecture.
+
+        Args:
+            include_framework: Which components the layer listing and the
+                dependency graph cover; see :meth:`visible_components`. The
+                summary counts always cover every registered component.
         """
+        listed = self.visible_components(include_framework)
         lines: list[str] = []
 
         # Header
@@ -1098,14 +1132,21 @@ class RegistrySnapshot:
         lines.append(f"  Total components: {self.component_count}")
         lines.append(f"  Framework components: {self.framework_component_count}")
         lines.append(f"  User components: {user_count}")
+        if len(listed) != self.component_count:
+            lines.append(
+                f"  Listed below: {len(listed)} application component(s); "
+                "framework components are omitted "
+                "(describe(include_framework=True) lists them)"
+            )
         lines.append("")
 
         # Components by layer
         lines.append("COMPONENTS BY LAYER")
         for layer_name, component_names in sorted(self.layers.items()):
-            if component_names:
+            listed_names = [name for name in component_names if name in listed]
+            if listed_names:
                 lines.append(f"  [{layer_name}]")
-                for comp_name in sorted(component_names):
+                for comp_name in sorted(listed_names):
                     spec = self.components.get(comp_name)
                     if spec:
                         kind_label = spec.kind.name.lower()
@@ -1250,12 +1291,17 @@ class RegistrySnapshot:
             lines.append("")
 
         # Dependency graph
+        listed_graph = {
+            comp_name: deps
+            for comp_name, deps in self.dependency_graph.items()
+            if comp_name in listed
+        }
         has_dependencies = any(
-            deps for deps in self.dependency_graph.values()
+            deps for deps in listed_graph.values()
         )
         if has_dependencies:
             lines.append("DEPENDENCY GRAPH")
-            for comp_name, deps in sorted(self.dependency_graph.items()):
+            for comp_name, deps in sorted(listed_graph.items()):
                 if deps:
                     dep_str = ", ".join(sorted(deps))
                     lines.append(f"  {comp_name} -> {dep_str}")

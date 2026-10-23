@@ -406,7 +406,6 @@ def _build_framework_specs(
                     "from_dict(to_dict()) round-trip preserves every slot",
                 ],
             ),
-            dependencies=["ComponentSpec"],
             module_path="s0ma.models",
             qualified_name="s0ma.models.OperationContract",
             source_file=models_file,
@@ -432,7 +431,6 @@ def _build_framework_specs(
                     "or is None for a plain component name",
                 ],
             ),
-            dependencies=["ComponentSpec"],
             module_path="s0ma.models",
             qualified_name="s0ma.models.ComponentResolution",
             source_file=models_file,
@@ -674,6 +672,7 @@ def _build_framework_specs(
             ),
             dependencies=[
                 "ComponentSpec",
+                "ComponentResolution",
                 "RegistrySnapshot",
                 "AdoptedFile",
                 "AssertExpr",

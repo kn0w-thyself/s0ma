@@ -177,9 +177,53 @@ def test_live_health_requires_explicit_registry(tmp_path: Path) -> None:
         "basis": "explicit_runtime_registry",
         "registered_component_count": 0,
         "framework_component_count": 0,
+        "framework_components_included": False,
         "registered_components": [],
         "canonical_components_observed": [],
     }
+
+
+def test_live_health_counts_the_application_not_the_framework(tmp_path: Path) -> None:
+    from s0ma.models import ComponentSpec
+    from s0ma.types import ComponentKind, Layer
+
+    manifest = _write_build(tmp_path)
+    registry = ComponentRegistry(persist=False)
+    registry.register(
+        ComponentSpec(
+            name="S0maDSL_helper",
+            kind=ComponentKind.FUNCTION,
+            layer=Layer.FRAMEWORK,
+            intent="A framework helper that is not the application's.",
+            is_framework=True,
+        )
+    )
+    registry.register(
+        ComponentSpec(
+            name="submit_order",
+            kind=ComponentKind.SERVICE,
+            layer=Layer.APPLICATION,
+            intent="Submit an order for the application.",
+        )
+    )
+    health = self_context(manifest, registry=registry)["live_health"]
+    assert health["registered_component_count"] == 1
+    assert health["framework_component_count"] == 1
+    assert health["framework_components_included"] is False
+    assert health["registered_components"] == ["submit_order"]
+    assert health["canonical_components_observed"] == ["orders::submit_order"]
+
+    everything = self_context(manifest, registry=registry, include_framework=True)
+    assert everything["live_health"]["registered_component_count"] == 2
+    assert everything["live_health"]["framework_components_included"] is True
+    assert everything["live_health"]["registered_components"] == [
+        "S0maDSL_helper", "submit_order",
+    ]
+    adapter = self_inspect_adapter(manifest, registry=registry)
+    described = adapter.handle("describe")
+    assert described["component_count"] == 1
+    assert described["module_count"] == 1
+    assert described["live_health"]["registered_component_count"] == 1
 
 
 def test_legacy_manifest_refuses_with_rebuild_remediation(tmp_path: Path) -> None:

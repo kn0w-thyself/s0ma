@@ -79,7 +79,7 @@ class SelfModelInterface:
         self._metrics_collector = metrics_collector
         self._lifecycle_manager = lifecycle_manager
 
-    def describe_system(self) -> str:
+    def describe_system(self, *, include_framework: bool | None = None) -> str:
         """Natural language system overview for LLM context.
 
         Returns a comprehensive but concise description of:
@@ -90,9 +90,20 @@ class SelfModelInterface:
 
         Optimized for: injecting into an LLM system prompt as
         "here is what this system is."
+
+        Args:
+            include_framework: Whether s0ma's own framework components
+                are listed and counted in the layer and kind breakdowns.
+                ``None`` (the default) lists the application's components
+                alone whenever any are registered, and the framework's
+                when nothing else is, so an application's overview is
+                about the application; ``True`` lists everything and
+                ``False`` the application alone. The summary's total,
+                framework and application counts are always all three.
         """
         snapshot = self._registry.snapshot()
-        components = snapshot.components
+        components = snapshot.visible_components(include_framework)
+        framework_listed = any(spec.is_framework for spec in components.values())
 
         lines: list[str] = []
 
@@ -125,6 +136,12 @@ class SelfModelInterface:
         lines.append(f"User/application components: {user_count}")
         if configurable_count > 0:
             lines.append(f"Components with runtime-configurable properties: {configurable_count}")
+        if not framework_listed and snapshot.framework_component_count:
+            lines.append(
+                f"Listed below: the {len(components)} application components "
+                "(framework components omitted; pass include_framework=True "
+                "to list them)."
+            )
         lines.append("")
 
         # Layer breakdown
@@ -230,7 +247,7 @@ class SelfModelInterface:
 
         return "\n".join(lines).rstrip()
 
-    def get_architecture_context(self) -> str:
+    def get_architecture_context(self, *, include_framework: bool | None = None) -> str:
         """Full architectural context for LLM planning.
 
         Returns everything an LLM would need to understand the system
@@ -243,9 +260,16 @@ class SelfModelInterface:
 
         Optimized for: providing maximum context to an LLM that is
         about to generate code, plan a modification, or debug an issue.
+
+        Args:
+            include_framework: As for :meth:`describe_system`: ``None``
+                lists the application's components alone whenever any
+                are registered, ``True`` lists s0ma's framework
+                components too, ``False`` never lists them.
         """
         snapshot = self._registry.snapshot()
-        components = snapshot.components
+        components = snapshot.visible_components(include_framework)
+        framework_listed = any(spec.is_framework for spec in components.values())
 
         lines: list[str] = []
 
@@ -259,6 +283,11 @@ class SelfModelInterface:
             f"({snapshot.framework_component_count} framework, "
             f"{user_count} user)."
         )
+        if not framework_listed and snapshot.framework_component_count:
+            lines.append(
+                f"This context lists the {len(components)} application components; "
+                "framework components are omitted (include_framework=True lists them)."
+            )
         lines.append("")
 
         # Full layer breakdown with intents
@@ -268,7 +297,9 @@ class SelfModelInterface:
         # Full dependency graph
         lines.append("## Dependency Graph")
         lines.append(
-            format_dependency_graph_text(snapshot.dependency_graph)
+            format_dependency_graph_text(
+                {name: snapshot.dependency_graph.get(name, []) for name in components}
+            )
         )
         lines.append("")
 
@@ -430,6 +461,7 @@ class SelfModelInterface:
         context: str,
         *,
         target_package: str | None = None,
+        include_framework: bool | None = None,
     ) -> str:
         """Format self-model output for a specific agent context.
 
@@ -450,6 +482,10 @@ class SelfModelInterface:
 
             target_package: Required when ``context`` is
                 ``"code_generation"``.
+            include_framework: Whether the architectural-review and
+                debugging contexts list s0ma's framework components; see
+                :meth:`describe_system`. The code-generation context
+                always shows them, annotated as not importable.
 
         Returns:
             Context-optimized self-model text.
@@ -470,10 +506,10 @@ class SelfModelInterface:
             return self.describe_for_code_generation(target_package)
 
         if context == "architectural_review":
-            return self.get_architecture_context()
+            return self.get_architecture_context(include_framework=include_framework)
 
         if context == "debugging":
-            return self._describe_for_debugging()
+            return self._describe_for_debugging(include_framework=include_framework)
 
         valid = ("code_generation", "architectural_review", "debugging")
         raise ValueError(
@@ -594,7 +630,7 @@ class SelfModelInterface:
                 )
         return format_drift_status(snapshot, recomputed_hashes=recomputed)
 
-    def _describe_for_debugging(self) -> str:
+    def _describe_for_debugging(self, *, include_framework: bool | None = None) -> str:
         """Produce debugging-focused self-model output.
 
         Includes current verification status, all active anomalies,
@@ -602,6 +638,7 @@ class SelfModelInterface:
         most useful when diagnosing a system problem.
         """
         snapshot = self._registry.snapshot()
+        components = snapshot.visible_components(include_framework)
         report = self._try_verify()
 
         lines: list[str] = []
@@ -625,7 +662,11 @@ class SelfModelInterface:
 
         # Dependency graph for tracing component relationships
         lines.append("## Dependency Graph")
-        lines.append(format_dependency_graph_text(snapshot.dependency_graph))
+        lines.append(
+            format_dependency_graph_text(
+                {name: snapshot.dependency_graph.get(name, []) for name in components}
+            )
+        )
         lines.append("")
 
         # Recent lifecycle events (most recent 5)

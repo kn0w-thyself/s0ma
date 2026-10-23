@@ -133,7 +133,9 @@ class TestFullLifecycle:
         assert "DOMAIN" in description
         assert "APPLICATION" in description
         assert "INFRASTRUCTURE" in description
-        assert "FRAMEWORK" in description
+        # The framework's own components are counted, not listed, unless asked
+        assert "[FRAMEWORK]" not in description
+        assert "[FRAMEWORK]" in snapshot.describe(include_framework=True)
 
         # Step 8: Verify the classes actually work
         task = Task(title="Test integration")
@@ -392,7 +394,7 @@ class TestMixedComponents:
         assert "ComponentRegistry" in framework_specs
 
     def test_snapshot_describes_both(self) -> None:
-        """Snapshot description includes both framework and user components."""
+        """The description lists the application; asked, it lists the framework too."""
         registry = _fresh_registry_with_bootstrap()
         set_registry(registry)
 
@@ -403,15 +405,21 @@ class TestMixedComponents:
         snapshot = registry.snapshot()
         description = snapshot.describe()
 
-        # Framework components mentioned
-        assert "ComponentRegistry" in description
-        # User components mentioned
+        # User components are what the application's description lists
         assert "Task" in description
         assert "StorageAdapter" in description
-        # Both layer types present
-        assert "FRAMEWORK" in description
         assert "DOMAIN" in description
         assert "INFRASTRUCTURE" in description
+        # Framework components are counted, and said to be omitted, not listed
+        assert f"Framework components: {EXPECTED_FRAMEWORK_COMPONENT_COUNT}" in description
+        assert "framework components are omitted" in description
+        assert "[FRAMEWORK]" not in description
+        assert "- ComponentRegistry (framework)" not in description
+        # Asked for, both are there
+        everything = snapshot.describe(include_framework=True)
+        assert "- ComponentRegistry (framework)" in everything
+        assert "[FRAMEWORK]" in everything
+        assert "Task" in everything
         # Counts are accurate
         assert snapshot.framework_component_count == EXPECTED_FRAMEWORK_COMPONENT_COUNT
         user_count = snapshot.component_count - snapshot.framework_component_count

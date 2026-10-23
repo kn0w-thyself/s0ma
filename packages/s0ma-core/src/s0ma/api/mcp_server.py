@@ -90,7 +90,10 @@ def create_mcp_server(
 
         Returns a comprehensive description including component counts,
         architectural layers, key patterns, and current health status.
-        Use this to understand what the system is before making changes.
+        The layer and kind breakdowns list the application's own
+        components; s0ma's framework components are counted but not
+        listed. Use this to understand what the system is before making
+        changes.
         """
         return smi.describe_system()
 
