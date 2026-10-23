@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 170 documents. 134 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 172 documents. 136 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -120,6 +120,7 @@ The parts you work through day to day: your editor, the server a coding agent ta
 | --- | --- | --- | --- | --- |
 | [Authoring through the agent's own tool channel](guides/mcp-authoring.md) | `docs/guides/mcp-authoring.md` | agents, users | maintained | links checked, version checked |
 | [Editor support for `.s0ma` files](../editors/README.md) | `editors/README.md` | contributors | maintained | version checked |
+| [Packaging a s0ma project as a wheel](guides/packaging.md) | `docs/guides/packaging.md` | agents, users | maintained | links checked |
 | [Retrofitting an existing codebase](guides/retrofit-existing-codebase.md) | `docs/guides/retrofit-existing-codebase.md` | agents, users | maintained | links checked, version checked |
 | [s0ma in Claude](guides/claude-integration.md) | `docs/guides/claude-integration.md` | users | maintained | links checked, version checked |
 | [Seeing your system, and telling the s0ma team what you found](guides/studi0-feedback.md) | `docs/guides/studi0-feedback.md` | users | maintained | links checked, version checked |
@@ -186,6 +187,7 @@ Running s0ma when something has gone wrong, releasing it, and working on s0ma it
 | [ADR-012: The documentation application — placement, build and output boundaries, snapshot semantics](adr/ADR-012-docs-application.md) | `docs/adr/ADR-012-docs-application.md` | contributors | binding | links checked |
 | [ADR-013: Derived-source provider registry — generalizing `doc-ref covers: { source: <name> }`](adr/ADR-013-derived-source-registry.md) | `docs/adr/ADR-013-derived-source-registry.md` | contributors | binding | links checked |
 | [ADR-014: The `forbids` line — what a nerve or a ganglion must never do](adr/ADR-014-the-forbids-line.md) | `docs/adr/ADR-014-the-forbids-line.md` | contributors | binding | links checked |
+| [ADR-015: A build without the runtime packages records what it could not verify](adr/ADR-015-build-without-runtime-packages.md) | `docs/adr/ADR-015-build-without-runtime-packages.md` | contributors | binding | links checked |
 | [Architecture Decision Records](../packages/s0ma-dsl/docs/adr/README.md) | `packages/s0ma-dsl/docs/adr/README.md` | contributors | maintained | links checked |
 | [Code of conduct](../CODE_OF_CONDUCT.md) | `CODE_OF_CONDUCT.md` | contributors | maintained | version checked |
 | [Contributing to s0ma](../CONTRIBUTING.md) | `CONTRIBUTING.md` | contributors | maintained | links checked, version checked |

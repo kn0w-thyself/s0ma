@@ -348,7 +348,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.19.1",
-    "snapshot_hash": "sha256:2607b8d0896aa97d"
+    "snapshot_hash": "sha256:4637874a4bcdaece"
   },
   "topics": [
     {
@@ -3225,6 +3225,11 @@
           "title": "Language concepts"
         },
         {
+          "canonical_source": "docs/guides/packaging.md",
+          "id": "doc:guide/packaging",
+          "title": "Packaging a s0ma project as a wheel"
+        },
+        {
           "canonical_source": "docs/guides/retrofit-existing-codebase.md",
           "id": "doc:guide/retrofit-existing-codebase",
           "title": "Retrofitting an existing codebase"
@@ -3739,6 +3744,11 @@
           "canonical_source": "docs/guides/mcp-authoring.md",
           "id": "doc:guide/mcp-authoring",
           "title": "Authoring through the agent's own tool channel"
+        },
+        {
+          "canonical_source": "docs/guides/packaging.md",
+          "id": "doc:guide/packaging",
+          "title": "Packaging a s0ma project as a wheel"
         },
         {
           "canonical_source": "docs/guides/retrofit-existing-codebase.md",

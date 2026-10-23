@@ -6,7 +6,7 @@ Every component s0ma registers about itself: 159 of them, across 4 distributions
 
 By layer: 72 framework, 54 presentation, 33 application. 81 of the 159 declare themselves public and 73 declare no visibility at all, which is the honest answer for a component registered from hand-written Python: visibility is a field of the s0ma language, and a Python registration has nowhere to put one.
 
-This page describes the build stamped `sha256:2607b8d0896aa97d` at version `0.19.1`. The same rows in a form a program can read, with the reading each fact came from, are in [`docs/_generated/inventory-components.json`](../_generated/inventory-components.json).
+This page describes the build stamped `sha256:4637874a4bcdaece` at version `0.19.1`. The same rows in a form a program can read, with the reading each fact came from, are in [`docs/_generated/inventory-components.json`](../_generated/inventory-components.json).
 
 ## Contents
 

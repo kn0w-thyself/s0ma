@@ -151,6 +151,15 @@
     },
     {
       "authority_class": "adr",
+      "content_sha256": "57e795ab5998461497235189d264874a846c9797b14a8c360ba285ea15453d97",
+      "delegates": [],
+      "id": "authority:adr/repo.ADR-015",
+      "section": "ADR-015: A build without the runtime packages records what it could not verify",
+      "source": "docs/adr/ADR-015-build-without-runtime-packages.md",
+      "status": "Proposed; index=none; tree=repo"
+    },
+    {
+      "authority_class": "adr",
       "content_sha256": "716fdea091f813be0144df58e05faa139d4fbb5cdc1ccb0fcb8c183862ae5775",
       "delegates": [],
       "id": "authority:adr/s0ma-dsl.ADR-001",
@@ -295,7 +304,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "d79d90d35fe7bbc5f7a2bbbbcea8598f449ac5d609ebe0124827d6c420930161",
+      "content_sha256": "8d32cad719960ab7f2c80af9057a53e2403da38729864d8150f9077377f62b8c",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.19.1] — 2026-10-09",
@@ -3979,6 +3988,27 @@
     },
     {
       "authority": "",
+      "canonical_source": "docs/guides/packaging.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/check",
+        "cli:s0ma/test",
+        "cli:s0ma/verify-host",
+        "concept:requires",
+        "concept:strictness-mode",
+        "config:bootstrap_files",
+        "config:build_dir",
+        "config:source_roots",
+        "diagnostic:HOST_RUNTIME_UNDECLARED",
+        "diagnostic:MISSING_PACKAGE"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/packaging",
+      "prose_locator": "docs/guides/packaging.md",
+      "title": "Packaging a s0ma project as a wheel"
+    },
+    {
+      "authority": "",
       "canonical_source": "docs/s0ma_src/concepts/product.json",
       "covers": [
         "concept:authored-vs-generated-boundary",
@@ -4652,6 +4682,15 @@
       "id": "doc:normative/adr-014-the-forbids-line",
       "prose_locator": "docs/adr/ADR-014-the-forbids-line.md",
       "title": "ADR-014: The `forbids` line — what a nerve or a ganglion must never do"
+    },
+    {
+      "authority": "authority:adr/repo.ADR-015",
+      "canonical_source": "docs/adr/ADR-015-build-without-runtime-packages.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-015-build-without-runtime-packages",
+      "prose_locator": "docs/adr/ADR-015-build-without-runtime-packages.md",
+      "title": "ADR-015: A build without the runtime packages records what it could not verify"
     },
     {
       "authority": "",
@@ -5403,7 +5442,7 @@
     "build_channel": "preview",
     "release_version": "0.19.1",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:2607b8d0896aa97d"
+    "snapshot_hash": "sha256:4637874a4bcdaece"
   },
   "surfaces": [
     {
@@ -5420,7 +5459,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma adopt",
       "side_effects": [
@@ -5441,7 +5480,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma adopt baseline",
       "side_effects": [
@@ -5463,7 +5502,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma adopt draft",
       "side_effects": [
@@ -5483,7 +5522,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma adopt file",
       "side_effects": [
@@ -5505,7 +5544,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma adopt init",
       "side_effects": [
@@ -5527,7 +5566,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma adopt scan",
       "side_effects": [
@@ -5548,7 +5587,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma adopt status",
       "side_effects": [
@@ -5569,7 +5608,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma adopt verify-parity",
       "side_effects": [
@@ -5590,7 +5629,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma build",
       "side_effects": [
@@ -5612,7 +5651,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma check",
       "side_effects": [
@@ -5634,7 +5673,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma deferred-surface",
       "side_effects": [
@@ -5655,7 +5694,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs",
       "side_effects": [
@@ -5676,7 +5715,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs check",
       "side_effects": [
@@ -5697,7 +5736,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs check-drift",
       "side_effects": [
@@ -5718,7 +5757,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs compose",
       "side_effects": [
@@ -5740,7 +5779,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs list",
       "side_effects": [
@@ -5761,7 +5800,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs render",
       "side_effects": [
@@ -5783,7 +5822,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs search",
       "side_effects": [
@@ -5804,7 +5843,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs show",
       "side_effects": [
@@ -5825,7 +5864,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma docs verify",
       "side_effects": [
@@ -5846,7 +5885,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma doctor",
       "side_effects": [
@@ -5867,7 +5906,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma examples",
       "side_effects": [
@@ -5888,7 +5927,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma examples run",
       "side_effects": [
@@ -5911,7 +5950,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma feedback",
       "side_effects": [
@@ -5933,7 +5972,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma feedback delete",
       "side_effects": [
@@ -5954,7 +5993,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma feedback drafts",
       "side_effects": [
@@ -5974,7 +6013,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma feedback enroll",
       "side_effects": [
@@ -5996,7 +6035,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma feedback list",
       "side_effects": [
@@ -6016,7 +6055,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma feedback submit",
       "side_effects": [
@@ -6040,7 +6079,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma graph",
       "side_effects": [
@@ -6061,7 +6100,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma inspect",
       "side_effects": [
@@ -6082,7 +6121,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma migrate",
       "side_effects": [
@@ -6103,7 +6142,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma migrate-ext",
       "side_effects": [
@@ -6125,7 +6164,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma migrate-layout",
       "side_effects": [
@@ -6145,7 +6184,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma migrate grammar",
       "side_effects": [
@@ -6167,7 +6206,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma new",
       "side_effects": [
@@ -6189,7 +6228,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma score",
       "side_effects": [
@@ -6210,7 +6249,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma studi0",
       "side_effects": [
@@ -6233,7 +6272,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma test",
       "side_effects": [
@@ -6256,7 +6295,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma test-conftest",
       "side_effects": [
@@ -6278,7 +6317,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma topo",
       "side_effects": [
@@ -6299,7 +6338,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma transpile",
       "side_effects": [
@@ -6321,7 +6360,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma verify",
       "side_effects": [
@@ -6342,7 +6381,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "1121f8e604ee61486a544edfff012a1fc0dc1f68ef01c4ac0bced4f57b9d1415"
+        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
       },
       "public_name": "s0ma verify-host",
       "side_effects": [
