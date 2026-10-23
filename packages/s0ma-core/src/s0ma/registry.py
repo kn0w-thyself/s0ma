@@ -27,6 +27,7 @@ from s0ma.exceptions import LifecycleError, RegistrationError, RegistryIntegrity
 from s0ma.models import (
     AdoptedFile,
     AssertExpr,
+    ComponentResolution,
     ComponentSpec,
     Contract,
     DocGuideRegistration,
@@ -590,6 +591,57 @@ class ComponentRegistry:
             A dictionary mapping component names to their specs.
         """
         return dict(self._components)
+
+    def find_providers(self, operation: str) -> list[ComponentSpec]:
+        """Return the components that provide the named operation.
+
+        An operation is an entry of a component's ``provides:`` list, the
+        name an agent calls it by (``fetch_url``, ``pip_install``). The
+        answer is in registry order, so it is stable across calls.
+
+        Args:
+            operation: The operation name, matched exactly.
+
+        Returns:
+            The providing ComponentSpecs; empty when no component provides
+            the operation.
+        """
+        return [
+            spec for spec in self._components.values() if operation in spec.provides
+        ]
+
+    def resolve_component(self, name: str) -> ComponentResolution:
+        """Resolve a caller-supplied name to a component, accepting operation names.
+
+        The name is first read as a component identifier exactly as
+        :meth:`get` reads it (bare or ``module::name``). When that finds
+        nothing, it is read as the name of an operation some component
+        provides: one provider resolves to that component with the
+        operation recorded, and several providers resolve to nothing
+        with every provider listed as a candidate, so the caller can ask
+        again by component name. The describe surfaces route their name
+        arguments through this so an agent that knows a tool name reaches
+        the component behind it.
+
+        Args:
+            name: Bare component name, ``module::name``, or an operation name.
+
+        Returns:
+            A :class:`ComponentResolution`; see its docstring for the
+            three outcomes.
+        """
+        spec = self.get(name)
+        if spec is not None:
+            return ComponentResolution(name=name, spec=spec)
+        providers = self.find_providers(name)
+        if len(providers) == 1:
+            return ComponentResolution(name=name, spec=providers[0], operation=name)
+        if providers:
+            return ComponentResolution(
+                name=name,
+                candidates=tuple(provider.display_name for provider in providers),
+            )
+        return ComponentResolution(name=name)
 
     # ------------------------------------------------------------------
     # Hierarchical queries

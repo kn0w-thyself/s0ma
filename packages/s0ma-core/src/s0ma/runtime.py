@@ -271,20 +271,54 @@ def self_context(
     return result
 
 
+def _operations_of(component: dict[str, Any]) -> list[str]:
+    """The operation names a self-context component provides."""
+    names: list[str] = []
+    provides = component.get("provides")
+    if isinstance(provides, dict) and isinstance(provides.get("value"), list):
+        names.extend(str(name) for name in provides["value"])
+    contracts = component.get("provides_contracts")
+    if isinstance(contracts, list):
+        for entry in contracts:
+            if (
+                isinstance(entry, dict)
+                and isinstance(entry.get("name"), str)
+                and entry["name"] not in names
+            ):
+                names.append(entry["name"])
+    return names
+
+
 def _component_lookup(
     components: list[dict[str, Any]], name: str
-) -> tuple[dict[str, Any] | None, list[str]]:
+) -> tuple[dict[str, Any] | None, list[str], str | None]:
+    """Resolve *name* to one component record.
+
+    Returns ``(component, candidates, operation)``. The name is read as a
+    canonical id, then as a bare component name, then as the name of an
+    operation some component provides (its ``provides`` list), because an
+    agent mostly knows the system through the operations it calls. A
+    name that several components share, or an operation that several
+    components provide, resolves to nothing with every candidate listed.
+    ``operation`` is the matched operation name when the third reading
+    was the one that resolved, else ``None``.
+    """
     exact = [component for component in components if component.get("id") == name]
     if len(exact) == 1:
-        return exact[0], []
+        return exact[0], [], None
     bare = [
         component
         for component in components
         if str(component.get("id", "")).rsplit("::", 1)[-1] == name
     ]
     if len(bare) == 1:
-        return bare[0], []
-    return None, sorted(str(component.get("id", "")) for component in bare)
+        return bare[0], [], None
+    if bare:
+        return None, sorted(str(component.get("id", "")) for component in bare), None
+    providers = [component for component in components if name in _operations_of(component)]
+    if len(providers) == 1:
+        return providers[0], [], name
+    return None, sorted(str(component.get("id", "")) for component in providers), None
 
 
 @dataclass(frozen=True)
@@ -300,7 +334,9 @@ class SelfInspectAdapter:
             "name": "self_inspect",
             "description": (
                 "Inspect this application's verified s0ma self-context. Commands: "
-                "describe, component <name>, dependencies <name>."
+                "describe, component <name>, dependencies <name>. A <name> is a "
+                "component id or bare name, or the name of an operation a "
+                "component provides, which answers for that component."
             ),
             "inputSchema": {
                 "type": "object",
@@ -309,7 +345,7 @@ class SelfInspectAdapter:
                         "type": "string",
                         "description": (
                             "Exact command: describe, component <name>, or "
-                            "dependencies <name>."
+                            "dependencies <name>; <name> may be an operation name."
                         ),
                     }
                 },
@@ -357,7 +393,7 @@ class SelfInspectAdapter:
                 },
             }
         requested = name.strip()
-        component, ambiguous = _component_lookup(components, requested)
+        component, ambiguous, operation = _component_lookup(components, requested)
         if component is None:
             code = "AMBIGUOUS_COMPONENT" if ambiguous else "COMPONENT_NOT_FOUND"
             return {
@@ -367,17 +403,40 @@ class SelfInspectAdapter:
                     "message": (
                         f"Component {requested!r} is ambiguous; use one of {ambiguous}."
                         if ambiguous
-                        else f"Component {requested!r} is not in verified self-context."
+                        else (
+                            f"Component {requested!r} is not in verified self-context, "
+                            "and no component provides an operation of that name."
+                        )
                     ),
                 },
             }
+        # When the name was an operation, the answer says which component
+        # it reached, so a caller never mistakes the component for the
+        # operation it asked about.
+        resolved = (
+            {
+                "resolved": {
+                    "query": requested,
+                    "operation": operation,
+                    "note": f"{operation} is an operation of {component['id']}",
+                }
+            }
+            if operation is not None
+            else {}
+        )
         if verb == "component":
-            return {"ok": True, "command": verb, "component": deepcopy(component)}
+            return {
+                "ok": True,
+                "command": verb,
+                "component": deepcopy(component),
+                **resolved,
+            }
         return {
             "ok": True,
             "command": verb,
             "component": component["id"],
             "dependencies": deepcopy(component["dependencies"]),
+            **resolved,
         }
 
 

@@ -35,6 +35,7 @@ if TYPE_CHECKING:
 __all__ = [
     "Contract",
     "OperationContract",
+    "ComponentResolution",
     "ConfigurableProperty",
     "ProtocolContract",
     "ResourceProfile",
@@ -670,6 +671,20 @@ class ComponentSpec:
         self.contracts.validate()
 
     @property
+    def display_name(self) -> str:
+        """The name a describe surface shows: ``module::name`` when the module is known.
+
+        The module is the last segment of ``module_path``, the spelling the
+        canonical IR and the self-context use for a component id, so an
+        answer about the running registry names a component the way the
+        build artifacts do. A component registered without a module path
+        shows its bare name.
+        """
+        if self.module_path:
+            return f"{self.module_path.rsplit('.', 1)[-1]}::{self.name}"
+        return self.name
+
+    @property
     def provides(self) -> tuple[str, ...]:
         """The operations this component provides, in authored order.
 
@@ -869,6 +884,35 @@ class ComponentSpec:
 
 # Apply descriptive error messages wrapper
 ComponentSpec = _wrap_init_with_field_hints(ComponentSpec)  # type: ignore[misc, assignment]
+
+
+@dataclass(frozen=True)
+class ComponentResolution:
+    """What a caller-supplied name resolved to in the registry.
+
+    Every describe surface accepts a component name. Since an agent
+    mostly knows a system through the operations it calls (the tool
+    names), a name that is not a component but is an operation some
+    component provides resolves to that component, and the answer says
+    so: ``fetch_url is an operation of browser::WebBrowser``. This record
+    carries the three outcomes: ``spec`` set and ``operation`` ``None``
+    (a plain component name), ``spec`` and ``operation`` both set (an
+    operation name, resolved to its one provider), or ``spec`` ``None``
+    with ``candidates`` naming every provider of an operation that more
+    than one component provides. All three empty means nothing matched.
+    """
+
+    name: str
+    spec: ComponentSpec | None = None
+    operation: str | None = None
+    candidates: tuple[str, ...] = ()
+
+    @property
+    def note(self) -> str | None:
+        """One sentence saying the name was an operation, or ``None``."""
+        if self.spec is None or self.operation is None:
+            return None
+        return f"{self.operation} is an operation of {self.spec.display_name}"
 
 
 @dataclass(frozen=True)

@@ -99,7 +99,9 @@ def create_mcp_server(
         """Get detailed information about a specific component.
 
         Args:
-            name: The name of the component to look up.
+            name: The name of the component to look up, or the name of an
+                operation a component provides; that answers for the
+                providing component and says so.
 
         Returns the component's identity, purpose, contracts, the
         operations it provides with each operation's own expects,
@@ -132,8 +134,10 @@ def create_mcp_server(
         is direct or transitive.
 
         Args:
-            source: Name of the component that depends on target.
-            target: Name of the component being depended upon.
+            source: Name of the component that depends on target, or of an
+                operation it provides.
+            target: Name of the component being depended upon, or of an
+                operation it provides.
         """
         try:
             return explain_dependency_chain(registry, source, target)
@@ -160,7 +164,8 @@ def create_mcp_server(
         layers, and a risk assessment (low/medium/high).
 
         Args:
-            component: Name of the component to analyze.
+            component: Name of the component to analyze, or of an operation
+                it provides; the analysis is then the providing component's.
         """
         try:
             return smi.get_impact_analysis(component)

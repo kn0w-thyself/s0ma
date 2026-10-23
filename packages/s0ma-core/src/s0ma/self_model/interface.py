@@ -176,13 +176,24 @@ class SelfModelInterface:
         - Source location
 
         Args:
-            name: The name of the component to describe.
+            name: The name of the component to describe, or the name of an
+                operation it provides; an operation name describes the one
+                component that provides it, and the text opens by saying so.
 
         Raises:
-            RegistryIntegrityError: If the component doesn't exist.
+            RegistryIntegrityError: If no component or operation has the
+                name, or if several components provide the operation (the
+                message names them so the caller can ask by component).
         """
-        spec = self._registry.get(name)
+        resolution = self._registry.resolve_component(name)
+        spec = resolution.spec
         if spec is None:
+            if resolution.candidates:
+                raise RegistryIntegrityError(
+                    f"'{name}' is an operation of {len(resolution.candidates)} "
+                    f"components; describe one of them by name: "
+                    f"{', '.join(resolution.candidates)}"
+                )
             msg = (
                 f"Component '{name}' is not registered in the self-model. "
                 f"Registered components: "
@@ -192,13 +203,17 @@ class SelfModelInterface:
 
         lines: list[str] = []
 
+        if resolution.note is not None:
+            lines.append(f"{resolution.note}; this describes that component.")
+            lines.append("")
+
         # Detailed component description
         lines.append(format_component_detail(spec))
         lines.append("")
 
         # Dependents (who uses this component)
         try:
-            dependents = self._registry.get_dependents(name)
+            dependents = self._registry.get_dependents(spec.name)
         except RegistryIntegrityError:
             dependents = []
 
@@ -296,7 +311,8 @@ class SelfModelInterface:
         - Specific warnings if this is a high-impact component
 
         Args:
-            component: Name of the component to analyze.
+            component: Name of the component to analyze, or of an operation
+                it provides (the analysis is then the providing component's).
 
         Returns:
             Natural language impact analysis text.

@@ -473,6 +473,13 @@ def format_impact_report(report: ImpactReport) -> str:
 
     lines.append(f"## Impact Analysis: {report.component_name}")
     lines.append("")
+    operation = report.details.get("operation")
+    if isinstance(operation, str):
+        lines.append(
+            f"{operation} is an operation of {report.component_name}; "
+            f"this is the impact of that component."
+        )
+        lines.append("")
     lines.append(f"Risk level: {report.risk_level.upper()}")
     lines.append(
         f"Total components affected: {report.total_affected_count}"
