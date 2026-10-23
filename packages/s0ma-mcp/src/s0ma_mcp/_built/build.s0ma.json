@@ -40,7 +40,7 @@
       "logical_path": "resources.s0ma",
       "name": "resources",
       "output": "resources.py",
-      "output_hash": "sha256:f0df4bd740ac6fe8cca2aeb62d484850f98b4c2c62de5261d84dd2ebac32a4db",
+      "output_hash": "sha256:0e9f33ad48d5c1570b819365055c7385ea548b1f7d842544e3065969b5755f11",
       "role": "source",
       "source": "s0ma_src/resources.s0ma",
       "source_hash": "sha256:f31d52ccaf3cac65daa6f03ff2057e4f4c228be83b229eedefce97a042f31cf7",
@@ -52,7 +52,7 @@
       "logical_path": "tools.s0ma",
       "name": "tools",
       "output": "tools.py",
-      "output_hash": "sha256:0e3fe7737230304a9f08550043a26cff8961e2a022c82e21d49a8972eeb03593",
+      "output_hash": "sha256:8490fc7b8a0f4c0620c42a2ef8caef3deaf9f6d1bb45ef9d3bde6ae08495483a",
       "role": "source",
       "source": "s0ma_src/tools.s0ma",
       "source_hash": "sha256:e55b6b456f902bea5b5e48f859d3da50b3660c2db18e7414255a41c77f645ff4",
@@ -65,7 +65,7 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:ae13275a051323d2dcad262dbb92108064ccc3288fc6721385061f1039133d6a"
+      "sha256": "sha256:d801828a8bd6ad12967b50621aac56ad21467d069f71ce0a3afe97d9b526538b"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",

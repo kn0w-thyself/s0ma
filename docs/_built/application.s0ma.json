@@ -16,7 +16,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: docs."
-        }
+        },
+        "value": "docs"
       },
       "intent": {
         "state": "value",
@@ -45,7 +46,8 @@
         "schema": {
           "state": "value",
           "value": "str constant, a forward-slashed relative path. Value: _generated/s0ma-docs-model.json."
-        }
+        },
+        "value": "_generated/s0ma-docs-model.json"
       },
       "intent": {
         "state": "value",
@@ -74,7 +76,28 @@
         "schema": {
           "state": "value",
           "value": "tuple[str, ...] constant of forward-slashed relative paths. Value: (_generated/inventory-concepts.json, _generated/inventory-surfaces.json, _generated/inventory-components.json, reference/concepts-index.md, reference/surfaces-index.md, README.md, reference/cli.md, reference/configuration.md, reference/diagnostics.md, reference/mcp.md, reference/studi0.md, reference/packages.md, architecture/component-index.md, architecture/docs-application.md, _generated/core-teaching-slice.json, _generated/coverage-report.json, reference/quick-reference-readable.md, _generated/quick-reference-machine.json, _generated/docs-manifest.json)."
-        }
+        },
+        "value": [
+          "_generated/inventory-concepts.json",
+          "_generated/inventory-surfaces.json",
+          "_generated/inventory-components.json",
+          "reference/concepts-index.md",
+          "reference/surfaces-index.md",
+          "README.md",
+          "reference/cli.md",
+          "reference/configuration.md",
+          "reference/diagnostics.md",
+          "reference/mcp.md",
+          "reference/studi0.md",
+          "reference/packages.md",
+          "architecture/component-index.md",
+          "architecture/docs-application.md",
+          "_generated/core-teaching-slice.json",
+          "_generated/coverage-report.json",
+          "reference/quick-reference-readable.md",
+          "_generated/quick-reference-machine.json",
+          "_generated/docs-manifest.json"
+        ]
       },
       "intent": {
         "state": "value",
@@ -103,7 +126,8 @@
         "schema": {
           "state": "value",
           "value": "str constant, a forward-slashed relative directory. Value: learn."
-        }
+        },
+        "value": "learn"
       },
       "intent": {
         "state": "value",
@@ -132,7 +156,20 @@
         "schema": {
           "state": "value",
           "value": "tuple[str, ...] constant of provider ids. Value: (core, repo, concepts-language, concepts-product, catalog, cli, diagnostics, config, mcp, studi0, journeys)."
-        }
+        },
+        "value": [
+          "core",
+          "repo",
+          "concepts-language",
+          "concepts-product",
+          "catalog",
+          "cli",
+          "diagnostics",
+          "config",
+          "mcp",
+          "studi0",
+          "journeys"
+        ]
       },
       "intent": {
         "state": "value",

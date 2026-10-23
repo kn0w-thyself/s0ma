@@ -716,6 +716,6 @@ def test_reserved_constant_matches_adr_enumeration() -> None:
         "integration_manifest", "interface", "invariants", "kind_detail",
         "observes", "observes_patterns", "on_anomaly", "priors", "provides",
         "provides_contracts", "raises", "resolved_observes", "returns",
-        "schema", "scope", "serves_as", "visibility",
+        "schema", "scope", "serves_as", "value", "visibility",
     })
-    assert len(RESERVED_COMPONENT_METADATA_KEYS) == 27
+    assert len(RESERVED_COMPONENT_METADATA_KEYS) == 28

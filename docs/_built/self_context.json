@@ -13,7 +13,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "application"
+      "module": "application",
+      "value": "_generated/s0ma-docs-model.json"
     },
     {
       "dependencies": [],
@@ -24,7 +25,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "application"
+      "module": "application",
+      "value": "docs"
     },
     {
       "dependencies": [],
@@ -35,7 +37,28 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "application"
+      "module": "application",
+      "value": [
+        "_generated/inventory-concepts.json",
+        "_generated/inventory-surfaces.json",
+        "_generated/inventory-components.json",
+        "reference/concepts-index.md",
+        "reference/surfaces-index.md",
+        "README.md",
+        "reference/cli.md",
+        "reference/configuration.md",
+        "reference/diagnostics.md",
+        "reference/mcp.md",
+        "reference/studi0.md",
+        "reference/packages.md",
+        "architecture/component-index.md",
+        "architecture/docs-application.md",
+        "_generated/core-teaching-slice.json",
+        "_generated/coverage-report.json",
+        "reference/quick-reference-readable.md",
+        "_generated/quick-reference-machine.json",
+        "_generated/docs-manifest.json"
+      ]
     },
     {
       "dependencies": [],
@@ -46,7 +69,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "application"
+      "module": "application",
+      "value": "learn"
     },
     {
       "dependencies": [],
@@ -57,7 +81,20 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "application"
+      "module": "application",
+      "value": [
+        "core",
+        "repo",
+        "concepts-language",
+        "concepts-product",
+        "catalog",
+        "cli",
+        "diagnostics",
+        "config",
+        "mcp",
+        "studi0",
+        "journeys"
+      ]
     },
     {
       "dependencies": [],
@@ -139,7 +176,7 @@
   "source_ir": [
     {
       "path": "application.s0ma.json",
-      "sha256": "sha256:9973f98e53f23203cbd1182b3c0161da56990e2a1ad7c75f61f7c143891d2938"
+      "sha256": "sha256:94e4b992721e56fbdc21e81a0c9f394b3ab5f2db55fbee2992c19197f7e52aae"
     }
   ]
 }

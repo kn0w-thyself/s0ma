@@ -112,7 +112,9 @@ def validate_ir_schema_version(payload: dict[str, Any]) -> None:
 # integration helpers) plus this batch's two authored-but-emitter-written
 # keys (``serves_as`` now, ``covered_by`` at M2). ``deferred`` here is the
 # POST-12f stub-marker metadata key (a different record family from the M2
-# ``deferred_requires:`` import field).
+# ``deferred_requires:`` import field). ``value`` is the literal a CONSTANT
+# cell's body assigns: the emitter passes it to ``register_constant``,
+# which stores it in the same metadata dict (``ir/constant_values.py``).
 #
 # Consumers: ``semantic/validator.py`` rejects authored collisions with
 # ``METADATA_RESERVED_KEY``; the emitter test
@@ -126,7 +128,7 @@ RESERVED_COMPONENT_METADATA_KEYS: frozenset[str] = frozenset({
     "deferred", "evaluates_at", "expected_exceptions", "integration", "integration_helper",
     "integration_manifest", "interface", "invariants", "kind_detail", "observes",
     "observes_patterns", "on_anomaly", "priors", "provides", "provides_contracts", "raises",
-    "resolved_observes", "returns", "schema", "scope", "serves_as", "visibility",
+    "resolved_observes", "returns", "schema", "scope", "serves_as", "value", "visibility",
 })
 
 

@@ -87,6 +87,29 @@
         "prompts::PROMPT_JOURNEYS",
         "prompts::journey_ladder"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "journey prompt copy",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "prompts::AUTHOR_MODULE_TEMPLATE"
+        },
+        {
+          "authored": true,
+          "carries": "the journey this prompt walks",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "prompts::PROMPT_JOURNEYS"
+        },
+        {
+          "authored": true,
+          "carries": "the recorded journey id",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "prompts::journey_ladder"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root and module_name are non-empty; kind, when given, is a scaffold-recognized nerve kind"
@@ -124,6 +147,15 @@
       "dependencies": [
         "prompts::DIAGNOSE_FAULT_TEMPLATE"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "diagnostic journey prompt copy",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "prompts::DIAGNOSE_FAULT_TEMPLATE"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root and fault are non-empty"
@@ -154,6 +186,15 @@
       "dependencies": [
         "prompts::FEEDBACK_TEMPLATE"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "journey prompt copy",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "prompts::FEEDBACK_TEMPLATE"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "message, when given, is the user's own account of what they want reported; an absent message means the journey opens by asking for it"
@@ -181,6 +222,15 @@
     {
       "dependencies": [
         "prompts::FIX_CHECK_FAILURES_TEMPLATE"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "journey prompt copy",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "prompts::FIX_CHECK_FAILURES_TEMPLATE"
+        }
       ],
       "expects": {
         "state": "value",
@@ -238,6 +288,15 @@
       "dependencies": [
         "prompts::MIGRATE_PROJECT_TEMPLATE"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "journey prompt copy",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "prompts::MIGRATE_PROJECT_TEMPLATE"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root is non-empty"
@@ -294,7 +353,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "resources"
+      "module": "resources",
+      "value": "docs/README.md"
     },
     {
       "dependencies": [],
@@ -305,7 +365,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "resources"
+      "module": "resources",
+      "value": "s0ma-docs-model.json"
     },
     {
       "dependencies": [],
@@ -316,7 +377,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "resources"
+      "module": "resources",
+      "value": "docs/_generated/s0ma-docs-model.json"
     },
     {
       "dependencies": [],
@@ -327,7 +389,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "resources"
+      "module": "resources",
+      "value": "docs"
     },
     {
       "dependencies": [],
@@ -338,7 +401,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "resources"
+      "module": "resources",
+      "value": "docs/reference/surfaces-index.md"
     },
     {
       "dependencies": [],
@@ -371,11 +435,21 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "resources"
+      "module": "resources",
+      "value": "s0ma-authoring"
     },
     {
       "dependencies": [
         "resources::load_doc"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
       ],
       "expects": {
         "state": "value",
@@ -425,6 +499,22 @@
         "resources::docs_bundle",
         "resources::docs_snapshot_identity"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the recorded concepts",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_bundle"
+        },
+        {
+          "authored": true,
+          "carries": "which build this is",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_snapshot_identity"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "the packaged snapshot is present and readable"
@@ -450,6 +540,22 @@
       "dependencies": [
         "resources::docs_snapshot_identity",
         "resources::docs_topic_index"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "which build this is",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_snapshot_identity"
+        },
+        {
+          "authored": true,
+          "carries": "every id this build addresses",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_topic_index"
+        }
       ],
       "expects": {
         "state": "value",
@@ -480,6 +586,15 @@
       "dependencies": [
         "resources::docs_bundle"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the recorded journeys",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_bundle"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "journey_id names a journey this build records"
@@ -500,6 +615,15 @@
     {
       "dependencies": [
         "resources::docs_bundle"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the recorded journeys",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_bundle"
+        }
       ],
       "expects": {
         "state": "value",
@@ -523,6 +647,29 @@
         "resources::docs_bundle",
         "resources::docs_journey_steps",
         "resources::docs_snapshot_identity"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the recorded journeys",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_bundle"
+        },
+        {
+          "authored": true,
+          "carries": "one journey's steps in order",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_journey_steps"
+        },
+        {
+          "authored": true,
+          "carries": "which build this is",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_snapshot_identity"
+        }
       ],
       "expects": {
         "state": "value",
@@ -552,6 +699,36 @@
         "resources::DOCS_SURFACES_PAGE",
         "resources::docs_bundle"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the last-resort page",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "resources::DOCS_MAP_PAGE"
+        },
+        {
+          "authored": true,
+          "carries": "the documentation root paths are relative to",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "resources::DOCS_ROOT"
+        },
+        {
+          "authored": true,
+          "carries": "the served-capability index",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "resources::DOCS_SURFACES_PAGE"
+        },
+        {
+          "authored": true,
+          "carries": "the declared page coverage",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_bundle"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "topic_id is an id this build addresses"
@@ -576,6 +753,15 @@
     {
       "dependencies": [
         "resources::docs_bundle"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the snapshot's build stamp",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::docs_bundle"
+        }
       ],
       "expects": {
         "state": "value",
@@ -621,6 +807,15 @@
       "dependencies": [
         "resources::load_doc"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "the generated error catalog is packaged under s0ma_mcp/_docs"
@@ -644,6 +839,15 @@
     {
       "dependencies": [
         "resources::load_doc"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "getting-started loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
       ],
       "expects": {
         "state": "value",
@@ -669,6 +873,15 @@
       "dependencies": [
         "resources::GUIDE_DOCS"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "packaged-document registry",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "resources::GUIDE_DOCS"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "key is one of the GUIDE_DOCS loader keys"
@@ -690,6 +903,15 @@
       "dependencies": [
         "resources::DOCS_MODEL_FILENAME"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "packaged snapshot filename",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "resources::DOCS_MODEL_FILENAME"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "the snapshot is packaged under s0ma_mcp/_docs"
@@ -710,6 +932,15 @@
     {
       "dependencies": [
         "resources::load_doc"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
       ],
       "expects": {
         "state": "value",
@@ -735,6 +966,15 @@
       "dependencies": [
         "resources::load_doc"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "the quick reference data twin is packaged under s0ma_mcp/_docs as a byte-identical copy of docs/_generated/quick-reference-machine.json"
@@ -759,6 +999,15 @@
     {
       "dependencies": [
         "resources::load_doc"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
       ],
       "expects": {
         "state": "value",
@@ -835,6 +1084,15 @@
       "dependencies": [
         "resources::load_doc"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "the runtime self-prompting guide is packaged under s0ma_mcp/_docs"
@@ -858,6 +1116,15 @@
     {
       "dependencies": [
         "resources::load_doc"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
       ],
       "expects": {
         "state": "value",
@@ -883,6 +1150,15 @@
       "dependencies": [
         "resources::load_doc"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "the survival card is packaged under s0ma_mcp/_docs"
@@ -906,6 +1182,15 @@
     {
       "dependencies": [
         "resources::load_doc"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "loader key",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::load_doc"
+        }
       ],
       "expects": {
         "state": "value",
@@ -975,6 +1260,15 @@
       "dependencies": [
         "resources::SERVER_NAME"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "server identity",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "resources::SERVER_NAME"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "importlib.metadata can see the installed distributions"
@@ -999,6 +1293,15 @@
     {
       "dependencies": [
         "resources::version_document"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "version document",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "resources::version_document"
+        }
       ],
       "expects": {
         "state": "value",
@@ -1034,7 +1337,12 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "tools"
+      "module": "tools",
+      "value": [
+        ".py",
+        ".s0ma.json",
+        ".s0ma.map"
+      ]
     },
     {
       "dependencies": [],
@@ -1045,7 +1353,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "tools"
+      "module": "tools",
+      "value": "DERIVED (unverified) — componentize to make this authoritative"
     },
     {
       "dependencies": [],
@@ -1056,7 +1365,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "tools"
+      "module": "tools",
+      "value": "Ask s0ma about s0ma rather than guessing: learn_s0ma(topic=\"concept:ganglion\") answers one question — a concept, a command, a setting, a diagnostic code — from this release's own documentation and names the page carrying the rest. s0ma://docs/index lists what can be asked."
     },
     {
       "dependencies": [],
@@ -1067,7 +1377,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "tools"
+      "module": "tools",
+      "value": "build.s0ma.json"
     },
     {
       "dependencies": [],
@@ -1089,7 +1400,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "tools"
+      "module": "tools",
+      "value": "verify .s0ma edits with the check and build_project MCP tools here — the `s0ma` CLI is usually NOT on PATH in agent environments, so do not shell out to it."
     },
     {
       "dependencies": [],
@@ -1100,7 +1412,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "tools"
+      "module": "tools",
+      "value": "s0ma-tool-result@1"
     },
     {
       "dependencies": [],
@@ -1143,6 +1456,15 @@
       "dependencies": [
         "tools::_run_cli"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "s0ma adopt file argv",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::_run_cli"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root is a directory"
@@ -1177,6 +1499,15 @@
       "dependencies": [
         "tools::_run_cli"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "s0ma build argv",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::_run_cli"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root is a directory"
@@ -1210,6 +1541,15 @@
     {
       "dependencies": [
         "tools::_run_cli"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "s0ma check argv",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::_run_cli"
+        }
       ],
       "expects": {
         "state": "value",
@@ -1312,6 +1652,21 @@
       "dependencies": [
         "tools::_run_cli"
       ],
+      "edges": [
+        {
+          "authored": false,
+          "origin": "constant_reference",
+          "relation": "READS",
+          "target": "tools::_DERIVED_BANNER"
+        },
+        {
+          "authored": true,
+          "carries": "s0ma inspect argv",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::_run_cli"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root is a directory; module, when given, names a built module"
@@ -1380,6 +1735,15 @@
       "dependencies": [
         "tools::_run_cli"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "s0ma migrate-ext argv",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::_run_cli"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root is a directory"
@@ -1442,6 +1806,14 @@
     },
     {
       "dependencies": [],
+      "edges": [
+        {
+          "authored": false,
+          "origin": "constant_reference",
+          "relation": "READS",
+          "target": "tools::_TOOLCHAIN_NOTE"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root is a directory"
@@ -1519,6 +1891,22 @@
       "dependencies": [
         "tools::_run_cli",
         "tools::check_tool"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "s0ma new module argv",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::_run_cli"
+        },
+        {
+          "authored": true,
+          "carries": "generated module path",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::check_tool"
+        }
       ],
       "expects": {
         "state": "value",
@@ -1619,6 +2007,15 @@
       "dependencies": [
         "tools::_run_cli"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "s0ma transpile argv",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::_run_cli"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "source_path exists; source_path and any output_dir lie inside the project tree"
@@ -1652,6 +2049,15 @@
     {
       "dependencies": [
         "tools::_run_cli"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "s0ma verify-host argv",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "tools::_run_cli"
+        }
       ],
       "expects": {
         "state": "value",
@@ -1698,11 +2104,11 @@
     },
     {
       "path": "resources.s0ma.json",
-      "sha256": "sha256:5e85297c2d007dcc82a677a223297a1cce28e351ccc85aa4e37a0b110d9aa9dd"
+      "sha256": "sha256:1840792dadbea6880887a836ae8e6146c67550bfedd68cfc96075f1ec9fd4d06"
     },
     {
       "path": "tools.s0ma.json",
-      "sha256": "sha256:05e0755708b7931618993c2cc07e8513aef916a8102b549268387741ab7d8955"
+      "sha256": "sha256:5aa71055753c06a7757af62427b9a5b179f93f77892c7c2daea1305bbb5ad74b"
     }
   ]
 }

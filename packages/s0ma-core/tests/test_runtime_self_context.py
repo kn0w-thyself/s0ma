@@ -422,3 +422,52 @@ def test_a_shared_operation_name_lists_its_providers(tmp_path: Path) -> None:
     missing = adapter.handle("component teleport")["error"]
     assert missing["code"] == "COMPONENT_NOT_FOUND"
     assert "no component provides an operation of that name" in missing["message"]
+
+
+_READS_EDGES = [
+    {
+        "target": "limits::MIN_INTERVAL_SECONDS",
+        "relation": "READS",
+        "authored": False,
+        "origin": "constant_reference",
+    },
+    {
+        "target": "catalog::price_order",
+        "relation": "CALLS",
+        "authored": True,
+        "origin": "inline_depends_on",
+        "carries": "the priced order",
+    },
+]
+
+
+def test_dependencies_answer_carries_every_edge_with_its_relation(tmp_path: Path) -> None:
+    manifest = _write_build(tmp_path, component_extra={"edges": _READS_EDGES})
+    adapter = self_inspect_adapter(manifest)
+    answer = adapter.handle("dependencies submit_order")
+    assert answer["dependencies"] == ["catalog::price_order"]
+    assert answer["edges"] == _READS_EDGES
+    # A generation-1 companion has no edges and answers an empty list.
+    legacy = self_inspect_adapter(_write_build(tmp_path / "legacy"))
+    assert legacy.handle("dependencies submit_order")["edges"] == []
+
+
+def test_constant_value_rides_the_component_answer(tmp_path: Path) -> None:
+    manifest = _write_build(tmp_path, component_extra={"value": 60})
+    component = self_inspect_adapter(manifest).handle("component submit_order")["component"]
+    assert component["value"] == 60
+
+
+@pytest.mark.parametrize(
+    "edges",
+    [
+        pytest.param({"target": "x"}, id="not-an-array"),
+        pytest.param([{"target": "x", "relation": "READS"}], id="missing-authored-flag"),
+        pytest.param([{"target": "x", "authored": False}], id="missing-relation"),
+        pytest.param(["x"], id="entry-not-an-object"),
+    ],
+)
+def test_mis_shaped_edges_refuse(tmp_path: Path, edges: Any) -> None:
+    manifest = _write_build(tmp_path, component_extra={"edges": edges})
+    with pytest.raises(SelfContextError, match="edges must be a JSON array"):
+        self_context(manifest)

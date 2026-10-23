@@ -70,6 +70,7 @@ from s0ma_dsl.codegen.observes_resolver import (
     determine_privileged_imports,
 )
 from s0ma_dsl.config import StrictnessMode
+from s0ma_dsl.ir.constant_values import constant_literal
 from s0ma_dsl.ir.schema import TRANSPILER_VERSION
 
 if TYPE_CHECKING:
@@ -216,6 +217,20 @@ _STDLIB_MODULES: frozenset[str] = frozenset(
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def _constant_value_literal(value: object) -> str:
+    """Render a constant's carried literal as Python source.
+
+    Strings go through :func:`_py_str_literal`; ``None``, booleans and
+    numbers through ``repr``; a list element by element. The reader
+    (``s0ma_dsl.ir.constant_values``) admits nothing else.
+    """
+    if isinstance(value, str):
+        return _py_str_literal(value)
+    if isinstance(value, list):
+        return "[" + ", ".join(_constant_value_literal(item) for item in value) + "]"
+    return repr(value)
 
 
 def _py_str_literal(value: str) -> str:
@@ -1495,9 +1510,20 @@ class PythonEmitter:
             f"    module_path={_py_str_literal(self.module_name)},",
             f"    layer={layer_ref},",
             f"    intent={_py_str_literal(intent)},",
+        ]
+        # The constant's literal rides the registration as ``value=`` when
+        # the body assigns one (same rule as the IR's ``fields.value``, see
+        # ``s0ma_dsl.ir.constant_values``), so the registry carries the
+        # value the build saw. It is written as the JSON-shaped literal the
+        # IR holds, tuples as lists, so the two surfaces agree byte for
+        # byte on what the constant is.
+        has_value, value = constant_literal(cell)
+        if has_value:
+            reg_lines.append(f"    value={_constant_value_literal(value)},")
+        reg_lines.extend([
             f"    metadata={metadata},",
             ")",
-        ]
+        ])
 
         return body + "\n".join(reg_lines)
 

@@ -13,7 +13,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: s0ma-authoring."
-        }
+        },
+        "value": "s0ma-authoring"
       },
       "intent": {
         "state": "value",
@@ -1053,7 +1054,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: s0ma-docs-model.json."
-        }
+        },
+        "value": "s0ma-docs-model.json"
       },
       "intent": {
         "state": "value",
@@ -1079,7 +1081,8 @@
         "schema": {
           "state": "value",
           "value": "str constant, monorepo-root-relative. Value: docs/_generated/s0ma-docs-model.json."
-        }
+        },
+        "value": "docs/_generated/s0ma-docs-model.json"
       },
       "intent": {
         "state": "value",
@@ -1105,7 +1108,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: docs."
-        }
+        },
+        "value": "docs"
       },
       "intent": {
         "state": "value",
@@ -1131,7 +1135,8 @@
         "schema": {
           "state": "value",
           "value": "str constant, monorepo-root-relative. Value: docs/README.md."
-        }
+        },
+        "value": "docs/README.md"
       },
       "intent": {
         "state": "value",
@@ -1157,7 +1162,8 @@
         "schema": {
           "state": "value",
           "value": "str constant, monorepo-root-relative. Value: docs/reference/surfaces-index.md."
-        }
+        },
+        "value": "docs/reference/surfaces-index.md"
       },
       "intent": {
         "state": "value",

@@ -186,6 +186,19 @@ def _validate_companion(document: dict[str, Any], *, build_root: Path) -> None:
                     "Self-context component provides_contracts must be a JSON array "
                     "of operation objects, each with a string name."
                 )
+        if "edges" in component:
+            edges = component["edges"]
+            if not isinstance(edges, list) or any(
+                not isinstance(edge, dict)
+                or not isinstance(edge.get("target"), str)
+                or not isinstance(edge.get("relation"), str)
+                or not isinstance(edge.get("authored"), bool)
+                for edge in edges
+            ):
+                raise _remediation(
+                    "Self-context component edges must be a JSON array of edge objects, "
+                    "each with a string target, a string relation and a boolean authored."
+                )
 
 
 def _live_health(
@@ -431,11 +444,16 @@ class SelfInspectAdapter:
                 "component": deepcopy(component),
                 **resolved,
             }
+        # ``dependencies`` is the authored target list, unchanged; ``edges``
+        # is every outgoing edge the build knows, authored and derived,
+        # with its relation, so a reader sees the constants a nerve reads
+        # and the types it uses beside the dependencies it declared.
         return {
             "ok": True,
             "command": verb,
             "component": component["id"],
             "dependencies": deepcopy(component["dependencies"]),
+            "edges": deepcopy(component.get("edges", [])),
             **resolved,
         }
 

@@ -482,3 +482,54 @@ class TestFormatComponentDetailOperations:
         self, simple_spec: ComponentSpec
     ) -> None:
         assert "Operations" not in format_component_detail(simple_spec)
+
+
+# --- constants print their value ---
+
+
+class TestFormatConstantValue:
+    @pytest.fixture
+    def floor_spec(self) -> ComponentSpec:
+        return _make_spec(
+            name="MIN_INTERVAL_SECONDS",
+            kind=ComponentKind.MODEL,
+            layer=Layer.APPLICATION,
+            intent="Hard floor for interval triggers, in seconds.",
+            metadata={"kind_detail": "CONSTANT", "value": 60},
+        )
+
+    def test_detail_prints_the_value(self, floor_spec: ComponentSpec) -> None:
+        result = format_component_detail(floor_spec)
+        assert "Value: 60" in result
+
+    def test_summary_prints_the_value(self, floor_spec: ComponentSpec) -> None:
+        assert "  Value: 60" in format_component_summary(floor_spec)
+
+    def test_null_and_lists_print_as_json(self) -> None:
+        none_spec = _make_spec(
+            name="OPTIONAL",
+            kind=ComponentKind.MODEL,
+            layer=Layer.APPLICATION,
+            intent="An unset default, carried as null.",
+            metadata={"kind_detail": "CONSTANT", "value": None},
+        )
+        assert "Value: null" in format_component_detail(none_spec)
+        list_spec = _make_spec(
+            name="SUFFIXES",
+            kind=ComponentKind.MODEL,
+            layer=Layer.APPLICATION,
+            intent="Artifact suffixes a build emits per source.",
+            metadata={"kind_detail": "CONSTANT", "value": [".py", ".s0ma.json"]},
+        )
+        assert 'Value: [".py", ".s0ma.json"]' in format_component_detail(list_spec)
+
+    def test_no_value_line_without_a_carried_literal(self) -> None:
+        spec = _make_spec(
+            name="COMPUTED",
+            kind=ComponentKind.MODEL,
+            layer=Layer.APPLICATION,
+            intent="A constant computed at import time.",
+            metadata={"kind_detail": "CONSTANT"},
+        )
+        assert "Value:" not in format_component_detail(spec)
+        assert "Value:" not in format_component_summary(spec)

@@ -6,7 +6,7 @@
       "logical_path": "application.s0ma",
       "name": "application",
       "output": "application.py",
-      "output_hash": "sha256:9c43dbfa4348139269ca2bb8dcdba30885a543432216f6ff45f02d3745fea3b9",
+      "output_hash": "sha256:f526813a636da23bb2817d3c56d7800aa886a126d1440276690c43a3a7ce99e0",
       "role": "source",
       "source": "s0ma_src/application.s0ma",
       "source_hash": "sha256:ae081cc1fff656c36f42353ebdfd3fcafe994ba84c199100f152f76c19206802",
@@ -19,7 +19,7 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:b69be214dbf5826f983b3c3f69e15db486629ae9b3829d33b738f58e6c061e9f"
+      "sha256": "sha256:4abcf04ff7a819e259be00958e99a9085fd652a046b85a75a0c50f765f98edc5"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",

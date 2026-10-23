@@ -111,7 +111,73 @@ def _authored_detail(component: dict[str, Any]) -> dict[str, Any]:
         ]
         if records:
             detail["provides_contracts"] = records
+    # A CONSTANT cell's literal (``fields.value``, written only when the
+    # body assigns a simple literal) is copied as it is, null included: the
+    # key's presence is what says the build knew the value.
+    if "value" in fields:
+        detail["value"] = fields["value"]
     return detail
+
+
+def _edges_by_source(raw_edges: object) -> dict[str, list[dict[str, Any]]]:
+    """Group a module IR's authored and derived edges by source component.
+
+    ``dependencies`` keeps carrying the authored targets alone, as every
+    generation-1 reader expects. ``edges`` is the whole graph the IR has
+    for the component: each record names the ``target``, the
+    ``relation``, whether the edge was ``authored`` (``depends_on`` or a
+    standalone axon) or derived by the transpiler, the IR ``origin`` that
+    produced it and, for an authored edge, what it ``carries``. This is
+    what lets a runtime answer "what depends on X" over derived edges
+    too, so a constant's readers reach its ``impact``.
+    """
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    if not isinstance(raw_edges, dict):
+        return grouped
+    seen: set[tuple[str, str, str, bool, str]] = set()
+    for key, authored in (("authored", True), ("derived", False)):
+        entries = raw_edges.get(key, [])
+        if not isinstance(entries, list):
+            continue
+        for edge in entries:
+            if not isinstance(edge, dict):
+                continue
+            source = edge.get("source")
+            target = edge.get("target")
+            relation = edge.get("relation")
+            if not (
+                isinstance(source, str)
+                and isinstance(target, str)
+                and isinstance(relation, str)
+            ):
+                continue
+            origin = edge.get("origin")
+            origin_text = origin if isinstance(origin, str) else ""
+            identity = (source, target, relation, authored, origin_text)
+            if identity in seen:
+                continue
+            seen.add(identity)
+            record: dict[str, Any] = {
+                "target": target,
+                "relation": relation,
+                "authored": authored,
+            }
+            if origin_text:
+                record["origin"] = origin_text
+            carries = edge.get("carries")
+            if authored and isinstance(carries, str) and carries:
+                record["carries"] = carries
+            grouped.setdefault(source, []).append(record)
+    for records in grouped.values():
+        records.sort(
+            key=lambda record: (
+                str(record["target"]),
+                str(record["relation"]),
+                not bool(record["authored"]),
+                str(record.get("origin", "")),
+            )
+        )
+    return grouped
 
 
 def build_self_context_document(
@@ -143,6 +209,7 @@ def build_self_context_document(
                 target = edge.get("target")
                 if isinstance(source, str) and isinstance(target, str):
                     dependency_map.setdefault(source, set()).add(target)
+        edge_map = _edges_by_source(ir.get("edges"))
 
         raw_components = ir.get("components", [])
         if not isinstance(raw_components, list):
@@ -164,6 +231,7 @@ def build_self_context_document(
                 "layer": module_layer,
                 "intent": intent,
                 "dependencies": sorted(dependency_map.get(component_id, set())),
+                **({"edges": edge_map[component_id]} if component_id in edge_map else {}),
                 **_authored_detail(component),
             })
 

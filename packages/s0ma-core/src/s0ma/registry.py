@@ -59,6 +59,11 @@ _VALID_DOC_FORMATS: frozenset[str] = frozenset({"markdown", "html", "json"})
 _VALID_RUNS_IN: frozenset[str] = frozenset({"standalone", "pytest", "integration"})
 
 
+#: Marks ``register_constant``'s ``value`` as not given, so a constant whose
+#: literal is ``None`` is told apart from one whose literal is unknown.
+_NO_VALUE: object = object()
+
+
 def _validate_doc_format(fmt: str) -> None:
     """Reject unknown doc formats at the registration boundary."""
     if fmt not in _VALID_DOC_FORMATS:
@@ -1121,6 +1126,7 @@ class ComponentRegistry:
         metadata: dict[str, object] | None = None,
         source_file: str | None = None,
         module_path: str = "",
+        value: object = _NO_VALUE,
     ) -> ComponentSpec:
         """Register a CONSTANT cell as a component.
 
@@ -1134,6 +1140,13 @@ class ComponentRegistry:
             intent: Human-readable purpose statement (≥10 chars).
             metadata: Additional DSL metadata (visibility, schema, etc.).
             source_file: Source file path.
+            value: The constant's literal, when the caller knows it: the
+                DSL emitter passes the simple literal a constant's body
+                assigns (an int, float, str, bool or None, or a list of
+                those), so the registry says what the constant is and not
+                only that it exists. Stored as ``metadata["value"]`` and
+                carried by the snapshot. Left out, no key is written:
+                ``None`` is a value a constant can have.
             module_path: Owning module's canonical name (e.g.
                 ``"presentation.web.shell_view"``). Empty string when
                 unknown — the DSL emitter populates this so the registry
@@ -1153,6 +1166,8 @@ class ComponentRegistry:
 
         merged_metadata = dict(metadata or {})
         merged_metadata.setdefault("kind_detail", "CONSTANT")
+        if value is not _NO_VALUE:
+            merged_metadata["value"] = value
 
         spec = ComponentSpec(
             name=name,

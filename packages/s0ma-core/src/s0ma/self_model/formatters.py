@@ -13,6 +13,7 @@ Design principles:
 
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -48,6 +49,21 @@ __all__ = [
 ]
 
 
+def _constant_value_text(spec: ComponentSpec) -> str | None:
+    """The JSON text of a constant's carried literal, or ``None``.
+
+    ``register_constant`` stores the literal as ``metadata["value"]`` only
+    when the caller knew it; the key's presence is the signal, so a
+    constant whose value is ``None`` prints ``null`` rather than nothing.
+    """
+    if spec.metadata.get("kind_detail") != "CONSTANT" or "value" not in spec.metadata:
+        return None
+    try:
+        return json.dumps(spec.metadata["value"], ensure_ascii=False, sort_keys=True)
+    except (TypeError, ValueError):
+        return repr(spec.metadata["value"])
+
+
 def format_component_summary(spec: ComponentSpec) -> str:
     """Format a single component as a concise text block.
 
@@ -64,6 +80,9 @@ def format_component_summary(spec: ComponentSpec) -> str:
     lines: list[str] = []
     lines.append(f"{spec.name} ({spec.kind.name.lower()}, {spec.layer.name.lower()})")
     lines.append(f"  Intent: {spec.intent}")
+    value_text = _constant_value_text(spec)
+    if value_text is not None:
+        lines.append(f"  Value: {value_text}")
     if spec.version and spec.version != "0.1.0":
         lines.append(f"  Version: {spec.version}")
     if spec.dependencies:
@@ -102,6 +121,13 @@ def format_component_detail(spec: ComponentSpec) -> str:
     # Intent
     lines.append(f"Purpose: {spec.intent}")
     lines.append("")
+
+    # A constant's literal, when the registration carried one, so a limit
+    # or a threshold is answered with its number and not only its intent.
+    value_text = _constant_value_text(spec)
+    if value_text is not None:
+        lines.append(f"Value: {value_text}")
+        lines.append("")
 
     # Contracts
     contracts_text = format_contracts_text(spec.contracts)

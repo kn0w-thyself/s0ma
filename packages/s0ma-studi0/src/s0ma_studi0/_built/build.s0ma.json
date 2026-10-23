@@ -32,7 +32,7 @@
       "logical_path": "studi0_narration.s0ma",
       "name": "studi0_narration",
       "output": "studi0_narration.py",
-      "output_hash": "sha256:3d9c114d0087e9497fed118a1c8f553f57bf4f041e7a8794ff5bb37dc87974f4",
+      "output_hash": "sha256:3103a112da1061408adfe147fd8b075fcddc7c6206868b107500d9a0150250b5",
       "role": "source",
       "source": "s0ma_src/studi0_narration.s0ma",
       "source_hash": "sha256:fd30ff2405b2086f335839f8f3181c4fc7f5ab253c4b63cd56778f3ed600e98c",
@@ -44,7 +44,7 @@
       "logical_path": "studi0_server.s0ma",
       "name": "studi0_server",
       "output": "studi0_server.py",
-      "output_hash": "sha256:57af06e3538a2609106bb66c0611a7ea993d5600a7c336b440be00a620a3174d",
+      "output_hash": "sha256:8f67a262673448964610e80edcd0605729c374b4db6678a1caf04a66b2d74454",
       "role": "source",
       "source": "s0ma_src/studi0_server.s0ma",
       "source_hash": "sha256:904e78299d90f9592b512e883ef4ac6b588b038a64956cbbe185b3e8d4c59ebd",
@@ -56,7 +56,7 @@
       "logical_path": "studi0_state.s0ma",
       "name": "studi0_state",
       "output": "studi0_state.py",
-      "output_hash": "sha256:c4699713b2c192098a7bce908d76b023f6418ee94e5adc9efa04bb3bd17ccb1f",
+      "output_hash": "sha256:dc9e23d4cfbbc255490a5543113ba7e96c2e68004cc8d4507ae9c770698dbab8",
       "role": "source",
       "source": "s0ma_src/studi0_state.s0ma",
       "source_hash": "sha256:95dcec896ac1ad109b4a91c40b45018c5dbdbca63b8f3855358b43eaf1491604",
@@ -81,7 +81,7 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:9ef1fc22a615c20d8a686144a7e85c550e24ad4888504c5333044ffa99d01409"
+      "sha256": "sha256:b8b8f9be5726ad59d3ca5bfdc40854cd148f600a004ebb991a435050ab1e73ab"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",

@@ -203,3 +203,57 @@ class TestPersistedRegistryRefreshesEmptyQualifiedName:
         assert persisted is not None
         assert persisted.qualified_name == "legacy.module.STORED_CONST"
         third.close()
+
+
+class TestRegisterConstantValue:
+    """``register_constant`` carries the constant's literal when it is given."""
+
+    def test_value_is_stored_in_metadata_and_the_snapshot(self) -> None:
+        registry = ComponentRegistry(persist=False)
+        spec = registry.register_constant(
+            name="MIN_INTERVAL_SECONDS",
+            layer="APPLICATION",
+            intent="Hard floor for interval triggers, in seconds",
+            module_path="scheduler_service",
+            value=60,
+        )
+        assert spec.metadata["value"] == 60
+        assert spec.metadata["kind_detail"] == "CONSTANT"
+        snapshot = registry.snapshot().to_dict()
+        assert snapshot["components"]["MIN_INTERVAL_SECONDS"]["metadata"]["value"] == 60
+
+    def test_none_is_a_value_and_absence_is_not(self) -> None:
+        registry = ComponentRegistry(persist=False)
+        with_none = registry.register_constant(
+            name="OPTIONAL_LIMIT",
+            layer="APPLICATION",
+            intent="A limit that is unset by default",
+            value=None,
+        )
+        assert "value" in with_none.metadata and with_none.metadata["value"] is None
+        without = registry.register_constant(
+            name="COMPUTED_LIMIT",
+            layer="APPLICATION",
+            intent="A limit computed at import time",
+        )
+        assert "value" not in without.metadata
+
+    def test_value_survives_persistence(self, tmp_path: Path) -> None:
+        db = tmp_path / "registry.db"
+        registry = ComponentRegistry(persist=True, db_path=db)
+        try:
+            registry.register_constant(
+                name="SUFFIXES",
+                layer="APPLICATION",
+                intent="Artifact suffixes a build emits per source",
+                value=[".py", ".s0ma.json"],
+            )
+        finally:
+            registry.close()
+        reopened = ComponentRegistry(persist=True, db_path=db)
+        try:
+            spec = reopened.get("SUFFIXES")
+            assert spec is not None
+            assert spec.metadata["value"] == [".py", ".s0ma.json"]
+        finally:
+            reopened.close()

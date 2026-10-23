@@ -1,7 +1,8 @@
 """Derived edge analysis for the s0ma DSL (Stage 4).
 
 Derives RAISES and TYPE_USES edges from structured fields per PRD §1.12
-and spec §4.11.1–4.11.3. Also detects conflicts between authored and
+and spec §4.11.1–4.11.3, and READS edges from the constants a nerve or
+ganglion body refers to. Also detects conflicts between authored and
 derived edges (single-source authority enforcement).
 
 Derived edges are inferred by the transpiler — they must never be
@@ -24,7 +25,11 @@ from s0ma.types import ComponentKind, Layer
 from s0ma_dsl.ast_nodes.enums import Kind, Relation
 from s0ma_dsl.config import StrictnessMode, get_severity
 from s0ma_dsl.errors import S0maSemanticError
-from s0ma_dsl.resolver.namespaces import NamespaceService, build_namespaces
+from s0ma_dsl.resolver.namespaces import (
+    NamespaceService,
+    build_namespaces,
+    canonicalize_qualified_target,
+)
 
 if TYPE_CHECKING:
     from s0ma_dsl.ast_nodes.nodes import (
@@ -52,7 +57,7 @@ __all__ = [
     layer=Layer.FRAMEWORK,
     intent=(
         "Represents a single derived dependency edge inferred by the transpiler from raises "
-        "fields or function signature annotations."
+        "fields, function signature annotations or a body's references to constants."
     ),
     idempotent=True,
     is_framework=True,
@@ -76,10 +81,11 @@ class DerivedEdge:
     """The fully-qualified canonical ID of the target (``module::component``)."""
 
     relation: Relation
-    """The relation type — always RAISES or TYPE_USES."""
+    """The relation type: RAISES, TYPE_USES, or READS for a constant a body refers to."""
 
     origin: str
-    """The derivation origin: ``'raises_field'`` or ``'function_signature'``."""
+    """The derivation origin: ``'raises_field'``, ``'function_signature'``,
+    ``'constructor_call'`` or ``'constant_reference'``."""
 
     source_line: int = 0
     """Line number in the source file where this edge was derived from."""
@@ -95,15 +101,16 @@ class DerivedEdge:
     kind=ComponentKind.SERVICE,
     layer=Layer.FRAMEWORK,
     intent=(
-        "Derives RAISES edges from raises fields and TYPE_USES edges from signatures and "
-        "constructor calls, and detects conflicts with authored edges, per spec §4.11."
+        "Derives RAISES edges from raises fields, TYPE_USES edges from signatures and "
+        "constructor calls and READS edges from the constants a body refers to, and detects "
+        "conflicts with authored edges, per spec §4.11."
     ),
     idempotent=True,
     is_framework=True,
 )
 @dataclass
 class DerivedEdgeAnalyzer:
-    """Derives RAISES and TYPE_USES edges from a parsed ``S0maModule``.
+    """Derives RAISES, TYPE_USES and READS edges from a parsed ``S0maModule``.
 
     Also detects conflicts where an authored edge duplicates a derived
     edge (single-source authority violation).
@@ -123,8 +130,10 @@ class DerivedEdgeAnalyzer:
         self,
         module: S0maModule,
         ns: NamespaceService | None = None,
+        *,
+        constant_targets: frozenset[str] | None = None,
     ) -> tuple[list[DerivedEdge], list[S0maSemanticError]]:
-        """Derive all RAISES and TYPE_USES edges and detect conflicts.
+        """Derive all RAISES, TYPE_USES and READS edges and detect conflicts.
 
         Parameters
         ----------
@@ -133,6 +142,12 @@ class DerivedEdgeAnalyzer:
         ns:
             Pre-built namespace service for the module. If ``None``,
             one is built automatically.
+        constant_targets:
+            The canonical ids (``module::NAME``) of every CONSTANT cell
+            in the project, so a ``uses``-imported name that is a
+            constant of another module derives a READS edge too. The
+            build passes the set it has from parsing every module;
+            without it only the module's own constants are read.
 
         Returns
         -------
@@ -157,11 +172,104 @@ class DerivedEdgeAnalyzer:
         edges.extend(type_uses_edges)
         errors.extend(type_uses_errors)
 
+        # Derive READS edges from the constants a body refers to
+        edges.extend(self._derive_reads_edges(module, ns, constant_targets))
+
         # Detect conflicts between authored and derived edges
         conflict_errors = self._detect_conflicts(module, edges)
         errors.extend(conflict_errors)
 
         return edges, errors
+
+    # -------------------------------------------------------------------
+    # READS edge derivation (from constant references in bodies)
+    # -------------------------------------------------------------------
+
+    def _derive_reads_edges(
+        self,
+        module: S0maModule,
+        ns: NamespaceService,
+        constant_targets: frozenset[str] | None,
+    ) -> list[DerivedEdge]:
+        """Derive READS edges from the constants a nerve or ganglion body reads.
+
+        A body that refers to a CONSTANT cell by name (``timeout =
+        MIN_INTERVAL_SECONDS``) depends on that constant: a limit is
+        connected to the service it governs, so ``dependencies`` of the
+        service names the constant and ``impact`` of the constant names
+        the service. Constants of the module itself are always known;
+        constants of another module are known through
+        ``constant_targets`` when the caller has the project in hand.
+
+        An authored edge between the same source and target, with any
+        relation, is the architectural statement and wins: no READS edge
+        is derived for that pair, so an author who already declared
+        ``depends_on: {LIMIT: {relation: READS, ...}}`` sees no
+        duplicate. A name the body also binds (a parameter, a local
+        assignment) is not read as the constant.
+        """
+        module_name = module.module.name
+        constants: dict[str, str] = {}
+        for cell in module.cells:
+            if cell.kind == Kind.CONSTANT:
+                constants[cell.name] = f"{module_name}::{cell.name}"
+        if constant_targets:
+            for use in module.module.uses:
+                local = use.alias or use.qualified_name.rsplit(".", 1)[-1]
+                entry = ns.lookup_component_ref(local)
+                if entry is not None and entry.canonical_name in constant_targets:
+                    constants.setdefault(local, entry.canonical_name)
+        if not constants:
+            return []
+
+        authored = self._authored_pairs(module, ns)
+        edges: list[DerivedEdge] = []
+        decls_with_bodies: list[NerveDecl | GanglionDecl] = []
+        decls_with_bodies.extend(module.nerves)
+        decls_with_bodies.extend(module.ganglia)
+        for decl in decls_with_bodies:
+            if not decl.body:
+                continue
+            source_line = decl.location.start_line if decl.location else 0
+            for name in sorted(_extract_free_name_reads(decl.body) & constants.keys()):
+                canonical = constants[name]
+                if (decl.name, canonical) in authored:
+                    continue
+                edges.append(DerivedEdge(
+                    source=decl.name,
+                    target=name,
+                    target_canonical=canonical,
+                    relation=Relation.READS,
+                    origin="constant_reference",
+                    source_line=source_line,
+                ))
+        return edges
+
+    @staticmethod
+    def _authored_pairs(
+        module: S0maModule, ns: NamespaceService
+    ) -> set[tuple[str, str]]:
+        """``(source name, target canonical id)`` for every authored edge in the module."""
+        module_name = module.module.name
+
+        def canonical(target: str) -> str:
+            if "." in target:
+                return canonicalize_qualified_target(target, module_name)
+            entry = ns.lookup_component_ref(target)
+            if entry is not None:
+                return entry.canonical_name
+            return f"{module_name}::{target}"
+
+        pairs: set[tuple[str, str]] = set()
+        for decl in module.all_declarations:
+            parent_name = getattr(decl, "name", None)
+            if parent_name is None:
+                continue
+            for axon in getattr(decl, "depends_on", ()):
+                pairs.add((parent_name, canonical(axon.target)))
+        for axon in module.axons:
+            pairs.add((axon.source, canonical(axon.target)))
+        return pairs
 
     # -------------------------------------------------------------------
     # RAISES edge derivation (from raises fields)
@@ -398,6 +506,61 @@ class DerivedEdgeAnalyzer:
 
 
 # ---------------------------------------------------------------------------
+# Name-read extraction helper (READS derivation)
+# ---------------------------------------------------------------------------
+
+
+def _extract_free_name_reads(body: str) -> set[str]:
+    """Return the names a body reads without binding them itself.
+
+    Every ``ast.Name`` in load context counts as a read; every name the
+    body binds anywhere (assignment and deletion targets, function and
+    class names, parameters, import aliases, exception aliases, ``global``
+    and ``nonlocal`` declarations) is removed from the answer, so a local
+    that happens to share a constant's name is not read as the constant.
+    An unparsable body reads nothing; the body-syntax check reports it.
+    """
+    if not body or not body.strip():
+        return set()
+    try:
+        tree = ast.parse(body)
+    except SyntaxError:
+        return set()
+
+    reads: set[str] = set()
+    bound: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            if isinstance(node.ctx, ast.Load):
+                reads.add(node.id)
+            else:
+                bound.add(node.id)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            bound.add(node.name)
+            arguments = node.args
+            for arg in (
+                *arguments.posonlyargs,
+                *arguments.args,
+                *arguments.kwonlyargs,
+            ):
+                bound.add(arg.arg)
+            if arguments.vararg is not None:
+                bound.add(arguments.vararg.arg)
+            if arguments.kwarg is not None:
+                bound.add(arguments.kwarg.arg)
+        elif isinstance(node, ast.ClassDef):
+            bound.add(node.name)
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            for alias in node.names:
+                bound.add(alias.asname or alias.name.split(".", 1)[0])
+        elif isinstance(node, ast.ExceptHandler) and node.name:
+            bound.add(node.name)
+        elif isinstance(node, (ast.Global, ast.Nonlocal)):
+            bound.update(node.names)
+    return reads - bound
+
+
+# ---------------------------------------------------------------------------
 # Annotation extraction helper
 # ---------------------------------------------------------------------------
 
@@ -528,8 +691,8 @@ def _extract_annotation_names(body: str) -> set[str]:
     kind=ComponentKind.FUNCTION,
     layer=Layer.FRAMEWORK,
     intent=(
-        "Convenience function to derive RAISES and TYPE_USES edges and detect authored/derived "
-        "conflicts for a module."
+        "Convenience function to derive RAISES, TYPE_USES and READS edges and detect "
+        "authored/derived conflicts for a module."
     ),
     idempotent=True,
     is_framework=True,
@@ -540,8 +703,9 @@ def analyze_derived_edges(
     mode: StrictnessMode = StrictnessMode.DEV,
     filename: str = "<unknown>",
     ns: NamespaceService | None = None,
+    constant_targets: frozenset[str] | None = None,
 ) -> tuple[list[DerivedEdge], list[S0maSemanticError]]:
-    """Derive RAISES and TYPE_USES edges and detect conflicts.
+    """Derive RAISES, TYPE_USES and READS edges and detect conflicts.
 
     Parameters
     ----------
@@ -553,6 +717,10 @@ def analyze_derived_edges(
         Source file path for diagnostics.
     ns:
         Pre-built namespace service. If ``None``, one is built.
+    constant_targets:
+        Canonical ids of every CONSTANT cell in the project, so imported
+        constants derive READS edges too; see
+        :meth:`DerivedEdgeAnalyzer.analyze`.
 
     Returns
     -------
@@ -560,4 +728,4 @@ def analyze_derived_edges(
         The derived edges and any conflict errors/warnings.
     """
     analyzer = DerivedEdgeAnalyzer(mode=mode, filename=filename)
-    return analyzer.analyze(module, ns=ns)
+    return analyzer.analyze(module, ns=ns, constant_targets=constant_targets)
