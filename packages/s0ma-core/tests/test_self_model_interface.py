@@ -446,3 +446,36 @@ class TestDescribeForAgent:
         assert "code_generation" in error_msg
         assert "architectural_review" in error_msg
         assert "debugging" in error_msg
+
+
+# --- describe_component(): the operations a component provides ---
+
+
+class TestDescribeComponentOperations:
+    def test_per_operation_contracts_reach_the_description(
+        self, registry: ComponentRegistry
+    ) -> None:
+        registry.register(
+            ComponentSpec(
+                name="CodeExecutor",
+                kind=ComponentKind.SERVICE,
+                layer=Layer.INFRASTRUCTURE,
+                intent="Runs Python snippets and installs packages for the agent.",
+                metadata={
+                    "provides": ["get_spec", "pip_install"],
+                    "provides_contracts": [
+                        {"name": "get_spec", "returns": "list[ToolSpec]"},
+                        {
+                            "name": "pip_install",
+                            "expects": "a wired run_shell",
+                            "guarantees": "fails with the shell's reason when run_shell is off",
+                        },
+                    ],
+                },
+            )
+        )
+        result = SelfModelInterface(registry).describe_component("CodeExecutor")
+        assert "Operations (provides):" in result
+        assert "  - pip_install" in result
+        assert "Expects: a wired run_shell" in result
+        assert "Guarantees: fails with the shell's reason when run_shell is off" in result

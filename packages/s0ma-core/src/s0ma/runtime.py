@@ -21,6 +21,12 @@ if TYPE_CHECKING:
 
 _MANIFEST_SCHEMA = "s0ma-build-manifest@1"
 _SELF_CONTEXT_SCHEMA = "s0ma-self-context@1"
+# The companion generations this runtime reads. Generation 1 carried a
+# component's intent, dependencies and authored state fields; generation
+# 2 adds the per-operation ``provides_contracts``, a constant's literal
+# ``value`` and the component's ``edges`` where they exist. A generation-1
+# document stays valid: every addition is optional and read as absent.
+_SELF_CONTEXT_GENERATIONS = frozenset({"1", "2"})
 _MANIFEST_FILENAME = "build.s0ma.json"
 # Optional authored per-component detail (additive under
 # s0ma-self-context@1): documents emitted before these fields existed
@@ -118,10 +124,11 @@ def _validate_companion(document: dict[str, Any], *, build_root: Path) -> None:
             f"Unknown self-context schema {document.get('schema')!r}; "
             f"this runtime supports {_SELF_CONTEXT_SCHEMA!r}."
         )
-    if document.get("generation_version") != "1":
+    if document.get("generation_version") not in _SELF_CONTEXT_GENERATIONS:
         raise _remediation(
             f"Unknown self-context generation version {document.get('generation_version')!r}; "
-            "this runtime supports generation version '1'."
+            f"this runtime supports generation versions "
+            f"{sorted(_SELF_CONTEXT_GENERATIONS)}."
         )
     provenance = document.get("provenance")
     if (
@@ -169,6 +176,16 @@ def _validate_companion(document: dict[str, Any], *, build_root: Path) -> None:
                     raise _remediation(
                         f"Self-context component {field} must be a state-carrying object."
                     )
+        if "provides_contracts" in component:
+            contracts = component["provides_contracts"]
+            if not isinstance(contracts, list) or any(
+                not isinstance(entry, dict) or not isinstance(entry.get("name"), str)
+                for entry in contracts
+            ):
+                raise _remediation(
+                    "Self-context component provides_contracts must be a JSON array "
+                    "of operation objects, each with a string name."
+                )
 
 
 def _live_health(

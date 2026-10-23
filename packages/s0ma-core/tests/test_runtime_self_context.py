@@ -258,3 +258,66 @@ def test_invalid_adapter_commands_are_deterministic(tmp_path: Path) -> None:
     assert adapter.handle("component missing")["error"]["code"] == (
         "COMPONENT_NOT_FOUND"
     )
+
+
+_OPERATION_CONTRACTS = [
+    {"name": "get_spec", "returns": "list[ToolSpec]"},
+    {
+        "name": "pip_install",
+        "expects": "a wired run_shell",
+        "guarantees": "fails with the shell's reason when run_shell is off",
+    },
+]
+
+
+def test_component_answer_carries_per_operation_contracts(tmp_path: Path) -> None:
+    manifest = _write_build(
+        tmp_path,
+        component_extra={
+            "provides": {"state": "value", "value": ["get_spec", "pip_install"]},
+            "provides_contracts": _OPERATION_CONTRACTS,
+        },
+    )
+    adapter = self_inspect_adapter(manifest)
+    component = adapter.handle("component submit_order")["component"]
+    assert component["provides_contracts"] == _OPERATION_CONTRACTS
+    assert component["provides"]["value"] == ["get_spec", "pip_install"]
+
+
+@pytest.mark.parametrize(
+    "contracts",
+    [
+        pytest.param({"name": "pip_install"}, id="not-an-array"),
+        pytest.param(["pip_install"], id="entry-not-an-object"),
+        pytest.param([{"expects": "no name"}], id="entry-without-name"),
+    ],
+)
+def test_mis_shaped_operation_contracts_refuse(tmp_path: Path, contracts: Any) -> None:
+    manifest = _write_build(tmp_path, component_extra={"provides_contracts": contracts})
+    with pytest.raises(SelfContextError, match="provides_contracts must be a JSON array"):
+        self_context(manifest)
+
+
+def test_generation_two_companion_loads_and_generation_one_still_does(
+    tmp_path: Path,
+) -> None:
+    manifest = _write_build(tmp_path)
+    assert self_context(manifest)["generation_version"] == "1"
+
+    companion_path = manifest.parent / "self_context.json"
+    companion = json.loads(companion_path.read_text(encoding="utf-8"))
+    companion["generation_version"] = "2"
+    companion_bytes = (json.dumps(companion, indent=2, sort_keys=True) + "\n").encode()
+    companion_path.write_bytes(companion_bytes)
+    raw = _manifest(manifest)
+    raw["self_context"]["json"]["sha256"] = _hash(companion_bytes)
+    manifest.write_text(json.dumps(raw), encoding="utf-8")
+    assert self_context(manifest)["generation_version"] == "2"
+
+    companion["generation_version"] = "3"
+    companion_bytes = (json.dumps(companion, indent=2, sort_keys=True) + "\n").encode()
+    companion_path.write_bytes(companion_bytes)
+    raw["self_context"]["json"]["sha256"] = _hash(companion_bytes)
+    manifest.write_text(json.dumps(raw), encoding="utf-8")
+    with pytest.raises(SelfContextError, match="generation version '3'"):
+        self_context(manifest)

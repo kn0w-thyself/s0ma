@@ -34,6 +34,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "Contract",
+    "OperationContract",
     "ConfigurableProperty",
     "ProtocolContract",
     "ResourceProfile",
@@ -429,6 +430,66 @@ Contract = _wrap_init_with_field_hints(Contract)  # type: ignore[misc, assignmen
 
 
 @dataclass(frozen=True)
+class OperationContract:
+    """The authored contract of one operation a component provides.
+
+    A SERVICE nerve's ``provides:`` entries may each carry ``returns``,
+    ``expects`` and ``guarantees`` lines (the per-operation contract the
+    DSL added in 0.15.0). The DSL emitter stores them on the registration
+    as ``metadata["provides_contracts"]``, a list of dicts keyed by
+    operation ``name`` with whichever of the three slots the author
+    wrote; :attr:`ComponentSpec.provides_contracts` is the typed view of
+    that list, and this is one entry of it. Every slot except ``name`` is
+    optional, so a bare ``provides: [foo]`` entry is a contract with a
+    name and nothing else.
+    """
+
+    name: str
+    returns: str | None = None
+    expects: str | None = None
+    guarantees: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to the ``metadata["provides_contracts"]`` entry shape.
+
+        Only the slots that carry a value are written, matching what the
+        emitter writes, so a round trip is byte-stable.
+        """
+        result: dict[str, Any] = {"name": self.name}
+        if self.returns is not None:
+            result["returns"] = self.returns
+        if self.expects is not None:
+            result["expects"] = self.expects
+        if self.guarantees is not None:
+            result["guarantees"] = self.guarantees
+        return result
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> OperationContract:
+        """Deserialize one ``metadata["provides_contracts"]`` entry.
+
+        Raises:
+            RegistrationError: If the entry has no string ``name``.
+        """
+        name = data.get("name")
+        if not isinstance(name, str) or not name:
+            raise RegistrationError(
+                "OperationContract.from_dict: entry has no string 'name'"
+            )
+
+        def _text(key: str) -> str | None:
+            value = data.get(key)
+            return value if isinstance(value, str) else None
+
+        return cls(
+            name=name,
+            returns=_text("returns"),
+            expects=_text("expects"),
+            guarantees=_text("guarantees"),
+        )
+
+
+@dataclass(frozen=True)
 class ResourceProfile:
     """Expected resource usage profile for a component.
 
@@ -607,6 +668,46 @@ class ComponentSpec:
 
         # Contract validation
         self.contracts.validate()
+
+    @property
+    def provides(self) -> tuple[str, ...]:
+        """The operations this component provides, in authored order.
+
+        A SERVICE nerve's ``provides:`` list reaches the registration as
+        ``metadata["provides"]``; this is its typed view. When only the
+        per-operation contracts were stored, their names are the list.
+        Empty for a component that provides no named operations.
+        """
+        names = self.metadata.get("provides")
+        if isinstance(names, (list, tuple)):
+            return tuple(str(name) for name in names)
+        return tuple(contract.name for contract in self.provides_contracts)
+
+    @property
+    def provides_contracts(self) -> tuple[OperationContract, ...]:
+        """The per-operation contracts of the operations this component provides.
+
+        Read from ``metadata["provides_contracts"]``, the list the DSL
+        emitter writes when at least one ``provides:`` entry carries a
+        ``returns``, ``expects`` or ``guarantees`` line. The metadata copy
+        stays the stored form, so registrations written before this view
+        existed read the same way; entries without a string ``name`` are
+        skipped rather than raised, because a describe surface must keep
+        answering about a component whose metadata somebody mis-shaped.
+        Empty when no per-operation contract was authored.
+        """
+        raw = self.metadata.get("provides_contracts")
+        if not isinstance(raw, (list, tuple)):
+            return ()
+        contracts: list[OperationContract] = []
+        for entry in raw:
+            if not isinstance(entry, dict):
+                continue
+            try:
+                contracts.append(OperationContract.from_dict(entry))
+            except RegistrationError:
+                continue
+        return tuple(contracts)
 
     def replace(self, **overrides: Any) -> ComponentSpec:
         """Create a new ComponentSpec with the given field overrides.

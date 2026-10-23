@@ -21,7 +21,13 @@ from s0ma_dsl.codegen.build_manifest import (
 SELF_CONTEXT_SCHEMA = "s0ma-self-context@1"
 SELF_CONTEXT_FILENAME = "self_context.json"
 SELF_PROMPT_CARD_FILENAME = "self_prompt_card.md"
-SELF_CONTEXT_GENERATION_VERSION = "1"
+#: The companion's generation. ``"1"`` carried a component's intent,
+#: dependencies and authored state fields; ``"2"`` adds, where they
+#: exist, the per-operation ``provides_contracts``, a constant cell's
+#: literal ``value`` and the component's authored and derived ``edges``.
+#: The schema name and its required members do not move: a generation-1
+#: companion stays valid to a runtime that knows generation 2.
+SELF_CONTEXT_GENERATION_VERSION = "2"
 #: The card's size contract, in UTF-8 bytes and whitespace-delimited words.
 #:
 #: The byte ceiling was 1,800 until 2026-08-30. At that number the inventory
@@ -76,7 +82,8 @@ def _authored_detail(component: dict[str, Any]) -> dict[str, Any]:
     emits the authored map verbatim and omits the key entirely when nothing
     was authored).  State-carrying fields keep their authored ``state`` form
     but are omitted when the state is ``none``, so the companion grows only
-    where something was actually authored.
+    where something was actually authored.  ``provides_contracts`` is
+    copied when at least one provided operation authored a contract.
     """
     fields = component.get("fields")
     if not isinstance(fields, dict):
@@ -89,6 +96,21 @@ def _authored_detail(component: dict[str, Any]) -> dict[str, Any]:
         value = fields.get(key)
         if isinstance(value, dict) and value.get("state") in {"value", "pending"}:
             detail[key] = value
+    # The per-operation contracts of a ``provides:`` list (0.15.0) ride the
+    # IR as a plain list of ``{"name", "returns"?, "expects"?,
+    # "guarantees"?}`` records, present only when an entry authored a
+    # contract. They are copied whole: a host answering "what does
+    # pip_install expect" must find the answer on this surface rather
+    # than in the module's canonical IR.
+    contracts = fields.get("provides_contracts")
+    if isinstance(contracts, list):
+        records = [
+            entry
+            for entry in contracts
+            if isinstance(entry, dict) and isinstance(entry.get("name"), str)
+        ]
+        if records:
+            detail["provides_contracts"] = records
     return detail
 
 

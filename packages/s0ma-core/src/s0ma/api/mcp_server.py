@@ -101,8 +101,10 @@ def create_mcp_server(
         Args:
             name: The name of the component to look up.
 
-        Returns the component's identity, purpose, contracts,
-        dependencies, dependents, and source location.
+        Returns the component's identity, purpose, contracts, the
+        operations it provides with each operation's own expects,
+        guarantees and returns, dependencies, dependents, and source
+        location.
         """
         try:
             return smi.describe_component(name)

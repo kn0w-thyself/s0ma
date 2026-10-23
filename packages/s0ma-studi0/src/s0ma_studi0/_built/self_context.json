@@ -781,7 +781,7 @@
       "module": "studi0_server"
     }
   ],
-  "generation_version": "1",
+  "generation_version": "2",
   "provenance": {
     "authored_text_trust": "untrusted_project_data",
     "authority": "canonical_ir",

@@ -77,8 +77,9 @@ def format_component_summary(spec: ComponentSpec) -> str:
 def format_component_detail(spec: ComponentSpec) -> str:
     """Format a component with full detail for LLM context.
 
-    Includes all available metadata: identity, contracts, dependencies,
-    resource profile, and source location. Designed for the
+    Includes all available metadata: identity, contracts, the operations
+    the component provides with their per-operation contracts,
+    dependencies, resource profile, and source location. Designed for the
     ``describe_component()`` method.
 
     Args:
@@ -107,6 +108,30 @@ def format_component_detail(spec: ComponentSpec) -> str:
     if contracts_text:
         lines.append("Contracts:")
         lines.append(contracts_text)
+        lines.append("")
+
+    # Operations: the ``provides:`` list, with the per-operation contract
+    # under each operation that authored one. This is where a reader
+    # learns that ``pip_install`` is an operation of this component and
+    # what that operation expects and guarantees; before these lines the
+    # per-operation contracts stopped at registry metadata nothing read.
+    operations = spec.provides
+    if operations:
+        contracts_by_name = {
+            contract.name: contract for contract in spec.provides_contracts
+        }
+        lines.append("Operations (provides):")
+        for operation in operations:
+            lines.append(f"  - {operation}")
+            contract = contracts_by_name.get(operation)
+            if contract is None:
+                continue
+            if contract.expects is not None:
+                lines.append(f"      Expects: {contract.expects}")
+            if contract.guarantees is not None:
+                lines.append(f"      Guarantees: {contract.guarantees}")
+            if contract.returns is not None:
+                lines.append(f"      Returns: {contract.returns}")
         lines.append("")
 
     # Dependencies
