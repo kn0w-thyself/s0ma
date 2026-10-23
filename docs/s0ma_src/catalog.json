@@ -1488,6 +1488,33 @@
     {
       "audiences": [
         "agent",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/packaging.md",
+      "covers": [
+        "cli:s0ma/build",
+        "cli:s0ma/check",
+        "cli:s0ma/test",
+        "cli:s0ma/verify-host",
+        "concept:requires",
+        "concept:strictness-mode",
+        "config:bootstrap_files",
+        "config:build_dir",
+        "config:source_roots",
+        "diagnostic:HOST_RUNTIME_UNDECLARED",
+        "diagnostic:MISSING_PACKAGE"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/packaging",
+      "kind": "guide",
+      "prose_locator": "docs/guides/packaging.md",
+      "status": "living",
+      "title": "Packaging a s0ma project as a wheel"
+    },
+    {
+      "audiences": [
+        "agent",
         "contributor"
       ],
       "authority": "",
@@ -2451,6 +2478,20 @@
       "prose_locator": "docs/adr/ADR-014-the-forbids-line.md",
       "status": "normative",
       "title": "ADR-014: The `forbids` line — what a nerve or a ganglion must never do"
+    },
+    {
+      "audiences": [
+        "contributor"
+      ],
+      "authority": "authority:adr/repo.ADR-015",
+      "canonical_source": "docs/adr/ADR-015-build-without-runtime-packages.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:normative/adr-015-build-without-runtime-packages",
+      "kind": "normative",
+      "prose_locator": "docs/adr/ADR-015-build-without-runtime-packages.md",
+      "status": "normative",
+      "title": "ADR-015: A build without the runtime packages records what it could not verify"
     },
     {
       "audiences": [
