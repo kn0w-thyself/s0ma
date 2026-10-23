@@ -37,7 +37,10 @@ logger = logging.getLogger("s0ma")
 # Update this constant whenever a framework component is added or removed.
 # The bootstrap test uses this to catch accidental omissions.
 # 60 → 61 (0.11.0): + AdoptedFile (batch-01a D2, adopted-file records).
-EXPECTED_FRAMEWORK_COMPONENT_COUNT = 61
+# 61 → 63 (0.20.0): + OperationContract (one provided operation's own
+# contract) and ComponentResolution (what a describe-surface name
+# resolved to, operation names included).
+EXPECTED_FRAMEWORK_COMPONENT_COUNT = 63
 
 
 def bootstrap_register(registry: ComponentRegistry) -> None:
@@ -381,6 +384,57 @@ def _build_framework_specs(
             ),
             module_path="s0ma.models",
             qualified_name="s0ma.models.RegistrySnapshot",
+            source_file=models_file,
+            is_framework=True,
+        ),
+        ComponentSpec(
+            name="OperationContract",
+            kind=ComponentKind.FRAMEWORK,
+            layer=Layer.FRAMEWORK,
+            intent=(
+                "The authored contract of one operation a component provides: "
+                "its name with the returns, expects and guarantees the author "
+                "wrote for that operation, read from the registration metadata"
+            ),
+            contracts=Contract(
+                invariants=[
+                    "name is a non-empty string",
+                ],
+                postconditions=[
+                    "to_dict() writes only the slots that carry a value",
+                    "from_dict() raises RegistrationError for an entry without a string name",
+                    "from_dict(to_dict()) round-trip preserves every slot",
+                ],
+            ),
+            dependencies=["ComponentSpec"],
+            module_path="s0ma.models",
+            qualified_name="s0ma.models.OperationContract",
+            source_file=models_file,
+            is_framework=True,
+        ),
+        ComponentSpec(
+            name="ComponentResolution",
+            kind=ComponentKind.FRAMEWORK,
+            layer=Layer.FRAMEWORK,
+            intent=(
+                "What a caller-supplied name resolved to in the registry: the "
+                "component, the operation name when the name was an operation "
+                "the component provides, or the candidate providers when "
+                "several components provide it"
+            ),
+            contracts=Contract(
+                invariants=[
+                    "spec and candidates are never both set",
+                    "operation is set only together with spec",
+                ],
+                postconditions=[
+                    "note names the operation and the component's display name, "
+                    "or is None for a plain component name",
+                ],
+            ),
+            dependencies=["ComponentSpec"],
+            module_path="s0ma.models",
+            qualified_name="s0ma.models.ComponentResolution",
             source_file=models_file,
             is_framework=True,
         ),

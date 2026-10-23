@@ -742,10 +742,12 @@ class TestGeneralExitCriteria:
         dispatched to subscribers from the import hook), bringing the
         total to 60. 0.11.0 (batch-01a D2) adds AdoptedFile (the
         adopted-file record behind register_adopted_file), bringing
-        the total to 61.
+        the total to 61. 0.20.0 adds OperationContract (one provided
+        operation's own contract) and ComponentResolution (what a
+        describe-surface name resolved to), bringing the total to 63.
         """
         assert bootstrapped_registry.count() == EXPECTED_FRAMEWORK_COMPONENT_COUNT
-        assert EXPECTED_FRAMEWORK_COMPONENT_COUNT == 61
+        assert EXPECTED_FRAMEWORK_COMPONENT_COUNT == 63
 
     def test_self_model_test_passes(
         self,
