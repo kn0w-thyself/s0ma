@@ -53,7 +53,7 @@ from s0ma_dsl.ir.schema import IRSchemaVersionError, validate_ir_schema_version
 from s0ma_dsl.project import S0maProject, is_empty_package_marker
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Collection, Sequence
 
     from s0ma_dsl.ast_nodes.nodes import S0maModule
     from s0ma_dsl.cache import BuildCache, CacheResult
@@ -297,6 +297,7 @@ def _format_diagnostics_json(
     mode: str | None = None,
     delta: DeltaReport | None = None,
     build_override: dict[str, Any] | None = None,
+    build_environment: dict[str, Any] | None = None,
 ) -> str:
     """Format diagnostics as JSON per PRD §2.4.4.
 
@@ -314,6 +315,11 @@ def _format_diagnostics_json(
     into the document as a top-level ``build_override`` block so the MCP
     ``build_project`` result carries the override marker the bench's
     ``build_override_new_errors`` counter keys on.
+
+    *build_environment* is set only by ``build --without-runtime-packages``:
+    the record of the ``requires:`` entries that build could not find in an
+    environment the caller said lacks the project's runtime packages. It
+    rides into the document as a top-level ``build_environment`` block.
     """
     # Build per-file groups for structured output
     all_diags = errors + warnings
@@ -348,6 +354,8 @@ def _format_diagnostics_json(
         result["delta"] = delta.to_dict()
     if build_override is not None:
         result["build_override"] = build_override
+    if build_environment is not None:
+        result["build_environment"] = build_environment
     return json.dumps(result, indent=2, sort_keys=True)
 
 
@@ -474,6 +482,8 @@ def _print_diagnostics(
     quiet: bool = False,
     delta: DeltaReport | None = None,
     build_override: dict[str, Any] | None = None,
+    build_environment: dict[str, Any] | None = None,
+    manifest_written: bool = True,
 ) -> None:
     """Print diagnostics in the requested format.
 
@@ -491,12 +501,20 @@ def _print_diagnostics(
     ``build`` when ``--allow-new-errors`` waved NEW check errors through —
     rides into the JSON document as a top-level ``build_override`` block
     and prints one trailing text line naming the override.
+
+    *build_environment* (supplied only by ``build --without-runtime-packages``)
+    rides into the JSON document as a top-level ``build_environment`` block
+    and prints one text line naming the packages the build could not verify.
+    That line names the manifest only when *manifest_written* says the
+    build wrote one (a build with no build directory, such as one of a
+    project without ``[tool.s0ma]``, writes none).
     """
     errors, warnings = _split_diagnostics(all_errors)
     if output_format == "json":
         print(_format_diagnostics_json(
             errors, warnings, files_processed, mode=mode, delta=delta,
             build_override=build_override,
+            build_environment=build_environment,
         ))
         return
     # M2: the override note leads the text output (before any warnings) so
@@ -507,6 +525,19 @@ def _print_diagnostics(
             f"Note: built with --allow-new-errors — {count} NEW check "
             f"error(s) waved through and recorded in the build manifest."
         )
+    if build_environment is not None:
+        names = list(build_environment.get("unverified_packages", []))
+        if names:
+            noun = "entry" if len(names) == 1 else "entries"
+            recorded = (
+                ", recorded in the build manifest as unverified"
+                if manifest_written else ""
+            )
+            print(
+                f"Note: built without the project's runtime packages: "
+                f"{len(names)} requires: {noun} not verified here "
+                f"({', '.join(names)}){recorded}."
+            )
     if quiet:
         # Quiet mode: only print errors (no warnings, no file grouping)
         for err in errors:
@@ -784,6 +815,7 @@ def _emit_build_manifest(
     external_content_files: dict[str, ExternalContentFileEntry] | None = None,
     recorded_build_dir: str | None = None,
     overridden_new_errors: tuple[str, ...] = (),
+    unverified_packages: tuple[str, ...] = (),
     emit_self_context: bool = True,
 ) -> Path | None:
     """Write the build manifest to ``build_dir/build.s0ma.json``.
@@ -811,6 +843,10 @@ def _emit_build_manifest(
     these from each parsed module's ``CellDecl.embedded_*`` fields;
     legacy callers leave the argument ``None`` and the manifest stays
     byte-identical to its pre-M12 shape.
+
+    ``unverified_packages`` is the record of a build made with
+    ``--without-runtime-packages``: the import names of the ``requires:``
+    entries it could not find. Empty, and the key omitted, otherwise.
     """
     if build_dir is None:
         return None
@@ -834,6 +870,7 @@ def _emit_build_manifest(
         topological_import_order=topological_import_order,
         external_content_files=external_content_files,
         overridden_new_errors=overridden_new_errors,
+        unverified_packages=unverified_packages,
         self_context=self_context_refs,
     )
     return emit_manifest(manifest, build_dir)
@@ -2897,6 +2934,29 @@ class S0maCLI:
                 "this flag the build refuses and lists the new errors. "
                 "Distinct from --force (which discards hand-edits to "
                 "generated files)."
+            ),
+        )
+        # A build hook runs inside a PEP 517 build environment, which holds
+        # [build-system].requires and nothing else, so every third-party
+        # requires: entry is MISSING_PACKAGE there and the gate above would
+        # count each one as NEW against a baseline recorded where the
+        # packages are installed. The caller is the one who knows that the
+        # environment is the cause, so the caller says so with this flag;
+        # the build then records what it could not verify instead of
+        # refusing, and still refuses a new contract error. It is not an
+        # override: nothing is waved through, and the manifest records the
+        # packages under unverified_packages, not overridden_new_errors.
+        bd.add_argument(
+            "--without-runtime-packages",
+            action="store_true",
+            help=(
+                "Say that the environment this build runs in does not hold "
+                "the project's runtime packages, as a PEP 517 build "
+                "environment does not. A requires: entry the build cannot "
+                "find is then recorded in the build manifest as unverified "
+                "instead of counted as a NEW check error; a new contract "
+                "error still refuses the build. Combines with --mode dev or "
+                "migration only."
             ),
         )
         bd.add_argument(
@@ -5509,6 +5569,9 @@ class S0maCLI:
         files_processed: int,
         mode: str | None,
         quiet: bool,
+        name_environment_flag: bool = False,
+        project_modules: Collection[str] = (),
+        build_environment: dict[str, Any] | None = None,
     ) -> int:
         """Render the first-class build refusal for NEW check errors.
 
@@ -5525,7 +5588,36 @@ class S0maCLI:
         Returns :data:`EXIT_VALIDATION_ERROR` (the ``GENERATED_FILE_DRIFT``
         exit convention) so the MCP ``build_project`` tool sees a failing
         exit and surfaces the refusal under ``result["diagnostics"]``.
+
+        *name_environment_flag*: when every NEW error is an environment
+        diagnostic (see :data:`s0ma_dsl.check_baseline.ENVIRONMENT_CODES`)
+        and the caller did not pass ``--without-runtime-packages``, the
+        refusal says that the flag exists and what it does, so a build
+        hook meeting the gate for the first time reads the answer in the
+        refusal rather than sniffing the error list for it.
+        *project_modules* names the project's s0ma modules, so an entry
+        that names one of them is not taken for an environment finding.
+        *build_environment* is the record a build made with
+        ``--without-runtime-packages`` keeps of what it could not verify;
+        a refusal under the flag carries it too, as the ``build_environment``
+        block of the JSON document and one text line, so the reader sees
+        what was left out of the count and why.
         """
+        from s0ma_dsl.check_baseline import is_environment_diagnostic
+
+        environment_hint: str | None = None
+        if name_environment_flag and all(
+            is_environment_diagnostic(diag, project_modules)
+            for diag in new_errors
+        ):
+            environment_hint = (
+                "Every NEW error is MISSING_PACKAGE, a requires: entry this "
+                "environment cannot find. If this build runs where the "
+                "project's runtime packages are not installed, such as a "
+                "PEP 517 build environment, pass --without-runtime-packages: "
+                "the build then records those packages in its manifest as "
+                "unverified and refuses only new contract errors."
+            )
         # Present the NEW check errors as errors (they ARE errors to
         # `check` — strict — even though this build's mode ranked them
         # warnings), each labelled [NEW] and carrying its suggested block.
@@ -5546,6 +5638,7 @@ class S0maCLI:
                     files_processed,
                     mode=mode,
                     delta=delta,
+                    build_environment=build_environment,
                 )
             )
             doc["build_refused"] = {
@@ -5554,6 +5647,8 @@ class S0maCLI:
                 "rule": self._BUILD_GATE_RULE,
                 "escape_hatch": escape_hatch,
             }
+            if environment_hint is not None:
+                doc["build_refused"]["environment_hint"] = environment_hint
             print(json.dumps(doc, indent=2, sort_keys=True))
             return EXIT_VALIDATION_ERROR
 
@@ -5569,6 +5664,17 @@ class S0maCLI:
             print(f"[{label}] {diag.format_text()}")
             print()
         print(escape_hatch)
+        if environment_hint is not None:
+            print(environment_hint)
+        if build_environment is not None:
+            names = list(build_environment.get("unverified_packages", []))
+            if names:
+                noun = "entry" if len(names) == 1 else "entries"
+                print(
+                    f"Not counted above, because --without-runtime-packages "
+                    f"was passed: {len(names)} requires: {noun} this "
+                    f"environment cannot find ({', '.join(names)})."
+                )
         return EXIT_VALIDATION_ERROR
 
     def _cmd_build(self, args: argparse.Namespace) -> int:
@@ -5590,6 +5696,31 @@ class S0maCLI:
         from s0ma_dsl.resolver.dependency import resolve_dependencies
 
         mode = StrictnessMode(args.mode)
+        # A build made where the project's runtime packages are not
+        # installed (--without-runtime-packages) can only record the
+        # requires: entries it could not find. Strict and release mode
+        # exist to verify them, so the two do not combine: the flag is
+        # refused there rather than left to fail on the errors it cannot
+        # explain. The mode may come from [tool.s0ma].mode rather than a
+        # --mode flag, so the refusal names the mode, not the flag, and
+        # says which flag overrides it.
+        without_runtime_packages = bool(
+            getattr(args, "without_runtime_packages", False)
+        )
+        if without_runtime_packages and mode in (
+            StrictnessMode.STRICT, StrictnessMode.RELEASE,
+        ):
+            print(
+                f"s0ma build: --without-runtime-packages does not combine "
+                f"with {mode.value} mode: strict and release mode verify "
+                f"every requires: entry, which an environment without the "
+                f"project's runtime packages cannot do. Pass --mode dev or "
+                f"--mode migration here (either overrides "
+                f"[tool.s0ma].mode), and run `s0ma check --mode "
+                f"{mode.value}` where the packages are installed.",
+                file=sys.stderr,
+            )
+            return EXIT_USAGE_ERROR
         # M6a (feedback 5–6, ADR-007): output_dir resolution prefers an
         # explicit --output-dir; otherwise falls back to the resolved
         # S0maProject.build_dir (M1) when one is available; otherwise
@@ -5960,6 +6091,38 @@ class S0maCLI:
         # a re-run refuses again until the errors are fixed or the flag is
         # passed.
         allow_new_errors = bool(getattr(args, "allow_new_errors", False))
+        from s0ma_dsl.check_baseline import is_environment_diagnostic
+
+        # The record of a build made without the runtime packages: every
+        # requires: entry it could not find, whether or not a baseline
+        # exists to attribute it, and whether or not the gate below goes
+        # on to refuse the build for something else. Rides into the JSON
+        # report as ``build_environment`` and into the manifest as
+        # ``unverified_packages`` (nothing was overridden, so never into
+        # ``overridden_new_errors``). An entry naming one of this
+        # project's s0ma modules is not an environment finding.
+        build_environment: dict[str, Any] | None = None
+        unverified_packages: tuple[str, ...] = ()
+        if without_runtime_packages:
+            environment_findings = [
+                d for d in all_diagnostics
+                if is_environment_diagnostic(d, module_dict)
+            ]
+            unverified_packages = tuple(sorted({
+                str(
+                    d.context.get("import_path")
+                    or d.context.get("requires")
+                    or d.code
+                )
+                for d in environment_findings
+            }))
+            build_environment = {
+                "without_runtime_packages": True,
+                "unverified_package_count": len(unverified_packages),
+                "unverified_packages": list(unverified_packages),
+                "diagnostics": [d.to_dict() for d in environment_findings],
+            }
+
         # Two paths are exempt: `build --check` (a drift dry-run that
         # writes NO artifacts to the real build dir — the gate's
         # refuse-before-emit rationale does not apply) and the internal
@@ -5986,6 +6149,19 @@ class S0maCLI:
             check_errors = [
                 d for d in all_diagnostics if is_check_severity_error(d)
             ]
+            if without_runtime_packages:
+                # The caller stated that this environment does not hold
+                # the runtime packages, so a requires: entry the build
+                # cannot find is an environment finding, not a contract
+                # error the edit introduced. It is left out of the set the
+                # gate classifies, so a refusal's delta counts only what
+                # can refuse; the record above keeps it. An entry naming
+                # one of this project's s0ma modules is not an environment
+                # finding and stays in.
+                check_errors = [
+                    d for d in check_errors
+                    if not is_environment_diagnostic(d, module_dict)
+                ]
             if check_errors:
                 record = load_baseline_record(gate_root)
                 delta = classify(
@@ -6005,6 +6181,9 @@ class S0maCLI:
                         files_processed=len(target_files),
                         mode=args.mode,
                         quiet=quiet,
+                        name_environment_flag=not without_runtime_packages,
+                        project_modules=module_dict,
+                        build_environment=build_environment,
                     )
                 if new_errors:  # allow_new_errors — override, record it
                     overridden_new_error_keys = tuple(
@@ -6299,6 +6478,7 @@ class S0maCLI:
                 # can count overrides. Empty (key omitted) on every normal
                 # build.
                 overridden_new_errors=overridden_new_error_keys,
+                unverified_packages=unverified_packages,
             )
             if manifest_path is not None:
                 all_outputs.append(str(manifest_path))
@@ -6359,7 +6539,14 @@ class S0maCLI:
             )
         except OSError:
             is_full_root_build = False
-        if is_full_root_build and getattr(args, "_role", None) is None:
+        # A build made without the runtime packages observed a foreign
+        # environment: what it could not find says nothing about this
+        # checkout's debt, so it leaves the baseline alone.
+        if (
+            is_full_root_build
+            and getattr(args, "_role", None) is None
+            and not without_runtime_packages
+        ):
             self._record_check_baseline(s0ma_project, all_diagnostics)
 
         # Report
@@ -6370,6 +6557,8 @@ class S0maCLI:
             mode=args.mode,
             quiet=quiet,
             build_override=build_override,
+            build_environment=build_environment,
+            manifest_written=manifest_path is not None,
         )
 
         errors, warnings = _split_diagnostics(all_diagnostics)

@@ -292,6 +292,18 @@ class BuildManifest:
     # byte-identical to their pre-M2 shape. Each key is
     # ``CODE@module.s0ma[:symbol]`` (the line-number-free baseline identity).
     overridden_new_errors: tuple[str, ...] = field(default_factory=tuple)
+    # The import names that a build made with ``s0ma build
+    # --without-runtime-packages`` looked up for its ``requires:`` entries
+    # and could not find in its environment (the top-level package of a
+    # plain import, the module of a from-import). The caller stated that
+    # the environment does not hold the project's runtime packages, so
+    # these were recorded rather than counted as NEW check errors;
+    # nothing was overridden, which is why they are not in
+    # ``overridden_new_errors``. Additive under
+    # ``s0ma-build-manifest@1``: a build made where the packages are
+    # installed never sets it, and ``to_dict`` omits the key when empty.
+    # Sorted and distinct, so two builds of one tree record the same list.
+    unverified_packages: tuple[str, ...] = field(default_factory=tuple)
     # M6 (0.14.0): content-addressed canonical self-context companions.
     # Optional so every older s0ma-build-manifest@1 remains loadable.
     self_context: SelfContextReferences | None = None
@@ -334,6 +346,12 @@ class BuildManifest:
         if self.overridden_new_errors:
             payload["overridden_new_errors"] = sorted(
                 self.overridden_new_errors
+            )
+        # Emit ``unverified_packages`` only for a build made without the
+        # runtime packages that met at least one it could not find.
+        if self.unverified_packages:
+            payload["unverified_packages"] = sorted(
+                set(self.unverified_packages)
             )
         if self.self_context is not None:
             payload["self_context"] = self.self_context.to_dict()
@@ -420,6 +438,7 @@ def build_manifest(
     topological_import_order: tuple[str, ...] | list[str] = (),
     external_content_files: dict[str, ExternalContentFileEntry] | None = None,
     overridden_new_errors: tuple[str, ...] | list[str] = (),
+    unverified_packages: tuple[str, ...] | list[str] = (),
     self_context: SelfContextReferences | None = None,
 ) -> BuildManifest:
     """Construct a :class:`BuildManifest` for the given build.
@@ -445,6 +464,10 @@ def build_manifest(
     file embedded via ``content: @file("path")`` on a CONSTANT cell.
     ``None`` (the default) is treated as an empty dict so the manifest
     stays back-compatible with pre-M12 callers.
+
+    ``unverified_packages`` is the record of a build made with
+    ``--without-runtime-packages``: the import names of the ``requires:``
+    entries it could not find. Empty for every other build.
     """
     return BuildManifest(
         schema=MANIFEST_SCHEMA,
@@ -461,6 +484,7 @@ def build_manifest(
         topological_import_order=tuple(topological_import_order),
         external_content_files=dict(external_content_files or {}),
         overridden_new_errors=tuple(overridden_new_errors),
+        unverified_packages=tuple(sorted(set(unverified_packages))),
         self_context=self_context,
     )
 
@@ -611,6 +635,17 @@ def load_manifest(build_dir: Path) -> BuildManifest:
                 f"Re-run `s0ma build` to regenerate it."
             )
         overridden_new_errors = tuple(str(key) for key in raw_override)
+        # ``unverified_packages`` is additive in the same way: present only
+        # on a build made with ``--without-runtime-packages`` that could
+        # not find at least one ``requires:`` entry.
+        raw_unverified = raw.get("unverified_packages", [])
+        if not isinstance(raw_unverified, list):
+            raise ManifestSchemaError(
+                f"Build manifest at {manifest_path} has an "
+                f"'unverified_packages' that is not a JSON array. "
+                f"Re-run `s0ma build` to regenerate it."
+            )
+        unverified_packages = tuple(str(name) for name in raw_unverified)
         raw_self_context = raw.get("self_context")
         self_context: SelfContextReferences | None = None
         if raw_self_context is not None:
@@ -652,6 +687,7 @@ def load_manifest(build_dir: Path) -> BuildManifest:
             topological_import_order=topological_import_order,
             external_content_files=external_content_files,
             overridden_new_errors=overridden_new_errors,
+            unverified_packages=unverified_packages,
             self_context=self_context,
         )
     except (KeyError, TypeError) as exc:

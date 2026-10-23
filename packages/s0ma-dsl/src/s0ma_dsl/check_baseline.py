@@ -131,7 +131,7 @@ from typing import TYPE_CHECKING, Any
 from s0ma_dsl.config import StrictnessMode, get_severity
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Mapping, Sequence
+    from collections.abc import Collection, Iterable, Mapping, Sequence
 
     from s0ma_dsl.errors import S0maError
 
@@ -182,6 +182,42 @@ _PREEMPTING_CODES: frozenset[str] = frozenset({
     "MIXED_PROVIDES_FORMS",
     "DUPLICATE_PROVIDES_NAME",
 })
+
+
+ENVIRONMENT_CODES: frozenset[str] = frozenset({"MISSING_PACKAGE"})
+"""Codes whose truth depends on the environment the check runs in.
+
+Every other check-severity code is a statement about the authored source:
+the same ``.s0ma`` text fires it in every environment. ``MISSING_PACKAGE``
+is different. It is raised when ``importlib.util.find_spec`` cannot find a
+``requires:`` entry in the interpreter running the check, so the same
+source is clean where the project's runtime packages are installed and
+red where they are not. A PEP 517 build environment is the common case:
+it holds the project's ``[build-system].requires`` and nothing else, so
+every third-party ``requires:`` entry is missing there, and a baseline
+recorded in the developer's environment makes each one look NEW.
+
+The gate cannot tell that case from a misspelled ``requires:`` entry on
+its own, so it does not guess: it treats these codes as environment
+findings only when the caller states that the environment lacks the
+runtime packages (``s0ma build --without-runtime-packages``). Without
+that statement they count as NEW check errors like any other.
+"""
+
+
+def is_environment_diagnostic(
+    diag: S0maError, project_modules: Collection[str] = (),
+) -> bool:
+    """Whether *diag* is an environment finding (:data:`ENVIRONMENT_CODES`).
+
+    A ``MISSING_PACKAGE`` whose import path names one of *project_modules*,
+    the s0ma modules of the project being built, is not: that entry names
+    a s0ma module, which belongs in ``uses:``, so no environment supplies
+    it and the source alone settles it.
+    """
+    if diag.code not in ENVIRONMENT_CODES:
+        return False
+    return diag.context.get("import_path") not in project_modules
 
 
 def is_check_severity_error(diag: S0maError) -> bool:
