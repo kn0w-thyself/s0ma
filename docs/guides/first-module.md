@@ -155,8 +155,9 @@ Module: greeting_domain
 Components (2):
   greeting_domain::GREETING_OPENER [INTERNAL CONSTANT cell]
   greeting_domain::greet [PUBLIC FUNCTION nerve]
-Derived edges (1):
+Derived edges (2):
   greeting_domain::greet --[TYPE_USES]--> core_domain::describe_self
+  greeting_domain::greet --[READS]--> greeting_domain::GREETING_OPENER
 Exports: greet
 ```
 
@@ -164,7 +165,7 @@ The real output prints a little more between those lines — the version, the in
 
 Read the middle of it back against what you wrote. Both parts are there, each with who may call it and which archetype it is, in the words you chose. Nothing here was inferred from a naming convention: it is your file, read back.
 
-The line under **Derived edges** is the answer to the axon question from step 4. Nobody declared that connection. The build saw `greet` reach across to `core_domain::describe_self` and recorded the edge itself, which is exactly why writing an axon for it would be writing down something already known — and why an axon is worth spending on a decision a reader could not have worked out.
+The two lines under **Derived edges** are the answer to the axon question from step 4. Nobody declared either connection. The build saw `greet` reach across to `core_domain::describe_self` and recorded that edge itself, and it saw `greet` read the constant `GREETING_OPENER` in its own body and recorded that too, so the opener is connected to the part that uses it. That is exactly why writing an axon for either would be writing down something already known — and why an axon is worth spending on a decision a reader could not have worked out.
 
 ## Where to go next
 

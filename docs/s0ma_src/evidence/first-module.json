@@ -130,11 +130,15 @@
           },
           {
             "match": "line",
-            "text": "Derived edges (1):"
+            "text": "Derived edges (2):"
           },
           {
             "match": "line",
             "text": "  greeting_domain::greet --[TYPE_USES]--> core_domain::describe_self"
+          },
+          {
+            "match": "line",
+            "text": "  greeting_domain::greet --[READS]--> greeting_domain::GREETING_OPENER"
           },
           {
             "match": "line",
