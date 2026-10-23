@@ -334,9 +334,128 @@ def _component_lookup(
     return None, sorted(str(component.get("id", "")) for component in providers), None
 
 
+def _reverse_edges(
+    components: list[dict[str, Any]],
+) -> dict[str, list[dict[str, Any]]]:
+    """Index the self-context's edges by target: who depends on whom.
+
+    A component's ``edges`` (generation 2) carry every authored and
+    derived outgoing edge with its relation; a generation-1 companion has
+    only the authored ``dependencies`` targets, which are indexed with no
+    relation. A target is matched to a component by exact id, else by a
+    bare name that exactly one component carries, because an authored
+    ``depends_on`` target is written as the declaring module's
+    ``module::name`` even when the component lives elsewhere; the record
+    keeps the spelling the author used under ``declared_as`` when it
+    differs from the id it reached. Self-edges and unresolvable targets
+    are dropped.
+    """
+    by_id = {str(component["id"]): component for component in components}
+    by_bare: dict[str, list[str]] = {}
+    for component_id in by_id:
+        by_bare.setdefault(component_id.rsplit("::", 1)[-1], []).append(component_id)
+
+    def resolve(target: str) -> str | None:
+        if target in by_id:
+            return target
+        candidates = by_bare.get(target.rsplit("::", 1)[-1], [])
+        return candidates[0] if len(candidates) == 1 else None
+
+    reverse: dict[str, list[dict[str, Any]]] = {}
+    seen: set[tuple[str, str, str | None, bool | None]] = set()
+    for component in components:
+        source_id = str(component["id"])
+        edges = component.get("edges")
+        claims: list[tuple[object, object, object]]
+        if isinstance(edges, list):
+            claims = [
+                (edge.get("target"), edge.get("relation"), edge.get("authored"))
+                for edge in edges
+                if isinstance(edge, dict)
+            ]
+        else:
+            claims = [
+                (target, None, True)
+                for target in component.get("dependencies", [])
+                if isinstance(target, str)
+            ]
+        for target, relation, authored in claims:
+            if not isinstance(target, str):
+                continue
+            target_id = resolve(target)
+            if target_id is None or target_id == source_id:
+                continue
+            relation_text = relation if isinstance(relation, str) else None
+            authored_flag = authored if isinstance(authored, bool) else None
+            identity = (target_id, source_id, relation_text, authored_flag)
+            if identity in seen:
+                continue
+            seen.add(identity)
+            record: dict[str, Any] = {
+                "id": source_id,
+                "relation": relation_text,
+                "authored": authored_flag,
+            }
+            if target != target_id:
+                record["declared_as"] = target
+            reverse.setdefault(target_id, []).append(record)
+    for records in reverse.values():
+        records.sort(
+            key=lambda record: (
+                str(record["id"]),
+                str(record["relation"] or ""),
+                not bool(record["authored"]),
+            )
+        )
+    return reverse
+
+
+def _impact(
+    component_id: str,
+    reverse: dict[str, list[dict[str, Any]]],
+    components: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Breadth-first walk of the reverse edges: the transitive dependents of one id."""
+    direct = sorted({str(record["id"]) for record in reverse.get(component_id, [])})
+    depth_of: dict[str, int] = dict.fromkeys(direct, 1)
+    queue = list(direct)
+    while queue:
+        current = queue.pop(0)
+        for record in reverse.get(current, []):
+            dependent = str(record["id"])
+            if dependent == component_id or dependent in depth_of:
+                continue
+            depth_of[dependent] = depth_of[current] + 1
+            queue.append(dependent)
+    transitive = sorted(name for name in depth_of if name not in direct)
+    layer_of = {str(item["id"]): str(item.get("layer", "UNKNOWN")) for item in components}
+    affected_layers = sorted(
+        {layer_of[name] for name in depth_of if name in layer_of}
+        | {layer_of.get(component_id, "UNKNOWN")}
+    )
+    return {
+        "direct_dependents": direct,
+        "transitive_dependents": transitive,
+        "total_affected_count": len(depth_of),
+        "max_dependency_depth": max(depth_of.values(), default=0),
+        "affected_layers": affected_layers,
+    }
+
+
 @dataclass(frozen=True)
 class SelfInspectAdapter:
-    """App-registerable deterministic tool adapter over verified self-context."""
+    """App-registerable deterministic tool adapter over verified self-context.
+
+    The handler answers five exact commands. ``describe`` is the
+    inventory; ``component <name>`` is one component's authored record;
+    ``dependencies <name>`` is what it depends on (outgoing edges);
+    ``dependents <name>`` is what depends on it directly, and
+    ``impact <name>`` what depends on it transitively, both read over
+    the authored and derived edges the build recorded, so "what breaks
+    if X is off" is answerable from the running application. A
+    ``<name>`` is a component id, a bare name, or the name of an
+    operation a component provides.
+    """
 
     context: dict[str, Any]
 
@@ -347,9 +466,11 @@ class SelfInspectAdapter:
             "name": "self_inspect",
             "description": (
                 "Inspect this application's verified s0ma self-context. Commands: "
-                "describe, component <name>, dependencies <name>. A <name> is a "
-                "component id or bare name, or the name of an operation a "
-                "component provides, which answers for that component."
+                "describe, component <name>, dependencies <name> (what it depends "
+                "on), dependents <name> (what depends on it), impact <name> (what "
+                "depends on it transitively). A <name> is a component id or bare "
+                "name, or the name of an operation a component provides, which "
+                "answers for that component."
             ),
             "inputSchema": {
                 "type": "object",
@@ -357,8 +478,9 @@ class SelfInspectAdapter:
                     "query": {
                         "type": "string",
                         "description": (
-                            "Exact command: describe, component <name>, or "
-                            "dependencies <name>; <name> may be an operation name."
+                            "Exact command: describe, component <name>, "
+                            "dependencies <name>, dependents <name>, or impact <name>; "
+                            "<name> may be an operation name."
                         ),
                     }
                 },
@@ -395,13 +517,18 @@ class SelfInspectAdapter:
             }
 
         verb, separator, name = command.partition(" ")
-        if verb not in {"component", "dependencies"} or not separator or not name.strip():
+        if (
+            verb not in {"component", "dependencies", "dependents", "impact"}
+            or not separator
+            or not name.strip()
+        ):
             return {
                 "ok": False,
                 "error": {
                     "code": "INVALID_SELF_INSPECT_COMMAND",
                     "message": (
-                        "Use exactly: describe, component <name>, or dependencies <name>."
+                        "Use exactly: describe, component <name>, dependencies <name>, "
+                        "dependents <name>, or impact <name>."
                     ),
                 },
             }
@@ -444,16 +571,37 @@ class SelfInspectAdapter:
                 "component": deepcopy(component),
                 **resolved,
             }
-        # ``dependencies`` is the authored target list, unchanged; ``edges``
-        # is every outgoing edge the build knows, authored and derived,
-        # with its relation, so a reader sees the constants a nerve reads
-        # and the types it uses beside the dependencies it declared.
+        if verb == "dependencies":
+            # ``dependencies`` is the authored target list, unchanged;
+            # ``edges`` is every outgoing edge the build knows, authored and
+            # derived, with its relation, so a reader sees the constants a
+            # nerve reads and the types it uses beside the dependencies it
+            # declared.
+            return {
+                "ok": True,
+                "command": verb,
+                "component": component["id"],
+                "dependencies": deepcopy(component["dependencies"]),
+                "edges": deepcopy(component.get("edges", [])),
+                **resolved,
+            }
+        reverse = _reverse_edges(components)
+        component_id = str(component["id"])
+        if verb == "dependents":
+            dependents = deepcopy(reverse.get(component_id, []))
+            return {
+                "ok": True,
+                "command": verb,
+                "component": component_id,
+                "dependents": dependents,
+                "dependent_count": len(dependents),
+                **resolved,
+            }
         return {
             "ok": True,
             "command": verb,
-            "component": component["id"],
-            "dependencies": deepcopy(component["dependencies"]),
-            "edges": deepcopy(component.get("edges", [])),
+            "component": component_id,
+            **_impact(component_id, reverse, components),
             **resolved,
         }
 

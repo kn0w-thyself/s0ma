@@ -401,3 +401,13 @@ def test_per_operation_contracts_reach_the_companion(tmp_path: Path) -> None:
     browser = _component(document, "shellwork::WebBrowser")
     assert browser["provides"] == {"state": "value", "value": ["fetch_url"]}
     assert "provides_contracts" not in browser
+
+
+def test_the_card_names_every_adapter_command_within_its_budget() -> None:
+    card = render_self_prompt_card(_document(2))
+    header = card.splitlines()[2]
+    for command in ("describe", "component", "dependencies", "dependents", "impact"):
+        assert command in header, header
+    assert "`<name>`" in header
+    assert len(header.encode("utf-8")) <= 123, "the header may not grow past its old length"
+    assert len(card.encode("utf-8")) <= SELF_PROMPT_CARD_MAX_BYTES

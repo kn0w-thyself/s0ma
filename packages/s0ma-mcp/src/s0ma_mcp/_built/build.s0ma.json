@@ -69,7 +69,7 @@
     },
     "prompt_card": {
       "path": "self_prompt_card.md",
-      "sha256": "sha256:f9d5b19e3fb5cbfba3df6f8c842c74d415236de7f012bc1ec5aff5c2f3682e95"
+      "sha256": "sha256:1a4440e5cb99e28e600aeed046cf49fefdb1e66b5a8a210af9300f18dc4182e1"
     }
   },
   "topological_import_order": [

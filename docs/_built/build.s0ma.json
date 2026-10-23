@@ -23,7 +23,7 @@
     },
     "prompt_card": {
       "path": "self_prompt_card.md",
-      "sha256": "sha256:48ecfd6cb990656abccccd1316b628703554b41c973b137fa4964a64bbf3a4b7"
+      "sha256": "sha256:3758a643dade9b802a31199225a2fbdeecd8c85b0a00d0ed2c8fa2c604d49459"
     }
   },
   "topological_import_order": [

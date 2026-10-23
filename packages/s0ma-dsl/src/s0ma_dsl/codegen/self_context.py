@@ -296,8 +296,12 @@ def render_self_prompt_card(document: dict[str, Any]) -> str:
     lines = [
         "# s0ma self-prompt card",
         "",
-        "Runtime adapter: `s0ma.runtime.self_inspect_adapter(...)`; commands: "
-        "`describe`, `component <name>`, `dependencies <name>`.",
+        # The five commands in 121 bytes: the card's byte ceiling is
+        # load-bearing (the authoring server's own card sits a few bytes
+        # under it), so the line names every command without spelling
+        # ``<name>`` five times.
+        "Runtime adapter `s0ma.runtime.self_inspect_adapter(...)`: describe; "
+        "component, dependencies, dependents, impact `<name>`.",
         _TRUST_INSTRUCTION,
         "Build health: unknown. Live health comes only from the runtime adapter.",
         "",
