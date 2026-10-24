@@ -5,7 +5,7 @@ module: "common_errors"
 format: "markdown"
 intent: "Derived table of every s0ma-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
 schema_version: "3.0.0"
-content_hash: "1:01d4bee74ca02f184f531c31f54a4efa98fc54cb1e0a22c6153d8fbc2605b097"
+content_hash: "1:529d1e7ccde8654324e334951bbb926d5b264165d3337bbd14746e6c46fa1e19"
 ---
 
 # CommonErrorsTable
@@ -89,6 +89,7 @@ Derived table of every s0ma-dsl error code, severity by mode, and a one-sentence
 | `MODULE_DEPENDENCY_CYCLE` | error | error | error | error | Topological sort detected a cycle in the project module `uses:` graph. |
 | `MODULE_NAME_COLLISION` | error | error | error | error | Two source files declare the same `module <name>` in one project. Rename one with a descriptive suffix — `<name>_test`, `<name>_lib`, `<dir>_<name>`. For test-context modules under a `test_roots` directory, `[tool.s0ma].test_module_name_prefix_by_dir = true` prefixes them by their parent directory instead of a hand-rename. |
 | `MODULE_NAME_STEM_MISMATCH` | error | error | error | error | The source filename's stem does not match the declared `module <name>`. |
+| `MODULE_OUTSIDE_PROJECT_ROOTS` | warning | warning | warning | warning | A built module's file lives under none of the project's `[tool.s0ma].source_roots` or `test_roots`, so the build recorded it with role `source` by default. Add its directory to one of the two lists so the build can record which it is, or move the file under a configured root. |
 | `MODULE_SHADOWS_STDLIB` | warning | warning | error | error | A module's declared name shadows a Python stdlib module (io, json, csv, …). The stdlib module is already loaded, so the built module cannot be imported by its bare name and cross-module `uses:` resolution fails at runtime — rename the module (and its file) to a non-stdlib name. |
 | `MODULE_SUBSCRIPT` | error | error | error | error | A body subscripts a bare `uses: [mod]` module object (`mod["key"]`). A bare uses entry imports the whole module, not a component, so the subscript raises `TypeError: 'module' object is not subscriptable` at runtime — import the symbol with `uses: [mod.symbol]` (emits `from mod import symbol`) instead. |
 | `MUTABLE_DEFAULT` | warning | warning | error | error | A body calls `dataclasses.field(default=[...])` or `dataclasses.field(default={...})` with a mutable collection literal as the `default=` argument. Python evaluates `default` once at class-body time and shares the same object across instances. Use `default_factory=list` / `default_factory=dict` instead so each instance gets a fresh collection. |

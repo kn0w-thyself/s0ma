@@ -703,6 +703,94 @@ def _recorded_logical_structure(
     return ("", "")
 
 
+def _root_role(
+    source_path: Path, s0ma_project: S0maProject | None,
+) -> str | None:
+    """The manifest role the project's configured roots give *source_path*.
+
+    ``"test"`` when the file lives under one of ``[tool.s0ma].test_roots``,
+    ``"source"`` when it lives under one of ``source_roots``, and ``None``
+    when no configured root encloses it or there is no real project to
+    ask: a synthetic fallback has no roots of its own, so it has nothing
+    to attribute against. The roots are disjoint by construction, since
+    :func:`s0ma_dsl.project._detect_overlapping_roots` refuses a project
+    whose roots overlap at load time (``OVERLAPPING_DISCOVERY_ROOTS``), so
+    at most one root encloses any file and the answer is never ambiguous.
+
+    This is the one place a build derives a role from the file system.
+    Readers take the role from the manifest entry it is recorded in.
+    ``s0ma test``'s build helper states its role explicitly instead (the
+    hidden ``_role`` attribute), and that statement wins over this answer.
+    """
+    if s0ma_project is None or s0ma_project.synthetic:
+        return None
+    try:
+        resolved_source = Path(source_path).resolve()
+    except OSError:
+        return None
+    for role, roots in (
+        ("test", s0ma_project.test_roots),
+        ("source", s0ma_project.source_roots),
+    ):
+        for root in roots:
+            try:
+                resolved_source.relative_to(Path(root).resolve())
+            except (ValueError, OSError):
+                continue
+            return role
+    return None
+
+
+def _module_outside_project_roots(
+    module_name: str, source_path: Path, s0ma_project: S0maProject,
+) -> S0maError:
+    """The warning for a module the build recorded as source by default.
+
+    Raised by ``_cmd_build`` when a real project is built from a path
+    whose module lives under none of the configured roots (``s0ma build
+    examples/`` in a project whose roots are ``src`` and ``tests``). The
+    entry is still written, with role ``source``, because nothing declares
+    the module a test; the warning says so and names the roots, as
+    project-root-relative paths, so the reader can declare the directory
+    or move the file. It is a warning in every strictness mode
+    (``SEVERITY_MATRIX``), so
+    :func:`s0ma_dsl.check_baseline.is_check_severity_error` never counts
+    it and neither the build gate nor the check baseline is affected.
+    """
+    source_roots = [
+        _recorded_project_path(root, s0ma_project)
+        for root in s0ma_project.source_roots
+    ]
+    test_roots = [
+        _recorded_project_path(root, s0ma_project)
+        for root in s0ma_project.test_roots
+    ]
+    return S0maError(
+        code="MODULE_OUTSIDE_PROJECT_ROOTS",
+        message=(
+            f"Module '{module_name}' lives under none of the project's "
+            f"source_roots ({', '.join(source_roots) or 'none declared'}) "
+            f"or test_roots ({', '.join(test_roots) or 'none declared'}), "
+            f"so the build recorded it with role source."
+        ),
+        file=str(source_path),
+        line=1,
+        column=0,
+        severity="warning",
+        remediation=(
+            "Add its directory to [tool.s0ma].source_roots or test_roots so "
+            "the build can record which it is, or move the file under a "
+            "configured root. Until then it is recorded as source, which is "
+            "what bootstrap_imports loads by default."
+        ),
+        context={
+            "module": module_name,
+            "source_roots": source_roots,
+            "test_roots": test_roots,
+        },
+    )
+
+
 def _collect_manifest_entry(
     *,
     module_name: str,
@@ -2861,7 +2949,10 @@ class S0maCLI:
                 "Directory holding the .s0ma sources to build. Optional: "
                 "with none, this builds the project you are in — every "
                 "source root and test root it declares, the same set "
-                "`s0ma check` reads when it is given no paths."
+                "`s0ma check` reads when it is given no paths. Each module "
+                "is recorded with the role of the root its file lives "
+                "under, so a test module is a test whether the build was "
+                "given a path or not."
             ),
         )
         bd.add_argument(
@@ -5609,6 +5700,17 @@ class S0maCLI:
         always did: build what is under it. Every refusal in the family
         can now print ``s0ma build`` as a sentence somebody can run
         (friction F-E2-2).
+
+        Whichever path the caller names, each module's manifest ``role``
+        is the role of the configured root its file lives under
+        (``test`` under ``test_roots``, ``source`` under
+        ``source_roots``), so a bare build records the test modules it
+        sweeps in as tests rather than as source, and
+        ``bootstrap_imports`` with its default roles loads the
+        application alone. ``s0ma test``'s helper states its role
+        explicitly through the hidden ``_role`` attribute, which wins. A
+        module under no configured root is recorded as source and
+        reported with ``MODULE_OUTSIDE_PROJECT_ROOTS``.
         """
         from s0ma_dsl.cache import BuildCache
         from s0ma_dsl.codegen.build_manifest import MANIFEST_FILENAME
@@ -5785,6 +5887,18 @@ class S0maCLI:
         # M-14 (POST-10d): effective-name discriminator for the
         # collision check. See ``_cmd_check`` for the rationale.
         build_effective_to_file: dict[str, str] = {}
+        # The manifest role each built module is recorded with. The
+        # hidden ``_role`` attribute is the explicit statement
+        # ``_run_build_for_test`` (``s0ma test``'s build helper) makes
+        # for a whole pass, and it wins when set. Every other caller
+        # gets the role of the configured root each file lives under
+        # (``_root_role``), so a bare build, ``s0ma build .`` and
+        # ``s0ma build tests`` record a test module as a test. A module
+        # under no configured root is recorded as source and reported
+        # (``MODULE_OUTSIDE_PROJECT_ROOTS``); a synthetic project has no
+        # roots to be outside of and records source silently, as before.
+        explicit_role: str | None = getattr(args, "_role", None)
+        roles_by_source: dict[Path, str] = {}
 
         # M-12 (POST-8, 0.16.0): resolve ``[project].requires-python``
         # for the build pass so per-file validation can fire
@@ -5843,6 +5957,20 @@ class S0maCLI:
                 module_filenames[declared_name] = str(source_path)
                 build_effective_to_file[effective_name] = str(source_path)
                 target_names.add(declared_name)
+                if explicit_role is not None:
+                    module_role = explicit_role
+                else:
+                    attributed = _root_role(source_path, s0ma_project)
+                    if (
+                        attributed is None
+                        and s0ma_project is not None
+                        and not s0ma_project.synthetic
+                    ):
+                        all_diagnostics.append(_module_outside_project_roots(
+                            declared_name, source_path, s0ma_project,
+                        ))
+                    module_role = attributed or "source"
+                roles_by_source[source_path] = module_role
 
         # Parse and validate context modules (from --include — not transpiled)
         for source_path in context_files:
@@ -6163,20 +6291,20 @@ class S0maCLI:
         # readers branch on optional fields rather than the version.
         manifest_path: Path | None = None
         if not errors_so_far and output_dir is not None and modules:
-            # PRE-2/PRE-3 (0.14.0): tag manifest entries with the build
-            # role so a single ``build.s0ma.json`` can hold both source
-            # and test modules. ``_run_build_for_test`` sets the hidden
-            # ``_role`` attribute on its argparse Namespace; every
-            # other caller leaves it unset and inherits the back-compat
-            # ``"source"`` default.
-            build_role = getattr(args, "_role", "source")
+            # PRE-2/PRE-3 (0.14.0): tag manifest entries with a role so
+            # a single ``build.s0ma.json`` can hold both source and test
+            # modules. Each entry carries the role decided in the target
+            # loop above (``roles_by_source``): the configured root the
+            # file lives under, or the explicit role ``s0ma test``'s
+            # helper passed for the whole pass, so the tag is right
+            # whichever command wrote the manifest.
             manifest_entries: list[ModuleManifestEntry] = []
             for source_path, module in modules:
                 entry = _collect_manifest_entry(
                     module_name=module.module.name,
                     source_path=source_path,
                     build_dir=output_dir,
-                    role=build_role,
+                    role=roles_by_source.get(source_path, "source"),
                     recorded_source=_recorded_project_path(
                         source_path, s0ma_project,
                     ),

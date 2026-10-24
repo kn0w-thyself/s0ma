@@ -562,7 +562,8 @@ Then run this project's tests with the Python file still there and check which f
 ```
 
 `s0ma build` with no argument builds the project you are standing in — every
-source root it declares. Naming a directory (`s0ma build src`) still means
+source root and test root it declares, each module recorded with the role of
+the root it lives under. Naming a directory (`s0ma build src`) still means
 build what is under it.
 
 Those three numbered lines are step 7, printed at the moment you need them and

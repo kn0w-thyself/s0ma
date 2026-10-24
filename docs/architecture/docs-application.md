@@ -6,7 +6,7 @@ This is the page s0ma writes about the thing that writes its pages. Everything b
 
 That last sentence is the point of the page. A documentation build that could not describe its own readings would be asking a reader to take on faith exactly the property the product exists to make checkable, so the account is generated from the build rather than written beside it, and it is byte-compared like every other output here.
 
-This page describes the build stamped `sha256:ab0ef73f94bc2be2` at version `0.19.1 (preview)`. What each of those 67 files came out as, with the digest of its exact bytes, is in [`docs/_generated/docs-manifest.json`](../_generated/docs-manifest.json).
+This page describes the build stamped `sha256:d5bf014bad66b01b` at version `0.19.1 (preview)`. What each of those 67 files came out as, with the digest of its exact bytes, is in [`docs/_generated/docs-manifest.json`](../_generated/docs-manifest.json).
 
 ## Contents
 
@@ -18,7 +18,7 @@ This page describes the build stamped `sha256:ab0ef73f94bc2be2` at version `0.19
 
 ## The readings
 
-11 readings, 49 sources between them, 660 records composed. A reading is one adapter over one kind of source: it is handed a checkout, it produces records that each carry the source they came from and the digest of what was read, and it never sees another reading's answer. The merge is the only place they meet, and it sorts every group before the model is built — so the order the readings run in cannot change what the build says.
+11 readings, 49 sources between them, 661 records composed. A reading is one adapter over one kind of source: it is handed a checkout, it produces records that each carry the source they came from and the digest of what was read, and it never sees another reading's answer. The merge is the only place they meet, and it sorts every group before the model is built — so the order the readings run in cannot change what the build says.
 
 **Sources** is how many distinct files or in-process readings the adapter drew on, and **Records** is how many records it contributed. **Groups it fills** names which parts of the model those records landed in, with the count in each; an adapter that fills one group is not a lesser reading than one that fills four, it is a narrower question asked completely.
 
@@ -30,7 +30,7 @@ This page describes the build stamped `sha256:ab0ef73f94bc2be2` at version `0.19
 | `concepts-product` | 1 | 17 | authorities 3, concepts 14 |
 | `config` | 1 | 19 | surfaces 19 |
 | `core` | 3 | 43 | surfaces 43 |
-| `diagnostics` | 1 | 114 | surfaces 114 |
+| `diagnostics` | 1 | 115 | surfaces 115 |
 | `journeys` | 7 | 7 | journeys 7 |
 | `mcp` | 1 | 36 | surfaces 36 |
 | `repo` | 28 | 144 | authorities 144 |
@@ -68,14 +68,14 @@ This page describes the build stamped `sha256:ab0ef73f94bc2be2` at version `0.19
 
 ## What it covers
 
-332 of the 501 things this build is required to cover are covered, 203 carry a written exception, and 0 are neither. That last number is the one to read: a gate says nothing when it finds nothing, so a silent build and a build whose gates were never armed look identical from outside. This is the standing positive answer.
+332 of the 502 things this build is required to cover are covered, 204 carry a written exception, and 0 are neither. That last number is the one to read: a gate says nothing when it finds nothing, so a silent build and a build whose gates were never armed look identical from outside. This is the standing positive answer.
 
-**By written exception** counts the members somebody has excused in a reviewable ledger, with a reason, one at a time. Every one of them is named — with the file its permission is written in — in [`docs/_generated/coverage-report.json`](../_generated/coverage-report.json); they are counted here and listed there because a page carrying 203 ids is a page nobody reads. **Not covered** is what no ledger excuses and nothing covers, and it is the number the gates are armed to keep at zero.
+**By written exception** counts the members somebody has excused in a reviewable ledger, with a reason, one at a time. Every one of them is named — with the file its permission is written in — in [`docs/_generated/coverage-report.json`](../_generated/coverage-report.json); they are counted here and listed there because a page carrying 204 ids is a page nobody reads. **Not covered** is what no ledger excuses and nothing covers, and it is the number the gates are armed to keep at zero.
 
 | Set | Required | Covered | By written exception | Not covered |
 | --- | --- | --- | --- | --- |
 | concepts | 39 | 39 | 0 | 0 |
-| surfaces | 261 | 92 | 169 | 0 |
+| surfaces | 262 | 92 | 170 | 0 |
 | journeys | 17 | 17 | 30 | 0 |
 | discovery | 14 | 14 | 0 | 0 |
 | catalog | 170 | 170 | 4 | 0 |
@@ -84,7 +84,7 @@ Two of those ledgers are bounded, and the bound is a review moment rather than a
 
 | Ledger | Set | Entries | Ceiling | Headroom |
 | --- | --- | --- | --- | --- |
-| `unbound` | surfaces | 169 | 175 | 6 |
+| `unbound` | surfaces | 170 | 175 | 5 |
 | `reference_only_surfaces` | journeys | 25 | 30 | 5 |
 
 **How each set is measured** is stated per set in the report rather than assumed to be the same, because it is not. Four of the five are measured here; discovery is not, and says so. Its routes are properties of the running product — a help text, a server's instructions, a scaffolded file — which no build-time gate has in front of it, so the report names each route, the contract clause it comes from and the suite that runs it, and claims nothing about having checked it during the build.

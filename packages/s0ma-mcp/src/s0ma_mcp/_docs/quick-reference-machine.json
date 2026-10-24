@@ -551,7 +551,7 @@
     "release": "0.19.1 (preview)",
     "release_version": "0.19.1",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:ab0ef73f94bc2be2",
+    "snapshot_hash": "sha256:d5bf014bad66b01b",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
@@ -1925,7 +1925,7 @@
   ],
   "modes": {
     "refused_in_every_mode": 73,
-    "reports": 101,
+    "reports": 102,
     "unchanging": 13,
     "values": [
       {
@@ -1934,7 +1934,7 @@
         "refuses": 73,
         "skips": 3,
         "treats": "As `dev`, with a little more room.",
-        "warns": 25
+        "warns": 26
       },
       {
         "meant_for": "day to day",
@@ -1942,7 +1942,7 @@
         "refuses": 74,
         "skips": 3,
         "treats": "A mistake the build can carry on past is a warning.",
-        "warns": 24
+        "warns": 25
       },
       {
         "meant_for": "the automated checks before a merge",
@@ -1950,7 +1950,7 @@
         "refuses": 94,
         "skips": 3,
         "treats": "What the first two warn about is refused.",
-        "warns": 4
+        "warns": 5
       },
       {
         "meant_for": "shipping",
@@ -1963,7 +1963,7 @@
         "refuses": 98,
         "skips": 0,
         "treats": "As `strict`, and it makes checks the others do not: they are named under the table.",
-        "warns": 3
+        "warns": 4
       }
     ]
   },

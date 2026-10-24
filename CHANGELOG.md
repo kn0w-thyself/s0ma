@@ -168,6 +168,29 @@ Historical entries describe artifacts as they were named at the time.
   whichever is larger. The contract records the revision as R7, for owner
   review.
 
+### Fixed
+
+- **A bare `s0ma build` records test modules as tests, not as source.** Only
+  `s0ma test` ever wrote `role: "test"` into `build.s0ma.json`, through a
+  hidden argument its build helper set for a whole pass. A bare `s0ma build`,
+  the command `s0ma doctor` recommends, walks the project's `test_roots` as
+  well as its `source_roots`, and it recorded every module with role
+  `source`; so did `s0ma build .`, `s0ma build` given the project root, and
+  the MCP server's `build_project` tool. After any of them `bootstrap_imports`,
+  which loads the source modules by default, imported the tests into the
+  application until the next `s0ma test` rewrote the manifest. The build now
+  records each module with the role of the configured root its `.s0ma` file
+  lives under, `test` under a `test_roots` entry and `source` under a
+  `source_roots` entry, whether it was given a path or not. `s0ma test` still
+  states its role for each pass, and that statement wins, so what it writes is
+  unchanged. A module under none of the configured roots is still built and
+  recorded as `source`, and the build says so with a new warning,
+  `MODULE_OUTSIDE_PROJECT_ROOTS`, which is a warning in every strictness mode
+  and so never reaches the build gate or the check baseline. A build of a
+  source root alone, such as `s0ma build src`, writes the same manifest as
+  before. New tests pin the role each way of building records, and the
+  warning.
+
 ## [0.19.1] — 2026-10-09
 
 The 0.19.1 artifacts are the build of the public repository's tag `v0.19.1`

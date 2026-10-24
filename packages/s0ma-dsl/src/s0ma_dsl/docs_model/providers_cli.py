@@ -389,7 +389,9 @@ _SIDE_EFFECTS: Mapping[str, tuple[tuple[str, ...], str]] = {
     ),
     "build": (
         ("read", "write"),
-        "It reads every source root and writes the generated .py, "
+        "It reads every source root and test root (or the directory it is "
+        "given), records each module in the manifest with the role of the "
+        "root its file lives under, and writes the generated .py, "
         ".s0ma.json and .s0ma.map files plus the build cache, which "
         "--clean removes first.",
     ),
