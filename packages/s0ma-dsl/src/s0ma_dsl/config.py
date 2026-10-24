@@ -551,6 +551,18 @@ SEVERITY_MATRIX: dict[str, dict[StrictnessMode, str | None]] = {
     # Keep this static guidance a warning in every mode; ``verify-host``
     # owns the explicit, executable release verdict.
     "HOST_RUNTIME_UNDECLARED": dict.fromkeys(StrictnessMode, "warning"),
+    # A build of a real project recorded a module whose file lives under
+    # none of the configured ``source_roots`` or ``test_roots`` (``s0ma
+    # build examples/`` in a project whose roots are ``src`` and
+    # ``tests``). The build decides each manifest entry's role from the
+    # root the file lives under; a file under no root has no root to
+    # answer, so the entry is written with role ``source``, because
+    # nothing declares the module a test, and this says so and names the
+    # roots so the directory can be declared. A warning in every mode: it
+    # describes the project's declared perimeter, not the module's
+    # source, so the build gate must never refuse a build over it
+    # (``is_check_severity_error`` reads the strict column).
+    "MODULE_OUTSIDE_PROJECT_ROOTS": dict.fromkeys(StrictnessMode, "warning"),
 
     # --- Behavioral/hygiene rules: vary by mode ---
     "PROHIBITED_CONSTRUCT": {
@@ -1193,6 +1205,12 @@ ERROR_CODE_DESCRIPTIONS: dict[str, str] = {
         "both host runtime distributions. Naming them in [project].dependencies clears the "
         "finding; the environment that runs the application must also have them installed, "
         "and `s0ma verify-host` is how that is proved."
+    ),
+    "MODULE_OUTSIDE_PROJECT_ROOTS": (
+        "A built module's file lives under none of the project's `[tool.s0ma].source_roots` "
+        "or `test_roots`, so the build recorded it with role `source` by default. Add its "
+        "directory to one of the two lists so the build can record which it is, or move the "
+        "file under a configured root."
     ),
     "DOC_RENDER_ERROR": (
         "The doc renderer raised `DocRenderError` while emitting a `doc-ref` or `doc-guide`."

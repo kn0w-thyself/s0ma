@@ -405,6 +405,7 @@ translated out of the shorthand:
 | `PROVIDES_KEY_MISMATCH` / `MISSING_RETURN_KEY` | The header promises a set of names and the body returns a different set. | Make the two agree; the message lists exactly which names are missing or extra. |
 | `GENERATED_FILE_DRIFT` | Someone edited a file under `build/`. See [the section above](#a-check-failure-a-stale-build-and-drift-are-three-different-things). | Move the change into the source, or `s0ma build src --force` to discard it. |
 | `HOST_RUNTIME_UNDECLARED` | The generated code uses the s0ma runtime, but your project's package list does not mention it. A warning, not a stop. | Add `s0ma-core` and `s0ma-dsl` to your project's dependencies. |
+| `MODULE_OUTSIDE_PROJECT_ROOTS` | The build was given a directory, and a module in it lives under none of the roots your `[tool.s0ma]` table declares, so the build recorded it as source, not as a test. A warning, not a stop. | Add the module's directory to `source_roots` or `test_roots`, or move the file under one of the declared roots. A bare `s0ma build` reads only the declared roots, so it never raises this. |
 | `MISSING_TEST_COVERAGE` / `MISSING_PUBLIC_DOC_REF` / `MISSING_EMBEDDED_EXAMPLE` | Something public has no test, no documentation, or an unused example. **These only appear in release mode** — the release gate is where those become required. | Write the missing test, documentation, or example, or stop running in release mode until you are ready to. |
 
 **A message you cannot act on is a defect in the message, and we want to hear

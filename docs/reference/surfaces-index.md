@@ -2,13 +2,13 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-s0ma serves 261 capabilities across 9 channels. Each row names one of them: what it is called, the id the model addresses it by, what it does, what calling it touches, and whether the model can point at the code behind it. 92 of the 261 reach a registered component; the rest carry a written reason instead, and both are listed with their reasons in `docs/_generated/inventory-surfaces.json`.
+s0ma serves 262 capabilities across 9 channels. Each row names one of them: what it is called, the id the model addresses it by, what it does, what calling it touches, and whether the model can point at the code behind it. 92 of the 262 reach a registered component; the rest carry a written reason instead, and both are listed with their reasons in `docs/_generated/inventory-surfaces.json`.
 
 Effects are read from the thing itself wherever the thing declares them: `none`, `read`, `write`, `network`, `subprocess`, `credential`, `approval`. Where a capability declares nothing, the row says so rather than guessing.
 
 ## Command line
 
-44 of the 261. Channel: `cli`.
+44 of the 262. Channel: `cli`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -59,7 +59,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Tools an agent can call
 
-27 of the 261. Channel: `mcp_tool`.
+27 of the 262. Channel: `mcp_tool`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -93,7 +93,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Resources an agent can read
 
-24 of the 261. Channel: `mcp_resource`.
+24 of the 262. Channel: `mcp_resource`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -124,7 +124,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Prompts an agent can start from
 
-5 of the 261. Channel: `mcp_prompt`.
+5 of the 262. Channel: `mcp_prompt`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -136,7 +136,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The studi0 viewer
 
-5 of the 261. Channel: `studi0`.
+5 of the 262. Channel: `studi0`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -148,7 +148,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The self-description interface
 
-14 of the 261. Channel: `rest`.
+14 of the 262. Channel: `rest`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -169,7 +169,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Project settings
 
-19 of the 261. Channel: `config`.
+19 of the 262. Channel: `config`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -195,7 +195,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Reports s0ma can make
 
-114 of the 261. Channel: `diagnostic`.
+115 of the 262. Channel: `diagnostic`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -274,6 +274,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 | MODULE_DEPENDENCY_CYCLE | `diagnostic:MODULE_DEPENDENCY_CYCLE` | Topological sort detected a cycle in the project module `uses:` graph. | none | exception |
 | MODULE_NAME_COLLISION | `diagnostic:MODULE_NAME_COLLISION` | Two source files declare the same `module <name>` in one project. Rename one with a descriptive suffix — `<name>_test`, `<name>_lib`, `<dir>_<name>`. For test-context modules under a `test_roots` directory, `[tool.s0ma].test_module_name_prefix_by_dir = true` prefixes them by their parent directory instead of a hand-rename. | none | exception |
 | MODULE_NAME_STEM_MISMATCH | `diagnostic:MODULE_NAME_STEM_MISMATCH` | The source filename's stem does not match the declared `module <name>`. | none | exception |
+| MODULE_OUTSIDE_PROJECT_ROOTS | `diagnostic:MODULE_OUTSIDE_PROJECT_ROOTS` | A built module's file lives under none of the project's `[tool.s0ma].source_roots` or `test_roots`, so the build recorded it with role `source` by default. Add its directory to one of the two lists so the build can record which it is, or move the file under a configured root. | none | exception |
 | MODULE_SHADOWS_STDLIB | `diagnostic:MODULE_SHADOWS_STDLIB` | A module's declared name shadows a Python stdlib module (io, json, csv, …). The stdlib module is already loaded, so the built module cannot be imported by its bare name and cross-module `uses:` resolution fails at runtime — rename the module (and its file) to a non-stdlib name. | none | exception |
 | MODULE_SUBSCRIPT | `diagnostic:MODULE_SUBSCRIPT` | A body subscripts a bare `uses: [mod]` module object (`mod["key"]`). A bare uses entry imports the whole module, not a component, so the subscript raises `TypeError: 'module' object is not subscriptable` at runtime — import the symbol with `uses: [mod.symbol]` (emits `from mod import symbol`) instead. | none | exception |
 | MUTABLE_DEFAULT | `diagnostic:MUTABLE_DEFAULT` | A body calls `dataclasses.field(default=[...])` or `dataclasses.field(default={...})` with a mutable collection literal as the `default=` argument. Python evaluates `default` once at class-body time and shares the same object across instances. Use `default_factory=list` / `default_factory=dict` instead so each instance gets a fresh collection. | none | exception |
@@ -316,7 +317,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The Python interface
 
-9 of the 261. Channel: `python`.
+9 of the 262. Channel: `python`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |

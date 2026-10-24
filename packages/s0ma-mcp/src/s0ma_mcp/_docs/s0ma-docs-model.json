@@ -304,7 +304,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "3235d40f57a030c32caf4b888c7a0879c524867ead1635a73957bb7298932232",
+      "content_sha256": "ab31e2c720c1f282a951775745215147b8c25add67c7a27c584a0c98861f1b44",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.19.1] — 2026-10-09",
@@ -1471,7 +1471,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/axon-declaration",
       "section": "4.4",
@@ -1480,7 +1480,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/body-separator",
       "section": "4.9",
@@ -1489,7 +1489,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/build-pipeline",
       "section": "2.1",
@@ -1498,7 +1498,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/canonical-ir",
       "section": "4.14.5",
@@ -1507,7 +1507,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/cell-declaration",
       "section": "4.2",
@@ -1516,7 +1516,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/current",
       "section": "s0ma DSL — Language Specification & Coding Agent Rulebook",
@@ -1525,7 +1525,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/declaration-types",
       "section": "4",
@@ -1534,7 +1534,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/dependency-categories",
       "section": "4.5.1",
@@ -1543,7 +1543,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/doc-guide-declaration",
       "section": "4.12.2",
@@ -1552,7 +1552,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/doc-ref-declaration",
       "section": "4.12.1",
@@ -1561,7 +1561,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/doc-validation-layers",
       "section": "4.12.4",
@@ -1570,7 +1570,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/documentation-declarations",
       "section": "4.12",
@@ -1579,7 +1579,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/drift-check",
       "section": "4.12.5",
@@ -1588,7 +1588,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/example-declaration",
       "section": "4.12.3",
@@ -1597,7 +1597,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/ganglion-declaration",
       "section": "4.3",
@@ -1606,7 +1606,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/helper-declaration",
       "section": "4.4a",
@@ -1615,7 +1615,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/integration-declaration",
       "section": "4.4b",
@@ -1624,7 +1624,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/intermediate-representation",
       "section": "4.10.5",
@@ -1633,7 +1633,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/kind-taxonomy",
       "section": "3.1",
@@ -1642,7 +1642,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/layer-consistency",
       "section": "4.0.1",
@@ -1651,7 +1651,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/layer-reachability",
       "section": "4.0.2",
@@ -1660,7 +1660,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/module-declaration",
       "section": "4.5",
@@ -1669,7 +1669,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/namespace-model",
       "section": "4.10.1",
@@ -1678,7 +1678,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/nerve-declaration",
       "section": "4.1",
@@ -1687,7 +1687,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/primitive-vocabulary",
       "section": "3",
@@ -1696,7 +1696,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/registry-storage",
       "section": "4.10.4",
@@ -1705,7 +1705,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/strictness-modes",
       "section": "2.4",
@@ -1714,7 +1714,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/test-declaration",
       "section": "4.8",
@@ -1723,7 +1723,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/test-execution",
       "section": "4.15",
@@ -1732,7 +1732,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/validation-command",
       "section": "4.16",
@@ -1741,7 +1741,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
+      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
       "delegates": [],
       "id": "authority:spec/visibility-system",
       "section": "5",
@@ -5442,7 +5442,7 @@
     "build_channel": "preview",
     "release_version": "0.19.1",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:73ec358e89ebaace"
+    "snapshot_hash": "sha256:c9da24a3a2762814"
   },
   "surfaces": [
     {
@@ -5459,7 +5459,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma adopt",
       "side_effects": [
@@ -5480,7 +5480,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma adopt baseline",
       "side_effects": [
@@ -5502,7 +5502,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma adopt draft",
       "side_effects": [
@@ -5522,7 +5522,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma adopt file",
       "side_effects": [
@@ -5544,7 +5544,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma adopt init",
       "side_effects": [
@@ -5566,7 +5566,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma adopt scan",
       "side_effects": [
@@ -5587,7 +5587,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma adopt status",
       "side_effects": [
@@ -5608,7 +5608,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma adopt verify-parity",
       "side_effects": [
@@ -5624,12 +5624,12 @@
       "governed_by": [],
       "id": "cli:s0ma/build",
       "intent": "Full project build with cross-module resolution",
-      "manual_exception": "The handler this command reaches was transcribed from the dispatch — argparse records none — and is s0ma_dsl.cli.main.S0maCLI._cmd_build, a method of a registered component; the binding names the class because a method is not separately registered. It reads every source root and writes the generated .py, .s0ma.json and .s0ma.map files plus the build cache, which --clean removes first.",
+      "manual_exception": "The handler this command reaches was transcribed from the dispatch — argparse records none — and is s0ma_dsl.cli.main.S0maCLI._cmd_build, a method of a registered component; the binding names the class because a method is not separately registered. It reads every source root and test root (or the directory it is given), records each module in the manifest with the role of the root its file lives under, and writes the generated .py, .s0ma.json and .s0ma.map files plus the build cache, which --clean removes first.",
       "provenance": {
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma build",
       "side_effects": [
@@ -5651,7 +5651,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma check",
       "side_effects": [
@@ -5673,7 +5673,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma deferred-surface",
       "side_effects": [
@@ -5694,7 +5694,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs",
       "side_effects": [
@@ -5715,7 +5715,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs check",
       "side_effects": [
@@ -5736,7 +5736,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs check-drift",
       "side_effects": [
@@ -5757,7 +5757,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs compose",
       "side_effects": [
@@ -5779,7 +5779,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs list",
       "side_effects": [
@@ -5800,7 +5800,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs render",
       "side_effects": [
@@ -5822,7 +5822,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs search",
       "side_effects": [
@@ -5843,7 +5843,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs show",
       "side_effects": [
@@ -5864,7 +5864,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma docs verify",
       "side_effects": [
@@ -5885,7 +5885,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma doctor",
       "side_effects": [
@@ -5906,7 +5906,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma examples",
       "side_effects": [
@@ -5927,7 +5927,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma examples run",
       "side_effects": [
@@ -5950,7 +5950,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma feedback",
       "side_effects": [
@@ -5972,7 +5972,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma feedback delete",
       "side_effects": [
@@ -5993,7 +5993,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma feedback drafts",
       "side_effects": [
@@ -6013,7 +6013,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma feedback enroll",
       "side_effects": [
@@ -6035,7 +6035,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma feedback list",
       "side_effects": [
@@ -6055,7 +6055,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma feedback submit",
       "side_effects": [
@@ -6079,7 +6079,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma graph",
       "side_effects": [
@@ -6100,7 +6100,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma inspect",
       "side_effects": [
@@ -6121,7 +6121,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma migrate",
       "side_effects": [
@@ -6142,7 +6142,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma migrate-ext",
       "side_effects": [
@@ -6164,7 +6164,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma migrate-layout",
       "side_effects": [
@@ -6184,7 +6184,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma migrate grammar",
       "side_effects": [
@@ -6206,7 +6206,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma new",
       "side_effects": [
@@ -6228,7 +6228,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma score",
       "side_effects": [
@@ -6249,7 +6249,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma studi0",
       "side_effects": [
@@ -6272,7 +6272,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma test",
       "side_effects": [
@@ -6295,7 +6295,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma test-conftest",
       "side_effects": [
@@ -6317,7 +6317,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma topo",
       "side_effects": [
@@ -6338,7 +6338,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma transpile",
       "side_effects": [
@@ -6360,7 +6360,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma verify",
       "side_effects": [
@@ -6381,7 +6381,7 @@
         "adapter_id": "cli",
         "schema_version": "s0ma-docs-model@1",
         "source": "python:s0ma_dsl.cli.main.S0maCLI.build_parser",
-        "source_sha256": "c5b99f618163b246d8fd93ff3988583549e40e7ca6cb1f0f7da4c213c27d19a8"
+        "source_sha256": "4e39b474972580df7f99e3da95417694679655388cfce86d4625cb40e4a51542"
       },
       "public_name": "s0ma verify-host",
       "side_effects": [
@@ -6833,7 +6833,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "ADOPTED_CHURN",
       "side_effects": [
@@ -6858,7 +6858,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "ADOPT_PLACEHOLDER_INTENT",
       "side_effects": [
@@ -6883,7 +6883,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "ADOPT_UNPLACED_CODE",
       "side_effects": [
@@ -6908,7 +6908,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "AMBIGUOUS_TEST_TARGET",
       "side_effects": [
@@ -6933,7 +6933,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "ASSERT_FAILED",
       "side_effects": [
@@ -6958,7 +6958,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "ASSERT_SYNTAX_ERROR",
       "side_effects": [
@@ -6983,7 +6983,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "ASSERT_UNEVALUABLE",
       "side_effects": [
@@ -7008,7 +7008,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "ATTRIBUTE_BUDGET_VIOLATION",
       "side_effects": [
@@ -7033,7 +7033,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "BARE_IMPORT",
       "side_effects": [
@@ -7054,7 +7054,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "BUILD_DIR_OVERRIDE_CONFLICT",
       "side_effects": [
@@ -7079,7 +7079,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "CIRCULAR_DEPENDENCY",
       "side_effects": [
@@ -7104,7 +7104,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "CLASS_BODY_IN_NERVE",
       "side_effects": [
@@ -7125,7 +7125,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "CONFLICTING_PACKAGE_DECLARATION",
       "side_effects": [
@@ -7150,7 +7150,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "CONSTANT_NAME_MISMATCH",
       "side_effects": [
@@ -7175,7 +7175,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "CONSUMES_VIA_DICT_INVALID",
       "side_effects": [
@@ -7200,7 +7200,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "COVERED_BY_EMPTY",
       "side_effects": [
@@ -7225,7 +7225,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "CROSS_LAYER_DEPENDENCY",
       "side_effects": [
@@ -7250,7 +7250,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "CROSS_MODULE_USES_ASYMMETRY",
       "side_effects": [
@@ -7275,7 +7275,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DEFERRED_IMPORT_MODULE_SCOPE",
       "side_effects": [
@@ -7300,7 +7300,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DOC_RENDER_ERROR",
       "side_effects": [
@@ -7325,7 +7325,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DOC_SOURCE_FORMAT_UNSUPPORTED",
       "side_effects": [
@@ -7350,7 +7350,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DOES_NOT_EXIST",
       "side_effects": [
@@ -7375,7 +7375,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DRIFT_DETECTED",
       "side_effects": [
@@ -7400,7 +7400,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DUPLICATE_AXON",
       "side_effects": [
@@ -7425,7 +7425,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DUPLICATE_DECLARATION",
       "side_effects": [
@@ -7450,7 +7450,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DUPLICATE_INNER_FUNCTION",
       "side_effects": [
@@ -7475,7 +7475,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DUPLICATE_PROVIDES_NAME",
       "side_effects": [
@@ -7500,7 +7500,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "DUPLICATE_REQUIRES_ENTRY",
       "side_effects": [
@@ -7525,7 +7525,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "EMBEDDED_FILE_NOT_FOUND",
       "side_effects": [
@@ -7550,7 +7550,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "EMPTY_BLOCK_LIST",
       "side_effects": [
@@ -7575,7 +7575,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "EMPTY_DOC_FILTER",
       "side_effects": [
@@ -7600,7 +7600,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "EMPTY_OBSERVES",
       "side_effects": [
@@ -7625,7 +7625,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "ENTITY_KIND_MISMATCH",
       "side_effects": [
@@ -7650,7 +7650,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "EXPORTED_HELPER_NOT_FOUND",
       "side_effects": [
@@ -7675,7 +7675,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "FIELD_NOT_FOUND",
       "side_effects": [
@@ -7700,7 +7700,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "FIXTURE_FORMAT_INVALID",
       "side_effects": [
@@ -7721,7 +7721,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "GENERATED_FILE_DRIFT",
       "side_effects": [
@@ -7742,7 +7742,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "GRAMMAR_MIGRATION_APPLY_FAILED",
       "side_effects": [
@@ -7763,7 +7763,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "GRAMMAR_MIGRATION_CONFLICT",
       "side_effects": [
@@ -7784,7 +7784,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "GRAMMAR_MIGRATION_OUTPUT_INVALID",
       "side_effects": [
@@ -7805,7 +7805,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "GRAMMAR_MIGRATION_PARSE_ERROR",
       "side_effects": [
@@ -7826,7 +7826,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "GRAMMAR_MIGRATION_ROLLBACK_FAILED",
       "side_effects": [
@@ -7847,7 +7847,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "HELPER_NAME_COLLISION",
       "side_effects": [
@@ -7872,7 +7872,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "HELPER_PRIVATE_TO_MODULE",
       "side_effects": [
@@ -7893,7 +7893,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "HOLLOW_MODEL",
       "side_effects": [
@@ -7918,7 +7918,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "HOST_RUNTIME_UNDECLARED",
       "side_effects": [
@@ -7943,7 +7943,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INCONSISTENT_BLOCK_LIST_INDENT",
       "side_effects": [
@@ -7968,7 +7968,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INTEGRATION_FACTORY_NOT_FOUND",
       "side_effects": [
@@ -7993,7 +7993,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INTEGRATION_FACTORY_NOT_SERVICE",
       "side_effects": [
@@ -8018,7 +8018,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INTEGRATION_INVALID_MANIFEST_KEY",
       "side_effects": [
@@ -8043,7 +8043,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INTEGRATION_SMOKE_TEST_NOT_FOUND",
       "side_effects": [
@@ -8068,7 +8068,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INTERFACE_ON_NON_ABSTRACT",
       "side_effects": [
@@ -8093,7 +8093,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INVALID_AXON_RELATION",
       "side_effects": [
@@ -8118,7 +8118,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INVALID_DATACLASS_INVARIANT",
       "side_effects": [
@@ -8143,7 +8143,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INVALID_KIND",
       "side_effects": [
@@ -8168,7 +8168,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INVALID_PROJECT_NAME_FOR_BUILD_DIR",
       "side_effects": [
@@ -8193,7 +8193,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INVALID_RAISES_TARGET",
       "side_effects": [
@@ -8218,7 +8218,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "INVALID_VERSION",
       "side_effects": [
@@ -8243,7 +8243,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "LAYER_MISMATCH",
       "side_effects": [
@@ -8268,7 +8268,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "METADATA_INVALID_KEY",
       "side_effects": [
@@ -8293,7 +8293,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "METADATA_INVALID_VALUE",
       "side_effects": [
@@ -8318,7 +8318,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "METADATA_RESERVED_KEY",
       "side_effects": [
@@ -8343,7 +8343,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MISSING_EMBEDDED_EXAMPLE",
       "side_effects": [
@@ -8368,7 +8368,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MISSING_FIELD",
       "side_effects": [
@@ -8393,7 +8393,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MISSING_INTERFACE_METHODS",
       "side_effects": [
@@ -8418,7 +8418,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MISSING_PACKAGE",
       "side_effects": [
@@ -8443,7 +8443,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MISSING_PROVIDED_FUNCTION",
       "side_effects": [
@@ -8468,7 +8468,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MISSING_PUBLIC_DOC_REF",
       "side_effects": [
@@ -8493,7 +8493,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MISSING_RETURN_KEY",
       "side_effects": [
@@ -8518,7 +8518,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MISSING_TEST_COVERAGE",
       "side_effects": [
@@ -8543,7 +8543,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MIXED_PROVIDES_FORMS",
       "side_effects": [
@@ -8568,7 +8568,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MOCK_KEY_MISMATCH",
       "side_effects": [
@@ -8593,7 +8593,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MODULE_DEPENDENCY_CYCLE",
       "side_effects": [
@@ -8618,7 +8618,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MODULE_NAME_COLLISION",
       "side_effects": [
@@ -8643,9 +8643,34 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MODULE_NAME_STEM_MISMATCH",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=warning",
+        "strict=warning"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MODULE_OUTSIDE_PROJECT_ROOTS",
+      "intent": "A built module's file lives under none of the project's `[tool.s0ma].source_roots` or `test_roots`, so the build recorded it with role `source` by default. Add its directory to one of the two lists so the build can record which it is, or move the file under a configured root.",
+      "manual_exception": "No registered component implements a diagnostic. A code is raised from validator passes, parser helpers and command pre-flight checks that the component registry does not carry, so this record names the registry it was read from rather than a component that would have to be invented. The binding is left to the milestone that completes every surface's binding.",
+      "provenance": {
+        "adapter_id": "diagnostics",
+        "schema_version": "s0ma-docs-model@1",
+        "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+      },
+      "public_name": "MODULE_OUTSIDE_PROJECT_ROOTS",
       "side_effects": [
         "none"
       ]
@@ -8668,7 +8693,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MODULE_SHADOWS_STDLIB",
       "side_effects": [
@@ -8693,7 +8718,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MODULE_SUBSCRIPT",
       "side_effects": [
@@ -8718,7 +8743,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "MUTABLE_DEFAULT",
       "side_effects": [
@@ -8743,7 +8768,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "NAMESPACE_COLLISION",
       "side_effects": [
@@ -8768,7 +8793,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "NEW_FILE_ROSTER_ONLY",
       "side_effects": [
@@ -8793,7 +8818,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "NOT_EXPORTED",
       "side_effects": [
@@ -8818,7 +8843,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "NO_PAGE_COMPOSER_DECLARED",
       "side_effects": [
@@ -8843,7 +8868,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "OVERLAPPING_DISCOVERY_ROOTS",
       "side_effects": [
@@ -8868,7 +8893,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "PARSE_DOC_REF_BODY_PROHIBITED",
       "side_effects": [
@@ -8893,7 +8918,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "PARSE_ERROR",
       "side_effects": [
@@ -8918,7 +8943,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "PARSE_GRAMMAR_FORWARD_INCOMPAT",
       "side_effects": [
@@ -8943,7 +8968,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "PLACEHOLDER_NOT_FOUND",
       "side_effects": [
@@ -8968,7 +8993,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "POSSIBLE_UNRESOLVED_REFERENCE",
       "side_effects": [
@@ -8993,7 +9018,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "PROHIBITED_CONSTRUCT",
       "side_effects": [
@@ -9018,7 +9043,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "PROSE_RAW_CODE_BLOCK",
       "side_effects": [
@@ -9043,7 +9068,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "PROVIDES_KEY_MISMATCH",
       "side_effects": [
@@ -9068,7 +9093,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "REQUIRES_DOTTED_LOWERCASE_HINT",
       "side_effects": [
@@ -9093,7 +9118,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SEMANTIC_DERIVED_FIELD_AUTHORED",
       "side_effects": [
@@ -9118,7 +9143,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SEMANTIC_NONE_NOT_ALLOWED",
       "side_effects": [
@@ -9143,7 +9168,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SEMANTIC_PENDING_DEBT",
       "side_effects": [
@@ -9168,7 +9193,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SEMANTIC_PENDING_INVALID",
       "side_effects": [
@@ -9193,7 +9218,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SEMANTIC_PENDING_NOT_ALLOWED",
       "side_effects": [
@@ -9218,7 +9243,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SEMANTIC_PENDING_REASON_EMPTY",
       "side_effects": [
@@ -9243,7 +9268,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SEMANTIC_REQUIRED_STATE_OMITTED",
       "side_effects": [
@@ -9268,7 +9293,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SERVES_AS_COLLISION",
       "side_effects": [
@@ -9293,7 +9318,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "SERVES_AS_INVALID",
       "side_effects": [
@@ -9318,7 +9343,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "STALE_GENERATED_CONFTEST",
       "side_effects": [
@@ -9343,7 +9368,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "TEMPLATE_SYNTAX_ERROR",
       "side_effects": [
@@ -9368,7 +9393,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "TEST_NOT_COLLECTED",
       "side_effects": [
@@ -9393,7 +9418,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "TEST_VISIBILITY_VIOLATION",
       "side_effects": [
@@ -9418,7 +9443,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "UNDECLARED_PLACEHOLDER",
       "side_effects": [
@@ -9443,7 +9468,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "UNKNOWN_FIELD",
       "side_effects": [
@@ -9468,7 +9493,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "UNRECOGNIZED_LINE",
       "side_effects": [
@@ -9493,7 +9518,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "UNREGISTERED_EXAMPLE",
       "side_effects": [
@@ -9514,7 +9539,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "UNREGISTERED_SURFACE",
       "side_effects": [
@@ -9539,7 +9564,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "UNRESOLVED_REFERENCE",
       "side_effects": [
@@ -9560,7 +9585,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "UNSUPPORTED_IR_SCHEMA_MAJOR",
       "side_effects": [
@@ -9585,7 +9610,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "VESTIGIAL_IMPORT",
       "side_effects": [
@@ -9610,7 +9635,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "2122dcd2886cb84648d608b7f60be4909d83a70ba82aecab604056557a1d7cde"
+        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
       },
       "public_name": "VISIBILITY_MISMATCH",
       "side_effects": [

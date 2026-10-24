@@ -593,11 +593,11 @@ UNREGISTERED_HANDLERS: tuple[str, ...] = (
 
 #: The most surfaces this composition may leave reaching no component.
 #:
-#: One hundred and sixty-nine today, in four groups of two kinds. The
+#: One hundred and seventy today, in four groups of two kinds. The
 #: thirty-six that are *decisions* — the seven above and core's
 #: twenty-nine MCP and Python surfaces — are enumerated by id in
 #: ``test_docs_binding_policy.py``, so any change to them fails a test
-#: that names them. The remaining hundred and thirty-three are *rulings
+#: that names them. The remaining hundred and thirty-four are *rulings
 #: about a source*: a diagnostic code is a label on a report and a
 #: configuration key is a value in a table, and neither has an
 #: implementing component by its nature rather than by anyone's

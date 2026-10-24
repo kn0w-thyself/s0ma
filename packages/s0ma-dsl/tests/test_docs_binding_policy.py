@@ -349,7 +349,7 @@ class TestCoresUnboundSurfaces:
 
 
 class TestTheCountedCeiling:
-    """One hundred and sixty-nine unbound today, and a stated ceiling of 175."""
+    """One hundred and seventy unbound today, and a stated ceiling of 175."""
 
     @requires_checkout
     def test_the_ledger_is_within_its_ceiling(
@@ -368,12 +368,15 @@ class TestTheCountedCeiling:
         """The shape, which is what the ceiling is a backstop for.
 
         Thirty-six of these are decisions about particular surfaces and
-        are enumerated by id above. The other hundred and thirty-three are
+        are enumerated by id above. The other hundred and thirty-four are
         one ruling each about a whole source: a diagnostic code is a label
         on a report and a configuration key is a value in a table, and
         neither has an implementing component by its nature. A fifth
         source appearing here is a new *kind* of unbound thing, which is
-        what this test refuses.
+        what this test refuses. The hundred and fifteenth diagnostic,
+        ``MODULE_OUTSIDE_PROJECT_ROOTS``, arrived with the build's role
+        attribution and is counted here like the other hundred and
+        fourteen.
         """
         counted = collections.Counter(
             surface.provenance.adapter_id for surface in _unbound(surfaces)
@@ -382,9 +385,9 @@ class TestTheCountedCeiling:
             "cli": 7,
             "config": 19,
             "core": 29,
-            "diagnostics": 114,
+            "diagnostics": 115,
         }
-        assert sum(counted.values()) == 169
+        assert sum(counted.values()) == 170
 
     @requires_checkout
     def test_no_surface_is_unbound_and_silent(
@@ -392,7 +395,7 @@ class TestTheCountedCeiling:
     ) -> None:
         """§6.3's actual requirement, which the ceiling exists to bound.
 
-        Zero silent unbounds. Every one of the hundred and sixty-nine
+        Zero silent unbounds. Every one of the hundred and seventy
         says, in writing, why it reaches nothing — that is what makes it
         an entry in a ledger rather than a gap.
         """
@@ -558,11 +561,11 @@ class TestTheSideEffectConvention:
         """The convention, stated over the whole composition.
 
         ``()`` is the unanswered question and ``('none',)`` is the answer
-        "nothing". Two hundred and sixty-one surfaces, twenty-nine of them
+        "nothing". Two hundred and sixty-two surfaces, twenty-nine of them
         allowed to be silent, and no third case.
         """
         silent = [surface for surface in surfaces if not surface.side_effects]
-        assert len(surfaces) == 261
+        assert len(surfaces) == 262
         assert len(silent) == 29
         for surface in silent:
             key = (surface.provenance.adapter_id, surface.channel)
@@ -640,17 +643,19 @@ class TestTheLedgerDescribesTheRealComposition:
     def test_the_surface_count_is_what_the_d_phase_added(
         self, surfaces: tuple[SurfaceRecord, ...]
     ) -> None:
-        """Forty-three before D5b, two hundred and sixty-one today.
+        """Forty-three before D5b, two hundred and sixty-two today.
 
         The C phase composed forty-three surfaces, all of them core's.
         Wiring the five D-phase readings added a hundred and ninety-nine:
         the command line, the diagnostics, the configuration keys, the
         authoring server and the viewer. The quick reference's data twin
         (owner ruling 2026-09-29, surface contract R5) is the two hundred
-        and sixty-first. A number that moves without a milestone behind it
+        and sixty-first, and the diagnostic ``MODULE_OUTSIDE_PROJECT_ROOTS``,
+        which arrived with the build's role attribution, the two hundred
+        and sixty-second. A number that moves without a change behind it
         is a reading that changed shape.
         """
-        assert len(surfaces) == 261
+        assert len(surfaces) == 262
         by_adapter = collections.Counter(
             surface.provenance.adapter_id for surface in surfaces
         )
@@ -658,7 +663,7 @@ class TestTheLedgerDescribesTheRealComposition:
             "cli": 44,
             "config": 19,
             "core": 43,
-            "diagnostics": 114,
+            "diagnostics": 115,
             "mcp": 36,
             "studi0": 5,
         }

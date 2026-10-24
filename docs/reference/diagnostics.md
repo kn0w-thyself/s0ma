@@ -2,7 +2,7 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-Every report s0ma can make about a project, with what it means and how seriously it is taken. This build registers 114 of them: 101 get more serious as a project tightens its strictness, and 13 are the same whatever mode the project is in.
+Every report s0ma can make about a project, with what it means and how seriously it is taken. This build registers 115 of them: 102 get more serious as a project tightens its strictness, and 13 are the same whatever mode the project is in.
 
 Each report has an entry of its own further down, so a build that stopped on one can send you straight to it.
 
@@ -97,6 +97,7 @@ Read from `packages/s0ma-dsl/src/s0ma_dsl/config.py` when the documentation was 
 | [`MODULE_DEPENDENCY_CYCLE`](#module_dependency_cycle) | `error` | `error` | `error` | `error` |
 | [`MODULE_NAME_COLLISION`](#module_name_collision) | `error` | `error` | `error` | `error` |
 | [`MODULE_NAME_STEM_MISMATCH`](#module_name_stem_mismatch) | `error` | `error` | `error` | `error` |
+| [`MODULE_OUTSIDE_PROJECT_ROOTS`](#module_outside_project_roots) | `warning` | `warning` | `warning` | `warning` |
 | [`MODULE_SHADOWS_STDLIB`](#module_shadows_stdlib) | `warning` | `warning` | `error` | `error` |
 | [`MODULE_SUBSCRIPT`](#module_subscript) | `error` | `error` | `error` | `error` |
 | [`MUTABLE_DEFAULT`](#mutable_default) | `warning` | `warning` | `error` | `error` |
@@ -663,6 +664,13 @@ The source filename's stem does not match the declared `module <name>`.
 
 - **Severity by mode** — migration `error`, dev `error`, strict `error`, release `error`
 - **Addressed as** — `diagnostic:MODULE_NAME_STEM_MISMATCH`
+
+### MODULE_OUTSIDE_PROJECT_ROOTS
+
+A built module's file lives under none of the project's `[tool.s0ma].source_roots` or `test_roots`, so the build recorded it with role `source` by default. Add its directory to one of the two lists so the build can record which it is, or move the file under a configured root.
+
+- **Severity by mode** — migration `warning`, dev `warning`, strict `warning`, release `warning`
+- **Addressed as** — `diagnostic:MODULE_OUTSIDE_PROJECT_ROOTS`
 
 ### MODULE_SHADOWS_STDLIB
 
