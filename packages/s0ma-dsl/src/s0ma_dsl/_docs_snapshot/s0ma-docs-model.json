@@ -295,7 +295,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "5ec24146141b7c6499e9b1417108b1eb985357e3008a3c62022bece7616e684b",
+      "content_sha256": "957e8932ef93cca384d6947114bf0df0bc24eee6eded1df0486c7114f1670795",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.19.1] — 2026-10-09",
@@ -358,7 +358,7 @@
     },
     {
       "authority_class": "frozen_contract",
-      "content_sha256": "875823b67a7b4947207b21c342859ab63c4fcb4c42baa2ed1f64a25e3add75e8",
+      "content_sha256": "00641b430cbb85b77109e823d2da28588949b46fac953cec42360749b3cbf54c",
       "delegates": [],
       "id": "authority:frozen_contract/0.14.0-schema-and-surface-budget",
       "section": "s0ma 0.14.0 Schema and Surface Budget",
@@ -5403,7 +5403,7 @@
     "build_channel": "preview",
     "release_version": "0.19.1",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:8566b7670125c9fa"
+    "snapshot_hash": "sha256:d5bf014bad66b01b"
   },
   "surfaces": [
     {

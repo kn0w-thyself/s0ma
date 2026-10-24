@@ -9,7 +9,7 @@ One page to find your way around s0ma: what the parts of a `.s0ma` file are, wha
 | **Describes** | s0ma 0.19.1 (preview) |
 | **Packages** | `s0ma-core`, `s0ma-dsl`, `s0ma-mcp`, `s0ma-studi0`, which all share that version |
 | **Language specification** | [s0ma DSL — Language Specification & Coding Agent Rulebook](../../packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md) |
-| **Documentation snapshot** | `sha256:8566b7670125c9fa` |
+| **Documentation snapshot** | `sha256:d5bf014bad66b01b` |
 | **This page** | edition 2, last revised 2026-10-05 — [what has changed](#what-has-changed) |
 
 A version marked `(preview)` is the latest release together with the changes made since, which are not released yet.

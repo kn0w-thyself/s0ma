@@ -81,11 +81,11 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:b8b8f9be5726ad59d3ca5bfdc40854cd148f600a004ebb991a435050ab1e73ab"
+      "sha256": "sha256:ebdc152d5e8b7630841bd7a780a0432210449b673a2d0fd0d918fe29790f3302"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",
-      "sha256": "sha256:255b6ae5e9c4c00e10e4082b199b518c438ce58f9d8fbf105590a6284b0dc225"
+      "sha256": "sha256:dc8b7d7b775ed881fa1c87930c00e8d475e5866f1f83a95ed5d0d25ea371512f"
     }
   },
   "topological_import_order": [
