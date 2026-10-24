@@ -13,7 +13,13 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_narration"
+      "module": "studi0_narration",
+      "value": [
+        "orient",
+        "author",
+        "verify",
+        "move_on"
+      ]
     },
     {
       "dependencies": [],
@@ -24,7 +30,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_narration"
+      "module": "studi0_narration",
+      "value": "work.narrated"
     },
     {
       "dependencies": [],
@@ -35,7 +42,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_narration"
+      "module": "studi0_narration",
+      "value": 50
     },
     {
       "dependencies": [],
@@ -57,7 +65,12 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_narration"
+      "module": "studi0_narration",
+      "value": [
+        ".s0ma",
+        "studi0",
+        "active.json"
+      ]
     },
     {
       "dependencies": [],
@@ -68,11 +81,25 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_narration"
+      "module": "studi0_narration",
+      "value": [
+        ".s0ma",
+        "studi0",
+        "session.jsonl"
+      ]
     },
     {
       "dependencies": [
         "studi0_narration::presence_path"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the project root to unmark",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_narration::presence_path"
+        }
       ],
       "expects": {
         "state": "value",
@@ -97,6 +124,14 @@
     },
     {
       "dependencies": [],
+      "edges": [
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_narration::NarrationLog"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "log is a reading advanced by read_narrations"
@@ -117,6 +152,15 @@
     {
       "dependencies": [
         "studi0_narration::PRESENCE_PATH_PARTS"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the marker's path segments",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_narration::PRESENCE_PATH_PARTS"
+        }
       ],
       "expects": {
         "state": "value",
@@ -143,6 +187,21 @@
       "dependencies": [
         "studi0_narration::session_log_path"
       ],
+      "edges": [
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_narration::NarrationLog"
+        },
+        {
+          "authored": true,
+          "carries": "the project root to tail",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_narration::session_log_path"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "log is the reading to advance; project_root is the project being watched"
@@ -168,6 +227,15 @@
       "dependencies": [
         "studi0_narration::SESSION_LOG_PATH_PARTS"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the log's path segments",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_narration::SESSION_LOG_PATH_PARTS"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root is the root of the project being watched"
@@ -192,6 +260,15 @@
     {
       "dependencies": [
         "studi0_narration::presence_path"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the project root to mark",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_narration::presence_path"
+        }
       ],
       "expects": {
         "state": "value",
@@ -223,7 +300,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_state"
+      "module": "studi0_state",
+      "value": "missing"
     },
     {
       "dependencies": [],
@@ -234,7 +312,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_state"
+      "module": "studi0_state",
+      "value": "s0ma-graph@2"
     },
     {
       "dependencies": [],
@@ -245,7 +324,12 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_state"
+      "module": "studi0_state",
+      "value": [
+        "graph",
+        "schema",
+        "seq"
+      ]
     },
     {
       "dependencies": [],
@@ -256,7 +340,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_state"
+      "module": "studi0_state",
+      "value": "s0ma-studi0-graph@1"
     },
     {
       "dependencies": [],
@@ -267,7 +352,12 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_state"
+      "module": "studi0_state",
+      "value": [
+        "entries",
+        "invalid",
+        "total"
+      ]
     },
     {
       "dependencies": [],
@@ -278,7 +368,14 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_state"
+      "module": "studi0_state",
+      "value": [
+        "build_status",
+        "narration",
+        "schema",
+        "seq",
+        "stale_modules"
+      ]
     },
     {
       "dependencies": [],
@@ -289,7 +386,8 @@
       },
       "kind": "CONSTANT",
       "layer": "APPLICATION",
-      "module": "studi0_state"
+      "module": "studi0_state",
+      "value": "s0ma-studi0-state@2"
     },
     {
       "dependencies": [],
@@ -317,6 +415,27 @@
       "dependencies": [
         "studi0_state::BUILD_STATUS_MISSING"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the status of a session that has read nothing yet",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_state::BUILD_STATUS_MISSING"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Session"
+        },
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Snapshot"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "project_root is the root of the project to show"
@@ -341,6 +460,21 @@
     {
       "dependencies": [
         "studi0_state::GRAPH_SCHEMA"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the envelope's schema stamp",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_state::GRAPH_SCHEMA"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Snapshot"
+        }
       ],
       "expects": {
         "state": "value",
@@ -388,6 +522,20 @@
     },
     {
       "dependencies": [],
+      "edges": [
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Session"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Snapshot"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "session is a session opened by create_session"
@@ -408,6 +556,39 @@
     {
       "dependencies": [
         "studi0_state::read_graph"
+      ],
+      "edges": [
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_narration::narration_snapshot"
+        },
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_narration::read_narrations"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Session"
+        },
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Snapshot"
+        },
+        {
+          "authored": true,
+          "carries": "the project root to read",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_state::read_graph"
+        }
       ],
       "expects": {
         "state": "value",
@@ -433,6 +614,21 @@
     {
       "dependencies": [
         "studi0_state::STATE_SCHEMA"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the document's schema stamp",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_state::STATE_SCHEMA"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Snapshot"
+        }
       ],
       "expects": {
         "state": "value",
@@ -479,6 +675,20 @@
     },
     {
       "dependencies": [],
+      "edges": [
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::refresh_session"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_watch::Studi0Watcher"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "watcher is a watch whose session is the one to refresh"
@@ -504,6 +714,27 @@
       "dependencies": [
         "studi0_watch::poll_once"
       ],
+      "edges": [
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Session"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_watch::Studi0Watcher"
+        },
+        {
+          "authored": true,
+          "carries": "the first reading",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_watch::poll_once"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "session is a session opened by studi0_state.create_session"
@@ -524,6 +755,21 @@
     {
       "dependencies": [
         "studi0_watch::Studi0WatchConfig"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the bound on the shutdown wait",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_watch::Studi0WatchConfig"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_watch::Studi0Watcher"
+        }
       ],
       "expects": {
         "state": "value",
@@ -628,7 +874,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "studi0_server"
+      "module": "studi0_server",
+      "value": "text/css; charset=utf-8"
     },
     {
       "dependencies": [],
@@ -639,7 +886,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "studi0_server"
+      "module": "studi0_server",
+      "value": "text/html; charset=utf-8"
     },
     {
       "dependencies": [],
@@ -650,7 +898,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "studi0_server"
+      "module": "studi0_server",
+      "value": "application/json; charset=utf-8"
     },
     {
       "dependencies": [],
@@ -661,7 +910,8 @@
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "studi0_server"
+      "module": "studi0_server",
+      "value": "text/javascript; charset=utf-8"
     },
     {
       "dependencies": [],
@@ -686,6 +936,34 @@
       "dependencies": [
         "studi0_server::Studi0ServerConfig",
         "studi0_server::route_request"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the loopback host to bind",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::Studi0ServerConfig"
+        },
+        {
+          "authored": true,
+          "carries": "the requested path",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_server::route_request"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Session"
+        },
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::create_session"
+        }
       ],
       "expects": {
         "state": "value",
@@ -738,6 +1016,88 @@
         "studi0_server::_HTML_CONTENT_TYPE",
         "studi0_server::_JS_CONTENT_TYPE"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the sh0w stylesheet",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::APP_CSS"
+        },
+        {
+          "authored": true,
+          "carries": "the sh0w script",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::APP_JS"
+        },
+        {
+          "authored": true,
+          "carries": "the sh0w page served at the root",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::INDEX_HTML"
+        },
+        {
+          "authored": true,
+          "carries": "the unbuilt-project answer",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::NOT_BUILT_ERROR"
+        },
+        {
+          "authored": true,
+          "carries": "the unserved-path answer",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::NOT_FOUND_ERROR"
+        },
+        {
+          "authored": true,
+          "carries": "the stylesheet content type header",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::_CSS_CONTENT_TYPE"
+        },
+        {
+          "authored": true,
+          "carries": "the HTML content type header",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::_HTML_CONTENT_TYPE"
+        },
+        {
+          "authored": true,
+          "carries": "the script content type header",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::_JS_CONTENT_TYPE"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Session"
+        },
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::graph_document"
+        },
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::read_snapshot"
+        },
+        {
+          "authored": false,
+          "origin": "constructor_call",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::state_document"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from"
@@ -763,6 +1123,15 @@
       "dependencies": [
         "studi0_server::Studi0ServerConfig"
       ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "how often the loop checks for a shutdown request",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::Studi0ServerConfig"
+        }
+      ],
       "expects": {
         "state": "value",
         "value": "server is a bound server, as returned by create_server"
@@ -781,7 +1150,7 @@
       "module": "studi0_server"
     }
   ],
-  "generation_version": "1",
+  "generation_version": "2",
   "provenance": {
     "authored_text_trust": "untrusted_project_data",
     "authority": "canonical_ir",
@@ -798,15 +1167,15 @@
     },
     {
       "path": "studi0_narration.s0ma.json",
-      "sha256": "sha256:f0f7bd94b9cbefd60131732207192c4d54a61b235d78d7c3dafc753891979e1c"
+      "sha256": "sha256:8e8fd0535642fcf0daf9775aaf61cb45577ecc06a3a1686dbc9a6b4c32f305f7"
     },
     {
       "path": "studi0_server.s0ma.json",
-      "sha256": "sha256:e382732608c0df09bedd93c6de96ad2385432116497928a35440870022b304d0"
+      "sha256": "sha256:02fb8ba747b6e08a4e680bf84000d5ab1777c2549afaf37d19a7e3d861931bce"
     },
     {
       "path": "studi0_state.s0ma.json",
-      "sha256": "sha256:dd788d59791e2617f6143e2fcf74a3fd741cec16fd21ee79cbbb1e45aa91e4e0"
+      "sha256": "sha256:c1b2e7036803cf81203beda258d4fc5f385cd55cafd112cbe80192522c87a7c5"
     },
     {
       "path": "studi0_watch.s0ma.json",

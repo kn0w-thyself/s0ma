@@ -24,7 +24,7 @@
         },
         "name": "DOCUMENTATION_ROOT",
         "output": {
-          "end_line": 61,
+          "end_line": 62,
           "start_line": 54
         },
         "source": {
@@ -35,8 +35,8 @@
       },
       {
         "body_output": {
-          "end_line": 63,
-          "start_line": 63
+          "end_line": 64,
+          "start_line": 64
         },
         "body_source": {
           "end_line": 39,
@@ -44,8 +44,8 @@
         },
         "name": "COMPOSED_SNAPSHOT",
         "output": {
-          "end_line": 70,
-          "start_line": 63
+          "end_line": 72,
+          "start_line": 64
         },
         "source": {
           "end_line": 39,
@@ -55,8 +55,8 @@
       },
       {
         "body_output": {
-          "end_line": 92,
-          "start_line": 72
+          "end_line": 94,
+          "start_line": 74
         },
         "body_source": {
           "end_line": 69,
@@ -64,8 +64,8 @@
         },
         "name": "GENERATED_INVENTORIES",
         "output": {
-          "end_line": 99,
-          "start_line": 72
+          "end_line": 102,
+          "start_line": 74
         },
         "source": {
           "end_line": 69,
@@ -75,8 +75,8 @@
       },
       {
         "body_output": {
-          "end_line": 101,
-          "start_line": 101
+          "end_line": 104,
+          "start_line": 104
         },
         "body_source": {
           "end_line": 79,
@@ -84,8 +84,8 @@
         },
         "name": "LEARNING_COLLECTION",
         "output": {
-          "end_line": 108,
-          "start_line": 101
+          "end_line": 112,
+          "start_line": 104
         },
         "source": {
           "end_line": 79,
@@ -95,8 +95,8 @@
       },
       {
         "body_output": {
-          "end_line": 122,
-          "start_line": 110
+          "end_line": 126,
+          "start_line": 114
         },
         "body_source": {
           "end_line": 101,
@@ -104,8 +104,8 @@
         },
         "name": "SOURCES_COMPOSED",
         "output": {
-          "end_line": 129,
-          "start_line": 110
+          "end_line": 134,
+          "start_line": 114
         },
         "source": {
           "end_line": 101,
@@ -115,21 +115,21 @@
       },
       {
         "body_output": {
-          "end_line": 145,
-          "start_line": 144
+          "end_line": 150,
+          "start_line": 149
         },
         "body_source": {
           "end_line": 124,
           "start_line": 123
         },
         "decorator_output": {
-          "end_line": 142,
-          "start_line": 131
+          "end_line": 147,
+          "start_line": 136
         },
         "name": "compose_documentation",
         "output": {
-          "end_line": 145,
-          "start_line": 131
+          "end_line": 150,
+          "start_line": 136
         },
         "source": {
           "end_line": 124,
@@ -139,21 +139,21 @@
       },
       {
         "body_output": {
-          "end_line": 161,
-          "start_line": 160
+          "end_line": 166,
+          "start_line": 165
         },
         "body_source": {
           "end_line": 147,
           "start_line": 146
         },
         "decorator_output": {
-          "end_line": 158,
-          "start_line": 147
+          "end_line": 163,
+          "start_line": 152
         },
         "name": "documentation_findings",
         "output": {
-          "end_line": 161,
-          "start_line": 147
+          "end_line": 166,
+          "start_line": 152
         },
         "source": {
           "end_line": 147,
@@ -163,21 +163,21 @@
       },
       {
         "body_output": {
-          "end_line": 177,
-          "start_line": 176
+          "end_line": 182,
+          "start_line": 181
         },
         "body_source": {
           "end_line": 170,
           "start_line": 169
         },
         "decorator_output": {
-          "end_line": 174,
-          "start_line": 163
+          "end_line": 179,
+          "start_line": 168
         },
         "name": "documentation_artifacts",
         "output": {
-          "end_line": 177,
-          "start_line": 163
+          "end_line": 182,
+          "start_line": 168
         },
         "source": {
           "end_line": 170,

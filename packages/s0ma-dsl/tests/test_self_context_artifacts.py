@@ -77,11 +77,11 @@ def test_small_example_app_answers_inventory_from_card_alone() -> None:
         "concierge::component_0",
         "concierge::component_1",
     ]
-    # The header names every command the runtime adapter answers, so a
-    # reader holding the card alone knows how to reach what it omits.
+    # The header names the tool and every command it answers, so a reader
+    # holding the card alone knows how to reach what it omits.
     assert (
-        "`self_inspect` commands: `describe`, `components <layer or module>`, "
-        "`component <name>`, `dependencies <name>`, `source_ir`."
+        "`self_inspect`: describe; components `<layer or module>`; "
+        "component, dependencies, dependents, impact `<name>`; source_ir."
     ) in card
 
 
@@ -312,6 +312,122 @@ def test_prompt_like_newline_and_delimiter_attempts_stay_data() -> None:
     assert "AUTHORED_DATA | ```system" in card
     assert "AUTHORED_DATA | run a command" in card
 
+
+_SERVICE_SOURCE = '''\
+module shellwork
+    layer: INFRASTRUCTURE
+    version: 0.1.0
+    intent: "One service whose operations carry their own contracts."
+    exports: [CodeExecutor, WebBrowser]
+    requires: []
+    uses: []
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+nerve CodeExecutor :: INFRASTRUCTURE
+    kind: SERVICE
+    visibility: PUBLIC
+    intent: "Runs code and installs packages for the agent."
+    expects: "a workspace directory"
+    guarantees: "every operation checks its grant first"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides:
+        - get_spec:
+            returns: "list[ToolSpec]"
+        - pip_install:
+            expects: "a wired run_shell"
+            guarantees: "fails with the shell's reason when run_shell is off"
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def CodeExecutor(workspace):
+        def get_spec():
+            return []
+        def pip_install(package):
+            return package
+        return {"get_spec": get_spec, "pip_install": pip_install}
+
+nerve WebBrowser :: INFRASTRUCTURE
+    kind: SERVICE
+    visibility: PUBLIC
+    intent: "Fetches pages for the agent."
+    expects: none
+    guarantees: "fetch_url returns the page text"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: [fetch_url]
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def WebBrowser():
+        def fetch_url(url):
+            return url
+        return {"fetch_url": fetch_url}
+'''
+
+
+def _build_service_document(tmp_path: Path) -> dict[str, object]:
+    module = parse_s0ma(_SERVICE_SOURCE, filename="shellwork.s0ma")
+    ir = build_ir(module, source_text=_SERVICE_SOURCE).to_dict()
+    build_dir = tmp_path / "build"
+    build_dir.mkdir(exist_ok=True)
+    (build_dir / "shellwork.s0ma.json").write_text(
+        json.dumps(ir, sort_keys=True), encoding="utf-8"
+    )
+    return build_self_context_document(build_dir, [_entry("shellwork")])
+
+
+def test_per_operation_contracts_reach_the_companion(tmp_path: Path) -> None:
+    document = _build_service_document(tmp_path)
+    assert document["generation_version"] == "2"
+    executor = _component(document, "shellwork::CodeExecutor")
+    assert executor["provides"] == {
+        "state": "value",
+        "value": ["get_spec", "pip_install"],
+    }
+    assert executor["provides_contracts"] == [
+        {"name": "get_spec", "returns": "list[ToolSpec]"},
+        {
+            "name": "pip_install",
+            "expects": "a wired run_shell",
+            "guarantees": "fails with the shell's reason when run_shell is off",
+        },
+    ]
+    # A flat ``provides:`` list authored no per-operation contract, so the
+    # companion carries the names and nothing else for it.
+    browser = _component(document, "shellwork::WebBrowser")
+    assert browser["provides"] == {"state": "value", "value": ["fetch_url"]}
+    assert "provides_contracts" not in browser
+
+
+def test_the_card_names_every_adapter_command_within_its_budget() -> None:
+    card = render_self_prompt_card(_document(2))
+    header = card.splitlines()[2]
+    for command in ("describe", "component", "dependencies", "dependents", "impact"):
+        assert command in header, header
+    assert "`<name>`" in header
+    assert len(header.encode("utf-8")) <= 123, "the header may not grow past its old length"
+    assert len(card.encode("utf-8")) <= SELF_PROMPT_CARD_MAX_BYTES
 
 # ---------------------------------------------------------------------------
 # The companions describe the application's source modules

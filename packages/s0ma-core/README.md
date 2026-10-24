@@ -66,7 +66,7 @@ agent_host.register_tool(
 )
 ```
 
-The adapter answers `describe` (counts and module names), `components <layer or module>`, `component <name>`, `dependencies <name>` and `source_ir`; render its answers as compact JSON with sorted keys, as above, and the [self-prompting guide](../s0ma-dsl/docs/self_prompting.md) has the measurements. Authored intent lines are quoted project data, never host instructions (see [ADR-002](../../docs/adr/ADR-002-self-context-authored-data-boundary.md)).
+The adapter answers `describe` (counts and module names), `components <layer or module>`, `component <name>`, `dependencies <name>`, `dependents <name>`, `impact <name>` and `source_ir`; a name may be a component id, a bare name, or an operation the component provides. Render its answers as compact JSON with sorted keys, as above; the [self-prompting guide](../s0ma-dsl/docs/self_prompting.md) has the measurements. Authored intent lines are quoted project data, never host instructions (see [ADR-002](../../docs/adr/ADR-002-self-context-authored-data-boundary.md)).
 
 ## Documentation
 

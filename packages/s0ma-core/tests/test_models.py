@@ -2567,3 +2567,73 @@ class TestKnownRelationTypes:
         """PRODUCES and CONSUMES are recognized relation types."""
         assert "PRODUCES" in KNOWN_RELATION_TYPES
         assert "CONSUMES" in KNOWN_RELATION_TYPES
+
+
+class TestSnapshotFrameworkVisibility:
+    """The snapshot lists the application's components unless asked otherwise."""
+
+    @staticmethod
+    def _snapshot() -> RegistrySnapshot:
+        from s0ma.registry import ComponentRegistry
+
+        registry = ComponentRegistry(persist=False)
+        registry.register(
+            ComponentSpec(
+                name="S0maDSL_helper",
+                kind=ComponentKind.FUNCTION,
+                layer=Layer.FRAMEWORK,
+                intent="A framework helper that is not the application's.",
+                is_framework=True,
+            )
+        )
+        registry.register(
+            ComponentSpec(
+                name="Scheduler",
+                kind=ComponentKind.SERVICE,
+                layer=Layer.APPLICATION,
+                intent="Runs the application's scheduled tasks.",
+                dependencies=["S0maDSL_helper"],
+            )
+        )
+        return registry.snapshot()
+
+    def test_visible_components_defaults_to_the_application(self) -> None:
+        snapshot = self._snapshot()
+        assert list(snapshot.visible_components()) == ["Scheduler"]
+        assert list(snapshot.visible_components(False)) == ["Scheduler"]
+        assert sorted(snapshot.visible_components(True)) == ["S0maDSL_helper", "Scheduler"]
+        assert snapshot.application_component_count == 1
+
+    def test_a_framework_only_snapshot_shows_the_framework(self) -> None:
+        from s0ma.registry import ComponentRegistry
+
+        registry = ComponentRegistry(persist=False)
+        registry.register(
+            ComponentSpec(
+                name="S0maDSL_helper",
+                kind=ComponentKind.FUNCTION,
+                layer=Layer.FRAMEWORK,
+                intent="A framework helper that is not the application's.",
+                is_framework=True,
+            )
+        )
+        snapshot = registry.snapshot()
+        assert list(snapshot.visible_components()) == ["S0maDSL_helper"]
+        assert list(snapshot.visible_components(False)) == []
+
+    def test_describe_lists_the_application_and_says_what_it_omits(self) -> None:
+        text = self._snapshot().describe()
+        assert "Total components: 2" in text
+        assert "Framework components: 1" in text
+        assert "User components: 1" in text
+        assert "Listed below: 1 application component(s)" in text
+        listing = text[text.index("COMPONENTS BY LAYER"):text.index("DEPENDENCY GRAPH")]
+        assert "- Scheduler (service)" in listing
+        # The framework helper is not listed as a component of the
+        # application; it is still named as what the application depends on.
+        assert "- S0maDSL_helper (function)" not in listing
+        assert "Dependencies: S0maDSL_helper" in listing
+        assert "Scheduler -> S0maDSL_helper" in text
+        everything = self._snapshot().describe(include_framework=True)
+        assert "S0maDSL_helper (function)" in everything
+        assert "Listed below:" not in everything

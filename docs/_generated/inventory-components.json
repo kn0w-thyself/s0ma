@@ -1,7 +1,7 @@
 {
   "counts": {
     "by_distribution": {
-      "s0ma-core": 61,
+      "s0ma-core": 63,
       "s0ma-dsl": 10,
       "s0ma-mcp": 40,
       "s0ma-studi0": 48
@@ -10,7 +10,7 @@
       "ADAPTER": 2,
       "CONFIG": 2,
       "CONSTANT": 22,
-      "FRAMEWORK": 62,
+      "FRAMEWORK": 64,
       "FUNCTION": 65,
       "MODEL": 4,
       "ORCHESTRATOR": 1,
@@ -18,15 +18,15 @@
     },
     "by_layer": {
       "APPLICATION": 33,
-      "FRAMEWORK": 72,
+      "FRAMEWORK": 74,
       "PRESENTATION": 54
     },
     "by_visibility": {
-      "(not declared)": 73,
+      "(not declared)": 75,
       "INTERNAL": 5,
       "PUBLIC": 81
     },
-    "components": 159
+    "components": 161
   },
   "entries": [
     {
@@ -184,6 +184,15 @@
     },
     {
       "distribution": "s0ma-core",
+      "id": "component:s0ma.models.ComponentResolution",
+      "intent": "What a caller-supplied name resolved to in the registry: the component, the operation name when the name was an operation the component provides, or the candidate providers when several components provide it",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
       "id": "component:s0ma.models.ComponentSpec",
       "intent": "Core data structure storing registration metadata for a single component",
       "kind": "FRAMEWORK",
@@ -294,6 +303,15 @@
       "distribution": "s0ma-core",
       "id": "component:s0ma.models.ModuleMetadata",
       "intent": "Metadata for module-level registration capturing layer, version, intent, exports, content hash, and tags",
+      "kind": "FRAMEWORK",
+      "layer": "FRAMEWORK",
+      "read_from": "python:s0ma._bootstrap.bootstrap_register",
+      "visibility": null
+    },
+    {
+      "distribution": "s0ma-core",
+      "id": "component:s0ma.models.OperationContract",
+      "intent": "The authored contract of one operation a component provides: its name with the returns, expects and guarantees the author wrote for that operation, read from the registration metadata",
       "kind": "FRAMEWORK",
       "layer": "FRAMEWORK",
       "read_from": "python:s0ma._bootstrap.bootstrap_register",
@@ -1479,8 +1497,8 @@
       "source": "python:<component>.__component__"
     },
     {
-      "components": 61,
-      "content_sha256": "080a2abcafe4a481ad0e0334dd7786de3b6dbfa95d1e7bbd3c2f5ab594a9147f",
+      "components": 63,
+      "content_sha256": "d09c5b964bd443e645f4cd4f7f4e9861d47539de1c9ab7d3d79f24d6fdfd0c30",
       "source": "python:s0ma._bootstrap.bootstrap_register"
     }
   ],
@@ -1488,6 +1506,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.19.1",
-    "snapshot_hash": "sha256:402a431f4ac64f0d"
+    "snapshot_hash": "sha256:83a17b9cf586f808"
   }
 }

@@ -131,7 +131,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: text/html; charset=utf-8."
-        }
+        },
+        "value": "text/html; charset=utf-8"
       },
       "intent": {
         "state": "value",
@@ -157,7 +158,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: application/json; charset=utf-8."
-        }
+        },
+        "value": "application/json; charset=utf-8"
       },
       "intent": {
         "state": "value",
@@ -186,7 +188,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: text/css; charset=utf-8."
-        }
+        },
+        "value": "text/css; charset=utf-8"
       },
       "intent": {
         "state": "value",
@@ -215,7 +218,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: text/javascript; charset=utf-8."
-        }
+        },
+        "value": "text/javascript; charset=utf-8"
       },
       "intent": {
         "state": "value",

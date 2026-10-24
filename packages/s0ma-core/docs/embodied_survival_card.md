@@ -10,8 +10,8 @@ body, a service, a live process — and for the host wiring that agent up.
    build-time truth (components, intents, dependencies), the bounded
    self-prompt card, and the `self_inspect` answers that are build facts:
    `describe`, `components <layer or module>`, `component <name>`,
-   `dependencies <name>`, `source_ir`. It says what you ARE, never what is
-   happening.
+   `dependencies <name>`, `dependents <name>`, `impact <name>`,
+   `source_ir`. It says what you ARE, never what is happening.
 2. **Live health** — the registered `self_inspect` tool (`describe`,
    whose `live_health` counts, and `component <name>`, whose `observed`
    flag, appear only when the host supplied a runtime registry) and the

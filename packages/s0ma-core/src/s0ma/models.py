@@ -34,6 +34,8 @@ if TYPE_CHECKING:
 
 __all__ = [
     "Contract",
+    "OperationContract",
+    "ComponentResolution",
     "ConfigurableProperty",
     "ProtocolContract",
     "ResourceProfile",
@@ -429,6 +431,66 @@ Contract = _wrap_init_with_field_hints(Contract)  # type: ignore[misc, assignmen
 
 
 @dataclass(frozen=True)
+class OperationContract:
+    """The authored contract of one operation a component provides.
+
+    A SERVICE nerve's ``provides:`` entries may each carry ``returns``,
+    ``expects`` and ``guarantees`` lines (the per-operation contract the
+    DSL added in 0.15.0). The DSL emitter stores them on the registration
+    as ``metadata["provides_contracts"]``, a list of dicts keyed by
+    operation ``name`` with whichever of the three slots the author
+    wrote; :attr:`ComponentSpec.provides_contracts` is the typed view of
+    that list, and this is one entry of it. Every slot except ``name`` is
+    optional, so a bare ``provides: [foo]`` entry is a contract with a
+    name and nothing else.
+    """
+
+    name: str
+    returns: str | None = None
+    expects: str | None = None
+    guarantees: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to the ``metadata["provides_contracts"]`` entry shape.
+
+        Only the slots that carry a value are written, matching what the
+        emitter writes, so a round trip is byte-stable.
+        """
+        result: dict[str, Any] = {"name": self.name}
+        if self.returns is not None:
+            result["returns"] = self.returns
+        if self.expects is not None:
+            result["expects"] = self.expects
+        if self.guarantees is not None:
+            result["guarantees"] = self.guarantees
+        return result
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> OperationContract:
+        """Deserialize one ``metadata["provides_contracts"]`` entry.
+
+        Raises:
+            RegistrationError: If the entry has no string ``name``.
+        """
+        name = data.get("name")
+        if not isinstance(name, str) or not name:
+            raise RegistrationError(
+                "OperationContract.from_dict: entry has no string 'name'"
+            )
+
+        def _text(key: str) -> str | None:
+            value = data.get(key)
+            return value if isinstance(value, str) else None
+
+        return cls(
+            name=name,
+            returns=_text("returns"),
+            expects=_text("expects"),
+            guarantees=_text("guarantees"),
+        )
+
+
+@dataclass(frozen=True)
 class ResourceProfile:
     """Expected resource usage profile for a component.
 
@@ -608,6 +670,60 @@ class ComponentSpec:
         # Contract validation
         self.contracts.validate()
 
+    @property
+    def display_name(self) -> str:
+        """The name a describe surface shows: ``module::name`` when the module is known.
+
+        The module is the last segment of ``module_path``, the spelling the
+        canonical IR and the self-context use for a component id, so an
+        answer about the running registry names a component the way the
+        build artifacts do. A component registered without a module path
+        shows its bare name.
+        """
+        if self.module_path:
+            return f"{self.module_path.rsplit('.', 1)[-1]}::{self.name}"
+        return self.name
+
+    @property
+    def provides(self) -> tuple[str, ...]:
+        """The operations this component provides, in authored order.
+
+        A SERVICE nerve's ``provides:`` list reaches the registration as
+        ``metadata["provides"]``; this is its typed view. When only the
+        per-operation contracts were stored, their names are the list.
+        Empty for a component that provides no named operations.
+        """
+        names = self.metadata.get("provides")
+        if isinstance(names, (list, tuple)):
+            return tuple(str(name) for name in names)
+        return tuple(contract.name for contract in self.provides_contracts)
+
+    @property
+    def provides_contracts(self) -> tuple[OperationContract, ...]:
+        """The per-operation contracts of the operations this component provides.
+
+        Read from ``metadata["provides_contracts"]``, the list the DSL
+        emitter writes when at least one ``provides:`` entry carries a
+        ``returns``, ``expects`` or ``guarantees`` line. The metadata copy
+        stays the stored form, so registrations written before this view
+        existed read the same way; entries without a string ``name`` are
+        skipped rather than raised, because a describe surface must keep
+        answering about a component whose metadata somebody mis-shaped.
+        Empty when no per-operation contract was authored.
+        """
+        raw = self.metadata.get("provides_contracts")
+        if not isinstance(raw, (list, tuple)):
+            return ()
+        contracts: list[OperationContract] = []
+        for entry in raw:
+            if not isinstance(entry, dict):
+                continue
+            try:
+                contracts.append(OperationContract.from_dict(entry))
+            except RegistrationError:
+                continue
+        return tuple(contracts)
+
     def replace(self, **overrides: Any) -> ComponentSpec:
         """Create a new ComponentSpec with the given field overrides.
 
@@ -771,6 +887,35 @@ ComponentSpec = _wrap_init_with_field_hints(ComponentSpec)  # type: ignore[misc,
 
 
 @dataclass(frozen=True)
+class ComponentResolution:
+    """What a caller-supplied name resolved to in the registry.
+
+    Every describe surface accepts a component name. Since an agent
+    mostly knows a system through the operations it calls (the tool
+    names), a name that is not a component but is an operation some
+    component provides resolves to that component, and the answer says
+    so: ``fetch_url is an operation of browser::WebBrowser``. This record
+    carries the three outcomes: ``spec`` set and ``operation`` ``None``
+    (a plain component name), ``spec`` and ``operation`` both set (an
+    operation name, resolved to its one provider), or ``spec`` ``None``
+    with ``candidates`` naming every provider of an operation that more
+    than one component provides. All three empty means nothing matched.
+    """
+
+    name: str
+    spec: ComponentSpec | None = None
+    operation: str | None = None
+    candidates: tuple[str, ...] = ()
+
+    @property
+    def note(self) -> str | None:
+        """One sentence saying the name was an operation, or ``None``."""
+        if self.spec is None or self.operation is None:
+            return None
+        return f"{self.operation} is an operation of {self.spec.display_name}"
+
+
+@dataclass(frozen=True)
 class Anomaly:
     """A detected code-model discrepancy.
 
@@ -931,13 +1076,47 @@ class RegistrySnapshot:
         result["snapshot_at"] = self.snapshot_at.isoformat()
         return result
 
-    def describe(self) -> str:
+    @property
+    def application_component_count(self) -> int:
+        """How many registered components are the application's own, not s0ma's."""
+        return self.component_count - self.framework_component_count
+
+    def visible_components(
+        self, include_framework: bool | None = None
+    ) -> dict[str, ComponentSpec]:
+        """The components a describe surface lists.
+
+        s0ma registers its own framework components beside the
+        application's (``is_framework``). An application's self-description
+        is about the application, so by default (``None``) the framework's
+        components are left out whenever the application registered any of
+        its own, and listed only when they are all there is, which is the
+        framework describing itself. ``True`` lists everything; ``False``
+        lists the application's components alone, even when that is
+        nothing. The counts on the snapshot itself always cover both.
+        """
+        if include_framework is True:
+            return dict(self.components)
+        application = {
+            name: spec for name, spec in self.components.items() if not spec.is_framework
+        }
+        if include_framework is False or application:
+            return application
+        return dict(self.components)
+
+    def describe(self, *, include_framework: bool | None = None) -> str:
         """Produce a human-readable description of the system.
 
         This is the output the bootstrap test validates. It must be
         accurate enough that a fresh reader (human or LLM) can understand
         the system's architecture.
+
+        Args:
+            include_framework: Which components the layer listing and the
+                dependency graph cover; see :meth:`visible_components`. The
+                summary counts always cover every registered component.
         """
+        listed = self.visible_components(include_framework)
         lines: list[str] = []
 
         # Header
@@ -953,14 +1132,21 @@ class RegistrySnapshot:
         lines.append(f"  Total components: {self.component_count}")
         lines.append(f"  Framework components: {self.framework_component_count}")
         lines.append(f"  User components: {user_count}")
+        if len(listed) != self.component_count:
+            lines.append(
+                f"  Listed below: {len(listed)} application component(s); "
+                "framework components are omitted "
+                "(describe(include_framework=True) lists them)"
+            )
         lines.append("")
 
         # Components by layer
         lines.append("COMPONENTS BY LAYER")
         for layer_name, component_names in sorted(self.layers.items()):
-            if component_names:
+            listed_names = [name for name in component_names if name in listed]
+            if listed_names:
                 lines.append(f"  [{layer_name}]")
-                for comp_name in sorted(component_names):
+                for comp_name in sorted(listed_names):
                     spec = self.components.get(comp_name)
                     if spec:
                         kind_label = spec.kind.name.lower()
@@ -1105,12 +1291,17 @@ class RegistrySnapshot:
             lines.append("")
 
         # Dependency graph
+        listed_graph = {
+            comp_name: deps
+            for comp_name, deps in self.dependency_graph.items()
+            if comp_name in listed
+        }
         has_dependencies = any(
-            deps for deps in self.dependency_graph.values()
+            deps for deps in listed_graph.values()
         )
         if has_dependencies:
             lines.append("DEPENDENCY GRAPH")
-            for comp_name, deps in sorted(self.dependency_graph.items()):
+            for comp_name, deps in sorted(listed_graph.items()):
                 if deps:
                     dep_str = ", ".join(sorted(deps))
                     lines.append(f"  {comp_name} -> {dep_str}")

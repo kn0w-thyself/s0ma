@@ -256,6 +256,13 @@ def _fuzzy_match_component(
     return None
 
 
+def _with_notes(notes: list[str], answer: str) -> str:
+    """Open *answer* with the operation-resolution notes, when there are any."""
+    if not notes:
+        return answer
+    return "\n".join([*notes, "", answer])
+
+
 def _extract_keywords(question: str) -> list[str]:
     """Extract meaningful keywords from a question for intent matching.
 
@@ -333,22 +340,30 @@ class QueryEngine:
 
         intent, entities = classify_query(question)
 
-        # Resolve entities against registered component names
+        # Resolve entities against registered component names, then against
+        # the operations components provide: an agent mostly knows a system
+        # by its tool names, and "what breaks if fetch_url is off" is a
+        # question about the component that provides fetch_url.
         component_names = sorted(self._registry.get_all().keys())
         resolved: list[str] = []
-        for entity in entities:
-            match = _fuzzy_match_component(entity, component_names)
+        notes: list[str] = []
+
+        def _resolve(term: str) -> None:
+            match = _fuzzy_match_component(term, component_names)
+            if match is None:
+                match = self._resolve_operation(term, notes)
             if match is not None and match not in resolved:
                 resolved.append(match)
+
+        for entity in entities:
+            _resolve(entity)
 
         # Also try to find component names directly in the question text
         # (for unquoted, non-PascalCase references like "registry")
         if not resolved:
             keywords = _extract_keywords(question)
             for keyword in keywords:
-                match = _fuzzy_match_component(keyword, component_names)
-                if match is not None and match not in resolved:
-                    resolved.append(match)
+                _resolve(keyword)
 
         # Dispatch to the appropriate handler
         handlers = {
@@ -365,13 +380,41 @@ class QueryEngine:
 
         handler = handlers.get(intent)
         if handler is not None:
-            return handler(question, resolved)
+            return _with_notes(notes, handler(question, resolved))
 
         # UNKNOWN intent — try component lookup if we found entities
         if resolved:
-            return self._handle_component_lookup(question, resolved)
+            return _with_notes(notes, self._handle_component_lookup(question, resolved))
 
         return self._fallback_response()
+
+    def _resolve_operation(self, term: str, notes: list[str]) -> str | None:
+        """Resolve *term* as the name of an operation a component provides.
+
+        An exact, case-insensitive match on one provider's operation
+        resolves to that provider and records the note the answer opens
+        with. Several providers resolve to nothing, with a note naming
+        them, because guessing one would answer about the wrong part.
+        """
+        wanted = term.lower()
+        providers: dict[str, str] = {}
+        for key, spec in self._registry.get_all().items():
+            for operation in spec.provides:
+                if operation.lower() == wanted:
+                    providers[key] = operation
+                    break
+        if len(providers) == 1:
+            key, operation = next(iter(providers.items()))
+            spec = self._registry.get_all()[key]
+            notes.append(f"{operation} is an operation of {spec.display_name}.")
+            return key
+        if providers:
+            names = ", ".join(sorted(providers))
+            notes.append(
+                f"'{term}' is an operation of {len(providers)} components "
+                f"({names}); ask about one of them by name."
+            )
+        return None
 
     # ------------------------------------------------------------------
     # Intent handlers

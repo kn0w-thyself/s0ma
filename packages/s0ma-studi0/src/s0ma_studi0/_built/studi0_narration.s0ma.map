@@ -12,7 +12,7 @@
         },
         "name": "NARRATION_TYPE",
         "output": {
-          "end_line": 40,
+          "end_line": 41,
           "start_line": 33
         },
         "source": {
@@ -23,8 +23,8 @@
       },
       {
         "body_output": {
-          "end_line": 42,
-          "start_line": 42
+          "end_line": 43,
+          "start_line": 43
         },
         "body_source": {
           "end_line": 32,
@@ -32,8 +32,8 @@
         },
         "name": "NARRATION_PHASES",
         "output": {
-          "end_line": 49,
-          "start_line": 42
+          "end_line": 51,
+          "start_line": 43
         },
         "source": {
           "end_line": 32,
@@ -43,8 +43,8 @@
       },
       {
         "body_output": {
-          "end_line": 51,
-          "start_line": 51
+          "end_line": 53,
+          "start_line": 53
         },
         "body_source": {
           "end_line": 42,
@@ -52,8 +52,8 @@
         },
         "name": "NARRATION_WINDOW",
         "output": {
-          "end_line": 58,
-          "start_line": 51
+          "end_line": 61,
+          "start_line": 53
         },
         "source": {
           "end_line": 42,
@@ -63,8 +63,8 @@
       },
       {
         "body_output": {
-          "end_line": 60,
-          "start_line": 60
+          "end_line": 63,
+          "start_line": 63
         },
         "body_source": {
           "end_line": 52,
@@ -72,8 +72,8 @@
         },
         "name": "PRESENCE_PATH_PARTS",
         "output": {
-          "end_line": 67,
-          "start_line": 60
+          "end_line": 71,
+          "start_line": 63
         },
         "source": {
           "end_line": 52,
@@ -83,8 +83,8 @@
       },
       {
         "body_output": {
-          "end_line": 69,
-          "start_line": 69
+          "end_line": 73,
+          "start_line": 73
         },
         "body_source": {
           "end_line": 62,
@@ -92,8 +92,8 @@
         },
         "name": "SESSION_LOG_PATH_PARTS",
         "output": {
-          "end_line": 76,
-          "start_line": 69
+          "end_line": 81,
+          "start_line": 73
         },
         "source": {
           "end_line": 62,
@@ -103,21 +103,21 @@
       },
       {
         "body_output": {
-          "end_line": 110,
-          "start_line": 86
+          "end_line": 115,
+          "start_line": 91
         },
         "body_source": {
           "end_line": 97,
           "start_line": 72
         },
         "decorator_output": {
-          "end_line": 84,
-          "start_line": 78
+          "end_line": 89,
+          "start_line": 83
         },
         "name": "NarrationLog",
         "output": {
-          "end_line": 110,
-          "start_line": 78
+          "end_line": 115,
+          "start_line": 83
         },
         "source": {
           "end_line": 97,
@@ -127,21 +127,21 @@
       },
       {
         "body_output": {
-          "end_line": 128,
-          "start_line": 126
+          "end_line": 133,
+          "start_line": 131
         },
         "body_source": {
           "end_line": 122,
           "start_line": 120
         },
         "decorator_output": {
-          "end_line": 124,
-          "start_line": 112
+          "end_line": 129,
+          "start_line": 117
         },
         "name": "presence_path",
         "output": {
-          "end_line": 128,
-          "start_line": 112
+          "end_line": 133,
+          "start_line": 117
         },
         "source": {
           "end_line": 122,
@@ -151,21 +151,21 @@
       },
       {
         "body_output": {
-          "end_line": 146,
-          "start_line": 144
+          "end_line": 151,
+          "start_line": 149
         },
         "body_source": {
           "end_line": 147,
           "start_line": 145
         },
         "decorator_output": {
-          "end_line": 142,
-          "start_line": 130
+          "end_line": 147,
+          "start_line": 135
         },
         "name": "session_log_path",
         "output": {
-          "end_line": 146,
-          "start_line": 130
+          "end_line": 151,
+          "start_line": 135
         },
         "source": {
           "end_line": 147,
@@ -175,21 +175,21 @@
       },
       {
         "body_output": {
-          "end_line": 186,
-          "start_line": 162
+          "end_line": 191,
+          "start_line": 167
         },
         "body_source": {
           "end_line": 195,
           "start_line": 170
         },
         "decorator_output": {
-          "end_line": 160,
-          "start_line": 148
+          "end_line": 165,
+          "start_line": 153
         },
         "name": "write_presence",
         "output": {
-          "end_line": 186,
-          "start_line": 148
+          "end_line": 191,
+          "start_line": 153
         },
         "source": {
           "end_line": 195,
@@ -199,21 +199,21 @@
       },
       {
         "body_output": {
-          "end_line": 220,
-          "start_line": 202
+          "end_line": 225,
+          "start_line": 207
         },
         "body_source": {
           "end_line": 237,
           "start_line": 218
         },
         "decorator_output": {
-          "end_line": 200,
-          "start_line": 188
+          "end_line": 205,
+          "start_line": 193
         },
         "name": "clear_presence",
         "output": {
-          "end_line": 220,
-          "start_line": 188
+          "end_line": 225,
+          "start_line": 193
         },
         "source": {
           "end_line": 237,
@@ -223,8 +223,8 @@
       },
       {
         "body_output": {
-          "end_line": 252,
-          "start_line": 224
+          "end_line": 257,
+          "start_line": 229
         },
         "body_source": {
           "end_line": 270,
@@ -232,8 +232,8 @@
         },
         "name": "_projected_narration",
         "output": {
-          "end_line": 252,
-          "start_line": 222
+          "end_line": 257,
+          "start_line": 227
         },
         "source": {
           "end_line": 270,
@@ -243,8 +243,8 @@
       },
       {
         "body_output": {
-          "end_line": 261,
-          "start_line": 256
+          "end_line": 266,
+          "start_line": 261
         },
         "body_source": {
           "end_line": 280,
@@ -252,8 +252,8 @@
         },
         "name": "_reset_log",
         "output": {
-          "end_line": 261,
-          "start_line": 254
+          "end_line": 266,
+          "start_line": 259
         },
         "source": {
           "end_line": 280,
@@ -263,8 +263,8 @@
       },
       {
         "body_output": {
-          "end_line": 287,
-          "start_line": 265
+          "end_line": 292,
+          "start_line": 270
         },
         "body_source": {
           "end_line": 307,
@@ -272,8 +272,8 @@
         },
         "name": "_consume",
         "output": {
-          "end_line": 287,
-          "start_line": 263
+          "end_line": 292,
+          "start_line": 268
         },
         "source": {
           "end_line": 307,
@@ -283,21 +283,21 @@
       },
       {
         "body_output": {
-          "end_line": 347,
-          "start_line": 303
+          "end_line": 352,
+          "start_line": 308
         },
         "body_source": {
           "end_line": 375,
           "start_line": 330
         },
         "decorator_output": {
-          "end_line": 301,
-          "start_line": 289
+          "end_line": 306,
+          "start_line": 294
         },
         "name": "read_narrations",
         "output": {
-          "end_line": 347,
-          "start_line": 289
+          "end_line": 352,
+          "start_line": 294
         },
         "source": {
           "end_line": 375,
@@ -307,21 +307,21 @@
       },
       {
         "body_output": {
-          "end_line": 370,
-          "start_line": 361
+          "end_line": 375,
+          "start_line": 366
         },
         "body_source": {
           "end_line": 406,
           "start_line": 397
         },
         "decorator_output": {
-          "end_line": 359,
-          "start_line": 349
+          "end_line": 364,
+          "start_line": 354
         },
         "name": "narration_snapshot",
         "output": {
-          "end_line": 370,
-          "start_line": 349
+          "end_line": 375,
+          "start_line": 354
         },
         "source": {
           "end_line": 406,

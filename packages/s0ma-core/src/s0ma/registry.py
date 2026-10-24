@@ -27,6 +27,7 @@ from s0ma.exceptions import LifecycleError, RegistrationError, RegistryIntegrity
 from s0ma.models import (
     AdoptedFile,
     AssertExpr,
+    ComponentResolution,
     ComponentSpec,
     Contract,
     DocGuideRegistration,
@@ -56,6 +57,11 @@ if TYPE_CHECKING:
 # (design §6 / documentation subsystem plan M2).
 _VALID_DOC_FORMATS: frozenset[str] = frozenset({"markdown", "html", "json"})
 _VALID_RUNS_IN: frozenset[str] = frozenset({"standalone", "pytest", "integration"})
+
+
+#: Marks ``register_constant``'s ``value`` as not given, so a constant whose
+#: literal is ``None`` is told apart from one whose literal is unknown.
+_NO_VALUE: object = object()
 
 
 def _validate_doc_format(fmt: str) -> None:
@@ -591,6 +597,57 @@ class ComponentRegistry:
         """
         return dict(self._components)
 
+    def find_providers(self, operation: str) -> list[ComponentSpec]:
+        """Return the components that provide the named operation.
+
+        An operation is an entry of a component's ``provides:`` list, the
+        name an agent calls it by (``fetch_url``, ``pip_install``). The
+        answer is in registry order, so it is stable across calls.
+
+        Args:
+            operation: The operation name, matched exactly.
+
+        Returns:
+            The providing ComponentSpecs; empty when no component provides
+            the operation.
+        """
+        return [
+            spec for spec in self._components.values() if operation in spec.provides
+        ]
+
+    def resolve_component(self, name: str) -> ComponentResolution:
+        """Resolve a caller-supplied name to a component, accepting operation names.
+
+        The name is first read as a component identifier exactly as
+        :meth:`get` reads it (bare or ``module::name``). When that finds
+        nothing, it is read as the name of an operation some component
+        provides: one provider resolves to that component with the
+        operation recorded, and several providers resolve to nothing
+        with every provider listed as a candidate, so the caller can ask
+        again by component name. The describe surfaces route their name
+        arguments through this so an agent that knows a tool name reaches
+        the component behind it.
+
+        Args:
+            name: Bare component name, ``module::name``, or an operation name.
+
+        Returns:
+            A :class:`ComponentResolution`; see its docstring for the
+            three outcomes.
+        """
+        spec = self.get(name)
+        if spec is not None:
+            return ComponentResolution(name=name, spec=spec)
+        providers = self.find_providers(name)
+        if len(providers) == 1:
+            return ComponentResolution(name=name, spec=providers[0], operation=name)
+        if providers:
+            return ComponentResolution(
+                name=name,
+                candidates=tuple(provider.display_name for provider in providers),
+            )
+        return ComponentResolution(name=name)
+
     # ------------------------------------------------------------------
     # Hierarchical queries
     # ------------------------------------------------------------------
@@ -1069,6 +1126,7 @@ class ComponentRegistry:
         metadata: dict[str, object] | None = None,
         source_file: str | None = None,
         module_path: str = "",
+        value: object = _NO_VALUE,
     ) -> ComponentSpec:
         """Register a CONSTANT cell as a component.
 
@@ -1082,6 +1140,13 @@ class ComponentRegistry:
             intent: Human-readable purpose statement (≥10 chars).
             metadata: Additional DSL metadata (visibility, schema, etc.).
             source_file: Source file path.
+            value: The constant's literal, when the caller knows it: the
+                DSL emitter passes the simple literal a constant's body
+                assigns (an int, float, str, bool or None, or a list of
+                those), so the registry says what the constant is and not
+                only that it exists. Stored as ``metadata["value"]`` and
+                carried by the snapshot. Left out, no key is written:
+                ``None`` is a value a constant can have.
             module_path: Owning module's canonical name (e.g.
                 ``"presentation.web.shell_view"``). Empty string when
                 unknown — the DSL emitter populates this so the registry
@@ -1101,6 +1166,8 @@ class ComponentRegistry:
 
         merged_metadata = dict(metadata or {})
         merged_metadata.setdefault("kind_detail", "CONSTANT")
+        if value is not _NO_VALUE:
+            merged_metadata["value"] = value
 
         spec = ComponentSpec(
             name=name,

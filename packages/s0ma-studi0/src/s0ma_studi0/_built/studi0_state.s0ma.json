@@ -16,7 +16,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: s0ma-studi0-state@2."
-        }
+        },
+        "value": "s0ma-studi0-state@2"
       },
       "intent": {
         "state": "value",
@@ -45,7 +46,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: s0ma-studi0-graph@1."
-        }
+        },
+        "value": "s0ma-studi0-graph@1"
       },
       "intent": {
         "state": "value",
@@ -75,7 +77,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: s0ma-graph@2. Stamped by s0ma_dsl.graph_export, never by studi0."
-        }
+        },
+        "value": "s0ma-graph@2"
       },
       "intent": {
         "state": "value",
@@ -105,7 +108,14 @@
         "schema": {
           "state": "value",
           "value": "tuple[str, ...] constant, sorted. Value: ('build_status', 'narration', 'schema', 'seq', 'stale_modules')."
-        }
+        },
+        "value": [
+          "build_status",
+          "narration",
+          "schema",
+          "seq",
+          "stale_modules"
+        ]
       },
       "intent": {
         "state": "value",
@@ -135,7 +145,12 @@
         "schema": {
           "state": "value",
           "value": "tuple[str, ...] constant, sorted. Value: ('entries', 'invalid', 'total')."
-        }
+        },
+        "value": [
+          "entries",
+          "invalid",
+          "total"
+        ]
       },
       "intent": {
         "state": "value",
@@ -165,7 +180,12 @@
         "schema": {
           "state": "value",
           "value": "tuple[str, ...] constant, sorted. Value: ('graph', 'schema', 'seq')."
-        }
+        },
+        "value": [
+          "graph",
+          "schema",
+          "seq"
+        ]
       },
       "intent": {
         "state": "value",
@@ -194,7 +214,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: missing. One of the three statuses in the frozen /api/state contract (fresh | stale | missing)."
-        }
+        },
+        "value": "missing"
       },
       "intent": {
         "state": "value",
