@@ -1235,7 +1235,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.19.1",
-    "snapshot_hash": "sha256:4ebb3236461ceea1"
+    "snapshot_hash": "sha256:c157b6f70dabfbd8"
   },
   "totals": {
     "covered": 332,
