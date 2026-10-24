@@ -167,130 +167,16 @@ Historical entries describe artifacts as they were named at the time.
   and estimate a result's size by its words or a quarter of the characters,
   whichever is larger. The contract records the revision as R7, for owner
   review.
-- **The front door is written for the public repository's first release.**
-  The root README now opens on what s0ma is — a substrate in which the code
-  produces its own live, queryable model — and says who it is for: anyone
-  building agents, harnesses, AI-enabled applications or autonomous software
-  and hardware systems, with or without an LLM in the loop. It says how a part
-  that is not Python is declared from the Python side as a reference, and that
-  more languages are on the roadmap. Its install section describes the one
-  route that release offers — clone `kn0w-thyself/s0ma` and build from it,
-  with PyPI publication pending — and no longer describes accounts, the keyed
-  installer, or the Claude plugin and extension. Feedback goes to the
-  repository's issues and discussions. The getting-started guide the README
-  embeds, which `s0ma://guide/getting-started` serves, says the same, so its
-  catalog row no longer claims `s0ma feedback`, and the public-export rules
-  expect fewer old repository addresses to rewrite. The guide's host-probe
-  step now says what a fresh project needs before `s0ma verify-host` can
-  pass — an environment of its own with `s0ma-core` and `s0ma-dsl` installed
-  and declared — because walking the guide from a cold install showed that
-  step refusing first.
-- **The pages the README no longer links say the same thing it does.** The
-  tester page, the Claude page, the four package READMEs, the stability
-  statement, the security policy and the contributor guide all described a
-  route the public repository's first release does not offer — an account, a
-  license key, the keyed installer, or the Claude plugin and extension — or
-  pointed a reader at one. The tester page and the Claude page keep their
-  accounts of those routes and now say, at the top and in their closing
-  pointers, that the public repository offers one way in: the source route,
-  stated once in the getting-started guide. The package READMEs' Install
-  sections state that route alone. The stability statement says beta means
-  pre-1.0 and nothing else, and holds a project to a version through its own
-  lock file or checkout rather than through an account or Claude. The
-  security policy drops the account service from its scope and from the four
-  facts it summarises, which now include that nothing checks a licence or an
-  entitlement in order to run. The contributor guide clones the public
-  repository and sends feedback about s0ma to the repository's discussions
-  and bug reports, and the public-export rules expect one fewer old
-  repository address to rewrite.
-- **The remaining route pages say the same.** The uninstall guide, the MCP
-  walkthrough, the core user guide, the first-project journey, the
-  troubleshooting page, the trust model and the two issue templates all
-  listed the tester route, the Claude route or `s0ma feedback` as ways in,
-  or pointed a reader at them. Each now states the source route — clone the
-  repository and build from it, stated once in the getting-started guide
-  with its commands in the root README — and sends feedback to the
-  repository's discussions and bug reports; where a page keeps an account of
-  the hosted channel's routes, because a reader may really have installed
-  that way or because the code ships here, it says that channel is not what
-  the public repository's first release offers. The uninstall guide no
-  longer quotes the keyed installer, so the guide-bindings suite's command
-  sites are the tester page alone, and its pointer rule asks the walkthrough
-  and the user guide to name the getting-started guide and the README and
-  not the tester page; the first-project journey test asks the same of its
-  page.
-- **The requirements document records the rulings behind the first public
-  release (v1.15).** Non-goal 1 — languages other than Python — is now a
-  statement of the current horizon, with expanding to other languages on the
-  development roadmap and the way a part in another language is declared from
-  the Python side today written beside it. NFR-8 says the codebase is released
-  first, through GitHub alone: the public repository's first release is the
-  source tree under its licences, reached by cloning and building, with
-  nothing that depends on an account offered or described as a route by it,
-  and the paid convenience channel comes after that release; §7.5 says the
-  same. The product concepts file pins the amended document's digest.
-- **The requirements document distinguishes the two ways an agent meets s0ma,
-  and MCP is one channel rather than the way in (v1.16).** §1 separates the
-  coding agent building or maintaining a s0ma application — efficiency,
-  captured intent, enforcement — from an LLM or agent operating one, which the
-  running system hands its own model to through the self-context and the
-  runtime query surfaces — autonomy and safety; the end state and persona P1
-  no longer say a coding agent connects over MCP, since it works from the
-  checkout as well. The trust model says s0ma is an open-source codebase you
-  build and run yourself, names the launcher, the keyed installer and the
-  feedback function as the hosted channel's clients, and no longer reads as
-  the account of a service. The stability statement speaks of no account or
-  subscription at all. The retrofit guide starts from the Python in an
-  application rather than from a Python application, and says how the parts
-  that are not Python are declared as references. The studi0 feedback guide
-  says sending feedback from inside s0ma is the hosted channel's function.
-- **The front door distinguishes the two ways an agent meets s0ma.** The
-  README's "Is s0ma for you?" and the getting-started guide it embeds now
-  separate a coding agent building or maintaining a s0ma application — from
-  the checkout with the `s0ma` command line, or through the authoring MCP
-  server as one channel among others — from an LLM or agent operating one,
-  which is handed the system's own model through the self-context and the
-  runtime query surfaces; the README's MCP section says the server is one
-  channel to the same model.
-
-### Fixed
-
-- **studi0 binds its loopback socket without a reverse-DNS lookup.**
-  `HTTPServer.server_bind` resolves the bound host with `socket.getfqdn`, a
-  lookup that stalls for tens of seconds on a machine whose resolver answers
-  slowly; the public repository's first macOS CI run showed the first studi0
-  launch of the test session missing its thirty-second startup window for
-  exactly that reason, with every later launch passing once the resolver had
-  cached its answer. studi0 only ever binds the loopback literal, so the
-  lookup could never say anything the literal does not: the server now binds
-  the socket and records the address by value. One test refuses the lookup
-  and binds anyway.
-- **The `authored-lines` stage no longer fails a checkout that lacks the spike
-  tree.** `scripts/spikes` is one of the six trees whose `.s0ma` fixtures the
-  stage reads, and a tree with no tracked `.s0ma` file was an error, so that a
-  moved tree could not pass by silence. The public export withholds the spike
-  directory whole, and inside an exported tree the stage therefore went red
-  (and with it two tests that run the stage end to end), which is the one
-  thing that made the export rehearsal of 2026-10-15 invalid. The spike tree is
-  now the one optional tree: read where present, reported as withheld and
-  skipped where absent, with the summary line counting the trees actually
-  read. The five core trees keep the loud error, and the floor on the number
-  of lines read still guards the scan. One test covers the absent tree.
-- **The editor grammar names the `helpers` line and the spec it was
-  harvested from, and its README installs into VS Code and Cursor by a route
-  that works.** The TextMate grammar's known-field rule lacked `helpers:`, so
-  that line took the generic key colour rather than the field colour every
-  other authored line gets, and the grammar's contributor note still pointed
-  at the previous language spec while the editors README and the drift guard
-  point at the current one. The README's full-highlighting route copied an
-  unpackaged folder into the editor's extensions directory, which current VS
-  Code and Cursor no longer load: they read only the extensions their own
-  manifest registers. The route is now a small local package zipped from the
-  same two files and installed with the editor's own command line, which
-  registers it; the README names Cursor, and says the install was checked
-  against Cursor on macOS.
 
 ## [0.19.1] — 2026-10-09
+
+The 0.19.1 artifacts are the build of the public repository's tag `v0.19.1`
+(commit `046c25cb`, 2026-10-19), which replaced the artifacts built on
+2026-10-09 wherever they were served. That build carried the changes made
+between the two dates, so this section describes them too: the six `Changed`
+entries from "The front door is written for the public repository's first
+release" onward, and the three `Fixed` entries from "studi0 binds its loopback
+socket without a reverse-DNS lookup" onward.
 
 ### Added
 
@@ -424,6 +310,91 @@ Historical entries describe artifacts as they were named at the time.
   and `pending` emit nothing, so on this line's account they ask nothing new
   of the installed core. The authoring server and studi0 now carry real
   sentences, so they need it too.
+- **The front door is written for the public repository's first release.**
+  The root README now opens on what s0ma is — a substrate in which the code
+  produces its own live, queryable model — and says who it is for: anyone
+  building agents, harnesses, AI-enabled applications or autonomous software
+  and hardware systems, with or without an LLM in the loop. It says how a part
+  that is not Python is declared from the Python side as a reference, and that
+  more languages are on the roadmap. Its install section describes the one
+  route that release offers — clone `kn0w-thyself/s0ma` and build from it,
+  with PyPI publication pending — and no longer describes accounts, the keyed
+  installer, or the Claude plugin and extension. Feedback goes to the
+  repository's issues and discussions. The getting-started guide the README
+  embeds, which `s0ma://guide/getting-started` serves, says the same, so its
+  catalog row no longer claims `s0ma feedback`, and the public-export rules
+  expect fewer old repository addresses to rewrite. The guide's host-probe
+  step now says what a fresh project needs before `s0ma verify-host` can
+  pass — an environment of its own with `s0ma-core` and `s0ma-dsl` installed
+  and declared — because walking the guide from a cold install showed that
+  step refusing first.
+- **The pages the README no longer links say the same thing it does.** The
+  tester page, the Claude page, the four package READMEs, the stability
+  statement, the security policy and the contributor guide all described a
+  route the public repository's first release does not offer — an account, a
+  license key, the keyed installer, or the Claude plugin and extension — or
+  pointed a reader at one. The tester page and the Claude page keep their
+  accounts of those routes and now say, at the top and in their closing
+  pointers, that the public repository offers one way in: the source route,
+  stated once in the getting-started guide. The package READMEs' Install
+  sections state that route alone. The stability statement says beta means
+  pre-1.0 and nothing else, and holds a project to a version through its own
+  lock file or checkout rather than through an account or Claude. The
+  security policy drops the account service from its scope and from the four
+  facts it summarises, which now include that nothing checks a licence or an
+  entitlement in order to run. The contributor guide clones the public
+  repository and sends feedback about s0ma to the repository's discussions
+  and bug reports, and the public-export rules expect one fewer old
+  repository address to rewrite.
+- **The remaining route pages say the same.** The uninstall guide, the MCP
+  walkthrough, the core user guide, the first-project journey, the
+  troubleshooting page, the trust model and the two issue templates all
+  listed the tester route, the Claude route or `s0ma feedback` as ways in,
+  or pointed a reader at them. Each now states the source route — clone the
+  repository and build from it, stated once in the getting-started guide
+  with its commands in the root README — and sends feedback to the
+  repository's discussions and bug reports; where a page keeps an account of
+  the hosted channel's routes, because a reader may really have installed
+  that way or because the code ships here, it says that channel is not what
+  the public repository's first release offers. The uninstall guide no
+  longer quotes the keyed installer, so the guide-bindings suite's command
+  sites are the tester page alone, and its pointer rule asks the walkthrough
+  and the user guide to name the getting-started guide and the README and
+  not the tester page; the first-project journey test asks the same of its
+  page.
+- **The requirements document records the rulings behind the first public
+  release (v1.15).** Non-goal 1 — languages other than Python — is now a
+  statement of the current horizon, with expanding to other languages on the
+  development roadmap and the way a part in another language is declared from
+  the Python side today written beside it. NFR-8 says the codebase is released
+  first, through GitHub alone: the public repository's first release is the
+  source tree under its licences, reached by cloning and building, with
+  nothing that depends on an account offered or described as a route by it,
+  and the paid convenience channel comes after that release; §7.5 says the
+  same. The product concepts file pins the amended document's digest.
+- **The requirements document distinguishes the two ways an agent meets s0ma,
+  and MCP is one channel rather than the way in (v1.16).** §1 separates the
+  coding agent building or maintaining a s0ma application — efficiency,
+  captured intent, enforcement — from an LLM or agent operating one, which the
+  running system hands its own model to through the self-context and the
+  runtime query surfaces — autonomy and safety; the end state and persona P1
+  no longer say a coding agent connects over MCP, since it works from the
+  checkout as well. The trust model says s0ma is an open-source codebase you
+  build and run yourself, names the launcher, the keyed installer and the
+  feedback function as the hosted channel's clients, and no longer reads as
+  the account of a service. The stability statement speaks of no account or
+  subscription at all. The retrofit guide starts from the Python in an
+  application rather than from a Python application, and says how the parts
+  that are not Python are declared as references. The studi0 feedback guide
+  says sending feedback from inside s0ma is the hosted channel's function.
+- **The front door distinguishes the two ways an agent meets s0ma.** The
+  README's "Is s0ma for you?" and the getting-started guide it embeds now
+  separate a coding agent building or maintaining a s0ma application — from
+  the checkout with the `s0ma` command line, or through the authoring MCP
+  server as one channel among others — from an LLM or agent operating one,
+  which is handed the system's own model through the self-context and the
+  runtime query surfaces; the README's MCP section says the server is one
+  channel to the same model.
 
 ### Fixed
 
@@ -512,6 +483,40 @@ Historical entries describe artifacts as they were named at the time.
   on the toolchain at all: for the four-component demonstration application,
   three warnings remain and all three are the lazy edges inside s0ma-core
   named above.
+- **studi0 binds its loopback socket without a reverse-DNS lookup.**
+  `HTTPServer.server_bind` resolves the bound host with `socket.getfqdn`, a
+  lookup that stalls for tens of seconds on a machine whose resolver answers
+  slowly; the public repository's first macOS CI run showed the first studi0
+  launch of the test session missing its thirty-second startup window for
+  exactly that reason, with every later launch passing once the resolver had
+  cached its answer. studi0 only ever binds the loopback literal, so the
+  lookup could never say anything the literal does not: the server now binds
+  the socket and records the address by value. One test refuses the lookup
+  and binds anyway.
+- **The `authored-lines` stage no longer fails a checkout that lacks the spike
+  tree.** `scripts/spikes` is one of the six trees whose `.s0ma` fixtures the
+  stage reads, and a tree with no tracked `.s0ma` file was an error, so that a
+  moved tree could not pass by silence. The public export withholds the spike
+  directory whole, and inside an exported tree the stage therefore went red
+  (and with it two tests that run the stage end to end), which is the one
+  thing that made the export rehearsal of 2026-10-15 invalid. The spike tree is
+  now the one optional tree: read where present, reported as withheld and
+  skipped where absent, with the summary line counting the trees actually
+  read. The five core trees keep the loud error, and the floor on the number
+  of lines read still guards the scan. One test covers the absent tree.
+- **The editor grammar names the `helpers` line and the spec it was
+  harvested from, and its README installs into VS Code and Cursor by a route
+  that works.** The TextMate grammar's known-field rule lacked `helpers:`, so
+  that line took the generic key colour rather than the field colour every
+  other authored line gets, and the grammar's contributor note still pointed
+  at the previous language spec while the editors README and the drift guard
+  point at the current one. The README's full-highlighting route copied an
+  unpackaged folder into the editor's extensions directory, which current VS
+  Code and Cursor no longer load: they read only the extensions their own
+  manifest registers. The route is now a small local package zipped from the
+  same two files and installed with the editor's own command line, which
+  registers it; the README names Cursor, and says the install was checked
+  against Cursor on macOS.
 
 ## [0.19.0] — 2026-10-05
 

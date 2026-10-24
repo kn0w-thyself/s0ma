@@ -63,4 +63,4 @@ Do not use it for the strictness modes, which are the ratchet at the top of it r
 
 - Topic id: `concept:adoption-ladder`
 - Release: `0.19.1 (preview)`
-- Documentation snapshot: `sha256:83a17b9cf586f808`
+- Documentation snapshot: `sha256:ab0ef73f94bc2be2`
