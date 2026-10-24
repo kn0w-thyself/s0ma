@@ -44,15 +44,15 @@ migration map; the catalog is what the build reads.
 
 | Disposition | Meaning | Count |
 |---|---|---|
-| `normative-current` | Binding today. The PRD, the current DSL spec, the current core spec, accepted ADRs, frozen contracts, and the repo agent contract. | 24 |
-| `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 46 |
+| `normative-current` | Binding today. The PRD, the current DSL spec, the current core spec, accepted ADRs, frozen contracts, and the repo agent contract. | 25 |
+| `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 47 |
 | `generated` | A rendered output of a generator or the s0ma build. Never hand-edited. | 60 |
 | `mirror` | A byte-for-byte copy of another file in this repo, kept honest by a gate. | 9 |
 | `historical` | A record of the past. Kept for provenance; must not be read as current guidance. | 14 |
 | `superseded-pointer` | A short stub whose only content is "this moved — go here". | 11 |
 | `working-plan` | Plans, notes, and review records: those under `plans/`, this summary beside the ledger it explains, and the result records of the B-phase spikes under `scripts/spikes/`. | 1 |
 | `non-documentation` | A `.md` file that is test data or test scaffolding, not part of the documentation corpus. | 4 |
-| **Total** | | **169** |
+| **Total** | | **171** |
 
 158 files were tracked at Phase A finalization (the walkthrough pointer stub added at the A5-findings pass is the 156th, and A7's two tester documents — `docs/troubleshooting.md` and `docs/uninstall.md` — are the 157th and 158th); the 159th row was this summary, which the ledger
 classifies in advance of its own commit.
@@ -336,6 +336,16 @@ The second round of the plan for authored lines that stand on their own
 2026-10-06 as the first round's follow-up card: the authored lines written
 in Python, and the spike fixtures) adds one `working-plan` row. Net:
 `working-plan` 85 → 86, total 295 → 296.
+
+The build gate and the environment a wheel is built in add two rows. The
+packaging guide (`docs/guides/packaging.md`, `user`) is `living-authored`: the
+build hook, the isolated build environment and the check baseline, an editable
+install against a wheel, the two build directories, and locating the build at
+runtime; its two listings are run by `packages/s0ma-dsl/tests/test_docs_packaging_guide.py`,
+and it joins `LIVING_GUIDES` and `BINDINGS` in the guide-bindings suite. The
+decision on record for the gate (`docs/adr/ADR-015-build-without-runtime-packages.md`,
+proposed with the pull request that implements it) is `normative-current`.
+Net: `living-authored` 46 → 47, `normative-current` 24 → 25, total 169 → 171.
 
 `audience` is advisory and single-valued (the primary reader): `agent` (coding
 agents), `user` (people using or evaluating s0ma), `contributor` (whoever works

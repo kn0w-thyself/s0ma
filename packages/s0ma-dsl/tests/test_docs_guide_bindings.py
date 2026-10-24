@@ -129,6 +129,7 @@ LIVING_GUIDES: Mapping[str, str] = {
     "doc:guide/documentation-subsystem": "docs/documentation-subsystem.md",
     "doc:guide/getting-started": "docs/getting-started.md",
     "doc:guide/hosting-getting-started": "docs/hosting-getting-started.md",
+    "doc:guide/packaging": "docs/guides/packaging.md",
     "doc:guide/releasing": "docs/RELEASING.md",
     "doc:guide/retrofit-existing-codebase": "docs/guides/retrofit-existing-codebase.md",
     "doc:guide/stability": "docs/stability.md",
@@ -284,6 +285,30 @@ BINDINGS: Mapping[str, tuple[str, ...]] = {
         "concept:feedback",
         "config:authoring",
         "mcp:prompt/feedback",
+    ),
+    # The packaging guide: how a project written in .s0ma becomes a wheel.
+    # Its subject is the one build that runs where the runtime packages are
+    # not installed, so it teaches the requires: list the build probes and
+    # the strictness mode the probe's severity ladders over. Its surfaces
+    # are the three commands the loop in its last section runs, plus
+    # `s0ma verify-host`, which section 3 names as where the application's
+    # own interpreter proves the build; the three project keys the hook
+    # and the bootstrap are written against; and the two diagnostics a
+    # wheel build meets: the missing package the flag records, and the
+    # undeclared runtime the dependencies answer. Its pyproject, hook and
+    # bootstrap listings are run by test_docs_packaging_guide.py.
+    "doc:guide/packaging": (
+        "cli:s0ma/build",
+        "cli:s0ma/check",
+        "cli:s0ma/test",
+        "cli:s0ma/verify-host",
+        "concept:requires",
+        "concept:strictness-mode",
+        "config:bootstrap_files",
+        "config:build_dir",
+        "config:source_roots",
+        "diagnostic:HOST_RUNTIME_UNDECLARED",
+        "diagnostic:MISSING_PACKAGE",
     ),
     # The release runbook. It is about the act of releasing, not about the
     # toolchain: it teaches the mirror (the byte-identical served copies it

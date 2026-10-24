@@ -86,6 +86,30 @@ Historical entries describe artifacts as they were named at the time.
   is `observed` live when a registry was supplied, beside the record and
   never inside it. The adapter's `tool_spec` names all seven commands so no
   answer has to repeat them.
+- **A wheel build no longer needs a per-project workaround, and there is a
+  packaging guide.** `s0ma build` takes `--without-runtime-packages`, by
+  which a build hook states that the environment it runs in does not hold
+  the project's runtime packages, as a PEP 517 build environment does not.
+  A `requires:` entry the build cannot find is then recorded in
+  `build.s0ma.json` under `unverified_packages`, and in the `--format json`
+  report under `build_environment`, instead of being counted as a NEW check
+  error against a baseline recorded where the packages are installed; any
+  other new check error still refuses the build (so does a `requires:`
+  entry that names one of the project's own modules, which belongs in
+  `uses:`), nothing is written to
+  `overridden_new_errors`, the baseline is left alone, and strict or release
+  mode refuse the flag because they exist to verify what it says cannot be
+  verified there. Without the flag the gate is unchanged, except that a
+  refusal whose every new error is `MISSING_PACKAGE` now names the flag. fr3d
+  met this as a refused `pip install -e .` and worked around it by retrying
+  with `--allow-new-errors`; `docs/adr/ADR-015-build-without-runtime-packages.md`
+  records the decision and the alternatives. The new guide,
+  `docs/guides/packaging.md`, walks through the build hook that transpiles
+  at wheel-build time, the isolated build environment, the check baseline
+  and the gate, an editable install against a wheel, keeping the wheel's
+  build apart from the checkout's, and locating the build at runtime rather
+  than importing it as a package; both of its listings are run by the dsl
+  test suite.
 
 ### Changed
 

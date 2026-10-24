@@ -209,7 +209,8 @@ Wondering what s0ma trusts, what it executes, and what it will never send
 anywhere? That contract is written down: `docs/trust-model.md`.
 
 See also `docs/troubleshooting.md` when a step here does not behave as
-described, and `docs/uninstall.md` for removing s0ma completely.
+described, `docs/guides/packaging.md` when the project is ready to ship as a
+wheel, and `docs/uninstall.md` for removing s0ma completely.
 
 If anything here broke or was harder than it should have been, say so where it
 will be seen and answered: open a

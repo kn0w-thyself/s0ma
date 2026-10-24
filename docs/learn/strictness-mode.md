@@ -51,6 +51,7 @@ Do not reach for a forgiving mode to get a release out. The extra release requir
 - [What the viewer shows you](../reference/studi0.md)
 - [Authoring through the agent's own tool channel](../guides/mcp-authoring.md)
 - [Building an app with s0ma over MCP — walkthrough](../walkthrough.md)
+- [Packaging a s0ma project as a wheel](../guides/packaging.md)
 - [Retrofitting an existing codebase](../guides/retrofit-existing-codebase.md)
 - [The documentation subsystem](../documentation-subsystem.md)
 - [When s0ma refuses, and how to get back to green](../guides/drift-recovery.md)
@@ -62,4 +63,4 @@ Do not reach for a forgiving mode to get a release out. The extra release requir
 
 - Topic id: `concept:strictness-mode`
 - Release: `0.19.1 (preview)`
-- Documentation snapshot: `sha256:d5bf014bad66b01b`
+- Documentation snapshot: `sha256:c9da24a3a2762814`

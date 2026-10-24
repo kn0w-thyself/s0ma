@@ -109,6 +109,12 @@
     },
     {
       "audience": "contributor",
+      "disposition": "normative-current",
+      "note": "Status: Proposed with the pull request that implements it; the owner's merge is the ruling. The build gate and an environment without the runtime packages.",
+      "path": "docs/adr/ADR-015-build-without-runtime-packages.md"
+    },
+    {
+      "audience": "contributor",
       "disposition": "generated",
       "note": "Generated index of every registered component (F4): what each one is, which layer and distribution it belongs to, and where its code is. It succeeds the hand-maintained architecture document the August 2026 audit found had stopped naming half of them. Byte-gated by `s0ma docs check`.",
       "path": "docs/architecture/component-index.md"
@@ -178,6 +184,12 @@
       "disposition": "living-authored",
       "note": "Journey guide authored at Phase E; bound to its journey through the catalog.",
       "path": "docs/guides/mcp-authoring.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "Guide to packaging a project as a wheel: the build hook, the isolated build environment and the gate, editable against wheel installs, the two build directories, and locating the build at runtime; its two listings are run by the dsl suite, and its coverage is bound in the guide-bindings suite.",
+      "path": "docs/guides/packaging.md"
     },
     {
       "audience": "user",

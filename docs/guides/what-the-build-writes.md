@@ -190,7 +190,7 @@ Lines 1 to 11 of your file became the docstring, the imports, `__all__` and the 
 - `bootstrap_imports` in `s0ma-core` loads a built project's modules in that order, the source modules only unless it is asked for more.
 - `s0ma doctor`, the MCP server's `project_status` and studi0 compare each module's recorded source fingerprint with the file as it is now, and tell you whether the module is fresh, stale or not built yet.
 
-The manifest keeps what earlier builds recorded. A module you delete keeps its entry, and its files stay in the build directory, until you run `s0ma build --clean`.
+The manifest keeps what earlier builds recorded. A module you delete keeps its entry, and its files stay in the build directory, until you run `s0ma build --clean`. A build made with `--without-runtime-packages`, the way a wheel is built, also lists under `unverified_packages` the packages its `requires:` entries name that it could not find in its environment; [Packaging a s0ma project as a wheel](packaging.md) says why.
 
 **`build.s0ma.pyi`, the type stub.** It declares every built module and a `BootstrapModules` type, so that a type checker such as mypy or pyright can check code that uses what `bootstrap_imports` returns. Nothing in s0ma reads it; it is there for your tools.
 
@@ -223,3 +223,4 @@ For edited files: move the hand edits into the .s0ma source and run `s0ma build`
 - [Your first module](first-module.md) writes a module from nothing and builds it.
 - The [canonical IR](../learn/canonical-ir.md) and [self-model](../learn/self-model.md) concept pages define the two words this page leans on.
 - [When s0ma refuses, and how to get back to green](drift-recovery.md) covers the refusals, `GENERATED_FILE_DRIFT` among them.
+- [Packaging a s0ma project as a wheel](packaging.md) ships this directory inside a wheel, built at the moment the wheel is.

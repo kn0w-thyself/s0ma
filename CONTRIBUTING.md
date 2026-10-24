@@ -159,6 +159,15 @@ degrades to warn-and-build. Re-running `check` on your own red tree does
 **not** launder NEW into PRE-EXISTING: attribution keys on the baseline's
 inherited-debt *anchor*, which is seeded at first contact and only ever
 shrinks (a failure leaves it when observed fixed, and never re-enters).
+One code is read differently on request: `MISSING_PACKAGE` depends on the
+environment the build runs in, and a wheel is built in one that holds only
+`[build-system].requires`. A build hook passes `--without-runtime-packages`
+to say so, and the build then records the `requires:` entries it could not
+find under `unverified_packages` in the manifest instead of refusing them
+as NEW, while any other new check error still refuses (an entry that names
+one of the project's own modules belongs in `uses:` and refuses as before)
+and strict or release mode refuses the flag; `docs/guides/packaging.md` walks through it, and
+`docs/adr/ADR-015-build-without-runtime-packages.md` records the decision.
 
 ## The spelling law (INV-1)
 
