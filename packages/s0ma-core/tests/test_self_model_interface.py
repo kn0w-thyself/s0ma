@@ -446,3 +446,113 @@ class TestDescribeForAgent:
         assert "code_generation" in error_msg
         assert "architectural_review" in error_msg
         assert "debugging" in error_msg
+
+
+# --- describe_component(): the operations a component provides ---
+
+
+class TestDescribeComponentOperations:
+    def test_per_operation_contracts_reach_the_description(
+        self, registry: ComponentRegistry
+    ) -> None:
+        registry.register(
+            ComponentSpec(
+                name="CodeExecutor",
+                kind=ComponentKind.SERVICE,
+                layer=Layer.INFRASTRUCTURE,
+                intent="Runs Python snippets and installs packages for the agent.",
+                metadata={
+                    "provides": ["get_spec", "pip_install"],
+                    "provides_contracts": [
+                        {"name": "get_spec", "returns": "list[ToolSpec]"},
+                        {
+                            "name": "pip_install",
+                            "expects": "a wired run_shell",
+                            "guarantees": "fails with the shell's reason when run_shell is off",
+                        },
+                    ],
+                },
+            )
+        )
+        result = SelfModelInterface(registry).describe_component("CodeExecutor")
+        assert "Operations (provides):" in result
+        assert "  - pip_install" in result
+        assert "Expects: a wired run_shell" in result
+        assert "Guarantees: fails with the shell's reason when run_shell is off" in result
+
+
+# --- framework components are listed only when asked, or when alone ---
+
+
+class TestFrameworkComponentsAreNotTheApplication:
+    def test_describe_system_lists_the_application_alone_by_default(
+        self, registry_with_user_component: ComponentRegistry
+    ) -> None:
+        smi = SelfModelInterface(registry_with_user_component)
+        text = smi.describe_system()
+        assert "User/application components: 1" in text
+        assert "Listed below: the 1 application components" in text
+        breakdown = text[
+            text.index("Components by architectural layer:"):
+            text.index("## Key Architectural Patterns")
+        ]
+        assert "PaymentProcessor" in breakdown
+        assert "ComponentRegistry" not in breakdown
+        assert "  framework:" not in breakdown
+
+    def test_include_framework_true_lists_everything(
+        self, registry_with_user_component: ComponentRegistry
+    ) -> None:
+        smi = SelfModelInterface(registry_with_user_component)
+        text = smi.describe_system(include_framework=True)
+        breakdown = text[
+            text.index("Components by architectural layer:"):
+            text.index("## Key Architectural Patterns")
+        ]
+        assert "PaymentProcessor" in breakdown
+        assert "ComponentRegistry" in breakdown
+        assert "Listed below:" not in text
+
+    def test_a_framework_only_registry_still_describes_itself(
+        self, smi: SelfModelInterface
+    ) -> None:
+        def breakdown(text: str) -> str:
+            return text[
+                text.index("Components by architectural layer:"):
+                text.index("## Key Architectural Patterns")
+            ]
+
+        text = smi.describe_system()
+        assert "ComponentRegistry" in breakdown(text)
+        assert "Listed below:" not in text
+        alone = smi.describe_system(include_framework=False)
+        summary_to_patterns = alone[
+            alone.index("## Component Summary"):alone.index("## Key Architectural Patterns")
+        ]
+        assert "No components registered." in summary_to_patterns
+        assert "ComponentRegistry" not in summary_to_patterns
+
+    def test_architecture_context_follows_the_same_rule(
+        self, registry_with_user_component: ComponentRegistry
+    ) -> None:
+        smi = SelfModelInterface(registry_with_user_component)
+        text = smi.get_architecture_context()
+        assert "This context lists the 1 application components" in text
+        assert "PaymentProcessor" in text
+        assert "## ComponentRegistry" not in text
+        graph = text[text.index("## Dependency Graph"):text.index("## Component Details")]
+        assert "PaymentProcessor -> ComponentRegistry" in graph
+        assert "ComponentRegistry ->" not in graph
+        everything = smi.get_architecture_context(include_framework=True)
+        assert "ComponentRegistry (framework, framework)" in everything
+
+    def test_debugging_context_graph_is_the_applications(
+        self, registry_with_user_component: ComponentRegistry
+    ) -> None:
+        smi = SelfModelInterface(registry_with_user_component)
+        text = smi.describe_for_agent("debugging")
+        graph = text[text.index("## Dependency Graph"):]
+        assert "PaymentProcessor -> ComponentRegistry" in graph
+        assert "ComponentRegistry ->" not in graph
+        full = smi.describe_for_agent("debugging", include_framework=True)
+        assert "ComponentRegistry ->" in full[full.index("## Dependency Graph"):]

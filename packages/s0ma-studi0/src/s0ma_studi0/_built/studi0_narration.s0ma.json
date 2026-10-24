@@ -16,7 +16,8 @@
         "schema": {
           "state": "value",
           "value": "str constant. Value: work.narrated."
-        }
+        },
+        "value": "work.narrated"
       },
       "intent": {
         "state": "value",
@@ -45,7 +46,13 @@
         "schema": {
           "state": "value",
           "value": "tuple[str, ...] constant. Value: ('orient', 'author', 'verify', 'move_on')."
-        }
+        },
+        "value": [
+          "orient",
+          "author",
+          "verify",
+          "move_on"
+        ]
       },
       "intent": {
         "state": "value",
@@ -75,7 +82,8 @@
         "schema": {
           "state": "value",
           "value": "int constant. Value: 50 — comfortably more than a page shows at once, small enough that the state document stays the cheap poll it is."
-        }
+        },
+        "value": 50
       },
       "intent": {
         "state": "value",
@@ -104,7 +112,12 @@
         "schema": {
           "state": "value",
           "value": "tuple[str, ...] constant of path segments joined against the project root. Value: ('.s0ma', 'studi0', 'active.json')."
-        }
+        },
+        "value": [
+          ".s0ma",
+          "studi0",
+          "active.json"
+        ]
       },
       "intent": {
         "state": "value",
@@ -133,7 +146,12 @@
         "schema": {
           "state": "value",
           "value": "tuple[str, ...] constant of path segments joined against the project root. Value: ('.s0ma', 'studi0', 'session.jsonl')."
-        }
+        },
+        "value": [
+          ".s0ma",
+          "studi0",
+          "session.jsonl"
+        ]
       },
       "intent": {
         "state": "value",

@@ -21,7 +21,13 @@ from s0ma_dsl.codegen.build_manifest import (
 SELF_CONTEXT_SCHEMA = "s0ma-self-context@1"
 SELF_CONTEXT_FILENAME = "self_context.json"
 SELF_PROMPT_CARD_FILENAME = "self_prompt_card.md"
-SELF_CONTEXT_GENERATION_VERSION = "1"
+#: The companion's generation. ``"1"`` carried a component's intent,
+#: dependencies and authored state fields; ``"2"`` adds, where they
+#: exist, the per-operation ``provides_contracts``, a constant cell's
+#: literal ``value`` and the component's authored and derived ``edges``.
+#: The schema name and its required members do not move: a generation-1
+#: companion stays valid to a runtime that knows generation 2.
+SELF_CONTEXT_GENERATION_VERSION = "2"
 #: The card's size contract, in UTF-8 bytes and whitespace-delimited words.
 #:
 #: The byte ceiling was 1,800 until 2026-08-30. At that number the inventory
@@ -76,7 +82,8 @@ def _authored_detail(component: dict[str, Any]) -> dict[str, Any]:
     emits the authored map verbatim and omits the key entirely when nothing
     was authored).  State-carrying fields keep their authored ``state`` form
     but are omitted when the state is ``none``, so the companion grows only
-    where something was actually authored.
+    where something was actually authored.  ``provides_contracts`` is
+    copied when at least one provided operation authored a contract.
     """
     fields = component.get("fields")
     if not isinstance(fields, dict):
@@ -89,7 +96,88 @@ def _authored_detail(component: dict[str, Any]) -> dict[str, Any]:
         value = fields.get(key)
         if isinstance(value, dict) and value.get("state") in {"value", "pending"}:
             detail[key] = value
+    # The per-operation contracts of a ``provides:`` list (0.15.0) ride the
+    # IR as a plain list of ``{"name", "returns"?, "expects"?,
+    # "guarantees"?}`` records, present only when an entry authored a
+    # contract. They are copied whole: a host answering "what does
+    # pip_install expect" must find the answer on this surface rather
+    # than in the module's canonical IR.
+    contracts = fields.get("provides_contracts")
+    if isinstance(contracts, list):
+        records = [
+            entry
+            for entry in contracts
+            if isinstance(entry, dict) and isinstance(entry.get("name"), str)
+        ]
+        if records:
+            detail["provides_contracts"] = records
+    # A CONSTANT cell's literal (``fields.value``, written only when the
+    # body assigns a simple literal) is copied as it is, null included: the
+    # key's presence is what says the build knew the value.
+    if "value" in fields:
+        detail["value"] = fields["value"]
     return detail
+
+
+def _edges_by_source(raw_edges: object) -> dict[str, list[dict[str, Any]]]:
+    """Group a module IR's authored and derived edges by source component.
+
+    ``dependencies`` keeps carrying the authored targets alone, as every
+    generation-1 reader expects. ``edges`` is the whole graph the IR has
+    for the component: each record names the ``target``, the
+    ``relation``, whether the edge was ``authored`` (``depends_on`` or a
+    standalone axon) or derived by the transpiler, the IR ``origin`` that
+    produced it and, for an authored edge, what it ``carries``. This is
+    what lets a runtime answer "what depends on X" over derived edges
+    too, so a constant's readers reach its ``impact``.
+    """
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    if not isinstance(raw_edges, dict):
+        return grouped
+    seen: set[tuple[str, str, str, bool, str]] = set()
+    for key, authored in (("authored", True), ("derived", False)):
+        entries = raw_edges.get(key, [])
+        if not isinstance(entries, list):
+            continue
+        for edge in entries:
+            if not isinstance(edge, dict):
+                continue
+            source = edge.get("source")
+            target = edge.get("target")
+            relation = edge.get("relation")
+            if not (
+                isinstance(source, str)
+                and isinstance(target, str)
+                and isinstance(relation, str)
+            ):
+                continue
+            origin = edge.get("origin")
+            origin_text = origin if isinstance(origin, str) else ""
+            identity = (source, target, relation, authored, origin_text)
+            if identity in seen:
+                continue
+            seen.add(identity)
+            record: dict[str, Any] = {
+                "target": target,
+                "relation": relation,
+                "authored": authored,
+            }
+            if origin_text:
+                record["origin"] = origin_text
+            carries = edge.get("carries")
+            if authored and isinstance(carries, str) and carries:
+                record["carries"] = carries
+            grouped.setdefault(source, []).append(record)
+    for records in grouped.values():
+        records.sort(
+            key=lambda record: (
+                str(record["target"]),
+                str(record["relation"]),
+                not bool(record["authored"]),
+                str(record.get("origin", "")),
+            )
+        )
+    return grouped
 
 
 def build_self_context_document(
@@ -121,6 +209,7 @@ def build_self_context_document(
                 target = edge.get("target")
                 if isinstance(source, str) and isinstance(target, str):
                     dependency_map.setdefault(source, set()).add(target)
+        edge_map = _edges_by_source(ir.get("edges"))
 
         raw_components = ir.get("components", [])
         if not isinstance(raw_components, list):
@@ -142,6 +231,7 @@ def build_self_context_document(
                 "layer": module_layer,
                 "intent": intent,
                 "dependencies": sorted(dependency_map.get(component_id, set())),
+                **({"edges": edge_map[component_id]} if component_id in edge_map else {}),
                 **_authored_detail(component),
             })
 
@@ -206,8 +296,12 @@ def render_self_prompt_card(document: dict[str, Any]) -> str:
     lines = [
         "# s0ma self-prompt card",
         "",
-        "Runtime adapter: `s0ma.runtime.self_inspect_adapter(...)`; commands: "
-        "`describe`, `component <name>`, `dependencies <name>`.",
+        # The five commands in 121 bytes: the card's byte ceiling is
+        # load-bearing (the authoring server's own card sits a few bytes
+        # under it), so the line names every command without spelling
+        # ``<name>`` five times.
+        "Runtime adapter `s0ma.runtime.self_inspect_adapter(...)`: describe; "
+        "component, dependencies, dependents, impact `<name>`.",
         _TRUST_INSTRUCTION,
         "Build health: unknown. Live health comes only from the runtime adapter.",
         "",

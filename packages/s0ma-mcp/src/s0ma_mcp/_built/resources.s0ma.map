@@ -12,7 +12,7 @@
         },
         "name": "SERVER_NAME",
         "output": {
-          "end_line": 43,
+          "end_line": 44,
           "start_line": 36
         },
         "source": {
@@ -23,21 +23,21 @@
       },
       {
         "body_output": {
-          "end_line": 71,
-          "start_line": 53
+          "end_line": 72,
+          "start_line": 54
         },
         "body_source": {
           "end_line": 50,
           "start_line": 31
         },
         "decorator_output": {
-          "end_line": 51,
-          "start_line": 45
+          "end_line": 52,
+          "start_line": 46
         },
         "name": "GuideDoc",
         "output": {
-          "end_line": 71,
-          "start_line": 45
+          "end_line": 72,
+          "start_line": 46
         },
         "source": {
           "end_line": 50,
@@ -47,8 +47,8 @@
       },
       {
         "body_output": {
-          "end_line": 137,
-          "start_line": 73
+          "end_line": 138,
+          "start_line": 74
         },
         "body_source": {
           "end_line": 124,
@@ -56,8 +56,8 @@
         },
         "name": "GUIDE_DOCS",
         "output": {
-          "end_line": 144,
-          "start_line": 73
+          "end_line": 145,
+          "start_line": 74
         },
         "source": {
           "end_line": 124,
@@ -67,21 +67,21 @@
       },
       {
         "body_output": {
-          "end_line": 179,
-          "start_line": 159
+          "end_line": 180,
+          "start_line": 160
         },
         "body_source": {
           "end_line": 168,
           "start_line": 147
         },
         "decorator_output": {
-          "end_line": 157,
-          "start_line": 146
+          "end_line": 158,
+          "start_line": 147
         },
         "name": "load_doc",
         "output": {
-          "end_line": 179,
-          "start_line": 146
+          "end_line": 180,
+          "start_line": 147
         },
         "source": {
           "end_line": 168,
@@ -91,21 +91,21 @@
       },
       {
         "body_output": {
-          "end_line": 200,
-          "start_line": 194
+          "end_line": 201,
+          "start_line": 195
         },
         "body_source": {
           "end_line": 200,
           "start_line": 193
         },
         "decorator_output": {
-          "end_line": 192,
-          "start_line": 181
+          "end_line": 193,
+          "start_line": 182
         },
         "name": "system_prompt_resource",
         "output": {
-          "end_line": 200,
-          "start_line": 181
+          "end_line": 201,
+          "start_line": 182
         },
         "source": {
           "end_line": 200,
@@ -115,21 +115,21 @@
       },
       {
         "body_output": {
-          "end_line": 222,
-          "start_line": 215
+          "end_line": 223,
+          "start_line": 216
         },
         "body_source": {
           "end_line": 233,
           "start_line": 225
         },
         "decorator_output": {
-          "end_line": 213,
-          "start_line": 202
+          "end_line": 214,
+          "start_line": 203
         },
         "name": "getting_started_resource",
         "output": {
-          "end_line": 222,
-          "start_line": 202
+          "end_line": 223,
+          "start_line": 203
         },
         "source": {
           "end_line": 233,
@@ -139,21 +139,21 @@
       },
       {
         "body_output": {
-          "end_line": 248,
-          "start_line": 237
+          "end_line": 249,
+          "start_line": 238
         },
         "body_source": {
           "end_line": 270,
           "start_line": 258
         },
         "decorator_output": {
-          "end_line": 235,
-          "start_line": 224
+          "end_line": 236,
+          "start_line": 225
         },
         "name": "survival_card_resource",
         "output": {
-          "end_line": 248,
-          "start_line": 224
+          "end_line": 249,
+          "start_line": 225
         },
         "source": {
           "end_line": 270,
@@ -163,21 +163,21 @@
       },
       {
         "body_output": {
-          "end_line": 270,
-          "start_line": 263
+          "end_line": 271,
+          "start_line": 264
         },
         "body_source": {
           "end_line": 303,
           "start_line": 295
         },
         "decorator_output": {
-          "end_line": 261,
-          "start_line": 250
+          "end_line": 262,
+          "start_line": 251
         },
         "name": "self_prompting_resource",
         "output": {
-          "end_line": 270,
-          "start_line": 250
+          "end_line": 271,
+          "start_line": 251
         },
         "source": {
           "end_line": 303,
@@ -187,21 +187,21 @@
       },
       {
         "body_output": {
-          "end_line": 298,
-          "start_line": 285
+          "end_line": 299,
+          "start_line": 286
         },
         "body_source": {
           "end_line": 343,
           "start_line": 329
         },
         "decorator_output": {
-          "end_line": 283,
-          "start_line": 272
+          "end_line": 284,
+          "start_line": 273
         },
         "name": "quick_reference_resource",
         "output": {
-          "end_line": 298,
-          "start_line": 272
+          "end_line": 299,
+          "start_line": 273
         },
         "source": {
           "end_line": 343,
@@ -211,21 +211,21 @@
       },
       {
         "body_output": {
-          "end_line": 323,
-          "start_line": 313
+          "end_line": 324,
+          "start_line": 314
         },
         "body_source": {
           "end_line": 380,
           "start_line": 369
         },
         "decorator_output": {
-          "end_line": 311,
-          "start_line": 300
+          "end_line": 312,
+          "start_line": 301
         },
         "name": "quick_reference_machine_resource",
         "output": {
-          "end_line": 323,
-          "start_line": 300
+          "end_line": 324,
+          "start_line": 301
         },
         "source": {
           "end_line": 380,
@@ -235,21 +235,21 @@
       },
       {
         "body_output": {
-          "end_line": 345,
-          "start_line": 338
+          "end_line": 346,
+          "start_line": 339
         },
         "body_source": {
           "end_line": 413,
           "start_line": 405
         },
         "decorator_output": {
-          "end_line": 336,
-          "start_line": 325
+          "end_line": 337,
+          "start_line": 326
         },
         "name": "patterns_resource",
         "output": {
-          "end_line": 345,
-          "start_line": 325
+          "end_line": 346,
+          "start_line": 326
         },
         "source": {
           "end_line": 413,
@@ -259,21 +259,21 @@
       },
       {
         "body_output": {
-          "end_line": 366,
-          "start_line": 360
+          "end_line": 367,
+          "start_line": 361
         },
         "body_source": {
           "end_line": 445,
           "start_line": 438
         },
         "decorator_output": {
-          "end_line": 358,
-          "start_line": 347
+          "end_line": 359,
+          "start_line": 348
         },
         "name": "spec_resource",
         "output": {
-          "end_line": 366,
-          "start_line": 347
+          "end_line": 367,
+          "start_line": 348
         },
         "source": {
           "end_line": 445,
@@ -283,21 +283,21 @@
       },
       {
         "body_output": {
-          "end_line": 390,
-          "start_line": 381
+          "end_line": 391,
+          "start_line": 382
         },
         "body_source": {
           "end_line": 480,
           "start_line": 470
         },
         "decorator_output": {
-          "end_line": 379,
-          "start_line": 368
+          "end_line": 380,
+          "start_line": 369
         },
         "name": "errors_resource",
         "output": {
-          "end_line": 390,
-          "start_line": 368
+          "end_line": 391,
+          "start_line": 369
         },
         "source": {
           "end_line": 480,
@@ -307,21 +307,21 @@
       },
       {
         "body_output": {
-          "end_line": 413,
-          "start_line": 405
+          "end_line": 414,
+          "start_line": 406
         },
         "body_source": {
           "end_line": 514,
           "start_line": 505
         },
         "decorator_output": {
-          "end_line": 403,
-          "start_line": 392
+          "end_line": 404,
+          "start_line": 393
         },
         "name": "changelog_resource",
         "output": {
-          "end_line": 413,
-          "start_line": 392
+          "end_line": 414,
+          "start_line": 393
         },
         "source": {
           "end_line": 514,
@@ -331,8 +331,8 @@
       },
       {
         "body_output": {
-          "end_line": 422,
-          "start_line": 417
+          "end_line": 423,
+          "start_line": 418
         },
         "body_source": {
           "end_line": 524,
@@ -340,8 +340,8 @@
         },
         "name": "_dist_version",
         "output": {
-          "end_line": 422,
-          "start_line": 415
+          "end_line": 423,
+          "start_line": 416
         },
         "source": {
           "end_line": 524,
@@ -351,21 +351,21 @@
       },
       {
         "body_output": {
-          "end_line": 454,
-          "start_line": 438
+          "end_line": 455,
+          "start_line": 439
         },
         "body_source": {
           "end_line": 564,
           "start_line": 547
         },
         "decorator_output": {
-          "end_line": 436,
-          "start_line": 424
+          "end_line": 437,
+          "start_line": 425
         },
         "name": "version_document",
         "output": {
-          "end_line": 454,
-          "start_line": 424
+          "end_line": 455,
+          "start_line": 425
         },
         "source": {
           "end_line": 564,
@@ -375,21 +375,21 @@
       },
       {
         "body_output": {
-          "end_line": 481,
-          "start_line": 470
+          "end_line": 482,
+          "start_line": 471
         },
         "body_source": {
           "end_line": 602,
           "start_line": 590
         },
         "decorator_output": {
-          "end_line": 468,
-          "start_line": 456
+          "end_line": 469,
+          "start_line": 457
         },
         "name": "version_resource",
         "output": {
-          "end_line": 481,
-          "start_line": 456
+          "end_line": 482,
+          "start_line": 457
         },
         "source": {
           "end_line": 602,
@@ -399,21 +399,21 @@
       },
       {
         "body_output": {
-          "end_line": 507,
-          "start_line": 496
+          "end_line": 508,
+          "start_line": 497
         },
         "body_source": {
           "end_line": 639,
           "start_line": 627
         },
         "decorator_output": {
-          "end_line": 494,
-          "start_line": 483
+          "end_line": 495,
+          "start_line": 484
         },
         "name": "self_model_resource",
         "output": {
-          "end_line": 507,
-          "start_line": 483
+          "end_line": 508,
+          "start_line": 484
         },
         "source": {
           "end_line": 639,
@@ -423,8 +423,8 @@
       },
       {
         "body_output": {
-          "end_line": 722,
-          "start_line": 511
+          "end_line": 723,
+          "start_line": 512
         },
         "body_source": {
           "end_line": 852,
@@ -432,8 +432,8 @@
         },
         "name": "_render_runbook",
         "output": {
-          "end_line": 722,
-          "start_line": 509
+          "end_line": 723,
+          "start_line": 510
         },
         "source": {
           "end_line": 852,
@@ -443,21 +443,21 @@
       },
       {
         "body_output": {
-          "end_line": 750,
-          "start_line": 736
+          "end_line": 751,
+          "start_line": 737
         },
         "body_source": {
           "end_line": 892,
           "start_line": 877
         },
         "decorator_output": {
-          "end_line": 734,
-          "start_line": 724
+          "end_line": 735,
+          "start_line": 725
         },
         "name": "runbook_resource",
         "output": {
-          "end_line": 750,
-          "start_line": 724
+          "end_line": 751,
+          "start_line": 725
         },
         "source": {
           "end_line": 892,
@@ -467,8 +467,8 @@
       },
       {
         "body_output": {
-          "end_line": 752,
-          "start_line": 752
+          "end_line": 753,
+          "start_line": 753
         },
         "body_source": {
           "end_line": 902,
@@ -476,8 +476,8 @@
         },
         "name": "DOCS_MODEL_FILENAME",
         "output": {
-          "end_line": 759,
-          "start_line": 752
+          "end_line": 761,
+          "start_line": 753
         },
         "source": {
           "end_line": 902,
@@ -487,8 +487,8 @@
       },
       {
         "body_output": {
-          "end_line": 761,
-          "start_line": 761
+          "end_line": 763,
+          "start_line": 763
         },
         "body_source": {
           "end_line": 912,
@@ -496,8 +496,8 @@
         },
         "name": "DOCS_MODEL_SOURCE",
         "output": {
-          "end_line": 768,
-          "start_line": 761
+          "end_line": 771,
+          "start_line": 763
         },
         "source": {
           "end_line": 912,
@@ -507,8 +507,8 @@
       },
       {
         "body_output": {
-          "end_line": 770,
-          "start_line": 770
+          "end_line": 773,
+          "start_line": 773
         },
         "body_source": {
           "end_line": 922,
@@ -516,8 +516,8 @@
         },
         "name": "DOCS_ROOT",
         "output": {
-          "end_line": 777,
-          "start_line": 770
+          "end_line": 781,
+          "start_line": 773
         },
         "source": {
           "end_line": 922,
@@ -527,8 +527,8 @@
       },
       {
         "body_output": {
-          "end_line": 779,
-          "start_line": 779
+          "end_line": 783,
+          "start_line": 783
         },
         "body_source": {
           "end_line": 932,
@@ -536,8 +536,8 @@
         },
         "name": "DOCS_MAP_PAGE",
         "output": {
-          "end_line": 786,
-          "start_line": 779
+          "end_line": 791,
+          "start_line": 783
         },
         "source": {
           "end_line": 932,
@@ -547,8 +547,8 @@
       },
       {
         "body_output": {
-          "end_line": 788,
-          "start_line": 788
+          "end_line": 793,
+          "start_line": 793
         },
         "body_source": {
           "end_line": 942,
@@ -556,8 +556,8 @@
         },
         "name": "DOCS_SURFACES_PAGE",
         "output": {
-          "end_line": 795,
-          "start_line": 788
+          "end_line": 801,
+          "start_line": 793
         },
         "source": {
           "end_line": 942,
@@ -567,8 +567,8 @@
       },
       {
         "body_output": {
-          "end_line": 809,
-          "start_line": 797
+          "end_line": 815,
+          "start_line": 803
         },
         "body_source": {
           "end_line": 964,
@@ -576,8 +576,8 @@
         },
         "name": "DOCS_CATEGORY_WORDS",
         "output": {
-          "end_line": 816,
-          "start_line": 797
+          "end_line": 822,
+          "start_line": 803
         },
         "source": {
           "end_line": 964,
@@ -587,21 +587,21 @@
       },
       {
         "body_output": {
-          "end_line": 843,
-          "start_line": 831
+          "end_line": 849,
+          "start_line": 837
         },
         "body_source": {
           "end_line": 1000,
           "start_line": 987
         },
         "decorator_output": {
-          "end_line": 829,
-          "start_line": 818
+          "end_line": 835,
+          "start_line": 824
         },
         "name": "load_docs_model",
         "output": {
-          "end_line": 843,
-          "start_line": 818
+          "end_line": 849,
+          "start_line": 824
         },
         "source": {
           "end_line": 1000,
@@ -611,8 +611,8 @@
       },
       {
         "body_output": {
-          "end_line": 851,
-          "start_line": 847
+          "end_line": 857,
+          "start_line": 853
         },
         "body_source": {
           "end_line": 1008,
@@ -620,8 +620,8 @@
         },
         "name": "_docs_bundle_cached",
         "output": {
-          "end_line": 851,
-          "start_line": 845
+          "end_line": 857,
+          "start_line": 851
         },
         "source": {
           "end_line": 1008,
@@ -631,8 +631,8 @@
       },
       {
         "body_output": {
-          "end_line": 860,
-          "start_line": 855
+          "end_line": 866,
+          "start_line": 861
         },
         "body_source": {
           "end_line": 1017,
@@ -640,8 +640,8 @@
         },
         "name": "_docs_index_cached",
         "output": {
-          "end_line": 860,
-          "start_line": 853
+          "end_line": 866,
+          "start_line": 859
         },
         "source": {
           "end_line": 1017,
@@ -651,21 +651,21 @@
       },
       {
         "body_output": {
-          "end_line": 882,
-          "start_line": 875
+          "end_line": 888,
+          "start_line": 881
         },
         "body_source": {
           "end_line": 1047,
           "start_line": 1039
         },
         "decorator_output": {
-          "end_line": 873,
-          "start_line": 862
+          "end_line": 879,
+          "start_line": 868
         },
         "name": "docs_bundle",
         "output": {
-          "end_line": 882,
-          "start_line": 862
+          "end_line": 888,
+          "start_line": 868
         },
         "source": {
           "end_line": 1047,
@@ -675,21 +675,21 @@
       },
       {
         "body_output": {
-          "end_line": 903,
-          "start_line": 896
+          "end_line": 909,
+          "start_line": 902
         },
         "body_source": {
           "end_line": 1077,
           "start_line": 1069
         },
         "decorator_output": {
-          "end_line": 894,
-          "start_line": 884
+          "end_line": 900,
+          "start_line": 890
         },
         "name": "docs_topic_index",
         "output": {
-          "end_line": 903,
-          "start_line": 884
+          "end_line": 909,
+          "start_line": 890
         },
         "source": {
           "end_line": 1077,
@@ -699,21 +699,21 @@
       },
       {
         "body_output": {
-          "end_line": 939,
-          "start_line": 919
+          "end_line": 945,
+          "start_line": 925
         },
         "body_source": {
           "end_line": 1121,
           "start_line": 1100
         },
         "decorator_output": {
-          "end_line": 917,
-          "start_line": 905
+          "end_line": 923,
+          "start_line": 911
         },
         "name": "docs_snapshot_identity",
         "output": {
-          "end_line": 939,
-          "start_line": 905
+          "end_line": 945,
+          "start_line": 911
         },
         "source": {
           "end_line": 1121,
@@ -723,21 +723,21 @@
       },
       {
         "body_output": {
-          "end_line": 1001,
-          "start_line": 955
+          "end_line": 1007,
+          "start_line": 961
         },
         "body_source": {
           "end_line": 1191,
           "start_line": 1147
         },
         "decorator_output": {
-          "end_line": 953,
-          "start_line": 941
+          "end_line": 959,
+          "start_line": 947
         },
         "name": "docs_page_for",
         "output": {
-          "end_line": 1001,
-          "start_line": 941
+          "end_line": 1007,
+          "start_line": 947
         },
         "source": {
           "end_line": 1191,
@@ -747,21 +747,21 @@
       },
       {
         "body_output": {
-          "end_line": 1036,
-          "start_line": 1016
+          "end_line": 1042,
+          "start_line": 1022
         },
         "body_source": {
           "end_line": 1235,
           "start_line": 1214
         },
         "decorator_output": {
-          "end_line": 1014,
-          "start_line": 1003
+          "end_line": 1020,
+          "start_line": 1009
         },
         "name": "docs_journey_steps",
         "output": {
-          "end_line": 1036,
-          "start_line": 1003
+          "end_line": 1042,
+          "start_line": 1009
         },
         "source": {
           "end_line": 1235,
@@ -771,21 +771,21 @@
       },
       {
         "body_output": {
-          "end_line": 1069,
-          "start_line": 1051
+          "end_line": 1075,
+          "start_line": 1057
         },
         "body_source": {
           "end_line": 1277,
           "start_line": 1258
         },
         "decorator_output": {
-          "end_line": 1049,
-          "start_line": 1038
+          "end_line": 1055,
+          "start_line": 1044
         },
         "name": "docs_journey_recovery",
         "output": {
-          "end_line": 1069,
-          "start_line": 1038
+          "end_line": 1075,
+          "start_line": 1044
         },
         "source": {
           "end_line": 1277,
@@ -795,8 +795,8 @@
       },
       {
         "body_output": {
-          "end_line": 1090,
-          "start_line": 1073
+          "end_line": 1096,
+          "start_line": 1079
         },
         "body_source": {
           "end_line": 1299,
@@ -804,8 +804,8 @@
         },
         "name": "_docs_category_lines",
         "output": {
-          "end_line": 1090,
-          "start_line": 1071
+          "end_line": 1096,
+          "start_line": 1077
         },
         "source": {
           "end_line": 1299,
@@ -815,8 +815,8 @@
       },
       {
         "body_output": {
-          "end_line": 1107,
-          "start_line": 1094
+          "end_line": 1113,
+          "start_line": 1100
         },
         "body_source": {
           "end_line": 1317,
@@ -824,8 +824,8 @@
         },
         "name": "_docs_alias_lines",
         "output": {
-          "end_line": 1107,
-          "start_line": 1092
+          "end_line": 1113,
+          "start_line": 1098
         },
         "source": {
           "end_line": 1317,
@@ -835,21 +835,21 @@
       },
       {
         "body_output": {
-          "end_line": 1174,
-          "start_line": 1123
+          "end_line": 1180,
+          "start_line": 1129
         },
         "body_source": {
           "end_line": 1396,
           "start_line": 1344
         },
         "decorator_output": {
-          "end_line": 1121,
-          "start_line": 1109
+          "end_line": 1127,
+          "start_line": 1115
         },
         "name": "docs_index_resource",
         "output": {
-          "end_line": 1174,
-          "start_line": 1109
+          "end_line": 1180,
+          "start_line": 1115
         },
         "source": {
           "end_line": 1396,
@@ -859,21 +859,21 @@
       },
       {
         "body_output": {
-          "end_line": 1213,
-          "start_line": 1189
+          "end_line": 1219,
+          "start_line": 1195
         },
         "body_source": {
           "end_line": 1448,
           "start_line": 1423
         },
         "decorator_output": {
-          "end_line": 1187,
-          "start_line": 1176
+          "end_line": 1193,
+          "start_line": 1182
         },
         "name": "docs_concepts_resource",
         "output": {
-          "end_line": 1213,
-          "start_line": 1176
+          "end_line": 1219,
+          "start_line": 1182
         },
         "source": {
           "end_line": 1448,
@@ -883,21 +883,21 @@
       },
       {
         "body_output": {
-          "end_line": 1266,
-          "start_line": 1228
+          "end_line": 1272,
+          "start_line": 1234
         },
         "body_source": {
           "end_line": 1515,
           "start_line": 1476
         },
         "decorator_output": {
-          "end_line": 1226,
-          "start_line": 1215
+          "end_line": 1232,
+          "start_line": 1221
         },
         "name": "docs_journeys_resource",
         "output": {
-          "end_line": 1266,
-          "start_line": 1215
+          "end_line": 1272,
+          "start_line": 1221
         },
         "source": {
           "end_line": 1515,
@@ -907,8 +907,8 @@
       },
       {
         "body_output": {
-          "end_line": 1292,
-          "start_line": 1270
+          "end_line": 1298,
+          "start_line": 1276
         },
         "body_source": {
           "end_line": 1546,
@@ -916,8 +916,8 @@
         },
         "name": "test_guide_resources_serve_packaged_documents",
         "output": {
-          "end_line": 1299,
-          "start_line": 1268
+          "end_line": 1305,
+          "start_line": 1274
         },
         "source": {
           "end_line": 1546,
@@ -927,8 +927,8 @@
       },
       {
         "body_output": {
-          "end_line": 1313,
-          "start_line": 1303
+          "end_line": 1319,
+          "start_line": 1309
         },
         "body_source": {
           "end_line": 1565,
@@ -936,8 +936,8 @@
         },
         "name": "test_meta_resources_render_live_documents",
         "output": {
-          "end_line": 1320,
-          "start_line": 1301
+          "end_line": 1326,
+          "start_line": 1307
         },
         "source": {
           "end_line": 1565,
@@ -947,8 +947,8 @@
       },
       {
         "body_output": {
-          "end_line": 1332,
-          "start_line": 1324
+          "end_line": 1338,
+          "start_line": 1330
         },
         "body_source": {
           "end_line": 1582,
@@ -956,8 +956,8 @@
         },
         "name": "test_runbook_resource_serves",
         "output": {
-          "end_line": 1339,
-          "start_line": 1322
+          "end_line": 1345,
+          "start_line": 1328
         },
         "source": {
           "end_line": 1582,
@@ -967,8 +967,8 @@
       },
       {
         "body_output": {
-          "end_line": 1356,
-          "start_line": 1343
+          "end_line": 1362,
+          "start_line": 1349
         },
         "body_source": {
           "end_line": 1674,
@@ -976,8 +976,8 @@
         },
         "name": "test_docs_snapshot_surfaces_answer_from_package_data",
         "output": {
-          "end_line": 1433,
-          "start_line": 1341
+          "end_line": 1439,
+          "start_line": 1347
         },
         "source": {
           "end_line": 1674,

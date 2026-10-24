@@ -413,3 +413,123 @@ class TestFormatContractsText:
         assert "Preconditions:" in result
         # But not configurable properties
         assert "Configurable Properties:" not in result
+
+
+# --- format_component_detail: the operations a component provides ---
+
+
+class TestFormatComponentDetailOperations:
+    """The ``provides:`` list and its per-operation contracts reach the text."""
+
+    @pytest.fixture
+    def executor_spec(self) -> ComponentSpec:
+        return _make_spec(
+            name="CodeExecutor",
+            kind=ComponentKind.SERVICE,
+            layer=Layer.INFRASTRUCTURE,
+            intent="Runs Python snippets and installs packages for the agent.",
+            metadata={
+                "provides": ["get_spec", "pip_install"],
+                "provides_contracts": [
+                    {"name": "get_spec", "returns": "list[ToolSpec]"},
+                    {
+                        "name": "pip_install",
+                        "expects": "a wired run_shell",
+                        "guarantees": "fails with the shell's reason when run_shell is off",
+                        "returns": "ToolResult",
+                    },
+                ],
+            },
+        )
+
+    def test_lists_every_operation_under_one_heading(
+        self, executor_spec: ComponentSpec
+    ) -> None:
+        result = format_component_detail(executor_spec)
+        assert "Operations (provides):" in result
+        assert "  - get_spec" in result
+        assert "  - pip_install" in result
+
+    def test_prints_each_operation_contract_under_its_operation(
+        self, executor_spec: ComponentSpec
+    ) -> None:
+        result = format_component_detail(executor_spec)
+        pip = result.index("  - pip_install")
+        assert result.index("Expects: a wired run_shell") > pip
+        assert result.index(
+            "Guarantees: fails with the shell's reason when run_shell is off"
+        ) > pip
+        assert result.index("Returns: ToolResult") > pip
+        # get_spec authored only a return type; nothing is invented for it.
+        get_spec = result.index("  - get_spec")
+        assert "Expects" not in result[get_spec:pip]
+        assert "Returns: list[ToolSpec]" in result[get_spec:pip]
+
+    def test_flat_provides_list_prints_names_alone(self) -> None:
+        spec = _make_spec(
+            name="WebBrowser",
+            kind=ComponentKind.SERVICE,
+            layer=Layer.INFRASTRUCTURE,
+            intent="Fetches pages and searches the web for the agent.",
+            metadata={"provides": ["fetch_url", "web_search"]},
+        )
+        result = format_component_detail(spec)
+        assert "Operations (provides):" in result
+        assert "  - fetch_url" in result
+        assert "Expects:" not in result
+
+    def test_component_without_operations_has_no_heading(
+        self, simple_spec: ComponentSpec
+    ) -> None:
+        assert "Operations" not in format_component_detail(simple_spec)
+
+
+# --- constants print their value ---
+
+
+class TestFormatConstantValue:
+    @pytest.fixture
+    def floor_spec(self) -> ComponentSpec:
+        return _make_spec(
+            name="MIN_INTERVAL_SECONDS",
+            kind=ComponentKind.MODEL,
+            layer=Layer.APPLICATION,
+            intent="Hard floor for interval triggers, in seconds.",
+            metadata={"kind_detail": "CONSTANT", "value": 60},
+        )
+
+    def test_detail_prints_the_value(self, floor_spec: ComponentSpec) -> None:
+        result = format_component_detail(floor_spec)
+        assert "Value: 60" in result
+
+    def test_summary_prints_the_value(self, floor_spec: ComponentSpec) -> None:
+        assert "  Value: 60" in format_component_summary(floor_spec)
+
+    def test_null_and_lists_print_as_json(self) -> None:
+        none_spec = _make_spec(
+            name="OPTIONAL",
+            kind=ComponentKind.MODEL,
+            layer=Layer.APPLICATION,
+            intent="An unset default, carried as null.",
+            metadata={"kind_detail": "CONSTANT", "value": None},
+        )
+        assert "Value: null" in format_component_detail(none_spec)
+        list_spec = _make_spec(
+            name="SUFFIXES",
+            kind=ComponentKind.MODEL,
+            layer=Layer.APPLICATION,
+            intent="Artifact suffixes a build emits per source.",
+            metadata={"kind_detail": "CONSTANT", "value": [".py", ".s0ma.json"]},
+        )
+        assert 'Value: [".py", ".s0ma.json"]' in format_component_detail(list_spec)
+
+    def test_no_value_line_without_a_carried_literal(self) -> None:
+        spec = _make_spec(
+            name="COMPUTED",
+            kind=ComponentKind.MODEL,
+            layer=Layer.APPLICATION,
+            intent="A constant computed at import time.",
+            metadata={"kind_detail": "CONSTANT"},
+        )
+        assert "Value:" not in format_component_detail(spec)
+        assert "Value:" not in format_component_summary(spec)

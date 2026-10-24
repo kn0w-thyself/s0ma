@@ -6,7 +6,7 @@ This is the page s0ma writes about the thing that writes its pages. Everything b
 
 That last sentence is the point of the page. A documentation build that could not describe its own readings would be asking a reader to take on faith exactly the property the product exists to make checkable, so the account is generated from the build rather than written beside it, and it is byte-compared like every other output here.
 
-This page describes the build stamped `sha256:2607b8d0896aa97d` at version `0.19.1 (preview)`. What each of those 67 files came out as, with the digest of its exact bytes, is in [`docs/_generated/docs-manifest.json`](../_generated/docs-manifest.json).
+This page describes the build stamped `sha256:4ebb3236461ceea1` at version `0.19.1 (preview)`. What each of those 67 files came out as, with the digest of its exact bytes, is in [`docs/_generated/docs-manifest.json`](../_generated/docs-manifest.json).
 
 ## Contents
 

@@ -32,7 +32,7 @@
         },
         "name": "_ARTIFACT_SUFFIXES",
         "output": {
-          "end_line": 66,
+          "end_line": 67,
           "start_line": 59
         },
         "source": {
@@ -43,8 +43,8 @@
       },
       {
         "body_output": {
-          "end_line": 68,
-          "start_line": 68
+          "end_line": 69,
+          "start_line": 69
         },
         "body_source": {
           "end_line": 41,
@@ -52,8 +52,8 @@
         },
         "name": "_MANIFEST_NAME",
         "output": {
-          "end_line": 75,
-          "start_line": 68
+          "end_line": 77,
+          "start_line": 69
         },
         "source": {
           "end_line": 41,
@@ -63,8 +63,8 @@
       },
       {
         "body_output": {
-          "end_line": 77,
-          "start_line": 77
+          "end_line": 79,
+          "start_line": 79
         },
         "body_source": {
           "end_line": 51,
@@ -72,8 +72,8 @@
         },
         "name": "_TOOL_RESULT_SCHEMA",
         "output": {
-          "end_line": 84,
-          "start_line": 77
+          "end_line": 87,
+          "start_line": 79
         },
         "source": {
           "end_line": 51,
@@ -83,8 +83,8 @@
       },
       {
         "body_output": {
-          "end_line": 88,
-          "start_line": 86
+          "end_line": 91,
+          "start_line": 89
         },
         "body_source": {
           "end_line": 63,
@@ -92,8 +92,8 @@
         },
         "name": "_DERIVED_BANNER",
         "output": {
-          "end_line": 95,
-          "start_line": 86
+          "end_line": 99,
+          "start_line": 89
         },
         "source": {
           "end_line": 63,
@@ -103,8 +103,8 @@
       },
       {
         "body_output": {
-          "end_line": 101,
-          "start_line": 97
+          "end_line": 105,
+          "start_line": 101
         },
         "body_source": {
           "end_line": 77,
@@ -112,8 +112,8 @@
         },
         "name": "_TOOLCHAIN_NOTE",
         "output": {
-          "end_line": 108,
-          "start_line": 97
+          "end_line": 113,
+          "start_line": 101
         },
         "source": {
           "end_line": 77,
@@ -123,8 +123,8 @@
       },
       {
         "body_output": {
-          "end_line": 148,
-          "start_line": 110
+          "end_line": 153,
+          "start_line": 115
         },
         "body_source": {
           "end_line": 125,
@@ -132,8 +132,8 @@
         },
         "name": "_SURVIVAL_RULES",
         "output": {
-          "end_line": 155,
-          "start_line": 110
+          "end_line": 160,
+          "start_line": 115
         },
         "source": {
           "end_line": 125,
@@ -143,8 +143,8 @@
       },
       {
         "body_output": {
-          "end_line": 163,
-          "start_line": 157
+          "end_line": 168,
+          "start_line": 162
         },
         "body_source": {
           "end_line": 141,
@@ -152,8 +152,8 @@
         },
         "name": "_DOCS_RULE",
         "output": {
-          "end_line": 170,
-          "start_line": 157
+          "end_line": 176,
+          "start_line": 162
         },
         "source": {
           "end_line": 141,
@@ -163,8 +163,8 @@
       },
       {
         "body_output": {
-          "end_line": 217,
-          "start_line": 174
+          "end_line": 223,
+          "start_line": 180
         },
         "body_source": {
           "end_line": 190,
@@ -172,8 +172,8 @@
         },
         "name": "_process_alive",
         "output": {
-          "end_line": 217,
-          "start_line": 172
+          "end_line": 223,
+          "start_line": 178
         },
         "source": {
           "end_line": 190,
@@ -183,8 +183,8 @@
       },
       {
         "body_output": {
-          "end_line": 249,
-          "start_line": 221
+          "end_line": 255,
+          "start_line": 227
         },
         "body_source": {
           "end_line": 224,
@@ -192,8 +192,8 @@
         },
         "name": "_studi0_watching",
         "output": {
-          "end_line": 249,
-          "start_line": 219
+          "end_line": 255,
+          "start_line": 225
         },
         "source": {
           "end_line": 224,
@@ -203,8 +203,8 @@
       },
       {
         "body_output": {
-          "end_line": 272,
-          "start_line": 253
+          "end_line": 278,
+          "start_line": 259
         },
         "body_source": {
           "end_line": 249,
@@ -212,8 +212,8 @@
         },
         "name": "_feedback_offers_enabled",
         "output": {
-          "end_line": 272,
-          "start_line": 251
+          "end_line": 278,
+          "start_line": 257
         },
         "source": {
           "end_line": 249,
@@ -223,8 +223,8 @@
       },
       {
         "body_output": {
-          "end_line": 316,
-          "start_line": 276
+          "end_line": 322,
+          "start_line": 282
         },
         "body_source": {
           "end_line": 295,
@@ -232,8 +232,8 @@
         },
         "name": "_survival_rules",
         "output": {
-          "end_line": 316,
-          "start_line": 274
+          "end_line": 322,
+          "start_line": 280
         },
         "source": {
           "end_line": 295,
@@ -243,8 +243,8 @@
       },
       {
         "body_output": {
-          "end_line": 329,
-          "start_line": 320
+          "end_line": 335,
+          "start_line": 326
         },
         "body_source": {
           "end_line": 309,
@@ -252,8 +252,8 @@
         },
         "name": "_tool_arguments",
         "output": {
-          "end_line": 329,
-          "start_line": 318
+          "end_line": 335,
+          "start_line": 324
         },
         "source": {
           "end_line": 309,
@@ -263,8 +263,8 @@
       },
       {
         "body_output": {
-          "end_line": 429,
-          "start_line": 333
+          "end_line": 435,
+          "start_line": 339
         },
         "body_source": {
           "end_line": 410,
@@ -272,8 +272,8 @@
         },
         "name": "_default_next_actions",
         "output": {
-          "end_line": 429,
-          "start_line": 331
+          "end_line": 435,
+          "start_line": 337
         },
         "source": {
           "end_line": 410,
@@ -283,8 +283,8 @@
       },
       {
         "body_output": {
-          "end_line": 483,
-          "start_line": 433
+          "end_line": 489,
+          "start_line": 439
         },
         "body_source": {
           "end_line": 465,
@@ -292,8 +292,8 @@
         },
         "name": "_finalize_tool_result",
         "output": {
-          "end_line": 483,
-          "start_line": 431
+          "end_line": 489,
+          "start_line": 437
         },
         "source": {
           "end_line": 465,
@@ -303,8 +303,8 @@
       },
       {
         "body_output": {
-          "end_line": 507,
-          "start_line": 487
+          "end_line": 513,
+          "start_line": 493
         },
         "body_source": {
           "end_line": 491,
@@ -312,8 +312,8 @@
         },
         "name": "_safe",
         "output": {
-          "end_line": 507,
-          "start_line": 485
+          "end_line": 513,
+          "start_line": 491
         },
         "source": {
           "end_line": 491,
@@ -323,21 +323,21 @@
       },
       {
         "body_output": {
-          "end_line": 536,
-          "start_line": 522
+          "end_line": 542,
+          "start_line": 528
         },
         "body_source": {
           "end_line": 529,
           "start_line": 515
         },
         "decorator_output": {
-          "end_line": 520,
-          "start_line": 509
+          "end_line": 526,
+          "start_line": 515
         },
         "name": "_run_cli",
         "output": {
-          "end_line": 536,
-          "start_line": 509
+          "end_line": 542,
+          "start_line": 515
         },
         "source": {
           "end_line": 529,
@@ -347,8 +347,8 @@
       },
       {
         "body_output": {
-          "end_line": 553,
-          "start_line": 540
+          "end_line": 559,
+          "start_line": 546
         },
         "body_source": {
           "end_line": 548,
@@ -356,8 +356,8 @@
         },
         "name": "_parse_json_payload",
         "output": {
-          "end_line": 553,
-          "start_line": 538
+          "end_line": 559,
+          "start_line": 544
         },
         "source": {
           "end_line": 548,
@@ -367,8 +367,8 @@
       },
       {
         "body_output": {
-          "end_line": 565,
-          "start_line": 557
+          "end_line": 571,
+          "start_line": 563
         },
         "body_source": {
           "end_line": 561,
@@ -376,8 +376,8 @@
         },
         "name": "_resolve_root",
         "output": {
-          "end_line": 565,
-          "start_line": 555
+          "end_line": 571,
+          "start_line": 561
         },
         "source": {
           "end_line": 561,
@@ -387,8 +387,8 @@
       },
       {
         "body_output": {
-          "end_line": 574,
-          "start_line": 569
+          "end_line": 580,
+          "start_line": 575
         },
         "body_source": {
           "end_line": 571,
@@ -396,8 +396,8 @@
         },
         "name": "_contained",
         "output": {
-          "end_line": 574,
-          "start_line": 567
+          "end_line": 580,
+          "start_line": 573
         },
         "source": {
           "end_line": 571,
@@ -407,8 +407,8 @@
       },
       {
         "body_output": {
-          "end_line": 586,
-          "start_line": 578
+          "end_line": 592,
+          "start_line": 584
         },
         "body_source": {
           "end_line": 584,
@@ -416,8 +416,8 @@
         },
         "name": "_outside_tree_error",
         "output": {
-          "end_line": 586,
-          "start_line": 576
+          "end_line": 592,
+          "start_line": 582
         },
         "source": {
           "end_line": 584,
@@ -427,8 +427,8 @@
       },
       {
         "body_output": {
-          "end_line": 600,
-          "start_line": 590
+          "end_line": 606,
+          "start_line": 596
         },
         "body_source": {
           "end_line": 599,
@@ -436,8 +436,8 @@
         },
         "name": "_diagnostic_codes",
         "output": {
-          "end_line": 600,
-          "start_line": 588
+          "end_line": 606,
+          "start_line": 594
         },
         "source": {
           "end_line": 599,
@@ -447,8 +447,8 @@
       },
       {
         "body_output": {
-          "end_line": 614,
-          "start_line": 604
+          "end_line": 620,
+          "start_line": 610
         },
         "body_source": {
           "end_line": 615,
@@ -456,8 +456,8 @@
         },
         "name": "_lead_with_cause",
         "output": {
-          "end_line": 614,
-          "start_line": 602
+          "end_line": 620,
+          "start_line": 608
         },
         "source": {
           "end_line": 615,
@@ -467,8 +467,8 @@
       },
       {
         "body_output": {
-          "end_line": 664,
-          "start_line": 618
+          "end_line": 670,
+          "start_line": 624
         },
         "body_source": {
           "end_line": 666,
@@ -476,8 +476,8 @@
         },
         "name": "_diagnostics_result",
         "output": {
-          "end_line": 664,
-          "start_line": 616
+          "end_line": 670,
+          "start_line": 622
         },
         "source": {
           "end_line": 666,
@@ -487,8 +487,8 @@
       },
       {
         "body_output": {
-          "end_line": 720,
-          "start_line": 668
+          "end_line": 726,
+          "start_line": 674
         },
         "body_source": {
           "end_line": 722,
@@ -496,8 +496,8 @@
         },
         "name": "_attach_finding_owners",
         "output": {
-          "end_line": 720,
-          "start_line": 666
+          "end_line": 726,
+          "start_line": 672
         },
         "source": {
           "end_line": 722,
@@ -507,21 +507,21 @@
       },
       {
         "body_output": {
-          "end_line": 861,
-          "start_line": 736
+          "end_line": 867,
+          "start_line": 742
         },
         "body_source": {
           "end_line": 872,
           "start_line": 749
         },
         "decorator_output": {
-          "end_line": 734,
-          "start_line": 722
+          "end_line": 740,
+          "start_line": 728
         },
         "name": "check_tool",
         "output": {
-          "end_line": 861,
-          "start_line": 722
+          "end_line": 867,
+          "start_line": 728
         },
         "source": {
           "end_line": 872,
@@ -531,21 +531,21 @@
       },
       {
         "body_output": {
-          "end_line": 947,
-          "start_line": 877
+          "end_line": 953,
+          "start_line": 883
         },
         "body_source": {
           "end_line": 967,
           "start_line": 899
         },
         "decorator_output": {
-          "end_line": 875,
-          "start_line": 863
+          "end_line": 881,
+          "start_line": 869
         },
         "name": "verify_host_tool",
         "output": {
-          "end_line": 947,
-          "start_line": 863
+          "end_line": 953,
+          "start_line": 869
         },
         "source": {
           "end_line": 967,
@@ -555,8 +555,8 @@
       },
       {
         "body_output": {
-          "end_line": 1000,
-          "start_line": 951
+          "end_line": 1006,
+          "start_line": 957
         },
         "body_source": {
           "end_line": 1019,
@@ -564,8 +564,8 @@
         },
         "name": "_module_neighbor_actions",
         "output": {
-          "end_line": 1000,
-          "start_line": 949
+          "end_line": 1006,
+          "start_line": 955
         },
         "source": {
           "end_line": 1019,
@@ -575,8 +575,8 @@
       },
       {
         "body_output": {
-          "end_line": 1029,
-          "start_line": 1004
+          "end_line": 1035,
+          "start_line": 1010
         },
         "body_source": {
           "end_line": 1043,
@@ -584,8 +584,8 @@
         },
         "name": "_derived_adopted_surface",
         "output": {
-          "end_line": 1029,
-          "start_line": 1002
+          "end_line": 1035,
+          "start_line": 1008
         },
         "source": {
           "end_line": 1043,
@@ -595,21 +595,21 @@
       },
       {
         "body_output": {
-          "end_line": 1110,
-          "start_line": 1045
+          "end_line": 1116,
+          "start_line": 1051
         },
         "body_source": {
           "end_line": 1133,
           "start_line": 1070
         },
         "decorator_output": {
-          "end_line": 1043,
-          "start_line": 1031
+          "end_line": 1049,
+          "start_line": 1037
         },
         "name": "inspect_module_tool",
         "output": {
-          "end_line": 1110,
-          "start_line": 1031
+          "end_line": 1116,
+          "start_line": 1037
         },
         "source": {
           "end_line": 1133,
@@ -619,21 +619,21 @@
       },
       {
         "body_output": {
-          "end_line": 1147,
-          "start_line": 1125
+          "end_line": 1153,
+          "start_line": 1131
         },
         "body_source": {
           "end_line": 1180,
           "start_line": 1160
         },
         "decorator_output": {
-          "end_line": 1123,
-          "start_line": 1112
+          "end_line": 1129,
+          "start_line": 1118
         },
         "name": "describe_server_tool",
         "output": {
-          "end_line": 1147,
-          "start_line": 1112
+          "end_line": 1153,
+          "start_line": 1118
         },
         "source": {
           "end_line": 1180,
@@ -643,8 +643,8 @@
       },
       {
         "body_output": {
-          "end_line": 1168,
-          "start_line": 1151
+          "end_line": 1174,
+          "start_line": 1157
         },
         "body_source": {
           "end_line": 1202,
@@ -652,8 +652,8 @@
         },
         "name": "_related_topics",
         "output": {
-          "end_line": 1168,
-          "start_line": 1149
+          "end_line": 1174,
+          "start_line": 1155
         },
         "source": {
           "end_line": 1202,
@@ -663,8 +663,8 @@
       },
       {
         "body_output": {
-          "end_line": 1178,
-          "start_line": 1172
+          "end_line": 1184,
+          "start_line": 1178
         },
         "body_source": {
           "end_line": 1213,
@@ -672,8 +672,8 @@
         },
         "name": "_docs_resource_for",
         "output": {
-          "end_line": 1178,
-          "start_line": 1170
+          "end_line": 1184,
+          "start_line": 1176
         },
         "source": {
           "end_line": 1213,
@@ -683,8 +683,8 @@
       },
       {
         "body_output": {
-          "end_line": 1237,
-          "start_line": 1182
+          "end_line": 1243,
+          "start_line": 1188
         },
         "body_source": {
           "end_line": 1272,
@@ -692,8 +692,8 @@
         },
         "name": "_topic_not_resolved",
         "output": {
-          "end_line": 1237,
-          "start_line": 1180
+          "end_line": 1243,
+          "start_line": 1186
         },
         "source": {
           "end_line": 1272,
@@ -703,21 +703,21 @@
       },
       {
         "body_output": {
-          "end_line": 1336,
-          "start_line": 1252
+          "end_line": 1342,
+          "start_line": 1258
         },
         "body_source": {
           "end_line": 1376,
           "start_line": 1299
         },
         "decorator_output": {
-          "end_line": 1250,
-          "start_line": 1239
+          "end_line": 1256,
+          "start_line": 1245
         },
         "name": "learn_s0ma_tool",
         "output": {
-          "end_line": 1336,
-          "start_line": 1239
+          "end_line": 1342,
+          "start_line": 1245
         },
         "source": {
           "end_line": 1376,
@@ -727,8 +727,8 @@
       },
       {
         "body_output": {
-          "end_line": 1401,
-          "start_line": 1340
+          "end_line": 1407,
+          "start_line": 1346
         },
         "body_source": {
           "end_line": 1441,
@@ -736,8 +736,8 @@
         },
         "name": "_collect_artifacts",
         "output": {
-          "end_line": 1401,
-          "start_line": 1338
+          "end_line": 1407,
+          "start_line": 1344
         },
         "source": {
           "end_line": 1441,
@@ -747,21 +747,21 @@
       },
       {
         "body_output": {
-          "end_line": 1481,
-          "start_line": 1417
+          "end_line": 1487,
+          "start_line": 1423
         },
         "body_source": {
           "end_line": 1529,
           "start_line": 1468
         },
         "decorator_output": {
-          "end_line": 1415,
-          "start_line": 1403
+          "end_line": 1421,
+          "start_line": 1409
         },
         "name": "transpile_tool",
         "output": {
-          "end_line": 1481,
-          "start_line": 1403
+          "end_line": 1487,
+          "start_line": 1409
         },
         "source": {
           "end_line": 1529,
@@ -771,8 +771,8 @@
       },
       {
         "body_output": {
-          "end_line": 1498,
-          "start_line": 1485
+          "end_line": 1504,
+          "start_line": 1491
         },
         "body_source": {
           "end_line": 1546,
@@ -780,8 +780,8 @@
         },
         "name": "_find_manifest",
         "output": {
-          "end_line": 1498,
-          "start_line": 1483
+          "end_line": 1504,
+          "start_line": 1489
         },
         "source": {
           "end_line": 1546,
@@ -791,21 +791,21 @@
       },
       {
         "body_output": {
-          "end_line": 1611,
-          "start_line": 1514
+          "end_line": 1617,
+          "start_line": 1520
         },
         "body_source": {
           "end_line": 1666,
           "start_line": 1573
         },
         "decorator_output": {
-          "end_line": 1512,
-          "start_line": 1500
+          "end_line": 1518,
+          "start_line": 1506
         },
         "name": "build_project_tool",
         "output": {
-          "end_line": 1611,
-          "start_line": 1500
+          "end_line": 1617,
+          "start_line": 1506
         },
         "source": {
           "end_line": 1666,
@@ -815,21 +815,21 @@
       },
       {
         "body_output": {
-          "end_line": 1694,
-          "start_line": 1627
+          "end_line": 1700,
+          "start_line": 1633
         },
         "body_source": {
           "end_line": 1758,
           "start_line": 1693
         },
         "decorator_output": {
-          "end_line": 1625,
-          "start_line": 1613
+          "end_line": 1631,
+          "start_line": 1619
         },
         "name": "adopt_file_tool",
         "output": {
-          "end_line": 1694,
-          "start_line": 1613
+          "end_line": 1700,
+          "start_line": 1619
         },
         "source": {
           "end_line": 1758,
@@ -839,21 +839,21 @@
       },
       {
         "body_output": {
-          "end_line": 1749,
-          "start_line": 1710
+          "end_line": 1755,
+          "start_line": 1716
         },
         "body_source": {
           "end_line": 1822,
           "start_line": 1785
         },
         "decorator_output": {
-          "end_line": 1708,
-          "start_line": 1696
+          "end_line": 1714,
+          "start_line": 1702
         },
         "name": "migrate_ext_tool",
         "output": {
-          "end_line": 1749,
-          "start_line": 1696
+          "end_line": 1755,
+          "start_line": 1702
         },
         "source": {
           "end_line": 1822,
@@ -863,21 +863,21 @@
       },
       {
         "body_output": {
-          "end_line": 1880,
-          "start_line": 1765
+          "end_line": 1886,
+          "start_line": 1771
         },
         "body_source": {
           "end_line": 1961,
           "start_line": 1850
         },
         "decorator_output": {
-          "end_line": 1763,
-          "start_line": 1751
+          "end_line": 1769,
+          "start_line": 1757
         },
         "name": "scaffold_module_tool",
         "output": {
-          "end_line": 1880,
-          "start_line": 1751
+          "end_line": 1886,
+          "start_line": 1757
         },
         "source": {
           "end_line": 1961,
@@ -887,21 +887,21 @@
       },
       {
         "body_output": {
-          "end_line": 2046,
-          "start_line": 1895
+          "end_line": 2052,
+          "start_line": 1901
         },
         "body_source": {
           "end_line": 2135,
           "start_line": 1988
         },
         "decorator_output": {
-          "end_line": 1893,
-          "start_line": 1882
+          "end_line": 1899,
+          "start_line": 1888
         },
         "name": "init_project_tool",
         "output": {
-          "end_line": 2046,
-          "start_line": 1882
+          "end_line": 2052,
+          "start_line": 1888
         },
         "source": {
           "end_line": 2135,
@@ -911,8 +911,8 @@
       },
       {
         "body_output": {
-          "end_line": 2065,
-          "start_line": 2050
+          "end_line": 2071,
+          "start_line": 2056
         },
         "body_source": {
           "end_line": 2156,
@@ -920,8 +920,8 @@
         },
         "name": "_declared_mode",
         "output": {
-          "end_line": 2065,
-          "start_line": 2048
+          "end_line": 2071,
+          "start_line": 2054
         },
         "source": {
           "end_line": 2156,
@@ -931,8 +931,8 @@
       },
       {
         "body_output": {
-          "end_line": 2123,
-          "start_line": 2069
+          "end_line": 2129,
+          "start_line": 2075
         },
         "body_source": {
           "end_line": 2216,
@@ -940,8 +940,8 @@
         },
         "name": "_runtime_section",
         "output": {
-          "end_line": 2123,
-          "start_line": 2067
+          "end_line": 2129,
+          "start_line": 2073
         },
         "source": {
           "end_line": 2216,
@@ -951,8 +951,8 @@
       },
       {
         "body_output": {
-          "end_line": 2164,
-          "start_line": 2127
+          "end_line": 2170,
+          "start_line": 2133
         },
         "body_source": {
           "end_line": 2259,
@@ -960,8 +960,8 @@
         },
         "name": "_current_roster_module_row",
         "output": {
-          "end_line": 2164,
-          "start_line": 2125
+          "end_line": 2170,
+          "start_line": 2131
         },
         "source": {
           "end_line": 2259,
@@ -971,21 +971,21 @@
       },
       {
         "body_output": {
-          "end_line": 2474,
-          "start_line": 2179
+          "end_line": 2480,
+          "start_line": 2185
         },
         "body_source": {
           "end_line": 2567,
           "start_line": 2286
         },
         "decorator_output": {
-          "end_line": 2177,
-          "start_line": 2166
+          "end_line": 2183,
+          "start_line": 2172
         },
         "name": "project_status_tool",
         "output": {
-          "end_line": 2474,
-          "start_line": 2166
+          "end_line": 2480,
+          "start_line": 2172
         },
         "source": {
           "end_line": 2567,
@@ -995,21 +995,21 @@
       },
       {
         "body_output": {
-          "end_line": 2609,
-          "start_line": 2489
+          "end_line": 2615,
+          "start_line": 2495
         },
         "body_source": {
           "end_line": 2706,
           "start_line": 2594
         },
         "decorator_output": {
-          "end_line": 2487,
-          "start_line": 2476
+          "end_line": 2493,
+          "start_line": 2482
         },
         "name": "run_example_tool",
         "output": {
-          "end_line": 2609,
-          "start_line": 2476
+          "end_line": 2615,
+          "start_line": 2482
         },
         "source": {
           "end_line": 2706,
@@ -1019,8 +1019,8 @@
       },
       {
         "body_output": {
-          "end_line": 2640,
-          "start_line": 2613
+          "end_line": 2646,
+          "start_line": 2619
         },
         "body_source": {
           "end_line": 2738,
@@ -1028,8 +1028,8 @@
         },
         "name": "_feedback_shaped",
         "output": {
-          "end_line": 2640,
-          "start_line": 2611
+          "end_line": 2646,
+          "start_line": 2617
         },
         "source": {
           "end_line": 2738,
@@ -1039,8 +1039,8 @@
       },
       {
         "body_output": {
-          "end_line": 2695,
-          "start_line": 2644
+          "end_line": 2701,
+          "start_line": 2650
         },
         "body_source": {
           "end_line": 2794,
@@ -1048,8 +1048,8 @@
         },
         "name": "_feedback_approval_request",
         "output": {
-          "end_line": 2695,
-          "start_line": 2642
+          "end_line": 2701,
+          "start_line": 2648
         },
         "source": {
           "end_line": 2794,
@@ -1059,21 +1059,21 @@
       },
       {
         "body_output": {
-          "end_line": 2855,
-          "start_line": 2710
+          "end_line": 2861,
+          "start_line": 2716
         },
         "body_source": {
           "end_line": 2953,
           "start_line": 2820
         },
         "decorator_output": {
-          "end_line": 2708,
-          "start_line": 2697
+          "end_line": 2714,
+          "start_line": 2703
         },
         "name": "prepare_feedback_tool",
         "output": {
-          "end_line": 2855,
-          "start_line": 2697
+          "end_line": 2861,
+          "start_line": 2703
         },
         "source": {
           "end_line": 2953,
@@ -1083,21 +1083,21 @@
       },
       {
         "body_output": {
-          "end_line": 3066,
-          "start_line": 2870
+          "end_line": 3072,
+          "start_line": 2876
         },
         "body_source": {
           "end_line": 3163,
           "start_line": 2979
         },
         "decorator_output": {
-          "end_line": 2868,
-          "start_line": 2857
+          "end_line": 2874,
+          "start_line": 2863
         },
         "name": "submit_feedback_tool",
         "output": {
-          "end_line": 3066,
-          "start_line": 2857
+          "end_line": 3072,
+          "start_line": 2863
         },
         "source": {
           "end_line": 3163,
@@ -1107,8 +1107,8 @@
       },
       {
         "body_output": {
-          "end_line": 3091,
-          "start_line": 3070
+          "end_line": 3097,
+          "start_line": 3076
         },
         "body_source": {
           "end_line": 3193,
@@ -1116,8 +1116,8 @@
         },
         "name": "test_read_only_tools_answer_structurally",
         "output": {
-          "end_line": 3098,
-          "start_line": 3068
+          "end_line": 3104,
+          "start_line": 3074
         },
         "source": {
           "end_line": 3193,
@@ -1127,8 +1127,8 @@
       },
       {
         "body_output": {
-          "end_line": 3117,
-          "start_line": 3102
+          "end_line": 3123,
+          "start_line": 3108
         },
         "body_source": {
           "end_line": 3233,
@@ -1136,8 +1136,8 @@
         },
         "name": "test_learn_s0ma_answers_one_topic_within_its_budget",
         "output": {
-          "end_line": 3140,
-          "start_line": 3100
+          "end_line": 3146,
+          "start_line": 3106
         },
         "source": {
           "end_line": 3233,
@@ -1147,8 +1147,8 @@
       },
       {
         "body_output": {
-          "end_line": 3167,
-          "start_line": 3144
+          "end_line": 3173,
+          "start_line": 3150
         },
         "body_source": {
           "end_line": 3265,
@@ -1156,8 +1156,8 @@
         },
         "name": "test_writing_tools_refuse_invalid_targets",
         "output": {
-          "end_line": 3174,
-          "start_line": 3142
+          "end_line": 3180,
+          "start_line": 3148
         },
         "source": {
           "end_line": 3265,
@@ -1168,8 +1168,8 @@
       {
         "name": "mcp_public_surface_reference",
         "output": {
-          "end_line": 3194,
-          "start_line": 3176
+          "end_line": 3200,
+          "start_line": 3182
         },
         "source": {
           "end_line": 3272,
@@ -1184,8 +1184,8 @@
         },
         "name": "describe_the_running_server",
         "output": {
-          "end_line": 3207,
-          "start_line": 3196
+          "end_line": 3213,
+          "start_line": 3202
         },
         "source": {
           "end_line": 3284,
@@ -1200,8 +1200,8 @@
         },
         "name": "selfhost_walkthrough",
         "output": {
-          "end_line": 3230,
-          "start_line": 3209
+          "end_line": 3236,
+          "start_line": 3215
         },
         "source": {
           "end_line": 3302,
