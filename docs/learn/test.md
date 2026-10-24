@@ -71,5 +71,5 @@ test test_<name> :: <LAYER>
 ## Identity
 
 - Topic id: `concept:test`
-- Release: `0.20.0`
+- Release: `0.20.0 (preview)`
 - Documentation snapshot: `sha256:51ba36aa8c843a19`

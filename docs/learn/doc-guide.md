@@ -76,5 +76,5 @@ doc-guide <name>
 ## Identity
 
 - Topic id: `concept:doc-guide`
-- Release: `0.20.0`
+- Release: `0.20.0 (preview)`
 - Documentation snapshot: `sha256:51ba36aa8c843a19`

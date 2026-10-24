@@ -1,9 +1,9 @@
 {
   "identity": {
-    "channel": "release",
+    "channel": "preview",
     "journey": "journey:mcp-authoring-loop",
     "published_by": "doc:guide/mcp-authoring",
-    "release": "0.20.0",
+    "release": "0.20.0 (preview)",
     "snapshot": "sha256:51ba36aa8c843a19"
   },
   "package": {
