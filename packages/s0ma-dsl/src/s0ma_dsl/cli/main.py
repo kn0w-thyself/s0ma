@@ -2949,7 +2949,10 @@ class S0maCLI:
                 "Directory holding the .s0ma sources to build. Optional: "
                 "with none, this builds the project you are in — every "
                 "source root and test root it declares, the same set "
-                "`s0ma check` reads when it is given no paths."
+                "`s0ma check` reads when it is given no paths. Each module "
+                "is recorded with the role of the root its file lives "
+                "under, so a test module is a test whether the build was "
+                "given a path or not."
             ),
         )
         bd.add_argument(

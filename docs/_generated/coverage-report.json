@@ -101,7 +101,7 @@
     }
   ],
   "exception_kinds": {
-    "binding": 169,
+    "binding": 170,
     "not a document": 4,
     "reference-only channel": 5,
     "reference-only surface": 25
@@ -130,7 +130,7 @@
       "ceilings": {
         "unbound": {
           "ceiling": 175,
-          "used": 169
+          "used": 170
         }
       },
       "complete": true,
@@ -139,7 +139,7 @@
         "validate.check_surface_binding",
         "application.check_surface_index"
       ],
-      "exception_count": 169,
+      "exception_count": 170,
       "exceptions": [
         {
           "kind": "binding",
@@ -649,6 +649,11 @@
         {
           "kind": "binding",
           "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:MODULE_OUTSIDE_PROJECT_ROOTS"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
           "member": "diagnostic:MODULE_SHADOWS_STDLIB"
         },
         {
@@ -993,7 +998,7 @@
         "DOC_SURFACE_UNBOUND",
         "DOC_SURFACE_UNCOVERED"
       ],
-      "required": 261,
+      "required": 262,
       "set": "surfaces",
       "uncovered": []
     },
@@ -1235,12 +1240,12 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.19.1",
-    "snapshot_hash": "sha256:4ebb3236461ceea1"
+    "snapshot_hash": "sha256:ec62ca0343ef8be5"
   },
   "totals": {
     "covered": 332,
-    "exceptions": 203,
-    "required": 501,
+    "exceptions": 204,
+    "required": 502,
     "sets": 5,
     "uncovered": 0
   }

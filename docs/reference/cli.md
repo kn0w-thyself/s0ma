@@ -222,7 +222,7 @@ Full project build with cross-module resolution
 - **Running it touches** — `read`, `write`
 - **Implemented by** — `component:s0ma_dsl.cli.main.S0maCLI`
 
-The handler this command reaches was transcribed from the dispatch — argparse records none — and is s0ma_dsl.cli.main.S0maCLI._cmd_build, a method of a registered component; the binding names the class because a method is not separately registered. It reads every source root and writes the generated .py, .s0ma.json and .s0ma.map files plus the build cache, which --clean removes first.
+The handler this command reaches was transcribed from the dispatch — argparse records none — and is s0ma_dsl.cli.main.S0maCLI._cmd_build, a method of a registered component; the binding names the class because a method is not separately registered. It reads every source root and test root (or the directory it is given), records each module in the manifest with the role of the root its file lives under, and writes the generated .py, .s0ma.json and .s0ma.map files plus the build cache, which --clean removes first.
 
 | Argument | How many | Default | Accepted values |
 | --- | --- | --- | --- |

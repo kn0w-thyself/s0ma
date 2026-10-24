@@ -185,7 +185,7 @@ Lines 1 to 11 of your file became the docstring, the imports, `__all__` and the 
 
 ## 6. The files that describe the whole build
 
-**`build.s0ma.json`, the manifest.** It has one entry for each module the build wrote. The entry gives its source, its `.py`, IR and source map, a fingerprint of the source and of the output, and its `role`, which is `source`, or `test` for a module `s0ma test` built from a test root. The manifest also lists `topological_import_order`, the modules in an order in which each comes after everything it depends on.
+**`build.s0ma.json`, the manifest.** It has one entry for each module the build wrote. The entry gives its source, its `.py`, IR and source map, a fingerprint of the source and of the output, and its `role`. The role comes from where the module's `.s0ma` file lives: `source` under one of the project's `source_roots`, and `test` under one of its `test_roots`, whichever command built it. A module under neither is recorded as `source`, and the build tells you so with a `MODULE_OUTSIDE_PROJECT_ROOTS` warning. The manifest also lists `topological_import_order`, the modules in an order in which each comes after everything it depends on.
 
 - `bootstrap_imports` in `s0ma-core` loads a built project's modules in that order, the source modules only unless it is asked for more.
 - `s0ma doctor`, the MCP server's `project_status` and studi0 compare each module's recorded source fingerprint with the file as it is now, and tell you whether the module is fresh, stale or not built yet.

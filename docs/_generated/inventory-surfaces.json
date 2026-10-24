@@ -2,12 +2,12 @@
   "counts": {
     "by_binding": {
       "bound": 92,
-      "exception": 169
+      "exception": 170
     },
     "by_channel": {
       "cli": 44,
       "config": 19,
-      "diagnostic": 114,
+      "diagnostic": 115,
       "mcp_prompt": 5,
       "mcp_resource": 24,
       "mcp_tool": 27,
@@ -19,12 +19,12 @@
       "approval": 5,
       "credential": 1,
       "network": 7,
-      "none": 141,
+      "none": 142,
       "read": 82,
       "subprocess": 6,
       "write": 29
     },
-    "surfaces": 261,
+    "surfaces": 262,
     "undeclared_side_effects": 29
   },
   "entries": [
@@ -2413,6 +2413,25 @@
         "dev=warning",
         "migration=warning",
         "registry=severity_matrix",
+        "release=warning",
+        "strict=warning"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:MODULE_OUTSIDE_PROJECT_ROOTS",
+      "intent": "A built module's file lives under none of the project's `[tool.s0ma].source_roots` or `test_roots`, so the build recorded it with role `source` by default. Add its directory to one of the two lists so the build can record which it is, or move the file under a configured root.",
+      "public_name": "MODULE_OUTSIDE_PROJECT_ROOTS",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
         "release=error",
         "strict=error"
       ],
@@ -4317,6 +4336,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.19.1",
-    "snapshot_hash": "sha256:4ebb3236461ceea1"
+    "snapshot_hash": "sha256:ec62ca0343ef8be5"
   }
 }
