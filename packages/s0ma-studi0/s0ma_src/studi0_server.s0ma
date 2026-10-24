@@ -1,6 +1,6 @@
 module studi0_server
     layer: PRESENTATION
-    version: 0.19.1
+    version: 0.20.0
     intent: "The studi0 local host: a loopback-only HTTP server that serves one page per s0ma project — the sh0w view of the project's own component graph — plus the read-only graph API the page polls. It binds 127.0.0.1 only, answers GET only, and writes nothing at all: the one file studi0 ever puts in the project it is showing is the presence marker its launcher writes (studi0_narration.write_presence), and no request path touches disk."
     exports: [Studi0ServerConfig, ROUTE_TABLE, NOT_BUILT_ERROR, NOT_FOUND_ERROR, project_display_name, route_request, bound_address, create_server, run_server]
 

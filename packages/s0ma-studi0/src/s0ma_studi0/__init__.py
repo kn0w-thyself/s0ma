@@ -75,7 +75,7 @@ if TYPE_CHECKING:
     from s0ma_studi0._built import studi0_state as studi0_state
     from s0ma_studi0._built import studi0_watch as studi0_watch
 
-__version__ = "0.19.1"
+__version__ = "0.20.0"
 
 __all__ = [
     "__version__",

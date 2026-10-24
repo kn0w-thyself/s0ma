@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-dsl"
-version = "0.19.1"
+version = "0.20.0"
 description = "The s0ma DSL transpiler — compiles .s0ma source files into self-describing Python for software self-knowledge."
 readme = "README.md"
 license = "Apache-2.0"
@@ -30,7 +30,11 @@ dependencies = [
     # HEALTHY only there; and the runtime bridge every emitted module imports
     # declares dependencies on core components that an older core's global
     # registry does not yet hold at import time, which it logs as warnings.
-    "s0ma-core >= 0.19.1",
+    # Raised to 0.20.0 on evidence: the self-context companion this transpiler
+    # writes is generation 2 (per-operation contracts, a constant's value and
+    # the edge graph), and only that core's runtime reads generation 2; an
+    # older core refuses the companion of every build this version produces.
+    "s0ma-core >= 0.20.0",
     "lark[interegular] >= 1.1.0",
 ]
 

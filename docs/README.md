@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 172 documents. 136 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 173 documents. 136 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -199,7 +199,7 @@ Running s0ma when something has gone wrong, releasing it, and working on s0ma it
 | [s0ma 0.14.0 Schema and Surface Budget](contracts/0.14.0-schema-and-surface-budget.md) | `docs/contracts/0.14.0-schema-and-surface-budget.md` | contributors | binding | links checked |
 | [s0ma feedback contract — `s0ma-feedback@1` (feedback-v1)](contracts/feedback-v1.md) | `docs/contracts/feedback-v1.md` | contributors | binding | links checked |
 | [s0ma repository agent contract](../AGENTS.md) | `AGENTS.md` | agents | binding | links checked, version checked |
-| [s0ma-core — Runtime Specification & Coding Agent Rulebook](../packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md) | `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` | agents | binding | links checked |
+| [s0ma-core — Runtime Specification & Coding Agent Rulebook](../packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` | agents | binding | links checked |
 | [Spec Traceability Matrix](../packages/s0ma-dsl/docs/spec_traceability.md) | `packages/s0ma-dsl/docs/spec_traceability.md` | contributors | maintained | links checked |
 | [Troubleshooting s0ma](troubleshooting.md) | `docs/troubleshooting.md` | users | maintained | links checked, version checked |
 | [When s0ma refuses, and how to get back to green](guides/drift-recovery.md) | `docs/guides/drift-recovery.md` | users | maintained | links checked, version checked |
@@ -234,6 +234,7 @@ Records of how s0ma used to work, short stubs left behind where a document moved
 | [Release Checklist — superseded](../packages/s0ma-core/docs/release_checklist.md) | `packages/s0ma-core/docs/release_checklist.md` | owner | moved | links checked |
 | [s0ma-core — Runtime Specification & Coding Agent Rulebook (historical: v0.18.1)](../packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md) | `packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md` | agents | historical | links checked |
 | [s0ma-core — Runtime Specification & Coding Agent Rulebook (historical: v0.19.0)](../packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md) | `packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md` | agents | historical | links checked |
+| [s0ma-core — Runtime Specification & Coding Agent Rulebook (historical: v0.19.1)](../packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md) | `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` | agents | historical | links checked |
 | [s0ma — Framework Specification & Coding Agent Rulebook (historical: v0.2.0)](../packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md) | `packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md` | agents | historical | links checked |
 | [Moved: s0ma-framework-feedback-3.1.md](../packages/s0ma-core/docs/s0ma-framework-feedback-3.1.md) | `packages/s0ma-core/docs/s0ma-framework-feedback-3.1.md` | contributors | moved | links checked |
 | [Changelog](../packages/s0ma-dsl/CHANGELOG.md) | `packages/s0ma-dsl/CHANGELOG.md` | contributors | historical | listed only |

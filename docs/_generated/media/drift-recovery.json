@@ -3,8 +3,8 @@
     "channel": "preview",
     "journey": "journey:drift-recovery",
     "published_by": "doc:guide/drift-recovery",
-    "release": "0.19.1 (preview)",
-    "snapshot": "sha256:c9da24a3a2762814"
+    "release": "0.20.0 (preview)",
+    "snapshot": "sha256:51ba36aa8c843a19"
   },
   "package": {
     "audience": [

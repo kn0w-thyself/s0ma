@@ -65,5 +65,5 @@ Do not use metacognition for the act of recording structure or measuring behavio
 ## Identity
 
 - Topic id: `concept:metacognition`
-- Release: `0.19.1 (preview)`
-- Documentation snapshot: `sha256:c9da24a3a2762814`
+- Release: `0.20.0 (preview)`
+- Documentation snapshot: `sha256:51ba36aa8c843a19`

@@ -2106,6 +2106,20 @@
         "agent"
       ],
       "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-core-spec-v0-19-1",
+      "kind": "historical",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md",
+      "status": "historical",
+      "title": "s0ma-core — Runtime Specification & Coding Agent Rulebook (historical: v0.19.1)"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
       "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md",
       "covers": [],
       "governed_by": [],
@@ -2544,12 +2558,12 @@
         "agent"
       ],
       "authority": "",
-      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md",
       "covers": [],
       "governed_by": [],
-      "id": "doc:normative/s0ma-core-spec-v0-19-1",
+      "id": "doc:normative/s0ma-core-spec-v0-20-0",
       "kind": "normative",
-      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md",
       "status": "normative",
       "title": "s0ma-core — Runtime Specification & Coding Agent Rulebook"
     },

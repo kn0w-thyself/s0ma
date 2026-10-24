@@ -347,8 +347,8 @@
   "source": {
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
-    "release_version": "0.19.1",
-    "snapshot_hash": "sha256:c9da24a3a2762814"
+    "release_version": "0.20.0",
+    "snapshot_hash": "sha256:51ba36aa8c843a19"
   },
   "topics": [
     {

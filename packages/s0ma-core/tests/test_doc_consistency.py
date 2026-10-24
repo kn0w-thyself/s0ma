@@ -50,7 +50,7 @@ PYPROJECT = PACKAGE_ROOT / "pyproject.toml"
 # renamed.
 # ---------------------------------------------------------------------------
 
-CURRENT_CORE_SPEC_VERSION = "0.19.1"
+CURRENT_CORE_SPEC_VERSION = "0.20.0"
 
 #: The last spec cut before the monorepo consolidation. Kept in the tree as
 #: pinned history per OP-4 — never renamed, never deleted, and never allowed

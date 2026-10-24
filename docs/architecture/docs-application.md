@@ -6,7 +6,7 @@ This is the page s0ma writes about the thing that writes its pages. Everything b
 
 That last sentence is the point of the page. A documentation build that could not describe its own readings would be asking a reader to take on faith exactly the property the product exists to make checkable, so the account is generated from the build rather than written beside it, and it is byte-compared like every other output here.
 
-This page describes the build stamped `sha256:c9da24a3a2762814` at version `0.19.1 (preview)`. What each of those 67 files came out as, with the digest of its exact bytes, is in [`docs/_generated/docs-manifest.json`](../_generated/docs-manifest.json).
+This page describes the build stamped `sha256:51ba36aa8c843a19` at version `0.20.0 (preview)`. What each of those 67 files came out as, with the digest of its exact bytes, is in [`docs/_generated/docs-manifest.json`](../_generated/docs-manifest.json).
 
 ## Contents
 
@@ -18,13 +18,13 @@ This page describes the build stamped `sha256:c9da24a3a2762814` at version `0.19
 
 ## The readings
 
-11 readings, 50 sources between them, 664 records composed. A reading is one adapter over one kind of source: it is handed a checkout, it produces records that each carry the source they came from and the digest of what was read, and it never sees another reading's answer. The merge is the only place they meet, and it sorts every group before the model is built — so the order the readings run in cannot change what the build says.
+11 readings, 50 sources between them, 665 records composed. A reading is one adapter over one kind of source: it is handed a checkout, it produces records that each carry the source they came from and the digest of what was read, and it never sees another reading's answer. The merge is the only place they meet, and it sorts every group before the model is built — so the order the readings run in cannot change what the build says.
 
 **Sources** is how many distinct files or in-process readings the adapter drew on, and **Records** is how many records it contributed. **Groups it fills** names which parts of the model those records landed in, with the count in each; an adapter that fills one group is not a lesser reading than one that fills four, it is a narrower question asked completely.
 
 | Reading | Sources | Records | Groups it fills |
 | --- | --- | --- | --- |
-| `catalog` | 1 | 172 | documents 172 |
+| `catalog` | 1 | 173 | documents 173 |
 | `cli` | 1 | 44 | surfaces 44 |
 | `concepts-language` | 1 | 55 | authorities 30, concepts 25 |
 | `concepts-product` | 1 | 17 | authorities 3, concepts 14 |
@@ -68,7 +68,7 @@ This page describes the build stamped `sha256:c9da24a3a2762814` at version `0.19
 
 ## What it covers
 
-334 of the 504 things this build is required to cover are covered, 204 carry a written exception, and 0 are neither. That last number is the one to read: a gate says nothing when it finds nothing, so a silent build and a build whose gates were never armed look identical from outside. This is the standing positive answer.
+335 of the 505 things this build is required to cover are covered, 204 carry a written exception, and 0 are neither. That last number is the one to read: a gate says nothing when it finds nothing, so a silent build and a build whose gates were never armed look identical from outside. This is the standing positive answer.
 
 **By written exception** counts the members somebody has excused in a reviewable ledger, with a reason, one at a time. Every one of them is named — with the file its permission is written in — in [`docs/_generated/coverage-report.json`](../_generated/coverage-report.json); they are counted here and listed there because a page carrying 204 ids is a page nobody reads. **Not covered** is what no ledger excuses and nothing covers, and it is the number the gates are armed to keep at zero.
 
@@ -78,7 +78,7 @@ This page describes the build stamped `sha256:c9da24a3a2762814` at version `0.19
 | surfaces | 262 | 92 | 170 | 0 |
 | journeys | 17 | 17 | 30 | 0 |
 | discovery | 14 | 14 | 0 | 0 |
-| catalog | 172 | 172 | 4 | 0 |
+| catalog | 173 | 173 | 4 | 0 |
 
 Two of those ledgers are bounded, and the bound is a review moment rather than a limit anybody expects to reach: an ordinary addition lands inside the headroom, and a whole new family of exceptions turns the build red before it arrives — which is when the conversation about whether it should have been an exception at all is still worth having.
 

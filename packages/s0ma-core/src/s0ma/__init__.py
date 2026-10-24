@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from s0ma.models import VerificationReport
     from s0ma.registry import ComponentRegistry
 
-__version__ = "0.19.1"
+__version__ = "0.20.0"
 
 # Re-export LifecycleManager and SelfModelInterface at the top level
 # for convenience. TransactionContext is available via s0ma.lifecycle.

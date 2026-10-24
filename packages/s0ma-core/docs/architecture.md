@@ -17,7 +17,7 @@ documentation is composed. It is regenerated on every build and byte-compared
 by a gate, which is exactly the property this file asserted and never had.
 
 **What s0ma promises** is
-[`s0ma-core-spec-v0.19.1.md`](s0ma-core-spec-v0.19.1.md): core's invariants and
+[`s0ma-core-spec-v0.20.0.md`](s0ma-core-spec-v0.20.0.md): core's invariants and
 contracts — the registration rule, the import hook, verification, the trust
 boundary, the stability promises — stated once, with every inventory deferred
 to the generated pages.

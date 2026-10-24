@@ -773,7 +773,7 @@ class TestGeneralExitCriteria:
         import s0ma.lifecycle
         import s0ma.self_model
 
-        assert s0ma.__version__ == "0.19.1"
+        assert s0ma.__version__ == "0.20.0"
 
     def test_all_phase3_components_registered_and_describable(
         self,

@@ -1,6 +1,6 @@
 module studi0_narration
     layer: APPLICATION
-    version: 0.19.1
+    version: 0.20.0
     intent: "The narration side channel, both halves of it. Outbound: the presence marker studi0 writes into the project it is watching, which is how the authoring MCP server knows to ask an agent for narration at all and, when there is no marker, knows not to, because with no viewer there is no need for narration and no wish for it. Inbound: the append-only session log that agent writes, tailed at the watch's own cadence. Everything read here is the agent's account of its own work — self-reported, unverified, and true only in the sense that it was really written — so it is kept apart from the canonical graph at every level: its own file, its own module, its own counters, and its own block in the served document, which no renderer can mistake for build truth. Nothing is repaired and nothing is completed: a line that does not parse, or does not carry the narration schema, is counted and dropped, never guessed at."
     exports: [NARRATION_TYPE, NARRATION_PHASES, NARRATION_WINDOW, PRESENCE_PATH_PARTS, SESSION_LOG_PATH_PARTS, NarrationLog, presence_path, session_log_path, write_presence, clear_presence, read_narrations, narration_snapshot]
 

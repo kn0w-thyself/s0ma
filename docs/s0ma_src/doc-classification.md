@@ -311,6 +311,15 @@ arrives as `normative-current` and takes over the current-spec row, and
 bannered, under its own name. Net: `historical` 50 → 51, `normative-current`
 unchanged, total up by one.
 
+Cutting core's specification at 0.20.0 (2026-10-24, the release whose describe
+surfaces reach per-operation contracts, operation names, constant values and
+the dependents of a part, and list the application's components by default)
+does the same again: `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md`
+arrives as `normative-current` and takes over the current-spec row, and
+`packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` becomes `historical`,
+bannered, under its own name. Net: `historical` up by one, `normative-current`
+unchanged, total up by one.
+
 The plan for authored lines that stand on their own
 (`plans/s0ma-durable-authored-lines-1.md`, commissioned by the owner
 2026-10-05 as a required to-do, to run after `forbids-field-1` ships) adds
@@ -480,9 +489,10 @@ that read is repointed at the current spec first, or the stub stays.
 | Path | Replacement |
 |---|---|
 | `packages/s0ma-core/CHANGELOG.md` | `CHANGELOG.md` (root) — this file holds releases ≤ 0.4.0 |
-| `packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md` (0.19.0) | `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` — the current cut; the 0.19.0 cut restated this file and is itself historical since 0.19.1. This file keeps its content and its name and carries a banner naming the current cut |
-| `packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md` (0.19.1) | `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` — the cut that restates it for 0.19.1. This file keeps its content and its name and carries a banner naming its successor |
-| `packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md` (G3) | `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` — the current cut (G3 rotated this file to the 0.18.1 cut, itself historical since 0.19.0; the 0.19.0 cut is historical since 0.19.1). This file keeps its content and its name (historical spec cuts are never renamed) and carries a banner naming its successor, held there by `packages/s0ma-core/tests/test_doc_consistency.py` |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md` (0.19.0) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` — the current cut; the 0.19.0 cut restated this file and is itself historical since 0.19.1, as the 0.19.1 cut is since 0.20.0. This file keeps its content and its name and carries a banner naming the current cut |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md` (0.19.1) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` — the current cut; the 0.19.1 cut restated this file and is itself historical since 0.20.0. This file keeps its content and its name and carries a banner naming the current cut |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` (0.20.0) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` — the cut that restates it for 0.20.0. This file keeps its content and its name and carries a banner naming its successor |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md` (G3) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` — the current cut (G3 rotated this file to the 0.18.1 cut, itself historical since 0.19.0; the 0.19.0 cut is historical since 0.19.1 and the 0.19.1 cut since 0.20.0). This file keeps its content and its name (historical spec cuts are never renamed) and carries a banner naming the current cut, held there by `packages/s0ma-core/tests/test_doc_consistency.py` |
 | `packages/s0ma-dsl/CHANGELOG.md` | `CHANGELOG.md` (root) — this file holds the pre-monorepo dsl numbering ≤ 0.16.0 |
 | `packages/s0ma-dsl/docs/adr/ADR-004-separate-project.md` | No successor ADR. Current authority: `README.md` + `CONTRIBUTING.md` (workspace layout), `references/s0ma-prd.md` NFR-8/INV-4 (package split, licensing, lockstep) |
 | `packages/s0ma-dsl/docs/historical/release_walkthrough_5-6.md` | `packages/s0ma-dsl/docs/migration_guide.md` is the live upgrade reference. Moved to `historical/` with a pointer stub at the old path (A5-findings pass); the dsl README row now points at the moved file |

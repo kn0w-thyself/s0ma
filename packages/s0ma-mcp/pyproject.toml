@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-mcp"
-version = "0.19.1"
+version = "0.20.0"
 description = "The s0ma authoring MCP server — exposes the s0ma DSL self-knowledge toolchain and agent guides to coding agents over the Model Context Protocol."
 readme = "README.md"
 license = "Apache-2.0"
@@ -30,7 +30,9 @@ dependencies = [
     # HEALTHY only there; and the runtime bridge every emitted module imports
     # declares dependencies on core components that an older core's global
     # registry does not yet hold at import time, which it logs as warnings.
-    "s0ma-core[mcp] >= 0.19.1",
+    # Raised to 0.20.0 on evidence: the committed build's self-context
+    # companion is generation 2, which only that core's runtime reads.
+    "s0ma-core[mcp] >= 0.20.0",
     # Hard floor (DSL-M7): the committed _built/ output is REPRODUCED only by the
     # 0.8.0 dsl emitter — its registrations carry metadata=/serves_as= stamps, its
     # bodies carry cleandoc-normalized docstrings and per-call deferred imports, and
@@ -44,7 +46,11 @@ dependencies = [
     # resources and the `learn_s0ma` tool import `s0ma_dsl.docs_model`, which first
     # ships in 0.19.0. With an older dsl the server starts and those answers fail on
     # first use.
-    "s0ma-dsl >= 0.19.0",
+    # Raised to 0.20.0 on evidence: the committed _built/ modules register
+    # their constants with register_constant(value=...), an argument the
+    # runtime bridge first accepts in 0.20.0; an older dsl raises TypeError at
+    # import, so the server cannot start against it.
+    "s0ma-dsl >= 0.20.0",
 ]
 
 [project.optional-dependencies]

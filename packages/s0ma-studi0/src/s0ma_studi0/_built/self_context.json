@@ -1163,23 +1163,23 @@
   "source_ir": [
     {
       "path": "sh0w_assets.s0ma.json",
-      "sha256": "sha256:31c6407b2dcd4bb61bcbc7cddf06232ce0545ef3da3e67d7f5c77923726aab35"
+      "sha256": "sha256:f911e2308b4e869c860608ac57f8733b88b384634eb192b49d704030388493db"
     },
     {
       "path": "studi0_narration.s0ma.json",
-      "sha256": "sha256:8e8fd0535642fcf0daf9775aaf61cb45577ecc06a3a1686dbc9a6b4c32f305f7"
+      "sha256": "sha256:e321870ce6cfe9446b89fce64f112852f716deda78412f7e418fcfbd782df3cf"
     },
     {
       "path": "studi0_server.s0ma.json",
-      "sha256": "sha256:02fb8ba747b6e08a4e680bf84000d5ab1777c2549afaf37d19a7e3d861931bce"
+      "sha256": "sha256:0a64d93b6022d4de12c74c2ffb491980fe24e7cd521242cd79d8145ce4b2769e"
     },
     {
       "path": "studi0_state.s0ma.json",
-      "sha256": "sha256:c1b2e7036803cf81203beda258d4fc5f385cd55cafd112cbe80192522c87a7c5"
+      "sha256": "sha256:174c8439bb4e61361e71ccaf8c24014450d390c7534fe3c4662b00e3ae0eb426"
     },
     {
       "path": "studi0_watch.s0ma.json",
-      "sha256": "sha256:8eb2be905c752f58d5d658f7f17c408ce16051761184250c17dccaece44bc1ab"
+      "sha256": "sha256:6748d8374eb31b7f3283d0f5f807427d72c7ce7ff23b8c4e56f271bf51ab884f"
     }
   ]
 }

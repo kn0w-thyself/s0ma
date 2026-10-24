@@ -29,5 +29,5 @@
   "topological_import_order": [
     "application"
   ],
-  "transpiler_version": "0.19.1"
+  "transpiler_version": "0.20.0"
 }

@@ -659,8 +659,8 @@
     },
     {
       "audience": "agent",
-      "disposition": "normative-current",
-      "note": "The current core spec, cut at 0.19.1 from the 0.19.0 cut. States core's seven invariants and its contracts; states no inventory at all — every count and roster is deferred to the generated pages, and §12 is the routing table. Pinned to the package version by packages/s0ma-core/tests/test_doc_consistency.py, which also fails on a hand-written component count.",
+      "disposition": "historical",
+      "note": "The core spec as cut for 0.19.1, superseded at 0.20.0 by s0ma-core-spec-v0.20.0.md and kept under its own name with a historical banner, because historical cuts are never renamed.",
       "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md"
     },
     {
@@ -668,6 +668,12 @@
       "disposition": "historical",
       "note": "Frozen at the pre-monorepo 0.4.0 boundary. G3 rotated it: it keeps its content and its filename (historical cuts are never renamed) and gained a supersession banner naming s0ma-core-spec-v0.18.1.md as the current cut. July DOC-8 closed. The banner is held in place by packages/s0ma-core/tests/test_doc_consistency.py.",
       "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "normative-current",
+      "note": "The current core spec, cut at 0.20.0 from the 0.19.1 cut. States core's seven invariants and its contracts; states no inventory at all — every count and roster is deferred to the generated pages, and §12 is the routing table. Pinned to the package version by packages/s0ma-core/tests/test_doc_consistency.py, which also fails on a hand-written component count.",
+      "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md"
     },
     {
       "audience": "contributor",

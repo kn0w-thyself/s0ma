@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-studi0"
-version = "0.19.1"
+version = "0.20.0"
 description = "s0ma studi0 — the local viewer that renders a s0ma project's canonical component graph from its build artifacts, truthfully and read-only."
 readme = "README.md"
 license = "Apache-2.0"
@@ -37,8 +37,13 @@ dependencies = [
     # HEALTHY only there; and the runtime bridge every emitted module imports
     # declares dependencies on core components that an older core's global
     # registry does not yet hold at import time, which it logs as warnings.
-    "s0ma-core >= 0.19.1",
-    "s0ma-dsl >= 0.16.0",
+    # Raised to 0.20.0 on evidence: the committed _built/ modules register
+    # their constants with register_constant(value=...), an argument the
+    # runtime bridge first accepts in 0.20.0 (an older dsl raises TypeError at
+    # import), and the build's self-context companion is generation 2, which
+    # only that core's runtime reads.
+    "s0ma-core >= 0.20.0",
+    "s0ma-dsl >= 0.20.0",
 ]
 
 [project.optional-dependencies]

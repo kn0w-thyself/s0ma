@@ -11,6 +11,8 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+## [0.20.0] — 2026-10-24
+
 ### Added
 
 - **Per-operation contracts reach every describe surface.** A SERVICE nerve's
