@@ -755,6 +755,38 @@ modules["console_presentation"].dispatch(args.subcommand, rest)
 
 The downstream consumer's behaviour is the deciding factor: pytest, `s0ma test` and most CLI subcommands tolerate a leading `--` (it terminates option parsing); raw application code typically does not. When in doubt, strip it. The contributor-facing statement of the same contract is in the coding-agent handbook (its section 1.5).
 
+### 10.4 Wiring the `self_inspect` tool, and keeping its answers small
+
+A green build leaves `self_context.json` and `self_prompt_card.md` beside the manifest, and the operation channel is a few lines of plain Python in the bootstrap file. The full treatment, with the trust block the host prompt carries and the measurements behind these rules, is s0ma://guide/self-prompting; this section is the wiring and the economy.
+
+```python
+# bootstrap/startup.py: plain Python, not a .s0ma file
+import json
+from pathlib import Path
+
+from s0ma.runtime import self_context, self_inspect_adapter
+
+build_dir = Path(__file__).resolve().parent.parent / "build"
+context = self_context(build_dir)          # verified; context["card"] is the bounded card
+adapter = self_inspect_adapter(build_dir)  # pass registry=... only after registration
+
+
+def self_inspect(query: str) -> str:
+    return json.dumps(adapter.handle(query), separators=(",", ":"), sort_keys=True)
+
+
+agent_host.register_tool(adapter.tool_spec, self_inspect)
+```
+
+The companions describe the application's `source` modules; the test modules `s0ma test` builds into the same manifest are left out, and `provenance.roles` records that. The adapter answers seven commands, `describe`, `components <layer or module>`, `component <name>`, `dependencies <name>`, `dependents <name>`, `impact <name>` and `source_ir`, named once in `tool_spec`, and returns a `dict` for each; a registry supplied after registration reaches `describe` as live-health counts and `component <name>` as an `observed` flag. The host's rendering is what the model pays for, on every call, for as long as the answer stays in context. Six rules, with fr3d's build (103 source modules, 441 source components) as the evidence where a number is given:
+
+- **Compact JSON with sorted keys.** `separators=(",", ":"), sort_keys=True`, as above. Indentation cost fr3d about a third of every answer, and sorted keys make equal answers equal bytes, which a prompt cache rewards.
+- **Counts first, names second, authored text only on request.** `describe` is counts and module names: 2,264 characters on fr3d, down from 130,808 when it listed every component id and IR record, tests included. `components` is names. Only `component <name>` carries authored text, as quoted project data.
+- **Never repeat the tool's description in an answer.** The model already holds the tool list, and `tool_spec` is where the commands are taught.
+- **Every authored line is paid for on every answer that carries it.** One sentence added to an intent grew fr3d's full capabilities answer by 235 characters. Intents and contracts are product copy: write them once and keep them short.
+- **Budget each default answer and test the budget against a real build.** The adapter's own `describe` is held under 8,000 characters by the adapter itself, which trades module names for module counts past that line, and by two tests: one on 3,000 synthetic components over 200 modules, one on the s0ma-mcp package's own build.
+- **Estimate a result by its words or a quarter of its characters, whichever is larger.** A word count reads space-free JSON as one token.
+
 ---
 
 ## 11. `nerve` vs `ganglion` Decision Tree
@@ -2572,6 +2604,7 @@ Declare physical roles with the existing structural-attribute mechanism — `dec
 - **Ingestion is app-driven** — s0ma never reads hardware itself. `get_metrics_collector().record_physical("DoorServo", current_ma=520.0, profile=spec.resource_profile)` stores the latest gauges and immediately returns + publishes any crossing.
 - **Push, not poll:** `s0ma.anomaly_stream.subscribe_runtime_anomalies(cb)` delivers NOCICEPTION (a live executable-contract violation, published before the raise) and INFLAMMATION crossings on the detecting call's thread — embodied hosts replace health-poll timers with one subscription.
 - **Effect-checking contracts:** `postcondition(validator, "...", pass_args=True)` hands the validator `(result, *args, **kwargs)` — the shape for "the commanded displacement actually happened, per the rangefinder".
+- **The self-model channel:** the `self_inspect` adapter wired in §10.4. `component <name>` is where an agent reads a part's `hw_*` facts and, when the host supplied a registry, whether the part is observed live; `describe` and `components <layer or module>` are the counts and names it orients from, and they carry no authored text.
 
 ### 31.4 Trust rules
 

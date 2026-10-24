@@ -102,10 +102,22 @@ def test_dogfood_runtime_and_adapter_round_trip() -> None:
     adapter = self_inspect_adapter(BUILT)
     described = adapter.handle("describe")
     assert described["ok"] is True
+    assert described["roles"] == ["source"]
     assert described["component_count"] == len(context["components"])
-    assert "resources::self_prompting_resource" in described[
-        "components_by_layer"
-    ]["PRESENTATION"]
+    assert described["component_count_by_layer"] == {
+        "PRESENTATION": len(context["components"])
+    }
+    assert described["modules_by_layer"] == {"PRESENTATION": ["prompts", "resources", "tools"]}
+    # The overview is a short answer on a real build: this package's own.
+    # The adapter's ceiling is 8,000 characters of compact JSON; this
+    # package's answer is a few hundred (441 on the day this was written),
+    # and the shape it replaced, every id listed, was 3,130. The bound
+    # below is tight enough to catch a return to that shape.
+    compact = json.dumps(described, separators=(",", ":"), sort_keys=True)
+    assert len(compact) < 1_000
+    assert "::" not in compact
+    listed = adapter.handle("components PRESENTATION")
+    assert "self_prompting_resource" in listed["components"]["resources"]
 
     answer = adapter.handle("component _run_cli")
     assert answer["ok"] is True

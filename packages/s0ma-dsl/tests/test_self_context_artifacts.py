@@ -3,13 +3,24 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from typing import TYPE_CHECKING
 
-from s0ma_dsl.codegen.build_manifest import ModuleManifestEntry
+import pytest
+from s0ma.runtime import SelfContextError, self_context
+
+from s0ma_dsl.codegen.build_manifest import (
+    ModuleManifestEntry,
+    build_manifest,
+    emit_manifest,
+    load_manifest,
+)
 from s0ma_dsl.codegen.self_context import (
+    SELF_CONTEXT_DEFAULT_ROLES,
     SELF_PROMPT_CARD_MAX_BYTES,
     SELF_PROMPT_CARD_MAX_WORDS,
     build_self_context_document,
+    emit_self_context_artifacts,
     render_self_prompt_card,
 )
 from s0ma_dsl.ir.builder import build_ir
@@ -66,7 +77,12 @@ def test_small_example_app_answers_inventory_from_card_alone() -> None:
         "concierge::component_0",
         "concierge::component_1",
     ]
-    assert "s0ma.runtime.self_inspect_adapter" in card
+    # The header names the tool and every command it answers, so a reader
+    # holding the card alone knows how to reach what it omits.
+    assert (
+        "`self_inspect`: describe; components `<layer or module>`; "
+        "component, dependencies, dependents, impact `<name>`; source_ir."
+    ) in card
 
 
 _EMBODIED_SOURCE = '''\
@@ -136,7 +152,7 @@ nerve idle_probe :: APPLICATION
 '''
 
 
-def _entry(name: str) -> ModuleManifestEntry:
+def _entry(name: str, role: str = "source") -> ModuleManifestEntry:
     return ModuleManifestEntry(
         name=name,
         source=f"src/{name}.s0ma",
@@ -145,6 +161,7 @@ def _entry(name: str) -> ModuleManifestEntry:
         source_map=f"{name}.s0ma.map",
         source_hash="sha256:0",
         output_hash="sha256:0",
+        role=role,
     )
 
 
@@ -411,3 +428,165 @@ def test_the_card_names_every_adapter_command_within_its_budget() -> None:
     assert "`<name>`" in header
     assert len(header.encode("utf-8")) <= 123, "the header may not grow past its old length"
     assert len(card.encode("utf-8")) <= SELF_PROMPT_CARD_MAX_BYTES
+
+# ---------------------------------------------------------------------------
+# The companions describe the application's source modules
+# ---------------------------------------------------------------------------
+
+
+def _raw_ir(module: str, layer: str, names: tuple[str, ...]) -> dict[str, object]:
+    return {
+        "schema_version": "3.0.0",
+        "module": {"name": module, "layer": layer},
+        "edges": {"authored": []},
+        "components": [
+            {
+                "canonical_id": f"{module}::{name}",
+                "kind": "FUNCTION",
+                "intent": {"state": "value", "value": f"{name} of {module}."},
+                "fields": {},
+            }
+            for name in names
+        ],
+    }
+
+
+def _mixed_role_build(tmp_path: Path) -> tuple[Path, list[ModuleManifestEntry]]:
+    """One source module and one test module, as ``s0ma test`` leaves them
+    in a single manifest."""
+    build_dir = tmp_path / "build"
+    build_dir.mkdir()
+    (build_dir / "orders.s0ma.json").write_text(
+        json.dumps(_raw_ir("orders", "APPLICATION", ("submit", "cancel"))),
+        encoding="utf-8",
+    )
+    (build_dir / "test_orders.s0ma.json").write_text(
+        json.dumps(
+            _raw_ir("test_orders", "APPLICATION", ("test_submit", "test_cancel", "test_refund"))
+        ),
+        encoding="utf-8",
+    )
+    return build_dir, [_entry("test_orders", role="test"), _entry("orders")]
+
+
+def test_document_describes_source_modules_only_by_default(tmp_path: Path) -> None:
+    build_dir, entries = _mixed_role_build(tmp_path)
+    document = build_self_context_document(build_dir, entries)
+    assert SELF_CONTEXT_DEFAULT_ROLES == ("source",)
+    assert document["provenance"]["roles"] == ["source"]
+    assert [component["id"] for component in document["components"]] == [
+        "orders::cancel",
+        "orders::submit",
+    ]
+    assert [record["path"] for record in document["source_ir"]] == ["orders.s0ma.json"]
+    card = render_self_prompt_card(document)
+    assert "## Component inventory (2)" in card
+    assert "test_orders" not in card
+
+
+def test_roles_select_which_manifest_entries_the_document_describes(
+    tmp_path: Path,
+) -> None:
+    build_dir, entries = _mixed_role_build(tmp_path)
+    both = build_self_context_document(build_dir, entries, roles=("test", "source", "source"))
+    assert both["provenance"]["roles"] == ["source", "test"]
+    assert len(both["components"]) == 5
+    assert [record["path"] for record in both["source_ir"]] == [
+        "orders.s0ma.json",
+        "test_orders.s0ma.json",
+    ]
+    tests_only = build_self_context_document(build_dir, entries, roles=("test",))
+    assert tests_only["provenance"]["roles"] == ["test"]
+    assert {component["module"] for component in tests_only["components"]} == {"test_orders"}
+    assert [record["path"] for record in tests_only["source_ir"]] == ["test_orders.s0ma.json"]
+
+
+@pytest.mark.parametrize(
+    ("roles", "match"),
+    [
+        pytest.param((), "at least one manifest role", id="empty"),
+        pytest.param(("source", "fixture"), r"\['fixture'\] are not manifest roles", id="unknown"),
+        pytest.param("source", "tuple of role names", id="bare-string"),
+        pytest.param(("source", None), "tuple of role names", id="none-inside"),
+    ],
+)
+def test_unknown_or_empty_roles_are_refused(tmp_path: Path, roles: object, match: str) -> None:
+    build_dir, entries = _mixed_role_build(tmp_path)
+    with pytest.raises(ValueError, match=match):
+        build_self_context_document(build_dir, entries, roles=roles)  # type: ignore[arg-type]
+
+
+def test_a_selection_matching_no_entry_yields_an_empty_inventory(tmp_path: Path) -> None:
+    """``s0ma test`` on a project with test roots and no source modules
+    leaves a manifest of test entries; the companions then describe an
+    application with nothing in it, which is the truth, not an error."""
+    build_dir, entries = _mixed_role_build(tmp_path)
+    tests_only = [entry for entry in entries if entry.role == "test"]
+    document = build_self_context_document(build_dir, tests_only)
+    assert document["provenance"]["roles"] == ["source"]
+    assert document["components"] == []
+    assert document["source_ir"] == []
+    card = render_self_prompt_card(document)
+    assert "## Component inventory (0)" in card
+    assert "## Authored intent samples" not in card
+    assert "omitted" not in card
+
+
+def test_unselected_entries_are_skipped_before_their_ir_is_read(tmp_path: Path) -> None:
+    build_dir, entries = _mixed_role_build(tmp_path)
+    (build_dir / "test_orders.s0ma.json").unlink()
+    document = build_self_context_document(build_dir, entries)
+    assert [component["module"] for component in document["components"]] == ["orders", "orders"]
+    with pytest.raises(FileNotFoundError):
+        build_self_context_document(build_dir, entries, roles=("source", "test"))
+
+
+def test_the_documented_route_to_describing_tests_round_trips(tmp_path: Path) -> None:
+    """The self-prompting guide's recipe: re-emit with both roles, then
+    write the returned references into the manifest. Without the second
+    step the runtime refuses the companions, which is the point of the
+    hashes; with it, the runtime reads both roles."""
+    build_dir, entries = _mixed_role_build(tmp_path)
+    emit_manifest(
+        build_manifest(
+            project_name="orders",
+            build_dir="build",
+            modules=entries,
+            transpiler_version="0.0.0",
+            self_context=emit_self_context_artifacts(build_dir, entries),
+        ),
+        build_dir,
+    )
+    assert self_context(build_dir)["provenance"]["roles"] == ["source"]
+
+    manifest = load_manifest(build_dir)
+    references = emit_self_context_artifacts(
+        build_dir, list(manifest.modules), roles=("source", "test")
+    )
+    with pytest.raises(SelfContextError, match="hash mismatch"):
+        self_context(build_dir)
+    emit_manifest(replace(manifest, self_context=references), build_dir)
+    context = self_context(build_dir)
+    assert context["provenance"]["roles"] == ["source", "test"]
+    assert len(context["components"]) == 5
+    assert [record["path"] for record in context["source_ir"]] == [
+        "orders.s0ma.json",
+        "test_orders.s0ma.json",
+    ]
+
+
+def test_emitted_companions_describe_source_modules_only(tmp_path: Path) -> None:
+    build_dir, entries = _mixed_role_build(tmp_path)
+    references = emit_self_context_artifacts(build_dir, entries)
+    companion = json.loads((build_dir / references.json.path).read_text(encoding="utf-8"))
+    assert companion["provenance"]["roles"] == ["source"]
+    assert {component["module"] for component in companion["components"]} == {"orders"}
+    card = (build_dir / references.prompt_card.path).read_text(encoding="utf-8")
+    assert "- APPLICATION/orders: cancel,submit" in card
+    assert "test_orders" not in card
+    # The same call with every role is how a host that wants the tests
+    # described gets them; the record says so.
+    everything = emit_self_context_artifacts(build_dir, entries, roles=("source", "test"))
+    companion = json.loads((build_dir / everything.json.path).read_text(encoding="utf-8"))
+    assert companion["provenance"]["roles"] == ["source", "test"]
+    assert len(companion["components"]) == 5

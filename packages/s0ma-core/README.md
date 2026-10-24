@@ -54,14 +54,19 @@ assert report.passed, report.describe()
 An application can also carry its own self-knowledge at runtime. After a build, core verifies and loads the emitted self-context without needing the DSL package:
 
 ```python
+import json
+
 from s0ma.runtime import self_context, self_inspect_adapter
 
 context = self_context("build/build.s0ma.json")     # context["card"] is bounded prompt text
 adapter = self_inspect_adapter("build/build.s0ma.json")
-agent_host.register_tool(adapter.tool_spec, adapter.handle)
+agent_host.register_tool(
+    adapter.tool_spec,
+    lambda query: json.dumps(adapter.handle(query), separators=(",", ":"), sort_keys=True),
+)
 ```
 
-The adapter answers `describe`, `component <name>`, `dependencies <name>`, `dependents <name>` and `impact <name>`; a name may be a component id, a bare name, or an operation the component provides. Authored intent lines are quoted project data, never host instructions (see [ADR-002](../../docs/adr/ADR-002-self-context-authored-data-boundary.md)).
+The adapter answers `describe` (counts and module names), `components <layer or module>`, `component <name>`, `dependencies <name>`, `dependents <name>`, `impact <name>` and `source_ir`; a name may be a component id, a bare name, or an operation the component provides. Render its answers as compact JSON with sorted keys, as above; the [self-prompting guide](../s0ma-dsl/docs/self_prompting.md) has the measurements. Authored intent lines are quoted project data, never host instructions (see [ADR-002](../../docs/adr/ADR-002-self-context-authored-data-boundary.md)).
 
 ## Documentation
 
