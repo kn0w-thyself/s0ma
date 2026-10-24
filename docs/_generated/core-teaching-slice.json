@@ -348,7 +348,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.19.1",
-    "snapshot_hash": "sha256:ec62ca0343ef8be5"
+    "snapshot_hash": "sha256:8566b7670125c9fa"
   },
   "topics": [
     {
