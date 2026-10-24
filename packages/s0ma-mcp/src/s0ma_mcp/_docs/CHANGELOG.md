@@ -74,8 +74,18 @@ Historical entries describe artifacts as they were named at the time.
   is walked over its authored targets. A target an author spelled with the
   declaring module is landed by its unique bare name, and the answer keeps
   the spelling under `declared_as`. The tool description, the error wording,
-  the self-prompt card's header line and the self-prompting guide name all
-  five commands.
+  the self-prompt card's header line and the self-prompting guide name every
+  command.
+- **Two `self_inspect` commands reach what `describe` no longer carries.**
+  `components <layer or module>` answers the component names in that layer
+  or module, grouped by module (an id is `<module>::<name>`), and `source_ir`
+  answers the canonical IR records the companion was derived from, path and
+  hash, each verified when the companion loaded. An unknown scope answers
+  `SCOPE_NOT_FOUND`; `component <name>` and `dependencies <name>` are
+  unchanged, except that `component <name>` now says whether the component
+  is `observed` live when a registry was supplied, beside the record and
+  never inside it. The adapter's `tool_spec` names all seven commands so no
+  answer has to repeat them.
 - **A wheel build no longer needs a per-project workaround, and there is a
   packaging guide.** `s0ma build` takes `--without-runtime-packages`, by
   which a build hook states that the environment it runs in does not hold
@@ -137,6 +147,50 @@ Historical entries describe artifacts as they were named at the time.
   bootstrap registration, so the expected framework component count moves
   from 61 to 63; `ComponentRegistry` declares `ComponentResolution`, which it
   now imports.
+- **The self-context companions describe the application, not its tests.**
+  `self_context.json` and `self_prompt_card.md` are built from the manifest
+  entries with the `source` role; the test modules `s0ma test` builds into
+  the same manifest are left out, as `bootstrap_imports` leaves them out of
+  the running application. The companion records the roles it was built from
+  in `provenance.roles` (additive under `s0ma-self-context@1`; older
+  companions still load, and a malformed value is refused), and a build that
+  wants its tests described calls
+  `emit_self_context_artifacts(..., roles=("source", "test"))` and writes
+  the references it returns into the manifest (the self-prompting guide
+  shows the three lines). On fr3d's build the companion went from 1,021,910
+  bytes and 1,857 components, 1,416 of them from test modules, to 381,824
+  bytes and 441; the card's inventory went from 17 lines and 1,780 omitted
+  to 20 lines and 354 omitted, inside the unchanged 2,600-byte, 240-word
+  budget. The card's header line now names the `self_inspect` tool and
+  every command it answers.
+- **`self_inspect` answers `describe` with counts and module names.** The
+  default answer of `s0ma.runtime.self_inspect_adapter` carries
+  `component_count`, `module_count` and `source_ir_count`,
+  `component_count_by_layer` and `component_count_by_kind`, the module names
+  by layer, the roles, `build_health`, and the `live_health` overlay as
+  counts when a registry was supplied. `components_by_layer`, which listed
+  every id, and the `source_ir` list are no longer keys of `describe`; a
+  host that read either asks `components <layer or module>` or `source_ir`.
+  On fr3d's build, together with the source-only companion above, the
+  answer went from 130,808 characters of compact JSON to 2,264 (on the same
+  source-only companion the old shape would still have cost 28,752). The
+  adapter holds it under 8,000 characters (a 2,000-token answer) by trading
+  module names for per-layer module counts past that line, and tests hold
+  it there on 3,000 synthetic components over 200 modules, with and without
+  a registry, and on the s0ma-mcp package's own build; it grows with
+  modules, never with components. Nothing authored (intent, contracts,
+  metadata) leaves through `describe`, `components` or `source_ir`, and a
+  test says so.
+- **The self-prompting guide says how to render and budget answers.**
+  `s0ma://guide/self-prompting` and the patterns guide's bootstrap section
+  (§10.4) carry the rules a host follows, with fr3d's measurements as the
+  evidence: render every answer as compact JSON with sorted keys, answer
+  counts first and authored text only on request, never repeat a tool's
+  description in its answers, treat every authored line as data a model pays
+  for, budget each default answer and test the budget against a real build,
+  and estimate a result's size by its words or a quarter of the characters,
+  whichever is larger. The contract records the revision as R7, for owner
+  review.
 
 ## [0.19.1] — 2026-10-09
 

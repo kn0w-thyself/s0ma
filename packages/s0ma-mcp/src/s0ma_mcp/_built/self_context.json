@@ -2094,7 +2094,10 @@
   "provenance": {
     "authored_text_trust": "untrusted_project_data",
     "authority": "canonical_ir",
-    "live_health": false
+    "live_health": false,
+    "roles": [
+      "source"
+    ]
   },
   "schema": "s0ma-self-context@1",
   "source_ir": [

@@ -3,6 +3,11 @@
 The structured companion is derived only from emitted canonical IR.  The
 Markdown card is then rendered only from that structured document.  Neither
 artifact observes a live registry or executes project code.
+
+Both companions describe the application, which is the set of modules the
+manifest records with the ``source`` role.  Test modules are built into the
+same manifest by ``s0ma test`` and are left out by default; the roles a
+companion was derived from are recorded in its ``provenance.roles``.
 """
 
 from __future__ import annotations
@@ -10,6 +15,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any
+
+from s0ma.bootstrap import VALID_ROLES
 
 from s0ma_dsl.codegen.build_manifest import (
     ArtifactReference,
@@ -28,6 +35,18 @@ SELF_PROMPT_CARD_FILENAME = "self_prompt_card.md"
 #: The schema name and its required members do not move: a generation-1
 #: companion stays valid to a runtime that knows generation 2.
 SELF_CONTEXT_GENERATION_VERSION = "2"
+#: The manifest roles whose modules the companions describe unless a caller
+#: asks otherwise.  ``s0ma test`` merges test-role modules into the same
+#: manifest as the source modules, and a companion built from every entry
+#: describes the application's tests more than the application: on one real
+#: build (fr3d, 2026-10-23) 1,416 of 1,857 components came from test modules,
+#: the JSON weighed 1,021,910 bytes, and the bounded card spent inventory
+#: lines on ``test_*`` modules while omitting 1,780 components.  The default
+#: matches :func:`s0ma.bootstrap.bootstrap_imports`, which imports source
+#: modules only, so the inventory a model reads is the inventory the running
+#: application registers.  The roles a document was derived from are recorded
+#: in its ``provenance.roles`` (additive under ``s0ma-self-context@1``).
+SELF_CONTEXT_DEFAULT_ROLES: tuple[str, ...] = ("source",)
 #: The card's size contract, in UTF-8 bytes and whitespace-delimited words.
 #:
 #: The byte ceiling was 1,800 until 2026-08-30. At that number the inventory
@@ -62,6 +81,34 @@ _AUTHORED_DETAIL_STATE_FIELDS = (
     "latency_ms",
     "provides",
 )
+
+
+def _selected_roles(roles: tuple[str, ...]) -> tuple[str, ...]:
+    """Validate *roles* against the manifest's role vocabulary.
+
+    An empty selection would describe nothing, and an unknown role is a
+    caller bug; both are refused rather than silently producing an empty
+    inventory.  The result is sorted and de-duplicated so the recorded
+    ``provenance.roles`` is deterministic however the caller spelled it.
+    """
+    if isinstance(roles, str) or not all(isinstance(role, str) for role in roles):
+        raise ValueError(
+            "Self-context roles must be a tuple of role names such as ('source',); "
+            f"choose from {sorted(VALID_ROLES)}."
+        )
+    selected = tuple(sorted(set(roles)))
+    if not selected:
+        raise ValueError(
+            "Self-context roles must name at least one manifest role; "
+            f"choose from {sorted(VALID_ROLES)}."
+        )
+    unknown = sorted(set(selected) - VALID_ROLES)
+    if unknown:
+        raise ValueError(
+            f"Self-context roles {unknown} are not manifest roles; "
+            f"choose from {sorted(VALID_ROLES)}."
+        )
+    return selected
 
 
 def _read_ir(build_dir: Path, entry: ModuleManifestEntry) -> dict[str, Any]:
@@ -183,12 +230,26 @@ def _edges_by_source(raw_edges: object) -> dict[str, list[dict[str, Any]]]:
 def build_self_context_document(
     build_dir: Path,
     entries: list[ModuleManifestEntry],
+    *,
+    roles: tuple[str, ...] = SELF_CONTEXT_DEFAULT_ROLES,
 ) -> dict[str, Any]:
-    """Build ``s0ma-self-context@1`` from canonical IR artifacts."""
+    """Build ``s0ma-self-context@1`` from canonical IR artifacts.
+
+    Only manifest entries whose ``role`` is in *roles* contribute components
+    and ``source_ir`` records; the default describes the application's
+    source modules.  Pass ``("source", "test")`` to describe both.  A
+    selection that matches no entry, such as the default over a manifest
+    that holds only test modules, yields an empty inventory: that is a
+    true description of a project with nothing for a model to inspect yet,
+    and refusing it would break ``s0ma test`` for such a project.
+    """
+    selected_roles = _selected_roles(roles)
     source_ir: list[dict[str, str]] = []
     components: list[dict[str, Any]] = []
 
     for entry in sorted(entries, key=lambda item: (item.role, item.name)):
+        if entry.role not in selected_roles:
+            continue
         ir_path = build_dir / entry.ir
         ir_bytes = ir_path.read_bytes()
         ir = _read_ir(build_dir, entry)
@@ -249,6 +310,7 @@ def build_self_context_document(
             "authority": "canonical_ir",
             "live_health": False,
             "authored_text_trust": "untrusted_project_data",
+            "roles": list(selected_roles),
         },
         "build_health": {
             "status": "unknown",
@@ -296,12 +358,12 @@ def render_self_prompt_card(document: dict[str, Any]) -> str:
     lines = [
         "# s0ma self-prompt card",
         "",
-        # The five commands in 121 bytes: the card's byte ceiling is
+        # The seven commands in 122 bytes: the card's byte ceiling is
         # load-bearing (the authoring server's own card sits a few bytes
-        # under it), so the line names every command without spelling
-        # ``<name>`` five times.
-        "Runtime adapter `s0ma.runtime.self_inspect_adapter(...)`: describe; "
-        "component, dependencies, dependents, impact `<name>`.",
+        # under it), so the line names the tool and every command without
+        # spelling ``<name>`` five times.
+        "`self_inspect`: describe; components `<layer or module>`; "
+        "component, dependencies, dependents, impact `<name>`; source_ir.",
         _TRUST_INSTRUCTION,
         "Build health: unknown. Live health comes only from the runtime adapter.",
         "",
@@ -390,9 +452,17 @@ def render_self_prompt_card(document: dict[str, Any]) -> str:
 def emit_self_context_artifacts(
     build_dir: Path,
     entries: list[ModuleManifestEntry],
+    *,
+    roles: tuple[str, ...] = SELF_CONTEXT_DEFAULT_ROLES,
 ) -> SelfContextReferences:
-    """Write both deterministic companions and return manifest references."""
-    document = build_self_context_document(build_dir, entries)
+    """Write both deterministic companions and return manifest references.
+
+    *roles* selects the manifest entries the companions describe, exactly as
+    for :func:`build_self_context_document`.  The caller writes the returned
+    references into the manifest (``s0ma build`` does); the runtime verifies
+    the companions against those hashes and refuses stale ones.
+    """
+    document = build_self_context_document(build_dir, entries, roles=roles)
     json_bytes = (
         json.dumps(document, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
     ).encode("utf-8")
@@ -416,6 +486,7 @@ def emit_self_context_artifacts(
 
 
 __all__ = [
+    "SELF_CONTEXT_DEFAULT_ROLES",
     "SELF_CONTEXT_FILENAME",
     "SELF_CONTEXT_GENERATION_VERSION",
     "SELF_CONTEXT_SCHEMA",

@@ -331,6 +331,7 @@ def test_manifest_references_companion_without_claiming_inventory(
     companion = json.loads((root / "build" / refs["json"]["path"]).read_text(encoding="utf-8"))
     assert companion["schema"] == "s0ma-self-context@1"
     assert companion["provenance"]["authority"] == "canonical_ir"
+    assert companion["provenance"]["roles"] == ["source"]
     assert companion["components"]
 
 

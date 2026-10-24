@@ -213,3 +213,31 @@ def test_s0ma_build_clean_drops_prior_test_role_entries(
     assert "formatter" in names
     assert "calculator_tests" not in names
     assert "test_formatter" not in names
+
+
+def test_s0ma_test_companions_describe_source_modules_only(
+    staged_project: Path,
+) -> None:
+    """After ``s0ma test`` the manifest holds four entries, two of them
+    tests, and the companions beside it describe the two source modules:
+    the inventory a model reads is the inventory the application runs."""
+    from s0ma.runtime import self_context
+
+    cli = S0maCLI()
+    rc = cli.run([
+        "--project-root", str(staged_project),
+        "test",
+    ])
+    assert rc == EXIT_SUCCESS
+
+    context = self_context(_build_dir(staged_project))
+    assert context["provenance"]["roles"] == ["source"]
+    assert {component["module"] for component in context["components"]} == {
+        "calculator",
+        "formatter",
+    }
+    assert [record["path"] for record in context["source_ir"]] == [
+        "calculator.s0ma.json",
+        "formatter.s0ma.json",
+    ]
+    assert "test_formatter" not in context["card"]
