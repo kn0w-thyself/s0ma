@@ -13,6 +13,7 @@ Design principles:
 
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -48,6 +49,21 @@ __all__ = [
 ]
 
 
+def _constant_value_text(spec: ComponentSpec) -> str | None:
+    """The JSON text of a constant's carried literal, or ``None``.
+
+    ``register_constant`` stores the literal as ``metadata["value"]`` only
+    when the caller knew it; the key's presence is the signal, so a
+    constant whose value is ``None`` prints ``null`` rather than nothing.
+    """
+    if spec.metadata.get("kind_detail") != "CONSTANT" or "value" not in spec.metadata:
+        return None
+    try:
+        return json.dumps(spec.metadata["value"], ensure_ascii=False, sort_keys=True)
+    except (TypeError, ValueError):
+        return repr(spec.metadata["value"])
+
+
 def format_component_summary(spec: ComponentSpec) -> str:
     """Format a single component as a concise text block.
 
@@ -64,6 +80,9 @@ def format_component_summary(spec: ComponentSpec) -> str:
     lines: list[str] = []
     lines.append(f"{spec.name} ({spec.kind.name.lower()}, {spec.layer.name.lower()})")
     lines.append(f"  Intent: {spec.intent}")
+    value_text = _constant_value_text(spec)
+    if value_text is not None:
+        lines.append(f"  Value: {value_text}")
     if spec.version and spec.version != "0.1.0":
         lines.append(f"  Version: {spec.version}")
     if spec.dependencies:
@@ -77,8 +96,9 @@ def format_component_summary(spec: ComponentSpec) -> str:
 def format_component_detail(spec: ComponentSpec) -> str:
     """Format a component with full detail for LLM context.
 
-    Includes all available metadata: identity, contracts, dependencies,
-    resource profile, and source location. Designed for the
+    Includes all available metadata: identity, contracts, the operations
+    the component provides with their per-operation contracts,
+    dependencies, resource profile, and source location. Designed for the
     ``describe_component()`` method.
 
     Args:
@@ -102,11 +122,42 @@ def format_component_detail(spec: ComponentSpec) -> str:
     lines.append(f"Purpose: {spec.intent}")
     lines.append("")
 
+    # A constant's literal, when the registration carried one, so a limit
+    # or a threshold is answered with its number and not only its intent.
+    value_text = _constant_value_text(spec)
+    if value_text is not None:
+        lines.append(f"Value: {value_text}")
+        lines.append("")
+
     # Contracts
     contracts_text = format_contracts_text(spec.contracts)
     if contracts_text:
         lines.append("Contracts:")
         lines.append(contracts_text)
+        lines.append("")
+
+    # Operations: the ``provides:`` list, with the per-operation contract
+    # under each operation that authored one. This is where a reader
+    # learns that ``pip_install`` is an operation of this component and
+    # what that operation expects and guarantees; before these lines the
+    # per-operation contracts stopped at registry metadata nothing read.
+    operations = spec.provides
+    if operations:
+        contracts_by_name = {
+            contract.name: contract for contract in spec.provides_contracts
+        }
+        lines.append("Operations (provides):")
+        for operation in operations:
+            lines.append(f"  - {operation}")
+            contract = contracts_by_name.get(operation)
+            if contract is None:
+                continue
+            if contract.expects is not None:
+                lines.append(f"      Expects: {contract.expects}")
+            if contract.guarantees is not None:
+                lines.append(f"      Guarantees: {contract.guarantees}")
+            if contract.returns is not None:
+                lines.append(f"      Returns: {contract.returns}")
         lines.append("")
 
     # Dependencies
@@ -448,6 +499,13 @@ def format_impact_report(report: ImpactReport) -> str:
 
     lines.append(f"## Impact Analysis: {report.component_name}")
     lines.append("")
+    operation = report.details.get("operation")
+    if isinstance(operation, str):
+        lines.append(
+            f"{operation} is an operation of {report.component_name}; "
+            f"this is the impact of that component."
+        )
+        lines.append("")
     lines.append(f"Risk level: {report.risk_level.upper()}")
     lines.append(
         f"Total components affected: {report.total_affected_count}"

@@ -63,6 +63,11 @@ if TYPE_CHECKING:
     )
     from s0ma.registry import ComponentRegistry
 
+
+#: Marks ``register_constant``'s ``value`` as not given, so a constant
+#: whose literal is ``None`` is told apart from one with no literal.
+_NO_VALUE: Any = object()
+
 __all__ = [
     "import_modules_from_manifest",
     "register_constant",
@@ -190,6 +195,7 @@ def register_constant(
     intent: str,
     metadata: dict[str, Any] | None = None,
     module_path: str | None = None,
+    value: Any = _NO_VALUE,
 ) -> None:
     """Register a CONSTANT cell as a component.
 
@@ -203,6 +209,11 @@ def register_constant(
         Human-readable purpose statement.
     metadata:
         Additional DSL metadata (visibility, schema, etc.).
+    value:
+        The literal the constant's body assigns, when the emitter could
+        read one (``s0ma_dsl.ir.constant_values``); forwarded to the
+        registry, which keeps it as ``metadata["value"]``. Left out,
+        nothing is recorded: ``None`` is a value a constant can have.
     module_path:
         Owning module's canonical name (added 0.14.0 / PRE-8). The
         emitter passes the transpiler's ``self.module_name`` so the
@@ -225,10 +236,13 @@ def register_constant(
     # ``s0ma-framework``) where ``register_constant`` has no
     # ``module_path`` parameter — older frameworks just lose
     # the attribution, but no crash.
-    if module_path is not None and "module_path" in inspect.signature(
-        registry.register_constant
-    ).parameters:
+    parameters = inspect.signature(registry.register_constant).parameters
+    if module_path is not None and "module_path" in parameters:
         kwargs["module_path"] = module_path
+    # Same guard for ``value`` (0.20.0): an older registry without the
+    # parameter loses the value, never the registration.
+    if value is not _NO_VALUE and "value" in parameters:
+        kwargs["value"] = value
     registry.register_constant(**kwargs)
 
 

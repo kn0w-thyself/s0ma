@@ -304,7 +304,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "8d32cad719960ab7f2c80af9057a53e2403da38729864d8150f9077377f62b8c",
+      "content_sha256": "b6e5b9f02add85042ec31ad7bf6e3736bea5654d05c5b14a1da42c1267c35d1b",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.19.1] — 2026-10-09",
@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "3d9c114d0087e9497fed118a1c8f553f57bf4f041e7a8794ff5bb37dc87974f4",
+      "content_sha256": "3103a112da1061408adfe147fd8b075fcddc7c6206868b107500d9a0150250b5",
       "delegates": [],
       "id": "authority:declared/studi0.narration-event",
       "section": "NARRATION_TYPE",
@@ -322,7 +322,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "3d9c114d0087e9497fed118a1c8f553f57bf4f041e7a8794ff5bb37dc87974f4",
+      "content_sha256": "3103a112da1061408adfe147fd8b075fcddc7c6206868b107500d9a0150250b5",
       "delegates": [],
       "id": "authority:declared/studi0.presence-marker",
       "section": "PRESENCE_PATH_PARTS",
@@ -331,7 +331,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "57af06e3538a2609106bb66c0611a7ea993d5600a7c336b440be00a620a3174d",
+      "content_sha256": "8f67a262673448964610e80edcd0605729c374b4db6678a1caf04a66b2d74454",
       "delegates": [],
       "id": "authority:declared/studi0.serving-contract",
       "section": "Studi0ServerConfig",
@@ -349,7 +349,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "c4699713b2c192098a7bce908d76b023f6418ee94e5adc9efa04bb3bd17ccb1f",
+      "content_sha256": "dc9e23d4cfbbc255490a5543113ba7e96c2e68004cc8d4507ae9c770698dbab8",
       "delegates": [],
       "id": "authority:declared/studi0.wire-graph",
       "section": "GRAPH_SCHEMA",
@@ -358,7 +358,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "c4699713b2c192098a7bce908d76b023f6418ee94e5adc9efa04bb3bd17ccb1f",
+      "content_sha256": "dc9e23d4cfbbc255490a5543113ba7e96c2e68004cc8d4507ae9c770698dbab8",
       "delegates": [],
       "id": "authority:declared/studi0.wire-state",
       "section": "STATE_SCHEMA",
@@ -1471,7 +1471,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/axon-declaration",
       "section": "4.4",
@@ -1480,7 +1480,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/body-separator",
       "section": "4.9",
@@ -1489,7 +1489,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/build-pipeline",
       "section": "2.1",
@@ -1498,7 +1498,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/canonical-ir",
       "section": "4.14.5",
@@ -1507,7 +1507,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/cell-declaration",
       "section": "4.2",
@@ -1516,7 +1516,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/current",
       "section": "s0ma DSL — Language Specification & Coding Agent Rulebook",
@@ -1525,7 +1525,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/declaration-types",
       "section": "4",
@@ -1534,7 +1534,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/dependency-categories",
       "section": "4.5.1",
@@ -1543,7 +1543,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/doc-guide-declaration",
       "section": "4.12.2",
@@ -1552,7 +1552,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/doc-ref-declaration",
       "section": "4.12.1",
@@ -1561,7 +1561,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/doc-validation-layers",
       "section": "4.12.4",
@@ -1570,7 +1570,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/documentation-declarations",
       "section": "4.12",
@@ -1579,7 +1579,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/drift-check",
       "section": "4.12.5",
@@ -1588,7 +1588,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/example-declaration",
       "section": "4.12.3",
@@ -1597,7 +1597,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/ganglion-declaration",
       "section": "4.3",
@@ -1606,7 +1606,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/helper-declaration",
       "section": "4.4a",
@@ -1615,7 +1615,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/integration-declaration",
       "section": "4.4b",
@@ -1624,7 +1624,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/intermediate-representation",
       "section": "4.10.5",
@@ -1633,7 +1633,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/kind-taxonomy",
       "section": "3.1",
@@ -1642,7 +1642,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/layer-consistency",
       "section": "4.0.1",
@@ -1651,7 +1651,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/layer-reachability",
       "section": "4.0.2",
@@ -1660,7 +1660,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/module-declaration",
       "section": "4.5",
@@ -1669,7 +1669,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/namespace-model",
       "section": "4.10.1",
@@ -1678,7 +1678,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/nerve-declaration",
       "section": "4.1",
@@ -1687,7 +1687,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/primitive-vocabulary",
       "section": "3",
@@ -1696,7 +1696,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/registry-storage",
       "section": "4.10.4",
@@ -1705,7 +1705,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/strictness-modes",
       "section": "2.4",
@@ -1714,7 +1714,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/test-declaration",
       "section": "4.8",
@@ -1723,7 +1723,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/test-execution",
       "section": "4.15",
@@ -1732,7 +1732,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/validation-command",
       "section": "4.16",
@@ -1741,7 +1741,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "acb69540ae684cdae86d805c11e1bd7a77d243bb22f0934d24c47367d7c3ab44",
+      "content_sha256": "abcdc1a4ec70cc67cbc860c2a572b5422b2f2b9d81dfb102ec18f8126036027d",
       "delegates": [],
       "id": "authority:spec/visibility-system",
       "section": "5",
@@ -5442,7 +5442,7 @@
     "build_channel": "preview",
     "release_version": "0.19.1",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:4637874a4bcdaece"
+    "snapshot_hash": "sha256:f0638b89b84dfd6c"
   },
   "surfaces": [
     {
@@ -11194,7 +11194,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "57af06e3538a2609106bb66c0611a7ea993d5600a7c336b440be00a620a3174d"
+        "source_sha256": "8f67a262673448964610e80edcd0605729c374b4db6678a1caf04a66b2d74454"
       },
       "public_name": "/api/graph",
       "side_effects": [
@@ -11221,7 +11221,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "57af06e3538a2609106bb66c0611a7ea993d5600a7c336b440be00a620a3174d"
+        "source_sha256": "8f67a262673448964610e80edcd0605729c374b4db6678a1caf04a66b2d74454"
       },
       "public_name": "/api/state",
       "side_effects": [
@@ -11243,7 +11243,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "57af06e3538a2609106bb66c0611a7ea993d5600a7c336b440be00a620a3174d"
+        "source_sha256": "8f67a262673448964610e80edcd0605729c374b4db6678a1caf04a66b2d74454"
       },
       "public_name": "/assets/app.css",
       "side_effects": [
@@ -11265,7 +11265,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "57af06e3538a2609106bb66c0611a7ea993d5600a7c336b440be00a620a3174d"
+        "source_sha256": "8f67a262673448964610e80edcd0605729c374b4db6678a1caf04a66b2d74454"
       },
       "public_name": "/assets/app.js",
       "side_effects": [
@@ -11287,7 +11287,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "57af06e3538a2609106bb66c0611a7ea993d5600a7c336b440be00a620a3174d"
+        "source_sha256": "8f67a262673448964610e80edcd0605729c374b4db6678a1caf04a66b2d74454"
       },
       "public_name": "/",
       "side_effects": [

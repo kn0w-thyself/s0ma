@@ -79,4 +79,4 @@ ganglion <name> :: <LAYER>
 
 - Topic id: `concept:ganglion`
 - Release: `0.19.1 (preview)`
-- Documentation snapshot: `sha256:4637874a4bcdaece`
+- Documentation snapshot: `sha256:f0638b89b84dfd6c`

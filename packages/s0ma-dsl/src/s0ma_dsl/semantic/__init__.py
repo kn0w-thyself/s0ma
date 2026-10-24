@@ -5,8 +5,9 @@ consistency, layer consistency, inline axon validation, raises field validation,
 version format validation, and duplicate declaration detection.
 
 Also provides derived edge analysis: RAISES edge derivation from raises fields,
-TYPE_USES edge derivation from function signature annotations, and conflict
-detection between authored and derived edges (PRD §1.12).
+TYPE_USES edge derivation from function signature annotations, READS edge
+derivation from the constants a body refers to, and conflict detection
+between authored and derived edges (PRD §1.12).
 """
 
 from s0ma_dsl.semantic.derived_edges import (

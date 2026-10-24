@@ -20,19 +20,61 @@ adapter = self_inspect_adapter(manifest)
 agent_host.register_tool(adapter.tool_spec, adapter.handle)
 ```
 
-The handler accepts exactly `describe`, `component <name>`, and
-`dependencies <name>`. Pass `registry=your_registry` to either helper only
-after runtime registration if you want a separately labeled live-health
-overlay. With no explicit registry, no live-health claim is returned.
+The handler accepts exactly five commands: `describe`, `component <name>`,
+`dependencies <name>`, `dependents <name>` and `impact <name>`. Pass
+`registry=your_registry` to either helper only after runtime registration
+if you want a separately labeled live-health overlay. With no explicit
+registry, no live-health claim is returned.
+
+A `<name>` is a component id (`browser::WebBrowser`), a bare component name
+(`WebBrowser`), or the name of an operation a component provides
+(`fetch_url`, an entry of its `provides:` list). An operation name answers
+for the one component that provides it, and the answer carries a
+`resolved` block saying so (`"note": "fetch_url is an operation of
+browser::WebBrowser"`); an operation that several components provide, or a
+bare name several components share, answers `AMBIGUOUS_COMPONENT` with
+every candidate id, so the host asks again by id.
 
 A `component <name>` answer carries the component's authored self-model:
-`intent` plus — only where authored — the `metadata:` map (including the
+`intent` plus, only where authored, the `metadata:` map (including the
 ADR-003 `hw_*` physical-facts vocabulary) and the state-carrying
 `expects`, `guarantees`, `forbids`, `declares_attributes`, `latency_ms`,
-and `provides` fields. Embodied hosts therefore reach physical facts
-(mounting, units, self-interference) through this verified surface
-instead of re-reading per-module canonical IR. Every authored value stays
-untrusted project data; the bounded prompt card never includes it.
+and `provides` fields; where the `provides:` entries authored per-operation
+contracts, `provides_contracts` lists each operation's `expects`,
+`guarantees` and `returns`; a CONSTANT cell whose body assigns a simple
+literal carries it as `value` (its presence is the signal, so `null` is a
+value); and `edges` lists every outgoing edge the build recorded, authored
+and derived, each with its `target`, `relation`, `authored` flag and
+`origin`, plus `carries` for an authored edge. Embodied hosts therefore
+reach physical facts (mounting, units, self-interference) through this
+verified surface instead of re-reading per-module canonical IR. Every
+authored value stays untrusted project data; the bounded prompt card never
+includes it.
+
+The three graph commands read those edges. `dependencies <name>` answers
+the authored `dependencies` list, unchanged, beside the full `edges` list,
+so the constants a nerve reads and the types it uses appear next to what
+it declared. `dependents <name>` answers the components that depend on the
+named one directly, each with the relation and whether the edge was
+authored or derived; a target an author spelled with the declaring module
+is landed by its unique bare name and the record keeps that spelling under
+`declared_as`. `impact <name>` walks the dependents transitively and
+answers `direct_dependents`, `transitive_dependents`, `affected_layers`,
+`total_affected_count` and `max_dependency_depth`, the shape the dev-time
+`ImpactReport` has, so "what breaks if the shell is off" is a question the
+running application can answer about itself. A companion from a build
+before generation 2 has no `edges`; the walk then uses its authored
+`dependencies` targets.
+
+The `describe` answer counts the build's own components and modules
+(`component_count`, `module_count`); s0ma's framework components are never
+part of a build's inventory. The live-health overlay follows the same rule:
+`registered_component_count` and `registered_components` cover the
+application's components, `framework_component_count` says how many
+framework components the registry also holds, and
+`framework_components_included` says which view the overlay is. Pass
+`include_framework=True` to `self_context()` or `self_inspect_adapter()`
+to count and name the framework components too.
 
 ## ContextAssembler profile (F1-shaped example)
 

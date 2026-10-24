@@ -13,6 +13,69 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Added
 
+- **Per-operation contracts reach every describe surface.** A SERVICE nerve's
+  `provides:` entries carry per-operation `expects`, `guarantees` and
+  `returns`. They reached the IR and the registration metadata and stopped
+  there: nothing read `metadata["provides_contracts"]`, so a host asking what
+  `pip_install` expects got the nerve's contract and never the operation's.
+  `ComponentSpec` gains two typed views over the stored metadata copy, which
+  stays as it was: `provides`, the operation names, and `provides_contracts`,
+  a tuple of `OperationContract` records. `format_component_detail` prints an
+  `Operations (provides):` section with each operation's expects, guarantees
+  and returns under it, so `describe_component` and the introspection
+  server's `find_component` answer the question. The self-context companion
+  carries `provides_contracts` beside `provides`, and the runtime adapter's
+  `component <name>` answer returns it.
+- **An operation name resolves to the component that provides it.** An agent
+  mostly knows a system by the operations it calls, the tool names, and every
+  describe surface accepted only component names: `component fetch_url`
+  returned nothing and `impact fetch_url` said not found. The registry gains
+  `find_providers(operation)` and `resolve_component(name)`, which reads a
+  name as a component first and as an operation second; one provider resolves
+  to that component and several resolve to nothing with every provider named
+  as a candidate. `describe_component`, `get_impact_analysis`,
+  `explain_dependency_chain`, the query engine, the introspection server's
+  `find_component`, `get_impact` and `explain_dependency`, and the runtime
+  adapter all route through it, and each answer opens by saying so:
+  "fetch_url is an operation of browser::WebBrowser". `ComponentSpec.display_name`
+  is that `module::name` spelling, the one the build artifacts use; the
+  runtime adapter puts the same fact under a `resolved` key.
+- **A constant carries its value.** A CONSTANT cell whose body assigns a simple
+  literal (an int, a finite float, a str, a bool, None, or a flat tuple or
+  list of those, at most 1,024 bytes as JSON) now carries it on every surface:
+  the canonical IR at `components[].fields.value`, the emitted registration as
+  `register_constant(value=...)`, the registry as `metadata["value"]`, the
+  snapshot, and the self-context companion. Tuples are carried as JSON arrays
+  so the surfaces agree. The key's presence is the signal: `None` is a value,
+  and an expression, an embedded `@file` body or an oversized literal is no
+  value at all. `describe_component` and the summaries print `Value: 60`.
+- **A constant has readers.** The transpiler derives `READS` edges from nerve
+  and ganglion bodies to the constants they refer to, in their own module and,
+  when `s0ma build` has the whole project parsed, imported through `uses`. The
+  derived edge's origin is `constant_reference`. An authored edge between the
+  same source and target, with any relation, is the architectural statement
+  and wins: no derived edge is emitted for that pair, so a project that
+  already authors `READS` to its constants sees no `DUPLICATE_AXON`.
+  `s0ma graph` shows the new edges with the other derived ones.
+- **The self-context carries the edge graph.** Each component record gains an
+  `edges` list, every authored and derived outgoing edge with its `target`,
+  `relation`, whether it was `authored`, its IR `origin` and, for an authored
+  edge, what it `carries`. `dependencies` keeps carrying the authored targets
+  alone. The runtime adapter's `dependencies <name>` answer returns `edges`
+  beside `dependencies`, so a reader sees the constants a nerve reads and the
+  types it uses next to the dependencies it declared.
+- **The runtime self-model answers "what depends on X".** The runtime
+  `SelfInspectAdapter` gains `dependents <name>`, the components that depend
+  on the named one directly, each with its relation and whether the edge was
+  authored or derived, and `impact <name>`, the transitive walk with direct
+  and transitive dependents, affected layers, count and depth, the shape the
+  dev-time `ImpactReport` has. Both read the companion's authored and derived
+  edges, so a constant's readers are its dependents; a generation-1 companion
+  is walked over its authored targets. A target an author spelled with the
+  declaring module is landed by its unique bare name, and the answer keeps
+  the spelling under `declared_as`. The tool description, the error wording,
+  the self-prompt card's header line and the self-prompting guide name all
+  five commands.
 - **A wheel build no longer needs a per-project workaround, and there is a
   packaging guide.** `s0ma build` takes `--without-runtime-packages`, by
   which a build hook states that the environment it runs in does not hold
@@ -40,6 +103,40 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Changed
 
+- **Describe surfaces list the application's components by default.** s0ma
+  registers its own framework components beside an application's, flagged
+  `is_framework`, and the describe surfaces counted and listed them as the
+  application's: a host built its ambient self-description from "516
+  components across 5 layers" and named eight of the DSL's own helpers as its
+  capabilities, while the build's `self_context.json` said 441 in 103 modules.
+  `RegistrySnapshot.visible_components(include_framework=None)` is now the one
+  rule: the application's components alone whenever any are registered, the
+  framework's only when they are all there is (the framework describing
+  itself), `True` for everything, `False` for the application even when that
+  is nothing. `RegistrySnapshot.describe`, `SelfModelInterface.describe_system`,
+  `get_architecture_context` and the debugging context list and count through
+  it and say what they omit; the summary's total, framework and application
+  counts stay. The runtime overlay's `registered_component_count` and
+  `registered_components` follow the same rule, with a new
+  `framework_components_included` flag saying which view it is, so the live
+  count agrees with the companion; `self_context()` and
+  `self_inspect_adapter()` take `include_framework`, and the adapter's
+  `describe` adds `module_count`.
+- **The self-context companion is at generation 2.** `self_context.json` keeps
+  its schema name, `s0ma-self-context@1`, and every required member;
+  `generation_version` moves from `"1"` to `"2"` because the record now
+  carries `provides_contracts`, `value` and `edges` where they exist. The
+  runtime reads generation 1 and 2 alike, so an older build stays loadable
+  with the new fields absent. The three committed builds are regenerated.
+- **`value` is a reserved registration-metadata key.** `register_constant`
+  stores a constant's literal under it, so an authored `metadata: value:`
+  entry on any declaration is now `METADATA_RESERVED_KEY`, like the other
+  keys the emitter owns. `RESERVED_COMPONENT_METADATA_KEYS` has 28 members.
+- **The bootstrap self-model registers two more framework records.**
+  `OperationContract` and `ComponentResolution` join `s0ma.models` and the
+  bootstrap registration, so the expected framework component count moves
+  from 61 to 63; `ComponentRegistry` declares `ComponentResolution`, which it
+  now imports.
 - **The front door is written for the public repository's first release.**
   The root README now opens on what s0ma is — a substrate in which the code
   produces its own live, queryable model — and says who it is for: anyone

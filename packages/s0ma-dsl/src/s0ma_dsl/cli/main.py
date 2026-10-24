@@ -1258,12 +1258,33 @@ def _validate_single_module(
     ))
 
 
+def _project_constant_targets(
+    project_modules: dict[str, S0maModule] | None,
+) -> frozenset[str] | None:
+    """The canonical ids of every CONSTANT cell across the parsed project.
+
+    ``None`` when the caller has no project view (a single-file
+    transpile), in which case only a module's own constants derive READS
+    edges.
+    """
+    if not project_modules:
+        return None
+    from s0ma_dsl.ast_nodes.enums import Kind
+
+    return frozenset(
+        f"{parsed.module.name}::{cell.name}"
+        for parsed in project_modules.values()
+        for cell in parsed.cells
+        if cell.kind == Kind.CONSTANT
+    )
+
+
 def _analyze_derived_edges(
     module: S0maModule,
     source_path: Path,
     mode: StrictnessMode,
 ) -> tuple[list[DerivedEdge], list[S0maError]]:
-    """Analyze derived edges (RAISES, TYPE_USES) for a module."""
+    """Analyze derived edges (RAISES, TYPE_USES, READS) for a module."""
     from s0ma_dsl.semantic.derived_edges import analyze_derived_edges
 
     derived, errors = analyze_derived_edges(
@@ -1465,9 +1486,14 @@ def _transpile_single_file(
     )
     all_errors.extend(sem_errors)
 
-    # Stage 4: Derived edge analysis
+    # Stage 4: Derived edge analysis. The build has every module parsed,
+    # so the constants of the whole project are known and a body that
+    # reads an imported constant derives a READS edge to it.
     derived_edges, derived_errors = analyze_derived_edges(
-        module, mode=mode, filename=str(source_path)
+        module,
+        mode=mode,
+        filename=str(source_path),
+        constant_targets=_project_constant_targets(project_modules),
     )
     all_errors.extend(derived_errors)
 

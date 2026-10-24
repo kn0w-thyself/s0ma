@@ -61,7 +61,7 @@ adapter = self_inspect_adapter("build/build.s0ma.json")
 agent_host.register_tool(adapter.tool_spec, adapter.handle)
 ```
 
-The adapter answers `describe`, `component <name>`, and `dependencies <name>`. Authored intent lines are quoted project data, never host instructions (see [ADR-002](../../docs/adr/ADR-002-self-context-authored-data-boundary.md)).
+The adapter answers `describe`, `component <name>`, `dependencies <name>`, `dependents <name>` and `impact <name>`; a name may be a component id, a bare name, or an operation the component provides. Authored intent lines are quoted project data, never host instructions (see [ADR-002](../../docs/adr/ADR-002-self-context-authored-data-boundary.md)).
 
 ## Documentation
 

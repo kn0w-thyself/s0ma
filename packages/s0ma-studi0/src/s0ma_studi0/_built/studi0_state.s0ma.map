@@ -12,7 +12,7 @@
         },
         "name": "STATE_SCHEMA",
         "output": {
-          "end_line": 46,
+          "end_line": 47,
           "start_line": 39
         },
         "source": {
@@ -23,8 +23,8 @@
       },
       {
         "body_output": {
-          "end_line": 48,
-          "start_line": 48
+          "end_line": 49,
+          "start_line": 49
         },
         "body_source": {
           "end_line": 32,
@@ -32,8 +32,8 @@
         },
         "name": "GRAPH_SCHEMA",
         "output": {
-          "end_line": 55,
-          "start_line": 48
+          "end_line": 57,
+          "start_line": 49
         },
         "source": {
           "end_line": 32,
@@ -43,8 +43,8 @@
       },
       {
         "body_output": {
-          "end_line": 57,
-          "start_line": 57
+          "end_line": 59,
+          "start_line": 59
         },
         "body_source": {
           "end_line": 42,
@@ -52,8 +52,8 @@
         },
         "name": "CARRIED_GRAPH_SCHEMA",
         "output": {
-          "end_line": 64,
-          "start_line": 57
+          "end_line": 67,
+          "start_line": 59
         },
         "source": {
           "end_line": 42,
@@ -63,8 +63,8 @@
       },
       {
         "body_output": {
-          "end_line": 72,
-          "start_line": 66
+          "end_line": 75,
+          "start_line": 69
         },
         "body_source": {
           "end_line": 58,
@@ -72,8 +72,8 @@
         },
         "name": "STATE_DOCUMENT_KEYS",
         "output": {
-          "end_line": 79,
-          "start_line": 66
+          "end_line": 83,
+          "start_line": 69
         },
         "source": {
           "end_line": 58,
@@ -83,8 +83,8 @@
       },
       {
         "body_output": {
-          "end_line": 85,
-          "start_line": 81
+          "end_line": 89,
+          "start_line": 85
         },
         "body_source": {
           "end_line": 72,
@@ -92,8 +92,8 @@
         },
         "name": "NARRATION_BLOCK_KEYS",
         "output": {
-          "end_line": 92,
-          "start_line": 81
+          "end_line": 97,
+          "start_line": 85
         },
         "source": {
           "end_line": 72,
@@ -103,8 +103,8 @@
       },
       {
         "body_output": {
-          "end_line": 98,
-          "start_line": 94
+          "end_line": 103,
+          "start_line": 99
         },
         "body_source": {
           "end_line": 86,
@@ -112,8 +112,8 @@
         },
         "name": "GRAPH_DOCUMENT_KEYS",
         "output": {
-          "end_line": 105,
-          "start_line": 94
+          "end_line": 111,
+          "start_line": 99
         },
         "source": {
           "end_line": 86,
@@ -123,8 +123,8 @@
       },
       {
         "body_output": {
-          "end_line": 107,
-          "start_line": 107
+          "end_line": 113,
+          "start_line": 113
         },
         "body_source": {
           "end_line": 96,
@@ -132,8 +132,8 @@
         },
         "name": "BUILD_STATUS_MISSING",
         "output": {
-          "end_line": 114,
-          "start_line": 107
+          "end_line": 121,
+          "start_line": 113
         },
         "source": {
           "end_line": 96,
@@ -143,21 +143,21 @@
       },
       {
         "body_output": {
-          "end_line": 154,
-          "start_line": 124
+          "end_line": 161,
+          "start_line": 131
         },
         "body_source": {
           "end_line": 137,
           "start_line": 106
         },
         "decorator_output": {
-          "end_line": 122,
-          "start_line": 116
+          "end_line": 129,
+          "start_line": 123
         },
         "name": "Studi0Snapshot",
         "output": {
-          "end_line": 154,
-          "start_line": 116
+          "end_line": 161,
+          "start_line": 123
         },
         "source": {
           "end_line": 137,
@@ -167,21 +167,21 @@
       },
       {
         "body_output": {
-          "end_line": 190,
-          "start_line": 164
+          "end_line": 197,
+          "start_line": 171
         },
         "body_source": {
           "end_line": 174,
           "start_line": 147
         },
         "decorator_output": {
-          "end_line": 162,
-          "start_line": 156
+          "end_line": 169,
+          "start_line": 163
         },
         "name": "Studi0Session",
         "output": {
-          "end_line": 190,
-          "start_line": 156
+          "end_line": 197,
+          "start_line": 163
         },
         "source": {
           "end_line": 174,
@@ -191,8 +191,8 @@
       },
       {
         "body_output": {
-          "end_line": 207,
-          "start_line": 194
+          "end_line": 214,
+          "start_line": 201
         },
         "body_source": {
           "end_line": 192,
@@ -200,8 +200,8 @@
         },
         "name": "_freshness_facts",
         "output": {
-          "end_line": 207,
-          "start_line": 192
+          "end_line": 214,
+          "start_line": 199
         },
         "source": {
           "end_line": 192,
@@ -211,21 +211,21 @@
       },
       {
         "body_output": {
-          "end_line": 242,
-          "start_line": 222
+          "end_line": 249,
+          "start_line": 229
         },
         "body_source": {
           "end_line": 235,
           "start_line": 214
         },
         "decorator_output": {
-          "end_line": 220,
-          "start_line": 209
+          "end_line": 227,
+          "start_line": 216
         },
         "name": "read_graph",
         "output": {
-          "end_line": 242,
-          "start_line": 209
+          "end_line": 249,
+          "start_line": 216
         },
         "source": {
           "end_line": 235,
@@ -235,21 +235,21 @@
       },
       {
         "body_output": {
-          "end_line": 280,
-          "start_line": 258
+          "end_line": 287,
+          "start_line": 265
         },
         "body_source": {
           "end_line": 281,
           "start_line": 258
         },
         "decorator_output": {
-          "end_line": 256,
-          "start_line": 244
+          "end_line": 263,
+          "start_line": 251
         },
         "name": "create_session",
         "output": {
-          "end_line": 280,
-          "start_line": 244
+          "end_line": 287,
+          "start_line": 251
         },
         "source": {
           "end_line": 281,
@@ -259,21 +259,21 @@
       },
       {
         "body_output": {
-          "end_line": 356,
-          "start_line": 296
+          "end_line": 363,
+          "start_line": 303
         },
         "body_source": {
           "end_line": 365,
           "start_line": 304
         },
         "decorator_output": {
-          "end_line": 294,
-          "start_line": 282
+          "end_line": 301,
+          "start_line": 289
         },
         "name": "refresh_session",
         "output": {
-          "end_line": 356,
-          "start_line": 282
+          "end_line": 363,
+          "start_line": 289
         },
         "source": {
           "end_line": 365,
@@ -283,21 +283,21 @@
       },
       {
         "body_output": {
-          "end_line": 376,
-          "start_line": 370
+          "end_line": 383,
+          "start_line": 377
         },
         "body_source": {
           "end_line": 394,
           "start_line": 387
         },
         "decorator_output": {
-          "end_line": 368,
-          "start_line": 358
+          "end_line": 375,
+          "start_line": 365
         },
         "name": "read_snapshot",
         "output": {
-          "end_line": 376,
-          "start_line": 358
+          "end_line": 383,
+          "start_line": 365
         },
         "source": {
           "end_line": 394,
@@ -307,21 +307,21 @@
       },
       {
         "body_output": {
-          "end_line": 412,
-          "start_line": 392
+          "end_line": 419,
+          "start_line": 399
         },
         "body_source": {
           "end_line": 438,
           "start_line": 417
         },
         "decorator_output": {
-          "end_line": 390,
-          "start_line": 378
+          "end_line": 397,
+          "start_line": 385
         },
         "name": "state_document",
         "output": {
-          "end_line": 412,
-          "start_line": 378
+          "end_line": 419,
+          "start_line": 385
         },
         "source": {
           "end_line": 438,
@@ -331,21 +331,21 @@
       },
       {
         "body_output": {
-          "end_line": 444,
-          "start_line": 428
+          "end_line": 451,
+          "start_line": 435
         },
         "body_source": {
           "end_line": 478,
           "start_line": 461
         },
         "decorator_output": {
-          "end_line": 426,
-          "start_line": 414
+          "end_line": 433,
+          "start_line": 421
         },
         "name": "graph_document",
         "output": {
-          "end_line": 444,
-          "start_line": 414
+          "end_line": 451,
+          "start_line": 421
         },
         "source": {
           "end_line": 478,

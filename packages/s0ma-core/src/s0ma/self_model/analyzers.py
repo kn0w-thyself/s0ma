@@ -21,6 +21,7 @@ from s0ma.models import Anomaly
 from s0ma.types import AnomalyKind, AnomalySeverity, ComponentKind, Layer
 
 if TYPE_CHECKING:
+    from s0ma.models import ComponentSpec
     from s0ma.registry import ComponentRegistry
     from s0ma.verifiers.interoception import MetricsCollector
 
@@ -86,21 +87,22 @@ def compute_impact_analysis(
 
     Args:
         registry: The ComponentRegistry to analyze.
-        component_name: The component to analyze impact for.
+        component_name: The component to analyze impact for, or the name of
+            an operation it provides; the report is then the providing
+            component's and records the operation in ``details``.
         metrics_collector: Optional MetricsCollector for performance data.
 
     Returns:
         ImpactReport with structured analysis data.
 
     Raises:
-        RegistryIntegrityError: If the component is not registered.
+        RegistryIntegrityError: If the component is not registered, or if
+            the name is an operation that several components provide.
     """
-    spec = registry.get(component_name)
-    if spec is None:
-        raise RegistryIntegrityError(
-            f"Cannot analyze impact: component '{component_name}' "
-            f"is not registered."
-        )
+    spec, operation = _resolve_or_raise(
+        registry, component_name, "Cannot analyze impact"
+    )
+    component_name = spec.name
 
     # Get direct dependents
     direct_dependent_specs = registry.get_dependents(component_name)
@@ -158,6 +160,8 @@ def compute_impact_analysis(
         "component_layer": spec.layer.name,
         "is_framework": spec.is_framework,
     }
+    if operation is not None:
+        details["operation"] = operation
 
     if metrics_collector is not None:
         try:
@@ -433,23 +437,32 @@ def explain_dependency_chain(
 
     Raises:
         RegistryIntegrityError: If either component is not registered.
+            Either name may be an operation a component provides; the
+            explanation is then about the providing component and says so.
     """
-    source_spec = registry.get(source)
-    if source_spec is None:
-        raise RegistryIntegrityError(
-            f"Cannot explain dependency: component '{source}' is not registered."
+    source_spec, source_operation = _resolve_or_raise(
+        registry, source, "Cannot explain dependency"
+    )
+    target_spec, target_operation = _resolve_or_raise(
+        registry, target, "Cannot explain dependency"
+    )
+    notes = [
+        f"{operation} is an operation of {spec.display_name}."
+        for operation, spec in (
+            (source_operation, source_spec),
+            (target_operation, target_spec),
         )
-    target_spec = registry.get(target)
-    if target_spec is None:
-        raise RegistryIntegrityError(
-            f"Cannot explain dependency: component '{target}' is not registered."
-        )
+        if operation is not None
+    ]
+    source = source_spec.name
+    target = target_spec.name
 
     # Same component
     if source == target:
-        return (
+        return _with_notes(
+            notes,
             f"'{source}' and '{target}' are the same component. "
-            f"A component cannot depend on itself."
+            f"A component cannot depend on itself.",
         )
 
     # BFS from source following declared dependencies to find target
@@ -470,16 +483,51 @@ def explain_dependency_chain(
             if dep_name == target:
                 # Found — reconstruct the path
                 path = _reconstruct_path(parent, source, target)
-                return _format_dependency_explanation(registry, path)
+                return _with_notes(
+                    notes, _format_dependency_explanation(registry, path)
+                )
             queue.append(dep_name)
 
     # No path found
-    return (
+    return _with_notes(
+        notes,
         f"No dependency relationship found between '{source}' and '{target}'. "
         f"'{source}' ({source_spec.kind.name.lower()}, {source_spec.layer.name.lower()}) "
         f"does not depend on '{target}' ({target_spec.kind.name.lower()}, "
-        f"{target_spec.layer.name.lower()}) either directly or transitively."
+        f"{target_spec.layer.name.lower()}) either directly or transitively.",
     )
+
+
+def _resolve_or_raise(
+    registry: ComponentRegistry,
+    name: str,
+    what: str,
+) -> tuple[ComponentSpec, str | None]:
+    """Resolve *name* through the registry, raising the analyzer's own error.
+
+    Returns the component and, when *name* was the name of an operation
+    the component provides, that operation; ``None`` for a plain
+    component name. The error names every provider when an operation is
+    provided by several components, so the caller can ask by component.
+    """
+    resolution = registry.resolve_component(name)
+    if resolution.spec is not None:
+        return resolution.spec, resolution.operation
+    if resolution.candidates:
+        raise RegistryIntegrityError(
+            f"{what}: '{name}' is an operation of {len(resolution.candidates)} "
+            f"components; name one of them: {', '.join(resolution.candidates)}."
+        )
+    raise RegistryIntegrityError(
+        f"{what}: component '{name}' is not registered."
+    )
+
+
+def _with_notes(notes: list[str], text: str) -> str:
+    """Prefix *text* with the operation notes, when there are any."""
+    if not notes:
+        return text
+    return "\n".join([*notes, "", text])
 
 
 def _reconstruct_path(

@@ -1115,6 +1115,8 @@ A body with multiple top-level assignments is allowed as long as the cell name a
 
 **Style.** Use `UPPER_SNAKE_CASE` for both the cell name and the body identifier; this is the convention the project's other CONSTANT cells follow.
 
+**The literal rides the IR.** When a `CONSTANT` cell's body assigns a simple literal to the cell's name at top level, the canonical IR carries that literal at `components[].fields.value`, the emitted `register_constant(...)` call passes it as `value=`, the registry keeps it as `metadata["value"]`, and the build's self-context companion carries it, so a self-model answers "what is the floor" with the number rather than only with the sentence written about it. A simple literal is an `int`, a finite `float`, a `str`, a `bool` or `None`, or a flat tuple or list of those; tuples are carried as JSON arrays on every surface so the surfaces agree. The key is present only when such a literal exists, so a constant whose value is `None` is told apart from a constant assigned an expression, a name, a dict, a nested sequence, an embedded `content: @file(...)` body (the file is recorded by hash in the build manifest instead), or a literal whose JSON form exceeds 1,024 bytes; those carry no value at all. `value` is therefore a reserved registration-metadata key (§4.14).
+
 #### 4.2.4 Choosing visibility for cells consumed only by tests
 
 When a `cell` (or `nerve`) exists only to support a test — a fixture-style `CONSTANT`, a stub `MODEL`, a helper `EXCEPTION` — the impulse to reach for `visibility: INTERNAL` is wrong. `INTERNAL` forbids cross-module `uses:` from any other module (§4.10.1, ADR-008), *including* test modules. The transpiler emits `NOT_EXPORTED` the moment a sibling-module test references the component. The fix is `visibility: TEST`: TEST-visibility components are reachable from any module that contains at least one `test` declaration (a "test consumer"), but invisible to production callers. They never appear in `exports:` and are exempt from `NOT_EXPORTED`. Use `INTERNAL` only when you genuinely mean "no cross-module access, including tests" — typically when the component captures private invariants the tests for *this* module exercise indirectly.
@@ -2130,16 +2132,21 @@ The dependency graph contains two categories of edges. Each relationship has exa
 |----------|-------------|---------------------|
 | `RAISES` | `raises` field on nerve declarations | The `raises` field |
 | `TYPE_USES` | Python type annotations in nerve/ganglion signatures, and constructor calls to known cells in nerve/ganglion bodies | The Python signature and body |
+| `READS` (derived form) | References in nerve/ganglion bodies to CONSTANT cells, of the module or imported through `uses` | The Python body, unless an axon already covers the pair |
 
 **RAISES:** Derived from `raises`. Transpiler resolves to canonical IDs and emits edges. Authors must not declare `RAISES` axons.
 
 **TYPE_USES:** Derived from two sources: (1) Python type annotations in nerve and ganglion function signatures (parameter types and return types), and (2) constructor calls in nerve and ganglion bodies where the callee is a known cell (e.g., `ToolParameter(name="file")` where `ToolParameter` is a MODEL cell). Cell field annotations, base class references, and Protocol implementations are not in scope for v1 derivation — cell-internal type relationships are structural details covered by the `schema` field. Authors must not declare `TYPE_USES` axons. No exceptions.
 
-> **KEY:** Each relationship has exactly one authoritative source. If derivable, do not author it. If not derivable, you must author it.
+**READS to a constant:** Derived from the body. A nerve or ganglion body that refers by name to a `CONSTANT` cell, one of its own module or one imported through `uses`, depends on that constant: the limit is connected to the part it governs. The transpiler emits a `READS` edge with origin `constant_reference` for each such pair; a name the body also binds (a parameter, a local assignment) is not read as the constant. `READS` stays an authored relation as well. An authored edge between the same source and target, whatever its relation, is the architectural statement and wins: no derived edge is emitted for that pair and no `DUPLICATE_AXON` is raised, so a project that already authors `READS` to its constants keeps its declarations as the one record of each. Imported constants are derived when the build has the whole project parsed, which `s0ma build` does; a single-file transpile derives the module's own constants alone.
+
+> **KEY:** Each relationship has exactly one authoritative source. If derivable, do not author it. If not derivable, you must author it. A `READS` edge to a constant is the one exception in the other direction: derivable, and still yours to author when you want to say what it carries.
 
 #### 4.11.3 What the Transpiler Derives
 
-Per nerve and ganglion: `RAISES` edges (from `raises`), `TYPE_USES` edges (from function signature annotations and constructor calls to known cells), auto-generated intent for inline `depends_on`.
+Per nerve and ganglion: `RAISES` edges (from `raises`), `TYPE_USES` edges (from function signature annotations and constructor calls to known cells), `READS` edges to the constants the body refers to, auto-generated intent for inline `depends_on`.
+
+Per `CONSTANT` cell: the literal value at `components[].fields.value` (§4.2.3).
 
 Per module: `content_hash`, resolved `observes` lists, import statements.
 

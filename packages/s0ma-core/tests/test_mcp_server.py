@@ -336,3 +336,37 @@ class TestExplainDependencyChain:
 
         with pytest.raises(Exception, match="not registered"):
             explain_dependency_chain(registry, "ComponentRegistry", "NonExistent")
+
+
+class TestFindComponentOperations:
+    """``find_component`` answers with the operations a component provides."""
+
+    def test_per_operation_contracts_are_in_the_answer(
+        self, registry: ComponentRegistry
+    ) -> None:
+        from s0ma.models import ComponentSpec
+        from s0ma.types import ComponentKind, Layer
+
+        registry.register(
+            ComponentSpec(
+                name="CodeExecutor",
+                kind=ComponentKind.SERVICE,
+                layer=Layer.INFRASTRUCTURE,
+                intent="Runs Python snippets and installs packages for the agent.",
+                metadata={
+                    "provides": ["pip_install"],
+                    "provides_contracts": [
+                        {
+                            "name": "pip_install",
+                            "expects": "a wired run_shell",
+                            "guarantees": "fails with the shell's reason when run_shell is off",
+                        },
+                    ],
+                },
+            )
+        )
+        result = _call_tool(
+            create_mcp_server(registry), "find_component", {"name": "CodeExecutor"}
+        )
+        assert "Operations (provides):" in result
+        assert "Expects: a wired run_shell" in result

@@ -6,7 +6,7 @@
       "logical_path": "application.s0ma",
       "name": "application",
       "output": "application.py",
-      "output_hash": "sha256:9c43dbfa4348139269ca2bb8dcdba30885a543432216f6ff45f02d3745fea3b9",
+      "output_hash": "sha256:f526813a636da23bb2817d3c56d7800aa886a126d1440276690c43a3a7ce99e0",
       "role": "source",
       "source": "s0ma_src/application.s0ma",
       "source_hash": "sha256:ae081cc1fff656c36f42353ebdfd3fcafe994ba84c199100f152f76c19206802",
@@ -19,11 +19,11 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:23df00e1cbf03e75c0dd4609a7b187d789b92a4d8184d8c324de4cbcd414e641"
+      "sha256": "sha256:4abcf04ff7a819e259be00958e99a9085fd652a046b85a75a0c50f765f98edc5"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",
-      "sha256": "sha256:48ecfd6cb990656abccccd1316b628703554b41c973b137fa4964a64bbf3a4b7"
+      "sha256": "sha256:3758a643dade9b802a31199225a2fbdeecd8c85b0a00d0ed2c8fa2c604d49459"
     }
   },
   "topological_import_order": [

@@ -2,11 +2,11 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-Every component s0ma registers about itself: 159 of them, across 4 distributions and 8 kinds. This is the inventory the framework holds about its own code — the same self-model an application built with s0ma keeps about its code — read out of a registry booted for this build and out of the committed build artifacts of the packages that are written in s0ma itself.
+Every component s0ma registers about itself: 161 of them, across 4 distributions and 8 kinds. This is the inventory the framework holds about its own code — the same self-model an application built with s0ma keeps about its code — read out of a registry booted for this build and out of the committed build artifacts of the packages that are written in s0ma itself.
 
-By layer: 72 framework, 54 presentation, 33 application. 81 of the 159 declare themselves public and 73 declare no visibility at all, which is the honest answer for a component registered from hand-written Python: visibility is a field of the s0ma language, and a Python registration has nowhere to put one.
+By layer: 74 framework, 54 presentation, 33 application. 81 of the 161 declare themselves public and 75 declare no visibility at all, which is the honest answer for a component registered from hand-written Python: visibility is a field of the s0ma language, and a Python registration has nowhere to put one.
 
-This page describes the build stamped `sha256:4637874a4bcdaece` at version `0.19.1`. The same rows in a form a program can read, with the reading each fact came from, are in [`docs/_generated/inventory-components.json`](../_generated/inventory-components.json).
+This page describes the build stamped `sha256:f0638b89b84dfd6c` at version `0.19.1`. The same rows in a form a program can read, with the reading each fact came from, are in [`docs/_generated/inventory-components.json`](../_generated/inventory-components.json).
 
 ## Contents
 
@@ -23,7 +23,7 @@ This page describes the build stamped `sha256:4637874a4bcdaece` at version `0.19
 
 ## s0ma-core
 
-61 of the 159 components: all of them framework. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
+63 of the 161 components: all of them framework. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |
@@ -44,6 +44,7 @@ This page describes the build stamped `sha256:4637874a4bcdaece` at version `0.19
 | `component:s0ma.models.AdoptedFile` | framework | framework | not declared | Record of a real (non-generated) file registered into the self-model by adoption: path, content hash at adoption time, optional description and metadata |
 | `component:s0ma.models.Anomaly` | framework | framework | not declared | Represents a detected code-model discrepancy classified by biological pathology |
 | `component:s0ma.models.AssertExpr` | framework | framework | not declared | Verifiable assertion attached to a doc-guide, pairing an assertion expression with its source span for precise diagnostic reporting |
+| `component:s0ma.models.ComponentResolution` | framework | framework | not declared | What a caller-supplied name resolved to in the registry: the component, the operation name when the name was an operation the component provides, or the candidate providers when several components provide it |
 | `component:s0ma.models.ComponentSpec` | framework | framework | not declared | Core data structure storing registration metadata for a single component |
 | `component:s0ma.models.ConfigurableProperty` | framework | framework | not declared | Descriptor for runtime-configurable component properties like theme colors, layout options, and display settings |
 | `component:s0ma.models.Contract` | framework | framework | not declared | Behavioral contract declaring pre/postconditions, invariants, performance expectations, and cross-boundary protocol contracts with descriptive error messages on invalid keyword arguments |
@@ -57,6 +58,7 @@ This page describes the build stamped `sha256:4637874a4bcdaece` at version `0.19
 | `component:s0ma.models.ImportHookAnomaly` | framework | framework | not declared | Frozen record describing one foreign-code violation detected by the s0ma import hook; appended to the registry's anomaly buffer and dispatched to subscribers for downstream immune-response detection |
 | `component:s0ma.models.LifecycleEvent` | framework | framework | not declared | Records a lifecycle operation (register, unregister, update, create) for audit logging and rollback reference |
 | `component:s0ma.models.ModuleMetadata` | framework | framework | not declared | Metadata for module-level registration capturing layer, version, intent, exports, content hash, and tags |
+| `component:s0ma.models.OperationContract` | framework | framework | not declared | The authored contract of one operation a component provides: its name with the returns, expects and guarantees the author wrote for that operation, read from the registration metadata |
 | `component:s0ma.models.PluginRegistration` | framework | framework | not declared | Registration metadata for a plugin with dependency validation against core components |
 | `component:s0ma.models.ProtocolContract` | framework | framework | not declared | Declarative specification of a cross-boundary interface contract for WebSocket, REST, gRPC, or IPC protocols |
 | `component:s0ma.models.ReflexionAnalysis` | framework | framework | not declared | Murphy's Reflexion Model output classifying convergences, divergences, and absences |
@@ -91,7 +93,7 @@ This page describes the build stamped `sha256:4637874a4bcdaece` at version `0.19
 
 ## s0ma-dsl
 
-10 of the 159 components: 9 function, 1 service. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
+10 of the 161 components: 9 function, 1 service. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |
@@ -108,7 +110,7 @@ This page describes the build stamped `sha256:4637874a4bcdaece` at version `0.19
 
 ## s0ma-mcp
 
-40 of the 159 components: 36 function, 2 adapter, 1 framework, 1 orchestrator. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
+40 of the 161 components: 36 function, 2 adapter, 1 framework, 1 orchestrator. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |
@@ -155,7 +157,7 @@ This page describes the build stamped `sha256:4637874a4bcdaece` at version `0.19
 
 ## s0ma-studi0
 
-48 of the 159 components: 22 constant, 20 function, 4 model, 2 configuration. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
+48 of the 161 components: 22 constant, 20 function, 4 model, 2 configuration. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |

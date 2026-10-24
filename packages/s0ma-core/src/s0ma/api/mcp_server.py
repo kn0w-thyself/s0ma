@@ -90,7 +90,10 @@ def create_mcp_server(
 
         Returns a comprehensive description including component counts,
         architectural layers, key patterns, and current health status.
-        Use this to understand what the system is before making changes.
+        The layer and kind breakdowns list the application's own
+        components; s0ma's framework components are counted but not
+        listed. Use this to understand what the system is before making
+        changes.
         """
         return smi.describe_system()
 
@@ -99,10 +102,14 @@ def create_mcp_server(
         """Get detailed information about a specific component.
 
         Args:
-            name: The name of the component to look up.
+            name: The name of the component to look up, or the name of an
+                operation a component provides; that answers for the
+                providing component and says so.
 
-        Returns the component's identity, purpose, contracts,
-        dependencies, dependents, and source location.
+        Returns the component's identity, purpose, contracts, the
+        operations it provides with each operation's own expects,
+        guarantees and returns, dependencies, dependents, and source
+        location.
         """
         try:
             return smi.describe_component(name)
@@ -130,8 +137,10 @@ def create_mcp_server(
         is direct or transitive.
 
         Args:
-            source: Name of the component that depends on target.
-            target: Name of the component being depended upon.
+            source: Name of the component that depends on target, or of an
+                operation it provides.
+            target: Name of the component being depended upon, or of an
+                operation it provides.
         """
         try:
             return explain_dependency_chain(registry, source, target)
@@ -158,7 +167,8 @@ def create_mcp_server(
         layers, and a risk assessment (low/medium/high).
 
         Args:
-            component: Name of the component to analyze.
+            component: Name of the component to analyze, or of an operation
+                it provides; the analysis is then the providing component's.
         """
         try:
             return smi.get_impact_analysis(component)

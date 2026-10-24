@@ -40,6 +40,7 @@ from s0ma_dsl.ast_nodes.nodes import (
     StandaloneAxonDecl,
     TestDecl,
 )
+from s0ma_dsl.ir.constant_values import constant_literal
 from s0ma_dsl.ir.schema import (
     SCHEMA_VERSION,
     TRANSPILER_VERSION,
@@ -633,6 +634,15 @@ class IRBuilder:
         fields: dict[str, Any] = {
             "schema": cell.schema,
         }
+        # A CONSTANT cell whose body assigns a simple literal carries that
+        # literal at ``fields.value`` (``s0ma_dsl.ir.constant_values``
+        # says exactly which bodies qualify). The key is absent for every
+        # other cell, so a reader distinguishes "no literal" from a
+        # constant whose value is null. The emitted ``register_constant``
+        # call and the self-context carry the same value.
+        has_value, value = constant_literal(cell)
+        if has_value:
+            fields["value"] = value
         if cell.invariants:
             fields["invariants"] = cell.invariants
         if cell.version:
