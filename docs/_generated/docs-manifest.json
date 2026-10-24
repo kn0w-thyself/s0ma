@@ -1,7 +1,7 @@
 {
   "artifacts": [
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:f096300b98fc6a10",
       "format": "markdown",
       "id": "artifact:README.md",
@@ -11,8 +11,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:eca0f18587d20923",
+      "build_channel": "release",
+      "content_hash": "sha256:77658434fed2e600",
       "format": "package_data",
       "id": "artifact:_generated/core-teaching-slice.json",
       "path_or_uri": "docs/_generated/core-teaching-slice.json",
@@ -21,8 +21,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:1acc466028f80fbd",
+      "build_channel": "release",
+      "content_hash": "sha256:846b3b5239b2c723",
       "format": "json",
       "id": "artifact:_generated/coverage-report.json",
       "path_or_uri": "docs/_generated/coverage-report.json",
@@ -31,7 +31,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:875622123704e9cc",
       "format": "json",
       "id": "artifact:_generated/inventory-components.json",
@@ -41,7 +41,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:0f655a1220f05f21",
       "format": "json",
       "id": "artifact:_generated/inventory-concepts.json",
@@ -51,7 +51,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:eb8fc1d79ef51e8d",
       "format": "json",
       "id": "artifact:_generated/inventory-surfaces.json",
@@ -61,8 +61,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:ef630811090358e6",
+      "build_channel": "release",
+      "content_hash": "sha256:cad3b91406348f90",
       "format": "media_manifest",
       "id": "artifact:_generated/media/drift-recovery.json",
       "path_or_uri": "docs/_generated/media/drift-recovery.json",
@@ -71,8 +71,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:bb106347ee89f2d9",
+      "build_channel": "release",
+      "content_hash": "sha256:657cc2b04c817193",
       "format": "media_manifest",
       "id": "artifact:_generated/media/first-module.json",
       "path_or_uri": "docs/_generated/media/first-module.json",
@@ -81,8 +81,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:3d4903cef41719f3",
+      "build_channel": "release",
+      "content_hash": "sha256:d1362ba13325abe2",
       "format": "media_manifest",
       "id": "artifact:_generated/media/first-project.json",
       "path_or_uri": "docs/_generated/media/first-project.json",
@@ -91,8 +91,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:e36d92079bf2a45b",
+      "build_channel": "release",
+      "content_hash": "sha256:ae54d004730cd1ff",
       "format": "media_manifest",
       "id": "artifact:_generated/media/mcp-authoring-loop.json",
       "path_or_uri": "docs/_generated/media/mcp-authoring-loop.json",
@@ -101,8 +101,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:3affec4271b7a731",
+      "build_channel": "release",
+      "content_hash": "sha256:d2389133d39bf127",
       "format": "media_manifest",
       "id": "artifact:_generated/media/retrofit-existing-codebase.json",
       "path_or_uri": "docs/_generated/media/retrofit-existing-codebase.json",
@@ -111,8 +111,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:bb84cac518471366",
+      "build_channel": "release",
+      "content_hash": "sha256:024d044d414f7503",
       "format": "media_manifest",
       "id": "artifact:_generated/media/studi0-feedback.json",
       "path_or_uri": "docs/_generated/media/studi0-feedback.json",
@@ -121,8 +121,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:c3615afd98a05331",
+      "build_channel": "release",
+      "content_hash": "sha256:84351d720d146e7c",
       "format": "json",
       "id": "artifact:_generated/quick-reference-machine.json",
       "path_or_uri": "docs/_generated/quick-reference-machine.json",
@@ -131,8 +131,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:22bdc328bbe1f082",
+      "build_channel": "release",
+      "content_hash": "sha256:c1971b02f2cfadcb",
       "format": "json",
       "id": "artifact:_generated/s0ma-docs-model.json",
       "path_or_uri": "docs/_generated/s0ma-docs-model.json",
@@ -141,7 +141,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:cd1e1e502fd6aef8",
       "format": "markdown",
       "id": "artifact:architecture/component-index.md",
@@ -151,8 +151,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:181a1ca3a355bc79",
+      "build_channel": "release",
+      "content_hash": "sha256:ae4fad7e907cb6ac",
       "format": "markdown",
       "id": "artifact:architecture/docs-application.md",
       "path_or_uri": "docs/architecture/docs-application.md",
@@ -161,8 +161,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:35f6b14898192510",
+      "build_channel": "release",
+      "content_hash": "sha256:d3daf307114c8112",
       "format": "markdown",
       "id": "artifact:learn/adoption-ladder.md",
       "path_or_uri": "docs/learn/adoption-ladder.md",
@@ -171,8 +171,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:0bd625c016211f63",
+      "build_channel": "release",
+      "content_hash": "sha256:6360d2e6bc5eb449",
       "format": "markdown",
       "id": "artifact:learn/anatomy-of-a-s0ma-file.md",
       "path_or_uri": "docs/learn/anatomy-of-a-s0ma-file.md",
@@ -181,8 +181,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:ca6c30bc098e1cd4",
+      "build_channel": "release",
+      "content_hash": "sha256:afffd9374c7a01ed",
       "format": "markdown",
       "id": "artifact:learn/authored-vs-generated-boundary.md",
       "path_or_uri": "docs/learn/authored-vs-generated-boundary.md",
@@ -191,8 +191,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:f8539fc01bb0e6a7",
+      "build_channel": "release",
+      "content_hash": "sha256:ece1e4d8c981d532",
       "format": "markdown",
       "id": "artifact:learn/axon.md",
       "path_or_uri": "docs/learn/axon.md",
@@ -201,8 +201,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:e6898990d96af14f",
+      "build_channel": "release",
+      "content_hash": "sha256:82a8f6f94140b0da",
       "format": "markdown",
       "id": "artifact:learn/canonical-ir.md",
       "path_or_uri": "docs/learn/canonical-ir.md",
@@ -211,8 +211,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:3048b5daedfa3f25",
+      "build_channel": "release",
+      "content_hash": "sha256:bb7d477a659c3e43",
       "format": "markdown",
       "id": "artifact:learn/cell.md",
       "path_or_uri": "docs/learn/cell.md",
@@ -221,8 +221,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:ec6d34077cc8e19d",
+      "build_channel": "release",
+      "content_hash": "sha256:66253dc5bcdaca04",
       "format": "markdown",
       "id": "artifact:learn/check-and-build-loop.md",
       "path_or_uri": "docs/learn/check-and-build-loop.md",
@@ -231,8 +231,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:269cb42a1c4923e4",
+      "build_channel": "release",
+      "content_hash": "sha256:c2f49b86a26d61e6",
       "format": "markdown",
       "id": "artifact:learn/contract.md",
       "path_or_uri": "docs/learn/contract.md",
@@ -241,8 +241,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:c671a63773fea21c",
+      "build_channel": "release",
+      "content_hash": "sha256:50418149a6bc8bd6",
       "format": "markdown",
       "id": "artifact:learn/doc-guide.md",
       "path_or_uri": "docs/learn/doc-guide.md",
@@ -251,8 +251,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:98c7020f32455511",
+      "build_channel": "release",
+      "content_hash": "sha256:2257b4278f40c614",
       "format": "markdown",
       "id": "artifact:learn/doc-ref.md",
       "path_or_uri": "docs/learn/doc-ref.md",
@@ -261,8 +261,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:a02a5d7aaa65ae9e",
+      "build_channel": "release",
+      "content_hash": "sha256:0004373eb5c1bc77",
       "format": "markdown",
       "id": "artifact:learn/drift-gate.md",
       "path_or_uri": "docs/learn/drift-gate.md",
@@ -271,8 +271,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:662d61d84aa9f58b",
+      "build_channel": "release",
+      "content_hash": "sha256:21a356d175719e45",
       "format": "markdown",
       "id": "artifact:learn/drift.md",
       "path_or_uri": "docs/learn/drift.md",
@@ -281,8 +281,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:d751507effe0baa9",
+      "build_channel": "release",
+      "content_hash": "sha256:fcb9bfef2dd59be9",
       "format": "markdown",
       "id": "artifact:learn/embodiment.md",
       "path_or_uri": "docs/learn/embodiment.md",
@@ -291,8 +291,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:7ad1d8548bd1f54f",
+      "build_channel": "release",
+      "content_hash": "sha256:8150ea383089f22b",
       "format": "markdown",
       "id": "artifact:learn/example.md",
       "path_or_uri": "docs/learn/example.md",
@@ -301,8 +301,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:b66946dc706e1486",
+      "build_channel": "release",
+      "content_hash": "sha256:dc8333b87cc30ed0",
       "format": "markdown",
       "id": "artifact:learn/executable-evidence.md",
       "path_or_uri": "docs/learn/executable-evidence.md",
@@ -311,8 +311,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:10fbfa78cffae5dd",
+      "build_channel": "release",
+      "content_hash": "sha256:24f835777a5dc7a3",
       "format": "markdown",
       "id": "artifact:learn/feedback.md",
       "path_or_uri": "docs/learn/feedback.md",
@@ -321,8 +321,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:50c662285caf5205",
+      "build_channel": "release",
+      "content_hash": "sha256:c688b7b7b69452fd",
       "format": "markdown",
       "id": "artifact:learn/ganglion.md",
       "path_or_uri": "docs/learn/ganglion.md",
@@ -331,8 +331,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:31cdaaaba1b7b0ec",
+      "build_channel": "release",
+      "content_hash": "sha256:fd6cbaa09b34594e",
       "format": "markdown",
       "id": "artifact:learn/glossary.md",
       "path_or_uri": "docs/learn/glossary.md",
@@ -341,8 +341,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:ec806251bf6f86d7",
+      "build_channel": "release",
+      "content_hash": "sha256:cd01dd926dc72e84",
       "format": "markdown",
       "id": "artifact:learn/helper.md",
       "path_or_uri": "docs/learn/helper.md",
@@ -351,8 +351,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:359772244c16122f",
+      "build_channel": "release",
+      "content_hash": "sha256:3d76181e66329390",
       "format": "markdown",
       "id": "artifact:learn/integration.md",
       "path_or_uri": "docs/learn/integration.md",
@@ -361,8 +361,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:14561cd634f7cb09",
+      "build_channel": "release",
+      "content_hash": "sha256:9e6990f57573a6c3",
       "format": "markdown",
       "id": "artifact:learn/intent.md",
       "path_or_uri": "docs/learn/intent.md",
@@ -371,8 +371,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:fa4828c4947caed8",
+      "build_channel": "release",
+      "content_hash": "sha256:152036e397da3dbc",
       "format": "markdown",
       "id": "artifact:learn/interoception.md",
       "path_or_uri": "docs/learn/interoception.md",
@@ -381,8 +381,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:e74e707258b08a04",
+      "build_channel": "release",
+      "content_hash": "sha256:8ea4faf7ef748d70",
       "format": "markdown",
       "id": "artifact:learn/kind.md",
       "path_or_uri": "docs/learn/kind.md",
@@ -391,8 +391,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:f3608744aec19884",
+      "build_channel": "release",
+      "content_hash": "sha256:ff4583d81267745a",
       "format": "markdown",
       "id": "artifact:learn/layer.md",
       "path_or_uri": "docs/learn/layer.md",
@@ -401,8 +401,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:ac8ea61893a3db07",
+      "build_channel": "release",
+      "content_hash": "sha256:230292e22b6738db",
       "format": "markdown",
       "id": "artifact:learn/metacognition.md",
       "path_or_uri": "docs/learn/metacognition.md",
@@ -411,8 +411,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:e979aaa1f23380ad",
+      "build_channel": "release",
+      "content_hash": "sha256:d1bd7cc04f16dd4c",
       "format": "markdown",
       "id": "artifact:learn/mirror.md",
       "path_or_uri": "docs/learn/mirror.md",
@@ -421,8 +421,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:75081e96c042e610",
+      "build_channel": "release",
+      "content_hash": "sha256:3747786dd487bd84",
       "format": "markdown",
       "id": "artifact:learn/module.md",
       "path_or_uri": "docs/learn/module.md",
@@ -431,8 +431,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:34ee5737d537a14c",
+      "build_channel": "release",
+      "content_hash": "sha256:b098728830397fe8",
       "format": "markdown",
       "id": "artifact:learn/nerve.md",
       "path_or_uri": "docs/learn/nerve.md",
@@ -441,8 +441,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:0016271bb7122b6f",
+      "build_channel": "release",
+      "content_hash": "sha256:8bc0f5061b686fb5",
       "format": "markdown",
       "id": "artifact:learn/perimeter.md",
       "path_or_uri": "docs/learn/perimeter.md",
@@ -451,8 +451,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:c83dbd3792b48100",
+      "build_channel": "release",
+      "content_hash": "sha256:46c46662b4c06bff",
       "format": "markdown",
       "id": "artifact:learn/proprioception.md",
       "path_or_uri": "docs/learn/proprioception.md",
@@ -461,8 +461,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:eb6c01a21f9c4a06",
+      "build_channel": "release",
+      "content_hash": "sha256:90c95b99b6e7489f",
       "format": "markdown",
       "id": "artifact:learn/registry-snapshot.md",
       "path_or_uri": "docs/learn/registry-snapshot.md",
@@ -471,8 +471,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:0945ccc4bedf2859",
+      "build_channel": "release",
+      "content_hash": "sha256:5acffc0ec1355642",
       "format": "markdown",
       "id": "artifact:learn/release-channel.md",
       "path_or_uri": "docs/learn/release-channel.md",
@@ -481,8 +481,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:c1b6e495368aa59d",
+      "build_channel": "release",
+      "content_hash": "sha256:8271ae100ecf2287",
       "format": "markdown",
       "id": "artifact:learn/requires.md",
       "path_or_uri": "docs/learn/requires.md",
@@ -491,8 +491,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:b81f5d667f5fa530",
+      "build_channel": "release",
+      "content_hash": "sha256:f8fe7ddff6a79e97",
       "format": "markdown",
       "id": "artifact:learn/s0ma-file.md",
       "path_or_uri": "docs/learn/s0ma-file.md",
@@ -501,8 +501,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:765b69e14a7328d9",
+      "build_channel": "release",
+      "content_hash": "sha256:adafd53c0f4f4956",
       "format": "markdown",
       "id": "artifact:learn/s0ma.md",
       "path_or_uri": "docs/learn/s0ma.md",
@@ -511,8 +511,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:dc054beb64f13621",
+      "build_channel": "release",
+      "content_hash": "sha256:dc39b10d8cfadbc6",
       "format": "markdown",
       "id": "artifact:learn/self-knowledge.md",
       "path_or_uri": "docs/learn/self-knowledge.md",
@@ -521,8 +521,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:ebc2b7375f84f88a",
+      "build_channel": "release",
+      "content_hash": "sha256:ac76ddd70122aff5",
       "format": "markdown",
       "id": "artifact:learn/self-model.md",
       "path_or_uri": "docs/learn/self-model.md",
@@ -531,8 +531,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:089effc954e93b07",
+      "build_channel": "release",
+      "content_hash": "sha256:a902ace3392c64b1",
       "format": "markdown",
       "id": "artifact:learn/strictness-mode.md",
       "path_or_uri": "docs/learn/strictness-mode.md",
@@ -541,8 +541,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:4cab973ad44eaaa5",
+      "build_channel": "release",
+      "content_hash": "sha256:c0f6c9bd5f946606",
       "format": "markdown",
       "id": "artifact:learn/test.md",
       "path_or_uri": "docs/learn/test.md",
@@ -551,8 +551,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:6c3ce2b22d6651b2",
+      "build_channel": "release",
+      "content_hash": "sha256:e3dee56f792e241b",
       "format": "markdown",
       "id": "artifact:learn/uses.md",
       "path_or_uri": "docs/learn/uses.md",
@@ -561,8 +561,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:009b942a55a3a947",
+      "build_channel": "release",
+      "content_hash": "sha256:2c733987dafadb2a",
       "format": "markdown",
       "id": "artifact:learn/visibility.md",
       "path_or_uri": "docs/learn/visibility.md",
@@ -571,7 +571,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:eddd1ab179a59922",
       "format": "markdown",
       "id": "artifact:reference/cli.md",
@@ -581,7 +581,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:2529d2fd98826422",
       "format": "markdown",
       "id": "artifact:reference/concepts-index.md",
@@ -591,7 +591,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:d27cdaceb11ba90a",
       "format": "markdown",
       "id": "artifact:reference/configuration.md",
@@ -601,7 +601,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:fe29215ec911d6f3",
       "format": "markdown",
       "id": "artifact:reference/diagnostics.md",
@@ -611,7 +611,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:1d447609f269bf91",
       "format": "markdown",
       "id": "artifact:reference/mcp.md",
@@ -621,7 +621,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:2b719d8fd43d0eae",
       "format": "markdown",
       "id": "artifact:reference/packages.md",
@@ -631,8 +631,8 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
-      "content_hash": "sha256:140ab5bf5cbc43eb",
+      "build_channel": "release",
+      "content_hash": "sha256:d40e8c36162326c9",
       "format": "markdown",
       "id": "artifact:reference/quick-reference-readable.md",
       "path_or_uri": "docs/reference/quick-reference-readable.md",
@@ -641,7 +641,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:65c74b9467ddceca",
       "format": "markdown",
       "id": "artifact:reference/studi0.md",
@@ -651,7 +651,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     },
     {
-      "build_channel": "preview",
+      "build_channel": "release",
       "content_hash": "sha256:838a9fd2fe430cf9",
       "format": "markdown",
       "id": "artifact:reference/surfaces-index.md",
@@ -661,7 +661,7 @@
       "source_snapshot": "sha256:51ba36aa8c843a19"
     }
   ],
-  "build_channel": "preview",
+  "build_channel": "release",
   "package_versions": [
     {
       "distribution": "s0ma-core",

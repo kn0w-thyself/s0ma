@@ -1,9 +1,9 @@
 {
   "identity": {
-    "channel": "preview",
+    "channel": "release",
     "journey": "journey:first-module",
     "published_by": "doc:guide/first-module",
-    "release": "0.20.0 (preview)",
+    "release": "0.20.0",
     "snapshot": "sha256:51ba36aa8c843a19"
   },
   "package": {
