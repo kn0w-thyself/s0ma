@@ -43,10 +43,10 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install uv (Python ${{ matrix.python-version }})
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.3.0
         with:
           version: "0.9.21"
           python-version: ${{ matrix.python-version }}
@@ -79,7 +79,7 @@ jobs:
     # they carry with `docs/_generated/docs-manifest.json` from this same
     # checkout. Nothing it does is visible outside the runner.
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # The same shape as the `mirror-r2` and `verify-served` gates below,
       # and for the same reason: the JOB always runs so that everything
@@ -114,7 +114,7 @@ jobs:
 
       - name: Install uv
         if: steps.armed.outputs.on == 'true'
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.3.0
         with:
           version: "0.9.21"
           python-version: "3.12"
@@ -160,10 +160,10 @@ jobs:
     permissions:
       contents: write # create the GitHub Release and attach assets
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.3.0
         with:
           version: "0.9.21"
           python-version: "3.12"
@@ -240,7 +240,7 @@ jobs:
     needs: release
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # The R2 push is a MANUAL gate today: `CF_API_TOKEN` is deliberately not
       # set, which used to fail this job red on every tag. A permanently-red job
@@ -261,7 +261,7 @@ jobs:
           fi
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.3.0
         with:
           version: "0.9.21"
           python-version: "3.12"
@@ -332,7 +332,7 @@ jobs:
     needs: mirror-r2
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Same shape as the mirror job's `r2creds` gate above: `S0MA_SMOKE_KEY`
       # is an owner-provisioned secret that may not be set yet, and a
@@ -352,7 +352,7 @@ jobs:
           fi
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v8.2.0
+        uses: astral-sh/setup-uv@v10.3.0
         with:
           version: "0.9.21"
           python-version: "3.12"
@@ -415,10 +415,10 @@ jobs:
   #   permissions:
   #     id-token: write # OIDC for trusted publishing
   #   steps:
-  #     - uses: actions/checkout@v6
+  #     - uses: actions/checkout@v7
   #
   #     - name: Install uv
-  #       uses: astral-sh/setup-uv@v8.2.0
+  #       uses: astral-sh/setup-uv@v10.3.0
   #       with:
   #         version: "0.9.21"
   #         python-version: "3.12"
