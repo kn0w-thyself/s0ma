@@ -65,5 +65,5 @@ Do not use it to argue that hand-written explanation is unwelcome. Guides are au
 ## Identity
 
 - Topic id: `concept:authored-vs-generated-boundary`
-- Release: `0.21.0`
+- Release: `0.21.0 (preview)`
 - Documentation snapshot: `sha256:e9ff5e59e9d06aab`

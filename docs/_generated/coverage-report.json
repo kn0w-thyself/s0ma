@@ -1237,7 +1237,7 @@
     }
   ],
   "source": {
-    "build_channel": "release",
+    "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.21.0",
     "snapshot_hash": "sha256:e9ff5e59e9d06aab"

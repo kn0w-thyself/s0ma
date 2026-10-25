@@ -1,9 +1,9 @@
 {
   "identity": {
-    "channel": "release",
+    "channel": "preview",
     "journey": "journey:studi0-feedback",
     "published_by": "doc:guide/studi0-feedback",
-    "release": "0.21.0",
+    "release": "0.21.0 (preview)",
     "snapshot": "sha256:e9ff5e59e9d06aab"
   },
   "package": {

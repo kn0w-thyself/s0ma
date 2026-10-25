@@ -72,5 +72,5 @@ example <name>
 ## Identity
 
 - Topic id: `concept:example`
-- Release: `0.21.0`
+- Release: `0.21.0 (preview)`
 - Documentation snapshot: `sha256:e9ff5e59e9d06aab`

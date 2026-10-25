@@ -5484,7 +5484,7 @@
   ],
   "sequences": [],
   "stamp": {
-    "build_channel": "release",
+    "build_channel": "preview",
     "release_version": "0.21.0",
     "schema": "s0ma-docs-model@1",
     "snapshot_hash": "sha256:e9ff5e59e9d06aab"
