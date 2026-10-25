@@ -11,6 +11,23 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Fixed
+
+- Verification APIs distinguish passed, failed, and unavailable results. REST
+  health and anomaly counts are nullable when verification cannot run; text
+  describes verification scope instead of global operational health.
+- REST component detail uses one resolution for operation aliases, text and
+  structured data. Ambiguity returns 409 with canonical candidates; unknown
+  names retain 404. Bare-name ambiguity is retained by the public adapters.
+- Runtime registration observations match coherent canonical identities,
+  including package prefixes, and preserve unknown identity instead of
+  observing multiple same-named components from one registration. Overlays
+  carry snapshot lifetime and capture time; explicit reconstruction refreshes
+  observations without changing deterministic build identity.
+
+See [runtime compatibility and regression evidence](docs/operations/bench-runtime-contracts.md)
+for response examples, consumer adjustments, and the refresh contract.
+
 ## [0.20.0] — 2026-10-24
 
 ### Added

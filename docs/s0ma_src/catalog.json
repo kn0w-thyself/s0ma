@@ -1043,6 +1043,21 @@
     },
     {
       "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/operations/bench-runtime-contracts.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/bench-runtime-contracts",
+      "kind": "operations",
+      "prose_locator": "docs/operations/bench-runtime-contracts.md",
+      "status": "living",
+      "title": "Runtime observation compatibility and regression record"
+    },
+    {
+      "audiences": [
         "contributor"
       ],
       "authority": "",

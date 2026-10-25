@@ -66,7 +66,7 @@ repeats them:
 |---|---|
 | `describe` | The overview: `schema`, `roles` (when the companion records them), `component_count`, `module_count`, `source_ir_count`, `component_count_by_layer` and `component_count_by_kind`, `modules_by_layer` (names), `build_health`, and `live_health` as counts (`status`, `basis`, `registered_component_count`, `framework_component_count`, `framework_components_included`, `canonical_components_observed_count`) when a registry was supplied. No component ids, no IR records, no authored text. Its size grows with the number of modules, never with the number of components, and it stays under 8,000 characters of compact JSON: past that line the module names give way to `module_count_by_layer` and a `modules_omitted` count, and `components <layer>` still names them. |
 | `components <layer or module>` | The component names in that layer or module, grouped by module. An id is `<module>::<name>`. A name that is both a layer and a module answers as the layer. |
-| `component <name>` | One component's record, by id or by unambiguous bare name. The only answer that carries authored text. When a registry was supplied the answer also says whether the component is `observed` live, beside the record and never inside it. |
+| `component <name>` | One component's record, by id or by unambiguous bare name. The only answer that carries authored text. When a registry was supplied the answer also says whether the component was `observed` in the supplied registry snapshot (true, false, or null when identity/observation is unavailable), beside the record and never inside it. |
 | `dependencies <name>` | The authored `dependencies` list, unchanged, beside the full `edges` list: every outgoing edge the build recorded, authored and derived, so the constants a nerve reads and the types it uses appear next to what it declared. |
 | `dependents <name>` | The components that depend on the named one directly, each with the relation and whether the edge was authored or derived; a target an author spelled with the declaring module is landed by its unique bare name and the record keeps that spelling under `declared_as`. |
 | `impact <name>` | The transitive walk: `direct_dependents`, `transitive_dependents`, `affected_layers`, `total_affected_count` and `max_dependency_depth`, the shape the dev-time `ImpactReport` has, so "what breaks if the shell is off" is a question the running application can answer about itself. A companion from a build before generation 2 has no `edges`; the walk then uses its authored `dependencies` targets. |
@@ -259,3 +259,25 @@ orders — it is the runtime sibling of the authoring survival card.
 This is the operation channel. The authoring MCP server remains the
 construction channel; an application's runtime LLM does not need the DSL or
 MCP packages installed to use the core helper.
+
+## Refreshing observations in a long-running host
+
+The verified build view and runtime observations have separate lifetimes.
+`self_inspect_adapter(manifest, registry=registry)` captures one registry snapshot;
+reusing the adapter never reads the registry again. Its overlay carries
+`lifetime: snapshot` and `captured_at` from that snapshot. Reconstruct after
+register/unregister, and publish the replacement context and handler together.
+A supplied older RegistrySnapshot retains its original capture time.
+
+Registry read failure yields an unavailable overlay and `observed: null`.
+Conflicting or ambiguous registration identity yields partial coverage and null
+for the affected canonical components. A complete observation can report false
+for an absent component; null is not absence. The describe answer carries counts
+for unknown identities and unresolved registrations. Component answers carry
+observation basis and lifetime beside the immutable authored record.
+
+Build validation failures still raise SelfContextError. If the host retains an
+older adapter, label it as retained/stale and expose the failed refresh separately;
+never give it a new observation time. Inspection performs no provider/network
+request. [Runtime compatibility](../../../docs/operations/bench-runtime-contracts.md)
+has the response table, name-resolution rules and explicit reconstruction pattern.

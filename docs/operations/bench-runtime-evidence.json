@@ -1,0 +1,33 @@
+{
+  "base": "fd62a067b292f575c6845620a633af1d6b7e763f",
+  "python": "3.11.14",
+  "spend": 0,
+  "model_calls": 0,
+  "baseline": {
+    "command": "uv run pytest tests/test_rest_api.py tests/test_runtime_self_context.py -q",
+    "cwd": "packages/s0ma-core",
+    "passed": 87
+  },
+  "regression_before": {
+    "command": "PYTHONPATH=<base>/packages/s0ma-core/src uv run pytest tests/test_observation_contracts.py -q -o pythonpath=<base>/packages/s0ma-core/src",
+    "cwd": "packages/s0ma-core",
+    "failed": 16,
+    "log_sha256": "a8c1a561a91d01e779a5655b36524cefe8076b5439f2db0c620a83c137b457a6"
+  },
+  "focused_after": {
+    "command": "uv run pytest tests/test_observation_contracts.py tests/test_rest_api.py tests/test_runtime_self_context.py tests/test_self_model_formatters.py tests/test_self_model_interface.py tests/test_query_engine.py tests/test_mcp_server.py -q",
+    "cwd": "packages/s0ma-core",
+    "passed": 307
+  },
+  "full_gate": {
+    "command": "uv run python scripts/check.py",
+    "all_stages": "passed",
+    "core": {"passed": 2034, "skipped": 1},
+    "dsl": {"passed": 7990, "skipped": 23},
+    "mcp": {"passed": 476},
+    "studi0": {"passed": 124},
+    "integrations": {"passed": 532, "skipped": 6},
+    "includes": ["all type checks", "selfhost byte equality", "docs application", "installed-wheel cold checks", "docs links", "spelling"]
+  },
+  "note": "Two additional cases added after the focused run are included in the full gate. Local setup-error attempts retained under /private/tmp; none counted as product evidence."
+}

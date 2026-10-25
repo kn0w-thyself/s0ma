@@ -304,7 +304,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "712aa7b77416fc98107a3fa4668c127d8ab226cc03611ff619a8b70f8c6a557a",
+      "content_sha256": "27d14da94006a5446aff2026edb0fc88d51d4875772294bb181bf2123d3e707d",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.20.0] — 2026-10-24",
@@ -3657,6 +3657,15 @@
     },
     {
       "authority": "",
+      "canonical_source": "docs/operations/bench-runtime-contracts.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/bench-runtime-contracts",
+      "prose_locator": "docs/operations/bench-runtime-contracts.md",
+      "title": "Runtime observation compatibility and regression record"
+    },
+    {
+      "authority": "",
       "canonical_source": "CHANGELOG.md",
       "covers": [],
       "governed_by": [],
@@ -5451,7 +5460,7 @@
     "build_channel": "preview",
     "release_version": "0.20.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:51ba36aa8c843a19"
+    "snapshot_hash": "sha256:920da63fcc2e7e1f"
   },
   "surfaces": [
     {
