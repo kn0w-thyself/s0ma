@@ -70,5 +70,5 @@ module <name>
 ## Identity
 
 - Topic id: `concept:layer`
-- Release: `0.21.0 (preview)`
+- Release: `0.21.0`
 - Documentation snapshot: `sha256:e9ff5e59e9d06aab`
