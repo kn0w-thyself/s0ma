@@ -1,10 +1,10 @@
 # fr3d adoption after the upstream observation fixes
 
-Prepared 2026-10-25. This is a handoff for a separate session. Rob has merged
-runtime PR #11; guidance PR #12 awaits review and merge. Neither release nor
-fr3d adoption has occurred. The next release version is unresolved. After both
-PRs are merged, Rob must explicitly authorize the normal four-package release
-before fr3d adoption begins.
+Updated 2026-10-25. This is a handoff for a separate session. Rob has merged
+runtime PR #11 and guidance PR #12 and authorized the next four-package release.
+Version 0.21.0, tag `v0.21.0`, is being prepared through the release runbook.
+Publication is not yet verified and fr3d adoption has not begun. Verify the
+immutable release identity before changing downstream pins.
 
 ## Upstream identity and evidence
 
@@ -16,14 +16,15 @@ before fr3d adoption begins.
 | Runtime merge on main | 5c5793abdcd718f1b6f9b919612afdce62f3a3a3 |
 | Guidance implementation head | 348b8c90fa7898259c634e206f52caded1113a02 |
 | Guidance PR | [s0ma #12](https://github.com/kn0w-thyself/s0ma/pull/12) |
+| Guidance merge on main | 5888b8b2c085013c0bbfd32a53da87fb2b9acb71 |
 | fr3d main inspected read-only | cbe17141f721f315e53c7bb799224f53edee9579 |
-| Release / fr3d adoption | Neither performed; guidance merge and authorized release pending |
+| Release candidate | 0.21.0 / v0.21.0; authorized, publication pending |
+| fr3d adoption | Not performed; awaits verified release |
 
-The guidance PR now targets main after the runtime merge. Verify its current
-diff and checks before merging it. The guidance SHA above identifies the
-implementation before the handoff and Windows portability commits; get each
-PR's current head with `gh pr view --json
-headRefOid,state,statusCheckRollup`. A PR head is not a release tag.
+Both implementation PRs are merged. The guidance SHA above identifies the
+implementation before the handoff and Windows portability commits; its final
+head was `2c302a69f3424dfc0872f64fffd04c6d536cdb3a`. A PR head is not a
+release tag; downstream adoption must use the verified release identity.
 
 S01-S04 are fixed. S05 now has a public adapter matrix and real build composition;
 operation contracts, constants, READS edges, reverse dependencies and application
@@ -49,8 +50,9 @@ after retargeting to main and reopening the PR. It exposed Windows subprocess
 encoding in the new acceptance harness; local investigation also reproduced
 Windows asyncio's need for a loopback control socket. The harness now uses
 explicit UTF-8 and permits loopback while refusing external connections. The
-adjacent evidence JSON records both regressions and their local checks. Verify
-all six jobs and wheel building pass on the latest guidance head before merging.
+adjacent evidence JSON records both regressions and their local checks. All six
+jobs and wheel building passed on the final guidance head in
+[CI run 40237011697](https://github.com/kn0w-thyself/s0ma/actions/runs/40237011697).
 No authoring MCP surface snapshot, DSL grammar, IR schema or dependency direction
 changed. Frozen audit results and probe attempts remain untouched.
 
@@ -101,8 +103,9 @@ live facts, tools or ambient context through the upgrade.
 
 ## Owner release boundary
 
-Rob merges the reviewable changes; the author cannot supply the required review.
-Then Rob chooses a version and authorizes release. Follow
+Rob has merged the implementation and authorized version 0.21.0. The release
+preparation still follows repository review and verification requirements; the
+author cannot supply a required independent review. Follow
 [docs/RELEASING.md](../RELEASING.md), including its prepare A, tagged R and reopened
 P sequence, not an improvised tag on either implementation branch:
 

@@ -48,11 +48,11 @@ migration map; the catalog is what the build reads.
 | `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 50 |
 | `generated` | A rendered output of a generator or the s0ma build. Never hand-edited. | 60 |
 | `mirror` | A byte-for-byte copy of another file in this repo, kept honest by a gate. | 9 |
-| `historical` | A record of the past. Kept for provenance; must not be read as current guidance. | 15 |
+| `historical` | A record of the past. Kept for provenance; must not be read as current guidance. | 16 |
 | `superseded-pointer` | A short stub whose only content is "this moved — go here". | 11 |
 | `working-plan` | Plans, notes, and review records: those under `plans/`, this summary beside the ledger it explains, and the result records of the B-phase spikes under `scripts/spikes/`. | 1 |
 | `non-documentation` | A `.md` file that is test data or test scaffolding, not part of the documentation corpus. | 4 |
-| **Total** | | **175** |
+| **Total** | | **176** |
 
 158 files were tracked at Phase A finalization (the walkthrough pointer stub added at the A5-findings pass is the 156th, and A7's two tester documents — `docs/troubleshooting.md` and `docs/uninstall.md` — are the 157th and 158th); the 159th row was this summary, which the ledger
 classifies in advance of its own commit.
@@ -320,6 +320,12 @@ arrives as `normative-current` and takes over the current-spec row, and
 bannered, under its own name. Net: `historical` up by one, `normative-current`
 unchanged, total up by one.
 
+Cutting core's specification at 0.21.0 (2026-10-25) records unavailable
+verification, canonical resolution and snapshot observation contracts. The new
+`packages/s0ma-core/docs/s0ma-core-spec-v0.21.0.md` is `normative-current`;
+the 0.20.0 cut becomes `historical` under its existing name. Net: historical
+15 to 16, normative-current remains 25, total 175 to 176 in this public corpus.
+
 The plan for authored lines that stand on their own
 (`plans/s0ma-durable-authored-lines-1.md`, commissioned by the owner
 2026-10-05 as a required to-do, to run after `forbids-field-1` ships) adds
@@ -449,7 +455,7 @@ superseded.
 
 | Stub | Replacement |
 |---|---|
-| `packages/s0ma-core/docs/architecture.md` (G3) | `docs/architecture/component-index.md` + `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` |
+| `packages/s0ma-core/docs/architecture.md` (G3) | `docs/architecture/component-index.md` + `packages/s0ma-core/docs/s0ma-core-spec-v0.21.0.md` |
 | `packages/s0ma-core/docs/release_checklist.md` | `docs/RELEASING.md` |
 | `packages/s0ma-core/docs/s0ma-framework-feedback-3.1.md` | `packages/s0ma-core/docs/historical/s0ma-framework-feedback-3.1.md` |
 | `packages/s0ma-core/plans/README.md` (G5) | `docs/archive/pre-monorepo/s0ma-core/plans/` |
@@ -489,10 +495,11 @@ that read is repointed at the current spec first, or the stub stays.
 | Path | Replacement |
 |---|---|
 | `packages/s0ma-core/CHANGELOG.md` | `CHANGELOG.md` (root) — this file holds releases ≤ 0.4.0 |
-| `packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md` (0.19.0) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` — the current cut; the 0.19.0 cut restated this file and is itself historical since 0.19.1, as the 0.19.1 cut is since 0.20.0. This file keeps its content and its name and carries a banner naming the current cut |
-| `packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md` (0.19.1) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` — the current cut; the 0.19.1 cut restated this file and is itself historical since 0.20.0. This file keeps its content and its name and carries a banner naming the current cut |
-| `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` (0.20.0) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` — the cut that restates it for 0.20.0. This file keeps its content and its name and carries a banner naming its successor |
-| `packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md` (G3) | `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` — the current cut (G3 rotated this file to the 0.18.1 cut, itself historical since 0.19.0; the 0.19.0 cut is historical since 0.19.1 and the 0.19.1 cut since 0.20.0). This file keeps its content and its name (historical spec cuts are never renamed) and carries a banner naming the current cut, held there by `packages/s0ma-core/tests/test_doc_consistency.py` |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.18.1.md` (0.19.0) | `packages/s0ma-core/docs/s0ma-core-spec-v0.21.0.md` — the current cut; the 0.19.0 cut restated this file and is itself historical since 0.19.1, as the 0.19.1 cut is since 0.20.0. This file keeps its content and its name and carries a banner naming the current cut |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.19.0.md` (0.19.1) | `packages/s0ma-core/docs/s0ma-core-spec-v0.21.0.md` — the current cut; the 0.19.1 cut restated this file and is itself historical since 0.20.0. This file keeps its content and its name and carries a banner naming the current cut |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.19.1.md` (0.20.0) | `packages/s0ma-core/docs/s0ma-core-spec-v0.21.0.md` — the current cut. The 0.20.0 cut first restated this file and is itself historical since 0.21.0. This file keeps its content and its name and carries a banner naming the current cut |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.20.0.md` (0.21.0) | `packages/s0ma-core/docs/s0ma-core-spec-v0.21.0.md` — the current cut; the earlier cut is retained under its own name with a historical banner |
+| `packages/s0ma-core/docs/s0ma-core-spec-v0.2.0.md` (G3) | `packages/s0ma-core/docs/s0ma-core-spec-v0.21.0.md` — the current cut (G3 rotated this file to the 0.18.1 cut, itself historical since 0.19.0; the 0.19.0 cut is historical since 0.19.1 and the 0.19.1 cut since 0.20.0). This file keeps its content and its name (historical spec cuts are never renamed) and carries a banner naming the current cut, held there by `packages/s0ma-core/tests/test_doc_consistency.py` |
 | `packages/s0ma-dsl/CHANGELOG.md` | `CHANGELOG.md` (root) — this file holds the pre-monorepo dsl numbering ≤ 0.16.0 |
 | `packages/s0ma-dsl/docs/adr/ADR-004-separate-project.md` | No successor ADR. Current authority: `README.md` + `CONTRIBUTING.md` (workspace layout), `references/s0ma-prd.md` NFR-8/INV-4 (package split, licensing, lockstep) |
 | `packages/s0ma-dsl/docs/historical/release_walkthrough_5-6.md` | `packages/s0ma-dsl/docs/migration_guide.md` is the live upgrade reference. Moved to `historical/` with a pointer stub at the old path (A5-findings pass); the dsl README row now points at the moved file |

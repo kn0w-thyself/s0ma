@@ -1203,7 +1203,7 @@ wheels = [
 
 [[package]]
 name = "s0ma-core"
-version = "0.20.0"
+version = "0.21.0"
 source = { editable = "packages/s0ma-core" }
 
 [package.optional-dependencies]
@@ -1248,7 +1248,7 @@ provides-extras = ["api", "mcp", "all", "dev"]
 
 [[package]]
 name = "s0ma-dsl"
-version = "0.20.0"
+version = "0.21.0"
 source = { editable = "packages/s0ma-dsl" }
 dependencies = [
     { name = "lark", extra = ["interegular"] },
@@ -1274,7 +1274,7 @@ provides-extras = ["dev"]
 
 [[package]]
 name = "s0ma-mcp"
-version = "0.20.0"
+version = "0.21.0"
 source = { editable = "packages/s0ma-mcp" }
 dependencies = [
     { name = "s0ma-core", extra = ["mcp"] },
@@ -1300,7 +1300,7 @@ provides-extras = ["dev"]
 
 [[package]]
 name = "s0ma-studi0"
-version = "0.20.0"
+version = "0.21.0"
 source = { editable = "packages/s0ma-studi0" }
 dependencies = [
     { name = "s0ma-core" },

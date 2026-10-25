@@ -1,6 +1,6 @@
 # Runtime observation compatibility and regression record
 
-These unreleased changes follow the October 24 offline audit. The implementation
+These changes are included in s0ma 0.21.0 and follow the October 24 offline audit. The implementation
 base is `fd62a067b292f575c6845620a633af1d6b7e763f`. They change inspection
 answers, not the DSL grammar, deterministic companion schema, or provider execution.
 No new benchmark result or application adoption is claimed.
@@ -143,6 +143,7 @@ page for exact commands, source identity and subsequent gate results.
 
 The focused adapter suites passed 307 tests before two additional identity and
 single-resolution cases were added. The final gate result is recorded with the
-[review and adoption handoff](fr3d-adoption-handoff.md); a focused pass alone is not a release gate. No release version
-has been assigned. Rob merges the reviewable PRs and separately authorizes the
-four-package release through [the release runbook](../RELEASING.md).
+[review and adoption handoff](fr3d-adoption-handoff.md); a focused pass alone is
+not a release gate. Both implementation PRs are merged and Rob has authorized
+the four-package 0.21.0 release through [the release runbook](../RELEASING.md).
+Check the handoff for verified publication identity before downstream adoption.

@@ -162,7 +162,7 @@ at [the patterns guide §31](packages/s0ma-dsl/docs/references/dsl_patterns_guid
 
 ## Packages
 
-One repository, one lockstep version (**0.20.0**), four independently
+One repository, one lockstep version (**0.21.0**), four independently
 installable packages:
 
 | Distribution | Module | What it is | License |

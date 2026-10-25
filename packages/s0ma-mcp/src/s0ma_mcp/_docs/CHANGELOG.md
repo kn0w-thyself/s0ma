@@ -11,6 +11,8 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+## [0.21.0] — 2026-10-25
+
 ### Added
 
 - Offline application-observation example with real DSL build, registry composition,

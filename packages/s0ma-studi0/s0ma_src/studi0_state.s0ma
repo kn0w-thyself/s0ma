@@ -1,6 +1,6 @@
 module studi0_state
     layer: APPLICATION
-    version: 0.20.0
+    version: 0.21.0
     intent: "What one studi0 session knows about one project: the component graph read from that project's build artifacts, how fresh that build is against the sources it was built from, whatever an agent has said it is doing, and a sequence number that advances only when something really changed. Every graph fact enters studi0 here and only here — through s0ma_dsl.graph_export, never by opening IR JSON directly — so studi0 can never drift into a second, quieter answer about what a project contains. Narration enters through studi0_narration and stays in its own fields the whole way out: it is the agent's account of its work, never evidence about the project."
     exports: [STATE_SCHEMA, GRAPH_SCHEMA, CARRIED_GRAPH_SCHEMA, STATE_DOCUMENT_KEYS, NARRATION_BLOCK_KEYS, GRAPH_DOCUMENT_KEYS, BUILD_STATUS_MISSING, Studi0Snapshot, Studi0Session, read_graph, create_session, refresh_session, read_snapshot, state_document, graph_document]
 

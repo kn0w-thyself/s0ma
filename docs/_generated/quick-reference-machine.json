@@ -526,19 +526,19 @@
     "packages": [
       {
         "distribution": "s0ma-core",
-        "version": "0.20.0"
+        "version": "0.21.0"
       },
       {
         "distribution": "s0ma-dsl",
-        "version": "0.20.0"
+        "version": "0.21.0"
       },
       {
         "distribution": "s0ma-mcp",
-        "version": "0.20.0"
+        "version": "0.21.0"
       },
       {
         "distribution": "s0ma-studi0",
-        "version": "0.20.0"
+        "version": "0.21.0"
       }
     ],
     "read_from": [
@@ -548,10 +548,10 @@
       "python:s0ma_dsl.semantic_state"
     ],
     "readable": "docs/reference/quick-reference-readable.md",
-    "release": "0.20.0 (preview)",
-    "release_version": "0.20.0",
+    "release": "0.21.0 (preview)",
+    "release_version": "0.21.0",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:da3d3e6a1c041e5a",
+    "snapshot_hash": "sha256:e9ff5e59e9d06aab",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-studi0"
-version = "0.20.0"
+version = "0.21.0"
 description = "s0ma studi0 — the local viewer that renders a s0ma project's canonical component graph from its build artifacts, truthfully and read-only."
 readme = "README.md"
 license = "Apache-2.0"
