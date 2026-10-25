@@ -1,0 +1,9 @@
+[project]
+name = "observation-example"
+version = "0.1.0"
+dependencies = ["s0ma-core", "s0ma-dsl"]
+
+[tool.s0ma]
+source_roots = ["src"]
+build_dir = "build"
+mode = "dev"
