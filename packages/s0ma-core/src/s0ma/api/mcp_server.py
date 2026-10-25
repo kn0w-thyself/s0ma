@@ -124,8 +124,6 @@ def create_mcp_server(
         discrepancies between the registry and the actual codebase.
         """
         report = smi._try_verify()
-        if report is None:
-            return "Health status: No verification data available."
         return format_health_summary(report)
 
     @mcp.tool()

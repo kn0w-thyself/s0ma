@@ -464,6 +464,12 @@
     {
       "audience": "contributor",
       "disposition": "living-authored",
+      "note": "Runtime observation compatibility and audit requirement-to-test ledger.",
+      "path": "docs/operations/bench-runtime-contracts.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
       "note": "The maintenance runbook (I3): what a contributor does when adding a concept, a surface, a journey, a document or a coverage claim, and what each gate asks of them when it refuses. Authored prose that points rather than restates — the subsystem guide owns how the system works, RELEASING.md owns the release cut, AGENTS.md owns the build commands — so it carries no inventory of its own to go stale.",
       "path": "docs/operations/docs-maintenance.md"
     },

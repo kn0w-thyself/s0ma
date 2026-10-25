@@ -264,7 +264,7 @@ class TestFormatHealthSummary:
             total_duration_ms=42.0,
         )
         result = format_health_summary(report)
-        assert "HEALTHY" in result
+        assert "Verification status: PASSED" in result
         assert "No anomalies" in result
 
     def test_unhealthy_report(self) -> None:
@@ -291,7 +291,7 @@ class TestFormatHealthSummary:
             total_duration_ms=42.0,
         )
         result = format_health_summary(report)
-        assert "UNHEALTHY" in result
+        assert "Verification status: FAILED" in result
         assert "1" in result  # anomaly count
 
     def test_includes_erosion_coverage(self) -> None:

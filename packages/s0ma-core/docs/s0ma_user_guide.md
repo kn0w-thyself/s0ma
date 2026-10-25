@@ -728,6 +728,14 @@ POST /self/query                 → Natural language query (body: {"question": 
 
 All responses include both a `text` field (natural language for LLM consumption) and structured data fields (for programmatic access).
 
+The health endpoint reports verification, not provider or global application health.
+Check `status` (`passed`, `failed`, or `unavailable`) before interpreting `passed`
+or `anomaly_count`; both are null when verification is unavailable. Component
+aliases share the library resolver, ambiguity returns 409 with canonical
+candidates, and unknown names retain 404. See the
+[runtime compatibility guide](../../../docs/operations/bench-runtime-contracts.md)
+for exact response examples and the runtime adapter's snapshot refresh contract.
+
 ### 5.3 MCP Server
 
 s0ma also provides an MCP (Model Context Protocol) server for direct integration with AI tools:

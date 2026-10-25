@@ -638,12 +638,24 @@ class ComponentRegistry:
         spec = self.get(name)
         if spec is not None:
             return ComponentResolution(name=name, spec=spec)
+        # A component ambiguity must not fall through to an operation alias.
+        module, separator, bare = name.partition("::")
+        matches = [
+            spec for spec in self._components.values()
+            if spec.name == (bare if separator else name)
+            and (not separator or self._module_claim_matches(spec.module_path, module))
+        ]
+        if matches:
+            return ComponentResolution(
+                name=name, candidates=tuple(sorted(spec.display_name for spec in matches)),
+            )
         providers = self.find_providers(name)
         if len(providers) == 1:
             return ComponentResolution(name=name, spec=providers[0], operation=name)
         if providers:
             return ComponentResolution(
                 name=name,
+                operation=name,
                 candidates=tuple(provider.display_name for provider in providers),
             )
         return ComponentResolution(name=name)

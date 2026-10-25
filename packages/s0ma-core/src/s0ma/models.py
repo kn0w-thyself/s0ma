@@ -898,8 +898,9 @@ class ComponentResolution:
     carries the three outcomes: ``spec`` set and ``operation`` ``None``
     (a plain component name), ``spec`` and ``operation`` both set (an
     operation name, resolved to its one provider), or ``spec`` ``None``
-    with ``candidates`` naming every provider of an operation that more
-    than one component provides. All three empty means nothing matched.
+    with ``candidates`` naming every matching component. An ambiguous operation
+    also retains ``operation``; an ambiguous bare component name leaves it unset.
+    All three empty means nothing matched.
     """
 
     name: str

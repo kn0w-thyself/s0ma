@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 173 documents. 136 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 174 documents. 137 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -196,6 +196,7 @@ Running s0ma when something has gone wrong, releasing it, and working on s0ma it
 | [Releasing s0ma](RELEASING.md) | `docs/RELEASING.md` | owner | maintained | links checked, version checked |
 | [Removing s0ma](uninstall.md) | `docs/uninstall.md` | users | maintained | links checked, version checked |
 | [Reporting a security problem](../SECURITY.md) | `SECURITY.md` | contributors, users | maintained | version checked |
+| [Runtime observation compatibility and regression record](operations/bench-runtime-contracts.md) | `docs/operations/bench-runtime-contracts.md` | agents, contributors | maintained | links checked |
 | [s0ma 0.14.0 Schema and Surface Budget](contracts/0.14.0-schema-and-surface-budget.md) | `docs/contracts/0.14.0-schema-and-surface-budget.md` | contributors | binding | links checked |
 | [s0ma feedback contract — `s0ma-feedback@1` (feedback-v1)](contracts/feedback-v1.md) | `docs/contracts/feedback-v1.md` | contributors | binding | links checked |
 | [s0ma repository agent contract](../AGENTS.md) | `AGENTS.md` | agents | binding | links checked, version checked |

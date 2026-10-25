@@ -349,7 +349,22 @@ class QueryEngine:
         notes: list[str] = []
 
         def _resolve(term: str) -> None:
-            match = _fuzzy_match_component(term, component_names)
+            match: str | None
+            resolution = self._registry.resolve_component(term)
+            if resolution.candidates:
+                kind = "an operation of" if resolution.operation else "ambiguous between"
+                notes.append(
+                    f"'{term}' is {kind} {len(resolution.candidates)} components; "
+                    "ask by canonical name: "
+                    + ", ".join(resolution.candidates)
+                )
+                return
+            if resolution.spec is not None:
+                if resolution.note:
+                    notes.append(resolution.note + ".")
+                match = resolution.spec.display_name
+            else:
+                match = _fuzzy_match_component(term, component_names)
             if match is None:
                 match = self._resolve_operation(term, notes)
             if match is not None and match not in resolved:
@@ -528,29 +543,11 @@ class QueryEngine:
         resolved: list[str],
     ) -> str:
         """Handle "What anomalies exist?" / "Is the system healthy?" questions."""
+        from s0ma.self_model.formatters import format_health_summary
+
         report = self._self_model._try_verify()
-        if report is None:
-            return (
-                "Health status: No verification data available. "
-                "The verification engine could not be run."
-            )
-
-        lines: list[str] = []
-        if report.passed:
-            lines.append(
-                "The system is healthy. All verification checks passed."
-            )
-        else:
-            lines.append(
-                f"The system has {report.total_anomalies} anomalies "
-                f"({report.total_errors} errors, "
-                f"{report.total_warnings} warnings)."
-            )
-
-        lines.append("")
-        lines.append(report.explain_for_llm())
-
-        return "\n".join(lines)
+        summary = format_health_summary(report)
+        return summary if report is None else summary + "\n\n" + report.explain_for_llm()
 
     def _handle_performance_query(
         self,
