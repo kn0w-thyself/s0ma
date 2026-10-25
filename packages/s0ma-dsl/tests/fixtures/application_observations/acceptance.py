@@ -157,6 +157,10 @@ def main():
         assert delivered["memory"]["truncated"] is True
         assert len(delivered["memory"]["data"]) == 2
         assert all(len(value) <= 200 for value in delivered["memory"]["data"].values())
+        delivered = bounded["deliver"](inspection, record, "x" * 10000)
+        assert delivered["memory"]["status"] == "available"
+        assert delivered["memory"]["detail_status"] == "omitted"
+        assert delivered["follow_up"] == ["describe"]
         store_path = state / "missing.json"
         app = factory(store_path, lambda: "persistent", {})
         assert app["memory"]()["status"] == "missing"
@@ -195,6 +199,7 @@ def main():
         assert not app["readiness"]()["ready"]  # deliberate refresh, never a live config lookup
         app["refresh"](lambda: config)
         before_files = sorted(p.name for p in state.iterdir())
+        before_bytes = {p.name: p.read_bytes() for p in state.iterdir() if p.is_file()}
         before_readiness = app["readiness"](now=9)
         assert app["readiness"](now=9)["ready"]
         assert execute(now=9)["outcome"] == "success"
@@ -207,6 +212,7 @@ def main():
         )
         assert app["refresh"](fail)["status"] == "failed"
         assert app["readiness"](now=9) == before_readiness
+        assert {p.name: p.read_bytes() for p in state.iterdir() if p.is_file()} == before_bytes
         assert execute("direct", cache=fail)["cache"] == "failed"
         writes = []
         assert execute("direct", cache=writes.append)["cache"] == "written"
