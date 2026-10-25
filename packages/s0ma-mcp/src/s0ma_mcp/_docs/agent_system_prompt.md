@@ -201,8 +201,9 @@ APPLICATION CONSUMERS
   context after build/inspection. Preserve unknown/partial status, bound context,
   and offer follow-up queries. Relation kinds and optional effects are specific
   to operations; a type edge does not establish an operational prerequisite.
-- Worked offline example: `s0ma docs show doc:guide/application-observations`;
-  patterns guide (s0ma://guide/patterns) section 34 explains the acceptance loop.
+- Worked offline example: docs/guides/application-observations.md in the matching
+  source checkout (indexed by `s0ma docs show doc:guide/application-observations`).
+  The shipped patterns guide (s0ma://guide/patterns) section 34 explains the loop.
 
 VALIDATION
 - Run `s0ma check <file> --mode strict` to validate before committing.

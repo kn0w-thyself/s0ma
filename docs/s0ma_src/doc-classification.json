@@ -480,6 +480,12 @@
       "path": "docs/operations/docs-maintenance.md"
     },
     {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Dated upstream review and release boundary with executable downstream adoption prompt.",
+      "path": "docs/operations/fr3d-adoption-handoff.md"
+    },
+    {
       "audience": "user",
       "disposition": "generated",
       "note": "Generated reference to every command s0ma serves (F3): each one's help line, arguments, options and defaults, taken from the argparse tree the CLI really builds. Rendered by the documentation application from the composed snapshot and byte-gated by `s0ma docs check`; hand-edits are lost at the next compose.",

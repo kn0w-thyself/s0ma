@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 175 documents. 138 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 176 documents. 139 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -192,6 +192,7 @@ Running s0ma when something has gone wrong, releasing it, and working on s0ma it
 | [Architecture Decision Records](../packages/s0ma-dsl/docs/adr/README.md) | `packages/s0ma-dsl/docs/adr/README.md` | contributors | maintained | links checked |
 | [Code of conduct](../CODE_OF_CONDUCT.md) | `CODE_OF_CONDUCT.md` | contributors | maintained | version checked |
 | [Contributing to s0ma](../CONTRIBUTING.md) | `CONTRIBUTING.md` | contributors | maintained | links checked, version checked |
+| [fr3d adoption after the upstream observation fixes](operations/fr3d-adoption-handoff.md) | `docs/operations/fr3d-adoption-handoff.md` | agents, contributors | maintained | links checked |
 | [Maintaining the documentation](operations/docs-maintenance.md) | `docs/operations/docs-maintenance.md` | contributors | maintained | links checked, version checked |
 | [Offering a change during the beta](../.github/PULL_REQUEST_TEMPLATE.md) | `.github/PULL_REQUEST_TEMPLATE.md` | contributors | maintained | version checked |
 | [Releasing s0ma](RELEASING.md) | `docs/RELEASING.md` | owner | maintained | links checked, version checked |

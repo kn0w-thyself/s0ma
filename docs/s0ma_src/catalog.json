@@ -1398,6 +1398,21 @@
     },
     {
       "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/operations/fr3d-adoption-handoff.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/fr3d-adoption-handoff",
+      "kind": "operations",
+      "prose_locator": "docs/operations/fr3d-adoption-handoff.md",
+      "status": "living",
+      "title": "fr3d adoption after the upstream observation fixes"
+    },
+    {
+      "audiences": [
         "user"
       ],
       "authority": "",

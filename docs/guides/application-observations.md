@@ -8,6 +8,11 @@ fr3d dependency, paid model, real credentials or home-directory data.
 
 ## Run and inspect
 
+The agent prompt and patterns guide section 34 ship through the authoring MCP
+resources. `s0ma docs show doc:guide/application-observations` returns this guide's
+index entry and source locator. The executable fixture and this full guide live
+in the matching source checkout; they are not installed as a new MCP resource.
+
 From `packages/s0ma-dsl`, run:
 
 ```bash
@@ -47,7 +52,7 @@ and acceptance; all effects use the temporary fixture directory.
 | Credential expiry | Presence and locally known expiry are separate; expired relay execution refuses; provider_verified remains false. |
 | Alternate route | Direct execution needs no relay client identifier or credential. |
 | Optional cache | Cache failure is reported alongside a successful main result; a successful cache callback is also asserted. |
-| Context budget | Two memory entries, capped values and action names; operation detail is omitted with a reason if the 6,000-character budget would be exceeded. Follow-up queries retain the route to more detail. |
+| Context budget | Two memory entries, capped values and action names; operation detail is omitted with a reason if the 6,000-character budget would be exceeded. If detail still exceeds the budget, retain statuses with an explicit omission reason and a bounded follow-up query. |
 
 The recording adapter receives the actual `deliver` call, not a separately
 assembled test answer. Tests assert the static system instruction stays constant,

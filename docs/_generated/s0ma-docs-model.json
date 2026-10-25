@@ -3908,6 +3908,15 @@
     },
     {
       "authority": "",
+      "canonical_source": "docs/operations/fr3d-adoption-handoff.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/fr3d-adoption-handoff",
+      "prose_locator": "docs/operations/fr3d-adoption-handoff.md",
+      "title": "fr3d adoption after the upstream observation fixes"
+    },
+    {
+      "authority": "",
       "canonical_source": "docs/getting-started.md",
       "covers": [
         "cli:s0ma/build",
@@ -5469,7 +5478,7 @@
     "build_channel": "preview",
     "release_version": "0.20.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:d259cef049e9be11"
+    "snapshot_hash": "sha256:da3d3e6a1c041e5a"
   },
   "surfaces": [
     {

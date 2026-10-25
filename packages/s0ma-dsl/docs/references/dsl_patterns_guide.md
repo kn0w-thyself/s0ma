@@ -2666,19 +2666,25 @@ failed and partial observations distinct through inspection and the final
 consumer context, with safe reason codes rather than exception text. Health
 claims name the checks and their observation time, not global correctness.
 
-Test the actual return contract: ComponentRegistry.get_all returns specs, not
-names. A convenient name-list stub cannot prove that a scheduler or converter
+Test the actual return contract: ComponentRegistry.get_all returns a mapping to specs. A convenient name-list stub cannot prove that a scheduler or converter
 works with it. Interpret dependency relation kinds and operation scope before
 inferring failure: TYPE_USES is a type relationship, and an optional cache is not
 a prerequisite for every operation. Exercise valid alternate routes.
 
-The worked example is served by:
+The worked example lives at `docs/guides/application-observations.md` in the
+matching source checkout. Its indexed location is available with:
 
 ```text
 s0ma docs show doc:guide/application-observations
 ```
 
-It builds authored source, boots the real registry in an isolated process, checks
+The lookup returns an index entry, not the full source guide or fixture. This
+section ships in the authoring server's `s0ma://guide/patterns` resource. To run
+the example, use the matching source release and its guide; from the repository's
+`packages/s0ma-dsl` directory run
+`uv run pytest tests/test_application_observations.py -q`.
+
+The example builds authored source, boots the real registry in an isolated process, checks
 canonical IR and public adapters, and captures the context delivered to a
 recording consumer. Assertions follow response, working memory, disk and a fresh
 reader. A second build renames the provider and its operation. Context stays

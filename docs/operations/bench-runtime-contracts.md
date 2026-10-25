@@ -143,6 +143,6 @@ page for exact commands, source identity and subsequent gate results.
 
 The focused adapter suites passed 307 tests before two additional identity and
 single-resolution cases were added. The final gate result is recorded with the
-review handoff; a focused pass alone is not a release gate. No release version
+[review and adoption handoff](fr3d-adoption-handoff.md); a focused pass alone is not a release gate. No release version
 has been assigned. Rob merges the reviewable PRs and separately authorizes the
 four-package release through [the release runbook](../RELEASING.md).
