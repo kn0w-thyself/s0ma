@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-mcp"
-version = "0.20.0"
+version = "0.21.0"
 description = "The s0ma authoring MCP server — exposes the s0ma DSL self-knowledge toolchain and agent guides to coding agents over the Model Context Protocol."
 readme = "README.md"
 license = "Apache-2.0"

@@ -4,7 +4,7 @@
 specification as it was cut for 0.19.0.
 
 **The current specification is
-[`s0ma-core-spec-v0.20.0.md`](s0ma-core-spec-v0.20.0.md)**. The cut that
+[`s0ma-core-spec-v0.21.0.md`](s0ma-core-spec-v0.21.0.md)**. The cut that
 restated this one for 0.19.1, [`s0ma-core-spec-v0.19.1.md`](s0ma-core-spec-v0.19.1.md),
 is itself historical since 0.20.0 and says in its Section 13 what changed
 between this cut and it.

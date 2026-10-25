@@ -10,7 +10,7 @@ from s0ma_dsl.project import S0maProject
 # (`transpiler_version` field) so downstream tooling can branch on the
 # version that produced a given build artifact. Bump in lockstep with
 # the version field in ``pyproject.toml``.
-__version__ = "0.20.0"
+__version__ = "0.21.0"
 
 __all__ = [
     "S0maProject",

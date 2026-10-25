@@ -4,8 +4,8 @@
 specification as it was cut for 0.19.1.
 
 **The current specification is
-[`s0ma-core-spec-v0.20.0.md`](s0ma-core-spec-v0.20.0.md)**, which restates
-this cut for 0.20.0 and says in its Section 13 what changed between the two.
+[`s0ma-core-spec-v0.21.0.md`](s0ma-core-spec-v0.21.0.md)**, which restates
+the current runtime contracts and records the intervening changes in Section 13.
 
 This file is kept, and deliberately not renamed, because it is the record of
 what core promised at 0.19.1. Read it as history.

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-dsl"
-version = "0.20.0"
+version = "0.21.0"
 description = "The s0ma DSL transpiler — compiles .s0ma source files into self-describing Python for software self-knowledge."
 readme = "README.md"
 license = "Apache-2.0"
