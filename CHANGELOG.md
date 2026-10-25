@@ -11,6 +11,14 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Added
+
+- Offline application-observation example with real DSL build, registry composition,
+  public inspection, effect assertions and recorded consumer context, repeated
+  with renamed operations. Agent and integration guidance now teach effective
+  policy/results, shared readiness, unknown observations, bounded context and
+  application-specific acceptance after the authoring loop.
+
 ### Fixed
 
 - Verification APIs distinguish passed, failed, and unavailable results. REST

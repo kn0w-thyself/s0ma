@@ -1,0 +1,113 @@
+RUNTIME
+Command: uv run python scripts/check.py
+Cwd: implementation repository root
+SHA256 of full log: 52bf797b92608e1ffa77c23d00baec1a853418436295df3fde60141414f6caa6
+================= 2034 passed, 1 skipped, 2 warnings in 6.91s ==================
+========== 7990 passed, 23 skipped, 10 warnings in 194.78s (0:03:14) ===========
+============================= 476 passed in 15.68s =============================
+============================= 124 passed in 29.67s =============================
+532 passed, 6 skipped in 48.95s
+  Summary
+========================================================================
+  PASS  ruff             0.0s
+  PASS  mypy-core        0.1s
+  PASS  mypy-mcp         2.6s
+  PASS  mypy-dsl         6.5s
+  PASS  mypy-studi0      1.8s
+  PASS  pytest-core      7.3s
+  PASS  pytest-dsl     196.0s
+  PASS  pytest-mcp      19.1s
+  PASS  pytest-studi0    29.9s
+  PASS  integrations    50.4s
+  PASS  docs-application     1.2s
+  PASS  selfhost-build     9.3s
+  PASS  spelling         0.3s
+  PASS  docs-version-currency     0.0s
+  PASS  authored-lines     0.7s
+  PASS  docs-links       0.2s
+
+All checks passed.
+
+
+GUIDANCE
+Command: uv run python scripts/check.py
+Cwd: implementation repository root
+SHA256 of full log: 488bcdc7aa74d4d27782a9f2a00f6f9b6b0d8038e737a9e7935262850f116987
+================= 2034 passed, 1 skipped, 2 warnings in 6.91s ==================
+========== 7992 passed, 23 skipped, 10 warnings in 189.91s (0:03:09) ===========
+============================= 476 passed in 15.51s =============================
+============================= 124 passed in 29.53s =============================
+532 passed, 6 skipped in 48.90s
+  Summary
+========================================================================
+  PASS  ruff             0.0s
+  PASS  mypy-core        0.2s
+  PASS  mypy-mcp         0.2s
+  PASS  mypy-dsl         0.4s
+  PASS  mypy-studi0      0.2s
+  PASS  pytest-core      7.4s
+  PASS  pytest-dsl     191.1s
+  PASS  pytest-mcp      18.9s
+  PASS  pytest-studi0    29.8s
+  PASS  integrations    49.5s
+  PASS  docs-application     1.2s
+  PASS  selfhost-build     9.3s
+  PASS  spelling         0.4s
+  PASS  docs-version-currency     0.0s
+  PASS  authored-lines     0.7s
+  PASS  docs-links       0.2s
+
+All checks passed.
+
+
+FINAL HANDOFF
+Command: uv run python scripts/check.py
+Cwd: implementation repository root
+SHA256 of full log: 4802ee581b854ac7934557eb32e299b0115020317ab9b36ac4f138a2740d9eac
+================= 2034 passed, 1 skipped, 2 warnings in 6.85s ==================
+========== 7992 passed, 23 skipped, 10 warnings in 199.51s (0:03:19) ===========
+============================= 476 passed in 15.77s =============================
+============================= 124 passed in 29.50s =============================
+532 passed, 6 skipped in 50.09s
+  Summary
+========================================================================
+  PASS  ruff             0.0s
+  PASS  mypy-core        0.2s
+  PASS  mypy-mcp         0.2s
+  PASS  mypy-dsl         0.4s
+  PASS  mypy-studi0      0.2s
+  PASS  pytest-core      7.4s
+  PASS  pytest-dsl     200.9s
+  PASS  pytest-mcp      19.8s
+  PASS  pytest-studi0    29.7s
+  PASS  integrations    50.8s
+  PASS  docs-application     1.4s
+  PASS  selfhost-build    10.1s
+  PASS  spelling         0.4s
+  PASS  docs-version-currency     0.1s
+  PASS  authored-lines     0.8s
+  PASS  docs-links       0.2s
+
+All checks passed.
+
+
+CORRECTED REGRESSION BEFORE (base core source)
+Command: PYTHONPATH=/Users/main/Projects/kn0wthyself/s0ma/packages/s0ma-core/src uv run pytest tests/test_observation_contracts.py -q -o pythonpath=/Users/main/Projects/kn0wthyself/s0ma/packages/s0ma-core/src
+=========================== short test summary info ============================
+FAILED tests/test_observation_contracts.py::test_verification_meaning_through_public_adapters[passed]
+FAILED tests/test_observation_contracts.py::test_verification_meaning_through_public_adapters[failed]
+FAILED tests/test_observation_contracts.py::test_verification_meaning_through_public_adapters[missing]
+FAILED tests/test_observation_contracts.py::test_verification_meaning_through_public_adapters[exception]
+FAILED tests/test_observation_contracts.py::test_verification_meaning_through_public_adapters[empty]
+FAILED tests/test_observation_contracts.py::test_component_resolution_through_public_adapters[alpha::FixtureProvider]
+FAILED tests/test_observation_contracts.py::test_component_resolution_through_public_adapters[FixtureProvider]
+FAILED tests/test_observation_contracts.py::test_component_resolution_through_public_adapters[fixture_read]
+FAILED tests/test_observation_contracts.py::test_ambiguity_and_unknown_are_distinct
+FAILED tests/test_observation_contracts.py::test_canonical_observation_identity[alpha-alpha.Shared-False-expected0]
+FAILED tests/test_observation_contracts.py::test_canonical_observation_identity[alpha-alpha.Shared-True-expected1]
+FAILED tests/test_observation_contracts.py::test_canonical_observation_identity[pkg.alpha-pkg.alpha.Shared-True-expected2]
+FAILED tests/test_observation_contracts.py::test_canonical_observation_identity[--False-expected3]
+FAILED tests/test_observation_contracts.py::test_canonical_observation_identity[alpha-beta.Shared-False-expected4]
+FAILED tests/test_observation_contracts.py::test_canonical_observation_identity[unknown-unknown.Shared-False-expected5]
+FAILED tests/test_observation_contracts.py::test_explicit_refresh_and_failed_refresh_preserve_snapshots
+======================== 16 failed, 1 warning in 0.32s =========================

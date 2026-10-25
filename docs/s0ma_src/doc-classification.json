@@ -162,6 +162,12 @@
       "path": "docs/getting-started/first-project.md"
     },
     {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Offline worked application and replayable consumer acceptance at the DSL dependency layer.",
+      "path": "docs/guides/application-observations.md"
+    },
+    {
       "audience": "user",
       "disposition": "living-authored",
       "note": "The Claude route: installing s0ma as a Claude Code plugin or a Claude Desktop extension, where the license key goes, how automatic updates and pinning behave, what happens offline and when access to new versions ends. Authored at beta-prep-2-claude D1; bound through the catalog and pinned by test_docs_guide_bindings.py. The route itself is not offered by the public repository's first release, and the page says so: the summary home, docs/getting-started.md, states the source route alone.",
@@ -472,6 +478,12 @@
       "disposition": "living-authored",
       "note": "The maintenance runbook (I3): what a contributor does when adding a concept, a surface, a journey, a document or a coverage claim, and what each gate asks of them when it refuses. Authored prose that points rather than restates — the subsystem guide owns how the system works, RELEASING.md owns the release cut, AGENTS.md owns the build commands — so it carries no inventory of its own to go stale.",
       "path": "docs/operations/docs-maintenance.md"
+    },
+    {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Dated upstream review and release boundary with executable downstream adoption prompt.",
+      "path": "docs/operations/fr3d-adoption-handoff.md"
     },
     {
       "audience": "user",

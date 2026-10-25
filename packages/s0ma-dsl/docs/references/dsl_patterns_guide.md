@@ -2121,7 +2121,22 @@ The author still declares `GoogleCalendarClient` (the SERVICE factory) and `smok
 - **Your manifest carries a richer Python dataclass than the JSON-primitive map.** If the manifest needs typed enum values, datetime-aware fields, or other custom-class instances, the `manifest:` map's "JSON-serialisable primitives only" rule won't fit. Stay on the legacy form and construct the dataclass directly in `get_manifest`.
 - **You need the factory nerve to take constructor parameters.** The auto-emitted `get_factory()` calls the factory with no arguments. If the factory needs a parameterised constructor, stay on the legacy form or wrap the call in a separate nerve.
 
-### 23.3 Cross-references
+### 23.3 Readiness is an observation
+
+Both declaration forms remain supported. Changing syntax does not fix readiness.
+A manifest describes requirements; it cannot establish that effective values are
+valid, credentials are current, or a provider was contacted. A declared smoke
+test has not necessarily run.
+
+Have readiness call the same local validator as execution. Return safe missing
+field names and the next valid action, such as configure, authorize or execute.
+Keep credential presence, known expiry, registration and explicit provider
+verification separate. State whether configuration edits require an explicit
+reload or restart, and retain the earlier revision if a reload fails. Inspection
+must not refresh tokens, authorize, write or make network calls implicitly.
+Section 34 exercises these distinctions without a provider SDK or real secrets.
+
+### 23.4 Cross-references
 
 - Spec §4.4b — full `integration` declaration contract, including all four error codes (`INTEGRATION_FACTORY_NOT_FOUND`, `INTEGRATION_FACTORY_NOT_SERVICE`, `INTEGRATION_SMOKE_TEST_NOT_FOUND`, `INTEGRATION_INVALID_MANIFEST_KEY`).
 - Patterns guide §2 — SERVICE nerve patterns (the factory nerve under any integration is always a SERVICE nerve).
@@ -2635,3 +2650,44 @@ Three facts from that page change how the patterns above are applied mid-convers
 ## 33. Authored lines stand on their own
 
 An authored line — `intent`, `guarantees`, `invariants`, `schema` or `forbids` — stands on its own: in the present tense, it says what the part is for, what it promises, or what it must never do, to a reader who has only this file. It never names a plan, a milestone, a wave, a review item, a date, a person or a ruling: those belong to the changelog and to the planning record, and a reader who has only this file has neither. It may refer only to what ships with the code and is held by a gate — a requirement or an invariant by its id, an accepted architecture decision by its number, a contract revision, a section of the specification, a test through `covered_by:`, another part of the same project by name through `uses:` or `requires:` — and to nothing else.
+
+
+## 34. Application observations and consumer acceptance
+
+A contract describes intended behavior. Application code must enforce it and
+tests must show the effects. Report the effective result of a request: a session
+policy may downgrade a requested persistent write; a failed optional cache may
+leave the main result successful. A failed store read leaves its contents unknown,
+so a read-modify-write must preserve those bytes until recovery.
+
+Policy covers background reads and prompt construction as well as dispatch. An
+unknown policy cannot enable a protected read. Keep known-empty, unavailable,
+failed and partial observations distinct through inspection and the final
+consumer context, with safe reason codes rather than exception text. Health
+claims name the checks and their observation time, not global correctness.
+
+Test the actual return contract: ComponentRegistry.get_all returns a mapping to specs. A convenient name-list stub cannot prove that a scheduler or converter
+works with it. Interpret dependency relation kinds and operation scope before
+inferring failure: TYPE_USES is a type relationship, and an optional cache is not
+a prerequisite for every operation. Exercise valid alternate routes.
+
+The worked example lives at `docs/guides/application-observations.md` in the
+matching source checkout. Its indexed location is available with:
+
+```text
+s0ma docs show doc:guide/application-observations
+```
+
+The lookup returns an index entry, not the full source guide or fixture. This
+section ships in the authoring server's `s0ma://guide/patterns` resource. To run
+the example, use the matching source release and its guide; from the repository's
+`packages/s0ma-dsl` directory run
+`uv run pytest tests/test_application_observations.py -q`.
+
+The example builds authored source, boots the real registry in an isolated process, checks
+canonical IR and public adapters, and captures the context delivered to a
+recording consumer. Assertions follow response, working memory, disk and a fresh
+reader. A second build renames the provider and its operation. Context stays
+bounded, volatile facts stay outside the static system instruction, and follow-up
+queries replace bulk registry injection. These are example-enforced application
+checks, not new language syntax or automatic runtime policy.

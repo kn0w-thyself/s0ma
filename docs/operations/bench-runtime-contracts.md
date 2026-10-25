@@ -11,12 +11,12 @@ No new benchmark result or application adoption is claimed.
 | --- | --- | --- | --- |
 | S01 | REST claimed a pass when verification was unavailable. Missing verifier, thrown verification, and no results now mean unavailable. A completed report retains its actual pass/fail result. | `test_verification_meaning_through_public_adapters` covers HTTP, library, query engine and core MCP. | Nullable booleans/counts and explicit status; text says verification, not global health. |
 | S02 | REST resolved an operation in prose and then rejected its literal name. Resolve once for both representations; preserve ambiguity including bare-name collisions. | `test_component_resolution_through_public_adapters`, `test_ambiguity_and_unknown_are_distinct`, `test_rest_resolves_once_and_accepts_package_qualified_names`. | Unique aliases now return 200; ambiguity returns 409 with candidates; unknown names retain their 404 text detail. |
-| S03 | A bare Shared registration for alpha observed both alpha and beta. Coherent canonical/module/qualified identity now observes at most one component; only an unambiguous bare fallback is allowed. | `test_canonical_observation_identity`, `test_observation_filtering_and_supplied_snapshot_time`; build-backed acceptance accompanies the application example. | `observed` may be null for unresolved identity; false means absence from the supplied registry scope. |
+| S03 | A bare Shared registration for alpha observed both alpha and beta. Coherent canonical/module/qualified identity now observes at most one component; only an unambiguous bare fallback is allowed. | `test_canonical_observation_identity`, `test_observation_filtering_and_supplied_snapshot_time`; test_application_observations adds build-backed acceptance. | `observed` may be null for unresolved identity; false means absence from the supplied registry scope. |
 | S04 | Reusing an adapter after unregister retained its earlier observation. Snapshot semantics remain; reconstruct explicitly and replace the host's handler/context together. | `test_explicit_refresh_and_failed_refresh_preserve_snapshots`. | Additive capture metadata. Failed registry reads produce unavailable observations; invalid build artifacts still raise. |
 | S05 | Adapter parity was not executable for these failures. A common fixture now exercises the applicable public paths; existing operation-contract, constant and reverse-edge tests remain. | `packages/s0ma-core/tests/test_observation_contracts.py`; build/IR composition lives in the DSL layer. | Transport and registry scopes differ deliberately, as described below. |
-| S06 | Application results and failed observations need actual-effect tests. | Follow-on executable application example and guidance PR. | No universal application result schema or automatic enforcement. |
-| S07 | Declaration, readiness, observation and enforcement need separate evidence. | Follow-on executable application example and guidance PR. | Existing integration declarations and manual manifests remain supported. |
-| S08 | Optional dependencies and real provider types need composition tests. | Follow-on executable application example and guidance PR. | No graph or grammar redesign. |
+| S06 | Application results and failed observations need actual-effect tests. | [Executable application example](../guides/application-observations.md), replayed by test_application_observations for original and renamed providers. | No universal application result schema or automatic enforcement. |
+| S07 | Declaration, readiness, observation and enforcement need separate evidence. | [Executable application example](../guides/application-observations.md), replayed by test_application_observations for original and renamed providers. | Existing integration declarations and manual manifests remain supported. |
+| S08 | Optional dependencies and real provider types need composition tests. | [Executable application example](../guides/application-observations.md), replayed by test_application_observations for original and renamed providers. | No graph or grammar redesign. |
 
 ## Verification response table
 
@@ -143,6 +143,6 @@ page for exact commands, source identity and subsequent gate results.
 
 The focused adapter suites passed 307 tests before two additional identity and
 single-resolution cases were added. The final gate result is recorded with the
-review handoff; a focused pass alone is not a release gate. No release version
+[review and adoption handoff](fr3d-adoption-handoff.md); a focused pass alone is not a release gate. No release version
 has been assigned. Rob merges the reviewable PRs and separately authorizes the
 four-package release through [the release runbook](../RELEASING.md).

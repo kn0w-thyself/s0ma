@@ -45,14 +45,14 @@ migration map; the catalog is what the build reads.
 | Disposition | Meaning | Count |
 |---|---|---|
 | `normative-current` | Binding today. The PRD, the current DSL spec, the current core spec, accepted ADRs, frozen contracts, and the repo agent contract. | 25 |
-| `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 48 |
+| `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 50 |
 | `generated` | A rendered output of a generator or the s0ma build. Never hand-edited. | 60 |
 | `mirror` | A byte-for-byte copy of another file in this repo, kept honest by a gate. | 9 |
-| `historical` | A record of the past. Kept for provenance; must not be read as current guidance. | 14 |
+| `historical` | A record of the past. Kept for provenance; must not be read as current guidance. | 15 |
 | `superseded-pointer` | A short stub whose only content is "this moved — go here". | 11 |
 | `working-plan` | Plans, notes, and review records: those under `plans/`, this summary beside the ledger it explains, and the result records of the B-phase spikes under `scripts/spikes/`. | 1 |
 | `non-documentation` | A `.md` file that is test data or test scaffolding, not part of the documentation corpus. | 4 |
-| **Total** | | **172** |
+| **Total** | | **175** |
 
 158 files were tracked at Phase A finalization (the walkthrough pointer stub added at the A5-findings pass is the 156th, and A7's two tester documents — `docs/troubleshooting.md` and `docs/uninstall.md` — are the 157th and 158th); the 159th row was this summary, which the ledger
 classifies in advance of its own commit.
@@ -700,3 +700,11 @@ Nothing in the corpus was unclassifiable.
 
 The runtime observation compatibility guide records the unreleased audit fixes,
 public regression matrix, and migration requirements as living-authored guidance.
+
+The application-observations guide is living-authored contributor guidance, backed
+by the isolated build-and-consumer acceptance fixture. It makes no new primary
+surface or journey coverage claim.
+
+The fr3d adoption handoff is living-authored contributor guidance. It records
+upstream PR identities, release boundaries and a downstream implementation prompt,
+without claiming a release, downstream adoption or benchmark improvement.

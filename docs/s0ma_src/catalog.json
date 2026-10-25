@@ -1044,6 +1044,22 @@
     {
       "audiences": [
         "agent",
+        "contributor",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/application-observations.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/application-observations",
+      "kind": "guide",
+      "prose_locator": "docs/guides/application-observations.md",
+      "status": "living",
+      "title": "Application observations that reach the consumer"
+    },
+    {
+      "audiences": [
+        "agent",
         "contributor"
       ],
       "authority": "",
@@ -1379,6 +1395,21 @@
       "prose_locator": "docs/getting-started/first-project.md",
       "status": "living",
       "title": "Your first project, from install to graph"
+    },
+    {
+      "audiences": [
+        "agent",
+        "contributor"
+      ],
+      "authority": "",
+      "canonical_source": "docs/operations/fr3d-adoption-handoff.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/fr3d-adoption-handoff",
+      "kind": "operations",
+      "prose_locator": "docs/operations/fr3d-adoption-handoff.md",
+      "status": "living",
+      "title": "fr3d adoption after the upstream observation fixes"
     },
     {
       "audiences": [

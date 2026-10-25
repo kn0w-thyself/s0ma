@@ -188,6 +188,23 @@ PROJECT STANDARDS (layout, naming, boundary)
   power, composition, articulation) use the `hw_*` metadata vocabulary with
   `sense:`/`actuator:` attribute roles — see §31 and ADR-003.
 
+APPLICATION CONSUMERS
+- Declarations describe intent. A smoke-test declaration is not a test run, and
+  forbids prose is not enforcement. Use the same effective configuration and
+  validator for readiness and execution; report safe missing field names and
+  the next valid action. Separate registration, credential presence, known
+  expiry and explicit provider verification.
+- Assert actual effects and effective outcomes: refused, session-only, persisted,
+  partial, failed. Unknown policy blocks protected reads in prompt construction
+  too. Failed reads preserve unknown data; an unreadable store is not empty.
+- Test the real provider return type, registry composition and assembled consumer
+  context after build/inspection. Preserve unknown/partial status, bound context,
+  and offer follow-up queries. Relation kinds and optional effects are specific
+  to operations; a type edge does not establish an operational prerequisite.
+- Worked offline example: docs/guides/application-observations.md in the matching
+  source checkout (indexed by `s0ma docs show doc:guide/application-observations`).
+  The shipped patterns guide (s0ma://guide/patterns) section 34 explains the loop.
+
 VALIDATION
 - Run `s0ma check <file> --mode strict` to validate before committing.
 - Fix all errors. Warnings in dev/migration mode become errors in strict/release.
