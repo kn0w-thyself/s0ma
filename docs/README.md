@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 174 documents. 137 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 175 documents. 138 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -118,6 +118,7 @@ The parts you work through day to day: your editor, the server a coding agent ta
 
 | Document | Where | For | Standing | Kept true by |
 | --- | --- | --- | --- | --- |
+| [Application observations that reach the consumer](guides/application-observations.md) | `docs/guides/application-observations.md` | agents, contributors, users | maintained | links checked |
 | [Authoring through the agent's own tool channel](guides/mcp-authoring.md) | `docs/guides/mcp-authoring.md` | agents, users | maintained | links checked, version checked |
 | [Editor support for `.s0ma` files](../editors/README.md) | `editors/README.md` | contributors | maintained | version checked |
 | [Packaging a s0ma project as a wheel](guides/packaging.md) | `docs/guides/packaging.md` | agents, users | maintained | links checked |

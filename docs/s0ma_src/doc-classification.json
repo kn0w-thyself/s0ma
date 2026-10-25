@@ -162,6 +162,12 @@
       "path": "docs/getting-started/first-project.md"
     },
     {
+      "audience": "contributor",
+      "disposition": "living-authored",
+      "note": "Offline worked application and replayable consumer acceptance at the DSL dependency layer.",
+      "path": "docs/guides/application-observations.md"
+    },
+    {
       "audience": "user",
       "disposition": "living-authored",
       "note": "The Claude route: installing s0ma as a Claude Code plugin or a Claude Desktop extension, where the license key goes, how automatic updates and pinning behave, what happens offline and when access to new versions ends. Authored at beta-prep-2-claude D1; bound through the catalog and pinned by test_docs_guide_bindings.py. The route itself is not offered by the public repository's first release, and the page says so: the summary home, docs/getting-started.md, states the source route alone.",

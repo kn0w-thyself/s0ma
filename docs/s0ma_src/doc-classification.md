@@ -700,3 +700,7 @@ Nothing in the corpus was unclassifiable.
 
 The runtime observation compatibility guide records the unreleased audit fixes,
 public regression matrix, and migration requirements as living-authored guidance.
+
+The application-observations guide is living-authored contributor guidance, backed
+by the isolated build-and-consumer acceptance fixture. It makes no new primary
+surface or journey coverage claim.

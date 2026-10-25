@@ -1044,6 +1044,22 @@
     {
       "audiences": [
         "agent",
+        "contributor",
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/application-observations.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/application-observations",
+      "kind": "guide",
+      "prose_locator": "docs/guides/application-observations.md",
+      "status": "living",
+      "title": "Application observations that reach the consumer"
+    },
+    {
+      "audiences": [
+        "agent",
         "contributor"
       ],
       "authority": "",

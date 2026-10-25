@@ -236,6 +236,22 @@ handled?" is answered from the system's record of itself, not from a search
 through its source. That record is what the build made from the declarations,
 so it cannot describe a component the project does not have.
 
+## Application runtime-consumer acceptance
+
+For an application, continue after step 5 with its own offline acceptance test:
+boot the emitted build in a fresh process, compose the real providers and
+registry, query the public inspection interfaces, and exercise the actual
+consumer. Check effective configuration, policy refusals, partial observations
+and actual effects. If the consumer is an agent, capture its assembled context
+with a recording adapter and assert what it received. A library needs tests of
+its callers; it does not need to run an agent.
+
+The [offline application example](application-observations.md) includes refusal,
+failed storage, explicit refresh, local expiry, alternate routes and failed
+optional effects. Its tests cover the consumer beyond the five authoring calls.
+The existing journey and transcript still cover exactly those five calls; no
+new MCP surface is implied by application acceptance.
+
 ## What every answer carries
 
 Four things ride on every result, and they are the difference between an agent

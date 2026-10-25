@@ -66,4 +66,4 @@ Do not use it to argue that hand-written explanation is unwelcome. Guides are au
 
 - Topic id: `concept:authored-vs-generated-boundary`
 - Release: `0.20.0 (preview)`
-- Documentation snapshot: `sha256:920da63fcc2e7e1f`
+- Documentation snapshot: `sha256:d259cef049e9be11`
