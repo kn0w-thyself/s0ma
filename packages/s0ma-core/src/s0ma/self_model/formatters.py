@@ -319,12 +319,14 @@ def format_health_summary(
     Returns:
         A multi-line text health summary.
     """
-    if report is None:
-        return "Health status: No verification data available."
+    if report is None or not report.results:
+        return "Verification status: UNAVAILABLE. No verification data available."
 
     lines: list[str] = []
-    status = "HEALTHY" if report.passed else "UNHEALTHY"
-    lines.append(f"Health status: {status}")
+    status = "PASSED" if report.passed else "FAILED"
+    lines.append(f"Verification status: {status}")
+    lines.append("  Scope: registered verification checks; provider health is not established.")
+    lines.append(f"  Reported at: {report.report_at.isoformat()}")
     lines.append(
         f"  Verifiers run: {len(report.results)}, "
         f"Duration: {report.total_duration_ms:.1f}ms"

@@ -28,7 +28,7 @@ Requires: ``pip install s0ma-core[api]``
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 try:
     from fastapi import FastAPI, HTTPException
@@ -78,14 +78,19 @@ class ComponentDetailResponse(BaseModel):
 
     text: str
     spec: dict[str, Any]
+    resolved: dict[str, Any]
 
 
 class HealthResponse(BaseModel):
     """Response for GET /self/health."""
 
     text: str
-    passed: bool
-    anomaly_count: int
+    status: Literal["passed", "failed", "unavailable"]
+    passed: bool | None
+    anomaly_count: int | None
+    reason: str | None = None
+    basis: str = "registered_verification_checks"
+    checked_at: str | None = None
     erosion_coverage: dict[str, Any] | None = None
 
 
@@ -94,7 +99,9 @@ class AnomaliesResponse(BaseModel):
 
     text: str
     anomalies: list[dict[str, Any]]
-    total: int
+    total: int | None
+    status: Literal["passed", "failed", "unavailable"]
+    reason: str | None = None
 
 
 class GraphResponse(BaseModel):
@@ -292,24 +299,30 @@ def create_app(
         description="Get detailed information about a specific component.",
     )
     def get_component(name: str) -> ComponentDetailResponse:
-        try:
-            text = smi.describe_component(name)
-        except RegistryIntegrityError as exc:
+        resolution = registry.resolve_component(name)
+        if resolution.spec is None:
+            ambiguous = bool(resolution.candidates)
+            if not ambiguous:
+                raise HTTPException(
+                    status_code=404, detail=f"Component '{name}' is not registered.",
+                )
             raise HTTPException(
-                status_code=404,
-                detail=f"Component '{name}' is not registered.",
-            ) from exc
-
-        spec = registry.get(name)
-        if spec is None:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Component '{name}' is not registered.",
+                status_code=409 if ambiguous else 404,
+                detail={
+                    "code": "AMBIGUOUS_COMPONENT" if ambiguous else "COMPONENT_NOT_FOUND",
+                    "query": name,
+                    "candidates": list(resolution.candidates),
+                    "message": (
+                        "Use a canonical component name from candidates."
+                        if ambiguous else f"Component '{name}' is not registered."
+                    ),
+                },
             )
-
         return ComponentDetailResponse(
-            text=text,
-            spec=spec.to_dict(),
+            text=smi._describe_resolution(resolution),
+            spec=resolution.spec.to_dict(),
+            resolved={"query": name, "component": resolution.spec.display_name,
+                      "operation": resolution.operation},
         )
 
     # ------------------------------------------------------------------
@@ -322,17 +335,14 @@ def create_app(
         description="Get the system's current health status and verification results.",
     )
     def get_health() -> HealthResponse:
-        report = smi._try_verify()
+        from s0ma.self_model.formatters import format_health_summary
 
+        report, reason = smi._verification_observation()
         if report is None:
             return HealthResponse(
-                text="Health status: No verification data available.",
-                passed=True,
-                anomaly_count=0,
-                erosion_coverage=None,
+                text=format_health_summary(None), status="unavailable",
+                passed=None, anomaly_count=None, reason=reason,
             )
-
-        from s0ma.self_model.formatters import format_health_summary
 
         text = format_health_summary(report)
 
@@ -346,7 +356,9 @@ def create_app(
 
         return HealthResponse(
             text=text,
+            status="passed" if report.passed else "failed",
             passed=report.passed,
+            checked_at=report.report_at.isoformat(),
             anomaly_count=report.total_anomalies,
             erosion_coverage=erosion_coverage,
         )
@@ -361,13 +373,11 @@ def create_app(
         description="Get current verification anomalies (code-model discrepancies).",
     )
     def get_anomalies() -> AnomaliesResponse:
-        report = smi._try_verify()
-
+        report, reason = smi._verification_observation()
         if report is None:
             return AnomaliesResponse(
-                text="No verification data available.",
-                anomalies=[],
-                total=0,
+                text="Verification status: UNAVAILABLE. No verification data available.",
+                anomalies=[], total=None, status="unavailable", reason=reason,
             )
 
         all_anomalies: list[dict[str, Any]] = []
@@ -384,6 +394,7 @@ def create_app(
             text=text,
             anomalies=all_anomalies,
             total=len(all_anomalies),
+            status="passed" if report.passed else "failed",
         )
 
     # ------------------------------------------------------------------

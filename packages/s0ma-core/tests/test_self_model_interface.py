@@ -77,10 +77,10 @@ class TestDescribeSystem:
         result = smi.describe_system()
         # Should have some health info (either HEALTHY or "No verification")
         assert (
-            "HEALTHY" in result
-            or "UNHEALTHY" in result
+            "Verification status: PASSED" in result
+            or "Verification status: FAILED" in result
             or "No verification" in result
-            or "Health status" in result
+            or "Verification status" in result
         )
 
     def test_includes_system_purpose(self, smi: SelfModelInterface) -> None:
@@ -420,9 +420,9 @@ class TestDescribeForAgent:
     ) -> None:
         result = smi.describe_for_agent("debugging")
         assert (
-            "HEALTHY" in result
-            or "UNHEALTHY" in result
-            or "Health status" in result
+            "Verification status: PASSED" in result
+            or "Verification status: FAILED" in result
+            or "Verification status" in result
         )
 
     def test_debugging_includes_dependency_graph(

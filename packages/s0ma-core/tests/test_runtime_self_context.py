@@ -195,6 +195,10 @@ def test_live_health_requires_explicit_registry(tmp_path: Path) -> None:
     registry = ComponentRegistry(persist=False)
     context = self_context(manifest.parent, registry=registry)
     assert context["live_health"] == {
+        "lifetime": "snapshot",
+        "captured_at": context["live_health"]["captured_at"],
+        "canonical_components_unknown": [],
+        "unresolved_registrations": [],
         "status": "available",
         "basis": "explicit_runtime_registry",
         "registered_component_count": 0,
@@ -866,6 +870,10 @@ def test_live_health_reaches_describe_as_counts_and_component_as_a_flag(
 
     with_registry = self_inspect_adapter(manifest, registry=ComponentRegistry(persist=False))
     assert with_registry.handle("describe")["live_health"] == {
+        "lifetime": "snapshot",
+        "captured_at": with_registry.context["live_health"]["captured_at"],
+        "canonical_components_unknown_count": 0,
+        "unresolved_registrations_count": 0,
         "status": "available",
         "basis": "explicit_runtime_registry",
         "registered_component_count": 0,

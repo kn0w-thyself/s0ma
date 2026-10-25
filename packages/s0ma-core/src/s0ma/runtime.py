@@ -71,6 +71,9 @@ _DESCRIBE_BUDGET_CHARS = 8_000
 _LIVE_HEALTH_SCALAR_KEYS = (
     "status",
     "basis",
+    "lifetime",
+    "captured_at",
+    "reason",
     "registered_component_count",
     "framework_component_count",
     "framework_components_included",
@@ -263,27 +266,71 @@ def _live_health(
     companion's inventory, which never lists them. ``include_framework``
     follows :meth:`RegistrySnapshot.visible_components`.
     """
-    snapshot = registry.snapshot() if isinstance(registry, ComponentRegistry) else registry
-    visible = snapshot.visible_components(include_framework)
-    registered = sorted(visible)
+    try:
+        snapshot = registry.snapshot() if isinstance(registry, ComponentRegistry) else registry
+        visible = snapshot.visible_components(include_framework)
+    except Exception:  # noqa: BLE001
+        return {
+            "status": "unavailable", "basis": "explicit_runtime_registry",
+            "lifetime": "snapshot", "captured_at": None,
+            "reason": "REGISTRY_SNAPSHOT_FAILED",
+        }
     canonical_ids = {str(component["id"]) for component in components}
-    matched = sorted(
-        component_id
-        for component_id in canonical_ids
-        if component_id in snapshot.components
-        or component_id.rsplit("::", 1)[-1] in snapshot.components
-    )
+    observed: set[str] = set()
+    uncertain: set[str] = set()
+    unresolved: list[str] = []
+    for key, spec in visible.items():
+        bare = spec.name.rsplit("::", 1)[-1]
+        candidates = {cid for cid in canonical_ids if cid.rsplit("::", 1)[-1] == bare}
+        modules = []
+        if "::" in key:
+            modules.append(key.rsplit("::", 1)[0])
+        if spec.module_path:
+            modules.append(spec.module_path)
+        qualified = spec.qualified_name
+        conflict = False
+        if qualified and "." in qualified:
+            if spec.module_path:
+                # Nested Python entities may follow the module prefix. An
+                # explicit registration name need not equal the Python name.
+                conflict = not qualified.startswith(spec.module_path + ".")
+            elif qualified.endswith("." + bare):
+                modules.append(qualified[:-(len(bare) + 1)])
+            else:
+                conflict = True
+        canonical_modules = {module.rsplit(".", 1)[-1] for module in modules}
+        if len(canonical_modules) > 1:
+            conflict = True
+        if conflict:
+            uncertain.update(candidates)
+            unresolved.append(key)
+            continue
+        if canonical_modules:
+            module = next(iter(canonical_modules))
+            matches = {cid for cid in candidates if cid.rsplit("::", 1)[0] == module}
+        else:
+            matches = candidates
+        if len(matches) == 1:
+            observed.update(matches)
+        elif len(matches) > 1:
+            uncertain.update(matches)
+            unresolved.append(key)
+        # Coherent identity outside this build does not establish observation.
+    uncertain.difference_update(observed)
     return {
-        "status": "available",
+        "status": "partial" if uncertain else "available",
         "basis": "explicit_runtime_registry",
+        "lifetime": "snapshot",
+        "captured_at": snapshot.snapshot_at.isoformat(),
         "registered_component_count": len(visible),
         "framework_component_count": snapshot.framework_component_count,
-        "framework_components_included": any(
-            spec.is_framework for spec in visible.values()
-        ),
-        "registered_components": registered,
-        "canonical_components_observed": matched,
+        "framework_components_included": any(spec.is_framework for spec in visible.values()),
+        "registered_components": sorted(visible),
+        "canonical_components_observed": sorted(observed),
+        "canonical_components_unknown": sorted(uncertain),
+        "unresolved_registrations": sorted(unresolved),
     }
+
 
 
 def self_context(
@@ -546,9 +593,11 @@ def _live_health_counts(overlay: object) -> dict[str, Any]:
     if not isinstance(overlay, dict):
         return {}
     counts = {key: deepcopy(overlay[key]) for key in _LIVE_HEALTH_SCALAR_KEYS if key in overlay}
-    observed = overlay.get("canonical_components_observed")
-    if isinstance(observed, list):
-        counts["canonical_components_observed_count"] = len(observed)
+    for key in ("canonical_components_observed", "canonical_components_unknown",
+                "unresolved_registrations"):
+        values = overlay.get(key)
+        if isinstance(values, list):
+            counts[key + "_count"] = len(values)
     return counts
 
 
@@ -746,6 +795,7 @@ class SelfInspectAdapter:
                 "ok": False,
                 "error": {
                     "code": code,
+                    "candidates": ambiguous,
                     "message": (
                         f"Component {requested!r} is ambiguous; use one of {ambiguous}."
                         if ambiguous
@@ -782,7 +832,15 @@ class SelfInspectAdapter:
                 # Observed beside declared, never inside it: the record stays
                 # what the build declared, and the flag is the live fact.
                 observed = overlay.get("canonical_components_observed")
-                answer["observed"] = isinstance(observed, list) and component["id"] in observed
+                unknown = overlay.get("canonical_components_unknown", [])
+                answer["observed"] = (
+                    None if overlay.get("status") == "unavailable" or component["id"] in unknown
+                    else component["id"] in observed if isinstance(observed, list) else None
+                )
+                answer["observation"] = {
+                    key: deepcopy(overlay[key])
+                    for key in ("basis", "lifetime", "captured_at", "reason") if key in overlay
+                }
             return answer
         if verb == "dependencies":
             # ``dependencies`` is the authored target list, unchanged;
@@ -827,7 +885,11 @@ def self_inspect_adapter(
 ) -> SelfInspectAdapter:
     """Create an app-registerable adapter from verified companions.
 
-    The arguments are :func:`self_context`'s.
+    The arguments are :func:`self_context`'s. The observation is a snapshot,
+    not a subscription. Reconstruct explicitly after a registry change and
+    replace the host's paired handler/context together. A failed registry read
+    yields an unavailable overlay; an invalid build still raises SelfContextError.
+    Retaining an older adapter retains its original capture time, not fresh evidence.
     """
     return SelfInspectAdapter(
         self_context(manifest, registry=registry, include_framework=include_framework)

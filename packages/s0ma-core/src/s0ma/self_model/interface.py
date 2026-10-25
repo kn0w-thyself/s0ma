@@ -46,7 +46,7 @@ from s0ma.self_model.formatters import (
 
 if TYPE_CHECKING:
     from s0ma.lifecycle.manager import LifecycleManager
-    from s0ma.models import Anomaly, ComponentSpec, VerificationReport
+    from s0ma.models import Anomaly, ComponentResolution, ComponentSpec, VerificationReport
     from s0ma.registry import ComponentRegistry
     from s0ma.verifiers.interoception import MetricsCollector
 
@@ -203,12 +203,18 @@ class SelfModelInterface:
                 message names them so the caller can ask by component).
         """
         resolution = self._registry.resolve_component(name)
+        return self._describe_resolution(resolution)
+
+    def _describe_resolution(self, resolution: ComponentResolution) -> str:
+        """Render one authoritative resolution for text and structured adapters."""
+        name = resolution.name
         spec = resolution.spec
         if spec is None:
             if resolution.candidates:
+                kind = "an operation of" if resolution.operation else "ambiguous between"
                 raise RegistryIntegrityError(
-                    f"'{name}' is an operation of {len(resolution.candidates)} "
-                    f"components; describe one of them by name: "
+                    f"'{name}' is {kind} {len(resolution.candidates)} "
+                    f"components; describe one of them by canonical name: "
                     f"{', '.join(resolution.candidates)}"
                 )
             msg = (
@@ -230,7 +236,7 @@ class SelfModelInterface:
 
         # Dependents (who uses this component)
         try:
-            dependents = self._registry.get_dependents(spec.name)
+            dependents = self._registry.get_dependents(spec.display_name)
         except RegistryIntegrityError:
             dependents = []
 
@@ -678,20 +684,29 @@ class SelfModelInterface:
         return "\n".join(lines)
 
     def _try_verify(self) -> VerificationReport | None:
-        """Attempt to run verification, returning None on failure.
+        """Return a completed report, or None when verification is unavailable."""
+        return self._verification_observation()[0]
 
-        Catches import errors and other failures gracefully so the
-        self-model API works even if verification isn't available.
+    def _verification_observation(self) -> tuple[VerificationReport | None, str | None]:
+        """Keep missing checks and execution failures out of the pass/fail domain.
+
+        Diagnostic codes are fixed strings: exception messages may carry secrets.
+        This result is per request, never mutable cached state on the interface.
         """
         try:
             from s0ma.verifiers import verify_all
 
-            return verify_all(
+            report = verify_all(
                 self._registry,
                 metrics_collector=self._metrics_collector,
             )
+        except ImportError:
+            return None, "VERIFIER_UNAVAILABLE"
         except Exception:  # noqa: BLE001
-            return None
+            return None, "VERIFICATION_ERROR"
+        if report is None or not report.results:
+            return None, "NO_VERIFICATION_RESULTS"
+        return report, None
 
     @staticmethod
     def _count_by_kind(
