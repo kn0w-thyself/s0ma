@@ -122,5 +122,39 @@
     "merged": false,
     "released": false,
     "adopted": false
+  },
+  "windows_acceptance_repair": {
+    "failing_head": "3e13ed9dafc3fd3f8d4413f9511339fd3cc85de4",
+    "ci_run": "https://github.com/kn0w-thyself/s0ma/actions/runs/40234394199",
+    "symptom": "Windows cp1252 child stdout cannot encode the CLI build arrow; original and renamed acceptance variants fail.",
+    "change": "Explicit UTF-8 child streams and capture decoding; permit loopback for Windows asyncio control sockets while refusing external connections.",
+    "command": "PYTHONIOENCODING=cp1252 uv run pytest tests/test_application_observations.py -q",
+    "cwd": "packages/s0ma-dsl",
+    "before": {
+      "failed": 2,
+      "log_sha256": "c674b23cfdf80b5c0a1f2f327f48a91e59253308f2887588a655212839ea3899"
+    },
+    "after": {
+      "passed": 2,
+      "log_sha256": "57bbd3a4f11e72fafcd00c6b062ec82a6d165200dd5fba253f7bb557d4bd74e5"
+    },
+    "socketpair_fallback": {
+      "before": "Failed at asyncio self-pipe creation when socket.connect was globally refused.",
+      "after": "Both original and renamed variants pass with the standard-library socketpair fallback forced, including both optional transports.",
+      "command": "uv run python /private/tmp/s0ma-pr12-portable-probe.py",
+      "recipe": "Copy the fixture to a temporary project; launch acceptance.py in a UTF-8 child process after assigning socket.socketpair = socket._fallback_socketpair; repeat with --renamed.",
+      "before_log_sha256": "15c590ffc0ec21d50059910c1162eef07aeaa17f7e81822475bbcb8717e33222",
+      "after_log_sha256": "fbf96d85c658b28f48e3003df73f0b4a6481623c3d19c5fdf58bc583fa7c718c",
+      "network_scope": "external"
+    },
+    "base": "main",
+    "runtime_merge": "5c5793abdcd718f1b6f9b919612afdce62f3a3a3",
+    "full_gate": {
+      "command": "uv run python scripts/check.py",
+      "all_stages": "passed",
+      "total_passed": 11158,
+      "total_skipped": 30,
+      "log_sha256": "993ff7602ac2a4002967123a843b0a0049ab766e78e78555a2ac933bb752a1f2"
+    }
   }
 }

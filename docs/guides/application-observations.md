@@ -32,8 +32,10 @@ Generated artifacts stay in the temporary project.
 The example lives in the DSL tests because it builds source. Core remains
 independently installable. REST and core MCP checks run when their optional extras
 are installed; the repository's complete gate installs both. No provider SDK is
-required. Socket connections are refused by the harness during application boot
-and acceptance; all effects use the temporary fixture directory.
+required. External socket connections are refused by the harness during boot
+and acceptance; loopback remains available for Windows asyncio's control sockets.
+The zero network-call count refers to external calls. All file effects use the
+temporary fixture directory.
 
 ## What is enforced and asserted
 

@@ -1,9 +1,10 @@
 # fr3d adoption after the upstream observation fixes
 
-Prepared 2026-10-25. This is a handoff for a separate session. Upstream work is
-prepared for review; it is not merged, released or adopted. The next release
-version is unresolved. Rob must merge both s0ma PRs, then explicitly authorize
-the normal four-package release before fr3d adoption begins.
+Prepared 2026-10-25. This is a handoff for a separate session. Rob has merged
+runtime PR #11; guidance PR #12 awaits review and merge. Neither release nor
+fr3d adoption has occurred. The next release version is unresolved. After both
+PRs are merged, Rob must explicitly authorize the normal four-package release
+before fr3d adoption begins.
 
 ## Upstream identity and evidence
 
@@ -12,15 +13,16 @@ the normal four-package release before fr3d adoption begins.
 | s0ma implementation base | fd62a067b292f575c6845620a633af1d6b7e763f |
 | Runtime head | 35f34ec19d9b759818c7ac46b9af984ae760319f |
 | Runtime PR | [s0ma #11](https://github.com/kn0w-thyself/s0ma/pull/11) |
+| Runtime merge on main | 5c5793abdcd718f1b6f9b919612afdce62f3a3a3 |
 | Guidance implementation head | 348b8c90fa7898259c634e206f52caded1113a02 |
 | Guidance PR | [s0ma #12](https://github.com/kn0w-thyself/s0ma/pull/12) |
 | fr3d main inspected read-only | cbe17141f721f315e53c7bb799224f53edee9579 |
-| Release / fr3d adoption | Neither performed; owner merge and authorized release pending |
+| Release / fr3d adoption | Neither performed; guidance merge and authorized release pending |
 
-The guidance PR is stacked on the runtime branch. Merge runtime first, retarget
-the guidance PR to main and verify its diff and checks before merging it. The
-guidance SHA above identifies the implementation before this handoff's final
-documentation commit; get each PR's current head with `gh pr view --json
+The guidance PR now targets main after the runtime merge. Verify its current
+diff and checks before merging it. The guidance SHA above identifies the
+implementation before the handoff and Windows portability commits; get each
+PR's current head with `gh pr view --json
 headRefOid,state,statusCheckRollup`. A PR head is not a release tag.
 
 S01-S04 are fixed. S05 now has a public adapter matrix and real build composition;
@@ -35,18 +37,22 @@ base source, and 307 focused passes before two further tests were added.
 
 The full runtime gate passed: core 2,034, DSL 7,990, MCP 476, studi0 124 and
 integration 532 tests, with 30 documented skips across those suites. The guidance
-adds two build/boot/consumer runs, original and renamed, with zero model/network
-calls. The guidance gate passed with DSL 7,992 and the same other suite counts;
-the final combined gate is recorded in the adjacent evidence JSON. Both use
+adds two build/boot/consumer runs, original and renamed, with zero model calls
+and zero external network calls. The guidance gate passed with DSL 7,992 and the
+same other suite counts; the final combined gate is recorded in the adjacent
+evidence JSON. Both use
 the canonical `uv run python scripts/check.py`,
 including type/lint checks, three-build equality, packaged guide equality,
 cold installed-wheel checks and documentation gates. `git diff --check` passes.
-Runtime CI passed all six OS/Python jobs and wheel building. CI is filtered
-to PRs targeting main, so the stacked guidance PR has no remote checks yet.
-After retargeting it to main, verify a new CI run completes before merging;
-if retargeting alone does not trigger the workflow, reopen the PR or push the
-next reviewed change. Do not treat absent checks as a pass. No authoring MCP
-surface snapshot, DSL grammar, IR schema or dependency direction changed. Frozen audit results and probe attempts remain untouched.
+Runtime CI passed all six OS/Python jobs and wheel building. Guidance CI began
+after retargeting to main and reopening the PR. It exposed Windows subprocess
+encoding in the new acceptance harness; local investigation also reproduced
+Windows asyncio's need for a loopback control socket. The harness now uses
+explicit UTF-8 and permits loopback while refusing external connections. The
+adjacent evidence JSON records both regressions and their local checks. Verify
+all six jobs and wheel building pass on the latest guidance head before merging.
+No authoring MCP surface snapshot, DSL grammar, IR schema or dependency direction
+changed. Frozen audit results and probe attempts remain untouched.
 
 ## Consumer compatibility, with before and after examples
 

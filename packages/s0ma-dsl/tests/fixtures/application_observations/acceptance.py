@@ -45,7 +45,21 @@ def main():
         )
         == 0
     )
-    socket.socket.connect = fail
+    socket_connect = socket.socket.connect
+
+    def loopback_only(connection, address):
+        # Windows asyncio implements socketpair using loopback TCP.
+        if not isinstance(address, tuple) or address[0] not in ("127.0.0.1", "::1"):
+            raise OSError("EXTERNAL_NETWORK_DISABLED")
+        return socket_connect(connection, address)
+
+    socket.socket.connect = loopback_only
+    try:
+        socket.socket.connect(None, ("192.0.2.1", 443))
+    except OSError as exc:
+        assert str(exc) == "EXTERNAL_NETWORK_DISABLED"
+    else:
+        raise AssertionError("External connections must be refused before using a socket.")
     registry = ComponentRegistry(persist=False)
     set_registry(registry)
     bootstrap_register(registry)
@@ -285,6 +299,7 @@ def main():
                 "optional_transports": transport_count,
                 "model_calls": 0,
                 "network_calls": 0,
+                "network_scope": "external",
             },
             sort_keys=True,
         )
