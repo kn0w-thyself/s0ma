@@ -156,5 +156,145 @@
       "total_skipped": 30,
       "log_sha256": "993ff7602ac2a4002967123a843b0a0049ab766e78e78555a2ac933bb752a1f2"
     }
+  },
+  "release_0_21_0": {
+    "version": "0.21.0",
+    "tag": "v0.21.0",
+    "status": "published_and_served_verified",
+    "pr": "https://github.com/kn0w-thyself/s0ma/pull/13",
+    "base": "5888b8b2c085013c0bbfd32a53da87fb2b9acb71",
+    "A": "da8a3f211079a930dcda100cd3f435677a33d9e0",
+    "R": "62bbf1caa5341b5f3047e8e08c1b3cdebd7506b8",
+    "P": "1fb42af9b068b58158ee21b1ee121c157828b966",
+    "A_P_tree": "742a9101b50e34133dfc78ef583125d4c6acb1e1",
+    "local_gates": {
+      "A": {
+        "passed": 11158,
+        "skipped": 30,
+        "log_sha256": "d260c8fd833717329ef230855f3d991412fe3380ddaa305d2f86084bf0a09b4a"
+      },
+      "R": {
+        "passed": 11145,
+        "skipped": 43,
+        "log_sha256": "90f4f355b27f005f0eec998333d4d367e992bbfedc4a5caa6e90da47b6090df6",
+        "extra_skips": "13 tests explicitly marked preview_tree_only"
+      },
+      "P": {
+        "passed": 11158,
+        "skipped": 30,
+        "log_sha256": "b387240257395a33753e194514cb7d68284e8bb62d5b4893f7923f7a5296962e"
+      }
+    },
+    "ci_A": {
+      "run_id": 40241683686,
+      "conclusion": "success"
+    },
+    "ci_P": {
+      "run_id": 40242577813,
+      "conclusion": "success"
+    },
+    "docs_identity_gate": "on; enabled for this authorized release",
+    "docs_snapshot": "sha256:e9ff5e59e9d06aab",
+    "tag_object": "1c22eb8ec69a4ef5c31fce1ab7db66477df027e4",
+    "owner_merge": "d8016df2e45bcb68afbf9b2844571017010257a7",
+    "owner_merge_note": "Owner merged PR 13 with a merge commit preserving A/R/P; its tree equals A and P. No main history rewrite was needed.",
+    "release_url": "https://github.com/kn0w-thyself/s0ma/releases/tag/v0.21.0",
+    "published_at": "2026-10-25T23:38:48Z",
+    "release_run": "https://github.com/kn0w-thyself/s0ma/actions/runs/40245019756",
+    "release_jobs": [
+      {
+        "id": 121324660994,
+        "name": "check (py3.11)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121324661150,
+        "name": "check (py3.12)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121324661212,
+        "name": "check (py3.13)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121326570525,
+        "name": "verify the wheels carry this release's documentation",
+        "conclusion": "success"
+      },
+      {
+        "id": 121326619903,
+        "name": "build + GitHub Release",
+        "conclusion": "success"
+      },
+      {
+        "id": 121326683348,
+        "name": "mirror wheels + manifest to R2 (s0ma-dist)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121326807571,
+        "name": "verify what prod actually serves",
+        "conclusion": "success"
+      }
+    ],
+    "critical_steps": {
+      "Verify the wheels carry this release's documentation": "success",
+      "Mirror wheels + manifest to R2": "success",
+      "Verify the served manifest, wheels, and installer": "success"
+    },
+    "assets": [
+      {
+        "name": "s0ma_core-0.21.0-py3-none-any.whl",
+        "sha256": "92da3deadbe7a3a03e6f8d2f88d743bd52ce24d4089fcdd06618335533c8f594",
+        "size": 277172
+      },
+      {
+        "name": "s0ma_core-0.21.0.tar.gz",
+        "sha256": "a22923f1d4dc7901ccb168506da8d3a487bc429156722698f6bbaeea3c56367e",
+        "size": 580326
+      },
+      {
+        "name": "s0ma_dsl-0.21.0-py3-none-any.whl",
+        "sha256": "2915002c76ec7028e84bde0f05944121936f04d3699a23da76fae3ac974f8dbc",
+        "size": 1360669
+      },
+      {
+        "name": "s0ma_dsl-0.21.0.tar.gz",
+        "sha256": "a8374a972554a3defcfe17cc1f4eec76f7a53fb1e985a0e5787b35111f40437b",
+        "size": 3050255
+      },
+      {
+        "name": "s0ma_mcp-0.21.0-py3-none-any.whl",
+        "sha256": "160f166d78bc3c8741c7b307ac1d443565f35159d90efed769243bc2f9af1820",
+        "size": 583338
+      },
+      {
+        "name": "s0ma_mcp-0.21.0.tar.gz",
+        "sha256": "befb31f80e7b916f01073d3a6bcc88e9275f2aad9398c9d9709a1bc90f072bcb",
+        "size": 739187
+      },
+      {
+        "name": "s0ma_studi0-0.21.0-py3-none-any.whl",
+        "sha256": "0b46bbe4e91a2d00890a8be92a7080ea9132b25c33336792a92e12a521870678",
+        "size": 114788
+      },
+      {
+        "name": "s0ma_studi0-0.21.0.tar.gz",
+        "sha256": "c4eb50464a601f9f70e1cdadf7ceea3b2e19603306fcf3ec1691319be23c9a26",
+        "size": 188590
+      }
+    ],
+    "served_verification": {
+      "manifest_latest": "0.21.0",
+      "wheel_count": 4,
+      "wheel_hashes_match_manifest_and_fresh_builds": true,
+      "installer_matches": true,
+      "pass_count": 16,
+      "log_sha256": "cda78b611aaa8608a0bcdd6a9b6b956804a35e4144e5c3bf55c6c9cf7b5aa348"
+    },
+    "fr3d_adopted": false,
+    "benchmark_run": false,
+    "prior_status_note": "The earlier pull_requests object is the pre-merge preparation snapshot. This release record supersedes its merge/release status, preserving the original evidence."
   }
 }
