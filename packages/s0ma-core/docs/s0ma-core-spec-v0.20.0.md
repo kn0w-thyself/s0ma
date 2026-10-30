@@ -4,8 +4,8 @@
 specification as it was cut for 0.20.0.
 
 **The current specification is
-[`s0ma-core-spec-v0.21.0.md`](s0ma-core-spec-v0.21.0.md)**, which states the runtime contracts
-after the verification and observation corrections.
+[`s0ma-core-spec-v0.21.1.md`](s0ma-core-spec-v0.21.1.md)**, which restates
+the current runtime contracts and records the intervening changes in Section 13.
 
 This file keeps its content and its name as the record of what core promised
 at 0.20.0. Read it as history.

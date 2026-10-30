@@ -5,7 +5,7 @@ specification as it was cut for 0.18.1, the first cut after the monorepo
 consolidation.
 
 **The current specification is
-[`s0ma-core-spec-v0.21.0.md`](s0ma-core-spec-v0.21.0.md)**. This cut was
+[`s0ma-core-spec-v0.21.1.md`](s0ma-core-spec-v0.21.1.md)**. This cut was
 restated for 0.19.0 by [`s0ma-core-spec-v0.19.0.md`](s0ma-core-spec-v0.19.0.md),
 itself historical since 0.19.1, and each later cut says in its Section 13 what
 changed from the one before.

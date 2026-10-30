@@ -137,7 +137,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:397d2304d64b95417d3016e6e87317164bfb0ec53b81d06319587a5b75d1a3f1",
+    "content_hash": "sha256:1a5902a2b6971f97c5bafea1c249d2e112b87e2abee7d8b30a06ae4d1507b8f0",
     "exports_helpers": {
       "state": "none"
     },
@@ -150,9 +150,9 @@
     "source_file": "s0ma_src/sh0w_assets.s0ma",
     "tags": [],
     "transpiled_file": "sh0w_assets.py",
-    "version": "0.21.0"
+    "version": "0.21.1"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:397d2304d64b9541",
+  "source_hash": "sha256:1a5902a2b6971f97",
   "transpiler_version": "1.0.0"
 }

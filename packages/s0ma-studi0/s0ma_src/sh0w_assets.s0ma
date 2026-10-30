@@ -1,6 +1,6 @@
 module sh0w_assets
     layer: PRESENTATION
-    version: 0.21.0
+    version: 0.21.1
     intent: "The sh0w page itself, carried inside studi0's own self-model. The three files a browser needs — the document, its stylesheet, its script — are authored in their native syntax under assets/ and embedded here by reference, so the page studi0 serves is part of the build rather than a directory the server happens to find next to it (FR-STUDI0-8). One installed artifact, no loose files, nothing fetched from anywhere."
     exports: [INDEX_HTML, APP_CSS, APP_JS]
 

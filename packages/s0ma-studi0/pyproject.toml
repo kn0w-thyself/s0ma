@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-studi0"
-version = "0.21.0"
+version = "0.21.1"
 description = "s0ma studi0 — the local viewer that renders a s0ma project's canonical component graph from its build artifacts, truthfully and read-only."
 readme = "README.md"
 license = "Apache-2.0"
@@ -42,8 +42,14 @@ dependencies = [
     # runtime bridge first accepts in 0.20.0 (an older dsl raises TypeError at
     # import), and the build's self-context companion is generation 2, which
     # only that core's runtime reads.
-    "s0ma-core >= 0.20.0",
-    "s0ma-dsl >= 0.20.0",
+    # Raised to 0.21.1 on the same evidence: the committed companion is now
+    # generation 3 (it carries the enforced layer matrix as layer_rules, and
+    # the generation records a body's calls to its own module's components
+    # as CALLS edges), which only that core's runtime reads and only that
+    # dsl's transpiler emits, so an older dsl regenerates different bytes
+    # from the same sources.
+    "s0ma-core >= 0.21.1",
+    "s0ma-dsl >= 0.21.1",
 ]
 
 [project.optional-dependencies]

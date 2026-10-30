@@ -4,7 +4,7 @@
 specification as it was cut for 0.19.1.
 
 **The current specification is
-[`s0ma-core-spec-v0.21.0.md`](s0ma-core-spec-v0.21.0.md)**, which restates
+[`s0ma-core-spec-v0.21.1.md`](s0ma-core-spec-v0.21.1.md)**, which restates
 the current runtime contracts and records the intervening changes in Section 13.
 
 This file is kept, and deliberately not renamed, because it is the record of

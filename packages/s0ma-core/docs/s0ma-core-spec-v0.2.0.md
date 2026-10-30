@@ -9,7 +9,7 @@ every count, component list, module map, and API roster it contains was
 accurate on the day it was written and has been drifting ever since.
 
 **The current specification is
-[`s0ma-core-spec-v0.21.0.md`](s0ma-core-spec-v0.21.0.md)** — core's invariants
+[`s0ma-core-spec-v0.21.1.md`](s0ma-core-spec-v0.21.1.md)** — core's invariants
 and contracts, stated once, with every inventory deferred to the generated
 references. For what core actually contains today, read the
 [component index](../../../docs/architecture/component-index.md); for what it

@@ -20,10 +20,10 @@
       "logical_path": "sh0w_assets.s0ma",
       "name": "sh0w_assets",
       "output": "sh0w_assets.py",
-      "output_hash": "sha256:c2c4a5605551b85d4744ce75f8994440d9cf529491d96fd8db5db04d8b858038",
+      "output_hash": "sha256:7dc6faa218e5b166270053d40687b3d5a1e601847e43d290f752bc1cacbfb95d",
       "role": "source",
       "source": "s0ma_src/sh0w_assets.s0ma",
-      "source_hash": "sha256:397d2304d64b95417d3016e6e87317164bfb0ec53b81d06319587a5b75d1a3f1",
+      "source_hash": "sha256:1a5902a2b6971f97c5bafea1c249d2e112b87e2abee7d8b30a06ae4d1507b8f0",
       "source_map": "sh0w_assets.s0ma.map",
       "source_root": "s0ma_src"
     },
@@ -32,10 +32,10 @@
       "logical_path": "studi0_narration.s0ma",
       "name": "studi0_narration",
       "output": "studi0_narration.py",
-      "output_hash": "sha256:7610e24bebc2633c19e9089ae36379f4c38b9c6a5f3c71ffda54c42ceed8fd05",
+      "output_hash": "sha256:ab43acd6f8a3fb860278ba51a0a4f4a69c9787b7eac5f3d44969f0e5e2ae7bbc",
       "role": "source",
       "source": "s0ma_src/studi0_narration.s0ma",
-      "source_hash": "sha256:46f4b20f43aa8244407762da3e6045594d97be5dc35a3bd16693006a1c79f709",
+      "source_hash": "sha256:7b46a39b88202cf4086275f93562f87d5dace125af5c0996c1be67a962903734",
       "source_map": "studi0_narration.s0ma.map",
       "source_root": "s0ma_src"
     },
@@ -44,10 +44,10 @@
       "logical_path": "studi0_server.s0ma",
       "name": "studi0_server",
       "output": "studi0_server.py",
-      "output_hash": "sha256:4c389201e5b684d4284da758f4f600b71b90f3049619e356d920bd696efb66b0",
+      "output_hash": "sha256:1a7f1f47e2c98e1f11ad62463fabc2b81aac795ce7dfe60d2f426d44f81ddd79",
       "role": "source",
       "source": "s0ma_src/studi0_server.s0ma",
-      "source_hash": "sha256:bf69f5be45c5dfbba1b3d1434b95cd9aa607691be18dd7077338c9c2c09f5909",
+      "source_hash": "sha256:7a3d0a8bda60aab3d245823e857441541cabf59f0310d4cff2d95584c0c91869",
       "source_map": "studi0_server.s0ma.map",
       "source_root": "s0ma_src"
     },
@@ -56,10 +56,10 @@
       "logical_path": "studi0_state.s0ma",
       "name": "studi0_state",
       "output": "studi0_state.py",
-      "output_hash": "sha256:b6c4a33664e4bddb849a99c6c4be8baab5d9f3eaef7b58ea0bfdda0bfeac79dc",
+      "output_hash": "sha256:9ecc04182b554665e906da8b26a97638da71e5703dbe9b30382554416b58cad3",
       "role": "source",
       "source": "s0ma_src/studi0_state.s0ma",
-      "source_hash": "sha256:6f3022d1f04c34f5b59eb8983cbf01609c1a373a636d0552b7857b31701661ce",
+      "source_hash": "sha256:b80a306a6523c4dbf58dc0eaefac7253101e800b58eee2bc1e622af03d4a137c",
       "source_map": "studi0_state.s0ma.map",
       "source_root": "s0ma_src"
     },
@@ -68,10 +68,10 @@
       "logical_path": "studi0_watch.s0ma",
       "name": "studi0_watch",
       "output": "studi0_watch.py",
-      "output_hash": "sha256:5b1ff82bc9d29bc0b9cd4c734f4d51714acc04b3c1ea56e6d84384328fecbd89",
+      "output_hash": "sha256:92a770dc3dd1389b3a1e7e448ce01de474281071c0f78b1693d3d3bd0e73954e",
       "role": "source",
       "source": "s0ma_src/studi0_watch.s0ma",
-      "source_hash": "sha256:4252832f0277e07b433c0950ce0bcd4862177213b7f4228fc3b1793388d51020",
+      "source_hash": "sha256:3d95add36f4ec2b04c6390e4bc06cab8766adc8fe82975872e1103fa965622cb",
       "source_map": "studi0_watch.s0ma.map",
       "source_root": "s0ma_src"
     }
@@ -81,7 +81,7 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:86f4e062089f8eb184396cacb46657056d9604be407d7b4861e0cb4d38127617"
+      "sha256": "sha256:946ee3a07cda6918c25187cc2503e844e245f61bcdf8a0befa871ef4b8ddadd5"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",
@@ -95,5 +95,5 @@
     "sh0w_assets",
     "studi0_narration"
   ],
-  "transpiler_version": "0.21.0"
+  "transpiler_version": "0.21.1"
 }

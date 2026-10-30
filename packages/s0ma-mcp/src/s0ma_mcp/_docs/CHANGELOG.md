@@ -11,6 +11,8 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+## [0.21.1] — 2026-10-30
+
 ### Added
 
 - **A call within a module is an edge.** The self-model's dependency statements

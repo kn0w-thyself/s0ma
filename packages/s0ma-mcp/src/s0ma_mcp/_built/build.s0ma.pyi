@@ -7,7 +7,7 @@
 # equivalent) and use `BootstrapModules` as the return type of your
 # bootstrap wrapper.
 #
-# Produced by s0ma-dsl 0.21.0.
+# Produced by s0ma-dsl 0.21.1.
 
 from types import ModuleType
 from typing import TypedDict

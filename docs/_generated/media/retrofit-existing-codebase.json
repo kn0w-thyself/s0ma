@@ -3,8 +3,8 @@
     "channel": "preview",
     "journey": "journey:retrofit-existing-codebase",
     "published_by": "doc:guide/retrofit-existing-codebase",
-    "release": "0.21.0 (preview)",
-    "snapshot": "sha256:c658fd9bbcbd3969"
+    "release": "0.21.1 (preview)",
+    "snapshot": "sha256:348fe57f8e0d1551"
   },
   "package": {
     "audience": [

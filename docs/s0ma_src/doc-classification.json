@@ -695,9 +695,15 @@
     },
     {
       "audience": "agent",
-      "disposition": "normative-current",
-      "note": "The current core specification, cut at 0.21.0 from 0.20.0. Records unavailable verification, canonical identity and snapshot lifetime contracts; retains the invariant and generated-inventory discipline. Pinned to the package version by test_doc_consistency.py.",
+      "disposition": "historical",
+      "note": "The core specification cut at 0.21.0, retained with a historical banner after the 0.21.1 cut.",
       "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.21.0.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "normative-current",
+      "note": "The current core specification, cut at 0.21.1 from 0.21.0. Section 6 records the derived call edge within a module and the layer rule the self-context companion carries at generation 3; retains the invariant and generated-inventory discipline. Pinned to the package version by test_doc_consistency.py.",
+      "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.21.1.md"
     },
     {
       "audience": "contributor",

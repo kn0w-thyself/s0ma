@@ -174,4 +174,4 @@ Added to [the user guide](../s0ma_user_guide.md) Appendix C.10:
 | `ExampleRunner`, `ExampleResult`, `ExampleDispatcher`, `DispatchOutcome`, `TimeoutResult` | [the component index](../../../../docs/architecture/component-index.md) |
 | What the transitive hash covers and why | [the documentation subsystem](../../../../docs/documentation-subsystem.md) |
 | Why the markers are load-bearing | [the documentation subsystem](../../../../docs/documentation-subsystem.md) |
-| The contract core's registrations have to hold | [`s0ma-core-spec-v0.21.0.md`](../s0ma-core-spec-v0.21.0.md) §7 |
+| The contract core's registrations have to hold | [`s0ma-core-spec-v0.21.1.md`](../s0ma-core-spec-v0.21.1.md) §7 |

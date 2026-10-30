@@ -4335,7 +4335,7 @@
   "schema": "s0ma-docs-inventory@1",
   "source": {
     "model_schema": "s0ma-docs-model@1",
-    "release_version": "0.21.0",
-    "snapshot_hash": "sha256:c658fd9bbcbd3969"
+    "release_version": "0.21.1",
+    "snapshot_hash": "sha256:348fe57f8e0d1551"
   }
 }

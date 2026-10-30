@@ -181,7 +181,7 @@ if TYPE_CHECKING:
     from s0ma_mcp._built import resources as resources
     from s0ma_mcp._built import tools as tools
 
-__version__ = "0.21.0"
+__version__ = "0.21.1"
 
 __all__ = [
     "SERVER_NAME",

@@ -1,6 +1,6 @@
 module studi0_watch
     layer: APPLICATION
-    version: 0.21.0
+    version: 0.21.1
     intent: "The poll that keeps a studi0 session honest between builds: roughly four times a second it re-reads the project's build artifacts and republishes the session's reading only when the project actually said something new. It runs on a daemon thread so an interrupted studi0 dies with its server; it treats a build caught half-written as a reason to keep the last good reading and look again, not as a reason to fall over; and it reports each distinct failure to stderr once, never once per tick."
     exports: [Studi0WatchConfig, Studi0Watcher, poll_once, start_watcher, stop_watcher]
 

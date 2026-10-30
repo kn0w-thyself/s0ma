@@ -1,3 +1,17 @@
+# s0ma-core — Runtime Specification & Coding Agent Rulebook (historical: v0.21.0)
+
+**Historical. This is a frozen record, not current guidance.** It is the core
+specification as it was cut for 0.21.0.
+
+**The current specification is
+[`s0ma-core-spec-v0.21.1.md`](s0ma-core-spec-v0.21.1.md)**, which restates this
+cut for 0.21.1 and says in its Section 13 what changed between the two.
+
+This file keeps its content and its name as the record of what core promised
+at 0.21.0. Read it as history.
+
+---
+
 # s0ma-core — Runtime Specification & Coding Agent Rulebook
 
 **Version:** 0.21.0
