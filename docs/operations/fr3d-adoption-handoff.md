@@ -1,10 +1,11 @@
 # fr3d adoption after the upstream observation fixes
 
-Updated 2026-10-25. This is a handoff for a separate session. Rob has merged
-runtime PR #11 and guidance PR #12 and authorized the next four-package release.
-Version 0.21.0, tag `v0.21.0`, is being prepared through the release runbook.
-Publication is not yet verified and fr3d adoption has not begun. Verify the
-immutable release identity before changing downstream pins.
+Updated 2026-10-25. This is a handoff for a separate session. Rob reviewed and
+merged the upstream fixes and release preparation, then authorized publication.
+The annotated tag `v0.21.0` names release commit
+`62bbf1caa5341b5f3047e8e08c1b3cdebd7506b8`. Publication and served-artifact
+verification passed. fr3d adoption can now use this immutable release in its
+separate implementation session; it has not begun here.
 
 ## Upstream identity and evidence
 
@@ -18,8 +19,13 @@ immutable release identity before changing downstream pins.
 | Guidance PR | [s0ma #12](https://github.com/kn0w-thyself/s0ma/pull/12) |
 | Guidance merge on main | 5888b8b2c085013c0bbfd32a53da87fb2b9acb71 |
 | fr3d main inspected read-only | cbe17141f721f315e53c7bb799224f53edee9579 |
-| Release candidate | 0.21.0 / v0.21.0; authorized, publication pending |
-| fr3d adoption | Not performed; awaits verified release |
+| Release version / tag | 0.21.0 / [v0.21.0](https://github.com/kn0w-thyself/s0ma/releases/tag/v0.21.0) |
+| Release commit R | 62bbf1caa5341b5f3047e8e08c1b3cdebd7506b8 |
+| Annotated tag object | 1c22eb8ec69a4ef5c31fce1ab7db66477df027e4 |
+| Release PR | [s0ma #13](https://github.com/kn0w-thyself/s0ma/pull/13), reviewed and merged by Rob |
+| Owner merge on main | d8016df2e45bcb68afbf9b2844571017010257a7 |
+| Publication verification | [Release run 40245019756](https://github.com/kn0w-thyself/s0ma/actions/runs/40245019756), all jobs and critical verification steps passed |
+| fr3d adoption | Not performed; separate implementation session |
 
 Both implementation PRs are merged. The guidance SHA above identifies the
 implementation before the handoff and Windows portability commits; its final
@@ -101,38 +107,54 @@ decision, not something this upstream change does. Keep source-mode gates around
 every new prompt/inspection path. `frozen_docs` and `manifest_only` must not gain
 live facts, tools or ambient context through the upgrade.
 
-## Owner release boundary
+## Release record and downstream boundary
 
-Rob has merged the implementation and authorized version 0.21.0. The release
-preparation still follows repository review and verification requirements; the
-author cannot supply a required independent review. Follow
-[docs/RELEASING.md](../RELEASING.md), including its prepare A, tagged R and reopened
-P sequence, not an improvised tag on either implementation branch:
+The cut followed [docs/RELEASING.md](../RELEASING.md):
 
-1. From clean updated main, create the release branch. Dry-run the release-cut
-   script before its authorized write. Bump all four packages together and carve
-   the root changelog; cut the new core spec and refresh documented version refs.
-2. Rebuild all three outputs without cache, render the documentation application,
-   compose preview, refresh all GUIDE_DOCS and five generated mirrors, then run
-   the full gate. Commit A and review it through the release PR.
-3. For R, compose with the chosen tag value and run the full gate with the same
-   S0MA_HEAD_TAG. Recompose preview for P, run the full gate again, and verify P's
-   tree equals A's. The annotated release tag names R; main ends at P.
-4. Only the owner-authorized tag push triggers publication. Verify wheel identity,
-   release artifacts and served distribution checks. A skipped deployment or
-   served check is not evidence of delivery. No control-plane change is part of
-   these library fixes. Do not enable index publishing as an incidental step.
+| Commit | SHA | Local canonical gate |
+| --- | --- | --- |
+| A, prepare as preview | da8a3f211079a930dcda100cd3f435677a33d9e0 | 11,158 passed, 30 skipped |
+| R, compose for v0.21.0 | 62bbf1caa5341b5f3047e8e08c1b3cdebd7506b8 | 11,145 passed, 43 skipped |
+| P, restore preview | 1fb42af9b068b58158ee21b1ee121c157828b966 | 11,158 passed, 30 skipped |
 
-Stop on failed gates, mismatched artifacts or missing authorization. Before
-publication, retain the prior release and correct the candidate. After publication,
-use the runbook's manifest-pointer rollback if authorized; do not move a released
-tag or replace immutable wheels. Record the approved tag, commit and package
-version in the downstream PR before changing fr3d pins.
+R's additional 13 skips are tests explicitly marked `preview_tree_only`; all
+run on A and P. A and P have the identical tree
+`742a9101b50e34133dfc78ef583125d4c6acb1e1`. Both A and P passed all six
+OS/Python CI jobs and wheel building. Rob merged PR #13 with a merge commit
+rather than a fast-forward; that merge preserves R and P and has exactly the
+same tested preview tree. No history was rewritten. The annotated tag names R,
+whose documentation identifies the release channel.
+
+The [release workflow](https://github.com/kn0w-thyself/s0ma/actions/runs/40245019756)
+passed on R: Python 3.11, 3.12 and 3.13 gates, exact wheel documentation
+identity, GitHub publication, R2 mirroring and served-release verification.
+The documentation-identity gate was armed before publication; its check, the
+mirror step and the served check all ran successfully. The GitHub Release was
+published at `2026-10-25T23:38:48Z` with four wheels and four source archives.
+The served verifier confirmed that `latest` is 0.21.0, all four wheel hashes
+match both the manifest and fresh builds, and the installer matches the
+canonical script. No control-plane deployment or PyPI publication occurred.
+Artifact digests and workflow evidence are in the adjacent evidence JSON.
+This post-release handoff supersedes the preparation status captured inside the
+tagged source. Install the immutable tag; use this updated record for publication
+status and the downstream implementation prompt.
+
+The runtime floors between sibling s0ma packages remain at 0.20.0 because this
+cut introduces no new sibling API dependency. That does not make an older core
+sufficient for fr3d's new observation contracts: adopt 0.21.0 for the existing
+core, DSL and authoring MCP dependencies. Do not add studi0 to fr3d merely
+because upstream releases four packages together.
+
+Do not move this release tag or replace its immutable wheels. Any production
+rollback uses the runbook's manifest-pointer procedure only with owner
+approval. The next work is fr3d adoption and application fixes in its separate
+session, followed by benchmark preparation. No fr3d changes or benchmark runs
+were performed during this release.
 
 ## Copy/paste prompt for the separate fr3d session
 
-Copy the following block after the upstream release has been authorized and
-verified. It supplements the older detailed prompt with the actual API changes.
+The release is verified. Copy the following block into the separate fr3d
+session; it includes the exact release identity and actual API changes.
 
 ```text
 You are CLU. Implement fr3d's adoption and application fixes in a fresh codex/
@@ -147,23 +169,30 @@ Read in order:
    evidence.md and upstream-first-handoff.md in full.
 3. /Users/main/Projects/kn0wthyself/s0ma-bench/docs/scenarios/s2-phase1-v1/investigation/fr3d-fixes-prompt.md
    in full. The newer report governs F01-F11 when the earlier prompt is stale.
-4. The merged s0ma docs/operations/fr3d-adoption-handoff.md,
+4. This post-release s0ma docs/operations/fr3d-adoption-handoff.md, plus
    docs/operations/bench-runtime-contracts.md and
-   docs/guides/application-observations.md, including the executable fixture.
+   docs/guides/application-observations.md at v0.21.0, including the executable
+   fixture. The handoff inside the immutable tag records preparation status;
+   this updated handoff records verified publication. Install from the tag.
 
-First verify that Rob merged s0ma #11 and #12, authorized a release,
-and that its immutable tag/commit includes both implementations. Record the
-actual version, tag, SHA, package provenance and installed import paths. Do not
-substitute a pending branch, assume a future version, or claim adoption while
-that release is missing. Complete independent investigation while a required
-owner decision is pending; keep dependent changes behind that boundary.
+Adopt s0ma 0.21.0, annotated tag v0.21.0, from kn0w-thyself/s0ma.
+The tag must resolve to release commit
+62bbf1caa5341b5f3047e8e08c1b3cdebd7506b8, which includes merged fixes #11
+and #12 and release preparation #13. The tag object is
+1c22eb8ec69a4ef5c31fce1ab7db66477df027e4. Verify those identities and the
+successful release workflow 40245019756 before adopting. Do not substitute
+moving main, a preview commit or another editable checkout. Record package
+provenance, installed versions and import paths, and retain the upstream
+compatibility requirements below. An unavailable or mismatched release is a
+stop condition; it is not permission to invent a replacement pin.
 
 At inspected fr3d main cbe17141f721f315e53c7bb799224f53edee9579, build-system
 core/dsl pins and dev mcp pin in pyproject.toml used v0.20.0, runtime floors
 were >=0.19.1, and Dockerfile plus boundary-check.yml, ci-windows.yml and
 install_smoke.yml pinned v0.20.0. Re-inventory current main, update all existing
 active pins/floors, lockfile if present, CI/build references and living docs to
-the approved release. No dependency lockfile was tracked in the inspected
+0.21.0: existing Git pins use v0.21.0, and runtime floors requiring these fixes
+must require >=0.21.0. No dependency lockfile was tracked in the inspected
 main; recheck instead of assuming one exists or inventing a lock mechanism.
 fr3d uses core, dsl and authoring mcp; do not add studi0 because upstream releases
 four packages. Preserve valid alternative installation routes.
