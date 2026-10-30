@@ -304,7 +304,7 @@ class IRAuthoredEdge:
 )
 @dataclass(frozen=True)
 class IRDerivedEdge:
-    """A derived dependency edge (RAISES or TYPE_USES) in the IR."""
+    """A derived dependency edge (RAISES, TYPE_USES, READS or CALLS) in the IR."""
 
     source: str
     target: str

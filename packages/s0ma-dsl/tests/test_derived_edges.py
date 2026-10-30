@@ -8,6 +8,7 @@ Covers:
   - Derivation skips requires names
   - Conflict detection between authored and derived edges
   - Strictness mode severity differences for conflicts
+  - CALLS edge derivation from a body's calls to its own module's components
 """
 
 from __future__ import annotations
@@ -25,6 +26,7 @@ from s0ma_dsl.ast_nodes.enums import (
 from s0ma_dsl.ast_nodes.nodes import (
     CellDecl,
     GanglionDecl,
+    HelperDecl,
     InlineAxon,
     ModuleDecl,
     NerveDecl,
@@ -1180,3 +1182,248 @@ class TestAnalyzeDerivedEdgesConvenience:
         edges, errors = analyze_derived_edges(module)
 
         assert len(edges) == 1
+
+
+# ===========================================================================
+# CALLS edge derivation (a body's calls to the components of its own module)
+# ===========================================================================
+
+
+def _calls(edges: list) -> list:
+    return [edge for edge in edges if edge.relation == Relation.CALLS]
+
+
+class TestCallsEdgeDerivation:
+    """A body that calls a sibling nerve or ganglion derives a CALLS edge.
+
+    The module's ``uses:`` list is per module and never names a sibling,
+    so until this derivation a call from one component to another in the
+    same module left no trace in the dependency graph.
+    """
+
+    def test_same_module_call_derives_calls(self):
+        """``neutral_payload_text(cfg)`` in a sibling's body is a CALLS edge."""
+        callee = _make_nerve("neutral_payload_text", line=5)
+        caller = _make_nerve(
+            "forward_call_tool",
+            body=(
+                "def forward_call_tool(cfg):\n"
+                "    try:\n"
+                "        return remote(cfg)\n"
+                "    except Exception:\n"
+                "        return neutral_payload_text(cfg)"
+            ),
+            line=15,
+        )
+        module = S0maModule(
+            module=_make_module("shim"),
+            nerves=(callee, caller),
+        )
+
+        edges, errors = analyze_derived_edges(module)
+
+        assert errors == []
+        calls = _calls(edges)
+        assert len(calls) == 1
+        edge = calls[0]
+        assert edge.source == "forward_call_tool"
+        assert edge.target == "neutral_payload_text"
+        assert edge.target_canonical == "shim::neutral_payload_text"
+        assert edge.origin == "body_call"
+        assert edge.source_line == 15
+
+    def test_call_through_a_module_level_alias_keeps_its_existing_edge(self):
+        """A call through a ``uses: [a.b as alias]`` alias is not a sibling call.
+
+        The alias is declared at module level and resolves to the other
+        module's component; the pair already derives TYPE_USES with origin
+        ``constructor_call`` through the ``uses`` list, and that edge is
+        unchanged. No CALLS edge is added for it, so the pair is recorded
+        once and the authored ``uses:`` semantics do not move.
+        """
+        caller = _make_nerve(
+            "login",
+            body="def login(token):\n    return verify_token(token)",
+            line=10,
+        )
+        module = S0maModule(
+            module=_make_module(
+                uses=(UsesEntry(
+                    qualified_name="auth.validate_token",
+                    alias="verify_token",
+                    location=_loc(3),
+                ),),
+            ),
+            nerves=(caller,),
+        )
+
+        edges, errors = analyze_derived_edges(module)
+
+        assert errors == []
+        assert _calls(edges) == []
+        for_pair = [
+            edge for edge in edges
+            if edge.source == "login" and edge.target_canonical == "auth::validate_token"
+        ]
+        assert len(for_pair) == 1
+        assert for_pair[0].target == "verify_token"
+        assert for_pair[0].relation == Relation.TYPE_USES
+        assert for_pair[0].origin == "constructor_call"
+
+    def test_call_to_something_that_is_not_a_component_derives_nothing(self):
+        """A builtin, a ``requires`` import and a helper are not components."""
+        helper = HelperDecl(
+            name="_fmt",
+            layer=Layer.APPLICATION,
+            intent="Module-private formatter.",
+            body="def _fmt(value):\n    return str(value)",
+            location=_loc(5),
+        )
+        caller = _make_nerve(
+            "render",
+            body=(
+                "def render(value):\n"
+                "    text = json.dumps(_fmt(value))\n"
+                "    return len(text)"
+            ),
+            line=10,
+        )
+        module = S0maModule(
+            module=_make_module(
+                requires=(RequiresEntry(module_path="json", location=_loc(3)),),
+            ),
+            nerves=(caller,),
+            helpers=(helper,),
+        )
+
+        edges, errors = analyze_derived_edges(module)
+
+        assert errors == []
+        assert _calls(edges) == []
+
+    def test_a_self_call_and_a_shadowed_sibling_name_derive_nothing(self):
+        """Recursion is no edge, and a parameter named like a sibling is not the sibling."""
+        sibling = _make_nerve("notify", line=5)
+        recursive = _make_nerve(
+            "walk",
+            body=(
+                "def walk(node, notify):\n"
+                "    notify(node)\n"
+                "    for child in node.children:\n"
+                "        walk(child, notify)"
+            ),
+            line=10,
+        )
+        module = S0maModule(
+            module=_make_module(),
+            nerves=(sibling, recursive),
+        )
+
+        edges, errors = analyze_derived_edges(module)
+
+        assert errors == []
+        assert _calls(edges) == []
+
+    def test_an_attribute_call_is_not_a_sibling_call(self):
+        """``self.notify()`` and ``obj.notify()`` have no component root here."""
+        sibling = _make_nerve("notify", line=5)
+        caller = _make_nerve(
+            "run",
+            body="def run(obj):\n    obj.notify()\n    return obj",
+            line=10,
+        )
+        module = S0maModule(module=_make_module(), nerves=(sibling, caller))
+
+        edges, _ = analyze_derived_edges(module)
+
+        assert _calls(edges) == []
+
+    def test_an_authored_edge_for_the_pair_wins_without_a_duplicate(self):
+        """``depends_on: {sibling: CALLS}`` plus the call derives nothing new, in every mode."""
+        callee = _make_nerve("price_order", line=5)
+        caller = _make_nerve(
+            "submit_order",
+            depends_on=(InlineAxon(
+                target="price_order",
+                relation=Relation.CALLS,
+                carries="the priced order",
+                coupling=Coupling.TIGHT,
+                location=_loc(12),
+            ),),
+            body="def submit_order(order):\n    return price_order(order)",
+            line=10,
+        )
+        module = S0maModule(module=_make_module(), nerves=(callee, caller))
+
+        for mode in (StrictnessMode.DEV, StrictnessMode.STRICT):
+            edges, errors = analyze_derived_edges(module, mode=mode)
+            assert _calls(edges) == []
+            assert [e for e in errors if e.code == "DUPLICATE_AXON"] == []
+
+    def test_a_ganglion_body_calls_a_nerve(self):
+        """Ganglia have bodies too, and a nerve they call is a dependency."""
+        nerve = _make_nerve("escalate", line=5)
+        ganglion = _make_ganglion(
+            "watch_latency",
+            body=(
+                "def watch_latency(signals):\n"
+                "    if max(signals) > 10:\n"
+                "        escalate(signals)"
+            ),
+            line=20,
+        )
+        module = S0maModule(
+            module=_make_module(),
+            nerves=(nerve,),
+            ganglia=(ganglion,),
+        )
+
+        edges, errors = analyze_derived_edges(module)
+
+        assert errors == []
+        calls = _calls(edges)
+        assert [(e.source, e.target_canonical, e.origin) for e in calls] == [
+            ("watch_latency", "test_module::escalate", "body_call"),
+        ]
+
+    def test_each_called_sibling_yields_one_edge_in_name_order(self):
+        """Two calls to one sibling are one edge; several siblings sort by name."""
+        first = _make_nerve("alpha", line=5)
+        second = _make_nerve("beta", line=6)
+        caller = _make_nerve(
+            "run",
+            body=(
+                "def run():\n"
+                "    beta()\n"
+                "    alpha()\n"
+                "    return beta()"
+            ),
+            line=10,
+        )
+        module = S0maModule(module=_make_module(), nerves=(first, second, caller))
+
+        edges, _ = analyze_derived_edges(module)
+
+        assert [e.target for e in _calls(edges)] == ["alpha", "beta"]
+
+    def test_calls_edges_reach_the_ir_with_their_origin(self):
+        """The IR records the derived edge under ``edges.derived`` as CALLS, body_call."""
+        from s0ma_dsl.ir.builder import build_ir
+
+        callee = _make_nerve("neutral_payload_text", line=5)
+        caller = _make_nerve(
+            "forward_call_tool",
+            body="def forward_call_tool(cfg):\n    return neutral_payload_text(cfg)",
+            line=15,
+        )
+        module = S0maModule(module=_make_module("shim"), nerves=(callee, caller))
+
+        derived, _ = analyze_derived_edges(module)
+        ir = build_ir(module, derived_edges=derived).to_dict()
+
+        assert {
+            "source": "shim::forward_call_tool",
+            "target": "shim::neutral_payload_text",
+            "relation": "CALLS",
+            "origin": "body_call",
+        } in ir["edges"]["derived"]

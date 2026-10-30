@@ -1,8 +1,9 @@
 """Derived edge analysis for the s0ma DSL (Stage 4).
 
 Derives RAISES and TYPE_USES edges from structured fields per PRD §1.12
-and spec §4.11.1–4.11.3, and READS edges from the constants a nerve or
-ganglion body refers to. Also detects conflicts between authored and
+and spec §4.11.1–4.11.3, READS edges from the constants a nerve or
+ganglion body refers to, and CALLS edges from the sibling nerves and
+ganglia a body calls. Also detects conflicts between authored and
 derived edges (single-source authority enforcement).
 
 Derived edges are inferred by the transpiler — they must never be
@@ -57,7 +58,8 @@ __all__ = [
     layer=Layer.FRAMEWORK,
     intent=(
         "Represents a single derived dependency edge inferred by the transpiler from raises "
-        "fields, function signature annotations or a body's references to constants."
+        "fields, function signature annotations, a body's references to constants or a body's "
+        "calls to the components of its own module."
     ),
     idempotent=True,
     is_framework=True,
@@ -81,18 +83,19 @@ class DerivedEdge:
     """The fully-qualified canonical ID of the target (``module::component``)."""
 
     relation: Relation
-    """The relation type: RAISES, TYPE_USES, or READS for a constant a body refers to."""
+    """The relation type: RAISES, TYPE_USES, READS for a constant a body refers
+    to, or CALLS for a sibling component a body calls."""
 
     origin: str
     """The derivation origin: ``'raises_field'``, ``'function_signature'``,
-    ``'constructor_call'`` or ``'constant_reference'``."""
+    ``'constructor_call'``, ``'constant_reference'`` or ``'body_call'``."""
 
     source_line: int = 0
     """Line number in the source file where this edge was derived from."""
 
 
 # ---------------------------------------------------------------------------
-# DerivedEdgeAnalyzer — derives RAISES and TYPE_USES edges
+# DerivedEdgeAnalyzer — derives RAISES, TYPE_USES, READS and CALLS edges
 # ---------------------------------------------------------------------------
 
 
@@ -102,15 +105,16 @@ class DerivedEdge:
     layer=Layer.FRAMEWORK,
     intent=(
         "Derives RAISES edges from raises fields, TYPE_USES edges from signatures and "
-        "constructor calls and READS edges from the constants a body refers to, and detects "
-        "conflicts with authored edges, per spec §4.11."
+        "constructor calls, READS edges from the constants a body refers to and CALLS edges "
+        "from the sibling components a body calls, and detects conflicts with authored edges, "
+        "per spec §4.11."
     ),
     idempotent=True,
     is_framework=True,
 )
 @dataclass
 class DerivedEdgeAnalyzer:
-    """Derives RAISES, TYPE_USES and READS edges from a parsed ``S0maModule``.
+    """Derives RAISES, TYPE_USES, READS and CALLS edges from a parsed ``S0maModule``.
 
     Also detects conflicts where an authored edge duplicates a derived
     edge (single-source authority violation).
@@ -133,7 +137,7 @@ class DerivedEdgeAnalyzer:
         *,
         constant_targets: frozenset[str] | None = None,
     ) -> tuple[list[DerivedEdge], list[S0maSemanticError]]:
-        """Derive all RAISES, TYPE_USES and READS edges and detect conflicts.
+        """Derive all RAISES, TYPE_USES, READS and CALLS edges and detect conflicts.
 
         Parameters
         ----------
@@ -174,6 +178,9 @@ class DerivedEdgeAnalyzer:
 
         # Derive READS edges from the constants a body refers to
         edges.extend(self._derive_reads_edges(module, ns, constant_targets))
+
+        # Derive CALLS edges from the sibling components a body calls
+        edges.extend(self._derive_calls_edges(module, ns))
 
         # Detect conflicts between authored and derived edges
         conflict_errors = self._detect_conflicts(module, edges)
@@ -241,6 +248,73 @@ class DerivedEdgeAnalyzer:
                     target_canonical=canonical,
                     relation=Relation.READS,
                     origin="constant_reference",
+                    source_line=source_line,
+                ))
+        return edges
+
+    # -------------------------------------------------------------------
+    # CALLS edge derivation (from calls to sibling components in bodies)
+    # -------------------------------------------------------------------
+
+    def _derive_calls_edges(
+        self,
+        module: S0maModule,
+        ns: NamespaceService,
+    ) -> list[DerivedEdge]:
+        """Derive CALLS edges from the sibling components a body calls.
+
+        A nerve or ganglion body that calls another nerve or ganglion of
+        its own module by name (``return neutral_payload_text(cfg)``)
+        depends on it, and until now the module's dependency statements
+        said nothing about that pair: the authored ``uses:`` list is per
+        module and never names a caller, and a sibling is not imported
+        through it at all. The edge is derived with origin ``body_call``
+        so a reader of the self-model sees the call without reading the
+        source.
+
+        Only direct calls by bare name count: a call through an
+        attribute, a name the body binds itself (a parameter, a local
+        assignment) and a call to something that is not a component (a
+        helper, a ``requires`` import, a builtin) derive nothing, and a
+        body never calls itself into an edge. A call to a component of
+        another module keeps the edge it already had: through ``uses:``
+        a cell call derives TYPE_USES with origin ``constructor_call``,
+        and that derivation is unchanged here.
+
+        An authored edge between the same source and target, with any
+        relation, is the architectural statement and wins: no CALLS
+        edge is derived for that pair, so an author who already declared
+        ``depends_on: {sibling: {relation: CALLS, ...}}`` sees no
+        duplicate and no ``DUPLICATE_AXON``.
+        """
+        module_name = module.module.name
+        siblings: list[NerveDecl | GanglionDecl] = []
+        siblings.extend(module.nerves)
+        siblings.extend(module.ganglia)
+        callables: dict[str, str] = {
+            decl.name: f"{module_name}::{decl.name}" for decl in siblings
+        }
+        if not callables:
+            return []
+
+        authored = self._authored_pairs(module, ns)
+        edges: list[DerivedEdge] = []
+        for decl in siblings:
+            if not decl.body:
+                continue
+            source_line = decl.location.start_line if decl.location else 0
+            for name in sorted(_extract_free_name_calls(decl.body) & callables.keys()):
+                if name == decl.name:
+                    continue
+                canonical = callables[name]
+                if (decl.name, canonical) in authored:
+                    continue
+                edges.append(DerivedEdge(
+                    source=decl.name,
+                    target=name,
+                    target_canonical=canonical,
+                    relation=Relation.CALLS,
+                    origin="body_call",
                     source_line=source_line,
                 ))
         return edges
@@ -510,6 +584,20 @@ class DerivedEdgeAnalyzer:
 # ---------------------------------------------------------------------------
 
 
+def _parse_body(body: str) -> ast.AST | None:
+    """Parse a body for name analysis; ``None`` when it does not parse.
+
+    An unparsable body reads and calls nothing; the body-syntax check
+    reports it.
+    """
+    if not body or not body.strip():
+        return None
+    try:
+        return ast.parse(body)
+    except SyntaxError:
+        return None
+
+
 def _extract_free_name_reads(body: str) -> set[str]:
     """Return the names a body reads without binding them itself.
 
@@ -520,20 +608,50 @@ def _extract_free_name_reads(body: str) -> set[str]:
     that happens to share a constant's name is not read as the constant.
     An unparsable body reads nothing; the body-syntax check reports it.
     """
-    if not body or not body.strip():
+    tree = _parse_body(body)
+    if tree is None:
         return set()
-    try:
-        tree = ast.parse(body)
-    except SyntaxError:
-        return set()
+    reads = {
+        node.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    }
+    return reads - _bound_names(tree)
 
-    reads: set[str] = set()
+
+def _extract_free_name_calls(body: str) -> set[str]:
+    """Return the bare names a body calls without binding them itself.
+
+    Every ``ast.Call`` whose callee is a plain ``ast.Name`` counts; a
+    call through an attribute (``module.func()``, ``self.method()``) does
+    not, because its root is not a component of this module. The names
+    the body binds are removed exactly as :func:`_extract_free_name_reads`
+    removes them, so a parameter or local that shares a sibling's name is
+    not read as a call to the sibling, and a function's own name, which
+    its ``def`` binds, never yields a self-edge.
+    """
+    tree = _parse_body(body)
+    if tree is None:
+        return set()
+    calls = {
+        node.func.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+    }
+    return calls - _bound_names(tree)
+
+
+def _bound_names(tree: ast.AST) -> set[str]:
+    """Every name a parsed body binds anywhere.
+
+    Assignment and deletion targets, function and class names,
+    parameters, import aliases, exception aliases, ``global`` and
+    ``nonlocal`` declarations all bind; a name in load context does not.
+    """
     bound: set[str] = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Name):
-            if isinstance(node.ctx, ast.Load):
-                reads.add(node.id)
-            else:
+            if not isinstance(node.ctx, ast.Load):
                 bound.add(node.id)
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             bound.add(node.name)
@@ -557,7 +675,7 @@ def _extract_free_name_reads(body: str) -> set[str]:
             bound.add(node.name)
         elif isinstance(node, (ast.Global, ast.Nonlocal)):
             bound.update(node.names)
-    return reads - bound
+    return bound
 
 
 # ---------------------------------------------------------------------------
@@ -691,7 +809,7 @@ def _extract_annotation_names(body: str) -> set[str]:
     kind=ComponentKind.FUNCTION,
     layer=Layer.FRAMEWORK,
     intent=(
-        "Convenience function to derive RAISES, TYPE_USES and READS edges and detect "
+        "Convenience function to derive RAISES, TYPE_USES, READS and CALLS edges and detect "
         "authored/derived conflicts for a module."
     ),
     idempotent=True,
@@ -705,7 +823,7 @@ def analyze_derived_edges(
     ns: NamespaceService | None = None,
     constant_targets: frozenset[str] | None = None,
 ) -> tuple[list[DerivedEdge], list[S0maSemanticError]]:
-    """Derive RAISES, TYPE_USES and READS edges and detect conflicts.
+    """Derive RAISES, TYPE_USES, READS and CALLS edges and detect conflicts.
 
     Parameters
     ----------
@@ -720,7 +838,8 @@ def analyze_derived_edges(
     constant_targets:
         Canonical ids of every CONSTANT cell in the project, so imported
         constants derive READS edges too; see
-        :meth:`DerivedEdgeAnalyzer.analyze`.
+        :meth:`DerivedEdgeAnalyzer.analyze`. CALLS edges need no project
+        view: they join a body to the nerves and ganglia of its own module.
 
     Returns
     -------
