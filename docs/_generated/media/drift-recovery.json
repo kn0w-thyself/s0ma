@@ -1,9 +1,9 @@
 {
   "identity": {
-    "channel": "preview",
+    "channel": "release",
     "journey": "journey:drift-recovery",
     "published_by": "doc:guide/drift-recovery",
-    "release": "0.21.1 (preview)",
+    "release": "0.21.1",
     "snapshot": "sha256:348fe57f8e0d1551"
   },
   "package": {

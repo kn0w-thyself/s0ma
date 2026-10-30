@@ -345,7 +345,7 @@
   ],
   "schema": "s0ma-core-teaching@1",
   "source": {
-    "build_channel": "preview",
+    "build_channel": "release",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.21.1",
     "snapshot_hash": "sha256:348fe57f8e0d1551"

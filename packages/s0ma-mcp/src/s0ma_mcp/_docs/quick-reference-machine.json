@@ -518,7 +518,7 @@
     ]
   },
   "identity": {
-    "build_channel": "preview",
+    "build_channel": "release",
     "documentation_root": "docs",
     "edition": 2,
     "explanations": "docs/s0ma_src/quick-reference.json",
@@ -548,7 +548,7 @@
       "python:s0ma_dsl.semantic_state"
     ],
     "readable": "docs/reference/quick-reference-readable.md",
-    "release": "0.21.1 (preview)",
+    "release": "0.21.1",
     "release_version": "0.21.1",
     "revised": "2026-10-05",
     "snapshot_hash": "sha256:348fe57f8e0d1551",
