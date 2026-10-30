@@ -1150,7 +1150,36 @@
       "module": "studi0_server"
     }
   ],
-  "generation_version": "2",
+  "generation_version": "3",
+  "layer_rules": {
+    "basis": "the cross-layer matrix the build enforces on every module's uses: declarations; a pair outside it is CROSS_LAYER_DEPENDENCY",
+    "may_reach": {
+      "APPLICATION": [
+        "APPLICATION",
+        "DOMAIN",
+        "FRAMEWORK"
+      ],
+      "DOMAIN": [
+        "DOMAIN",
+        "FRAMEWORK"
+      ],
+      "FRAMEWORK": [
+        "FRAMEWORK"
+      ],
+      "INFRASTRUCTURE": [
+        "APPLICATION",
+        "DOMAIN",
+        "FRAMEWORK",
+        "INFRASTRUCTURE"
+      ],
+      "PRESENTATION": [
+        "APPLICATION",
+        "DOMAIN",
+        "FRAMEWORK",
+        "PRESENTATION"
+      ]
+    }
+  },
   "provenance": {
     "authored_text_trust": "untrusted_project_data",
     "authority": "canonical_ir",

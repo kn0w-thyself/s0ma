@@ -508,6 +508,12 @@
           "target": "resources::docs_bundle"
         },
         {
+          "authored": false,
+          "origin": "body_call",
+          "relation": "CALLS",
+          "target": "resources::docs_page_for"
+        },
+        {
           "authored": true,
           "carries": "which build this is",
           "origin": "inline_depends_on",
@@ -662,6 +668,12 @@
           "origin": "inline_depends_on",
           "relation": "CALLS",
           "target": "resources::docs_journey_steps"
+        },
+        {
+          "authored": false,
+          "origin": "body_call",
+          "relation": "CALLS",
+          "target": "resources::docs_page_for"
         },
         {
           "authored": true,
@@ -2090,7 +2102,36 @@
       "module": "tools"
     }
   ],
-  "generation_version": "2",
+  "generation_version": "3",
+  "layer_rules": {
+    "basis": "the cross-layer matrix the build enforces on every module's uses: declarations; a pair outside it is CROSS_LAYER_DEPENDENCY",
+    "may_reach": {
+      "APPLICATION": [
+        "APPLICATION",
+        "DOMAIN",
+        "FRAMEWORK"
+      ],
+      "DOMAIN": [
+        "DOMAIN",
+        "FRAMEWORK"
+      ],
+      "FRAMEWORK": [
+        "FRAMEWORK"
+      ],
+      "INFRASTRUCTURE": [
+        "APPLICATION",
+        "DOMAIN",
+        "FRAMEWORK",
+        "INFRASTRUCTURE"
+      ],
+      "PRESENTATION": [
+        "APPLICATION",
+        "DOMAIN",
+        "FRAMEWORK",
+        "PRESENTATION"
+      ]
+    }
+  },
   "provenance": {
     "authored_text_trust": "untrusted_project_data",
     "authority": "canonical_ir",
@@ -2107,7 +2148,7 @@
     },
     {
       "path": "resources.s0ma.json",
-      "sha256": "sha256:1840792dadbea6880887a836ae8e6146c67550bfedd68cfc96075f1ec9fd4d06"
+      "sha256": "sha256:f0c964b3e862705c305fe9b64aeb7d8864fd661b26e71f9210e7a4c2f3a8c9af"
     },
     {
       "path": "tools.s0ma.json",

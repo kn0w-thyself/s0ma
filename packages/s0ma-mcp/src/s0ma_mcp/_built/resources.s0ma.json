@@ -2231,7 +2231,20 @@
         "target": "resources::version_document"
       }
     ],
-    "derived": [],
+    "derived": [
+      {
+        "origin": "body_call",
+        "relation": "CALLS",
+        "source": "resources::docs_concepts_resource",
+        "target": "resources::docs_page_for"
+      },
+      {
+        "origin": "body_call",
+        "relation": "CALLS",
+        "source": "resources::docs_journeys_resource",
+        "target": "resources::docs_page_for"
+      }
+    ],
     "verification": [
       {
         "origin": "tests_field",
