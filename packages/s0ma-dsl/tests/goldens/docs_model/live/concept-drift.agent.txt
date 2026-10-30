@@ -1,6 +1,6 @@
 Topic: concept:drift
 Release: 0.18.1 (preview)
-Snapshot: sha256:73f63b05b4e05632
+Snapshot: sha256:1479deaf66c835da
 Examples: none recorded
 Decided by: authority:spec/drift-check
 
