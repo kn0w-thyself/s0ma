@@ -78,4 +78,4 @@ module <name>
 
 - Topic id: `concept:s0ma-file`
 - Release: `0.21.0 (preview)`
-- Documentation snapshot: `sha256:e9ff5e59e9d06aab`
+- Documentation snapshot: `sha256:c658fd9bbcbd3969`

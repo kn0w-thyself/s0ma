@@ -304,7 +304,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "87ea130a8f35c5c10024e7780672670127442a4e239f2be45ed5b2a2bcb9172b",
+      "content_sha256": "9390b5a71565ce65c6496375a125c2ffa6f92d0e3fb5adc73d419255d5387d23",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.21.0] — 2026-10-25",
@@ -367,7 +367,7 @@
     },
     {
       "authority_class": "frozen_contract",
-      "content_sha256": "00641b430cbb85b77109e823d2da28588949b46fac953cec42360749b3cbf54c",
+      "content_sha256": "c08d2b346c539bc7c57cdab21cbe939d444650f3b86857e85eb048054dbcfacc",
       "delegates": [],
       "id": "authority:frozen_contract/0.14.0-schema-and-surface-budget",
       "section": "s0ma 0.14.0 Schema and Surface Budget",
@@ -1471,7 +1471,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/axon-declaration",
       "section": "4.4",
@@ -1480,7 +1480,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/body-separator",
       "section": "4.9",
@@ -1489,7 +1489,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/build-pipeline",
       "section": "2.1",
@@ -1498,7 +1498,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/canonical-ir",
       "section": "4.14.5",
@@ -1507,7 +1507,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/cell-declaration",
       "section": "4.2",
@@ -1516,7 +1516,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/current",
       "section": "s0ma DSL — Language Specification & Coding Agent Rulebook",
@@ -1525,7 +1525,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/declaration-types",
       "section": "4",
@@ -1534,7 +1534,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/dependency-categories",
       "section": "4.5.1",
@@ -1543,7 +1543,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/doc-guide-declaration",
       "section": "4.12.2",
@@ -1552,7 +1552,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/doc-ref-declaration",
       "section": "4.12.1",
@@ -1561,7 +1561,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/doc-validation-layers",
       "section": "4.12.4",
@@ -1570,7 +1570,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/documentation-declarations",
       "section": "4.12",
@@ -1579,7 +1579,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/drift-check",
       "section": "4.12.5",
@@ -1588,7 +1588,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/example-declaration",
       "section": "4.12.3",
@@ -1597,7 +1597,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/ganglion-declaration",
       "section": "4.3",
@@ -1606,7 +1606,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/helper-declaration",
       "section": "4.4a",
@@ -1615,7 +1615,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/integration-declaration",
       "section": "4.4b",
@@ -1624,7 +1624,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/intermediate-representation",
       "section": "4.10.5",
@@ -1633,7 +1633,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/kind-taxonomy",
       "section": "3.1",
@@ -1642,7 +1642,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/layer-consistency",
       "section": "4.0.1",
@@ -1651,7 +1651,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/layer-reachability",
       "section": "4.0.2",
@@ -1660,7 +1660,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/module-declaration",
       "section": "4.5",
@@ -1669,7 +1669,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/namespace-model",
       "section": "4.10.1",
@@ -1678,7 +1678,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/nerve-declaration",
       "section": "4.1",
@@ -1687,7 +1687,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/primitive-vocabulary",
       "section": "3",
@@ -1696,7 +1696,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/registry-storage",
       "section": "4.10.4",
@@ -1705,7 +1705,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/strictness-modes",
       "section": "2.4",
@@ -1714,7 +1714,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/test-declaration",
       "section": "4.8",
@@ -1723,7 +1723,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/test-execution",
       "section": "4.15",
@@ -1732,7 +1732,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/validation-command",
       "section": "4.16",
@@ -1741,7 +1741,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "30b025a889763c16eaa05cb3769b501878c8391ac1fe79401a86dbb21c1affb4",
+      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
       "delegates": [],
       "id": "authority:spec/visibility-system",
       "section": "5",
@@ -5487,7 +5487,7 @@
     "build_channel": "preview",
     "release_version": "0.21.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:e9ff5e59e9d06aab"
+    "snapshot_hash": "sha256:c658fd9bbcbd3969"
   },
   "surfaces": [
     {

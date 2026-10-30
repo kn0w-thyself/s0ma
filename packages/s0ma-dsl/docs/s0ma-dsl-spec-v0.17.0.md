@@ -2133,6 +2133,7 @@ The dependency graph contains two categories of edges. Each relationship has exa
 | `RAISES` | `raises` field on nerve declarations | The `raises` field |
 | `TYPE_USES` | Python type annotations in nerve/ganglion signatures, and constructor calls to known cells in nerve/ganglion bodies | The Python signature and body |
 | `READS` (derived form) | References in nerve/ganglion bodies to CONSTANT cells, of the module or imported through `uses` | The Python body, unless an axon already covers the pair |
+| `CALLS` (derived form) | Calls in nerve/ganglion bodies to the nerves and ganglia of the same module | The Python body, unless an axon already covers the pair |
 
 **RAISES:** Derived from `raises`. Transpiler resolves to canonical IDs and emits edges. Authors must not declare `RAISES` axons.
 
@@ -2140,11 +2141,13 @@ The dependency graph contains two categories of edges. Each relationship has exa
 
 **READS to a constant:** Derived from the body. A nerve or ganglion body that refers by name to a `CONSTANT` cell, one of its own module or one imported through `uses`, depends on that constant: the limit is connected to the part it governs. The transpiler emits a `READS` edge with origin `constant_reference` for each such pair; a name the body also binds (a parameter, a local assignment) is not read as the constant. `READS` stays an authored relation as well. An authored edge between the same source and target, whatever its relation, is the architectural statement and wins: no derived edge is emitted for that pair and no `DUPLICATE_AXON` is raised, so a project that already authors `READS` to its constants keeps its declarations as the one record of each. Imported constants are derived when the build has the whole project parsed, which `s0ma build` does; a single-file transpile derives the module's own constants alone.
 
-> **KEY:** Each relationship has exactly one authoritative source. If derivable, do not author it. If not derivable, you must author it. A `READS` edge to a constant is the one exception in the other direction: derivable, and still yours to author when you want to say what it carries.
+**CALLS to a sibling:** Derived from the body. A nerve or ganglion body that calls another nerve or ganglion of its own module by bare name (`return neutral_payload_text(cfg)`) depends on it, and nothing else records that pair: the module's `uses:` list names what the module imports, never which component calls what, and a sibling is not imported through it at all. The transpiler emits a `CALLS` edge with origin `body_call` for each such pair, once per callee, so the self-model's dependency statements reach inside a module. Only direct calls by bare name count: a call through an attribute (`obj.method()`), a name the body binds itself (a parameter, a local assignment), a body's call to itself, and a call to anything that is not a component of the module (a helper, a `requires` import, a builtin) derive nothing. A call to a component of another module keeps the derivation it already had: through `uses:`, a constructor call to a cell derives `TYPE_USES` with origin `constructor_call`, and this rule does not change it. `CALLS` stays an authored relation as well, and the authored edge wins exactly as it does for `READS`: an axon between the same source and target, whatever its relation, is the one record of the pair, no derived edge is emitted and no `DUPLICATE_AXON` is raised. The derivation needs no project view; `s0ma check` and `s0ma build` derive the same edges from the module alone.
+
+> **KEY:** Each relationship has exactly one authoritative source. If derivable, do not author it. If not derivable, you must author it. A `READS` edge to a constant and a `CALLS` edge to a sibling are the two exceptions in the other direction: derivable, and still yours to author when you want to say what they carry.
 
 #### 4.11.3 What the Transpiler Derives
 
-Per nerve and ganglion: `RAISES` edges (from `raises`), `TYPE_USES` edges (from function signature annotations and constructor calls to known cells), `READS` edges to the constants the body refers to, auto-generated intent for inline `depends_on`.
+Per nerve and ganglion: `RAISES` edges (from `raises`), `TYPE_USES` edges (from function signature annotations and constructor calls to known cells), `READS` edges to the constants the body refers to, `CALLS` edges to the nerves and ganglia of the same module the body calls, auto-generated intent for inline `depends_on`.
 
 Per `CONSTANT` cell: the literal value at `components[].fields.value` (§4.2.3).
 

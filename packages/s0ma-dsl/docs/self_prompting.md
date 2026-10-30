@@ -64,10 +64,10 @@ repeats them:
 
 | Command | Answer |
 |---|---|
-| `describe` | The overview: `schema`, `roles` (when the companion records them), `component_count`, `module_count`, `source_ir_count`, `component_count_by_layer` and `component_count_by_kind`, `modules_by_layer` (names), `build_health`, and `live_health` as counts (`status`, `basis`, `registered_component_count`, `framework_component_count`, `framework_components_included`, `canonical_components_observed_count`) when a registry was supplied. No component ids, no IR records, no authored text. Its size grows with the number of modules, never with the number of components, and it stays under 8,000 characters of compact JSON: past that line the module names give way to `module_count_by_layer` and a `modules_omitted` count, and `components <layer>` still names them. |
+| `describe` | The overview: `schema`, `roles` (when the companion records them), `component_count`, `module_count`, `source_ir_count`, `component_count_by_layer` and `component_count_by_kind`, `modules_by_layer` (names), `build_health`, `layer_rules` (the cross-layer matrix the build enforces: `may_reach` maps each layer to the layers a module at that layer may use, so a placement or boundary question is answered from data rather than from project prose; a companion from a build before generation 3 has none), and `live_health` as counts (`status`, `basis`, `registered_component_count`, `framework_component_count`, `framework_components_included`, `canonical_components_observed_count`) when a registry was supplied. No component ids, no IR records, no authored text. Its size grows with the number of modules, never with the number of components, and it stays under 8,000 characters of compact JSON: past that line the module names give way to `module_count_by_layer` and a `modules_omitted` count, and `components <layer>` still names them. |
 | `components <layer or module>` | The component names in that layer or module, grouped by module. An id is `<module>::<name>`. A name that is both a layer and a module answers as the layer. |
 | `component <name>` | One component's record, by id or by unambiguous bare name. The only answer that carries authored text. When a registry was supplied the answer also says whether the component was `observed` in the supplied registry snapshot (true, false, or null when identity/observation is unavailable), beside the record and never inside it. |
-| `dependencies <name>` | The authored `dependencies` list, unchanged, beside the full `edges` list: every outgoing edge the build recorded, authored and derived, so the constants a nerve reads and the types it uses appear next to what it declared. |
+| `dependencies <name>` | The authored `dependencies` list, unchanged, beside the full `edges` list: every outgoing edge the build recorded, authored and derived, so the constants a nerve reads, the types it uses and the sibling components it calls within its module appear next to what it declared. |
 | `dependents <name>` | The components that depend on the named one directly, each with the relation and whether the edge was authored or derived; a target an author spelled with the declaring module is landed by its unique bare name and the record keeps that spelling under `declared_as`. |
 | `impact <name>` | The transitive walk: `direct_dependents`, `transitive_dependents`, `affected_layers`, `total_affected_count` and `max_dependency_depth`, the shape the dev-time `ImpactReport` has, so "what breaks if the shell is off" is a question the running application can answer about itself. A companion from a build before generation 2 has no `edges`; the walk then uses its authored `dependencies` targets. |
 | `source_ir` | The canonical IR records the companion was derived from, path and hash, each verified when the companion loaded. |
@@ -96,7 +96,10 @@ contracts, `provides_contracts` lists each operation's `expects`,
 literal carries it as `value` (its presence is the signal, so `null` is a
 value); and `edges` lists every outgoing edge the build recorded, authored
 and derived, each with its `target`, `relation`, `authored` flag and
-`origin`, plus `carries` for an authored edge. Embodied hosts therefore
+`origin`, plus `carries` for an authored edge. A derived `CALLS` edge with
+origin `body_call` is a call from this component's body to a nerve or
+ganglion of its own module, the one dependency the module's `uses:` list
+could never state. Embodied hosts therefore
 reach physical facts (mounting, units, self-interference) through this
 verified surface instead of re-reading per-module canonical IR. Every
 authored value stays untrusted project data; the bounded prompt card never
