@@ -399,7 +399,7 @@ def _build_service_document(tmp_path: Path) -> dict[str, object]:
 
 def test_per_operation_contracts_reach_the_companion(tmp_path: Path) -> None:
     document = _build_service_document(tmp_path)
-    assert document["generation_version"] == "2"
+    assert document["generation_version"] == "3"
     executor = _component(document, "shellwork::CodeExecutor")
     assert executor["provides"] == {
         "state": "value",
@@ -590,3 +590,189 @@ def test_emitted_companions_describe_source_modules_only(tmp_path: Path) -> None
     companion = json.loads((build_dir / everything.json.path).read_text(encoding="utf-8"))
     assert companion["provenance"]["roles"] == ["source", "test"]
     assert len(companion["components"]) == 5
+
+
+# ---------------------------------------------------------------------------
+# Generation 3: the layer rule as data, and a module's own calls as edges
+# ---------------------------------------------------------------------------
+
+
+def test_the_companion_carries_the_layer_rule_the_resolver_enforces(
+    tmp_path: Path,
+) -> None:
+    """``layer_rules.may_reach`` is the resolver's table, read from the table itself.
+
+    The bench that asked for this block found that a reader of the
+    self-model could not learn that PRESENTATION may reach APPLICATION or
+    that every layer reaches FRAMEWORK, so those two facts are asserted by
+    name beside the equality.
+    """
+    from s0ma_dsl.resolver.dependency import (
+        _ALLOWED_TARGET_LAYERS,
+        layer_reachability_matrix,
+    )
+
+    document = _build_document(tmp_path)
+    assert document["generation_version"] == "3"
+    rules = document["layer_rules"]
+    assert isinstance(rules, dict)
+    assert set(rules) == {"basis", "may_reach"}
+    assert "CROSS_LAYER_DEPENDENCY" in str(rules["basis"])
+    enforced = {
+        source.value: sorted(target.value for target in targets)
+        for source, targets in _ALLOWED_TARGET_LAYERS.items()
+    }
+    assert rules["may_reach"] == enforced
+    assert rules["may_reach"] == layer_reachability_matrix()
+    assert "APPLICATION" in rules["may_reach"]["PRESENTATION"]
+    assert all("FRAMEWORK" in reach for reach in rules["may_reach"].values())
+    assert all(layer in reach for layer, reach in rules["may_reach"].items())
+
+
+def test_the_layer_rule_loads_through_the_verified_runtime_and_reaches_describe(
+    tmp_path: Path,
+) -> None:
+    from s0ma.runtime import self_inspect_adapter
+
+    module = parse_s0ma(_EMBODIED_SOURCE, filename="lightsense.s0ma")
+    ir = build_ir(module, source_text=_EMBODIED_SOURCE).to_dict()
+    build_dir = tmp_path / "build"
+    build_dir.mkdir()
+    (build_dir / "lightsense.s0ma.json").write_text(
+        json.dumps(ir, sort_keys=True), encoding="utf-8"
+    )
+    entries = [_entry("lightsense")]
+    emit_manifest(
+        build_manifest(
+            project_name="lightsense",
+            build_dir="build",
+            modules=entries,
+            transpiler_version="0.0.0",
+            self_context=emit_self_context_artifacts(build_dir, entries),
+        ),
+        build_dir,
+    )
+
+    described = self_inspect_adapter(build_dir).handle("describe")
+    assert described["ok"] is True
+    assert described["layer_rules"] == build_self_context_document(
+        build_dir, entries
+    )["layer_rules"]
+
+
+_CALLING_SOURCE = '''\
+module shim
+    layer: PRESENTATION
+    version: 0.1.0
+    intent: "Two nerves, one calling the other within the module."
+    exports: [forward_call_tool, neutral_payload_text]
+    requires: []
+    uses: []
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+
+nerve neutral_payload_text :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "The neutral payload a host reads when the daemon is down."
+    expects: none
+    guarantees: "returns a neutral payload"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def neutral_payload_text(cfg):
+        return "<neutral/>"
+
+nerve forward_call_tool :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Forward a tool call and fall back to the neutral payload."
+    expects: none
+    guarantees: "returns the daemon's answer or the neutral payload"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def forward_call_tool(forwarder, cfg):
+        try:
+            return forwarder(cfg)
+        except Exception:
+            return neutral_payload_text(cfg)
+'''
+
+
+def test_a_call_within_the_module_reaches_the_companion_and_the_dependency_answer(
+    tmp_path: Path,
+) -> None:
+    """The edge the bench found missing: a sibling call, present and queryable."""
+    from s0ma.runtime import self_inspect_adapter
+
+    from s0ma_dsl.semantic.derived_edges import analyze_derived_edges
+
+    module = parse_s0ma(_CALLING_SOURCE, filename="shim.s0ma")
+    derived, errors = analyze_derived_edges(module, filename="shim.s0ma")
+    assert errors == []
+    ir = build_ir(module, derived_edges=derived, source_text=_CALLING_SOURCE).to_dict()
+    build_dir = tmp_path / "build"
+    build_dir.mkdir()
+    (build_dir / "shim.s0ma.json").write_text(json.dumps(ir, sort_keys=True), encoding="utf-8")
+    entries = [_entry("shim")]
+
+    document = build_self_context_document(build_dir, entries)
+    caller = _component(document, "shim::forward_call_tool")
+    assert caller["dependencies"] == []
+    assert caller["edges"] == [
+        {
+            "target": "shim::neutral_payload_text",
+            "relation": "CALLS",
+            "authored": False,
+            "origin": "body_call",
+        }
+    ]
+    assert "edges" not in _component(document, "shim::neutral_payload_text")
+
+    emit_manifest(
+        build_manifest(
+            project_name="shim",
+            build_dir="build",
+            modules=entries,
+            transpiler_version="0.0.0",
+            self_context=emit_self_context_artifacts(build_dir, entries),
+        ),
+        build_dir,
+    )
+    adapter = self_inspect_adapter(build_dir)
+    dependencies = adapter.handle("dependencies forward_call_tool")
+    assert [edge["target"] for edge in dependencies["edges"]] == [
+        "shim::neutral_payload_text"
+    ]
+    dependents = adapter.handle("dependents neutral_payload_text")
+    assert [record["id"] for record in dependents["dependents"]] == [
+        "shim::forward_call_tool"
+    ]
+    assert dependents["dependents"][0]["relation"] == "CALLS"
+    assert dependents["dependents"][0]["authored"] is False

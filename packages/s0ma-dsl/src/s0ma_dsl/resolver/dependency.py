@@ -145,6 +145,38 @@ _ALLOWED_TARGET_LAYERS: dict[AstLayer, set[AstLayer]] = {
 }
 
 
+@component(
+    name="S0maDSL_layer_reachability_matrix",
+    kind=ComponentKind.FUNCTION,
+    layer=Layer.FRAMEWORK,
+    intent=(
+        "Projects the cross-layer reachability matrix the resolver enforces on uses: "
+        "declarations as plain data, one sorted list of reachable layers per layer, so a "
+        "build artifact can carry the rule the build applies and the two cannot drift."
+    ),
+    idempotent=True,
+    is_framework=True,
+)
+def layer_reachability_matrix() -> dict[str, list[str]]:
+    """The enforced cross-layer matrix as data: per layer, the layers it may reach.
+
+    This is a reading of ``_ALLOWED_TARGET_LAYERS``, the one table
+    :meth:`DependencyResolver._check_cross_layer_dependencies` applies, so
+    whatever is projected from here is exactly what ``CROSS_LAYER_DEPENDENCY``
+    enforces. Keys and values are the layer names (``"DOMAIN"``,
+    ``"APPLICATION"``, ...); every row lists the layer itself, and every row
+    lists FRAMEWORK, s0ma's own layer. The self-context companion carries the
+    result as ``layer_rules.may_reach`` so a reader of the self-model learns
+    which layer may import which without reading the resolver.
+    """
+    return {
+        source.value: sorted(target.value for target in targets)
+        for source, targets in sorted(
+            _ALLOWED_TARGET_LAYERS.items(), key=lambda item: item[0].value
+        )
+    }
+
+
 def _suggest_lower_layer(src_layer: AstLayer, tgt_layer: AstLayer) -> AstLayer:
     """Pick a sensible "move the shared concept down to" suggestion.
 

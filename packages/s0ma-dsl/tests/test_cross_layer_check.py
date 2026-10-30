@@ -364,3 +364,39 @@ class TestModeIndependence:
             f"{mode}; got: {[(d.code, d.message) for d in cross_layer]}"
         )
         assert cross_layer[0].severity == expected_severity
+
+
+class TestLayerReachabilityMatrixProjection:
+    """The matrix as data is the matrix the resolver enforces, nothing else."""
+
+    def test_projection_equals_the_enforced_table(self) -> None:
+        from s0ma_dsl.resolver import layer_reachability_matrix
+
+        projected = layer_reachability_matrix()
+        assert projected == {
+            source.value: sorted(target.value for target in targets)
+            for source, targets in _ALLOWED_TARGET_LAYERS.items()
+        }
+        # Every enforced row is projected and no row is invented.
+        assert set(projected) == {layer.value for layer in _ALLOWED_TARGET_LAYERS}
+        # The two facts the s4 bench found no arm could learn from the
+        # self-model: PRESENTATION reaches APPLICATION, and every layer
+        # reaches FRAMEWORK, s0ma's own layer.
+        assert "APPLICATION" in projected["PRESENTATION"]
+        assert all("FRAMEWORK" in reach for reach in projected.values())
+        # A layer always reaches itself.
+        assert all(layer in reach for layer, reach in projected.items())
+        # Deterministic: sorted keys, sorted rows, plain JSON types.
+        assert list(projected) == sorted(projected)
+        assert all(reach == sorted(reach) for reach in projected.values())
+
+    def test_the_projection_is_what_the_resolver_allows(self) -> None:
+        """Each projected pair passes the check; each pair outside it fires."""
+        from s0ma_dsl.ast_nodes.enums import Layer
+        from s0ma_dsl.resolver import layer_reachability_matrix
+
+        projected = layer_reachability_matrix()
+        for source in Layer:
+            for target in Layer:
+                allowed = target in _ALLOWED_TARGET_LAYERS[source]
+                assert (target.value in projected[source.value]) is allowed

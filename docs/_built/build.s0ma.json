@@ -19,7 +19,7 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:93d838ecefdff992590b1c637ed39223610e5ff23b9a3ad7bcf70a3f5cdbfb58"
+      "sha256": "sha256:1b16aeadc9a515d63fdc1f822abd93cac5c9491438159987ccc4c1cbc1399f0c"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",

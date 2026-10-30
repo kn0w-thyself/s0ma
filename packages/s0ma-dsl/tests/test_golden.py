@@ -847,7 +847,10 @@ class TestRoundtrip:
         ir = result["ir_dict"]
 
         valid_authored_origins = {"inline_depends_on", "standalone_axon"}
-        valid_derived_origins = {"raises_field", "function_signature", "constructor_call"}
+        valid_derived_origins = {
+            "raises_field", "function_signature", "constructor_call",
+            "constant_reference", "body_call",
+        }
 
         for edge in ir["edges"]["authored"]:
             assert edge["origin"] in valid_authored_origins, (

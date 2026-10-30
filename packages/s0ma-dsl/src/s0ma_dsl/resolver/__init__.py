@@ -6,6 +6,7 @@ Public API:
     build_namespaces(s0ma_module, filename) -> (NamespaceService, errors)
     DependencyResolver — four-phase cross-module dependency resolution
     resolve_dependencies(modules, ...) -> errors
+    layer_reachability_matrix() -> {layer: [reachable layers]}, the enforced table as data
 
 Documentation subsystem (M4):
     ProjectIndex — kind-indexed view of every doc-addressable entity
@@ -18,6 +19,7 @@ Documentation subsystem (M4):
 from s0ma_dsl.resolver.assert_evaluator import AssertEvaluator, AssertResult
 from s0ma_dsl.resolver.dependency import (
     DependencyResolver,
+    layer_reachability_matrix,
     resolve_dependencies,
 )
 from s0ma_dsl.resolver.doc_resolver import (
@@ -47,5 +49,6 @@ __all__ = [
     "build_namespaces",
     "build_project_index",
     "compute_topological_order",
+    "layer_reachability_matrix",
     "resolve_dependencies",
 ]

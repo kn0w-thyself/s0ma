@@ -11,6 +11,36 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Added
+
+- **A call within a module is an edge.** The self-model's dependency statements
+  stopped at the module: a body that called a sibling nerve or ganglion left no
+  edge, because the authored `uses:` list is per module and never names a
+  sibling, and the transpiler derived only types, constants and exceptions. On
+  one measured project a component with six dependencies answered five from
+  `self_inspect dependencies`, the sixth being a call within its own module.
+  The transpiler now derives a `CALLS` edge with origin `body_call` for every
+  bare-name call from a nerve or ganglion body to a nerve or ganglion of the
+  same module, once per callee. A call through an attribute, a name the body
+  binds, a body's call to itself, and a call to anything that is not a
+  component (a helper, a `requires` import, a builtin) derive nothing; a call
+  to another module's component keeps the edge it already had through `uses:`.
+  An authored edge for the same pair wins, as it does for `READS`, so no
+  `DUPLICATE_AXON` is raised. The edge reaches the canonical IR, the
+  self-context companion's `edges`, and the runtime adapter's `dependencies`,
+  `dependents` and `impact` answers. The companion moves to generation 3; a
+  generation-1 or generation-2 companion still loads.
+- **The layer rule is in the self-model.** The build enforces which layer may
+  use which (`CROSS_LAYER_DEPENDENCY`), and nothing a reader of the self-model
+  could open stated the rule: `self_context.json` carried a layer per
+  component and no matrix, so a reader could not learn that PRESENTATION may
+  reach APPLICATION, or that every layer reaches FRAMEWORK, and trusted
+  stricter project prose instead. The companion now carries `layer_rules`, a
+  `may_reach` map from each layer to the layers it may use, projected from the
+  resolver's own table by `layer_reachability_matrix()` so the two cannot
+  drift, and the runtime adapter's `describe` answer repeats it whole. A test
+  asserts the projection equals the enforced table.
+
 ## [0.21.0] — 2026-10-25
 
 ### Added

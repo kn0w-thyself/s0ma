@@ -1372,7 +1372,7 @@ def _analyze_derived_edges(
     source_path: Path,
     mode: StrictnessMode,
 ) -> tuple[list[DerivedEdge], list[S0maError]]:
-    """Analyze derived edges (RAISES, TYPE_USES, READS) for a module."""
+    """Analyze derived edges (RAISES, TYPE_USES, READS, CALLS) for a module."""
     from s0ma_dsl.semantic.derived_edges import analyze_derived_edges
 
     derived, errors = analyze_derived_edges(
@@ -1576,7 +1576,9 @@ def _transpile_single_file(
 
     # Stage 4: Derived edge analysis. The build has every module parsed,
     # so the constants of the whole project are known and a body that
-    # reads an imported constant derives a READS edge to it.
+    # reads an imported constant derives a READS edge to it. A body's
+    # calls to the nerves and ganglia of its own module derive CALLS
+    # edges from the module alone.
     derived_edges, derived_errors = analyze_derived_edges(
         module,
         mode=mode,

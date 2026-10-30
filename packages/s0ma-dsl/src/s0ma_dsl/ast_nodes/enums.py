@@ -166,7 +166,11 @@ class Relation(Enum):
     explicitly via ``depends_on`` or standalone ``axon`` declarations.
 
     Derived relations (RAISES, TYPE_USES) are inferred by the transpiler
-    and must never be authored manually.
+    and must never be authored manually. READS and CALLS stay authored
+    relations and also have a derived form: the transpiler reads a body's
+    references to constants as READS (origin ``constant_reference``) and
+    its calls to the nerves and ganglia of its own module as CALLS
+    (origin ``body_call``), and an authored edge for the same pair wins.
     """
 
     # Authored relations
