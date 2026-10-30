@@ -26,9 +26,12 @@ _SELF_CONTEXT_SCHEMA = "s0ma-self-context@1"
 # The companion generations this runtime reads. Generation 1 carried a
 # component's intent, dependencies and authored state fields; generation
 # 2 adds the per-operation ``provides_contracts``, a constant's literal
-# ``value`` and the component's ``edges`` where they exist. A generation-1
-# document stays valid: every addition is optional and read as absent.
-_SELF_CONTEXT_GENERATIONS = frozenset({"1", "2"})
+# ``value`` and the component's ``edges`` where they exist; generation 3
+# adds ``layer_rules``, the cross-layer matrix the build enforces, and
+# records a body's calls to its own module's components among the edges.
+# An older document stays valid: every addition is optional and read as
+# absent.
+_SELF_CONTEXT_GENERATIONS = frozenset({"1", "2", "3"})
 _MANIFEST_FILENAME = "build.s0ma.json"
 # Optional authored per-component detail (additive under
 # s0ma-self-context@1): documents emitted before these fields existed
@@ -195,6 +198,28 @@ def _validate_companion(document: dict[str, Any], *, build_root: Path) -> None:
         "unknown",
     }:
         raise _remediation("Self-context build_health must be declared or unknown.")
+    # ``layer_rules`` (generation 3) is the cross-layer matrix the build
+    # enforces: ``may_reach`` maps each layer name to the list of layer
+    # names a module at that layer may use. Older companions omit it; a
+    # present block must keep that shape, because ``describe`` repeats it
+    # as the rule and a mis-shaped rule is worse than none.
+    if "layer_rules" in document:
+        rules = document["layer_rules"]
+        may_reach = rules.get("may_reach") if isinstance(rules, dict) else None
+        if (
+            not isinstance(may_reach, dict)
+            or not may_reach
+            or not all(
+                isinstance(layer, str)
+                and isinstance(targets, list)
+                and all(isinstance(target, str) for target in targets)
+                for layer, targets in may_reach.items()
+            )
+        ):
+            raise _remediation(
+                "Self-context layer_rules must be an object whose may_reach maps each "
+                "layer name to a JSON array of layer names."
+            )
     source_ir = document.get("source_ir")
     components = document.get("components")
     if not isinstance(source_ir, list) or not isinstance(components, list):
@@ -607,10 +632,11 @@ class SelfInspectAdapter:
 
     Every answer is a JSON-compatible ``dict``; the host renders it. The
     handler answers seven exact commands. ``describe`` is the overview,
-    sized for a model's context: counts and module names, growing with the
-    number of modules and never with the number of components, holding
-    :data:`_DESCRIBE_BUDGET_CHARS` by falling back to per-layer module
-    counts. ``components <layer or module>`` names the components in one
+    sized for a model's context: counts, module names and the layer rule
+    the build enforces (``layer_rules``, which layer may reach which),
+    growing with the number of modules and never with the number of
+    components, holding :data:`_DESCRIBE_BUDGET_CHARS` by falling back to
+    per-layer module counts. ``components <layer or module>`` names the components in one
     scope; ``component <name>`` is one component's authored record;
     ``dependencies <name>`` is what it depends on (outgoing edges);
     ``dependents <name>`` is what depends on it directly, and
@@ -642,8 +668,10 @@ class SelfInspectAdapter:
             "description": (
                 "Inspect this application's verified s0ma self-context. Commands: "
                 "describe (component counts by layer and by kind, module names by "
-                "layer while they fit the answer's budget, build health, and live "
-                "health counts when a registry was supplied); components <layer or "
+                "layer while they fit the answer's budget, the layer rule the build "
+                "enforces as layer_rules.may_reach, which layers each layer may "
+                "import, build health, and live health counts when a registry was "
+                "supplied); components <layer or "
                 "module> (component names in that layer or module, grouped by "
                 "module; an id is <module>::<name>); component <name> (one "
                 "component's record: kind, layer, intent, dependencies, any authored "
@@ -698,6 +726,14 @@ class SelfInspectAdapter:
                 layer: sorted(modules) for layer, modules in sorted(modules_by_layer.items())
             },
             "build_health": deepcopy(self.context.get("build_health")),
+            # The layer rule rides the overview whole: it is the one fact a
+            # placement or boundary question needs, it is a few hundred
+            # characters, and it never grows with the build.
+            **(
+                {"layer_rules": deepcopy(self.context["layer_rules"])}
+                if isinstance(self.context.get("layer_rules"), dict)
+                else {}
+            ),
             **(
                 {"live_health": _live_health_counts(self.context["live_health"])}
                 if "live_health" in self.context

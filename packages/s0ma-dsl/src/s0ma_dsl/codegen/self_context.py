@@ -24,6 +24,7 @@ from s0ma_dsl.codegen.build_manifest import (
     SelfContextReferences,
     compute_file_hash,
 )
+from s0ma_dsl.resolver.dependency import layer_reachability_matrix
 
 SELF_CONTEXT_SCHEMA = "s0ma-self-context@1"
 SELF_CONTEXT_FILENAME = "self_context.json"
@@ -31,10 +32,14 @@ SELF_PROMPT_CARD_FILENAME = "self_prompt_card.md"
 #: The companion's generation. ``"1"`` carried a component's intent,
 #: dependencies and authored state fields; ``"2"`` adds, where they
 #: exist, the per-operation ``provides_contracts``, a constant cell's
-#: literal ``value`` and the component's authored and derived ``edges``.
-#: The schema name and its required members do not move: a generation-1
-#: companion stays valid to a runtime that knows generation 2.
-SELF_CONTEXT_GENERATION_VERSION = "2"
+#: literal ``value`` and the component's authored and derived ``edges``;
+#: ``"3"`` adds the ``layer_rules`` block, the cross-layer matrix the
+#: build enforces, and records a body's calls to the components of its
+#: own module among the ``edges`` (relation ``CALLS``, origin
+#: ``body_call``). The schema name and its required members do not move:
+#: a generation-1 or generation-2 companion stays valid to a runtime that
+#: knows generation 3.
+SELF_CONTEXT_GENERATION_VERSION = "3"
 #: The manifest roles whose modules the companions describe unless a caller
 #: asks otherwise.  ``s0ma test`` merges test-role modules into the same
 #: manifest as the source modules, and a companion built from every entry
@@ -227,6 +232,28 @@ def _edges_by_source(raw_edges: object) -> dict[str, list[dict[str, Any]]]:
     return grouped
 
 
+def layer_rules() -> dict[str, Any]:
+    """The layer rule the build enforces, as the companion carries it.
+
+    ``may_reach`` is :func:`layer_reachability_matrix`, read from the one
+    table the resolver applies to every ``uses:`` declaration, so the
+    companion can never state a rule the build does not enforce. The bench
+    that motivated the block found that a reader of the self-model could not
+    learn that PRESENTATION may reach APPLICATION, or that every layer
+    reaches FRAMEWORK, and trusted stricter project prose instead; the
+    block answers that question from data. A project's own stricter
+    convention, where it has one, is prose beside this rule, not a change
+    to it.
+    """
+    return {
+        "basis": (
+            "the cross-layer matrix the build enforces on every module's "
+            "uses: declarations; a pair outside it is CROSS_LAYER_DEPENDENCY"
+        ),
+        "may_reach": layer_reachability_matrix(),
+    }
+
+
 def build_self_context_document(
     build_dir: Path,
     entries: list[ModuleManifestEntry],
@@ -316,6 +343,7 @@ def build_self_context_document(
             "status": "unknown",
             "basis": "live runtime facts are not observed during deterministic build",
         },
+        "layer_rules": layer_rules(),
         "source_ir": source_ir,
         "components": components,
     }
@@ -495,5 +523,6 @@ __all__ = [
     "SELF_PROMPT_CARD_MAX_WORDS",
     "build_self_context_document",
     "emit_self_context_artifacts",
+    "layer_rules",
     "render_self_prompt_card",
 ]
