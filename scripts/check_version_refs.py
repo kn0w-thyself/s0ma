@@ -242,15 +242,6 @@ class Historical:
 #: version would make the sentence false) or names a version on an axis that
 #: is not the lockstep release version at all.
 ALLOWLIST: tuple[Historical, ...] = (
-    # The embodiment capability (hardware inside the self-knowing boundary)
-    # shipped in 0.15.0. The sentence dates that arrival; it is not a claim
-    # about what the current release is.
-    Historical(
-        "README.md",
-        "0.15.0",
-        "Since 0.15.0 self-knowledge reaches physical hardware",
-        "dates the arrival of hardware embodiment (0.15.0), not the current release",
-    ),
     # The walkthrough's language notes date four DSL capabilities to the
     # release that introduced them (0.8.0): the read-for-real [tool.s0ma]
     # table, qualified cross-module edges, authored metadata, and py.typed.

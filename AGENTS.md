@@ -68,6 +68,14 @@ extras in core remain optional.
 - README inventory blocks and the packaged getting-started guide are generated
   by `python scripts/generate_mcp_readme_surfaces.py --write`. Edit
   `docs/getting-started.md` or the served surface snapshot, not those blocks.
+- The root README's first picture is generated:
+  `docs/media/readme/nerve-anatomy-light.svg` and `nerve-anatomy-dark.svg` are
+  drawn by `python scripts/render_readme_hero.py --write` from the project
+  `s0ma new project shop --template service` makes, and
+  `packages/s0ma-dsl/tests/test_readme_hero.py` redraws and compares them. A
+  change to that scaffold needs the pictures redrawn. Terminal recordings are
+  never committed: `scripts/record_demos.sh` renders them outside the
+  repository and the README reaches them by URL.
 - Other committed mirrors under `s0ma_mcp/_docs/` must remain byte-identical to
   the source recorded in `resources.GUIDE_DOCS`.
 - The documentation loop ends in **five** mirror copies, and a change to what

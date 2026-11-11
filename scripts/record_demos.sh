@@ -1,10 +1,14 @@
 #!/bin/sh
 # s0ma: the demo recordings, rendered and then checked for honesty.
 #
-# Three scripted terminal recordings live in docs/media/tapes/. Each one is
-# built only from commands the documentation evidence already replays on every
-# gate run, so nothing on screen is a command that has never been proved to
-# work. This script does two things, in order:
+# Six scripted terminal recordings live in docs/media/tapes/. Three walk a
+# whole journey, and each of those is built only from commands the
+# documentation evidence already replays on every gate run. The other three,
+# readme-*.tape, are the short clips the root README embeds. They are cut from
+# the same journeys and add a scaffold template and two flags the evidence does
+# not replay, so step 2 below is what proves them. Either way, nothing on
+# screen is a command that has never been proved to work. This script does two
+# things, in order:
 #
 #   1. Renders each tape with vhs (which drives a real terminal through ttyd
 #      and encodes the frames with ffmpeg) into a directory OUTSIDE this

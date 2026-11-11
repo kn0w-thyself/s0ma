@@ -11,6 +11,33 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Changed
+
+- **The root README is a short front door.** It opens on the problem s0ma
+  solves, that an AI does not know what you know about your code, and on a
+  picture of one real part: its intent, what it guarantees, what it forbids,
+  what it depends on, and the Python under them. What a reader sees without
+  opening anything drops from about 4,600 words to about 2,100, and the
+  sections that restated each other are gone. The Install section, the route
+  to the map of record, the two generated regions and the license lines are
+  where the gate expects them. The tagline is now "Software that explains
+  itself to you and your AI".
+- **The README's first picture is generated and checked.**
+  `scripts/render_readme_hero.py` draws it, in a light and a dark palette,
+  from the project `s0ma new project shop --template service` makes, and
+  `test_readme_hero.py` redraws it in the gate and compares. The same test
+  checks that every local image the README shows is tracked, which the link
+  checker cannot see because it does not read HTML image tags.
+- **Getting started no longer opens with "s0ma in 30 seconds".** The section
+  restated the README. The guide now opens with one caution, when not to use
+  s0ma, and goes straight to step 1. Step 2 names the canonical IR where it is
+  first used. The copy served at `s0ma://guide/getting-started` changes with
+  it.
+- **Three short recordings for the README.** `readme-ask.tape`,
+  `readme-drift.tape` and `readme-existing.tape` run 13 to 20 seconds each, in
+  a smaller frame with larger type. Recordings are still never committed: the
+  README reaches each one by a GitHub attachment URL.
+
 ## [0.21.1] — 2026-10-30
 
 ### Added
