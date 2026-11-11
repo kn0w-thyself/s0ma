@@ -55,8 +55,12 @@ class TestLoadDoc:
 
     def test_getting_started_is_the_canonical_outcome_journey(self) -> None:
         text = load_doc("getting-started")
-        assert "s0ma in 30 seconds" in text
+        # The journey opens on its one caution and goes straight to the
+        # steps: the pitch belongs to the root README, which the guide names.
+        assert "s0ma in 30 seconds" not in text
         assert "When not to use it" in text
+        assert "throwaway script" in text
+        assert "1. Create a real project" in text
         assert "project_status" in text
         assert "inspect_module" in text
         assert "GENERATED_FILE_DRIFT" in text

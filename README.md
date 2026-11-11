@@ -271,53 +271,12 @@ This is the canonical cold-start journey for s0ma. It is embedded in the root
 README and served to coding agents as `s0ma://guide/getting-started`; if either
 copy differs, the repository gate fails.
 
-### s0ma in 30 seconds
-
-**The problem:** code, architecture prose, and an agent's mental model drift
-apart, so a green test suite can coexist with an application nobody can
-reliably explain or operate.
-
-**Who it is for:** anyone building agents, agent harnesses, AI-enabled
-applications, or autonomous software and hardware systems, and any team
-maintaining a system where component intent, dependency boundaries, generated
-documentation, and runtime evidence need to remain queryable and release-gated
-— with or without a coding agent in the loop.
-
-**The concrete outcome:** authored declarations compile to ordinary Python plus
-canonical IR, dependency facts, documentation, tests, and a bounded runtime
-self-context. Humans and agents can ask what exists and why, while CI rejects
-drift, hollow registration, unresolved semantic debt, and unproven host imports.
-
-**Two ways an agent meets s0ma, kept distinct:** a coding agent *building or
-maintaining* a s0ma application reads the self-model instead of reconstructing
-the system from source, authors intent and contracts the compiler then holds
-the code to, and works inside guardrails that refuse an undeclared or drifted
-change — from the checkout with the `s0ma` command line, or through the
-authoring MCP server when its host speaks MCP; MCP is one channel, never a
-requirement. An LLM or agent *using or operating* a s0ma application is handed
-the system's own model through the self-context and the runtime query surfaces,
-so it can ask what the system is made of, what each part promises and what
-would break, and be answered by the system rather than by a guess. The first
-gains efficiency, captured intent and enforcement; the second gains autonomy
-and safety, and what it is told is quoted project data, never an instruction.
-
-**When not to use it:** do not adopt s0ma for a throwaway script, a project
+**When not to use it.** s0ma is not the tool for a throwaway script, a project
 with no Python in it, a project that cannot accept generated Python, or a team
-unwilling to make component intent and boundaries part of its release contract.
-s0ma compiles Python today: parts written in other languages are declared from
-the Python side as references, and more languages are on the roadmap. s0ma does
-not include an LLM — it is as useful without one — and is not a replacement for
-application tests or observability.
-
-The toolchain's four packages have distinct jobs: **s0ma-core** is the Apache-2.0
-runtime — the registry every part is declared into, the verifiers, and the
-surfaces that answer what exists and why; **s0ma-dsl** is the Apache-2.0
-authoring language, compiler and `s0ma` command line; **s0ma-mcp** is the
-Apache-2.0 authoring server a coding agent works through when its host speaks
-MCP; **s0ma-studi0** is the
-Apache-2.0 local visual environment (`s0ma studi0`) hosting the sh0w graph
-renderer — an early preview, with more coming. Those are the licenses as they
-stand today; each package's own `LICENSE` file is the authority.
+unwilling to make component intent and boundaries part of its release
+contract, and it is not a replacement for application tests or observability.
+What s0ma is, who it is for and what each of its four packages does are on the
+repository's front page, the root `README.md`.
 
 ### 1. Create a real project
 
@@ -390,8 +349,9 @@ inspect_module(project_root="/absolute/path/to/my-app", module="core_domain")
 `project_status` is the first call in an unfamiliar tree: it reports project
 posture, modeled versus roster-only modules, build freshness, semantic debt,
 runtime/runbook facts, and validated next actions. `inspect_module` returns the
-canonical tagged IR for `core_domain`, including its declared dependencies and
-structured dependency-neighbor actions. The starter component has no component
+canonical IR for `core_domain`, the tagged record of everything that file
+declares, including its declared dependencies and structured
+dependency-neighbor actions. The starter component has no component
 dependency, and that empty edge set is useful evidence rather than an invented
 relationship. As the project grows, follow the returned `inspect_module`
 actions to inspect `depends_on` and `depended_by` neighbors before grepping.
