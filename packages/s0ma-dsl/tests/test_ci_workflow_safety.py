@@ -577,6 +577,24 @@ class Mutation:
     expected: str
 
 
+def _pinned(action: str, path: str = "ci.yml") -> str:
+    """The action and its reference, exactly as the real workflow pins it today.
+
+    A mutation that wrote the version down would go stale the day a dependency
+    update moved the pin, and moving the pin is the one edit those updates make
+    to these files. So the version is read from the workflow, and only the
+    action's name is written here. When the workflow does not pin the action
+    exactly one way (it is gone, or pinned two different ways), the answer is a
+    string no workflow contains, so the mutation is reported stale by its own
+    test rather than breaking the collection of every other test in this file.
+    """
+    text = (WORKFLOWS / path).read_text(encoding="utf-8")
+    references = set(re.findall(rf"uses: {re.escape(action)}@(\S+)", text))
+    if len(references) != 1:
+        return f"{action}@<no single pin in {path}>"
+    return f"{action}@{references.pop()}"
+
+
 #: Ten weakenings, at least one per rule. Each is applied to a copy of the
 #: real workflows, which is scanned clean first, so the finding can only
 #: have come from the mutation.
@@ -679,14 +697,14 @@ MUTATIONS = (
     Mutation(
         rule="actions_are_pinned (unknown publisher)",
         path="ci.yml",
-        before="        uses: actions/upload-artifact@v7\n",
+        before=f"        uses: {_pinned('actions/upload-artifact')}\n",
         after="        uses: some-vendor/upload-artifact@v1\n",
         expected="pinned to the moving tag `v1`",
     ),
     Mutation(
         rule="actions_are_pinned (no version at all)",
         path="ci.yml",
-        before="        uses: astral-sh/setup-uv@v8.2.0\n        with:\n"
+        before=f"        uses: {_pinned('astral-sh/setup-uv')}\n        with:\n"
         '          version: "0.9.21"\n          python-version: "3.12"\n',
         after="        uses: astral-sh/setup-uv\n        with:\n"
         '          version: "0.9.21"\n          python-version: "3.12"\n',
