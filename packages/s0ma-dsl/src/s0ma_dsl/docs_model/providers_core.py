@@ -546,7 +546,7 @@ def _rest_drafts(
         if not isinstance(route, APIRoute):
             continue
         component_refs = _bound_components(route.endpoint, index)
-        for method in sorted(route.methods):
+        for method in sorted(route.methods or ()):
             identifier = f"rest:{method}:{route.path}"
             validate_id(identifier)
             side_effects, exception = _route_effects(method, identifier)

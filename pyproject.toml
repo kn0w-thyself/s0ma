@@ -11,3 +11,15 @@ dev = [
     "ruff>=0.4",
     "httpx>=0.24.0",
 ]
+
+# Lint rules for the Python that lives outside `packages/`: `integrations/`
+# and `scripts/`. Each package states its own selection in its own
+# pyproject, and ruff reads the nearest one, so this table does not reach
+# them. Without it these files are checked against whatever a given ruff
+# release enables by default, and that set changes between releases: a
+# lockfile update alone could then fail the gate on code nobody touched.
+# The selection below is the set that was in force when it was written
+# down. Widening it is a decision made here, not a side effect of an
+# upgrade.
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
