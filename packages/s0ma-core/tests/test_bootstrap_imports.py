@@ -340,7 +340,8 @@ class TestCoreOnlyVenv:
     """
 
     @pytest.fixture(scope="class")
-    def core_only_python(self, tmp_path_factory: pytest.TempPathFactory) -> Path:
+    @classmethod
+    def core_only_python(cls, tmp_path_factory: pytest.TempPathFactory) -> Path:
         uv = shutil.which("uv")
         if uv is None:  # pragma: no cover - depends on the developer's box
             pytest.skip("uv is not on PATH; cannot build a core-only venv")

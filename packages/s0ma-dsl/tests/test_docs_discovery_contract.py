@@ -545,7 +545,8 @@ class TestGeneratedInstructions:
     """
 
     @pytest.fixture(scope="class")
-    def agents_md(self, tmp_path_factory: pytest.TempPathFactory) -> str:
+    @classmethod
+    def agents_md(cls, tmp_path_factory: pytest.TempPathFactory) -> str:
         target = tmp_path_factory.mktemp("generated") / "app"
         assert S0maCLI().run(["new", "project", str(target), "--quiet"]) == 0
         return (target / "AGENTS.md").read_text(encoding="utf-8")

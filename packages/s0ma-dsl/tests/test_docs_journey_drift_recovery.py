@@ -219,7 +219,8 @@ class TestRecoveryPaths:
     """Every failure this path recovers from is one the build can name."""
 
     @pytest.fixture(scope="class")
-    def composed(self) -> tuple[DocsBundle, ReferenceIndex, JourneyRecord]:
+    @classmethod
+    def composed(cls) -> tuple[DocsBundle, ReferenceIndex, JourneyRecord]:
         return _bundle_and_index()
 
     def test_the_three_recoveries_are_the_ones_authored(
@@ -323,7 +324,8 @@ class TestComposes:
     """
 
     @pytest.fixture(scope="class")
-    def findings(self) -> tuple[str, ...]:
+    @classmethod
+    def findings(cls) -> tuple[str, ...]:
         result = build_documentation(REPO_ROOT)
         return tuple(
             f"{finding.code} {finding.location} {finding.message}"
@@ -440,7 +442,8 @@ class TestReplay:
     """
 
     @pytest.fixture(scope="class")
-    def runs(self, fixture: EvidenceRecord) -> tuple[Replay, Replay]:
+    @classmethod
+    def runs(cls, fixture: EvidenceRecord) -> tuple[Replay, Replay]:
         return replay(fixture), replay(fixture)
 
     def test_replays_green(
