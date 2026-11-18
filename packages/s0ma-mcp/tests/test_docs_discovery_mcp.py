@@ -530,7 +530,8 @@ class TestGeneratedAgentsMd:
     """
 
     @pytest.fixture(scope="class")
-    def agents_md(self, tmp_path_factory: pytest.TempPathFactory) -> str:
+    @classmethod
+    def agents_md(cls, tmp_path_factory: pytest.TempPathFactory) -> str:
         from s0ma_dsl.cli.main import S0maCLI
 
         target = tmp_path_factory.mktemp("scaffolded") / "app"

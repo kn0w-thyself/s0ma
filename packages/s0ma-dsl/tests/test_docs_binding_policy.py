@@ -123,8 +123,13 @@ class TestTheCliLedger:
     """Forty-four commands in three classes, and only one class is unbound."""
 
     @pytest.fixture(scope="class")
-    def ledger(self) -> dict[str, int]:
-        return dict(collections.Counter(cls for _, cls in CliProvider().exceptions()))
+    @classmethod
+    def ledger(cls) -> dict[str, int]:
+        return dict(
+            collections.Counter(
+                binding_class for _, binding_class in CliProvider().exceptions()
+            )
+        )
 
     def test_the_three_classes_are_counted_exactly(self, ledger: dict[str, int]) -> None:
         """The ledger as of D5b. Any movement is a decision, so it fails here.

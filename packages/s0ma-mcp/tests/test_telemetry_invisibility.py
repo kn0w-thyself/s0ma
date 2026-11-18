@@ -201,8 +201,9 @@ class TestTelemetryInvisibility:
     """Flag-off and flag-on serve byte-identical responses."""
 
     @pytest.fixture(scope="class")
+    @classmethod
     def sessions(
-        self, tmp_path_factory: pytest.TempPathFactory
+        cls, tmp_path_factory: pytest.TempPathFactory
     ) -> dict[str, Any]:
         """One shared off-run + on-run (spawning the server is slow)."""
         probe_dir = tmp_path_factory.mktemp("nonproject-probe")

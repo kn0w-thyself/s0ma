@@ -126,7 +126,8 @@ class TestResourcesOverMcp:
     """Resources resolve through the server (in-process, no transport)."""
 
     @pytest.fixture(scope="class")
-    def server(self) -> Any:
+    @classmethod
+    def server(cls) -> Any:
         return create_server()
 
     @pytest.mark.parametrize("doc", list(GUIDE_DOCS.values()), ids=lambda d: d.key)
@@ -160,7 +161,8 @@ class TestVersionResource:
     """
 
     @pytest.fixture(scope="class")
-    def server(self) -> Any:
+    @classmethod
+    def server(cls) -> Any:
         return create_server()
 
     def _document(self, server: Any) -> dict[str, Any]:
