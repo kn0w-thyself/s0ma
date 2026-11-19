@@ -272,7 +272,7 @@ So the five projects are created in five rounds, in dependency order, the umbrel
    | Workflow name | `release.yml` |
    | Environment name | `pypi` |
 
-2. **Push the tag** ([step 7](#cut-a-release)). When the run reaches `publish-pypi` it asks for review: approve it. The job publishes `s0ma-lang-core`, then fails at `s0ma-lang-dsl` with an error that names it. That failure is expected in this round.
+2. **Push the tag** ([step 7](#cut-a-release)). When the run reaches `publish-pypi` it asks for review: approve it. The job publishes `s0ma-lang-core`, then fails at `s0ma-lang-dsl` with an error that names it. PyPI's part of that error reads "Non-user identities cannot create new projects. This was probably caused by successfully using a pending publisher but specifying the project name incorrectly". Every round on 2026-11-19 answered it with `400 Bad Request`, but the status is PyPI's to change, so recognize the refusal by its message. That failure is expected in this round.
 3. **Add the next pending publisher**: the same form, the same four values, and `s0ma-lang-dsl` as the project name. PyPI accepts it now because the first one was used up when the project was created.
 4. **Re-run the job**: on the run's page, "Re-run failed jobs", then approve it again. It skips the files already on PyPI, publishes `s0ma-lang-dsl`, and stops at the next project.
 5. **Repeat steps 3 and 4** for `s0ma-lang-mcp`, then `s0ma-lang-studi0`, then `s0ma-lang`. The fifth run is green.

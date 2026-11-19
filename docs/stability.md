@@ -36,7 +36,8 @@ It does not mean the ground moves at random. Three things you can rely on:
    and report s0ma writes for another program carries a version string, and a
    reader that meets a number it does not know is refused rather than misled.
 3. **Every change is written down once**, in [one changelog](../CHANGELOG.md),
-   for one version that all four distributions share.
+   for one version that all five distributions share, the umbrella `s0ma-lang`
+   among them.
 
 And one habit protects you from most of the rest: **pin the version, and commit
 the build.** A pinned project does not move when the toolchain moves, and a
@@ -226,8 +227,9 @@ which is the other half of the same question.
 
 ## How a change is announced
 
-**One version, one tag, one changelog.** All four distributions —
-`s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0` — share a single version
+**One version, one tag, one changelog.** All five distributions,
+`s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0` and the umbrella
+`s0ma-lang` that carries no code and requires the other four, share a single version
 number, ship from a single annotated tag, and are described in
 [a single changelog](../CHANGELOG.md) at the root of the repository (INV-4).
 "Which version of what" is therefore never a question you have to answer; what
@@ -262,7 +264,7 @@ new one is, and schedule no removal until there is a reason.
 
 ## Which versions get fixes
 
-**The newest release.** All four distributions ship one version together, so a
+**The newest release.** All five distributions ship one version together, so a
 fix goes out in a new release rather than being carried back into an older one,
 and updating is the supported way to get it. The security policy says so in
 full, along with how to report something privately:

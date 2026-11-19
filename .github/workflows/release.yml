@@ -516,7 +516,9 @@ jobs:
       # creates a new project only from a pending publisher, and it holds
       # one pending publisher at a time for this repository, workflow and
       # environment. The owner adds the next one and re-runs this job
-      # (docs/RELEASING.md, "The first publication").
+      # (docs/RELEASING.md, "The first publication"). PyPI's refusal for a
+      # project with no pending publisher reads "Non-user identities cannot
+      # create new projects"; on 2026-11-19 it came as 400 Bad Request.
       - name: Publish each distribution, a dependency before its dependents
         run: |
           version="${GITHUB_REF_NAME#v}"
@@ -529,7 +531,7 @@ jobs:
                 "dist/${stem}-${version}-py3-none-any.whl" \
                 "dist/${stem}-${version}.tar.gz"; then
               echo "::endgroup::"
-              echo "::error title=${project} ${version} was not published::Every distribution before ${project} in DISTRIBUTIONS is on PyPI and none after it was attempted. If the failure above is a 403 saying the project does not exist, or that a non-user identity cannot create a project, then ${project} has no trusted publisher yet: add its pending publisher as docs/RELEASING.md describes under 'The first publication', then re-run this job. Files PyPI already holds are skipped on the re-run."
+              echo "::error title=${project} ${version} was not published::Every distribution before ${project} in DISTRIBUTIONS is on PyPI and none after it was attempted. If PyPI's answer above says 'Non-user identities cannot create new projects' (observed as 400 Bad Request; the status is PyPI's to change, so go by the message), then ${project} has no trusted publisher yet: add its pending publisher as docs/RELEASING.md describes under 'The first publication', then re-run this job. Files PyPI already holds are skipped on the re-run."
               exit 1
             fi
             echo "::endgroup::"

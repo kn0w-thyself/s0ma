@@ -335,7 +335,9 @@ runs_the_steps = pytest.mark.skipif(
 _STUB_UV = """#!/bin/sh
 printf '%s\\n' "$*" >> "$STUB_LOG"
 case "$*" in
-  *"$STUB_FAIL_ON"*) echo "error: 403 Forbidden" >&2; exit 2 ;;
+  *"$STUB_FAIL_ON"*)
+    echo "error: 400 Bad Request: Non-user identities cannot create new projects." >&2
+    exit 2 ;;
 esac
 exit 0
 """
@@ -421,6 +423,9 @@ class TestTheStepsRun:
         assert f"::error title={project} {PRETEND_VERSION} was not published::" in result.stdout
         assert "re-run this job" in result.stdout
         assert "docs/RELEASING.md" in result.stdout
+        # The hint leads with the message PyPI sends, not a status code.
+        assert "Non-user identities cannot create new projects" in result.stdout
+        assert "403" not in result.stdout
 
     def test_exactly_the_named_distributions_pass(self, handed_over: Path) -> None:
         script = str(_step_running(_jobs()[PUBLISH_JOB], "ls -1 dist")["run"])

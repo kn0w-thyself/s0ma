@@ -8,7 +8,7 @@ s0ma is a Python framework for *software self-knowledge* — the ability of a so
 
 ## Where it sits
 
-Four distributions ship together at one version, and dependencies only ever point down the stack (PRD INV-6):
+Five distributions ship together at one version: the four below, and the umbrella [`s0ma-lang`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-lang), which carries no code and requires each of the four at exactly its own version. Dependencies only ever point down the stack (PRD INV-6):
 
 [`s0ma-lang-mcp`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-mcp) · [`s0ma-lang-studi0`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-studi0) → [`s0ma-lang-dsl`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-dsl) → **`s0ma-lang-core`**
 
