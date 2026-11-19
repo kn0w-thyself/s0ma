@@ -37,6 +37,31 @@ Historical entries describe artifacts as they were named at the time.
   `readme-drift.tape` and `readme-existing.tape` run 13 to 20 seconds each, in
   a smaller frame with larger type. Recordings are still never committed: the
   README reaches each one by a GitHub attachment URL.
+- **`s0ma migrate grammar` reads the project's own roots.** When the directory
+  it migrates is the root of the project the command resolved (the project
+  around the working directory, or `--project-root`), it walks the
+  `source_roots` and `test_roots` that project declares, the same roots
+  `s0ma check` and `s0ma build` read when given no path, and no longer every
+  directory under the root. It also leaves out what git ignores. It asks git,
+  so nested ignore files and negations count as they do for `git status`, and
+  a tracked file is never left out; where git is missing, or the directory is
+  not in a repository, nothing is filtered. A `.s0ma` file outside the
+  declared roots is no longer reached by a run on the project root: name its
+  directory to migrate it. A declared root outside the project root is not
+  walked, and a warning says so. When none of the declared roots exists, and
+  for any target that is not the project root, the whole target is walked as
+  before. The manifest keeps its shape, and its paths stay relative to the
+  directory that was migrated.
+
+### Fixed
+
+- **`s0ma migrate grammar` no longer stops at a directory it cannot read.**
+  One directory under the root that the process could not list ended the run
+  with `Internal error` and exit code 3 before anything was planned. The
+  directory is now skipped, a warning on stderr names it, and the rest is
+  planned and, with `--apply`, written. The manifest on stdout does not
+  mention the skipped directory, so read stderr before trusting that a plan
+  covers the whole project.
 
 ## [0.21.1] — 2026-10-30
 

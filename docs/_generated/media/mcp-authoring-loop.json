@@ -4,7 +4,7 @@
     "journey": "journey:mcp-authoring-loop",
     "published_by": "doc:guide/mcp-authoring",
     "release": "0.21.1 (preview)",
-    "snapshot": "sha256:82ce6f97a65a7d0d"
+    "snapshot": "sha256:c1c428b8cab5902c"
   },
   "package": {
     "audience": [
