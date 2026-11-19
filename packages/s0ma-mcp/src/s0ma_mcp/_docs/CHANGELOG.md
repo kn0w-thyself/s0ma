@@ -21,7 +21,7 @@ Historical entries describe artifacts as they were named at the time.
   four in three places and now says five as well.
 - **The publish hint quotes what PyPI says.** When `publish-pypi` stops at a
   project that has no pending publisher, its hint described the refusal as a
-  403. PyPI answered every round of the first publication with
+  403. PyPI answered each of the four refusals of the first publication with
   `400 Bad Request` and "Non-user identities cannot create new projects". The
   hint and the first-publication steps in `docs/RELEASING.md` now lead with
   that message and name the status only as what was observed, since the
