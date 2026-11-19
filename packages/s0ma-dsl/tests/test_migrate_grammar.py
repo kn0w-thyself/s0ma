@@ -274,3 +274,74 @@ def test_a_template_without_the_line_comes_out_with_one(
     assert "forbids:" not in template
     assert lines.index("    forbids: none") < lines.index("    ---")
     parse_s0ma(written, filename=module_path.name)
+
+
+# ---------------------------------------------------------------------------
+# Which directories are walked, and how paths are reported
+# ---------------------------------------------------------------------------
+
+_PROJECT_PYPROJECT = '''\
+[project]
+name = "walked"
+version = "0.0.1"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = ["tests"]
+'''
+
+
+def _legacy_embed(name: str, embed: str) -> str:
+    return f'''\
+module {name}
+    layer: PRESENTATION
+    version: 1.0.0
+    intent: "Owns {name}."
+    exports: [PAGE]
+
+cell PAGE :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "Holds a page read from a file beside this module."
+    schema: "string of HTML"
+    content: @file("{embed}")
+'''
+
+
+def _write_project(root: Path) -> Path:
+    (root / "pyproject.toml").write_text(_PROJECT_PYPROJECT, encoding="utf-8")
+    module = root / "src" / "site" / "page.s0ma"
+    module.parent.mkdir(parents=True)
+    module.write_text(_legacy_embed("page", "page.html"), encoding="utf-8")
+    (module.parent / "page.html").write_text("<p>hi</p>\n", encoding="utf-8")
+    return module
+
+
+def _run_cli(
+    argv: list[str], capsys: pytest.CaptureFixture[str],
+) -> tuple[int, str, str]:
+    code = S0maCLI().run(argv)
+    captured = capsys.readouterr()
+    return code, captured.out, captured.err
+
+
+def _manifest(out: str) -> dict[str, Any]:
+    manifest: dict[str, Any] = json.loads(out)
+    assert manifest["schema"] == "s0ma-grammar-migration@1"
+    return manifest
+
+
+def test_project_root_run_resolves_embeds_against_root_relative_paths(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    _write_project(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    code, out, err = _run_cli(["migrate", "grammar", "."], capsys)
+    assert "EMBEDDED_FILE_NOT_FOUND" not in out + err
+    assert code == EXIT_SUCCESS
+    manifest = _manifest(out)
+    assert [change["path"] for change in manifest["changes"]] == [
+        "src/site/page.s0ma",
+    ]
