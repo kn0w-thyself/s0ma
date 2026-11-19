@@ -20,7 +20,7 @@ paths through the product — and that file is mirrored into
 ``s0ma/_teaching/slice.json``, inside the packaged tree, so the wheel
 carries it. This module reads it with :mod:`json` and
 :mod:`importlib.resources` and nothing else. There is no import of
-s0ma-dsl, s0ma-mcp or s0ma-studi0 here and there must never be one: the
+s0ma-lang-dsl, s0ma-lang-mcp or s0ma-lang-studi0 here and there must never be one: the
 documentation application knows about core, and core knows about a file.
 
 **Resolution order, and what is left of the old path.** A question is
@@ -758,7 +758,7 @@ class TeachingProvider:
         """Whether the packaged teaching slice loaded.
 
         The property that should be ``True`` in every installation,
-        including a bare ``pip install s0ma-core``: the slice ships inside
+        including a bare ``pip install s0ma-lang-core``: the slice ships inside
         the package.
         """
         return self.teaching_slice() is not None

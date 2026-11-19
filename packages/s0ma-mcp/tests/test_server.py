@@ -1,7 +1,7 @@
 """Tests for the s0ma authoring MCP server factory and boundary.
 
 Uses FastMCP's in-process ``call_tool()`` / ``read_resource()`` methods
-(no transport server) — the testing pattern established by s0ma-core's
+(no transport server) — the testing pattern established by s0ma-lang-core's
 ``tests/test_mcp_server.py``.
 """
 

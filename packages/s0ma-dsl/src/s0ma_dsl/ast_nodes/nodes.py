@@ -1040,7 +1040,7 @@ class IntegrationDecl:
     so two integration modules can declare ``get_factory`` /
     ``get_manifest`` / ``smoke_test_primary`` / ``get_smoke_test``
     without registry collisions. The four helpers leverage the
-    pre-Phase-2 ``module_scoped`` flag on ``ComponentSpec`` (s0ma-core
+    pre-Phase-2 ``module_scoped`` flag on ``ComponentSpec`` (s0ma-lang-core
     0.3.0) so that the bare helper names live behind module-qualified
     registry keys and only ever collide intra-module.
 

@@ -3,13 +3,13 @@
 Milestone H2 of the docs-function plan (internal) §13. ``scripts/wheel_smoke.py``
 opens the built wheels and requires four things of what they carry:
 
-1. the ``s0ma-core`` wheel's embedded teaching slice was rendered from the
+1. the ``s0ma-lang-core`` wheel's embedded teaching slice was rendered from the
    snapshot the release manifest names;
-2. the ``s0ma-mcp`` wheel's ``_docs`` payload is the cataloged sources,
+2. the ``s0ma-lang-mcp`` wheel's ``_docs`` payload is the cataloged sources,
    byte for byte;
-3. the ``s0ma-dsl`` wheel's packaged snapshot — what ``s0ma docs`` reads
+3. the ``s0ma-lang-dsl`` wheel's packaged snapshot — what ``s0ma docs`` reads
    with no checkout — is that same composed snapshot, and byte-identical to
-   the ``s0ma-mcp`` wheel's copy of it;
+   the ``s0ma-lang-mcp`` wheel's copy of it;
 4. the version those payloads render is the version the wheels are.
 
 The gate itself runs those assertions against **real wheels**, which is the
@@ -74,7 +74,7 @@ CI_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "ci.yml"
 HEAD_TAG_ENV = "S0MA_HEAD_TAG"
 
 #: The four lockstep distributions (PRD INV-4).
-PACKAGES = ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0")
+PACKAGES = ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
 
 requires_checkout = pytest.mark.skipif(
     not MANIFEST.is_file(), reason="not a repository checkout: no release manifest"
@@ -271,9 +271,9 @@ class TestTheCommandLineSnapshotMustBeThisBuilds:
     """The dsl wheel's copy, bound twice: to the build, and to the mcp copy.
 
     The assertion this class proves can fail is the one whose *absence*
-    shipped a broken product. The snapshot went into the ``s0ma-mcp`` wheel
-    for the MCP resources and into ``s0ma-core`` as a teaching slice; the
-    ``s0ma-dsl`` wheel got nothing, so every ``s0ma docs`` command from an
+    shipped a broken product. The snapshot went into the ``s0ma-lang-mcp`` wheel
+    for the MCP resources and into ``s0ma-lang-core`` as a teaching slice; the
+    ``s0ma-lang-dsl`` wheel got nothing, so every ``s0ma docs`` command from an
     installed toolchain answered "no documentation snapshot was found" for
     four releases, with every gate in this repository green — because every
     gate ran inside a checkout, which is the one place the gap did not
@@ -394,7 +394,7 @@ class TestTheRenderedVersionMustBeTheWheelsVersion:
 
     def test_a_wheel_at_another_version_is_refused(self) -> None:
         versions = dict.fromkeys(PACKAGES, _manifest().product_version)
-        versions["s0ma-mcp"] = "0.17.0"
+        versions["s0ma-lang-mcp"] = "0.17.0"
         with pytest.raises(AssertionError, match="product_version"):
             _check(_payloads(wheel_versions=versions), _manifest())
 

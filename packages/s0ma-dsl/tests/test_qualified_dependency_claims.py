@@ -2,7 +2,7 @@
 
 The emitter writes ``dependencies=["<module>::<Name>"]`` (DSL-M2 canonical
 form, ADR-011 §(d)) while registering every generated component under its
-bare name — ``module_scoped`` stays False. s0ma-core's
+bare name — ``module_scoped`` stays False. s0ma-lang-core's
 ``ComponentRegistry._resolve_key`` used to short-circuit any qualified
 identifier that was not a direct key hit, so importing two generated
 modules joined by one cross-module ``depends_on`` edge logged a false

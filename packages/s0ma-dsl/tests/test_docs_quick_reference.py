@@ -1125,7 +1125,7 @@ class TestOneValueTwoRenderings:
         uneven = copy.deepcopy(document)
         uneven["identity"]["packages"][0]["version"] = "9.9.9"
         page = render_readable(uneven, words)
-        assert "`s0ma-core` 9.9.9" in page
+        assert "`s0ma-lang-core` 9.9.9" in page
         assert words["identity"]["packages_note"] not in page
 
     def test_what_each_kind_is_for_is_the_concepts_own_sentence(self, document, composed):

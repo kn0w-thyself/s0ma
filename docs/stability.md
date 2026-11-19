@@ -61,7 +61,7 @@ the ones that matter to somebody building on s0ma are these:
   environment — and the same input builds byte-identical output on macOS, Linux
   and Windows (INV-5, NFR-7). This is the invariant that makes committing your
   build output worth doing.
-- **The runtime is never gated.** `s0ma-core` is Apache-2.0 and fully functional
+- **The runtime is never gated.** `s0ma-lang-core` is Apache-2.0 and fully functional
   with nothing from anyone else — no key, no permission asked, no network
   access — in perpetuity. Applications built on s0ma keep running whatever
   happens outside the machine, and no gate of any kind may enter the runtime
@@ -227,7 +227,7 @@ which is the other half of the same question.
 ## How a change is announced
 
 **One version, one tag, one changelog.** All four distributions —
-`s0ma-core`, `s0ma-dsl`, `s0ma-mcp` and `s0ma-studi0` — share a single version
+`s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0` — share a single version
 number, ship from a single annotated tag, and are described in
 [a single changelog](../CHANGELOG.md) at the root of the repository (INV-4).
 "Which version of what" is therefore never a question you have to answer; what

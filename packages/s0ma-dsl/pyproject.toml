@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "s0ma-dsl"
+name = "s0ma-lang-dsl"
 version = "0.21.1"
 description = "The s0ma DSL transpiler — compiles .s0ma source files into self-describing Python for software self-knowledge."
 readme = "README.md"
@@ -38,7 +38,7 @@ dependencies = [
     # writes is generation 3 (a body's calls to its own module's components
     # as CALLS edges, and the enforced layer matrix as layer_rules), and only
     # that core's runtime reads generation 3.
-    "s0ma-core >= 0.21.1",
+    "s0ma-lang-core >= 0.21.1",
     "lark[interegular] >= 1.1.0",
 ]
 
@@ -56,7 +56,7 @@ s0ma = "s0ma_dsl.cli.main:main"
 packages = ["src/s0ma_dsl"]
 
 [tool.uv.sources]
-s0ma-core = { workspace = true }
+s0ma-lang-core = { workspace = true }
 
 [tool.ruff]
 line-length = 100

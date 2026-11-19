@@ -6196,7 +6196,7 @@ def _build_doc_guide(
 
 
 # A8 (T2): the mandatory ``runs_in:`` field on an ``example`` selects a
-# dispatcher arm in s0ma-core's ``ExampleDispatcher.dispatch`` — the three
+# dispatcher arm in s0ma-lang-core's ``ExampleDispatcher.dispatch`` — the three
 # names below are the only arms that exist. Spec §4.12.3 declares the
 # field as ``runs_in: <standalone | pytest | integration>``; anything else
 # can never execute, so it is a layer-1 ``PARSE_ERROR`` in every

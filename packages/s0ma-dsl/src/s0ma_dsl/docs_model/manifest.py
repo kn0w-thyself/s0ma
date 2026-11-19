@@ -127,7 +127,7 @@ MANIFEST_SCHEMA = SCHEMA
 
 #: The distribution whose ``project.version`` *is* the product version
 #: (PRD INV-4, and the anchor ``scripts/check_version_refs.py`` already
-#: uses). s0ma-core sits at the bottom of the dependency stack, so it is
+#: uses). s0ma-lang-core sits at the bottom of the dependency stack, so it is
 #: the one version the other three are held equal to rather than one of
 #: four opinions.
 #:
@@ -139,7 +139,7 @@ MANIFEST_SCHEMA = SCHEMA
 #: the product version would make every rendered page claim to document
 #: s0ma 0.0.0. What the manifest states is the version of the *product the
 #: documentation describes*, and the product is the four distributions.
-LOCKSTEP_ANCHOR = "s0ma-core"
+LOCKSTEP_ANCHOR = "s0ma-lang-core"
 
 #: Every id this module mints starts here. Artifact ids live only inside a
 #: manifest — nothing in the bundle resolves against them, so they are not

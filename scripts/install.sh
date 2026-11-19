@@ -10,8 +10,8 @@
 # machine to the feedback function, register the authoring MCP server, and
 # scaffold a feature-first project.
 #
-# This is a convenience script the USER runs. Nothing in s0ma-core /
-# s0ma-dsl / s0ma-mcp imports or invokes it (PRD P-6 / plan D-1: no network
+# This is a convenience script the USER runs. Nothing in s0ma-lang-core /
+# s0ma-lang-dsl / s0ma-lang-mcp imports or invokes it (PRD P-6 / plan D-1: no network
 # in product code, no toolchain coupling). The control-plane fetch lives
 # ONLY here, in this user-run shell script.
 #
@@ -64,7 +64,11 @@ CP_HOST_DEFAULT="account.kn0wthyself.ai"
 # The four wheels, named by their distribution stems. The control-plane
 # manifest carries all four (their inter-dependencies name packages that are
 # not on PyPI, so each must be installed explicitly; studi0 by owner decision 2026-08-17).
-WHEELS="s0ma_core s0ma_dsl s0ma_mcp s0ma_studi0"
+WHEELS="s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0"
+# The stems the same four wheels carried up to and including 0.21.1. The
+# manifest for one of those versions lists them this way, so --version can
+# still name one.
+FORMER_WHEELS="s0ma_core s0ma_dsl s0ma_mcp s0ma_studi0"
 # The MCP registration line, verbatim from docs/walkthrough.md §2 (project
 # scope: writes .mcp.json so every session/teammate inherits it).
 MCP_ADD="claude mcp add s0ma --scope project -- uv run s0ma-mcp"
@@ -575,6 +579,12 @@ MANIFEST="$(cp_fetch "$MANIFEST_URL")"
 [ -n "$MANIFEST" ] || die "the control plane returned an empty manifest. Check your key/subscription at $ACCOUNT_URL"
 
 mkdir -p "$WHEEL_DIR"
+
+# A version from before the rename lists its wheels under the former stems.
+if [ -z "$(wheel_path_and_sha "$MANIFEST" s0ma_lang_core)" ] \
+    && [ -n "$(wheel_path_and_sha "$MANIFEST" s0ma_core)" ]; then
+    WHEELS="$FORMER_WHEELS"
+fi
 
 printf '==> Downloading and verifying the s0ma wheels\n'
 UV_ADD_ARGS=""

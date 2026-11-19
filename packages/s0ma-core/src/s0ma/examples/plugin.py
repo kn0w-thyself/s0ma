@@ -1,7 +1,7 @@
 """Opt-in pytest plugin that runs registered examples as test items.
 
 Activated by ``--s0ma-examples``. When the flag is absent the plugin is
-a no-op so that installing ``s0ma-core`` never surprises an
+a no-op so that installing ``s0ma-lang-core`` never surprises an
 unrelated pytest run. This matches the v1 design in
 the docs-subsystem plan (internal) M6 and the
 resolution recorded for §11's open-question on opt-in vs. opt-out.
@@ -12,7 +12,7 @@ A failing example's captured stdout, stderr, and error summary are
 routed through ``pytest.fail`` so they render in the standard report.
 
 ``s0ma.examples.plugin`` imports ``pytest`` at module load time.
-s0ma-core declares pytest only as a dev extra; the plugin module is
+s0ma-lang-core declares pytest only as a dev extra; the plugin module is
 loaded exclusively through pytest's ``pytest11`` entry-point discovery,
 so by the time this import runs, pytest is already available.
 """

@@ -2084,7 +2084,7 @@
     {
       "body": {
         "state": "value",
-        "value": "def _outside_tree_error(what: str, path: Path, root: Path) -> dict[str, Any]:\n    \"\"\"The structured ``{ok: False}`` refusal for an out-of-tree path.\"\"\"\n    return {\n        \"ok\": False,\n        \"error\": (\n            f\"{what} {path} is outside the given project root {root}; \"\n            \"s0ma-mcp tools never write outside the project tree (PRD NFR-6).\"\n        ),\n    }"
+        "value": "def _outside_tree_error(what: str, path: Path, root: Path) -> dict[str, Any]:\n    \"\"\"The structured ``{ok: False}`` refusal for an out-of-tree path.\"\"\"\n    return {\n        \"ok\": False,\n        \"error\": (\n            f\"{what} {path} is outside the given project root {root}; \"\n            \"s0ma-lang-mcp tools never write outside the project tree (PRD NFR-6).\"\n        ),\n    }"
       },
       "body_kind": "function",
       "canonical_id": "tools::_outside_tree_error",
@@ -2528,7 +2528,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:e55b6b456f902bea5b5e48f859d3da50b3660c2db18e7414255a41c77f645ff4",
+    "content_hash": "sha256:9d58e782e7d30f95cfd6589ca2ff6a0d4ebe4f207ab66851ed90024fe99c30f2",
     "exports_helpers": {
       "state": "none"
     },
@@ -2544,6 +2544,6 @@
     "version": "0.7.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:e55b6b456f902bea",
+  "source_hash": "sha256:9d58e782e7d30f95",
   "transpiler_version": "1.0.0"
 }

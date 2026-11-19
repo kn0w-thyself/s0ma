@@ -72,7 +72,7 @@ from s0ma_dsl.docs_model.serialize import serialize_bundle
 from s0ma_dsl.docs_model.validate import DOC_GATE_VACUOUS, check_floors, validate_bundle
 
 pytest.importorskip("mcp", reason="MCP SDK not installed")
-pytest.importorskip("s0ma_mcp", reason="s0ma-mcp not installed")
+pytest.importorskip("s0ma_mcp", reason="s0ma-lang-mcp not installed")
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
@@ -643,7 +643,7 @@ class TestBinding:
             for spec in get_self_registry().get_all().values()
             if str(spec.qualified_name).count(".") == 1
         )
-        assert flat, "s0ma-mcp registers nothing package-flat — revisit D3's finding"
+        assert flat, "s0ma-lang-mcp registers nothing package-flat — revisit D3's finding"
         for identifier in flat:
             assert is_valid_id(identifier), identifier
             assert identifier in provider.component_ids(), identifier
@@ -994,7 +994,7 @@ class TestDependencies:
     """The dependency direction, checked against the source itself."""
 
     def test_the_mcp_package_is_never_imported_at_module_level(self) -> None:
-        """``s0ma-dsl`` does not depend on ``s0ma-mcp``, and must not.
+        """``s0ma-lang-dsl`` does not depend on ``s0ma-lang-mcp``, and must not.
 
         A module-level import would invert the direction the four
         packages ship in and make ``docs_model`` unimportable for

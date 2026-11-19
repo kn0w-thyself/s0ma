@@ -8,7 +8,7 @@ order the build recorded. The whole boot ceremony collapses to::
     from s0ma.bootstrap import bootstrap_imports
     modules = bootstrap_imports(build_dir)
 
-Why it lives in s0ma-core (M10, 0.16.x)
+Why it lives in s0ma-lang-core (M10, 0.16.x)
 ---------------------------------------
 
 :func:`bootstrap_imports` shipped from ``s0ma_dsl.runtime`` through
@@ -17,7 +17,7 @@ transpiler at process start: a runtime environment with no authoring
 packages installed died with ``ModuleNotFoundError: No module named
 's0ma_dsl'`` on the blessed one-line bootstrap. PRD INV-9 says nothing a
 deployed system needs at import/runtime may be license-gated, so the
-loader moved into ``s0ma-core`` (Apache-2.0) where deployment can reach
+loader moved into ``s0ma-lang-core`` (Apache-2.0) where deployment can reach
 it. ``s0ma_dsl.runtime.bootstrap_imports`` remains as a deprecated
 re-export of this function (INV-2: no silent rename) and delegates here.
 

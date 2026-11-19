@@ -43,7 +43,7 @@ if TYPE_CHECKING:
 # A CI matrix may set it per-OS if shared-runner variance (Windows
 # Defender scans, coarser timers, noisy neighbors) makes the absolute
 # budgets flake; scaled tests still catch order-of-magnitude
-# regressions. Mirrors the CI 4x precedent in s0ma-core's
+# regressions. Mirrors the CI 4x precedent in s0ma-lang-core's
 # test_structural_verifier_m2.py. The TestDeterminism class asserts
 # byte-identity, not time, and takes no scaling.
 _PERF_SCALE = float(os.environ.get("S0MA_TEST_PERF_SCALE", "1.0"))
@@ -401,7 +401,7 @@ class TestBuildCache:
     def test_cache_misses_under_another_transpiler_version(
         self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """An entry another s0ma-dsl version wrote is never replayed.
+        """An entry another s0ma-lang-dsl version wrote is never replayed.
 
         The key used to be the source text alone, so after an upgrade every
         unchanged module came back exactly as the old emitter wrote it

@@ -600,17 +600,17 @@ class TestTheRegisteredSources:
         rows = rendered.as_mappings()
         assert rendered.field_names() == ("distribution", "version", "depends_on")
         assert [row["distribution"] for row in rows] == [
-            "s0ma-core",
-            "s0ma-dsl",
-            "s0ma-mcp",
-            "s0ma-studi0",
+            "s0ma-lang-core",
+            "s0ma-lang-dsl",
+            "s0ma-lang-mcp",
+            "s0ma-lang-studi0",
         ]
         versions = {row["version"] for row in rows}
         assert len(versions) == 1, f"INV-4 lockstep: {versions}"
         direction = {row["distribution"]: row["depends_on"] for row in rows}
-        assert direction["s0ma-core"] is None
-        assert direction["s0ma-dsl"] == "s0ma-core"
-        assert direction["s0ma-mcp"] == "s0ma-core, s0ma-dsl"
+        assert direction["s0ma-lang-core"] is None
+        assert direction["s0ma-lang-dsl"] == "s0ma-lang-core"
+        assert direction["s0ma-lang-mcp"] == "s0ma-lang-core, s0ma-lang-dsl"
 
     def test_the_inventory_and_the_authority_records_are_one_reading(
         self, composed: Build

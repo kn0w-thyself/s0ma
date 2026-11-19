@@ -418,7 +418,7 @@ def test_a_map_whose_fenced_block_vanished_is_red(
     files = _tree()
     files["AGENTS.md"] = (
         "# Agents\n\n## Package and dependency map\n\n"
-        "We ship s0ma-core, s0ma-dsl, s0ma-mcp and s0ma-studi0.\n"
+        "We ship s0ma-lang-core, s0ma-lang-dsl, s0ma-lang-mcp and s0ma-lang-studi0.\n"
     )
     assert _checker().check_package_maps(_write(tmp_path, files)) == 1
     assert "no fenced block under '## Package and dependency map'" in capsys.readouterr().out

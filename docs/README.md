@@ -78,10 +78,10 @@ What s0ma is, the words it uses, and how its four packages fit together. Start h
 | [s0ma](../README.md) | `README.md` | users | maintained | links checked, version checked |
 | [s0ma — Product Requirements Document](../references/s0ma-prd.md) | `references/s0ma-prd.md` | owner | binding | listed only |
 | [s0ma, explained](learn/s0ma.md) | `docs/learn/s0ma.md` | agents, users | generated | rebuilt and compared, links checked |
-| [s0ma-core](../packages/s0ma-core/README.md) | `packages/s0ma-core/README.md` | users | maintained | links checked, version checked |
-| [s0ma-dsl](../packages/s0ma-dsl/README.md) | `packages/s0ma-dsl/README.md` | users | maintained | links checked, version checked |
-| [s0ma-mcp](../packages/s0ma-mcp/README.md) | `packages/s0ma-mcp/README.md` | users | maintained | links checked, version checked |
-| [s0ma-studi0](../packages/s0ma-studi0/README.md) | `packages/s0ma-studi0/README.md` | users | maintained | links checked, version checked |
+| [s0ma-lang-core](../packages/s0ma-core/README.md) | `packages/s0ma-core/README.md` | users | maintained | links checked, version checked |
+| [s0ma-lang-dsl](../packages/s0ma-dsl/README.md) | `packages/s0ma-dsl/README.md` | users | maintained | links checked, version checked |
+| [s0ma-lang-mcp](../packages/s0ma-mcp/README.md) | `packages/s0ma-mcp/README.md` | users | maintained | links checked, version checked |
+| [s0ma-lang-studi0](../packages/s0ma-studi0/README.md) | `packages/s0ma-studi0/README.md` | users | maintained | links checked, version checked |
 | [self-knowledge, explained](learn/self-knowledge.md) | `docs/learn/self-knowledge.md` | agents, users | generated | rebuilt and compared, links checked |
 | [self-model, explained](learn/self-model.md) | `docs/learn/self-model.md` | agents, users | generated | rebuilt and compared, links checked |
 | [strictness mode, explained](learn/strictness-mode.md) | `docs/learn/strictness-mode.md` | agents, users | generated | rebuilt and compared, links checked |
@@ -136,7 +136,7 @@ Look-up material. The language specification is the authority on what a .s0ma fi
 | Document | Where | For | Standing | Kept true by |
 | --- | --- | --- | --- | --- |
 | [Changelog](../CHANGELOG.md) | `CHANGELOG.md` | contributors | maintained | listed only |
-| [Common s0ma-dsl errors](../packages/s0ma-dsl/docs/_generated/common_errors.md) | `packages/s0ma-dsl/docs/_generated/common_errors.md` | agents | generated | rebuilt and compared |
+| [Common s0ma-lang-dsl errors](../packages/s0ma-dsl/docs/_generated/common_errors.md) | `packages/s0ma-dsl/docs/_generated/common_errors.md` | agents | generated | rebuilt and compared |
 | [Component index](architecture/component-index.md) | `docs/architecture/component-index.md` | agents, contributors, users | generated | rebuilt and compared, links checked |
 | [Concepts index](reference/concepts-index.md) | `docs/reference/concepts-index.md` | agents, users | generated | rebuilt and compared, links checked |
 | [docs application self-prompt card](_built/self_prompt_card.md) | `docs/_built/self_prompt_card.md` | agents | generated | rebuilt and compared |
@@ -202,7 +202,7 @@ Running s0ma when something has gone wrong, releasing it, and working on s0ma it
 | [s0ma 0.14.0 Schema and Surface Budget](contracts/0.14.0-schema-and-surface-budget.md) | `docs/contracts/0.14.0-schema-and-surface-budget.md` | contributors | binding | links checked |
 | [s0ma feedback contract — `s0ma-feedback@1` (feedback-v1)](contracts/feedback-v1.md) | `docs/contracts/feedback-v1.md` | contributors | binding | links checked |
 | [s0ma repository agent contract](../AGENTS.md) | `AGENTS.md` | agents | binding | links checked, version checked |
-| [s0ma-core — Runtime Specification & Coding Agent Rulebook](../packages/s0ma-core/docs/s0ma-core-spec-v0.21.1.md) | `packages/s0ma-core/docs/s0ma-core-spec-v0.21.1.md` | agents | binding | links checked |
+| [s0ma-lang-core — Runtime Specification & Coding Agent Rulebook](../packages/s0ma-core/docs/s0ma-core-spec-v0.21.1.md) | `packages/s0ma-core/docs/s0ma-core-spec-v0.21.1.md` | agents | binding | links checked |
 | [Spec Traceability Matrix](../packages/s0ma-dsl/docs/spec_traceability.md) | `packages/s0ma-dsl/docs/spec_traceability.md` | contributors | maintained | links checked |
 | [Troubleshooting s0ma](troubleshooting.md) | `docs/troubleshooting.md` | users | maintained | links checked, version checked |
 | [When s0ma refuses, and how to get back to green](guides/drift-recovery.md) | `docs/guides/drift-recovery.md` | users | maintained | links checked, version checked |
@@ -215,7 +215,7 @@ Byte-for-byte copies of documents listed above, packaged so a coding agent that 
 | --- | --- | --- | --- | --- |
 | [Changelog](../packages/s0ma-mcp/src/s0ma_mcp/_docs/CHANGELOG.md) | `packages/s0ma-mcp/src/s0ma_mcp/_docs/CHANGELOG.md` | agents | copy | rebuilt and compared |
 | [s0ma DSL — Coding Agent System Prompt](../packages/s0ma-mcp/src/s0ma_mcp/_docs/agent_system_prompt.md) | `packages/s0ma-mcp/src/s0ma_mcp/_docs/agent_system_prompt.md` | agents | copy | rebuilt and compared |
-| [Common s0ma-dsl errors](../packages/s0ma-mcp/src/s0ma_mcp/_docs/common_errors.md) | `packages/s0ma-mcp/src/s0ma_mcp/_docs/common_errors.md` | agents | copy | rebuilt and compared |
+| [Common s0ma-lang-dsl errors](../packages/s0ma-mcp/src/s0ma_mcp/_docs/common_errors.md) | `packages/s0ma-mcp/src/s0ma_mcp/_docs/common_errors.md` | agents | copy | rebuilt and compared |
 | [s0ma DSL Patterns Guide](../packages/s0ma-mcp/src/s0ma_mcp/_docs/dsl_patterns_guide.md) | `packages/s0ma-mcp/src/s0ma_mcp/_docs/dsl_patterns_guide.md` | agents | copy | rebuilt and compared |
 | [Getting started: prove the self-model is useful](../packages/s0ma-mcp/src/s0ma_mcp/_docs/getting-started.md) | `packages/s0ma-mcp/src/s0ma_mcp/_docs/getting-started.md` | agents | copy | rebuilt and compared |
 | [s0ma quick reference, as data](../packages/s0ma-mcp/src/s0ma_mcp/_docs/quick-reference-machine.json) | `packages/s0ma-mcp/src/s0ma_mcp/_docs/quick-reference-machine.json` | agents | copy | rebuilt and compared |

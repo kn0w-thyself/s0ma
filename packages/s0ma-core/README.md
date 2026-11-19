@@ -1,22 +1,22 @@
-# s0ma-core
+# s0ma-lang-core
 
 **Software that cannot exist without understanding itself.**
 
 s0ma is a Python framework for *software self-knowledge* — the ability of a software system to maintain an accurate, queryable model of itself: its structure, its runtime state, and the reasoning over that model. Self-knowledge spans three faculties — **proprioception** (structure), **interoception** (runtime state), and **metacognition** (reasoning over the model). Unlike conventional documentation, the self-model is **load-bearing**: remove it and the system fails to start. Every component must register itself as a condition of existing.
 
-`s0ma-core` is the runtime foundation the rest of the toolchain stands on: the registry every component registers into, the verification engine that compares that model against the real code, and the surfaces that answer questions from it — Python, an optional REST API, and an optional MCP server an application can offer about itself. It needs none of the other three packages.
+`s0ma-lang-core` is the runtime foundation the rest of the toolchain stands on: the registry every component registers into, the verification engine that compares that model against the real code, and the surfaces that answer questions from it — Python, an optional REST API, and an optional MCP server an application can offer about itself. It needs none of the other three packages.
 
 ## Where it sits
 
 Four distributions ship together at one version, and dependencies only ever point down the stack (PRD INV-6):
 
-[`s0ma-mcp`](../s0ma-mcp) · [`s0ma-studi0`](../s0ma-studi0) → [`s0ma-dsl`](../s0ma-dsl) → **`s0ma-core`**
+[`s0ma-lang-mcp`](../s0ma-mcp) · [`s0ma-lang-studi0`](../s0ma-studi0) → [`s0ma-lang-dsl`](../s0ma-dsl) → **`s0ma-lang-core`**
 
-Core sits at the bottom with no hard runtime dependency on any of them, and it is open: **`s0ma-core` is Apache-2.0**, as are `s0ma-dsl`, `s0ma-mcp` and `s0ma-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
+Core sits at the bottom with no hard runtime dependency on any of them, and it is open: **`s0ma-lang-core` is Apache-2.0**, as are `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
 
 ## Install
 
-s0ma is not on PyPI yet, so `pip install s0ma-core` will not work: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](../../README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own, with this package's optional extras (`[api]`, `[mcp]`, `[all]`) — and [getting started](../../docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+s0ma is not on PyPI yet, so `pip install s0ma-lang-core` will not work: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](../../README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own, with this package's optional extras (`[api]`, `[mcp]`, `[all]`) — and [getting started](../../docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
 
 ## What it feels like
 
@@ -88,7 +88,7 @@ The root [`CHANGELOG.md`](../../CHANGELOG.md) is the single record of what each 
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE) for details. The rest of the toolchain shares it: `s0ma-dsl`, `s0ma-mcp` and `s0ma-studi0` are Apache-2.0 too, each with its own `LICENSE`.
+Apache License 2.0 — see [LICENSE](LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0` are Apache-2.0 too, each with its own `LICENSE`.
 
 ---
 

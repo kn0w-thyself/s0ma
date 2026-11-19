@@ -5,7 +5,7 @@ deterministic Markdown / HTML / JSON output files alongside the
 ``.py`` / ``.s0ma.json`` / ``.s0ma.map`` artifacts the rest of the
 transpiler already emits.
 
-The subpackage also wires the s0ma-core M7 ``content_hash`` utility into
+The subpackage also wires the s0ma-lang-core M7 ``content_hash`` utility into
 the generated ``register_doc_*`` calls — at transpile time we synthesise
 a :class:`s0ma.RegistrySnapshot` from the parsed AST modules, build
 provisional ``DocRefRegistration`` / ``DocGuideRegistration`` records,

@@ -1,4 +1,4 @@
-"""Deprecated home of ``bootstrap_imports`` — the loader now lives in s0ma-core.
+"""Deprecated home of ``bootstrap_imports`` — the loader now lives in s0ma-lang-core.
 
 The manifest-driven bootstrap moved to :mod:`s0ma.bootstrap` in 0.16.x
 (M10). Importing it from here still works and behaves identically — the
@@ -19,7 +19,7 @@ under a proprietary license: in an environment with no authoring
 packages installed, the blessed one-line bootstrap died with
 ``ModuleNotFoundError: No module named 's0ma_dsl'``. PRD INV-9 forbids a
 license-gated import on a deployed system's boot path, so the loader
-moved into ``s0ma-core`` (Apache-2.0). The authoring packages are
+moved into ``s0ma-lang-core`` (Apache-2.0). The authoring packages are
 Apache-2.0 too now; the reason that still stands is that a deployed
 application should not need the authoring toolchain installed at all. INV-2 forbids a silent
 rename, so this module stays: existing bootstrap files keep working
@@ -48,7 +48,7 @@ __all__ = ["bootstrap_imports"]
 
 warnings.warn(
     "s0ma_dsl.runtime.bootstrap_imports has moved to s0ma.bootstrap "
-    "(s0ma-core). Import it as `from s0ma.bootstrap import "
+    "(s0ma-lang-core). Import it as `from s0ma.bootstrap import "
     "bootstrap_imports` so deployed applications no longer need the "
     "authoring packages at runtime. This re-export still works and "
     "behaves identically.",

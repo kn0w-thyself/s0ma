@@ -122,7 +122,7 @@
     },
     {
       "annotations": null,
-      "description": "The s0ma diagnostic error catalog (FR-MCP-10).\n\nEvery s0ma-dsl error code in one table: severity per strictness\nmode (migration / dev / strict / release) and a one-sentence\ndescription of the cause and canonical fix. Look unfamiliar\ndiagnostic codes up here while working the check loop \u2014 generated\nfrom the DSL's own error-code registry, so it cannot drift from\nthe diagnostics the tools return.",
+      "description": "The s0ma diagnostic error catalog (FR-MCP-10).\n\nEvery s0ma-lang-dsl error code in one table: severity per strictness\nmode (migration / dev / strict / release) and a one-sentence\ndescription of the cause and canonical fix. Look unfamiliar\ndiagnostic codes up here while working the check loop \u2014 generated\nfrom the DSL's own error-code registry, so it cannot drift from\nthe diagnostics the tools return.",
       "icons": null,
       "meta": null,
       "mimeType": "text/plain",
@@ -177,7 +177,7 @@
     },
     {
       "annotations": null,
-      "description": "Runtime self-prompting and verified self_inspect wiring.\n\nShows an application host how to load the content-addressed card and\ncompanion with s0ma-core, register the deterministic self_inspect\nadapter, assemble an F1-shaped concierge context profile, and keep\nauthored intents inside the explicit untrusted-data boundary.",
+      "description": "Runtime self-prompting and verified self_inspect wiring.\n\nShows an application host how to load the content-addressed card and\ncompanion with s0ma-lang-core, register the deterministic self_inspect\nadapter, assemble an F1-shaped concierge context profile, and keep\nauthored intents inside the explicit untrusted-data boundary.",
       "icons": null,
       "meta": null,
       "mimeType": "text/plain",
@@ -210,7 +210,7 @@
     },
     {
       "annotations": null,
-      "description": "The s0ma platform changelog \u2014 what's new, per version (FR-MCP-10).\n\nThe monorepo's canonical Keep-a-Changelog document covering every\npackage (s0ma-core, s0ma-dsl, s0ma-mcp \u2014 one lockstep version,\nINV-4). Read it to learn what changed in the version you are\nrunning, or what an upgrade would bring; pair with\ns0ma://meta/version for the installed versions themselves.",
+      "description": "The s0ma platform changelog \u2014 what's new, per version (FR-MCP-10).\n\nThe monorepo's canonical Keep-a-Changelog document covering every\npackage (s0ma-lang-core, s0ma-lang-dsl, s0ma-lang-mcp \u2014 one lockstep version,\nINV-4). Read it to learn what changed in the version you are\nrunning, or what an upgrade would bring; pair with\ns0ma://meta/version for the installed versions themselves.",
       "icons": null,
       "meta": null,
       "mimeType": "text/plain",
@@ -243,7 +243,7 @@
     },
     {
       "annotations": null,
-      "description": "The authoring server's live self-model (FR-MCP-7) as JSON.\n\nThe server eats its own dog food (FR-MCP-11): every tool,\nresource, and prompt here is authored as a s0ma component, and\nthis document is the live graph the served surface is derived\nfrom \u2014 components with name, kind, layer, intent, and\ndependencies, rendered through s0ma-core's own registry snapshot,\nplus the server's name and version. Read it to learn what this\nserver is and what it can do; the ``describe_server`` tool returns\nthe same graph with an LLM-ready text rendering.",
+      "description": "The authoring server's live self-model (FR-MCP-7) as JSON.\n\nThe server eats its own dog food (FR-MCP-11): every tool,\nresource, and prompt here is authored as a s0ma component, and\nthis document is the live graph the served surface is derived\nfrom \u2014 components with name, kind, layer, intent, and\ndependencies, rendered through s0ma-lang-core's own registry snapshot,\nplus the server's name and version. Read it to learn what this\nserver is and what it can do; the ``describe_server`` tool returns\nthe same graph with an LLM-ready text rendering.",
       "icons": null,
       "meta": null,
       "mimeType": "application/json",

@@ -5,98 +5,98 @@
       "audience": "agent",
       "clause": "architecture §9.6.1",
       "id": "agent-1",
-      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestInstructionsNameTheQuery",
+      "proof": "s0ma-lang-mcp tests/test_docs_discovery_mcp.py::TestInstructionsNameTheQuery",
       "route": "server instructions name the query and index"
     },
     {
       "audience": "agent",
       "clause": "architecture §9.6.2",
       "id": "agent-2",
-      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestToolDescriptionsSayWhen",
+      "proof": "s0ma-lang-mcp tests/test_docs_discovery_mcp.py::TestToolDescriptionsSayWhen",
       "route": "tool descriptions say when to consult"
     },
     {
       "audience": "agent",
       "clause": "architecture §9.6.3",
       "id": "agent-3",
-      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestHighTrafficResultsCarryAPointer",
+      "proof": "s0ma-lang-mcp tests/test_docs_discovery_mcp.py::TestHighTrafficResultsCarryAPointer",
       "route": "high-traffic results carry a pointer"
     },
     {
       "audience": "agent",
       "clause": "architecture §9.6.4",
       "id": "agent-4",
-      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestFailingDiagnosticsDeepLink",
+      "proof": "s0ma-lang-mcp tests/test_docs_discovery_mcp.py::TestFailingDiagnosticsDeepLink",
       "route": "failing diagnostics deep-link"
     },
     {
       "audience": "agent",
       "clause": "architecture §9.6.5",
       "id": "agent-5",
-      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestPromptsNameTheirDependencies",
+      "proof": "s0ma-lang-mcp tests/test_docs_discovery_mcp.py::TestPromptsNameTheirDependencies",
       "route": "prompts name their dependencies"
     },
     {
       "audience": "agent",
       "clause": "architecture §9.6.6",
       "id": "agent-6",
-      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestGeneratedAgentsMd",
+      "proof": "s0ma-lang-mcp tests/test_docs_discovery_mcp.py::TestGeneratedAgentsMd",
       "route": "generated AGENTS.md establishes both"
     },
     {
       "audience": "agent",
       "clause": "architecture §9.6.7",
       "id": "agent-7",
-      "proof": "s0ma-mcp tests/test_docs_discovery_mcp.py::TestTheIndexDescribesItself",
+      "proof": "s0ma-lang-mcp tests/test_docs_discovery_mcp.py::TestTheIndexDescribesItself",
       "route": "the index describes its own retrieval"
     },
     {
       "audience": "human",
       "clause": "architecture §9.3.1",
       "id": "human-1",
-      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestRootReadmeRoute",
+      "proof": "s0ma-lang-dsl tests/test_docs_discovery_contract.py::TestRootReadmeRoute",
       "route": "root README has one Start-here route"
     },
     {
       "audience": "human",
       "clause": "architecture §9.3.2",
       "id": "human-2",
-      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestHelpAdvertisesLearning",
+      "proof": "s0ma-lang-dsl tests/test_docs_discovery_contract.py::TestHelpAdvertisesLearning",
       "route": "--help advertises learning"
     },
     {
       "audience": "human",
       "clause": "architecture §9.3.3",
       "id": "human-3",
-      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestBareDocsNavigates",
+      "proof": "s0ma-lang-dsl tests/test_docs_discovery_contract.py::TestBareDocsNavigates",
       "route": "bare `s0ma docs` navigates"
     },
     {
       "audience": "human",
       "clause": "architecture §9.3.4",
       "id": "human-4",
-      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestSetupResultsNameANextStep",
+      "proof": "s0ma-lang-dsl tests/test_docs_discovery_contract.py::TestSetupResultsNameANextStep",
       "route": "setup results name a next step"
     },
     {
       "audience": "human",
       "clause": "architecture §9.3.5",
       "id": "human-5",
-      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestDiagnosticsPointAtTheirTopic",
+      "proof": "s0ma-lang-dsl tests/test_docs_discovery_contract.py::TestDiagnosticsPointAtTheirTopic",
       "route": "diagnostics point at their topic"
     },
     {
       "audience": "human",
       "clause": "architecture §9.3.6",
       "id": "human-6",
-      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestGeneratedInstructions",
+      "proof": "s0ma-lang-dsl tests/test_docs_discovery_contract.py::TestGeneratedInstructions",
       "route": "generated instructions name both routes"
     },
     {
       "audience": "human",
       "clause": "architecture §9.3.7",
       "id": "human-7",
-      "proof": "s0ma-dsl tests/test_docs_discovery_contract.py::TestInstalledBundlesNeedNoCheckout",
+      "proof": "s0ma-lang-dsl tests/test_docs_discovery_contract.py::TestInstalledBundlesNeedNoCheckout",
       "route": "installed bundles need no checkout"
     }
   ],
@@ -1184,8 +1184,8 @@
       "complete": true,
       "covered": 14,
       "enforced_by": [
-        "s0ma-dsl tests/test_docs_discovery_contract.py",
-        "s0ma-mcp tests/test_docs_discovery_mcp.py"
+        "s0ma-lang-dsl tests/test_docs_discovery_contract.py",
+        "s0ma-lang-mcp tests/test_docs_discovery_mcp.py"
       ],
       "exception_count": 0,
       "exceptions": [],
@@ -1240,7 +1240,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.21.1",
-    "snapshot_hash": "sha256:c1c428b8cab5902c"
+    "snapshot_hash": "sha256:0170503312d72027"
   },
   "totals": {
     "covered": 340,

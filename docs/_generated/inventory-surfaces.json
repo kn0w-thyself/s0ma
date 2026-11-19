@@ -1848,7 +1848,7 @@
       ],
       "governed_by": [],
       "id": "diagnostic:HOST_RUNTIME_UNDECLARED",
-      "intent": "Generated Python imports s0ma-core and s0ma-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved.",
+      "intent": "Generated Python imports s0ma-lang-core and s0ma-lang-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved.",
       "public_name": "HOST_RUNTIME_UNDECLARED",
       "side_effects": [
         "none"
@@ -2931,7 +2931,7 @@
       ],
       "governed_by": [],
       "id": "diagnostic:STALE_GENERATED_CONFTEST",
-      "intent": "The project's generated `conftest.py` was emitted by an older s0ma-dsl version and may have diverged from the runtime contract.",
+      "intent": "The project's generated `conftest.py` was emitted by an older s0ma-lang-dsl version and may have diverged from the runtime contract.",
       "public_name": "STALE_GENERATED_CONFTEST",
       "side_effects": [
         "none"
@@ -4336,6 +4336,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.21.1",
-    "snapshot_hash": "sha256:c1c428b8cab5902c"
+    "snapshot_hash": "sha256:0170503312d72027"
   }
 }

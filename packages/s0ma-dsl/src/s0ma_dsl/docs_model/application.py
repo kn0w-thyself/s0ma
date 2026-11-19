@@ -618,7 +618,7 @@ UNBOUND_CEILING = 175
 #: an empty tuple as the unanswered question it is.
 #:
 #: All three are core's, and they are the asymmetry the plan flagged
-#: rather than an exemption granted to it: **s0ma-mcp's tools declare
+#: rather than an exemption granted to it: **s0ma-lang-mcp's tools declare
 #: ``ToolAnnotations`` and core's do not**, so one provider reads
 #: ``readOnlyHint`` off every tool and the other has nothing to read.
 #: The gate does not paper over that. It records it, per source, with the
@@ -778,7 +778,7 @@ DISCOVERY_CONTRACT: tuple[DiscoveryEdge, ...] = (
             audience="human",
             clause=f"architecture §9.3.{index}",
             route=route,
-            proof=f"s0ma-dsl tests/test_docs_discovery_contract.py::{owner}",
+            proof=f"s0ma-lang-dsl tests/test_docs_discovery_contract.py::{owner}",
         )
         for index, (route, owner) in enumerate(
             (
@@ -808,7 +808,7 @@ DISCOVERY_CONTRACT: tuple[DiscoveryEdge, ...] = (
             audience="agent",
             clause=f"architecture §9.6.{index}",
             route=route,
-            proof=f"s0ma-mcp tests/test_docs_discovery_mcp.py::{owner}",
+            proof=f"s0ma-lang-mcp tests/test_docs_discovery_mcp.py::{owner}",
         )
         for index, (route, owner) in enumerate(
             (
@@ -898,7 +898,7 @@ class Build:
 def release_version() -> str:
     """The version this build stamps its snapshot with.
 
-    The installed ``s0ma-dsl`` version, because the model, the providers
+    The installed ``s0ma-lang-dsl`` version, because the model, the providers
     and the renderers all ship in that wheel: a snapshot claims to have
     been composed by a particular toolchain, and this is that toolchain's
     name for itself. Read at call time rather than at import so a caller
@@ -1431,7 +1431,7 @@ def build(
     :data:`SIDE_EFFECT_ALLOWANCES`, which together *are* this
     repository's documentation. They are parameters rather than constants
     for the reason ADR-012 §1 gives for shipping the machinery in the
-    s0ma-dsl wheel at all — "the documentation application is the first
+    s0ma-lang-dsl wheel at all — "the documentation application is the first
     consumer of the machinery, not its owner" — and because a gate wiring
     nothing can reach from outside is a gate nothing can prove.
 

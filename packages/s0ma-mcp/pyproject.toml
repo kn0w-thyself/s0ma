@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "s0ma-mcp"
+name = "s0ma-lang-mcp"
 version = "0.21.1"
 description = "The s0ma authoring MCP server — exposes the s0ma DSL self-knowledge toolchain and agent guides to coding agents over the Model Context Protocol."
 readme = "README.md"
@@ -34,7 +34,7 @@ dependencies = [
     # companion is generation 2, which only that core's runtime reads.
     # Raised to 0.21.1 on the same evidence: the committed companion is now
     # generation 3, which only that core's runtime reads.
-    "s0ma-core[mcp] >= 0.21.1",
+    "s0ma-lang-core[mcp] >= 0.21.1",
     # Hard floor (DSL-M7): the committed _built/ output is REPRODUCED only by the
     # 0.8.0 dsl emitter — its registrations carry metadata=/serves_as= stamps, its
     # bodies carry cleandoc-normalized docstrings and per-call deferred imports, and
@@ -58,7 +58,7 @@ dependencies = [
     # layer_rules, which only the 0.21.1 transpiler emits; an older dsl
     # regenerates different bytes and the selfhost-build equality gate is
     # red against it.
-    "s0ma-dsl >= 0.21.1",
+    "s0ma-lang-dsl >= 0.21.1",
 ]
 
 [project.optional-dependencies]
@@ -83,8 +83,8 @@ packages = ["src/s0ma_mcp"]
 exclude = ["src/s0ma_mcp/_built/.s0ma.cache"]
 
 [tool.uv.sources]
-s0ma-core = { workspace = true }
-s0ma-dsl = { workspace = true }
+s0ma-lang-core = { workspace = true }
+s0ma-lang-dsl = { workspace = true }
 
 # Self-hosting (FR-MCP-11, selfhost plan SH-M1 / ADR-001): this package is a
 # real s0ma project. .s0ma sources live in s0ma_src/; `s0ma build` emits the
@@ -132,7 +132,7 @@ python_version = "3.11"
 # is gone with the module: the derived factory invokes FastMCP's typed
 # decorator factories as plain calls, which mypy --strict accepts.)
 
-# s0ma-core ships py.typed since 0.7.0 (selfhost plan M0) and s0ma-dsl
+# s0ma-lang-core ships py.typed since 0.7.0 (selfhost plan M0) and s0ma-lang-dsl
 # ships it since 0.8.0 (DSL improvements plan M5 — the package reached
 # mypy --strict cleanliness), so both s0ma.* and s0ma_dsl.* imports
 # resolve with their real types here and need no override. The former
@@ -140,7 +140,7 @@ python_version = "3.11"
 # is gone: mypy-mcp now type-checks the bootstrap module's bridge and
 # the runtime_bridge registration calls inside emitted modules against
 # dsl's real types, with no untyped-decorator exposure (@component comes
-# from typed s0ma-core).
+# from typed s0ma-lang-core).
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

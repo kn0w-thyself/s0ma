@@ -525,19 +525,19 @@
     "machine": "docs/_generated/quick-reference-machine.json",
     "packages": [
       {
-        "distribution": "s0ma-core",
+        "distribution": "s0ma-lang-core",
         "version": "0.21.1"
       },
       {
-        "distribution": "s0ma-dsl",
+        "distribution": "s0ma-lang-dsl",
         "version": "0.21.1"
       },
       {
-        "distribution": "s0ma-mcp",
+        "distribution": "s0ma-lang-mcp",
         "version": "0.21.1"
       },
       {
-        "distribution": "s0ma-studi0",
+        "distribution": "s0ma-lang-studi0",
         "version": "0.21.1"
       }
     ],
@@ -551,7 +551,7 @@
     "release": "0.21.1 (preview)",
     "release_version": "0.21.1",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:c1c428b8cab5902c",
+    "snapshot_hash": "sha256:0170503312d72027",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
@@ -2054,7 +2054,7 @@
           ]
         }
       ],
-      "says": "Once the agent is connected to s0ma's authoring server, `s0ma-mcp`, ask it in your own words: \"what is a ganglion?\", \"why did the check fail?\", \"what does this project contain?\". To connect one, register the command `s0ma-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:"
+      "says": "Once the agent is connected to s0ma's authoring server, `s0ma-lang-mcp`, ask it in your own words: \"what is a ganglion?\", \"why did the check fail?\", \"what does this project contain?\". To connect one, register the command `s0ma-lang-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:"
     },
     "ask_s0ma": {
       "commands": [

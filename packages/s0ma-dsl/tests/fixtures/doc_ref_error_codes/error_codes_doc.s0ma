@@ -11,7 +11,7 @@ module error_codes_doc
     deferred_requires: none
     exports_helpers: none
 doc-ref ErrorCodesTable
-    intent: "Generated table of every registered s0ma-dsl error code with severity-by-mode and a canonical description."
+    intent: "Generated table of every registered s0ma-lang-dsl error code with severity-by-mode and a canonical description."
     format: markdown
     output: docs/error_codes.md
     covers: { source: error_codes }

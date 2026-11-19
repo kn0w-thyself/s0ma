@@ -611,7 +611,7 @@ class SelfModelInterface:
         on each registration. Any divergence is reported as drift.
 
         Args:
-            transpiler_version: The s0ma-dsl transpiler version to feed
+            transpiler_version: The s0ma-lang-dsl transpiler version to feed
                 into the hash. Drift checks emitted from CI should pass
                 the version tag that generated the stored hashes;
                 callers without that context may leave the default.

@@ -22,19 +22,19 @@ implementation fix. Escalate a real conflict to the owner.
 The distributions version in lockstep, but remain independently installable:
 
 ```text
-s0ma-mcp (agent authoring server)
-s0ma-studi0 (local visual environment: studi0 and its sh0w graph renderer)
-    -> s0ma-dsl (language, compiler, CLI)
-        -> s0ma-core (Apache-2.0 runtime, registry, verification, introspection)
+s0ma-lang-mcp (agent authoring server)
+s0ma-lang-studi0 (local visual environment: studi0 and its sh0w graph renderer)
+    -> s0ma-lang-dsl (language, compiler, CLI)
+        -> s0ma-lang-core (Apache-2.0 runtime, registry, verification, introspection)
 ```
 
-Dependencies never point upward. In particular, `s0ma-core` stays fully useful
+Dependencies never point upward. In particular, `s0ma-lang-core` stays fully useful
 with zero hard dependency on the DSL, MCP, or studi0 packages. Optional API/MCP
 extras in core remain optional.
 
 ## Authored and generated paths
 
-- Two packages are self-hosted — `s0ma-mcp` and `s0ma-studi0` — and both use the
+- Two packages are self-hosted — `s0ma-lang-mcp` and `s0ma-lang-studi0` — and both use the
   same layout: authored `.s0ma` sources under `s0ma_src/`, the transpiler's
   committed build output under `src/<module>/_built/` (the shape
   `packages/s0ma-mcp/docs/adr/ADR-001-selfhost-layout.md` set for MCP, which
@@ -118,7 +118,7 @@ Before editing:
   when the client-visible surface deliberately changed. A parser, grammar, IR,
   or emitter change reaches all three alike, even when you only edited one of
   them; the documentation application is the one that is easy to miss. Add
-  `--no-cache` to those rebuilds: the build cache is keyed on the s0ma-dsl
+  `--no-cache` to those rebuilds: the build cache is keyed on the s0ma-lang-dsl
   version, which does not move between unreleased commits.
 - A version is released in lockstep across all four packages. Follow
   `docs/RELEASING.md`; update the root `CHANGELOG.md`, keep package changelogs as

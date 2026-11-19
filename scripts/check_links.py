@@ -34,7 +34,7 @@ package's ``README.md`` plus ``docs/``. Four directory names are excluded
 wherever they appear:
 
 * ``_docs/``, ``_built/``, ``_generated/`` — mirrors and emitted output.
-  These are byte-gated against their sources already (the s0ma-mcp
+  These are byte-gated against their sources already (the s0ma-lang-mcp
   ``TestDocDrift`` gate, the ``selfhost-build`` equality stage), so a link
   defect in one is a defect in the source, reported once, at the source.
   Scanning both would double every finding and invite fixing the copy.

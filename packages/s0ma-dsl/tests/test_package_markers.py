@@ -577,14 +577,14 @@ class TestVerifyDefaultOutputHidesPackageMarker:
 
 
 class TestPep561TypedMarker:
-    """DSL-M5 (0.8.0): s0ma-dsl ships the PEP 561 ``py.typed`` marker.
+    """DSL-M5 (0.8.0): s0ma-lang-dsl ships the PEP 561 ``py.typed`` marker.
 
     The package reached ``mypy --strict`` cleanliness in DSL-M5, so it
     now advertises inline types to downstream consumers (the marker
     rides the wheel via hatchling's default packaging — same mechanism
-    s0ma-core uses since 0.7.0). This pins the marker's presence so a
+    s0ma-lang-core uses since 0.7.0). This pins the marker's presence so a
     future packaging refactor cannot silently drop it and quietly
-    regress every strict downstream (s0ma-mcp's gate stands on this).
+    regress every strict downstream (s0ma-lang-mcp's gate stands on this).
     """
 
     def test_py_typed_marker_present(self) -> None:
@@ -594,7 +594,7 @@ class TestPep561TypedMarker:
         pkg_dir = Path(s0ma_dsl.__file__).resolve().parent
         marker = pkg_dir / "py.typed"
         assert marker.is_file(), (
-            f"PEP 561 marker missing: {marker}. s0ma-dsl is strict-clean "
+            f"PEP 561 marker missing: {marker}. s0ma-lang-dsl is strict-clean "
             f"since 0.8.0 (DSL-M5) and must ship py.typed so downstream "
             f"strict gates see its real types."
         )

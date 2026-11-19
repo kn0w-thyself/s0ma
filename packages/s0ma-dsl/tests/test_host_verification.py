@@ -101,7 +101,7 @@ def test_declared_and_installed_runtime_passes_with_fingerprint(tmp_path: Path) 
     project = _write_project(
         tmp_path,
         {"app": "import s0ma\nimport s0ma_dsl\nVALUE = 1\n"},
-        dependencies=("s0ma-core", "s0ma-dsl"),
+        dependencies=("s0ma-lang-core", "s0ma-lang-dsl"),
     )
     report = verify_host(
         project, explicit_python=sys.executable, gate_mode="release"
@@ -113,7 +113,7 @@ def test_declared_and_installed_runtime_passes_with_fingerprint(tmp_path: Path) 
     assert report["interpreter"]["python_version"]
     assert report["interpreter"]["implementation"]
     assert report["interpreter"]["platform"]
-    assert report["interpreter"]["s0ma_distributions"]["s0ma-core"]
+    assert report["interpreter"]["s0ma_distributions"]["s0ma-lang-core"]
     assert [row["status"] for row in report["dependencies"]] == [
         "declared_installed",
         "declared_installed",
@@ -142,7 +142,7 @@ def test_runtime_import_without_host_declaration_fails(tmp_path: Path) -> None:
         if d["code"] == "HOST_RUNTIME_UNDECLARED"
     ]
     assert len(undeclared) == 1
-    assert undeclared[0]["dependency"] == "s0ma-core"
+    assert undeclared[0]["dependency"] == "s0ma-lang-core"
     assert undeclared[0]["modules"] == ["s0ma"]
     assert report["gate"]["passes"] is False
 
@@ -239,7 +239,42 @@ def test_static_emission_warning_names_missing_s0ma_runtime(tmp_path: Path) -> N
     assert warning is not None
     assert warning.code == "HOST_RUNTIME_UNDECLARED"
     assert warning.severity == "warning"
-    assert warning.context["missing_dependencies"] == ["s0ma-core", "s0ma-dsl"]
+    assert warning.context["missing_dependencies"] == ["s0ma-lang-core", "s0ma-lang-dsl"]
+
+
+def test_the_static_warning_names_the_replacement_for_a_former_name(
+    tmp_path: Path,
+) -> None:
+    """A project written before the rename declares names nothing ships under.
+
+    The runtime packages were `s0ma-core` and `s0ma-dsl` up to 0.21.1. Such a
+    project is told which name replaces which, ahead of the ordinary advice,
+    and the finding's context carries the former names for a program to read.
+    """
+    project = _write_project(
+        tmp_path, {"app": "VALUE = 1\n"}, dependencies=("s0ma-core>=0.21", "s0ma_dsl")
+    )
+    warning = static_runtime_dependency_warning(project)
+
+    assert warning is not None
+    assert warning.context["missing_dependencies"] == ["s0ma-lang-core", "s0ma-lang-dsl"]
+    assert warning.context["former_names_declared"] == ["s0ma-core", "s0ma-dsl"]
+    assert warning.remediation is not None
+    said = " ".join(warning.remediation.split())
+    assert "replace s0ma-core with s0ma-lang-core and s0ma-dsl with s0ma-lang-dsl" in said
+    assert said.index("replace s0ma-core") < said.index("that alone clears this warning")
+
+
+def test_a_project_on_the_current_names_hears_nothing_about_former_ones(
+    tmp_path: Path,
+) -> None:
+    project = _write_project(tmp_path, {"app": "VALUE = 1\n"})
+    warning = static_runtime_dependency_warning(project)
+
+    assert warning is not None
+    assert "former_names_declared" not in warning.context
+    assert warning.remediation is not None
+    assert "0.21.1" not in warning.remediation
 
 
 def test_the_static_warning_says_what_clears_it_and_what_it_cannot_see(
@@ -269,7 +304,7 @@ def test_static_warning_clears_when_runtime_is_declared(tmp_path: Path) -> None:
     project = _write_project(
         tmp_path,
         {"app": "VALUE = 1\n"},
-        dependencies=("s0ma-core", "s0ma-dsl"),
+        dependencies=("s0ma-lang-core", "s0ma-lang-dsl"),
     )
     assert static_runtime_dependency_warning(project) is None
 

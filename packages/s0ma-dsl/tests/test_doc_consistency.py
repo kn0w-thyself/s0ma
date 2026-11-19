@@ -805,7 +805,7 @@ def test_spec_documents_build_dir_sanitization_rule() -> None:
 #
 # G5 introduces ``STALE_GENERATED_CONFTEST`` as a ``s0ma test`` pre-flight
 # diagnostic when the project carries a generated conftest whose banner
-# version does not match the running s0ma-dsl version and whose body has
+# version does not match the running s0ma-lang-dsl version and whose body has
 # been customized (or whose body shape we can't classify). The code IS in
 # ``SEVERITY_MATRIX`` (error in every mode); the matrix-wide
 # ``test_error_codes_in_traceability`` already enforces a traceability row.

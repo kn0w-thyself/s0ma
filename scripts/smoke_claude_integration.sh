@@ -7,7 +7,7 @@
 #   1. The end-to-end smoke (integrations/launcher/tests/test_e2e_real_wheels.py)
 #      builds the four REAL s0ma wheels from this tree, serves them from a fake
 #      control plane on a loopback port, installs them with the launcher, starts
-#      the real s0ma-mcp through `serve`, completes a real MCP handshake, lets a
+#      the real s0ma-lang-mcp through `serve`, completes a real MCP handshake, lets a
 #      newer version arrive on its own, and proves a pinned project stays put.
 #
 #   2. If a `claude` binary is on this machine, `claude --plugin-dir ... mcp list`
@@ -100,7 +100,7 @@ else
         TOOLCHAIN="$HOME_DIR/toolchains/$VERSION"
         mkdir -p "$HOME_DIR/toolchains" "$PROJECT_DIR"
         MCP=pass
-        for package in s0ma-core s0ma-dsl s0ma-mcp s0ma-studi0; do
+        for package in s0ma-lang-core s0ma-lang-dsl s0ma-lang-mcp s0ma-lang-studi0; do
             uv build --package "$package" --wheel --out-dir "$WORK/dist" >/dev/null 2>&1 \
                 || MCP=fail
         done

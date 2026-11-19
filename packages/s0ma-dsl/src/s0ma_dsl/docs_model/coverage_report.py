@@ -413,8 +413,8 @@ def _discovery_set(edges: Sequence[DiscoveryEdge]) -> CoverageSet:
             "this artifact could have made up"
         ),
         enforced_by=(
-            "s0ma-dsl tests/test_docs_discovery_contract.py",
-            "s0ma-mcp tests/test_docs_discovery_mcp.py",
+            "s0ma-lang-dsl tests/test_docs_discovery_contract.py",
+            "s0ma-lang-mcp tests/test_docs_discovery_mcp.py",
         ),
         # Deliberately empty, and the emptiness is the claim: no gate in
         # this build can report anything about these routes, so naming a

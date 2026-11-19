@@ -104,7 +104,15 @@ PRD_FLOOR = 90
 ADR_FLOOR = {"repo": 5, "s0ma-dsl": 10, "s0ma-mcp": 1}
 
 #: The four distributions, and nothing pretends there could be fewer.
-PACKAGES = ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0")
+PACKAGES = ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
+
+
+def _folder(distribution: str) -> str:
+    """The folder under ``packages/`` a distribution is built from.
+
+    The folders keep the short names; the distributions carry ``lang``.
+    """
+    return distribution.replace("s0ma-lang-", "s0ma-", 1)
 
 
 def _authorities(result: ProviderResult) -> tuple[AuthorityRef, ...]:
@@ -149,9 +157,9 @@ class TestStatusGrammar:
 
     def test_facts_are_written_in_sorted_order(self) -> None:
         """Sorted at the source, so two equal fact sets are one string."""
-        one = status_line("Declared", {"version": "0.18.1", "depends": "s0ma-core"})
-        two = status_line("Declared", {"depends": "s0ma-core", "version": "0.18.1"})
-        assert one == two == "Declared; depends=s0ma-core; version=0.18.1"
+        one = status_line("Declared", {"version": "0.18.1", "depends": "s0ma-lang-core"})
+        two = status_line("Declared", {"depends": "s0ma-lang-core", "version": "0.18.1"})
+        assert one == two == "Declared; depends=s0ma-lang-core; version=0.18.1"
 
     def test_the_facts_read_back(self) -> None:
         written = status_line("Accepted", {"tree": "repo", "index": "none"})
@@ -613,7 +621,7 @@ class TestDistributions:
     def test_the_dependency_direction_is_the_one_inv_6_names(
         self, index: dict[str, AuthorityRef]
     ) -> None:
-        """``s0ma-mcp → s0ma-dsl → s0ma-core``, and studi0 a leaf.
+        """``s0ma-lang-mcp → s0ma-lang-dsl → s0ma-lang-core``, and studi0 a leaf.
 
         Only in-workspace dependencies are recorded; ``lark`` and
         ``fastapi`` are facts about a build environment, not about this
@@ -624,18 +632,18 @@ class TestDistributions:
             written = facts_of(index[f"authority:declared/package.{name}"].status)["depends"]
             return set() if written == "none" else set(written.split(","))
 
-        assert depends("s0ma-core") == set()
-        assert depends("s0ma-dsl") == {"s0ma-core"}
-        assert depends("s0ma-mcp") == {"s0ma-core", "s0ma-dsl"}
-        assert depends("s0ma-studi0") == {"s0ma-core", "s0ma-dsl"}
-        assert "s0ma-studi0" not in set().union(*(depends(name) for name in PACKAGES))
+        assert depends("s0ma-lang-core") == set()
+        assert depends("s0ma-lang-dsl") == {"s0ma-lang-core"}
+        assert depends("s0ma-lang-mcp") == {"s0ma-lang-core", "s0ma-lang-dsl"}
+        assert depends("s0ma-lang-studi0") == {"s0ma-lang-core", "s0ma-lang-dsl"}
+        assert "s0ma-lang-studi0" not in set().union(*(depends(name) for name in PACKAGES))
 
     def test_a_package_record_points_at_its_own_pyproject(
         self, index: dict[str, AuthorityRef]
     ) -> None:
         for name in PACKAGES:
             record = index[f"authority:declared/package.{name}"]
-            assert record.source == f"packages/{name}/pyproject.toml"
+            assert record.source == f"packages/{_folder(name)}/pyproject.toml"
             assert record.section == "[project]"
 
 
@@ -738,10 +746,11 @@ def _copy_sources(destination: Path) -> Path:
     for tree in ("docs/adr", CONTRACTS_DIR):
         shutil.copytree(REPO_ROOT / tree, root / tree)
     for name in PACKAGES:
-        (root / "packages" / name).mkdir(parents=True, exist_ok=True)
+        folder = _folder(name)
+        (root / "packages" / folder).mkdir(parents=True, exist_ok=True)
         shutil.copy2(
-            REPO_ROOT / "packages" / name / "pyproject.toml",
-            root / "packages" / name / "pyproject.toml",
+            REPO_ROOT / "packages" / folder / "pyproject.toml",
+            root / "packages" / folder / "pyproject.toml",
         )
     for tree in ("packages/s0ma-dsl/docs/adr", "packages/s0ma-mcp/docs/adr"):
         shutil.copytree(REPO_ROOT / tree, root / tree)

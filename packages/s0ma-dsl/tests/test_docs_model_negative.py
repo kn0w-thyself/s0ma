@@ -2045,7 +2045,7 @@ def _manifest(
     product_version: str = RELEASE,
     build_channel: str = PREVIEW_CHANNEL,
     snapshot_hash: str = "sha256:0000000000000000",
-    packages: tuple[tuple[str, str], ...] = (("s0ma-core", RELEASE),),
+    packages: tuple[tuple[str, str], ...] = (("s0ma-lang-core", RELEASE),),
     schemas: tuple[tuple[str, str], ...] = (("negative", SCHEMA),),
     artifacts: tuple[ArtifactRecord, ...] = (),
 ) -> DocsManifest:
@@ -2158,11 +2158,11 @@ class TestTheReleaseCurrency:
     def test_a_distribution_that_broke_the_lockstep(self) -> None:
         """PRD INV-4: four wheels, one version, or the release is not one."""
         manifest = _manifest(
-            packages=(("s0ma-core", RELEASE), ("s0ma-mcp", "0.17.0")),
+            packages=(("s0ma-lang-core", RELEASE), ("s0ma-lang-mcp", "0.17.0")),
         )
         findings = check_manifest(manifest)
         assert [finding.code for finding in findings] == [DOC_VERSION_MISMATCH]
-        assert "s0ma-mcp" in findings[0].message
+        assert "s0ma-lang-mcp" in findings[0].message
 
     def test_a_provider_emitting_against_an_older_model(self) -> None:
         """The comparison C2 deliberately left to this milestone."""

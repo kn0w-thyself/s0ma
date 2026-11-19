@@ -435,7 +435,7 @@ _PYPROJECT = """\
 [project]
 name = "ledger-demo"
 version = "0.1.0"
-dependencies = ["s0ma-core", "s0ma-dsl"]
+dependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]
 
 [tool.s0ma]
 source_roots = ["src"]

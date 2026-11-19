@@ -57,7 +57,7 @@ CANON_INSTALLER = REPO_ROOT / "scripts" / "install.sh"
 
 #: The four distributions the manifest must carry (the H4 contract). Pinned
 #: here so a stem quietly dropped from — or added to — the script fails.
-WHEEL_STEMS = ("s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0")
+WHEEL_STEMS = ("s0ma_lang_core", "s0ma_lang_dsl", "s0ma_lang_mcp", "s0ma_lang_studi0")
 
 #: A deliberately fictional release version: no real s0ma release can ever
 #: collide with it, so nothing in these tests reads as a version claim.
@@ -449,12 +449,12 @@ def test_wrong_latest_is_its_own_class(cp: FixtureCP) -> None:
 
 def test_missing_fourth_wheel_is_its_own_class(cp: FixtureCP) -> None:
     """A three-wheel manifest → exit 5, naming the missing distribution."""
-    cp.drop_wheel("s0ma_studi0")
+    cp.drop_wheel("s0ma_lang_studi0")
     result = _run(cp, dist_dir=cp.dist_dir)
     out = _combined(result)
     assert result.returncode == EXIT_WHEEL_LIST, out
     assert "lists 3 wheels, expected 4" in out
-    assert "names no wheel for s0ma_studi0" in out
+    assert "names no wheel for s0ma_lang_studi0" in out
     assert "VERDICT: FAILED (exit 5)" in out
 
 
@@ -465,7 +465,7 @@ def test_served_bytes_not_matching_the_manifest_sha_is_its_own_class(
 
     This is the failure every keyed install would hit: the installer verifies
     the manifest hash and aborts, so the release is unusable."""
-    path = cp.path_for("s0ma_mcp")
+    path = cp.path_for("s0ma_lang_mcp")
     cp.state.objects[path] = b"tampered wheel bytes\n"
     result = _run(cp, dist_dir=cp.dist_dir)
     out = _combined(result)
@@ -479,7 +479,7 @@ def test_local_dist_mismatch_is_reported(cp: FixtureCP) -> None:
 
     The manifest and the served object agree, so an install would succeed —
     with different bytes than this checkout produced. That is still red."""
-    path = cp.path_for("s0ma_dsl")
+    path = cp.path_for("s0ma_lang_dsl")
     replacement = b"a different but self-consistent wheel\n"
     cp.state.objects[path] = replacement
     for entry in cp.state.entries:

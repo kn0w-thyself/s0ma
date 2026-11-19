@@ -2411,7 +2411,7 @@ class TestTestCommand:
         self, cli: S0maCLI, tmp_path: Path
     ):
         # M7: pass --project-root pointing at a synthetic-fallback project
-        # so discovery doesn't pick up the s0ma-dsl repo itself.
+        # so discovery doesn't pick up the s0ma-lang-dsl repo itself.
         proj = tmp_path / "proj"
         proj.mkdir()
         exit_code = cli.run([

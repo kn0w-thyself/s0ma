@@ -40,10 +40,10 @@
       "logical_path": "resources.s0ma",
       "name": "resources",
       "output": "resources.py",
-      "output_hash": "sha256:0e9f33ad48d5c1570b819365055c7385ea548b1f7d842544e3065969b5755f11",
+      "output_hash": "sha256:313238478d88274f5142e90a469f027b897af8042fafeea542ee552551b58a61",
       "role": "source",
       "source": "s0ma_src/resources.s0ma",
-      "source_hash": "sha256:f31d52ccaf3cac65daa6f03ff2057e4f4c228be83b229eedefce97a042f31cf7",
+      "source_hash": "sha256:27a788ce7197b929bbe13c7e484d15f146a329c456e398e4113f429876b84fd4",
       "source_map": "resources.s0ma.map",
       "source_root": "s0ma_src"
     },
@@ -52,20 +52,20 @@
       "logical_path": "tools.s0ma",
       "name": "tools",
       "output": "tools.py",
-      "output_hash": "sha256:8490fc7b8a0f4c0620c42a2ef8caef3deaf9f6d1bb45ef9d3bde6ae08495483a",
+      "output_hash": "sha256:1d9b19d34dea523bc47345300bd0bb6a85ad47af8cf9fcd6d7ced0ae4afca671",
       "role": "source",
       "source": "s0ma_src/tools.s0ma",
-      "source_hash": "sha256:e55b6b456f902bea5b5e48f859d3da50b3660c2db18e7414255a41c77f645ff4",
+      "source_hash": "sha256:9d58e782e7d30f95cfd6589ca2ff6a0d4ebe4f207ab66851ed90024fe99c30f2",
       "source_map": "tools.s0ma.map",
       "source_root": "s0ma_src"
     }
   ],
-  "project": "s0ma-mcp",
+  "project": "s0ma-lang-mcp",
   "schema": "s0ma-build-manifest@1",
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:2d7e9634fbe9e8fec7a07043822767c3eeec3ecee11e6011e59ccb4a6da6e8d8"
+      "sha256": "sha256:d5a82da07c8d9cb8b3dfc6de141418290b79ba4c0a82fc00bf9b08bdddd6643a"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",

@@ -1,6 +1,6 @@
 """``example.runs_in`` value validation (A8 T2).
 
-``runs_in:`` selects a dispatcher arm in s0ma-core's
+``runs_in:`` selects a dispatcher arm in s0ma-lang-core's
 ``ExampleDispatcher.dispatch``. Only three arms exist —
 ``standalone``, ``pytest``, ``integration`` — and the DSL spec §4.12.3
 declares the field as ``runs_in: <standalone | pytest | integration>``.

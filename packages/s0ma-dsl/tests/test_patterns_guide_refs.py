@@ -12,7 +12,7 @@ after it and silently invalidates every one of those citations: the
 batch-01c wave's new §24 (commit 0e44a18) shifted the standards block
 §24–29 → §25–30, and the stale citations were caught only by a one-off
 manual grep during orchestrator review. This gate makes that catch
-mechanical, in the spirit of ``test_doc_consistency.py`` and the s0ma-mcp
+mechanical, in the spirit of ``test_doc_consistency.py`` and the s0ma-lang-mcp
 ``TestDocDrift`` byte gate.
 
 What counts as a patterns-guide reference. The repo uses ``§`` for several
@@ -45,7 +45,7 @@ trees, ``docs/historical/``, and generated ``_built/`` output.
 
 If this gate is red after editing the guide: fix every citation it lists
 (they are live surfaces — MCP-served docs, scaffold text, CLI docstrings),
-refresh the byte-identical ``_docs`` mirrors (the s0ma-mcp drift gate), and
+refresh the byte-identical ``_docs`` mirrors (the s0ma-lang-mcp drift gate), and
 rebuild + commit the MCP self-host if a ``.s0ma`` source changed.
 """
 
@@ -59,10 +59,10 @@ from pathlib import Path
 import pytest
 
 # ---------------------------------------------------------------------------
-# Roots. The package root works in any checkout of s0ma-dsl; the monorepo
+# Roots. The package root works in any checkout of s0ma-lang-dsl; the monorepo
 # root (two levels further up) is required only by the cross-repo scan,
 # which skips itself outside a workspace checkout (same stance as the
-# s0ma-mcp drift gate's repo-checkout guard).
+# s0ma-lang-mcp drift gate's repo-checkout guard).
 # ---------------------------------------------------------------------------
 
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
@@ -287,7 +287,7 @@ def scan_files() -> tuple[Path, ...]:
         singles.append(pkg / "README.md")
         bases.append((pkg / "docs", "*.md"))
         bases.append((pkg / "src", "*.py"))
-        bases.append((pkg / "src", "*.md"))  # the s0ma-mcp _docs mirrors
+        bases.append((pkg / "src", "*.md"))  # the s0ma-lang-mcp _docs mirrors
         for pattern in ("*.s0ma", "*.md", "*.txt"):
             bases.append((pkg / "s0ma_src", pattern))
     files: set[Path] = {single for single in singles if single.is_file()}

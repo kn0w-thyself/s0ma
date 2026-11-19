@@ -166,7 +166,7 @@ def test_stub_is_byte_deterministic_across_builds(tmp_path: Path) -> None:
 
 
 def test_stub_header_lists_transpiler_version(built_project: Path) -> None:
-    """The stub header carries the s0ma-dsl version that produced it.
+    """The stub header carries the s0ma-lang-dsl version that produced it.
 
     The header comment serves two roles:
 

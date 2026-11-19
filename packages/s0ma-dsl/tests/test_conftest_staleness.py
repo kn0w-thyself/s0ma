@@ -671,7 +671,7 @@ def test_conftest_patch_targets_resolve_against_live_modules() -> None:
         assert target.startswith(canonical_roots), (
             f"patch target {target!r} does not start with a canonical "
             f"root {canonical_roots!r}; the conftest is meant to mock "
-            f"the s0ma framework or the s0ma-dsl runtime bridge only."
+            f"the s0ma framework or the s0ma-lang-dsl runtime bridge only."
         )
 
         # Walk the dotted path: import the longest importable prefix,
@@ -702,7 +702,7 @@ def test_conftest_patch_targets_resolve_against_live_modules() -> None:
 
 def test_conftest_register_module_target_is_s0ma_dsl_runtime_bridge() -> None:
     """G10 regression — the register_module patch goes through the
-    s0ma-dsl runtime bridge, not the s0ma framework directly.
+    s0ma-lang-dsl runtime bridge, not the s0ma framework directly.
 
     Pinning the canonical name explicitly guards against a future
     refactor that "fixes" the path by patching the framework-side

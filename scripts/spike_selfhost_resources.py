@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """The M0 feasibility spike, reproducible (selfhost plan, step 4).
 
-Authors the s0ma-mcp RESOURCES surface as a real ``.s0ma`` module in a
+Authors the s0ma-lang-mcp RESOURCES surface as a real ``.s0ma`` module in a
 scratch ``[tool.s0ma]`` project (embedded below — nothing in
 ``packages/s0ma-mcp`` changes; layout is M1's decision), builds it with the
 real toolchain, and proves the four GO/NO-GO gates:
 
   (a) mypy --strict clean on the emitted module (same stance as the
       package gate: the documented ``s0ma_dsl.*`` ignore-missing-imports
-      override; s0ma-core and s0ma-mcp resolve typed via py.typed);
+      override; s0ma-lang-core and s0ma-lang-mcp resolve typed via py.typed);
   (b) deterministic rebuild — two cold builds (fresh build dir + cache),
       every artifact byte-identical; the manifest is compared as JSON and
       must be equal except the documented run-varying ``built_at`` field
@@ -262,7 +262,7 @@ nerve spec_resource :: PRESENTATION
 nerve errors_resource :: PRESENTATION
     kind: FUNCTION
     visibility: PUBLIC
-    intent: "Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix"
+    intent: "Serves the generated diagnostic error catalog — every s0ma-lang-dsl error code with its severity by mode and canonical fix"
     expects: "the generated error catalog is packaged under s0ma_mcp/_docs"
     guarantees: "Returns the full error-catalog text"
     evaluates_at: FUNCTION_BOUNDARY
@@ -273,7 +273,7 @@ nerve errors_resource :: PRESENTATION
     def errors_resource() -> str:
         """The s0ma diagnostic error catalog (FR-MCP-10).
 
-        Every s0ma-dsl error code in one table: severity per strictness
+        Every s0ma-lang-dsl error code in one table: severity per strictness
         mode (migration / dev / strict / release) and a one-sentence
         description of the cause and canonical fix. Look unfamiliar
         diagnostic codes up here while working the check loop — generated
@@ -297,7 +297,7 @@ nerve changelog_resource :: PRESENTATION
         """The s0ma platform changelog — what's new, per version (FR-MCP-10).
 
         The monorepo's canonical Keep-a-Changelog document covering every
-        package (s0ma-core, s0ma-dsl, s0ma-mcp — one lockstep version,
+        package (s0ma-lang-core, s0ma-lang-dsl, s0ma-lang-mcp — one lockstep version,
         INV-4). Read it to learn what changed in the version you are
         running, or what an upgrade would bring; pair with
         s0ma://meta/version for the installed versions themselves.
@@ -333,9 +333,9 @@ nerve version_document :: PRESENTATION
         """
         return {
             "server": SERVER_NAME,
-            "s0ma_core": _dist_version("s0ma-core"),
-            "s0ma_dsl": _dist_version("s0ma-dsl"),
-            "s0ma_mcp": _dist_version("s0ma-mcp"),
+            "s0ma_core": _dist_version("s0ma-lang-core"),
+            "s0ma_dsl": _dist_version("s0ma-lang-dsl"),
+            "s0ma_mcp": _dist_version("s0ma-lang-mcp"),
             "mcp_sdk": _dist_version("mcp"),
             "python": platform.python_version(),
         }
@@ -379,7 +379,7 @@ nerve self_model_resource :: PRESENTATION
         The server eats its own dog food: every MCP tool and resource here
         is a registered s0ma component, and this document is the live
         graph — components with name, kind, layer, intent, and
-        dependencies, rendered through s0ma-core's own registry snapshot,
+        dependencies, rendered through s0ma-lang-core's own registry snapshot,
         plus the server's name and version. Read it to learn what this
         server is and what it can do; the ``describe_server`` tool returns
         the same graph with an LLM-ready text rendering.

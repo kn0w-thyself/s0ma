@@ -40,7 +40,7 @@ Do not use it to argue that hand-written explanation is unwelcome. Guides are au
 
 - `references/s0ma-prd.md#11. Glossary`
 - `references/s0ma-prd.md#5. Principles (P-#) — the philosophy, enforced`
-- `references/s0ma-prd.md#7.2 `s0ma-dsl` — the language and compiler (FR-DSL)`
+- `references/s0ma-prd.md#7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)`
 
 ## Where to look next
 
@@ -66,4 +66,4 @@ Do not use it to argue that hand-written explanation is unwelcome. Guides are au
 
 - Topic id: `concept:authored-vs-generated-boundary`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:c1c428b8cab5902c`
+- Documentation snapshot: `sha256:0170503312d72027`

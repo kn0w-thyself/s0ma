@@ -4,8 +4,8 @@ Provides optional REST (FastAPI) and MCP server endpoints for external
 tools, monitoring dashboards, and Claude Code integration.
 
 This package requires optional dependencies:
-    pip install s0ma-core[api]   # for REST API (FastAPI + uvicorn)
-    pip install s0ma-core[mcp]   # for MCP server
+    pip install s0ma-lang-core[api]   # for REST API (FastAPI + uvicorn)
+    pip install s0ma-lang-core[mcp]   # for MCP server
 
 The core framework (lifecycle, self-model, verifiers) has zero runtime
 dependencies. This package is additive — importing it without the

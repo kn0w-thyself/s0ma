@@ -6,28 +6,28 @@ self-check) to the workspace root for the 0.5.0 consolidation. One command
 runs every CI gate (PRD NFR-1):
 
 1. ruff over ``packages/``
-2. mypy --strict over s0ma-core (run from the package directory so its
+2. mypy --strict over s0ma-lang-core (run from the package directory so its
    ``[tool.mypy]`` overrides load — from the repo root they never do and
    mypy reports bogus import-untyped errors)
-3. mypy --strict over s0ma-mcp (same from-the-package-dir rule)
-4. mypy --strict over s0ma-dsl (same from-the-package-dir rule; gated
+3. mypy --strict over s0ma-lang-mcp (same from-the-package-dir rule)
+4. mypy --strict over s0ma-lang-dsl (same from-the-package-dir rule; gated
    since 0.8.0 DSL-M5 — the package is now strict-clean and ships
    ``py.typed``, closing the 0.5.0-era follow-up). Runs TWICE: the
    native view plus ``--platform win32``, because mypy resolves
    ``sys.platform`` conditionals for the running platform only — a
    Windows-only block can be strict-broken while every POSIX run stays
    green (the DSL-M5 repair lesson)
-5. mypy --strict over s0ma-studi0 (same from-the-package-dir rule).
+5. mypy --strict over s0ma-lang-studi0 (same from-the-package-dir rule).
    Also runs TWICE, for a different reason — the ADR-001 self-hosted
    layout: the handwritten view with ``_built/`` excluded, then the
    committed build output analyzed FLAT with ``MYPYPATH`` pointing at
    it, because a single package-rooted walk cannot resolve the built
    modules' flat cross-imports (they import each other by canonical
    name, the way the runtime bootstrap loads them)
-6. the s0ma-core test suite
-7. the s0ma-dsl test suite
-8. the s0ma-mcp test suite
-9. the s0ma-studi0 test suite
+6. the s0ma-lang-core test suite
+7. the s0ma-lang-dsl test suite
+8. the s0ma-lang-mcp test suite
+9. the s0ma-lang-studi0 test suite
 10. the Claude integration (``integrations/``: the launcher, the Claude Code
     plugin and the Claude Desktop extension). Ruff over the whole tree, the
     launcher held to ``mypy --strict`` in BOTH the native and the
@@ -87,8 +87,8 @@ Usage:
 Adding a package:
     ruff and the spelling guard pick it up automatically; add one
     ``Stage("pytest-<name>", ...)`` entry to STAGES below for its test
-    suite (and a mypy stage if it is strict-clean — s0ma-mcp and
-    s0ma-studi0 are, and carry both). If it is self-hosted (its build
+    suite (and a mypy stage if it is strict-clean — s0ma-lang-mcp and
+    s0ma-lang-studi0 are, and carry both). If it is self-hosted (its build
     output is committed and shipped), add a ``SelfHosted`` record and one
     ``_selfhost`` sub-step to the selfhost-build stage.
 """
@@ -275,16 +275,16 @@ class SelfHosted:
 #: The self-hosted packages and their committed build directories (ADR-001:
 #: .s0ma sources in s0ma_src/, build output committed under src/<pkg>/_built).
 #: BOTH ship that output in their wheel, so for both a stale commit of it is
-#: a release defect — s0ma-studi0 joined this gate at studi0-v1 M7, once its
+#: a release defect — s0ma-lang-studi0 joined this gate at studi0-v1 M7, once its
 #: committed build became load-bearing product rather than a scratch artifact.
 MCP_SELFHOST = SelfHosted(
-    distribution="s0ma-mcp",
+    distribution="s0ma-lang-mcp",
     root=ROOT / "packages" / "s0ma-mcp",
     built=ROOT / "packages" / "s0ma-mcp" / "src" / "s0ma_mcp" / "_built",
     declared_mode="release",
 )
 STUDI0_SELFHOST = SelfHosted(
-    distribution="s0ma-studi0",
+    distribution="s0ma-lang-studi0",
     root=ROOT / "packages" / "s0ma-studi0",
     built=ROOT / "packages" / "s0ma-studi0" / "src" / "s0ma_studi0" / "_built",
     declared_mode="strict",
@@ -313,8 +313,8 @@ def selfhost_build_stage(package: SelfHosted) -> int:
     """Rebuild *package* from its .s0ma sources; assert byte-equality.
 
     Every self-hosted package's wheel ships the transpiler's COMMITTED
-    build output (``src/<pkg>/_built/``: FR-MCP-11 for s0ma-mcp, the
-    same posture for s0ma-studi0 — its runtime bootstraps those emitted
+    build output (``src/<pkg>/_built/``: FR-MCP-11 for s0ma-lang-mcp, the
+    same posture for s0ma-lang-studi0 — its runtime bootstraps those emitted
     modules at import time), so the committed bytes must be exactly what
     ``s0ma build`` reproduces from ``s0ma_src/`` on every machine and
     OS. This stage rebuilds in place with the cache disabled
@@ -333,7 +333,7 @@ def selfhost_build_stage(package: SelfHosted) -> int:
       --mode <declared mode>`` and commit ``s0ma_src/`` and ``_built/``
       together (one commit, plan D-4); or
     * the transpiler stopped being deterministic/portable for the same
-      input (a P-4/INV-5 regression — fix it in s0ma-dsl, never paper
+      input (a P-4/INV-5 regression — fix it in s0ma-lang-dsl, never paper
       over it here). This stage is the standing cross-platform
       determinism regression test: the committed bytes were produced
       on one machine and re-derived on every CI OS.
@@ -366,7 +366,7 @@ def selfhost_build_stage(package: SelfHosted) -> int:
                 "build", str(package.root),
                 # DSL-M3 (friction log F-M1-2): no --mode flag. Each
                 # package's pyproject declares [tool.s0ma].mode (release
-                # for s0ma-mcp, strict for s0ma-studi0), and as of 0.8.0
+                # for s0ma-lang-mcp, strict for s0ma-lang-studi0), and as of 0.8.0
                 # the CLI READS that key (precedence:
                 # --mode flag > [tool.s0ma].mode > the command's built-in
                 # default), so this stage proves the table-driven path on
@@ -422,7 +422,7 @@ def selfhost_build_stage(package: SelfHosted) -> int:
             f"committed (run `uv run s0ma --project-root {relative_root} "
             f"build {relative_root} --mode {package.declared_mode}` and "
             f"commit s0ma_src/ + _built/ together), or build determinism "
-            f"regressed (P-4/INV-5 — fix s0ma-dsl). Both are real failures."
+            f"regressed (P-4/INV-5 — fix s0ma-lang-dsl). Both are real failures."
         )
         return 1
     finally:
@@ -497,17 +497,17 @@ STAGES: list[Stage] = [
     Stage("ruff", "ruff over packages/", _cmd([*PY, "ruff", "check", "packages/"], ROOT)),
     Stage(
         "mypy-core",
-        "mypy --strict on s0ma-core (from packages/s0ma-core so [tool.mypy] loads)",
+        "mypy --strict on s0ma-lang-core (from packages/s0ma-core so [tool.mypy] loads)",
         _cmd([*PY, "mypy", "src/s0ma", "--strict"], ROOT / "packages" / "s0ma-core"),
     ),
     Stage(
         "mypy-mcp",
-        "mypy --strict on s0ma-mcp (from packages/s0ma-mcp so [tool.mypy] loads)",
+        "mypy --strict on s0ma-lang-mcp (from packages/s0ma-mcp so [tool.mypy] loads)",
         _cmd([*PY, "mypy", "src/s0ma_mcp", "--strict"], ROOT / "packages" / "s0ma-mcp"),
     ),
     Stage(
         "mypy-dsl",
-        "mypy --strict on s0ma-dsl, native + win32 views (from packages/s0ma-dsl)",
+        "mypy --strict on s0ma-lang-dsl, native + win32 views (from packages/s0ma-dsl)",
         _seq(
             (
                 "native view",
@@ -538,7 +538,7 @@ STAGES: list[Stage] = [
     ),
     Stage(
         "mypy-studi0",
-        "mypy --strict on s0ma-studi0, handwritten + built views (from packages/s0ma-studi0)",
+        "mypy --strict on s0ma-lang-studi0, handwritten + built views (from packages/s0ma-studi0)",
         _seq(
             (
                 # The single handwritten module (the bootstrap package
@@ -581,22 +581,22 @@ STAGES: list[Stage] = [
     ),
     Stage(
         "pytest-core",
-        "s0ma-core test suite",
+        "s0ma-lang-core test suite",
         _cmd([*PY, "pytest", "tests", "-q"], ROOT / "packages" / "s0ma-core"),
     ),
     Stage(
         "pytest-dsl",
-        "s0ma-dsl test suite",
+        "s0ma-lang-dsl test suite",
         _cmd([*PY, "pytest", "tests", "-q"], ROOT / "packages" / "s0ma-dsl"),
     ),
     Stage(
         "pytest-mcp",
-        "s0ma-mcp test suite",
+        "s0ma-lang-mcp test suite",
         _cmd([*PY, "pytest", "tests", "-q"], ROOT / "packages" / "s0ma-mcp"),
     ),
     Stage(
         "pytest-studi0",
-        "s0ma-studi0 test suite",
+        "s0ma-lang-studi0 test suite",
         _cmd([*PY, "pytest", "tests", "-q"], ROOT / "packages" / "s0ma-studi0"),
     ),
     Stage(
@@ -699,14 +699,14 @@ STAGES: list[Stage] = [
         "release integrity (selfhost equality, generated knowledge, wheel licenses, cold install)",
         _seq(
             (
-                "selfhost committed-build equality (s0ma-mcp)",
+                "selfhost committed-build equality (s0ma-lang-mcp)",
                 _selfhost(MCP_SELFHOST),
             ),
             (
                 # studi0's committed _built/ ships in its wheel and its
                 # runtime bootstraps from it — held to the identical
                 # byte-equality gate since studi0-v1 M7.
-                "selfhost committed-build equality (s0ma-studi0)",
+                "selfhost committed-build equality (s0ma-lang-studi0)",
                 _selfhost(STUDI0_SELFHOST),
             ),
             (

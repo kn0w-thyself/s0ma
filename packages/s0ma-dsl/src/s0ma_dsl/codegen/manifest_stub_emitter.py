@@ -35,7 +35,7 @@ Public surface
 - :func:`emit_manifest_stub` — write the stub to a build directory.
 
 The renderer is deterministic by construction: module names are sorted
-alphabetically, the header lists the s0ma-dsl version that produced
+alphabetically, the header lists the s0ma-lang-dsl version that produced
 the file (but no timestamp — repeat builds within the same project
 produce byte-identical output as long as the inputs are unchanged),
 and the body is plain ASCII Python.
@@ -63,7 +63,7 @@ def render_manifest_stub(
 
     The renderer is a pure function of the manifest plus the transpiler
     version string — no clocks, no environment, no filesystem reads —
-    so two builds of the same project with the same s0ma-dsl version
+    so two builds of the same project with the same s0ma-lang-dsl version
     produce byte-identical stubs. Module names are sorted
     alphabetically so the per-module declarations are deterministic
     independent of the order the manifest stores them in (the
@@ -73,7 +73,7 @@ def render_manifest_stub(
     Stub structure (in this order):
 
     1. A header comment block naming ``s0ma build`` as the producer
-       and pinning the s0ma-dsl version that wrote the file. Consumers
+       and pinning the s0ma-lang-dsl version that wrote the file. Consumers
        reading the stub know exactly which transpiler version's
        expectations the file encodes.
     2. The ``from types import ModuleType`` import and a

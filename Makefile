@@ -3,7 +3,7 @@
 # constitutes a passing tree (it is exactly what CI runs); these targets
 # are typing-savers, not alternative pipelines.
 #
-# The s0ma-dsl package keeps its own Makefile for package-local
+# The s0ma-lang-dsl package keeps its own Makefile for package-local
 # conveniences — notably `docs-derived`, which renders the in-repo
 # doc-ref generators; the root `docs-derived` target forwards to it with
 # the workspace CLI.

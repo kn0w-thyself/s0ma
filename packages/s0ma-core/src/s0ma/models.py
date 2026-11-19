@@ -1361,7 +1361,7 @@ class RegistrySnapshot:
         ``DocRefRegistration.covers`` (typed :class:`FilterExpr` list)
         is, per the plan, a coarse textual containment check on the
         filter's ``raw`` source — full filter-expression evaluation
-        lands later in s0ma-dsl.
+        lands later in s0ma-lang-dsl.
         """
         target = _coerce_entity_ref(entity_ref)
         guides = [

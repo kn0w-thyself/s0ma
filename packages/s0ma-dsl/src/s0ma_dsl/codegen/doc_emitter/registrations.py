@@ -1,6 +1,6 @@
 """Build provisional doc registration records from AST declarations.
 
-The s0ma-core M7 ``content_hash`` utility hashes a
+The s0ma-lang-core M7 ``content_hash`` utility hashes a
 :class:`DocRefRegistration` or :class:`DocGuideRegistration` directly,
 so the transpiler must construct one *before* it knows the hash. We
 build them with ``content_hash=""``; ``content_hash`` itself zeroes the

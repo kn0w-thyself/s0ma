@@ -205,7 +205,7 @@ exactly what would travel.
 
 - **The viewer draws nothing.** Nothing has been built yet. Build once, reload.
 - **`s0ma studi0` says the viewer is not installed.** The viewer ships as its
-  own optional package, `s0ma-studi0`.
+  own optional package, `s0ma-lang-studi0`.
 - **A feedback command says this machine is not connected**, or reports
   `INVALID_TOKEN`. The access code for feedback is not your license key, and it
   can expire or be withdrawn. Run `s0ma feedback enroll` to connect this machine

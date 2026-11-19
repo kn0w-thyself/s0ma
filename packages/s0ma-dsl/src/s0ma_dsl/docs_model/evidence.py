@@ -1381,7 +1381,7 @@ def _server() -> Any:
     """The real authoring server, created in this process.
 
     Imported here rather than at module scope for two reasons that point
-    the same way: s0ma-mcp depends on this package, so a module-scope
+    the same way: s0ma-lang-mcp depends on this package, so a module-scope
     import would be a cycle between distributions, and the documentation
     build imports this module without ever wanting a server. A missing
     server is refused with a sentence rather than an ImportError, because
@@ -1393,7 +1393,7 @@ def _server() -> Any:
     except ImportError as missing:  # pragma: no cover - exercised without the wheel
         raise DocsEvidenceError(
             "an mcp transcript replays against the real authoring server and "
-            "s0ma-mcp is not importable here. Install it, or run this fixture "
+            "s0ma-lang-mcp is not importable here. Install it, or run this fixture "
             "in an environment that has it — there is no stand-in, because a "
             "transcript of a stub is evidence of the stub."
         ) from missing

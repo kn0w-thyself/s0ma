@@ -45,7 +45,7 @@ Do not use metacognition for the act of recording structure or measuring behavio
 - `references/s0ma-prd.md#1`
 - `references/s0ma-prd.md#11. Glossary`
 - `references/s0ma-prd.md#5. Principles (P-#) — the philosophy, enforced`
-- `references/s0ma-prd.md#7.1 `s0ma-core` — the runtime (FR-CORE)`
+- `references/s0ma-prd.md#7.1 `s0ma-lang-core` — the runtime (FR-CORE)`
 
 ## Where to look next
 
@@ -66,4 +66,4 @@ Do not use metacognition for the act of recording structure or measuring behavio
 
 - Topic id: `concept:metacognition`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:c1c428b8cab5902c`
+- Documentation snapshot: `sha256:0170503312d72027`

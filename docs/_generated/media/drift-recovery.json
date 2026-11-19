@@ -4,7 +4,7 @@
     "journey": "journey:drift-recovery",
     "published_by": "doc:guide/drift-recovery",
     "release": "0.21.1 (preview)",
-    "snapshot": "sha256:c1c428b8cab5902c"
+    "snapshot": "sha256:0170503312d72027"
   },
   "package": {
     "audience": [
@@ -124,7 +124,7 @@
         "when": "GENERATED_FILE_DRIFT"
       },
       {
-        "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-core and s0ma-dsl in the project's own list of dependencies.",
+        "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-lang-core and s0ma-lang-dsl in the project's own list of dependencies.",
         "next_surface": "cli:s0ma/doctor",
         "next_surface_name": "s0ma doctor",
         "when": "HOST_RUNTIME_UNDECLARED"

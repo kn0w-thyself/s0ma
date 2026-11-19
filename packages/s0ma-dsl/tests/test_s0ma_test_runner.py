@@ -41,7 +41,7 @@ def staged_project(tmp_path: Path) -> Path:
     """Copy the fixture into ``tmp_path`` so the build dir lands there.
 
     ``s0ma test`` mutates ``project.build_dir`` and the in-tree fixture
-    lives in the s0ma-dsl repo's tests/. Staging keeps the test
+    lives in the s0ma-lang-dsl repo's tests/. Staging keeps the test
     hermetic and survives parallel pytest workers.
     """
     dst = tmp_path / "cross_module_test_project"

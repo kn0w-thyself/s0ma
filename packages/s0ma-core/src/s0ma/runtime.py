@@ -1,6 +1,6 @@
 """Verified runtime access to deterministic s0ma self-context artifacts.
 
-This module deliberately uses only the Python standard library and s0ma-core
+This module deliberately uses only the Python standard library and s0ma-lang-core
 types.  It never imports the authoring DSL and never executes project code.
 """
 
@@ -406,9 +406,9 @@ def self_context(
         raise _remediation("Self-prompt card is missing the fixed authored-data trust instruction.")
     # The build tool owns this contract (``s0ma_dsl.codegen.self_context``);
     # these literals are the runtime's independent re-verification of it and
-    # are deliberately not imported — s0ma-core never depends on the DSL. The
+    # are deliberately not imported — s0ma-lang-core never depends on the DSL. The
     # byte ceiling rose from 1,800 to 2,600 on 2026-08-30 (owner-ratified),
-    # sized so the s0ma-mcp inventory fits whole; if you change one, change both.
+    # sized so the s0ma-lang-mcp inventory fits whole; if you change one, change both.
     if len(card.encode("utf-8")) > 2_600 or len(card.split()) > 240:
         raise _remediation("Self-prompt card exceeds its 2600-byte/240-word contract.")
 

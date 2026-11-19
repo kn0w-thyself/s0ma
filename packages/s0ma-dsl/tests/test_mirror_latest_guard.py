@@ -41,7 +41,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 MIRROR_SH = REPO_ROOT / "scripts" / "mirror_to_r2.sh"
 
 #: The four wheel stems the mirror expects in --dist-dir (H4 contract).
-WHEEL_STEMS = ("s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0")
+WHEEL_STEMS = ("s0ma_lang_core", "s0ma_lang_dsl", "s0ma_lang_mcp", "s0ma_lang_studi0")
 
 #: The flag that names the rollback path. Its exact spelling is part of the
 #: refusal's remediation — RD-5 — so it is pinned here.

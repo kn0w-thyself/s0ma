@@ -265,7 +265,7 @@ class TestComponentCoverage:
         dsl = _get_dsl_components(_fresh_registry)
         for name, spec in dsl.items():
             assert spec.is_framework, (
-                f"{name} is registered as a user component; the s0ma-dsl "
+                f"{name} is registered as a user component; the s0ma-lang-dsl "
                 f"helpers are framework components"
             )
 

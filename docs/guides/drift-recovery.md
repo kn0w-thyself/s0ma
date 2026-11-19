@@ -202,7 +202,7 @@ s0ma build .
 
 ```text
 {project}/pyproject.toml:1: WARNING [HOST_RUNTIME_UNDECLARED]
-  Generated Python imports the s0ma runtime, but the host project does not declare s0ma-core, s0ma-dsl in [project].dependencies.
+  Generated Python imports the s0ma runtime, but the host project does not declare s0ma-lang-core, s0ma-lang-dsl in [project].dependencies.
 Results: 0 error(s), 1 warning(s) [mode: dev]
 Build complete: 3 module(s) → {project}/build (manifest: build.s0ma.json)
 ```

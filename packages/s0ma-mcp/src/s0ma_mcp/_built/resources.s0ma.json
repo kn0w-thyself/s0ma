@@ -709,7 +709,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix"
+        "value": "Serves the generated diagnostic error catalog — every s0ma-lang-dsl error code with its severity by mode and canonical fix"
       },
       "kind": "FUNCTION",
       "location": {
@@ -2582,7 +2582,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:f31d52ccaf3cac65daa6f03ff2057e4f4c228be83b229eedefce97a042f31cf7",
+    "content_hash": "sha256:27a788ce7197b929bbe13c7e484d15f146a329c456e398e4113f429876b84fd4",
     "exports_helpers": {
       "state": "none"
     },
@@ -2598,6 +2598,6 @@
     "version": "0.7.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:f31d52ccaf3cac65",
+  "source_hash": "sha256:27a788ce7197b929",
   "transpiler_version": "1.0.0"
 }

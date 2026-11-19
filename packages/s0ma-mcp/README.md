@@ -1,4 +1,4 @@
-# s0ma-mcp
+# s0ma-lang-mcp
 
 The **s0ma authoring MCP server** — exposes the s0ma DSL toolchain and the agent-alignment guides to coding agents over the [Model Context Protocol](https://modelcontextprotocol.io) (stdio transport, FastMCP). This is the agent-interface layer of the s0ma platform (PRD §7.3): an agent connects, reads the system's guides, then drives the scaffold → check → transpile/build loop entirely through tools.
 
@@ -8,9 +8,9 @@ It is also the **flagship `.s0ma` application** (FR-MCP-11): every tool, resourc
 
 Four distributions ship together at one version, and dependencies only ever point down the stack (PRD INV-6):
 
-**`s0ma-mcp`** · [`s0ma-studi0`](../s0ma-studi0) → [`s0ma-dsl`](../s0ma-dsl) → [`s0ma-core`](../s0ma-core)
+**`s0ma-lang-mcp`** · [`s0ma-lang-studi0`](../s0ma-studi0) → [`s0ma-lang-dsl`](../s0ma-dsl) → [`s0ma-lang-core`](../s0ma-core)
 
-Installing this one package transitively provides the full toolchain (`s0ma-dsl` and `s0ma-core[mcp]`). `s0ma-mcp` is **Apache-2.0**, and so are `s0ma-core`, `s0ma-dsl` and `s0ma-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
+Installing this one package transitively provides the full toolchain (`s0ma-lang-dsl` and `s0ma-lang-core[mcp]`). `s0ma-lang-mcp` is **Apache-2.0**, and so are `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
 
 ## Install and register
 
@@ -114,7 +114,7 @@ Implementation note: tools invoke the `s0ma` CLI's own command surface (`s0ma_ds
 
 ## The surface is derived, not enumerated (FR-MCP-7)
 
-`s0ma-mcp` is itself a s0ma application: every tool, resource, prompt, and the `create_server` factory is a registered s0ma component — name, kind, layer, one-sentence intent, dependencies — in a dedicated package self-model, and `create_server` derives the entire FastMCP surface from it. There is no hand-maintained registration list, so a component carrying MCP metadata is served *because* it is in the registry, and a served surface without a registered component cannot exist. Ask the running server what it is: `describe_server()`, or read `s0ma://self/model`.
+`s0ma-lang-mcp` is itself a s0ma application: every tool, resource, prompt, and the `create_server` factory is a registered s0ma component — name, kind, layer, one-sentence intent, dependencies — in a dedicated package self-model, and `create_server` derives the entire FastMCP surface from it. There is no hand-maintained registration list, so a component carrying MCP metadata is served *because* it is in the registry, and a served surface without a registered component cannot exist. Ask the running server what it is: `describe_server()`, or read `s0ma://self/model`.
 
 Adding a surface is therefore one move: author the `.s0ma` declaration with the matching `declares_attributes` namespace — `mcp_uri:<uri>` (plus `mcp_mime_type:<type>` where not text/plain) for resources, `mcp_prompt:<name>` plus `mcp_prompt_title:<title>` for prompts, `mcp_tool:<name>` plus `mcp_tool_annotations:<field>=<bool>` for tools — and the bridge catalogs it, the factory serves it. Two gates hold that line: `tests/test_components.py::TestDerivedSurface` asserts that every MCP-surfaced component carries complete serving metadata, that the catalog partitions exactly into served surfaces and a documented internal-plumbing allowlist (`UNSERVED_COMPONENTS`), and that an injected fake component with MCP metadata is served *without* touching the factory — derivation, not enumeration; and the committed schema snapshot (`tests/snapshots/mcp_surface.json`) pins the whole client-visible surface byte-exactly.
 
@@ -135,13 +135,13 @@ uv run python scripts/check.py
 git add packages/s0ma-mcp/s0ma_src packages/s0ma-mcp/src/s0ma_mcp/_built   # one commit
 ```
 
-A red `selfhost-build` stage means exactly one of two things, and both are real failures: you forgot to rebuild and commit, or the transpiler stopped being deterministic for the same input (a s0ma-dsl bug to fix, never to paper over).
+A red `selfhost-build` stage means exactly one of two things, and both are real failures: you forgot to rebuild and commit, or the transpiler stopped being deterministic for the same input (a s0ma-lang-dsl bug to fix, never to paper over).
 
 ## The documents it ships
 
 The file-backed document resources — the agent guides, the error catalog, the changelog, and the quick reference in both its forms (the page at `s0ma://guide/quick-reference` and the same facts as data at `s0ma://guide/quick-reference.json`) — are **committed copies** of their in-repo sources, shipped as package data in `s0ma_mcp/_docs/` and resolved with `importlib.resources`, so they work from an installed wheel and not only from a checkout (PRD FR-MCP-3/FR-MCP-10). `s0ma://meta/version` is the exception: no file — it renders live from `importlib.metadata` at read time.
 
-The copies exist because the `s0ma-dsl` wheel packages only `src/s0ma_dsl` (its `docs/` tree is repo-only, the root `CHANGELOG.md` belongs to no wheel at all, and the quick reference is written by the documentation build under the repository's `docs/`), so cross-package resolution from installed distributions is impossible without changing those packages. They cannot drift silently: `tests/test_resources.py::TestDocDrift` byte-compares every file in `_docs/` against its in-repo source on every CI run, and CI stays red until the copy here is refreshed (`cp` the file and commit). Each copy and its original are listed in [the MCP servers](../../docs/reference/mcp.md). The error catalog's source is itself generated from the DSL's error-code registry: after grammar or diagnostic changes, regenerate it first (`make -C packages/s0ma-dsl docs-derived S0MA="uv run s0ma"`), then refresh the copy here.
+The copies exist because the `s0ma-lang-dsl` wheel packages only `src/s0ma_dsl` (its `docs/` tree is repo-only, the root `CHANGELOG.md` belongs to no wheel at all, and the quick reference is written by the documentation build under the repository's `docs/`), so cross-package resolution from installed distributions is impossible without changing those packages. They cannot drift silently: `tests/test_resources.py::TestDocDrift` byte-compares every file in `_docs/` against its in-repo source on every CI run, and CI stays red until the copy here is refreshed (`cp` the file and commit). Each copy and its original are listed in [the MCP servers](../../docs/reference/mcp.md). The error catalog's source is itself generated from the DSL's error-code registry: after grammar or diagnostic changes, regenerate it first (`make -C packages/s0ma-dsl docs-derived S0MA="uv run s0ma"`), then refresh the copy here.
 
 ## Telemetry (off by default, invisible to agents)
 
@@ -173,4 +173,4 @@ In a terminal, `s0ma docs` opens the same map and `s0ma docs show <topic>` answe
 
 ## License
 
-Apache License 2.0 — see [`LICENSE`](LICENSE) for details. The rest of the toolchain shares it: `s0ma-core`, `s0ma-dsl` and `s0ma-studi0` are Apache-2.0 too, each with its own `LICENSE`.
+Apache License 2.0 — see [`LICENSE`](LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-studi0` are Apache-2.0 too, each with its own `LICENSE`.

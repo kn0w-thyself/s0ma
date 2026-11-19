@@ -24,10 +24,10 @@ requires-python = ">=3.11"
 # standing HOST_RUNTIME_UNDECLARED warning (ADR-012 §1, addition 1). The
 # application's own machinery — the `s0ma-docs-model@1` schema, the
 # registered providers, the composition engine and the renderers — ships in the
-# s0ma-dsl wheel, and the component registry it reads ships in s0ma-core.
+# s0ma-lang-dsl wheel, and the component registry it reads ships in s0ma-lang-core.
 dependencies = [
-    "s0ma-core >= 0.18.0",
-    "s0ma-dsl >= 0.18.0",
+    "s0ma-lang-core >= 0.18.0",
+    "s0ma-lang-dsl >= 0.18.0",
 ]
 
 [tool.s0ma]

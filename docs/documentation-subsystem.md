@@ -469,7 +469,7 @@ A person opens Markdown in this repository, or asks the command line —
 `s0ma docs` for the map, `s0ma docs list`, `s0ma docs show` for one topic, and
 `s0ma docs search` for a deterministic search that does not guess. An agent
 asks the authoring server, which serves the same topics as resources and tools
-over MCP. An installed copy of s0ma-core with no repository in sight answers
+over MCP. An installed copy of s0ma-lang-core with no repository in sight answers
 from a teaching slice generated here and carried inside its own wheel.
 
 Every one of those channels is offline and deterministic, and every one of

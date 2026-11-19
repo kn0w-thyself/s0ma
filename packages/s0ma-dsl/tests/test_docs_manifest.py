@@ -192,7 +192,7 @@ class TestTheFacts:
     def test_the_product_version_is_the_lockstep_anchors(
         self, manifest: DocsManifest
     ) -> None:
-        """PRD INV-4: s0ma-core's version is the product's."""
+        """PRD INV-4: s0ma-lang-core's version is the product's."""
         anchored = {item.distribution: item.version for item in manifest.package_versions}
         assert anchored[LOCKSTEP_ANCHOR] == manifest.product_version
 

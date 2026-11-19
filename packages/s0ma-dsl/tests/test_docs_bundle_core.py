@@ -2,7 +2,7 @@
 
 Milestone F8 of the docs-function plan (internal) §11, owner decision D-9.
 
-The slice exists because s0ma-core shipped unable to teach: its teaching
+The slice exists because s0ma-lang-core shipped unable to teach: its teaching
 module read a Markdown user guide it located by walking up to a repository
 checkout, and no wheel has ever carried that guide. This module renders the
 content into one file that ships inside the core wheel instead. The claims:
@@ -15,7 +15,7 @@ content into one file that ships inside the core wheel instead. The claims:
   of their steps is a core surface today, and the file says so rather than
   handing a core-only reader steps it cannot take;
 * **it is core-neutral.** The document is objects, arrays, strings and
-  numbers. Nothing in it needs s0ma-dsl to read, which is what makes D-9's
+  numbers. Nothing in it needs s0ma-lang-dsl to read, which is what makes D-9's
   "no upward dependency" possible at all — the reader's half of that
   proof is ``packages/s0ma-core/tests/test_teaching_slice.py``;
 * **the compatibility promise is checked here, not in core.** The twelve

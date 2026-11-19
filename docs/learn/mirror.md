@@ -42,7 +42,7 @@ Do not call a document a mirror when it is edited in its own right, or when it m
 
 - `references/s0ma-prd.md#11. Glossary`
 - `references/s0ma-prd.md#5. Principles (P-#) — the philosophy, enforced`
-- `references/s0ma-prd.md#7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**`
+- `references/s0ma-prd.md#7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**`
 
 ## Where to look next
 
@@ -64,4 +64,4 @@ Do not call a document a mirror when it is edited in its own right, or when it m
 
 - Topic id: `concept:mirror`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:c1c428b8cab5902c`
+- Documentation snapshot: `sha256:0170503312d72027`

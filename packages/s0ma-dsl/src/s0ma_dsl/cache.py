@@ -3,7 +3,7 @@
 Implements basic caching per PRD §2.7.5: hash-based incremental cache stored
 under a hidden ``.s0ma.cache/`` directory (rooted at the project root, *not*
 under the build output directory). Cache invalidation is based on file
-content hashes (SHA-256) and the version of s0ma-dsl that wrote the
+content hashes (SHA-256) and the version of s0ma-lang-dsl that wrote the
 entry. A cache hit skips the entire transpile pipeline for that file.
 
 **Cache layout policy (M6a, feedback 5–6):** The cache directory is *internal*
@@ -257,7 +257,7 @@ class BuildCache:
     ``sys.path`` and is *not* the importable build output (which lives at
     ``<project>.build_dir`` per ADR-007). Invalidation is based on SHA-256
     of the raw ``.s0ma`` source text, of any file it embeds, and of the
-    version of s0ma-dsl that wrote the entry.
+    version of s0ma-lang-dsl that wrote the entry.
     """
 
     cache_dir: Path

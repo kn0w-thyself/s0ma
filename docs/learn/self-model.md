@@ -71,4 +71,4 @@ Do not use self-model for the capability of having one; that is self-knowledge. 
 
 - Topic id: `concept:self-model`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:c1c428b8cab5902c`
+- Documentation snapshot: `sha256:0170503312d72027`

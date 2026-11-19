@@ -68,7 +68,7 @@ class TestDoctorOnTheMonorepo:
         assert set(report) >= SECTION_KEYS
         assert report["ok"] is True
         versions = report["versions"]
-        # core + dsl resolve from the workspace; s0ma-mcp/s0ma-studi0/
+        # core + dsl resolve from the workspace; s0ma-lang-mcp/s0ma-lang-studi0/
         # mcp_sdk are tolerated as None (core+dsl-only installs
         # supported, INV-6 — both packages are optional add-ons).
         assert versions["python"]
@@ -105,22 +105,22 @@ class TestDoctorOnTheMonorepo:
 
 
 class TestOptionalDistributions:
-    """s0ma-studi0 is an add-on: absence is diagnosed, never failed (INV-6).
+    """s0ma-lang-studi0 is an add-on: absence is diagnosed, never failed (INV-6).
 
-    The same contract s0ma-mcp has had since FR-DSL-5 v1.1 — the viewer
+    The same contract s0ma-lang-mcp has had since FR-DSL-5 v1.1 — the viewer
     joined the versions block at studi0-v1 M7.
     """
 
     @staticmethod
     def _without_studi0(monkeypatch: pytest.MonkeyPatch) -> None:
-        """Report s0ma-studi0 as absent, leaving every other lookup real."""
+        """Report s0ma-lang-studi0 as absent, leaving every other lookup real."""
         from s0ma_dsl.cli import doctor
 
         installed = doctor._dist_version
         monkeypatch.setattr(
             doctor,
             "_dist_version",
-            lambda name: None if name == "s0ma-studi0" else installed(name),
+            lambda name: None if name == "s0ma-lang-studi0" else installed(name),
         )
 
     def test_absence_is_an_info_finding_and_still_exits_zero(
@@ -140,7 +140,7 @@ class TestOptionalDistributions:
         studi0 = [
             f
             for f in report["findings"]
-            if f["section"] == "versions" and "s0ma-studi0" in f["message"]
+            if f["section"] == "versions" and "s0ma-lang-studi0" in f["message"]
         ]
         assert len(studi0) == 1, studi0
         assert studi0[0]["severity"] == "info", studi0[0]
@@ -159,12 +159,56 @@ class TestOptionalDistributions:
 
         assert rc == EXIT_SUCCESS
         out = capsys.readouterr().out
-        assert "s0ma-studi0 not installed" in out
+        assert "s0ma-lang-studi0 not installed" in out
 
 
 # ---------------------------------------------------------------------------
 # (b) A temp project: fresh → stale → unbuilt → orphaned
 # ---------------------------------------------------------------------------
+
+
+class TestFormerDistributionNames:
+    """A package left installed under its pre-rename name is said, not hidden.
+
+    `s0ma-core` and `s0ma-lang-core` install the same import package, so an
+    environment holding both has two owners for one set of files.
+    """
+
+    def test_a_leftover_former_name_is_a_warning_that_names_its_successor(
+        self,
+        cli: S0maCLI,
+        capsys: pytest.CaptureFixture[str],
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        from s0ma_dsl.cli import doctor
+
+        installed = doctor._dist_version
+        monkeypatch.setattr(
+            doctor,
+            "_dist_version",
+            lambda name: "0.21.1" if name == "s0ma-core" else installed(name),
+        )
+
+        rc, report = _doctor_json(cli, capsys, tmp_path)
+
+        assert rc == EXIT_SUCCESS
+        leftover = [
+            f
+            for f in report["findings"]
+            if f["section"] == "versions" and f["message"].startswith("s0ma-core 0.21.1")
+        ]
+        assert len(leftover) == 1, report["findings"]
+        assert leftover[0]["severity"] == "warning"
+        assert "s0ma-lang-core" in leftover[0]["message"]
+        assert "Uninstall s0ma-core" in leftover[0]["remediation"]
+
+    def test_a_clean_environment_carries_no_such_finding(
+        self, cli: S0maCLI, capsys: pytest.CaptureFixture[str], tmp_path: Path
+    ) -> None:
+        _, report = _doctor_json(cli, capsys, tmp_path)
+
+        assert not [f for f in report["findings"] if "carried up to 0.21.1" in f["message"]]
 
 
 class TestDoctorOnATempProject:
@@ -411,10 +455,10 @@ class TestDoctorTextRendering:
         # so this holds in any environment the suite runs in.
         for label in (
             "python",
-            "s0ma-core",
-            "s0ma-dsl",
-            "s0ma-mcp",
-            "s0ma-studi0",
+            "s0ma-lang-core",
+            "s0ma-lang-dsl",
+            "s0ma-lang-mcp",
+            "s0ma-lang-studi0",
             "mcp SDK",
         ):
             assert f"\n  {label:<12}" in out

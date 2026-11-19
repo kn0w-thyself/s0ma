@@ -17,7 +17,7 @@ module common_errors
     deferred_requires: none
     exports_helpers: none
 doc-ref CommonErrorsTable
-    intent: "Derived table of every s0ma-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
+    intent: "Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
     format: markdown
     output: _generated/common_errors.md
     covers: { source: error_codes }

@@ -6,7 +6,7 @@ the same structured report ``--format json`` emits):
 
 ``versions``
     The s0ma distributions via ``importlib.metadata`` (a missing
-    ``s0ma-mcp`` or ``s0ma-studi0`` is tolerated — both are optional
+    ``s0ma-lang-mcp`` or ``s0ma-lang-studi0`` is tolerated — both are optional
     add-ons and core+dsl-only installs are supported, INV-6), the
     Python version, and the ``mcp`` SDK version if present.
 ``project``
@@ -14,7 +14,7 @@ the same structured report ``--format json`` emits):
     it (``S0maProject.discover``), plus per-module build freshness
     judged by the build manifest's own recorded hashes — the same
     recipe as the MCP server's ``project_status`` tool, composed from
-    the dsl's own APIs (s0ma-dsl never imports s0ma-mcp, INV-6).
+    the dsl's own APIs (s0ma-lang-dsl never imports s0ma-lang-mcp, INV-6).
     Status vocabulary: ``fresh`` / ``stale`` / ``unbuilt`` /
     ``orphaned`` per module; ``fresh`` / ``stale`` / ``unbuilt`` for
     the build. Also reports the ``[tool.s0ma].authoring`` posture
@@ -33,7 +33,7 @@ the same structured report ``--format json`` emits):
 
 Doctor diagnoses, it does not gate: findings (missing tools, stale
 builds, malformed config) exit 0. A non-zero exit means the
-environment itself is broken — e.g. s0ma-dsl cannot import s0ma-core.
+environment itself is broken — e.g. s0ma-lang-dsl cannot import s0ma-lang-core.
 """
 
 from __future__ import annotations
@@ -110,21 +110,21 @@ def _versions_section(
             _finding(
                 "error",
                 "versions",
-                f"s0ma-dsl cannot import s0ma-core: {exc}",
-                "Reinstall the toolchain: `pip install s0ma-core s0ma-dsl` "
+                f"s0ma-lang-dsl cannot import s0ma-lang-core: {exc}",
+                "Reinstall the toolchain: `pip install s0ma-lang-core s0ma-lang-dsl` "
                 "(or `uv sync` in a uv-managed project).",
             )
         )
 
     versions = {
         "python": platform.python_version(),
-        "s0ma_core": _dist_version("s0ma-core"),
-        "s0ma_dsl": _dist_version("s0ma-dsl"),
-        "s0ma_mcp": _dist_version("s0ma-mcp"),
-        "s0ma_studi0": _dist_version("s0ma-studi0"),
+        "s0ma_core": _dist_version("s0ma-lang-core"),
+        "s0ma_dsl": _dist_version("s0ma-lang-dsl"),
+        "s0ma_mcp": _dist_version("s0ma-lang-mcp"),
+        "s0ma_studi0": _dist_version("s0ma-lang-studi0"),
         "mcp_sdk": _dist_version("mcp"),
     }
-    for dist_key, dist_name in (("s0ma_core", "s0ma-core"), ("s0ma_dsl", "s0ma-dsl")):
+    for dist_key, dist_name in (("s0ma_core", "s0ma-lang-core"), ("s0ma_dsl", "s0ma-lang-dsl")):
         if versions[dist_key] is None:
             findings.append(
                 _finding(
@@ -141,13 +141,13 @@ def _versions_section(
             _finding(
                 "info",
                 "versions",
-                "s0ma-mcp is not installed — optional; core+dsl-only "
+                "s0ma-lang-mcp is not installed — optional; core+dsl-only "
                 "installs are supported (INV-6)",
-                "Install s0ma-mcp to author over MCP, then register it: "
+                "Install s0ma-lang-mcp to author over MCP, then register it: "
                 f"`{MCP_HINT}`.",
             )
         )
-    # studi0 is optional in exactly the same sense as s0ma-mcp (the
+    # studi0 is optional in exactly the same sense as s0ma-lang-mcp (the
     # transpiler never imports it — `s0ma studi0` defers the import to
     # its handler), so its absence is an info finding, never an error.
     if versions["s0ma_studi0"] is None:
@@ -155,10 +155,31 @@ def _versions_section(
             _finding(
                 "info",
                 "versions",
-                "s0ma-studi0 is not installed — optional; the local "
+                "s0ma-lang-studi0 is not installed — optional; the local "
                 "viewer is an install-time opt-in (INV-6)",
-                "Install s0ma-studi0 to view a built project's component "
+                "Install s0ma-lang-studi0 to view a built project's component "
                 f"graph, then run `{STUDI0_HINT}`.",
+            )
+        )
+    # A distribution left behind under the name it carried before the rename
+    # writes the same import package as its successor, so removing either one
+    # later takes files out from under the other. It is worth saying before
+    # that happens rather than after.
+    from s0ma_dsl.host_verification import FORMER_DISTRIBUTION_NAMES
+
+    for former, current in FORMER_DISTRIBUTION_NAMES.items():
+        former_version = _dist_version(former)
+        if former_version is None:
+            continue
+        findings.append(
+            _finding(
+                "warning",
+                "versions",
+                f"{former} {former_version} is still installed under the name "
+                f"this package carried up to 0.21.1. It is {current} now, and "
+                "the two install the same files",
+                f"Uninstall {former}, then reinstall {current} so that its "
+                "files are whole again.",
             )
         )
     return versions, broken
@@ -404,7 +425,7 @@ def _project_section(
         "mode": mode,
         # STD-M4 (usability plan): the project's authoring posture, read
         # straight off the resolved S0maProject (default "on" when the
-        # key is absent). s0ma-dsl never imports s0ma-mcp (INV-6/D-7) —
+        # key is absent). s0ma-lang-dsl never imports s0ma-lang-mcp (INV-6/D-7) —
         # this is the dsl's own model field, the same value the MCP
         # server's project_status surfaces.
         "authoring": project.authoring,
@@ -431,7 +452,7 @@ def _mcp_section(findings: list[dict[str, Any]]) -> dict[str, Any]:
                 "info",
                 "mcp",
                 "the s0ma-mcp server executable is not on PATH",
-                f"Install s0ma-mcp, then register it: `{MCP_HINT}`.",
+                f"Install s0ma-lang-mcp, then register it: `{MCP_HINT}`.",
             )
         )
     return {
@@ -449,13 +470,15 @@ def _render_text(report: dict[str, Any]) -> str:
     lines.append("versions")
     for key, label in (
         ("python", "python"),
-        ("s0ma_core", "s0ma-core"),
-        ("s0ma_dsl", "s0ma-dsl"),
-        ("s0ma_mcp", "s0ma-mcp"),
-        ("s0ma_studi0", "s0ma-studi0"),
+        ("s0ma_core", "s0ma-lang-core"),
+        ("s0ma_dsl", "s0ma-lang-dsl"),
+        ("s0ma_mcp", "s0ma-lang-mcp"),
+        ("s0ma_studi0", "s0ma-lang-studi0"),
         ("mcp_sdk", "mcp SDK"),
     ):
-        lines.append(f"  {label:<12}{versions[key] or 'not installed'}")
+        # Wider than the other sections' column: the longest package name
+        # is sixteen characters, and a value has to stand clear of it.
+        lines.append(f"  {label:<17}{versions[key] or 'not installed'}")
 
     project = report["project"]
     lines.append("")

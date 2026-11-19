@@ -44,28 +44,36 @@ class PackageLicense:
     classifier: str
     license_heading: str
 
+    @property
+    def directory(self) -> str:
+        """The folder under ``packages/`` this distribution is built from.
+
+        The folders keep the short names; the distributions carry ``lang``.
+        """
+        return self.distribution.replace("s0ma-lang-", "s0ma-", 1)
+
 
 EXPECTED = (
     PackageLicense(
-        "s0ma-core",
+        "s0ma-lang-core",
         "Apache-2.0",
         "License :: OSI Approved :: Apache Software License",
         "Apache License",
     ),
     PackageLicense(
-        "s0ma-dsl",
+        "s0ma-lang-dsl",
         "Apache-2.0",
         "License :: OSI Approved :: Apache Software License",
         "Apache License",
     ),
     PackageLicense(
-        "s0ma-mcp",
+        "s0ma-lang-mcp",
         "Apache-2.0",
         "License :: OSI Approved :: Apache Software License",
         "Apache License",
     ),
     PackageLicense(
-        "s0ma-studi0",
+        "s0ma-lang-studi0",
         "Apache-2.0",
         "License :: OSI Approved :: Apache Software License",
         "Apache License",
@@ -73,7 +81,7 @@ EXPECTED = (
 )
 
 #: studi0's committed build output, which SHIPS in its wheel (the same
-#: self-hosted posture as s0ma-mcp): the package ``__init__`` bootstraps
+#: self-hosted posture as s0ma-lang-mcp): the package ``__init__`` bootstraps
 #: these emitted modules at import time, so a wheel missing any of them
 #: installs a viewer that cannot start.
 STUDI0_BUILT = ROOT / "packages/s0ma-studi0/src/s0ma_studi0/_built"
@@ -120,7 +128,7 @@ EXPECTED_SNAPSHOT_HASH = ""  # WHEEL_SMOKE_EXPECTED_SNAPSHOT_HASH
 
 for module in (s0ma, s0ma_dsl, s0ma_mcp):
     assert "site-packages" in str(Path(module.__file__).resolve()), module.__file__
-versions = {name: metadata.version(name) for name in ("s0ma-core", "s0ma-dsl", "s0ma-mcp")}
+versions = {name: metadata.version(name) for name in ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp")}
 assert len(set(versions.values())) == 1, versions
 print("cold: versions/imports", versions)
 
@@ -191,7 +199,7 @@ pyproject = project / "pyproject.toml"
 project_text = pyproject.read_text(encoding="utf-8")
 project_text = project_text.replace(
     'version = "0.1.0"\n',
-    'version = "0.1.0"\ndependencies = ["s0ma-core", "s0ma-dsl"]\n',
+    'version = "0.1.0"\ndependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]\n',
     1,
 )
 pyproject.write_text(project_text, encoding="utf-8", newline="\n")
@@ -396,14 +404,14 @@ def _metadata(wheel: Path) -> tuple[email.message.Message, str, list[str]]:
 def _assert_source_posture() -> None:
     root_readme = (ROOT / "README.md").read_text(encoding="utf-8")
     prd = (ROOT / "references/s0ma-prd.md").read_text(encoding="utf-8")
-    assert "s0ma-core: Apache-2.0" in root_readme
-    assert "s0ma-dsl: Apache-2.0" in root_readme
-    assert "s0ma-mcp: Apache-2.0" in root_readme
-    assert "s0ma-studi0: Apache-2.0" in root_readme
-    assert "`s0ma-core`: Apache-2.0, in perpetuity" in prd
-    assert "`s0ma-dsl`: Apache-2.0 (relicensed from the commercial license" in prd
+    assert "s0ma-lang-core: Apache-2.0" in root_readme
+    assert "s0ma-lang-dsl: Apache-2.0" in root_readme
+    assert "s0ma-lang-mcp: Apache-2.0" in root_readme
+    assert "s0ma-lang-studi0: Apache-2.0" in root_readme
+    assert "`s0ma-lang-core`: Apache-2.0, in perpetuity" in prd
+    assert "`s0ma-lang-dsl`: Apache-2.0 (relicensed from the commercial license" in prd
     assert (
-        "`s0ma-mcp` and `s0ma-studi0`: Apache-2.0 (relicensed from LicenseRef-Proprietary"
+        "`s0ma-lang-mcp` and `s0ma-lang-studi0`: Apache-2.0 (relicensed from LicenseRef-Proprietary"
         in prd
     )
     assert "**Every distribution the monorepo ships is Apache-2.0**" in prd
@@ -418,7 +426,7 @@ def _assert_source_posture() -> None:
     assert "Copyright 2026" in notice
 
     for expected in EXPECTED:
-        package = ROOT / "packages" / expected.distribution
+        package = ROOT / "packages" / expected.directory
         project = tomllib.loads((package / "pyproject.toml").read_text(encoding="utf-8"))[
             "project"
         ]
@@ -449,7 +457,7 @@ def _assert_source_posture() -> None:
     assert '- os: macos-latest\n            python-version: "3.13"' in ci
     for expected in EXPECTED:
         project = tomllib.loads(
-            (ROOT / "packages" / expected.distribution / "pyproject.toml").read_text(
+            (ROOT / "packages" / expected.directory / "pyproject.toml").read_text(
                 encoding="utf-8"
             )
         )["project"]
@@ -484,7 +492,9 @@ def _assert_no_stale_mit_claims() -> None:
             if not re.search(r"\bMIT\b|OSI Approved :: MIT", line, re.IGNORECASE):
                 continue
             # Correct open-core statements are not DSL/MCP license claims.
-            if "s0ma-core" in line:
+            # Released changelog sections name the core as `s0ma-core`, which
+            # is what it was called when they were written.
+            if "s0ma-lang-core" in line or "s0ma-core" in line:
                 continue
             # The one intentional historical exception is the frozen 0.5.0
             # changelog section, whose released authoring packages were MIT.
@@ -496,7 +506,7 @@ def _assert_no_stale_mit_claims() -> None:
             violations.append(f"{path.relative_to(ROOT)}:{number}: {line.strip()}")
     if violations:
         raise AssertionError(
-            "stale MIT marker in current s0ma-dsl/s0ma-mcp metadata/docs:\n"
+            "stale MIT marker in current s0ma-lang-dsl/s0ma-lang-mcp metadata/docs:\n"
             + "\n".join(violations)
         )
 
@@ -522,7 +532,7 @@ def _assert_studi0_payload(wheel: Path) -> None:
         if path.is_file() and {".s0ma.cache", "__pycache__"}.isdisjoint(path.parts)
     }
     assert shipped == committed, (
-        f"s0ma-studi0 wheel _built payload differs from the committed build: "
+        f"s0ma-lang-studi0 wheel _built payload differs from the committed build: "
         f"missing={sorted(committed - shipped)} extra={sorted(shipped - committed)}"
     )
     # Named explicitly because its absence is the silent failure: the viewer
@@ -537,9 +547,9 @@ def _assert_studi0_payload(wheel: Path) -> None:
         or "/s0ma_src/" in name
         or "/tests/" in name
     )
-    assert not excluded, f"s0ma-studi0 wheel ships non-product paths: {excluded}"
+    assert not excluded, f"s0ma-lang-studi0 wheel ships non-product paths: {excluded}"
     print(
-        f"wheel payload: s0ma-studi0 ships {len(shipped)} committed _built file(s), "
+        f"wheel payload: s0ma-lang-studi0 ships {len(shipped)} committed _built file(s), "
         f"no .s0ma.cache/s0ma_src/tests"
     )
 
@@ -664,7 +674,7 @@ def _check_core_slice(payloads: DocsPayloads, manifest: object) -> list[str]:
     listed = _artifact_hash(manifest, CORE_SLICE_ARTIFACT)
     carried = content_hash(text)
     assert carried == listed, (
-        f"the s0ma-core wheel's {CORE_SLICE_MEMBER} is not the slice this "
+        f"the s0ma-lang-core wheel's {CORE_SLICE_MEMBER} is not the slice this "
         f"documentation build rendered: the manifest's artifact "
         f"{CORE_SLICE_ARTIFACT} has content_hash {listed} and the wheel "
         f"carries {carried}. The mirror was not refreshed before the wheels "
@@ -737,7 +747,7 @@ def _check_mcp_docs(payloads: DocsPayloads, manifest: object) -> list[str]:
     listed = _artifact_hash(manifest, MCP_SNAPSHOT_ARTIFACT)
     carried = content_hash(snapshot_bytes.decode("utf-8"))
     assert carried == listed, (
-        f"the s0ma-mcp wheel's {MCP_DOCS_PREFIX}{MCP_SNAPSHOT_FILENAME} is "
+        f"the s0ma-lang-mcp wheel's {MCP_DOCS_PREFIX}{MCP_SNAPSHOT_FILENAME} is "
         f"not the snapshot this build composed: manifest artifact "
         f"{MCP_SNAPSHOT_ARTIFACT} has content_hash {listed}, the wheel "
         f"carries {carried}. Refresh the mirror and rebuild the wheel."
@@ -751,7 +761,7 @@ def _check_mcp_docs(payloads: DocsPayloads, manifest: object) -> list[str]:
         doc.filename for doc in GUIDE_DOCS.values()
     }
     assert set(payloads.mcp_docs) == expected_members, (
-        f"the s0ma-mcp wheel's {MCP_DOCS_PREFIX} payload is not the declared "
+        f"the s0ma-lang-mcp wheel's {MCP_DOCS_PREFIX} payload is not the declared "
         f"set: missing={sorted(expected_members - set(payloads.mcp_docs))} "
         f"unexpected={sorted(set(payloads.mcp_docs) - expected_members)}"
     )
@@ -770,14 +780,14 @@ def _check_mcp_docs(payloads: DocsPayloads, manifest: object) -> list[str]:
         source = ROOT / doc.source
         assert source.is_file(), f"cataloged source moved: {doc.source}"
         assert shipped == source.read_bytes(), (
-            f"the s0ma-mcp wheel's {MCP_DOCS_PREFIX}{doc.filename} differs "
+            f"the s0ma-lang-mcp wheel's {MCP_DOCS_PREFIX}{doc.filename} differs "
             f"from its cataloged source {doc.source}. Refresh the committed "
             f"copy (cp the source over it) and rebuild the wheel."
         )
         if doc.source in rendered:
             found = content_hash(shipped.decode("utf-8"))
             assert found == rendered[doc.source], (
-                f"the s0ma-mcp wheel ships {doc.filename} whose content hashes "
+                f"the s0ma-lang-mcp wheel ships {doc.filename} whose content hashes "
                 f"to {found}; the manifest's artifact {doc.source} has "
                 f"content_hash {rendered[doc.source]}. The copy was made from "
                 f"a compose other than the one that wrote the manifest: "
@@ -788,7 +798,7 @@ def _check_mcp_docs(payloads: DocsPayloads, manifest: object) -> list[str]:
         elif doc.source in digests:
             found = hashlib.sha256(shipped).hexdigest()
             assert found == digests[doc.source], (
-                f"the s0ma-mcp wheel ships {doc.filename} whose bytes hash to "
+                f"the s0ma-lang-mcp wheel ships {doc.filename} whose bytes hash to "
                 f"{found}; the manifest's source_hashes entry for "
                 f"{doc.source} is {digests[doc.source]}. The wheel and the "
                 f"manifest were built from different states of that file."
@@ -827,7 +837,7 @@ def _check_dsl_snapshot(payloads: DocsPayloads, manifest: object) -> list[str]:
     from s0ma_dsl.docs_model.serialize import content_hash
 
     assert payloads.dsl_snapshot == payloads.mcp_docs[MCP_SNAPSHOT_FILENAME], (
-        f"the s0ma-dsl wheel's {DSL_SNAPSHOT_MEMBER} and the s0ma-mcp "
+        f"the s0ma-lang-dsl wheel's {DSL_SNAPSHOT_MEMBER} and the s0ma-lang-mcp "
         f"wheel's {MCP_DOCS_PREFIX}{MCP_SNAPSHOT_FILENAME} are two copies of "
         f"one composed snapshot and their bytes differ. One of the loop's "
         f"three cp lines was not run, or a mirror was edited by hand — they "
@@ -837,7 +847,7 @@ def _check_dsl_snapshot(payloads: DocsPayloads, manifest: object) -> list[str]:
     listed = _artifact_hash(manifest, MCP_SNAPSHOT_ARTIFACT)
     carried = content_hash(payloads.dsl_snapshot.decode("utf-8"))
     assert carried == listed, (
-        f"the s0ma-dsl wheel's {DSL_SNAPSHOT_MEMBER} is not the snapshot "
+        f"the s0ma-lang-dsl wheel's {DSL_SNAPSHOT_MEMBER} is not the snapshot "
         f"this build composed: manifest artifact {MCP_SNAPSHOT_ARTIFACT} has "
         f"content_hash {listed}, the wheel carries {carried}. Refresh the "
         f"mirror and rebuild the wheel — docs/operations/docs-maintenance.md "
@@ -953,27 +963,27 @@ def _payloads_from_wheels(by_name: Mapping[str, Path]) -> DocsPayloads:
         document, _license_text, _paths = _metadata(wheel)
         versions[distribution] = str(document["Version"])
 
-    with zipfile.ZipFile(by_name["s0ma-core"]) as archive:
+    with zipfile.ZipFile(by_name["s0ma-lang-core"]) as archive:
         names = archive.namelist()
         assert CORE_SLICE_MEMBER in names, (
-            f"the s0ma-core wheel does not carry {CORE_SLICE_MEMBER}; check "
+            f"the s0ma-lang-core wheel does not carry {CORE_SLICE_MEMBER}; check "
             f"[tool.hatch.build.targets.wheel] in "
             f"packages/s0ma-core/pyproject.toml"
         )
         slice_bytes = archive.read(CORE_SLICE_MEMBER)
 
-    with zipfile.ZipFile(by_name["s0ma-mcp"]) as archive:
+    with zipfile.ZipFile(by_name["s0ma-lang-mcp"]) as archive:
         docs = {
             name[len(MCP_DOCS_PREFIX) :]: archive.read(name)
             for name in archive.namelist()
             if name.startswith(MCP_DOCS_PREFIX) and not name.endswith("/")
         }
-    assert docs, f"the s0ma-mcp wheel carries no {MCP_DOCS_PREFIX} payload"
+    assert docs, f"the s0ma-lang-mcp wheel carries no {MCP_DOCS_PREFIX} payload"
 
-    with zipfile.ZipFile(by_name["s0ma-dsl"]) as archive:
+    with zipfile.ZipFile(by_name["s0ma-lang-dsl"]) as archive:
         names = archive.namelist()
         assert DSL_SNAPSHOT_MEMBER in names, (
-            f"the s0ma-dsl wheel does not carry {DSL_SNAPSHOT_MEMBER}, so "
+            f"the s0ma-lang-dsl wheel does not carry {DSL_SNAPSHOT_MEMBER}, so "
             f"every `s0ma docs` command from an installed toolchain will "
             f"answer 'no documentation snapshot was found'. Refresh the "
             f"mirror (docs/operations/docs-maintenance.md step 3, the third "
@@ -1030,7 +1040,7 @@ def _inspect_wheels(dist: Path, *, head_tag: str = "") -> list[Path]:
             f"{document['License-Expression']} {license_paths[0]}"
         )
     assert set(by_name) == {item.distribution for item in EXPECTED}
-    _assert_studi0_payload(by_name["s0ma-studi0"])
+    _assert_studi0_payload(by_name["s0ma-lang-studi0"])
     _assert_docs_identity(by_name, head_tag=head_tag)
     return [by_name[item.distribution] for item in EXPECTED]
 

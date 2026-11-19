@@ -404,7 +404,7 @@ translated out of the shorthand:
 | `VESTIGIAL_IMPORT` | Something is declared but never used. | Delete the declaration — or use it, if the omission was the mistake. |
 | `PROVIDES_KEY_MISMATCH` / `MISSING_RETURN_KEY` | The header promises a set of names and the body returns a different set. | Make the two agree; the message lists exactly which names are missing or extra. |
 | `GENERATED_FILE_DRIFT` | Someone edited a file under `build/`. See [the section above](#a-check-failure-a-stale-build-and-drift-are-three-different-things). | Move the change into the source, or `s0ma build src --force` to discard it. |
-| `HOST_RUNTIME_UNDECLARED` | The generated code uses the s0ma runtime, but your project's package list does not mention it. A warning, not a stop. | Add `s0ma-core` and `s0ma-dsl` to your project's dependencies. |
+| `HOST_RUNTIME_UNDECLARED` | The generated code uses the s0ma runtime, but your project's package list does not mention it. A warning, not a stop. | Add `s0ma-lang-core` and `s0ma-lang-dsl` to your project's dependencies. |
 | `MODULE_OUTSIDE_PROJECT_ROOTS` | The build was given a directory, and a module in it lives under none of the roots your `[tool.s0ma]` table declares, so the build recorded it as source, not as a test. A warning, not a stop. | Add the module's directory to `source_roots` or `test_roots`, or move the file under one of the declared roots. A bare `s0ma build` reads only the declared roots, so it never raises this. |
 | `MISSING_TEST_COVERAGE` / `MISSING_PUBLIC_DOC_REF` / `MISSING_EMBEDDED_EXAMPLE` | Something public has no test, no documentation, or an unused example. **These only appear in release mode** — the release gate is where those become required. | Write the missing test, documentation, or example, or stop running in release mode until you are ready to. |
 
@@ -495,15 +495,15 @@ studi0 is the local visual view of your project. `s0ma studi0` starts a small
 server on your own machine, prints one line with the address it really used,
 and opens your browser there. It serves until you press Ctrl-C.
 
-**"The optional `s0ma-studi0` package is not importable in this environment."**
+**"The optional `s0ma-lang-studi0` package is not importable in this environment."**
 Most often the command ran outside the project and looked in the wrong
 environment: re-run it as `uv run s0ma studi0` from the project directory. If
 the viewer really is absent, note that the hint that message prints
-(`pip install s0ma-studi0`) does **not** work during the beta, because s0ma is
+(`pip install s0ma-lang-studi0`) does **not** work during the beta, because s0ma is
 not published on the public package index. How you get it back depends on how
 s0ma arrived: re-run the keyed installer; or, if the downloaded files are still
 in your project's `.wheels/` folder, add the viewer back with
-`uv add ./.wheels/s0ma_studi0-*.whl`. A machine that gets s0ma through Claude
+`uv add ./.wheels/s0ma_lang_studi0-*.whl`. A machine that gets s0ma through Claude
 never meets this: the four packages are installed together, as a set, every
 time.
 

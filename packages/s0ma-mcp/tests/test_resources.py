@@ -7,10 +7,10 @@ Two layers of protection:
   (including ``s0ma://meta/version``, which is rendered live rather
   than packaged);
 * drift gate — the committed copies under ``s0ma_mcp/_docs/`` are
-  byte-compared against their in-repo sources (the s0ma-dsl docs, the
+  byte-compared against their in-repo sources (the s0ma-lang-dsl docs, the
   generated error catalog, and — first source outside the dsl docs
   tree — the root ``CHANGELOG.md``), and the packaged spec is asserted
-  to be the highest version s0ma-dsl ships (the package README
+  to be the highest version s0ma-lang-dsl ships (the package README
   documents this strategy).
 """
 
@@ -194,14 +194,14 @@ class TestVersionResource:
     def test_values_are_the_installed_versions(self, server: Any) -> None:
         document = self._document(server)
         assert document["server"] == "s0ma-authoring"
-        assert document["s0ma_core"] == importlib.metadata.version("s0ma-core")
-        assert document["s0ma_dsl"] == importlib.metadata.version("s0ma-dsl")
-        assert document["s0ma_mcp"] == importlib.metadata.version("s0ma-mcp")
+        assert document["s0ma_core"] == importlib.metadata.version("s0ma-lang-core")
+        assert document["s0ma_dsl"] == importlib.metadata.version("s0ma-lang-dsl")
+        assert document["s0ma_mcp"] == importlib.metadata.version("s0ma-lang-mcp")
         assert document["mcp_sdk"] == importlib.metadata.version("mcp")
         assert document["python"] == platform.python_version()
 
     def test_studi0_is_reported_honestly_when_optional(self, server: Any) -> None:
-        """s0ma-studi0 is an optional leaf: a version, or an honest None.
+        """s0ma-lang-studi0 is an optional leaf: a version, or an honest None.
 
         Present in a workspace checkout, legitimately absent from a
         minimal install — the surface reports whichever is true rather
@@ -209,7 +209,7 @@ class TestVersionResource:
         """
         expected: str | None
         try:
-            expected = importlib.metadata.version("s0ma-studi0")
+            expected = importlib.metadata.version("s0ma-lang-studi0")
         except importlib.metadata.PackageNotFoundError:
             expected = None
         assert self._document(server)["s0ma_studi0"] == expected
@@ -218,7 +218,7 @@ class TestVersionResource:
 class TestDocDrift:
     """The drift gate for the committed-copies packaging strategy.
 
-    If one of these fails, an in-repo source changed (a s0ma-dsl guide,
+    If one of these fails, an in-repo source changed (a s0ma-lang-dsl guide,
     the generated error catalog, or the root changelog): refresh the
     copy (``cp`` the source file over ``s0ma_mcp/_docs/`` and commit).
     For the error catalog, regenerate the source first if the
@@ -229,7 +229,7 @@ class TestDocDrift:
     @pytest.fixture(autouse=True)
     def _require_repo_checkout(self) -> None:
         if not DSL_DOCS.is_dir():  # pragma: no cover - wheel-install context
-            pytest.skip("s0ma-dsl docs not available (not a repo checkout)")
+            pytest.skip("s0ma-lang-dsl docs not available (not a repo checkout)")
 
     @pytest.mark.parametrize("doc", list(GUIDE_DOCS.values()), ids=lambda d: d.key)
     def test_packaged_copy_matches_dsl_source(self, doc: Any) -> None:
@@ -237,7 +237,7 @@ class TestDocDrift:
         assert source.is_file(), f"drift-gate source moved: {doc.source}"
         assert load_doc(doc.key) == source.read_text(encoding="utf-8"), (
             f"s0ma_mcp/_docs/{doc.filename} has drifted from {doc.source}; "
-            "refresh the committed copy (see the s0ma-mcp README)"
+            "refresh the committed copy (see the s0ma-lang-mcp README)"
         )
 
     def test_packaged_spec_is_the_current_one(self) -> None:
@@ -247,10 +247,10 @@ class TestDocDrift:
             match = re.fullmatch(r"s0ma-dsl-spec-v(\d+)\.(\d+)\.(\d+)\.md", spec.name)
             if match:
                 versions[tuple(int(g) for g in match.groups())] = spec.name
-        assert versions, "no versioned spec files found in s0ma-dsl docs"
+        assert versions, "no versioned spec files found in s0ma-lang-dsl docs"
         newest = versions[max(versions)]
         assert GUIDE_DOCS["spec"].filename == newest, (
-            f"s0ma-dsl's current spec is {newest} but s0ma-mcp packages "
+            f"s0ma-lang-dsl's current spec is {newest} but s0ma-lang-mcp packages "
             f"{GUIDE_DOCS['spec'].filename}; update resources.GUIDE_DOCS "
             "and the committed copy"
         )

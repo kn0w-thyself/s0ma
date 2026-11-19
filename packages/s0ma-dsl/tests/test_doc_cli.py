@@ -4,9 +4,9 @@ Covers:
 - ``docs render`` produces the declared output files.
 - ``docs render`` reports doc-render errors as exit code 1.
 - ``docs verify`` reports validation errors but does not write output.
-- ``examples run`` informs cleanly when s0ma-core's runner is available
+- ``examples run`` informs cleanly when s0ma-lang-core's runner is available
   (we just check dispatch — actual sandbox execution is exercised by
-  s0ma-core).
+  s0ma-lang-core).
 """
 
 from __future__ import annotations
@@ -193,7 +193,7 @@ class TestExamplesRun:
     def test_blocking_errors_refuse_run(self, tmp_path: Path, capsys) -> None:
         """severity=error diagnostics print and exit 1 before any example runs.
 
-        Mirrors the s0ma-mcp ``run_example`` gate: a project with
+        Mirrors the s0ma-lang-mcp ``run_example`` gate: a project with
         blocking diagnostics must not execute even its valid examples.
         The example body writes a sentinel file, so execution (the
         regression) is directly observable.

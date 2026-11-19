@@ -86,7 +86,7 @@
     {
       "audience": "contributor",
       "disposition": "normative-current",
-      "note": "Status: Accepted — owner-ratified 2026-08-27. Not to be confused with the superseded s0ma-dsl ADR-004.",
+      "note": "Status: Accepted — owner-ratified 2026-08-27. Not to be confused with the superseded s0ma-lang-dsl ADR-004.",
       "path": "docs/adr/ADR-004-feedback-architecture.md"
     },
     {

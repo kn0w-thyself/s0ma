@@ -53,7 +53,7 @@ __all__ = [
 logger = logging.getLogger("s0ma")
 
 # Module-level marker attribute names for documentation-subsystem
-# declarations emitted by the s0ma-dsl transpiler. Each attribute, when
+# declarations emitted by the s0ma-lang-dsl transpiler. Each attribute, when
 # present on a loaded module, is a tuple (or other iterable) of names
 # whose matching registrations must be present in the registry after the
 # module finishes executing. See docs/references/documentation_subsystem.md.
@@ -139,7 +139,7 @@ def _get_unregistered_doc_declarations(
     """Scan a module for documentation-subsystem markers whose declarations
     are missing from the active registry.
 
-    The s0ma-dsl transpiler emits three module-level marker attributes
+    The s0ma-lang-dsl transpiler emits three module-level marker attributes
     (``__s0ma_doc_ref__``, ``__s0ma_doc_guide__``, ``__s0ma_example__``),
     each holding an iterable of registration names declared in that module.
     After the module finishes executing, every listed name must resolve
@@ -620,7 +620,7 @@ class S0maDSLLoader(importlib.abc.Loader):
             from s0ma_dsl.parser.s0ma_parser import parse_s0ma_with_warnings
         except ImportError as exc:
             raise ImportError(
-                f"Cannot transpile '{self.s0ma_path.name}': the s0ma-dsl "
+                f"Cannot transpile '{self.s0ma_path.name}': the s0ma-lang-dsl "
                 f"package is not installed. Install it with: "
                 f"pip install -e ../s0ma-dsl\n"
                 f"Original error: {exc}"
@@ -665,7 +665,7 @@ class S0maDSLLoader(importlib.abc.Loader):
                 # Basename, not the cache path: the IR sits next to the
                 # cached .py it references, and emitted artifacts must
                 # not embed absolute machine paths (INV-5; same policy
-                # as the s0ma-dsl build artifacts since WIN-M3).
+                # as the s0ma-lang-dsl build artifacts since WIN-M3).
                 transpiled_file=self.s0ma_path.stem + ".py",
             )
             ir_path = self._cache_dir / (self.s0ma_path.stem + ".s0ma.json")

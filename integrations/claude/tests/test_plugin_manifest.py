@@ -57,7 +57,7 @@ SHIMS = (PLUGIN_DIR / "bin" / "s0ma", PLUGIN_DIR / "bin" / "s0ma-launch")
 #: Where the one version number every s0ma package shares is written down.
 LOCKSTEP_PYPROJECT = REPO_ROOT / "packages" / "s0ma-mcp" / "pyproject.toml"
 
-#: The licence the plugin ships is the same file s0ma-core ships.
+#: The licence the plugin ships is the same file s0ma-lang-core ships.
 CANONICAL_LICENSE = REPO_ROOT / "packages" / "s0ma-core" / "LICENSE"
 
 #: Manifest features the `claude` CLI on this machine's PATH (2.1.153) either

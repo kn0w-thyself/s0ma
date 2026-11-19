@@ -7,7 +7,7 @@ Downstream consumers:
 * :class:`s0ma.self_model.interface.SelfModelInterface.get_drift_status`
   compares the stored ``content_hash`` on each doc-ref / doc-guide with
   a freshly recomputed one and reports divergence.
-* The s0ma-dsl transpiler emits the stored hash into generated
+* The s0ma-lang-dsl transpiler emits the stored hash into generated
   registration calls; its own ``docs check-drift`` command re-runs
   :func:`content_hash` against the committed registry and fails CI
   when the stored and recomputed values diverge.

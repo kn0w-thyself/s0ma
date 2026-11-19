@@ -249,6 +249,15 @@ def test_the_version_is_read_from_the_dist_info_directory(
     assert launcher.installed_version_of(root) == "0.18.0"
 
 
+def test_the_version_is_read_from_a_toolchain_installed_under_the_former_name(
+    launcher: ModuleType, tmp_path: Path, make_venv: Any
+) -> None:
+    """A toolchain from 0.21.1 or earlier carries `s0ma_mcp-<version>.dist-info`."""
+    root = tmp_path / "venv"
+    make_venv(root, version="0.18.0", distribution="s0ma_mcp")
+    assert launcher.installed_version_of(root) == "0.18.0"
+
+
 def test_an_environment_without_dist_info_has_no_cheap_version(
     launcher: ModuleType, tmp_path: Path, make_venv: Any
 ) -> None:

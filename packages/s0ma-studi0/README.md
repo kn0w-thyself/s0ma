@@ -1,8 +1,8 @@
-# s0ma-studi0
+# s0ma-lang-studi0
 
 **studi0** is s0ma's local visual development environment, and **sh0w** is the graph renderer it hosts. `s0ma studi0 <project>` starts a loopback web server and opens one page: the project's own component graph — modules, components, and the authored, derived, and verification edges between them — drawn from the artifacts that project's last build produced (PRD §7.6, FR-STUDI0-1..9).
 
-Every fact on the page comes from `s0ma-dsl`'s single graph-export contract (`s0ma_dsl.graph_export.collect_graph`, the same data `s0ma graph --format json --detail full` prints). studi0 has no second extraction path, so it cannot show you something the project did not declare. What it has no declaration for, it says so about: **nothing on the page is inferred, completed, or invented.**
+Every fact on the page comes from `s0ma-lang-dsl`'s single graph-export contract (`s0ma_dsl.graph_export.collect_graph`, the same data `s0ma graph --format json --detail full` prints). studi0 has no second extraction path, so it cannot show you something the project did not declare. What it has no declaration for, it says so about: **nothing on the page is inferred, completed, or invented.**
 
 studi0 is a **viewer**. It never executes or imports the application it is showing, never calls a model, and never opens a socket beyond `127.0.0.1` — it opens the project read-only and re-reads it as builds land. It writes exactly one file into the target tree: `.s0ma/studi0/active.json`, the marker that says a viewer is bound to this project, removed again when studi0 exits.
 
@@ -10,9 +10,9 @@ studi0 is a **viewer**. It never executes or imports the application it is showi
 
 Four distributions ship together at one version, and dependencies only ever point down the stack (PRD INV-6):
 
-**`s0ma-studi0`** · [`s0ma-mcp`](../s0ma-mcp) → [`s0ma-dsl`](../s0ma-dsl) → [`s0ma-core`](../s0ma-core)
+**`s0ma-lang-studi0`** · [`s0ma-lang-mcp`](../s0ma-mcp) → [`s0ma-lang-dsl`](../s0ma-dsl) → [`s0ma-lang-core`](../s0ma-core)
 
-`s0ma-studi0` is **Apache-2.0**, and so are `s0ma-core`, `s0ma-dsl` and `s0ma-mcp`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
+`s0ma-lang-studi0` is **Apache-2.0**, and so are `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-mcp`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
 
 ## Install
 
@@ -55,7 +55,7 @@ The routes studi0 serves, the contracts its build declares, the shape of a narra
 
 v1 is deliberately a pure viewer, and the honest list of what it is not is short:
 
-- **Viewer only.** studi0 shows; it does not edit, scaffold, refactor, or run anything. Authoring stays in your editor and in `s0ma-mcp`.
+- **Viewer only.** studi0 shows; it does not edit, scaffold, refactor, or run anything. Authoring stays in your editor and in `s0ma-lang-mcp`.
 - **Deferred, not stubbed:** proposal "ghosts", evidence badges, the pause protocol, session summary and retention, multi-agent views, host theme matching, replay, and 3D. None of them are half-present in the UI.
 - **One project per process.** `launch()` serves one project root and blocks until interrupted.
 - **The page needs JavaScript.** With scripting off it says so and points at `s0ma graph --format json --detail full`, which is the same data.
@@ -63,7 +63,7 @@ v1 is deliberately a pure viewer, and the honest list of what it is not is short
 
 ## How this package builds
 
-Like `s0ma-mcp`, this package is itself a s0ma project — a viewer for s0ma models that is a s0ma model. Its behavior is authored in the DSL under `s0ma_src/*.s0ma` and shipped as the transpiler's committed, deterministic build output under `src/s0ma_studi0/_built/`; `src/s0ma_studi0/__init__.py` is the **single** handwritten Python module, which bootstraps the built modules and exposes `launch()`. sh0w's front end rides the same rule (FR-STUDI0-8): `index.html`, `app.css`, and `app.js` are plain files under `s0ma_src/assets/`, embedded into PUBLIC CONSTANT cells with the DSL's `content: @file(...)` directive, so the served page is s0ma-owned content with its bytes hash-tracked in the build manifest.
+Like `s0ma-lang-mcp`, this package is itself a s0ma project — a viewer for s0ma models that is a s0ma model. Its behavior is authored in the DSL under `s0ma_src/*.s0ma` and shipped as the transpiler's committed, deterministic build output under `src/s0ma_studi0/_built/`; `src/s0ma_studi0/__init__.py` is the **single** handwritten Python module, which bootstraps the built modules and exposes `launch()`. sh0w's front end rides the same rule (FR-STUDI0-8): `index.html`, `app.css`, and `app.js` are plain files under `s0ma_src/assets/`, embedded into PUBLIC CONSTANT cells with the DSL's `content: @file(...)` directive, so the served page is s0ma-owned content with its bytes hash-tracked in the build manifest.
 
 Never hand-edit anything under `_built/` — a CI stage rebuilds it and byte-compares. Edit the `.s0ma` source, rebuild, and commit both together in one commit:
 
@@ -87,4 +87,4 @@ In a terminal, `s0ma docs` opens the same map and `s0ma docs show <topic>` answe
 
 ## License
 
-Apache License 2.0 — see [`LICENSE`](LICENSE) for details. The rest of the toolchain shares it: `s0ma-core`, `s0ma-dsl` and `s0ma-mcp` are Apache-2.0 too, each with its own `LICENSE`.
+Apache License 2.0 — see [`LICENSE`](LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-mcp` are Apache-2.0 too, each with its own `LICENSE`.

@@ -457,7 +457,7 @@ Verification found zero modeled s0ma modules; roster adoption verifies bytes but
 
 ### HOST_RUNTIME_UNDECLARED
 
-Generated Python imports s0ma-core and s0ma-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved.
+Generated Python imports s0ma-lang-core and s0ma-lang-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved.
 
 - **Severity by mode** — migration `warning`, dev `warning`, strict `warning`, release `warning`
 - **Addressed as** — `diagnostic:HOST_RUNTIME_UNDECLARED`
@@ -856,7 +856,7 @@ A `serves_as:` value is not identifier-shaped — the served name becomes the em
 
 ### STALE_GENERATED_CONFTEST
 
-The project's generated `conftest.py` was emitted by an older s0ma-dsl version and may have diverged from the runtime contract.
+The project's generated `conftest.py` was emitted by an older s0ma-lang-dsl version and may have diverged from the runtime contract.
 
 - **Severity by mode** — migration `error`, dev `error`, strict `error`, release `error`
 - **Addressed as** — `diagnostic:STALE_GENERATED_CONFTEST`

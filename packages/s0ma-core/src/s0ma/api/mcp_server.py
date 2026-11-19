@@ -17,7 +17,7 @@ Teaching resources and tools are also available — use them to learn
 how to build applications with s0ma. Documentation is served from
 the actual source files (never cached copies), so it is always current.
 
-Requires: ``pip install s0ma-core[mcp]``
+Requires: ``pip install s0ma-lang-core[mcp]``
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ try:
 except ImportError as _exc:
     raise ImportError(
         "The s0ma MCP server requires the MCP SDK. "
-        "Install it with: pip install s0ma-core[mcp]"
+        "Install it with: pip install s0ma-lang-core[mcp]"
     ) from _exc
 
 from s0ma.api.query_engine import QueryEngine

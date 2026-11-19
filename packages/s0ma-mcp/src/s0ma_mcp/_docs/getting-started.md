@@ -31,7 +31,7 @@ from it. The root `README.md` "Install" section has the exact commands, both
 for working inside the checkout and for building the wheels and installing them
 into a project of your own. s0ma is not on PyPI yet: all four packages are
 published there from the first release cut of the public repository (PRD
-NFR-8), so until then `pip install s0ma-core` will not work.
+NFR-8), so until then `pip install s0ma-lang-core` will not work.
 
 Then create a project:
 
@@ -132,7 +132,7 @@ the proof that the self-model participates in what can ship.
 Static checks deliberately do not execute project code. The host probe runs
 under the application's own Python, and a fresh project does not have one yet:
 it has no environment and declares no dependencies. Give it both in one step —
-from inside `my-app`, `uv add` the `s0ma-core` and `s0ma-dsl` wheels from the
+from inside `my-app`, `uv add` the `s0ma-lang-core` and `s0ma-lang-dsl` wheels from the
 Install section, which creates `.venv`, installs them, and names them in
 `[project].dependencies` (the build's `HOST_RUNTIME_UNDECLARED` warning asks
 for exactly that declaration; with pip, install the two wheels into a `.venv`

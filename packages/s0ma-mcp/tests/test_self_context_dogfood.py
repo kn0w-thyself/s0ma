@@ -1,4 +1,4 @@
-"""M6 dogfood: s0ma-mcp ships a bounded, complete self-context card.
+"""M6 dogfood: s0ma-lang-mcp ships a bounded, complete self-context card.
 
 The card is bounded first and complete second, and between F7 and the
 ceiling ruling those two were not both true for this package: 23 new

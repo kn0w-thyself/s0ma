@@ -1,11 +1,11 @@
 """``s0ma examples`` subcommand handlers (plan M7).
 
-The transpiler-side CLI surface for the s0ma-core example runner. We
+The transpiler-side CLI surface for the s0ma-lang-core example runner. We
 delegate to ``s0ma.examples.ExampleRunner`` so the runtime owns the
 sandboxing semantics; this module just discovers parsed example
 declarations, registers them in a transient registry, and dispatches.
 
-If ``s0ma.examples`` is not yet available (s0ma-core M6 not landed),
+If ``s0ma.examples`` is not yet available (s0ma-lang-core M6 not landed),
 the command exits with a clear, actionable message rather than
 silently faking a result. Per plan §10 ("Bootstrap / Chicken-and-Egg
 Notes"), this stub-failure is acceptable and intentional.
@@ -41,7 +41,7 @@ _EXIT_INTERNAL_ERROR = 3
     layer=Layer.FRAMEWORK,
     intent=(
         "Handler for `s0ma examples run`: discovers .s0ma examples and delegates execution to "
-        "s0ma-core's ExampleRunner."
+        "s0ma-lang-core's ExampleRunner."
     ),
     idempotent=True,
     is_framework=True,
@@ -57,7 +57,7 @@ def cmd_examples_run(args: argparse.Namespace) -> int:
 
     Validation gates execution: blocking (severity ``error``)
     diagnostics are printed and the command exits 1 without running
-    any example, matching the s0ma-mcp ``run_example`` tool. Warnings
+    any example, matching the s0ma-lang-mcp ``run_example`` tool. Warnings
     alone never block.
     """
     try:
@@ -65,8 +65,8 @@ def cmd_examples_run(args: argparse.Namespace) -> int:
     except ImportError:
         print(
             "Example runner unavailable: s0ma.examples.ExampleRunner is not "
-            "installed (s0ma-core M6 not yet landed in this environment).\n"
-            "Install or update the s0ma-core dependency to run examples.",
+            "installed (s0ma-lang-core M6 not yet landed in this environment).\n"
+            "Install or update the s0ma-lang-core dependency to run examples.",
             file=sys.stderr,
         )
         return _EXIT_INTERNAL_ERROR

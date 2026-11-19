@@ -126,10 +126,10 @@ jobs:
       # Three assertions, all against docs/_generated/docs-manifest.json in
       # this checkout (doc-function-1 H2, architecture §13.1):
       #
-      #   1. the s0ma-core wheel's embedded teaching slice names the
+      #   1. the s0ma-lang-core wheel's embedded teaching slice names the
       #      manifest's snapshot_hash, and its bytes are the manifest's
       #      core-teaching-slice.json artifact;
-      #   2. the s0ma-mcp wheel's s0ma_mcp/_docs payload is the cataloged
+      #   2. the s0ma-lang-mcp wheel's s0ma_mcp/_docs payload is the cataloged
       #      sources — the two the build reads are bound by their full
       #      digest in source_hashes, the rest by byte equality with the
       #      cataloged source and by catalog membership in the snapshot the
@@ -195,7 +195,7 @@ jobs:
       - name: Assert all four packages built at the tag version
         run: |
           version="${GITHUB_REF_NAME#v}"
-          for pkg in s0ma_core s0ma_dsl s0ma_mcp s0ma_studi0; do
+          for pkg in s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0; do
             ls "dist/${pkg}-${version}-py3-none-any.whl" "dist/${pkg}-${version}.tar.gz"
           done
 
@@ -275,7 +275,7 @@ jobs:
       - name: Assert all four wheels built at the tag version
         run: |
           version="${GITHUB_REF_NAME#v}"
-          for pkg in s0ma_core s0ma_dsl s0ma_mcp s0ma_studi0; do
+          for pkg in s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0; do
             ls "dist/${pkg}-${version}-py3-none-any.whl"
           done
 
@@ -427,4 +427,4 @@ jobs:
   #       run: uv build --all-packages
   #
   #     - name: Publish the four distributions, and only those
-  #       run: uv publish dist/s0ma_core-* dist/s0ma_dsl-* dist/s0ma_mcp-* dist/s0ma_studi0-*
+  #       run: uv publish dist/s0ma_lang_core-* dist/s0ma_lang_dsl-* dist/s0ma_lang_mcp-* dist/s0ma_lang_studi0-*

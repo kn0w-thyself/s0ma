@@ -7,7 +7,7 @@ Two kinds of coverage live here:
    the invariants the loader carried while it lived in ``s0ma_dsl``,
    verified against the core implementation that now owns them.
 2. **The runtime-honesty gate** (``TestCoreOnlyVenv``) — a real venv
-   containing **s0ma-core and nothing else** boots a build through
+   containing **s0ma-lang-core and nothing else** boots a build through
    ``s0ma.bootstrap.bootstrap_imports``. This is the wall a bench spike
    hit: with the loader in the authoring package (proprietary at the
    time), the documented one-line bootstrap died with
@@ -19,7 +19,7 @@ Two kinds of coverage live here:
 The builds used here are written by hand (a manifest plus plain-Python
 modules) rather than produced by the transpiler: core's suite must not
 depend on the authoring package, and the property under test is that the
-*loader* needs nothing but the standard library and s0ma-core.
+*loader* needs nothing but the standard library and s0ma-lang-core.
 """
 
 from __future__ import annotations
@@ -326,12 +326,12 @@ def test_non_array_topological_order_raises(tmp_path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
-# 5. The runtime-honesty gate: a venv with s0ma-core and nothing else
+# 5. The runtime-honesty gate: a venv with s0ma-lang-core and nothing else
 # ---------------------------------------------------------------------------
 
 
 class TestCoreOnlyVenv:
-    """Boot a build in an environment that has only s0ma-core installed.
+    """Boot a build in an environment that has only s0ma-lang-core installed.
 
     The venv is built once per module: ``uv venv`` + ``uv pip install
     --no-deps <repo>/packages/s0ma-core``. Nothing else goes in, so an
@@ -346,7 +346,7 @@ class TestCoreOnlyVenv:
         if uv is None:  # pragma: no cover - depends on the developer's box
             pytest.skip("uv is not on PATH; cannot build a core-only venv")
         if not (CORE_PACKAGE_ROOT / "pyproject.toml").is_file():  # pragma: no cover
-            pytest.skip("not a repo checkout; s0ma-core sources unavailable")
+            pytest.skip("not a repo checkout; s0ma-lang-core sources unavailable")
 
         venv = tmp_path_factory.mktemp("core_only") / "venv"
         subprocess.run(
@@ -434,7 +434,7 @@ class TestCoreOnlyVenv:
 
         assert result.returncode == 0, (
             "the core-only bootstrap failed — a deployed app cannot boot "
-            f"with s0ma-core alone:\n{result.stderr}"
+            f"with s0ma-lang-core alone:\n{result.stderr}"
         )
         payload = json.loads(result.stdout.strip().splitlines()[-1])
         assert payload["order"] == ["leaf_domain", "mid_application"]

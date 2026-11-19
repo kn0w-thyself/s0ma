@@ -346,7 +346,7 @@ def test_dry_run_prints_the_tagged_compose_and_the_tagged_gate(cut_repo: CutRepo
 
     All five mirror copies are named, in the order
     docs/operations/docs-maintenance.md ("The loop") gives them, and the
-    third one is why: the ``s0ma-dsl`` wheel's copy is what ``s0ma docs``
+    third one is why: the ``s0ma-lang-dsl`` wheel's copy is what ``s0ma docs``
     reads when there is no checkout, and while nothing filled it every read
     command answered an installed person "no documentation snapshot was
     found". The last two are the quick reference the authoring server

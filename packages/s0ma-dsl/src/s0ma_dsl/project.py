@@ -1,4 +1,4 @@
-"""Declarative project model for s0ma-dsl tools.
+"""Declarative project model for s0ma-lang-dsl tools.
 
 Every CLI subcommand resolves a :class:`S0maProject` first and operates
 against the resolved project. The project is rooted at the consumer's
@@ -149,7 +149,7 @@ DEFAULT_TEST_MODULE_NAME_PREFIX_BY_DIR: bool = False
 #   value, validated via ``json.loads`` on the full text).
 # * ``"yaml"`` — the file is a single YAML document (validated via
 #   ``yaml.safe_load`` on the full text). Requires PyYAML (already a
-#   transitive dependency of s0ma-core).
+#   transitive dependency of s0ma-lang-core).
 #
 # Any other value raises a ``ValueError`` at project-load time so a
 # typo cannot silently disable the check.
@@ -728,7 +728,7 @@ class S0maProject:
             raise ValueError(
                 f"[tool.s0ma].test_runner = {test_runner_raw!r} is not "
                 f"supported. Only {supported} is supported in this "
-                f"version of s0ma-dsl. Add 'pytest' to the project's "
+                f"version of s0ma-lang-dsl. Add 'pytest' to the project's "
                 f"pyproject.toml and re-run."
             )
 

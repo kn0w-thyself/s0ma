@@ -57,7 +57,7 @@ MCP_ADD_LINE = "claude mcp add s0ma --scope project -- uv run s0ma-mcp"
 #: ``uv add`` line names every one explicitly — their inter-deps are not on
 #: PyPI). This tuple PINS the intended set: install.sh's $WHEELS drifting
 #: from it — a stem dropped OR added — fails the sequence test below.
-WHEEL_STEMS = ("s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0")
+WHEEL_STEMS = ("s0ma_lang_core", "s0ma_lang_dsl", "s0ma_lang_mcp", "s0ma_lang_studi0")
 
 #: The default control-plane host (HOST-H6 / H4 contract). The installer
 #: targets this unless ``--cp-host`` overrides it.
@@ -683,6 +683,38 @@ def test_real_run_no_feedback_writes_no_token_file(
     assert not (home / ".s0ma").exists()
     assert STUB_TOKEN_PREFIX not in result.stdout
     assert "s0ma feedback enroll" in result.stdout
+
+
+#: The stems the four wheels carried up to and including 0.21.1.
+FORMER_WHEEL_STEMS = ("s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0")
+
+
+def test_real_run_installs_a_version_listed_under_the_former_names(
+    stub_toolchain: dict[str, object],
+) -> None:
+    """A manifest from before the rename still installs.
+
+    Versions up to 0.21.1 list their wheels without `lang` in the name, and
+    `--version` can ask for one of them, so the installer reads a manifest in
+    whichever set of names it was written.
+    """
+    env = stub_toolchain["env"]
+    assert isinstance(env, dict)
+    curl = Path(str(env["PATH"]).split(os.pathsep)[0]) / "curl"
+    body = curl.read_text(encoding="utf-8")
+    for current, former in zip(WHEEL_STEMS, FORMER_WHEEL_STEMS, strict=True):
+        body = body.replace(f"{current}-", f"{former}-")
+    curl.write_text(body, encoding="utf-8", newline="\n")
+
+    result = _install(stub_toolchain, "--no-feedback")
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    target = stub_toolchain["target"]
+    assert isinstance(target, Path)
+    fetched = sorted(path.name for path in (target / ".wheels").iterdir())
+    assert fetched == sorted(
+        f"{stem}-{_STUB_VERSION}-py3-none-any.whl" for stem in FORMER_WHEEL_STEMS
+    )
 
 
 def test_real_run_closing_summary_introduces_feedback(
