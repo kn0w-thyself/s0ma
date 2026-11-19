@@ -16,7 +16,13 @@ The two packages above are optional companions: `s0ma-lang-mcp` is the authoring
 
 ## Install
 
-s0ma is not on PyPI yet: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own — and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+s0ma is on PyPI:
+
+```bash
+pip install s0ma-lang-dsl
+```
+
+That brings `s0ma-lang-core` with it and installs the `s0ma` command. In a uv project, `uv add s0ma-lang-core s0ma-lang-dsl` names both in the project's dependencies. The package is named `s0ma-lang-dsl` and imported as `s0ma_dsl`. The other ways in, working inside a checkout or building the wheels yourself, are in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install), and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
 
 Then give your project a `[tool.s0ma]` table in its `pyproject.toml` — or start fresh with `s0ma new project <dir>`, which writes it for you. Without the table the CLI runs in legacy mode with a one-line warning per invocation.
 

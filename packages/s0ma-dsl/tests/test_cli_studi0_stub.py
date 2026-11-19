@@ -97,9 +97,13 @@ def test_missing_package_prints_one_hint_block(
     # Exactly one block: one statement of the problem, one remediation.
     assert err.count("is not importable in this environment") == 1
     assert err.count("Remediation:") == 1
-    assert err.count("Install the `s0ma-lang-studi0` wheel") == 1
-    # The remediation must never name a PyPI install route (PRD NFR-8).
-    assert "pip install s0ma-lang-studi0" not in err
+    assert err.count("Install `s0ma-lang-studi0` next to the other s0ma packages") == 1
+    # The remediation names the PyPI route, and names it first: all four
+    # packages are published there (PRD NFR-8), so it is the route most
+    # readers of this hint arrived by.
+    assert "pip install s0ma-lang-studi0" in err
+    assert err.index("pip install s0ma-lang-studi0") < err.index("keyed installer")
+    assert "not on PyPI" not in err
     assert "s0ma studi0: the optional `s0ma-lang-studi0` package" in err
     # It says what studi0 is, not merely that something failed.
     assert "component graph" in err
@@ -119,7 +123,7 @@ def test_missing_package_does_not_crash_without_a_positional(
 
     assert S0maCLI().run(["studi0"]) == EXIT_USAGE_ERROR
     err = capsys.readouterr().err
-    assert "Install the `s0ma-lang-studi0` wheel" in err
+    assert "Install `s0ma-lang-studi0` next to the other s0ma packages" in err
     # The hint names the directory it would have served.
     assert str(Path.cwd()) in err
 

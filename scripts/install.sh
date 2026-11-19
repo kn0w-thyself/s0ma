@@ -62,8 +62,10 @@ WHEEL_DIR=".wheels"
 # Default control-plane host (the H4 contract; --cp-host overrides for tests).
 CP_HOST_DEFAULT="account.kn0wthyself.ai"
 # The four wheels, named by their distribution stems. The control-plane
-# manifest carries all four (their inter-dependencies name packages that are
-# not on PyPI, so each must be installed explicitly; studi0 by owner decision 2026-08-17).
+# manifest carries all four and each is installed explicitly from it: a wheel
+# left out would be resolved from PyPI, at whatever version is published
+# there, instead of coming from the release this key was served (studi0 is in
+# the set by owner decision 2026-08-17).
 WHEELS="s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0"
 # The stems the same four wheels carried up to and including 0.21.1. The
 # manifest for one of those versions lists them this way, so --version can

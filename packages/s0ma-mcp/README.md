@@ -14,7 +14,13 @@ Installing this one package transitively provides the full toolchain (`s0ma-lang
 
 ## Install and register
 
-s0ma is not on PyPI yet: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own — and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+s0ma is on PyPI:
+
+```bash
+pip install s0ma-lang-mcp
+```
+
+That brings the full toolchain with it (`s0ma-lang-dsl` and `s0ma-lang-core[mcp]`) and installs the `s0ma-mcp` command. The package is named `s0ma-lang-mcp` and imported as `s0ma_mcp`. The other ways in, working inside a checkout or building the wheels yourself, are in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install), and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
 
 To register the server with Claude Code — `claude mcp add s0ma -- s0ma-mcp` where the wheel is installed, or `claude mcp add s0ma -- uv run s0ma-mcp` from a checkout of this repository. Any other client takes the same command as JSON:
 

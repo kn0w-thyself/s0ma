@@ -47,14 +47,15 @@ Every time you add, change, or remove functionality, follow this loop:
 
 ### 1.1 Install s0ma
 
-s0ma is not on PyPI yet, so `pip install s0ma-lang-core` will not work: all four packages are published there from the first release cut of the public repository. Until then the way in is the repository itself, and it is written down once, outside this guide:
+s0ma is on PyPI, and `pip install s0ma-lang-core` installs the runtime this guide is about. The ways in are written down once, outside this guide:
 [`docs/getting-started.md` §1](../../../docs/getting-started.md#1-create-a-real-project)
-states the route, and the
-[root `README.md`](../../../README.md) "Install" section has its commands —
-working inside a checkout, or building the wheels and installing them into a
-project of your own. Install that way, then come back here for the runtime.
+states them, and the
+[root `README.md`](../../../README.md) "Install" section has their commands:
+installing from PyPI, working inside a checkout, or building the wheels and
+installing them into a project of your own. Install one of those ways, then
+come back here for the runtime.
 
-From a checkout you may install `s0ma-lang-core` alone — the runtime framework on its own is fully supported — and then the optional extras matter:
+You may install `s0ma-lang-core` alone, because the runtime framework on its own is fully supported, and then the optional extras matter:
 
 | Extra | What it adds |
 |---|---|

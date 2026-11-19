@@ -14,24 +14,25 @@ repository's front page, the root `README.md`.
 ### 1. Create a real project
 
 <!--
-Single-source rule (the G6 rule, narrowed to one route for the public
-repository's first release). The route below is stated here and nowhere else:
-this section is the canonical route summary, and the root README's generated
-getting-started region is its byte-for-byte mirror. The route's mechanics —
-the clone, the sync, the wheel build and the install into a project — live on
-exactly one page, the root README's "Install" section, and every other page
-points there rather than restating them. Do not add a second copy, and do not
-restate the mechanics here: the rule is enforced by
-packages/s0ma-dsl/tests/test_docs_guide_bindings.py.
+Single-source rule (the G6 rule; one route at the public repository's first
+release, two since s0ma reached PyPI). The routes below are stated here and
+nowhere else: this section is the canonical route summary, and the root
+README's generated getting-started region is its byte-for-byte mirror. The
+routes' mechanics (the install from PyPI, the clone, the sync, the wheel build
+and the install into a project) live on exactly one page, the root README's
+"Install" section, and every other page points there rather than restating
+them. Do not add a second copy, and do not restate the mechanics here: the
+rule is enforced by packages/s0ma-dsl/tests/test_docs_guide_bindings.py.
 -->
 
-If the `s0ma` command is not installed yet, there is one way in today, and it
-is written down once — **the source route**: clone this repository and build
-from it. The root `README.md` "Install" section has the exact commands, both
-for working inside the checkout and for building the wheels and installing them
-into a project of your own. s0ma is not on PyPI yet: all four packages are
-published there from the first release cut of the public repository (PRD
-NFR-8), so until then `pip install s0ma-lang-core` will not work.
+If the `s0ma` command is not installed yet, there are two ways in, and they are
+written down once. The short one is **the package route**: s0ma is on PyPI as
+`s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, and
+installing `s0ma-lang-dsl` installs the command. The other is **the source
+route**: clone this repository and build from it. The root `README.md`
+"Install" section has the exact commands for both: installing from PyPI,
+working inside the checkout, and building the wheels and installing them into
+a project of your own.
 
 Then create a project:
 
@@ -131,12 +132,13 @@ the proof that the self-model participates in what can ship.
 
 Static checks deliberately do not execute project code. The host probe runs
 under the application's own Python, and a fresh project does not have one yet:
-it has no environment and declares no dependencies. Give it both in one step —
-from inside `my-app`, `uv add` the `s0ma-lang-core` and `s0ma-lang-dsl` wheels from the
-Install section, which creates `.venv`, installs them, and names them in
-`[project].dependencies` (the build's `HOST_RUNTIME_UNDECLARED` warning asks
-for exactly that declaration; with pip, install the two wheels into a `.venv`
-of your own and add the two names to `[project].dependencies` by hand). Then,
+it has no environment and declares no dependencies. Give it both in one step:
+from inside `my-app`, run `uv add s0ma-lang-core s0ma-lang-dsl`, which creates
+`.venv`, installs the two packages, and names them in `[project].dependencies`
+(the build's `HOST_RUNTIME_UNDECLARED` warning asks for exactly that
+declaration; with pip, install the two packages into a `.venv` of your own and
+add the two names to `[project].dependencies` by hand; from a checkout, add the
+two wheels you built, as the Install section shows). Then,
 after reviewing and trusting the application, run the separate probe:
 
 ```bash

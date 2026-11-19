@@ -8652,11 +8652,12 @@ class S0maCLI:
                 "reads build artifacts only and never writes to the "
                 "project.\n"
                 "Remediation:\n"
-                "  - Install the `s0ma-lang-studi0` wheel next to the other s0ma "
-                "packages: the keyed installer from the hosting "
-                "getting-started guide does this for you; from a source "
-                "checkout, build and install the studi0 wheel. "
-                "(s0ma is not on PyPI - PRD NFR-8.)\n"
+                "  - Install `s0ma-lang-studi0` next to the other s0ma "
+                "packages, the way they arrived: from PyPI, "
+                "`pip install s0ma-lang-studi0` (or `uv add "
+                "s0ma-lang-studi0` in a uv project); from the keyed "
+                "installer, run it again; from a source checkout, build "
+                "and install the studi0 wheel.\n"
                 f"  - Then re-run `s0ma studi0 {project_root}`.",
                 file=sys.stderr,
             )

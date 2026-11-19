@@ -16,7 +16,13 @@ Four distributions ship together at one version, and dependencies only ever poin
 
 ## Install
 
-s0ma is not on PyPI yet: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own — and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+s0ma is on PyPI:
+
+```bash
+pip install s0ma-lang-studi0
+```
+
+That brings `s0ma-lang-dsl` and `s0ma-lang-core` with it. The package is named `s0ma-lang-studi0` and imported as `s0ma_studi0`. The other ways in, working inside a checkout or building the wheels yourself, are in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install), and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
 
 studi0 ships no console script of its own on purpose: the door is the `s0ma` CLI, which discovers this package lazily and prints an install hint if it is absent.
 

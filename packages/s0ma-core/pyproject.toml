@@ -25,6 +25,12 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.urls]
+Homepage = "https://github.com/kn0w-thyself/s0ma"
+Repository = "https://github.com/kn0w-thyself/s0ma"
+Changelog = "https://github.com/kn0w-thyself/s0ma/blob/main/CHANGELOG.md"
+Issues = "https://github.com/kn0w-thyself/s0ma/issues"
+
 [project.optional-dependencies]
 api = ["fastapi>=0.100.0", "uvicorn[standard]>=0.20.0", "pydantic>=2.0"]
 mcp = ["mcp>=1.0.0,<2"]

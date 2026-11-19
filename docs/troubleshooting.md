@@ -498,11 +498,11 @@ and opens your browser there. It serves until you press Ctrl-C.
 **"The optional `s0ma-lang-studi0` package is not importable in this environment."**
 Most often the command ran outside the project and looked in the wrong
 environment: re-run it as `uv run s0ma studi0` from the project directory. If
-the viewer really is absent, note that the hint that message prints
-(`pip install s0ma-lang-studi0`) does **not** work during the beta, because s0ma is
-not published on the public package index. How you get it back depends on how
-s0ma arrived: re-run the keyed installer; or, if the downloaded files are still
-in your project's `.wheels/` folder, add the viewer back with
+the viewer really is absent, how you get it back depends on how s0ma arrived.
+From PyPI: `uv add s0ma-lang-studi0` in the project, or
+`pip install s0ma-lang-studi0` into the environment that holds `s0ma`. Through
+the keyed installer: re-run it; or, if the downloaded files are still in your
+project's `.wheels/` folder, add the viewer back with
 `uv add ./.wheels/s0ma_lang_studi0-*.whl`. A machine that gets s0ma through Claude
 never meets this: the four packages are installed together, as a set, every
 time.

@@ -16,7 +16,13 @@ Core sits at the bottom with no hard runtime dependency on any of them, and it i
 
 ## Install
 
-s0ma is not on PyPI yet, so `pip install s0ma-lang-core` will not work: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own, with this package's optional extras (`[api]`, `[mcp]`, `[all]`) — and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+s0ma is on PyPI:
+
+```bash
+pip install s0ma-lang-core
+```
+
+The package is named `s0ma-lang-core` and imported as `s0ma`. Its optional extras are `[api]` for the REST application, `[mcp]` for the introspection MCP server, and `[all]` for both: `pip install "s0ma-lang-core[api]"`. The other ways in, working inside a checkout or building the wheels yourself, are in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install), and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk with the `s0ma` command, which `s0ma-lang-dsl` adds.
 
 ## What it feels like
 

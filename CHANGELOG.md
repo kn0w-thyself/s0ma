@@ -13,6 +13,34 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Changed
 
+- **s0ma is on PyPI.** `pip install s0ma-lang-core` installs the runtime, and
+  `uv add s0ma-lang-core s0ma-lang-dsl` adds the runtime, the `.s0ma` compiler
+  and the `s0ma` command to a project. All four packages are there at this
+  version, and this is the first version that is: 0.19.1 through 0.21.1 were
+  never published to PyPI. Working from a checkout and building the wheels
+  yourself still work and are still written down, in the root README's Install
+  section. The README, the getting-started guide, the walkthrough, the
+  troubleshooting page, the core user guide and the four package READMEs now
+  put the PyPI route first, and the hint `s0ma studi0` prints when the viewer
+  is not installed names `pip install s0ma-lang-studi0`.
+- **Each package's PyPI page works as a page.** A package README is what PyPI
+  shows for that package, frozen into the version. The four READMEs now open
+  their Install section with the one command that installs the package, and
+  every link in them is a full address, because a relative link on PyPI leads
+  nowhere. The `docs-links` check reads a full address into this repository's
+  `main` branch the same way it reads a relative link, so those links are
+  still checked against the tree. Each package also names its homepage,
+  repository, changelog and issue tracker in its metadata.
+- **The release workflow publishes to PyPI.** `publish-pypi` is the last job
+  of `release.yml`, after the gate, the GitHub Release, the R2 mirror and the
+  check of what production serves. It builds nothing: it uploads the files
+  the `release` job built, after requiring them to be byte for byte the
+  assets of the GitHub Release. It signs in to PyPI by identity, so no token
+  is stored; it runs only in the public repository; and it waits in the
+  `pypi` environment for the owner's approval. A run that stops part-way can
+  be run again, and skips what PyPI already holds. `docs/RELEASING.md` has
+  the procedure, including the first publication, which PyPI's own rules make
+  one project at a time.
 - **The four packages have new names on the package index.** `s0ma-core` is
   now `s0ma-lang-core`, `s0ma-dsl` is `s0ma-lang-dsl`, `s0ma-mcp` is
   `s0ma-lang-mcp` and `s0ma-studi0` is `s0ma-lang-studi0`. The Python package
@@ -23,8 +51,7 @@ Historical entries describe artifacts as they were named at the time.
   `import s0ma`, `s0ma_dsl`, `s0ma_mcp` and `s0ma_studi0`, the `s0ma` and
   `s0ma-mcp` commands, the `.s0ma` extension and this repository's
   `packages/s0ma-*` directories are what they were. PRD v1.17 records the
-  ruling. s0ma is still not on the index; this release only takes the names
-  it will be published under.
+  ruling. This is the first release published under them.
 - **Moving a project to the new names.** In `[project].dependencies`, replace
   `s0ma-core` with `s0ma-lang-core` and `s0ma-dsl` with `s0ma-lang-dsl`, and
   the other two where you name them. Wheel files are named to match, for
