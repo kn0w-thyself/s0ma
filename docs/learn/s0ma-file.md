@@ -77,5 +77,5 @@ module <name>
 ## Identity
 
 - Topic id: `concept:s0ma-file`
-- Release: `0.22.0 (preview)`
+- Release: `0.22.0`
 - Documentation snapshot: `sha256:ef1b48710ab0f64c`
