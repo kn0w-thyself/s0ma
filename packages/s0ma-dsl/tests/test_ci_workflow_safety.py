@@ -84,6 +84,13 @@ WIDENED_PERMISSIONS: dict[tuple[str, str], str] = {
         "attaches the built distributions to it. Reachable only by pushing a tag "
         "(pinned by test_the_release_workflow_opens_only_on_a_tag_push)."
     ),
+    ("release.yml", "publish-pypi"): (
+        "id-token: write: this job publishes the built distributions to PyPI by "
+        "trusted publishing, which means proving the run's identity to PyPI instead "
+        "of storing a token. It asks for nothing else beyond reading, runs only in "
+        "the public repository behind the `pypi` environment, and is reachable only "
+        "by pushing a tag (test_release_publish_job.py pins all of it)."
+    ),
 }
 
 #: Workflows that do not yet declare a top-level ``permissions:`` block.

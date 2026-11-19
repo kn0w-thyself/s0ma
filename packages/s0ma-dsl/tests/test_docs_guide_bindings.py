@@ -87,6 +87,13 @@ The mechanics home and the mechanics sites are unchanged, and the command
 sites are the mechanics home alone: the installer is still described in
 exactly one place, and this suite still proves it.
 
+**Widened by one route when s0ma reached PyPI.** The summary home now
+states two routes by name, *the package route* (install from PyPI) and
+*the source route*, and still points at the root README's *Install*
+section for the mechanics of both. Nothing else moved: the keyed installer
+is still described on one page, and the pointer sites still point at the
+same two homes.
+
 **Cost.** The documentation build is composed once for the module, by the
 two tests that need composed records.
 """
@@ -586,10 +593,9 @@ CLAIMABLE_PREFIXES: tuple[str, ...] = (
 SUMMARY_HOME = "docs/getting-started.md"
 MECHANICS_HOME = "docs/hosting-getting-started.md"
 
-#: Where the source route's mechanics live — the clone, the sync, the wheel
-#: build and the install into a project. The public repository's first
-#: release offers that route alone, so the summary home points here and
-#: nowhere else.
+#: Where the mechanics of the package route and the source route live: the
+#: install from PyPI, the clone, the sync, the wheel build and the install
+#: into a project. The summary home points here and nowhere else.
 SOURCE_ROUTE_HOME = "README.md"
 
 #: The keyed installer, character for character. Quoted rather than built
@@ -1004,6 +1010,10 @@ class TestTheInstallNarrativeIsSingleSourced:
     def test_the_summary_home_states_the_source_route(self) -> None:
         text = _flowed((REPO_ROOT / SUMMARY_HOME).read_text(encoding="utf-8"))
         assert "the source route" in text
+        # And, since s0ma reached PyPI, the package route before it.
+        assert "the package route" in text
+        assert text.index("the package route") < text.index("the source route")
+        assert "not on PyPI" not in text
         assert "the tester route" not in text
         assert "the contributor route" not in text
         assert "the Claude route" not in text

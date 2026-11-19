@@ -8,10 +8,10 @@ This is the practical, end-to-end guide for using the **s0ma authoring MCP serve
 
 This page does not describe the install, because the install is written down once elsewhere and a second account of it would only drift. Take what you need from these two pages, then come back:
 
-- **The route** the public repository offers — clone the repository and build from it — is stated once in [`getting-started.md` §1](getting-started.md#1-create-a-real-project).
-- **Its commands** — building the wheels from a checkout, or working straight out of the monorepo with `uv sync` — are in the root [`README.md`](../README.md) "Install" section.
+- **The routes** in, installing from PyPI or cloning the repository and building from it, are stated once in [`getting-started.md` §1](getting-started.md#1-create-a-real-project).
+- **Their commands**, from `pip install` to working straight out of the monorepo with `uv sync`, are in the root [`README.md`](../README.md) "Install" section.
 
-One fact from those pages that the rest of this walkthrough leans on: s0ma is **not on PyPI** yet — all four packages are published there from the first release cut of the public repository (the single authority is [PRD](../references/s0ma-prd.md) **NFR-8**) — so there is no `pip install` route to fall back on, and the authoring server you are about to register runs **locally** — what s0ma sends anywhere is the subject of [`trust-model.md`](trust-model.md).
+One fact the rest of this walkthrough leans on, whichever route you took: the authoring server you are about to register runs **locally**. What s0ma sends anywhere is the subject of [`trust-model.md`](trust-model.md).
 
 Sanity check whichever route you took:
 

@@ -10,13 +10,19 @@ studi0 is a **viewer**. It never executes or imports the application it is showi
 
 Four distributions ship together at one version, and dependencies only ever point down the stack (PRD INV-6):
 
-**`s0ma-lang-studi0`** · [`s0ma-lang-mcp`](../s0ma-mcp) → [`s0ma-lang-dsl`](../s0ma-dsl) → [`s0ma-lang-core`](../s0ma-core)
+**`s0ma-lang-studi0`** · [`s0ma-lang-mcp`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-mcp) → [`s0ma-lang-dsl`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-dsl) → [`s0ma-lang-core`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-core)
 
-`s0ma-lang-studi0` is **Apache-2.0**, and so are `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-mcp`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
+`s0ma-lang-studi0` is **Apache-2.0**, and so are `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-mcp`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/packages.md).
 
 ## Install
 
-s0ma is not on PyPI yet: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](../../README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own — and [getting started](../../docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+s0ma is on PyPI:
+
+```bash
+pip install s0ma-lang-studi0
+```
+
+That brings `s0ma-lang-dsl` and `s0ma-lang-core` with it. The package is named `s0ma-lang-studi0` and imported as `s0ma_studi0`. The other ways in, working inside a checkout or building the wheels yourself, are in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install), and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
 
 studi0 ships no console script of its own on purpose: the door is the `s0ma` CLI, which discovers this package lazily and prints an install hint if it is absent.
 
@@ -49,7 +55,7 @@ studi0's whole job is to be honest about what a project did and did not declare,
 - **Declared versus not declared.** A value renders as itself; an absent field renders as a muted *not declared*; a field the author explicitly deferred renders as *pending: &lt;reason&gt;*, surfaced as authoring debt rather than hidden as an empty slot.
 - **Narration is separated from truth.** While studi0 is running, the authoring server may ask the agent to say which movement of the work it is in, and studi0 tails that log in a pane beside the graph. The pane says in words that it is self-reported and unverified, it never gains a checkmark or a badge, a line that does not parse is counted and dropped rather than guessed at, and a narrated name the graph does not carry is labelled *not in this graph* and moves nothing.
 
-The routes studi0 serves, the contracts its build declares, the shape of a narration line, and the one file it writes are all in [studi0, the viewer](../../docs/reference/studi0.md) — generated from studi0's own built source, so it describes the viewer that ships.
+The routes studi0 serves, the contracts its build declares, the shape of a narration line, and the one file it writes are all in [studi0, the viewer](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/studi0.md) — generated from studi0's own built source, so it describes the viewer that ships.
 
 ## v1 limits
 
@@ -73,18 +79,18 @@ Never hand-edit anything under `_built/` — a CI stage rebuilds it and byte-com
 uv run s0ma --project-root packages/s0ma-studi0 build packages/s0ma-studi0
 ```
 
-Point studi0 at itself to see the arrangement: `uv run s0ma studi0 packages/s0ma-studi0` draws five organs — the server, the state service, the watch loop, the narration side channel, and the embedded sh0w assets. [CONTRIBUTING.md](../../CONTRIBUTING.md) has the workspace setup and the one command that runs the whole gate.
+Point studi0 at itself to see the arrangement: `uv run s0ma studi0 packages/s0ma-studi0` draws five organs — the server, the state service, the watch loop, the narration side channel, and the embedded sh0w assets. [CONTRIBUTING.md](https://github.com/kn0w-thyself/s0ma/blob/main/CONTRIBUTING.md) has the workspace setup and the one command that runs the whole gate.
 
 ## Documentation
 
-[**The map of record**](../../docs/README.md) lists every document this repository keeps, what it is for, and which check keeps it honest. The paths through studi0:
+[**The map of record**](https://github.com/kn0w-thyself/s0ma/blob/main/docs/README.md) lists every document this repository keeps, what it is for, and which check keeps it honest. The paths through studi0:
 
-- [studi0, the viewer](../../docs/reference/studi0.md) — the generated reference: routes, contracts, wire documents.
-- [Look at what you built, then tell us what is wrong with it](../../docs/guides/studi0-feedback.md) — the viewer and the feedback route, end to end.
-- [What s0ma can do](../../docs/reference/surfaces-index.md) — every capability s0ma serves, on every channel.
+- [studi0, the viewer](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/studi0.md) — the generated reference: routes, contracts, wire documents.
+- [Look at what you built, then tell us what is wrong with it](https://github.com/kn0w-thyself/s0ma/blob/main/docs/guides/studi0-feedback.md) — the viewer and the feedback route, end to end.
+- [What s0ma can do](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/surfaces-index.md) — every capability s0ma serves, on every channel.
 
 In a terminal, `s0ma docs` opens the same map and `s0ma docs show <topic>` answers one question from it.
 
 ## License
 
-Apache License 2.0 — see [`LICENSE`](LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-mcp` are Apache-2.0 too, each with its own `LICENSE`.
+Apache License 2.0 — see [`LICENSE`](https://github.com/kn0w-thyself/s0ma/blob/main/packages/s0ma-studi0/LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-mcp` are Apache-2.0 too, each with its own `LICENSE`.

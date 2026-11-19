@@ -40,6 +40,12 @@ dependencies = [
     "s0ma-lang-studi0 == 0.21.1",
 ]
 
+[project.urls]
+Homepage = "https://github.com/kn0w-thyself/s0ma"
+Repository = "https://github.com/kn0w-thyself/s0ma"
+Changelog = "https://github.com/kn0w-thyself/s0ma/blob/main/CHANGELOG.md"
+Issues = "https://github.com/kn0w-thyself/s0ma/issues"
+
 # No modules, no console script, no extras: everything a person runs or
 # imports after installing this comes from the four distributions above.
 # hatchling refuses to build a wheel it has selected no files for unless it is

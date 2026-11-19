@@ -145,14 +145,47 @@ left out of it. More languages are on the roadmap. Hardware starts at
 
 ## Install
 
-s0ma is **not on PyPI yet**. All four packages are published there from the
-first release cut of this repository
-([PRD](references/s0ma-prd.md) NFR-8). Until that lands, `pip install s0ma-lang-core`
-does not work and the way in is this repository. This section is the one place
-that route is written down.
+s0ma is on [PyPI](https://pypi.org/project/s0ma-lang/), as four packages that
+share one version and an umbrella, `s0ma-lang`, that installs all four. It runs
+on macOS, Linux and Windows with native CPython 3.11 or newer.
 
-s0ma runs on macOS, Linux and Windows with native CPython 3.11 or newer. The
-commands use [uv](https://docs.astral.sh/uv/).
+The runtime on its own:
+
+```bash
+pip install s0ma-lang-core
+```
+
+The runtime with the `.s0ma` compiler and the `s0ma` command, in a
+[uv](https://docs.astral.sh/uv/) project:
+
+```bash
+uv add s0ma-lang-core s0ma-lang-dsl
+uv run s0ma doctor                    # what is installed here, and whether it is healthy
+```
+
+With pip, the same two names install into the active environment, and the
+command is plain `s0ma`.
+
+All of it under one name, the authoring server and the viewer included:
+
+```bash
+pip install s0ma-lang
+```
+
+`s0ma-lang` carries no code. It requires each of the four at exactly its own
+version, so one name installs the toolchain as it was released together.
+
+The packages carry `lang` in their names and nothing else does: you still
+`import s0ma` and type `s0ma`. `s0ma-lang-core` on its own is fully supported:
+the runtime, with zero hard dependencies. `s0ma-lang-dsl` adds the `.s0ma`
+compiler and the `s0ma` command, `s0ma-lang-mcp` adds the authoring server, and
+`s0ma-lang-studi0` adds the visual environment. The optional extras of
+`s0ma-lang-core` are `[api]` for REST, `[mcp]` for the introspection MCP
+server, and `[all]`.
+
+<details>
+<summary><b>Or work from a checkout of this repository</b></summary>
+<br>
 
 ```bash
 git clone https://github.com/kn0w-thyself/s0ma.git && cd s0ma
@@ -164,19 +197,22 @@ Working this way, every bare `s0ma` command on this page is `uv run s0ma …`
 from the checkout. Or activate the checkout's `.venv` once and type them as
 written.
 
+</details>
+
 <details>
 <summary><b>Or build the wheels and install them into a project of your own</b></summary>
 <br>
 
-From the checkout:
+This is the route for running what is on `main` before it is released. From
+the checkout:
 
 ```bash
 uv build --package s0ma-lang-core && uv build --package s0ma-lang-dsl   # add --package s0ma-lang-mcp / --package s0ma-lang-studi0 as needed
 ```
 
-Then, in your own project, add each wheel by path. Their inter-dependencies
-name PyPI packages that do not exist there yet, so a resolver cannot find them
-on its own:
+Then, in your own project, add each wheel by path. Name every one you built:
+a wheel left out is fetched from PyPI at its released version, not taken
+from your build:
 
 ```bash
 uv add /path/to/s0ma/dist/s0ma_lang_core-*.whl /path/to/s0ma/dist/s0ma_lang_dsl-*.whl
@@ -186,22 +222,16 @@ Or `pip install` the same wheels into any virtual environment, `s0ma-lang-core`
 first. The globs assume a clean `dist/`: one wheel per package, at the version
 you just built.
 
-`s0ma-lang-core` on its own is fully supported: the runtime, with zero hard
-dependencies. `s0ma-lang-dsl` adds the `.s0ma` compiler and the `s0ma` command,
-`s0ma-lang-mcp` adds the authoring server, and `s0ma-lang-studi0` adds the visual
-environment. The optional extras of `s0ma-lang-core` are `[api]` for REST, `[mcp]`
-for the introspection MCP server, and `[all]`.
-
 </details>
 
 ## Quick start
 
-With the checkout's environment active, make a project anywhere and ask it
-what it is. This is the project in the picture and the clips above:
+Install the viewer, which brings the rest with it, then make a project anywhere
+and ask it what it is. This is the project in the picture and the clips above:
 
 ```bash
-source .venv/bin/activate                              # Windows: .venv\Scripts\activate
-cd .. && s0ma new project shop --template service && cd shop
+pip install s0ma-lang-studi0         # the viewer, which brings the compiler and the runtime with it
+s0ma new project shop --template service && cd shop
 s0ma check                           # does everything declared hold together?
 s0ma inspect api_presentation        # ask a module what it is
 s0ma studi0                          # look at it
@@ -233,24 +263,26 @@ repository's front page, the root `README.md`.
 ### 1. Create a real project
 
 <!--
-Single-source rule (the G6 rule, narrowed to one route for the public
-repository's first release). The route below is stated here and nowhere else:
-this section is the canonical route summary, and the root README's generated
-getting-started region is its byte-for-byte mirror. The route's mechanics —
-the clone, the sync, the wheel build and the install into a project — live on
-exactly one page, the root README's "Install" section, and every other page
-points there rather than restating them. Do not add a second copy, and do not
-restate the mechanics here: the rule is enforced by
-packages/s0ma-dsl/tests/test_docs_guide_bindings.py.
+Single-source rule (the G6 rule; one route at the public repository's first
+release, two since s0ma reached PyPI). The routes below are stated here and
+nowhere else: this section is the canonical route summary, and the root
+README's generated getting-started region is its byte-for-byte mirror. The
+routes' mechanics (the install from PyPI, the clone, the sync, the wheel build
+and the install into a project) live on exactly one page, the root README's
+"Install" section, and every other page points there rather than restating
+them. Do not add a second copy, and do not restate the mechanics here: the
+rule is enforced by packages/s0ma-dsl/tests/test_docs_guide_bindings.py.
 -->
 
-If the `s0ma` command is not installed yet, there is one way in today, and it
-is written down once — **the source route**: clone this repository and build
-from it. The root `README.md` "Install" section has the exact commands, both
-for working inside the checkout and for building the wheels and installing them
-into a project of your own. s0ma is not on PyPI yet: all four packages are
-published there from the first release cut of the public repository (PRD
-NFR-8), so until then `pip install s0ma-lang-core` will not work.
+If the `s0ma` command is not installed yet, there are two ways in, and they are
+written down once. The short one is **the package route**: s0ma is on PyPI as
+`s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, and
+as `s0ma-lang`, one name that installs all four. Installing `s0ma-lang-dsl`
+installs the command. The other is **the source route**: clone this repository
+and build from it. The root `README.md`
+"Install" section has the exact commands for both: installing from PyPI,
+working inside the checkout, and building the wheels and installing them into
+a project of your own.
 
 Then create a project:
 
@@ -350,12 +382,13 @@ the proof that the self-model participates in what can ship.
 
 Static checks deliberately do not execute project code. The host probe runs
 under the application's own Python, and a fresh project does not have one yet:
-it has no environment and declares no dependencies. Give it both in one step —
-from inside `my-app`, `uv add` the `s0ma-lang-core` and `s0ma-lang-dsl` wheels from the
-Install section, which creates `.venv`, installs them, and names them in
-`[project].dependencies` (the build's `HOST_RUNTIME_UNDECLARED` warning asks
-for exactly that declaration; with pip, install the two wheels into a `.venv`
-of your own and add the two names to `[project].dependencies` by hand). Then,
+it has no environment and declares no dependencies. Give it both in one step:
+from inside `my-app`, run `uv add s0ma-lang-core s0ma-lang-dsl`, which creates
+`.venv`, installs the two packages, and names them in `[project].dependencies`
+(the build's `HOST_RUNTIME_UNDECLARED` warning asks for exactly that
+declaration; with pip, install the two packages into a `.venv` of your own and
+add the two names to `[project].dependencies` by hand; from a checkout, add the
+two wheels you built, as the Install section shows). Then,
 after reviewing and trusting the application, run the separate probe:
 
 ```bash

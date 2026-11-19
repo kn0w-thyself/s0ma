@@ -54,8 +54,8 @@ INSTALL_SH = REPO_ROOT / "scripts" / "install.sh"
 MCP_ADD_LINE = "claude mcp add s0ma --scope project -- uv run s0ma-mcp"
 
 #: The wheels the installer must ship, as bare distribution stems (the
-#: ``uv add`` line names every one explicitly — their inter-deps are not on
-#: PyPI). This tuple PINS the intended set: install.sh's $WHEELS drifting
+#: ``uv add`` line names every one explicitly, so none is resolved from PyPI
+#: at some other version). This tuple PINS the intended set: install.sh's $WHEELS drifting
 #: from it — a stem dropped OR added — fails the sequence test below.
 WHEEL_STEMS = ("s0ma_lang_core", "s0ma_lang_dsl", "s0ma_lang_mcp", "s0ma_lang_studi0")
 

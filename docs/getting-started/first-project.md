@@ -18,12 +18,11 @@ an accurate, queryable model of itself — and that you want a project of your
 own. If that is not yet true, [the cold-start guide](../getting-started.md)
 makes the case first and is the better page to begin on.
 
-You also need s0ma installed. If the `s0ma` command does not run yet, there is
-one route in, and the first section of [the cold-start guide](../getting-started.md)
-states it once: clone the repository and build the four packages from source,
-with the exact commands in the repository's own `README.md` under "Install".
-s0ma is not yet published on the usual Python package index, so the ordinary
-`pip install` route will not find it.
+You also need s0ma installed. If the `s0ma` command does not run yet, there are
+two ways in, and the first section of [the cold-start guide](../getting-started.md)
+states them once: install s0ma from the usual Python package index, or clone
+the repository and build the packages from source. The exact commands for both
+are in the repository's own `README.md` under "Install".
 
 Once the command runs, nothing else is needed. Everything on this page works
 offline, with no coding agent connected and nothing running in the background.

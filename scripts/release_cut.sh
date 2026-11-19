@@ -29,7 +29,7 @@
 # ---------------------------------------------------------------------------
 #   * It never commits, tags, or pushes. Pushing a `v*` tag IS the release
 #     act — it fires .github/workflows/release.yml (build, GitHub Release,
-#     R2 mirror). Only the owner performs it, deliberately.
+#     R2 mirror, PyPI). Only the owner performs it, deliberately.
 #   * It makes no network calls at all.
 #   * It bumps ONLY the five pyproject version lines and the umbrella's
 #     four pins. The other version
@@ -584,7 +584,7 @@ print_next_commands() {
     printf '  # 6. OWNER-AUTHORIZED ONLY, once CI is green on P: main moves to P by\n'
     printf '  #    a fast-forward, then the tag names R. The tag push IS the release\n'
     printf '  #    act — it fires .github/workflows/release.yml (wheels, GitHub\n'
-    printf '  #    Release, R2 mirror). No agent ever runs it.\n'
+    printf '  #    Release, R2 mirror, PyPI). No agent ever runs it.\n'
     printf '  git push origin release-%s:main\n' "$VERSION"
     printf '  git tag -a %s <hash-of-R> -m "s0ma %s %s <one-line summary>"\n' "$TAG" "$VERSION" "$EM_DASH"
     printf '  git push origin %s\n' "$TAG"

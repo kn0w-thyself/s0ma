@@ -279,6 +279,87 @@ def test_external_links_are_skipped_without_contacting_anything(tmp_path: Path) 
     assert "3 external link(s) skipped" in result.stdout
 
 
+def test_an_absolute_link_into_this_repository_is_checked_not_skipped(
+    tmp_path: Path,
+) -> None:
+    """A package README spells its links in full so they work on its PyPI
+    page. They are still links into this tree: a good one counts as checked,
+    and only the genuinely foreign address counts as external."""
+    own = _checker().OWN_REPOSITORY_URL
+    files = _baseline()
+    files["docs/adr/ADR-001.md"] = "# ADR 1\n"
+    files["docs/guide.md"] = (
+        "# Guide\n\n"
+        f"[notes]({own}/blob/main/docs/notes.md)\n"
+        f"[deep]({own}/blob/main/docs/notes.md#deep-section)\n"
+        f"[decisions]({own}/tree/main/docs/adr)\n"
+        f"[issues]({own}/issues/new/choose)\n"
+        f"[a release]({own}/blob/v0.21.1/docs/gone-since.md)\n"
+    )
+    result = _run(_make_repo(tmp_path, files))
+    assert result.returncode == 0, result.stdout
+    assert f"{FILLER_LINKS + 3} intra-repo link(s) resolved" in result.stdout
+    assert "2 external link(s) skipped" in result.stdout
+
+
+def test_an_absolute_link_to_a_file_that_is_gone_is_red(tmp_path: Path) -> None:
+    """The reason the rule exists: making a link absolute must not be how a
+    dead link stops being reported. It is reported as the URL on the page."""
+    own = _checker().OWN_REPOSITORY_URL
+    files = _baseline()
+    files["docs/guide.md"] = (
+        f"# Guide\n\n[moved]({own}/blob/main/docs/moved-away.md)\n"
+        f"[renamed]({own}/blob/main/docs/notes.md#no-such-heading)\n"
+    )
+    result = _run(_make_repo(tmp_path, files))
+    assert result.returncode == 1, result.stdout
+    assert "2 unresolvable link(s)" in result.stdout
+    assert "docs/guide.md:3: target docs/moved-away.md is not tracked" in result.stdout
+    assert f"| link: {own}/blob/main/docs/moved-away.md" in result.stdout
+    assert "docs/guide.md:4:" in result.stdout
+    assert "no-such-heading" in result.stdout
+
+
+def test_own_tree_target_reads_only_the_default_branch() -> None:
+    checker = _checker()
+    own = checker.OWN_REPOSITORY_URL
+    assert checker.own_tree_target(f"{own}/blob/main/docs/x.md#y") == "/docs/x.md#y"
+    assert checker.own_tree_target(f"{own}/tree/main/packages/s0ma-core") == (
+        "/packages/s0ma-core"
+    )
+    for foreign in (
+        f"{own}/blob/v0.21.1/docs/x.md",
+        f"{own}/issues/19",
+        f"{own}/tree/main",
+        f"{own}",
+        "https://github.com/someone-else/s0ma/blob/main/docs/x.md",
+        "docs/x.md",
+    ):
+        assert checker.own_tree_target(foreign) is None, foreign
+
+
+def test_the_package_readmes_carry_no_relative_link() -> None:
+    """Each package README is its PyPI project page, frozen into the release.
+    A relative link there is dead, so every link is absolute, and the rule
+    above is what keeps those absolute links checked."""
+    checker = _checker()
+    readmes = sorted((REPO_ROOT / "packages").glob("*/README.md"))
+    assert len(readmes) >= 4, readmes
+    for readme in readmes:
+        rel = readme.relative_to(REPO_ROOT).as_posix()
+        links = checker.document_links(rel, readme.read_text(encoding="utf-8"))
+        assert links, rel
+        relative = [
+            f"{rel}:{link.lineno}: {link.target}"
+            for link in links
+            if not checker._EXTERNAL_RE.match(link.target.strip())
+        ]
+        assert relative == [], (
+            "a package README is shown on PyPI, where these links are dead; "
+            f"write them as {checker.OWN_REPOSITORY_URL}/blob/main/<path>: {relative}"
+        )
+
+
 def test_excluded_directories_are_not_scanned(tmp_path: Path) -> None:
     """Mirrors are byte-gated at their source; history and plans are frozen."""
     files = _baseline()

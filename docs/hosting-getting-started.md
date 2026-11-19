@@ -2,10 +2,11 @@
 
 > **This is the keyed route, and it is not the route the public repository
 > offers.** This page describes the hosted channel's installer, for testers the
-> s0ma owner has invited and given a key. The public repository's first release
-> offers one way in — clone the repository and build from it — which is stated
+> s0ma owner has invited and given a key. The public repository offers two
+> ways in, installing from PyPI and cloning the repository to build from it.
+> Both are stated
 > once in [`getting-started.md` §1](getting-started.md#1-create-a-real-project)
-> and needs nothing on this page.
+> and need nothing on this page.
 
 You have been invited to the s0ma private beta. You received two things from the
 s0ma owner:
@@ -333,9 +334,9 @@ added later can parse it.
 
 **This page is the one place the keyed installer is described.** The route it
 belongs to is the hosted channel's, which the public repository's first release
-does not offer: that release's one route in — clone the repository and build
-from it — is stated once in
-[`getting-started.md` §1](getting-started.md#1-create-a-real-project), and its
+does not offer: the two routes in the public repository does offer, installing
+from PyPI and cloning the repository to build from it, are stated once in
+[`getting-started.md` §1](getting-started.md#1-create-a-real-project), and their
 mechanics once in the root `README.md` "Install" section. The installer itself,
 its flags, its failure modes, and the feedback enrolment it performs are stated
 once here, and the Claude Code plugin and the Claude Desktop extension are

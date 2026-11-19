@@ -268,7 +268,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "bb37aef715f8e701d83abc0d1bdd99fbc0f47fc6e17e45e8165c983f45303044",
+      "content_sha256": "6ca06b2d1c777b3551981daff7ba817cf11cf7e159a1d71c4126dc27731955f0",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang",
       "section": "[project]",
@@ -277,7 +277,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "c7b2e1d1e4e61a299adf0f610cc31961623ad72d214f749325032218ee4ca3af",
+      "content_sha256": "7b89fadc7a28119ab28cf3e1137e5aae7549a36cebe8a8124ad75caf06698c62",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-core",
       "section": "[project]",
@@ -286,7 +286,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "cbd56891c4848cd989d7310aeec6894c551e35d81673f726969412a463e5b768",
+      "content_sha256": "c50402d2873bcac21f4481b30c1ac83dc14d9a32551c8d54773a5492d331da4a",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-dsl",
       "section": "[project]",
@@ -295,7 +295,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "e9850f466eb98f71056e9ed636aefe96b8fe80dc6a41ba508a5b210fa40cd7c2",
+      "content_sha256": "872e28436fa49dd37546be122a90feab31427bf5d6af72e4d6aeba599d856721",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-mcp",
       "section": "[project]",
@@ -304,7 +304,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "1f20247849ae8d18f7ad62b20c50c1ff922103d0dcd214f8ed4a30f89dfe8cd3",
+      "content_sha256": "b06a119672161eaa53d927bc3883b27fb1cec5367676a9e820bc95a50fc0e8bd",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-studi0",
       "section": "[project]",
@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "129882b2b1d3275a1530995a7629ce61a622e878163256a3a312657d403ad38f",
+      "content_sha256": "692188a54d8db17207aaa5da8fb3a802154c226efe925b995dc30b832e840a18",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.21.1] — 2026-10-30",
@@ -5514,7 +5514,7 @@
     "build_channel": "preview",
     "release_version": "0.21.1",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:ea504d14be224c40"
+    "snapshot_hash": "sha256:cfa5678439689711"
   },
   "surfaces": [
     {

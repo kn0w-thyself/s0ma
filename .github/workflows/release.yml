@@ -1,27 +1,41 @@
 # s0ma release workflow (M6). Runs on every `v*` tag push.
 #
-#   check   — the same full gate as CI (`scripts/check.py`: ruff,
+# Six jobs, in this order; each needs the ones before it.
+#
+#   check:    the same full gate as CI (`scripts/check.py`: ruff,
 #             mypy --strict on all four packages, all four test
 #             suites, INV-1 spelling guard) on the Python
 #             3.11/3.12/3.13 matrix, against the tagged commit.
-#   verify-docs-identity
-#           — opens the wheels this tag would ship and requires the
+#   verify-docs-identity:
+#             opens the wheels this tag would ship and requires the
 #             documentation inside them to be the documentation this
 #             commit composed (doc-function-1 H2). It gates `release`,
 #             so a disagreement stops the tag before ANYTHING is
 #             published or mirrored. Verification only: it builds
 #             wheels into a temporary directory, reads them, and
 #             uploads nothing. ARMED BY THE OWNER — see the job.
-#   release — guards that the tag matches the lockstep package version
+#   release:  guards that the tag matches the lockstep package version
 #             (INV-4), builds wheels + sdists for every workspace
 #             package, extracts the matching `## [<version>]` section
 #             from the root CHANGELOG.md, and creates a GitHub Release
 #             with the artifacts attached and that section as the
 #             release notes. A missing CHANGELOG section fails the
 #             release — stamp before tagging (see docs/RELEASING.md).
-#
-# PyPI publishing is deliberately NOT enabled — see the commented-out
-# stub at the bottom of this file.
+#             It also hands the same files to `publish-pypi` as a
+#             workflow artifact.
+#   mirror-r2:
+#             mirrors the four wheels and a merged manifest to the R2
+#             bucket the control plane serves.
+#   verify-served:
+#             asks the control plane, from the outside, what it now
+#             serves for this tag.
+#   publish-pypi:
+#             publishes to PyPI the files the `release` job built, by
+#             trusted publishing (no stored token), in the public
+#             repository only, behind the `pypi` environment. It is
+#             last on purpose: a file on PyPI can never be replaced,
+#             so nothing is uploaded there until every job above is
+#             green. It never builds.
 #
 # uv is pinned to the version the repo was consolidated with; bump it
 # deliberately, together with the lockfile (keep in sync with ci.yml).
@@ -198,6 +212,20 @@ jobs:
           for pkg in s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0 s0ma_lang; do
             ls "dist/${pkg}-${version}-py3-none-any.whl" "dist/${pkg}-${version}.tar.gz"
           done
+
+      # The files `publish-pypi` uploads are these, not a rebuild: one
+      # build feeds the GitHub Release below and PyPI at the end, so the
+      # two can never disagree about a byte. Uploaded BEFORE the GitHub
+      # Release is created, so a failure here leaves nothing published
+      # and the job can simply be re-run; `overwrite` is what lets that
+      # re-run replace the first attempt's artifact.
+      - name: Hand the distributions to the jobs after this one
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-dist
+          path: dist/*
+          if-no-files-found: error
+          overwrite: true
 
       - name: Extract release notes from the root CHANGELOG
         run: |
@@ -399,38 +427,110 @@ jobs:
               ;;
           esac
 
-  # TODO: enable after PyPI account/trusted-publisher setup
-  # (https://docs.pypi.org/trusted-publishers/). Owner ruling O-5, 2026-09-18:
-  # All four packages are published, starting with the first release cut
-  # from the PUBLIC repository, and nothing built from the private source tree
-  # is ever published — the documentation snapshot inside a wheel built there
-  # lists private planning documents by title, and only the public export
-  # strips them. So this job publishes the four packages, and only when
-  # it runs in the public repository. Register all four projects with
-  # that repository + this workflow + the `pypi` environment, then uncomment;
-  # OIDC means no long-lived token. The name `s0ma-lang` is held by the
-  # umbrella distribution (PRD NFR-8), which this job publishes last, after
-  # the four it requires: it needs a fifth registered project of its own.
-  #
-  # publish-pypi:
-  #   name: publish the four packages and the umbrella to PyPI
-  #   if: github.repository == 'kn0w-thyself/s0ma'
-  #   runs-on: ubuntu-latest
-  #   needs: release
-  #   environment: pypi
-  #   permissions:
-  #     id-token: write # OIDC for trusted publishing
-  #   steps:
-  #     - uses: actions/checkout@v7
-  #
-  #     - name: Install uv
-  #       uses: astral-sh/setup-uv@v10.3.3
-  #       with:
-  #         version: "0.9.21"
-  #         python-version: "3.12"
-  #
-  #     - name: Build every workspace package
-  #       run: uv build --all-packages
-  #
-  #     - name: Publish the five distributions, and only those
-  #       run: uv publish dist/s0ma_lang_core-* dist/s0ma_lang_dsl-* dist/s0ma_lang_mcp-* dist/s0ma_lang_studi0-* dist/s0ma_lang-*
+  publish-pypi:
+    name: publish to PyPI
+    runs-on: ubuntu-latest
+    # LAST, and after everything: a file on PyPI can never be replaced or
+    # re-uploaded, so nothing goes there until the gate, the GitHub Release,
+    # the R2 mirror and the served-release check are all green. `release` is
+    # named beside the two jobs that already imply it because this job
+    # publishes that job's files.
+    needs: [release, mirror-r2, verify-served]
+    # Owner ruling O-5, 2026-09-18 (PRD NFR-8): nothing built from the
+    # private source tree is ever published. The documentation snapshot
+    # inside a wheel built there lists private planning documents by title,
+    # and only the public export strips them. So this job runs in the
+    # public repository and nowhere else. It is the last job, so skipping
+    # it here skips nothing downstream.
+    if: github.repository == 'kn0w-thyself/s0ma' && startsWith(github.ref, 'refs/tags/v')
+    # The `pypi` environment is half of the identity PyPI trusts (the other
+    # half is this repository and this file's name), and it is where the
+    # owner's review sits: with a required reviewer set on it, the job waits
+    # here until the owner approves. Setting it up is in docs/RELEASING.md.
+    environment:
+      name: pypi
+      url: https://pypi.org/project/s0ma-lang/
+    permissions:
+      contents: read # read this tag's GitHub Release, to compare bytes
+      id-token: write # prove this run's identity to PyPI; no token is stored
+    env:
+      # The distributions this job publishes, by wheel stem, in upload
+      # order: a dependency before its dependents, so whatever is on PyPI
+      # part-way through can be installed. The umbrella, `s0ma_lang`, is
+      # last because it requires the other four at exactly this version: it
+      # is not installable until all of them are up. Adding a distribution
+      # is this line and nothing else in the job;
+      # packages/s0ma-dsl/tests/test_release_publish_job.py fails until
+      # the line names every package the workspace builds.
+      DISTRIBUTIONS: s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0 s0ma_lang
+    steps:
+      # No checkout and no build. The only files this job can publish are
+      # the ones the `release` job built from the tagged commit.
+      - name: Download the distributions the release job built
+        uses: actions/download-artifact@v8
+        with:
+          name: release-dist
+          path: dist
+
+      # No cache: this job installs nothing with uv, and the action fails
+      # its own clean-up when caching is on and there is nothing to save.
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.9.21"
+          enable-cache: false
+
+      - name: Require exactly the distributions this release names
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          expected="$(
+            for stem in ${DISTRIBUTIONS}; do
+              printf '%s\n' "${stem}-${version}-py3-none-any.whl" "${stem}-${version}.tar.gz"
+            done | sort
+          )"
+          found="$(ls -1 dist | sort)"
+          if [ "${found}" != "${expected}" ]; then
+            echo "::error title=Unexpected distributions::The release job handed over a different set of files than this job publishes. Nothing was uploaded. Compare DISTRIBUTIONS in this job with what the workspace builds."
+            echo "--- expected"; echo "${expected}"
+            echo "--- found"; echo "${found}"
+            exit 1
+          fi
+          (cd dist && sha256sum -- *) | tee dist.sha256
+
+      # Proof, not assumption: the files about to go to PyPI are byte for
+      # byte the assets of this tag's GitHub Release.
+      - name: Require the same bytes the GitHub Release holds
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --dir released
+          (cd released && sha256sum --check --strict ../dist.sha256)
+
+      # One `uv publish` per distribution, so a failure names the
+      # distribution it stopped at. `--trusted-publishing always` refuses
+      # to fall back to a password prompt. `--check-url` makes the step
+      # safe to re-run: a file PyPI already holds with the same hash is
+      # skipped, so a run that stopped part-way picks up where it stopped.
+      #
+      # The FIRST publication stops here on purpose, once per project: PyPI
+      # creates a new project only from a pending publisher, and it holds
+      # one pending publisher at a time for this repository, workflow and
+      # environment. The owner adds the next one and re-runs this job
+      # (docs/RELEASING.md, "The first publication").
+      - name: Publish each distribution, a dependency before its dependents
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          for stem in ${DISTRIBUTIONS}; do
+            project="${stem//_/-}"
+            echo "::group::${project} ${version}"
+            if ! uv publish \
+                --trusted-publishing always \
+                --check-url https://pypi.org/simple/ \
+                "dist/${stem}-${version}-py3-none-any.whl" \
+                "dist/${stem}-${version}.tar.gz"; then
+              echo "::endgroup::"
+              echo "::error title=${project} ${version} was not published::Every distribution before ${project} in DISTRIBUTIONS is on PyPI and none after it was attempted. If the failure above is a 403 saying the project does not exist, or that a non-user identity cannot create a project, then ${project} has no trusted publisher yet: add its pending publisher as docs/RELEASING.md describes under 'The first publication', then re-run this job. Files PyPI already holds are skipped on the re-run."
+              exit 1
+            fi
+            echo "::endgroup::"
+          done
