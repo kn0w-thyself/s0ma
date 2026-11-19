@@ -209,7 +209,7 @@ VALIDATION
 - Run `s0ma check <file> --mode strict` to validate before committing.
 - Fix all errors. Warnings in dev/migration mode become errors in strict/release.
 
-WORKING THROUGH s0ma-mcp (when connected to the s0ma-authoring MCP server)
+WORKING THROUGH s0ma-lang-mcp (when connected to the s0ma-authoring MCP server)
 - Orient first: call the read-only project_status tool. One call answers whether the
   directory is a s0ma project, which mode, per-module build freshness, which modules
   are canonically mapped versus roster-adopted, and live-schema-validated next_actions.

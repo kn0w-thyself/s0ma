@@ -1,6 +1,6 @@
 # Building an app with s0ma over MCP — walkthrough
 
-This is the practical, end-to-end guide for using the **s0ma authoring MCP server** (`s0ma-mcp`, server name `s0ma-authoring`) to design, build, and verify a s0ma application with a coding agent. It assumes any MCP-capable agent host — anything that can run a stdio MCP server and read a project instructions file — plus `uv` as the package manager and Python ≥ 3.11 on macOS, Linux, or Windows (all three are CI-enforced platforms). Where a step needs a concrete command only one host has, Claude Code is the worked example and is labelled as such; everything else reads the same wherever you work. Deeper reference: `packages/s0ma-mcp/README.md` (the server's own README — tools, annotations, resources, the self-hosted layout) and the agent guides the server serves as resources.
+This is the practical, end-to-end guide for using the **s0ma authoring MCP server** (`s0ma-lang-mcp`, server name `s0ma-authoring`) to design, build, and verify a s0ma application with a coding agent. It assumes any MCP-capable agent host — anything that can run a stdio MCP server and read a project instructions file — plus `uv` as the package manager and Python ≥ 3.11 on macOS, Linux, or Windows (all three are CI-enforced platforms). Where a step needs a concrete command only one host has, Claude Code is the worked example and is labelled as such; everything else reads the same wherever you work. Deeper reference: `packages/s0ma-mcp/README.md` (the server's own README — tools, annotations, resources, the self-hosted layout) and the agent guides the server serves as resources.
 
 ---
 
@@ -33,7 +33,7 @@ claude mcp add s0ma --scope project -- uv run s0ma-mcp
 
 From a monorepo checkout the same command works from the repo root. With a globally installed wheel it is just `claude mcp add s0ma -- s0ma-mcp` — which is what `s0ma doctor` prints as its registration hint and what the installer runs, so the hint you will see quoted by the tooling is this one. `--scope project` writes `.mcp.json` into the repo so every session (and teammate) inherits the server; that file is the portable form, and a host that reads `.mcp.json` needs nothing further. Omit the flag for user-scope.
 
-However you registered it, verify the same way: have your host list its connected servers (`/mcp` in Claude Code) — you should see server `s0ma-authoring` — then compare its served names and schemas with the generated inventory in the [`s0ma-mcp` README](../packages/s0ma-mcp/README.md#served-surface).
+However you registered it, verify the same way: have your host list its connected servers (`/mcp` in Claude Code) — you should see server `s0ma-authoring` — then compare its served names and schemas with the generated inventory in the [`s0ma-lang-mcp` README](../packages/s0ma-mcp/README.md#served-surface).
 
 Two ergonomics notes worth knowing on day one:
 
@@ -113,7 +113,7 @@ For CI, wire 1–4 into a single workflow step per platform; the monorepo's `.gi
 ## Appendix: the surfaces at a glance
 
 The current tool, resource, and prompt inventory is generated from the served
-surface snapshot in the [`s0ma-mcp` README](../packages/s0ma-mcp/README.md#served-surface).
+surface snapshot in the [`s0ma-lang-mcp` README](../packages/s0ma-mcp/README.md#served-surface).
 That gate compares live names, annotations, and input/output schemas before the
 inventory is rendered, so this walkthrough does not maintain a second list.
 

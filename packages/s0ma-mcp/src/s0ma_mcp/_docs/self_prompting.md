@@ -154,7 +154,7 @@ its own `self_inspect` tool and through this adapter.
    This adapter's `describe` is held under 8,000 characters of compact JSON
    (a 2,000-token answer by the rule below) by the adapter itself, which
    trades module names for module counts past that line, and by two tests:
-   one on 3,000 synthetic components over 200 modules, one on the s0ma-mcp
+   one on 3,000 synthetic components over 200 modules, one on the s0ma-lang-mcp
    package's own build. The names cost about 16 characters per module of
    fr3d-length names (13 characters on average), so about 450 such modules
    fit before the trade. Give every default answer your own tools return
@@ -245,7 +245,7 @@ instruments; s0ma never reads hardware itself, and crossings are returned and
 published at ingestion time. Embodiment conventions (the `hw_*` physical-facts
 vocabulary, sense/actuator roles, trust rules) live in s0ma://guide/patterns
 §31 and ADR-003. Hand a runtime agent the embodied survival card
-(`docs/embodied_survival_card.md` in the `s0ma-core` package) as its standing
+(`docs/embodied_survival_card.md` in the `s0ma-lang-core` package) as its standing
 orders — it is the runtime sibling of the authoring survival card.
 
 ## Scaffold-to-operation loop

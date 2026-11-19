@@ -1,4 +1,4 @@
-# s0ma-dsl
+# s0ma-lang-dsl
 
 The transpiler toolchain for the **s0ma DSL** — a domain-specific language whose grammar enforces, at parse time, what the [s0ma framework](../s0ma-core) enforces at runtime: every component is declared, described, dependency-resolved, and registered in the self-model. It also ships the `s0ma` command line, which is how a person drives the whole toolchain.
 
@@ -8,11 +8,11 @@ The transpiler toolchain for the **s0ma DSL** — a domain-specific language who
 
 Four distributions ship together at one version, and dependencies only ever point down the stack (PRD INV-6):
 
-[`s0ma-mcp`](../s0ma-mcp) · [`s0ma-studi0`](../s0ma-studi0) → **`s0ma-dsl`** → [`s0ma-core`](../s0ma-core)
+[`s0ma-lang-mcp`](../s0ma-mcp) · [`s0ma-lang-studi0`](../s0ma-studi0) → **`s0ma-lang-dsl`** → [`s0ma-lang-core`](../s0ma-core)
 
-The two packages above are optional companions: `s0ma-mcp` is the authoring server coding agents drive, and `s0ma-studi0` is the local viewer `s0ma studi0 <project>` opens on a built project's graph. This CLI defers importing each and prints an install hint when it is absent, so neither is required to use the DSL. Below it, `s0ma-core` and `lark` are the only external runtime dependencies.
+The two packages above are optional companions: `s0ma-lang-mcp` is the authoring server coding agents drive, and `s0ma-lang-studi0` is the local viewer `s0ma studi0 <project>` opens on a built project's graph. This CLI defers importing each and prints an install hint when it is absent, so neither is required to use the DSL. Below it, `s0ma-lang-core` and `lark` are the only external runtime dependencies.
 
-`s0ma-dsl` is **Apache-2.0**, and so are `s0ma-core`, `s0ma-mcp` and `s0ma-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
+`s0ma-lang-dsl` is **Apache-2.0**, and so are `s0ma-lang-core`, `s0ma-lang-mcp` and `s0ma-lang-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
 
 ## Install
 
@@ -68,4 +68,4 @@ The root [`CHANGELOG.md`](../../CHANGELOG.md) names the current release and is c
 
 ## License
 
-Apache License 2.0 — see [`LICENSE`](LICENSE) for details. The rest of the toolchain shares it: `s0ma-core`, `s0ma-mcp` and `s0ma-studi0` are Apache-2.0 too, each with its own `LICENSE`.
+Apache License 2.0 — see [`LICENSE`](LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-core`, `s0ma-lang-mcp` and `s0ma-lang-studi0` are Apache-2.0 too, each with its own `LICENSE`.

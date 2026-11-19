@@ -54,10 +54,10 @@ import pytest
 #: The four distributions a copy of s0ma is made of, and the command each one
 #: provides. The same names the real wheels carry.
 FAKE_DISTRIBUTIONS: tuple[tuple[str, str | None], ...] = (
-    ("s0ma_core", None),
-    ("s0ma_dsl", "s0ma"),
-    ("s0ma_mcp", "s0ma-mcp"),
-    ("s0ma_studi0", None),
+    ("s0ma_lang_core", None),
+    ("s0ma_lang_dsl", "s0ma"),
+    ("s0ma_lang_mcp", "s0ma-mcp"),
+    ("s0ma_lang_studi0", None),
 )
 
 #: What the manifest claims a wheel hashes to when ``wrong_sha`` is on. A real

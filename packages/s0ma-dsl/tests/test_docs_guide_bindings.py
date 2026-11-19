@@ -688,7 +688,7 @@ def _term_pattern(term: str) -> re.Pattern[str]:
     singular and used in prose in both — the walkthrough writes
     "declaration kinds" for ``concept:kind``. Hyphen and word characters
     on either side are refused, so ``s0ma`` does not match inside
-    ``s0ma-core``.
+    ``s0ma-lang-core``.
     """
     return re.compile(rf"(?<![\w-]){re.escape(term)}s?(?![\w-])", re.IGNORECASE)
 

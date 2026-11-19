@@ -110,7 +110,7 @@ class TestCommonToolResult:
         pyproject.write_text(
             pyproject.read_text(encoding="utf-8").replace(
                 'version = "0.1.0"',
-                'version = "0.1.0"\ndependencies = ["s0ma-core", "s0ma-dsl"]',
+                'version = "0.1.0"\ndependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]',
             ),
             encoding="utf-8",
         )

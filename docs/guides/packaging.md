@@ -22,7 +22,7 @@ Two things: the Python package you wrote, and the directory the build wrote. [Wh
 
 The directory cannot ship under its checkout name. `build/` is the name `[tool.s0ma].build_dir` gives it in a checkout, and a top-level `build` in site-packages would collide with the `build` package that builds wheels. So the wheel carries it under a name that belongs to the project, `nightwatch_build/`, beside the `nightwatch/` package. The bootstrap in section 7 knows both places.
 
-The package itself needs `s0ma-core` and `s0ma-dsl` at runtime, because every built module imports them to register what it declares. They go in `[project].dependencies` next to the packages your `requires:` lines name; the build asks for them with `HOST_RUNTIME_UNDECLARED` when they are missing. Until s0ma is published on the package index, neither name resolves there, so `[project].dependencies` and the `[build-system].requires` of section 2 have to point at the two wheels the root README's Install section builds. `uv add` with their paths writes the names into `[project].dependencies` and the paths into `[tool.uv.sources]`, a table uv also applies to `[build-system].requires`. pip reads no such table, so for pip each entry names its wheel directly, `s0ma-core @ file:///path/to/s0ma_core-<version>-py3-none-any.whl`, and hatchling accepts an entry like that in `[project].dependencies` only with `allow-direct-references = true` under `[tool.hatch.metadata]`.
+The package itself needs `s0ma-lang-core` and `s0ma-lang-dsl` at runtime, because every built module imports them to register what it declares. They go in `[project].dependencies` next to the packages your `requires:` lines name; the build asks for them with `HOST_RUNTIME_UNDECLARED` when they are missing. Until s0ma is published on the package index, neither name resolves there, so `[project].dependencies` and the `[build-system].requires` of section 2 have to point at the two wheels the root README's Install section builds. `uv add` with their paths writes the names into `[project].dependencies` and the paths into `[tool.uv.sources]`, a table uv also applies to `[build-system].requires`. pip reads no such table, so for pip each entry names its wheel directly, `s0ma-lang-core @ file:///path/to/s0ma_core-<version>-py3-none-any.whl`, and hatchling accepts an entry like that in `[project].dependencies` only with `allow-direct-references = true` under `[tool.hatch.metadata]`.
 
 ## 2. The build hook
 
@@ -30,14 +30,14 @@ The build system is hatchling, and hatchling lets a project run its own code bef
 
 ```toml
 [build-system]
-requires = ["hatchling", "s0ma-core", "s0ma-dsl"]
+requires = ["hatchling", "s0ma-lang-core", "s0ma-lang-dsl"]
 build-backend = "hatchling.build"
 
 [project]
 name = "nightwatch"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["s0ma-core", "s0ma-dsl", "croniter"]
+dependencies = ["s0ma-lang-core", "s0ma-lang-dsl", "croniter"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/nightwatch"]
@@ -60,7 +60,7 @@ bootstrap_files = ["src/nightwatch/__init__.py", "src/nightwatch/bootstrap.py"]
 
 Read it table by table:
 
-- `[build-system].requires` names `s0ma-core` and `s0ma-dsl` as well as hatchling, because the hook runs `s0ma build`. It is also all the build environment holds, which is what section 3 is about.
+- `[build-system].requires` names `s0ma-lang-core` and `s0ma-lang-dsl` as well as hatchling, because the hook runs `s0ma build`. It is also all the build environment holds, which is what section 3 is about.
 - `packages` ships `src/nightwatch/`, your plain Python.
 - `force-include` ships the directory the hook builds, `.s0ma_wheel_build/`, under the name `nightwatch_build/` in the wheel.
 - `hooks.custom` names the hook file.
@@ -125,7 +125,7 @@ Each option on the command does one job:
 
 | Option | Why it is there |
 |---|---|
-| `python -m s0ma_dsl` | The `s0ma` script may not be on the path inside a build environment; the module form works wherever `s0ma-dsl` is installed. |
+| `python -m s0ma_dsl` | The `s0ma` script may not be on the path inside a build environment; the module form works wherever `s0ma-lang-dsl` is installed. |
 | `--project-root` | Says which project this is, rather than leaving it to the working directory. |
 | `build src` | Builds the directory `[tool.s0ma].source_roots` names and nothing else. The test root is not shipped. |
 | `--mode dev` | The strictness mode `--without-runtime-packages` needs; section 3 says why. |
@@ -273,7 +273,7 @@ def import_build_module(name: str) -> ModuleType:
 
 `locate_build` is the part that knows the two layouts. In a checkout, `bootstrap.py` is at `src/nightwatch/bootstrap.py` and the build is two directories up, at `build/`; in an installed wheel, it is at `site-packages/nightwatch/bootstrap.py` and the build is one directory up, at `nightwatch_build/`. An editable install is the first layout: Python imports `bootstrap.py` from the checkout, so the locator finds `build/`, the build `s0ma build` keeps current, and never looks at the copy the install left in site-packages. With no `build/` yet, it refuses and says to run `s0ma build`.
 
-`start` imports the build with `bootstrap_imports` from `s0ma-core`, which puts the build directory first on `sys.path` and imports each module by its bare name, in the order the manifest records, so that every module is registered after the modules it uses. `roles=("source",)` leaves out the modules the manifest records as tests, which matters in a checkout, where the test roots are built into the same directory. A module's role comes from where its `.s0ma` file lives, `source` under a source root and `test` under a test root, whichever command built it, so the test modules stay out however `build/` was last written.
+`start` imports the build with `bootstrap_imports` from `s0ma-lang-core`, which puts the build directory first on `sys.path` and imports each module by its bare name, in the order the manifest records, so that every module is registered after the modules it uses. `roles=("source",)` leaves out the modules the manifest records as tests, which matters in a checkout, where the test roots are built into the same directory. A module's role comes from where its `.s0ma` file lives, `source` under a source root and `test` under a test root, whichever command built it, so the test modules stay out however `build/` was last written.
 
 Then it checks where everything came from, and that check is the reason the build is located rather than imported as a package. A built module registers its components when Python imports it. `scheduler` imported by its bare name from the located build, and `nightwatch_build.scheduler` imported through the package an install left in site-packages, are two different modules to Python, and after the next `s0ma build` they hold two different bodies. Importing both would register the same components twice, and the registry refuses the second registration with a `RegistrationError` that names both modules. What the registry cannot catch is a copy that registers nothing new: a module imported by its bare name from another directory before `start` ran, which Python hands back to `bootstrap_imports` as if it were the located one, or the `nightwatch_build` package itself, whose `__init__.py` declares nothing. So `start` refuses if any module it imported came from somewhere else, or if the `nightwatch_build` package has been imported from a directory other than the located one, and the message says what to do instead: import built modules through the bootstrap. `import_build_module` is that way in for code outside the bootstrap that needs one module by name.
 

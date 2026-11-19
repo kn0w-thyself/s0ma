@@ -8,8 +8,8 @@
 # cutting a release makes it installable through the keyed control plane with
 # no manual uploads.
 #
-# This is RELEASE/CI TOOLING ONLY. No workspace package (s0ma-core, s0ma-dsl,
-# s0ma-mcp, s0ma-studi0) imports or invokes it (plan D-1: no network in product
+# This is RELEASE/CI TOOLING ONLY. No workspace package (s0ma-lang-core, s0ma-lang-dsl,
+# s0ma-lang-mcp, s0ma-lang-studi0) imports or invokes it (plan D-1: no network in product
 # code). It is called from `.github/workflows/release.yml` on a real tag
 # release, and is runnable locally for inspection via --dry-run.
 #
@@ -125,7 +125,8 @@
 #   --version <ver>   Release version, e.g. 0.9.0 (required).
 #   --dist-dir <dir>  Directory holding the four built wheels (required).
 #                     Expects <stem>-<version>-py3-none-any.whl for each of
-#                     s0ma_core / s0ma_dsl / s0ma_mcp / s0ma_studi0.
+#                     s0ma_lang_core / s0ma_lang_dsl / s0ma_lang_mcp /
+#                     s0ma_lang_studi0.
 #   --bucket <name>   R2 bucket. Default: s0ma-dist (the H4 contract).
 #   --dry-run         Print the exact objects that WOULD be written (keys +
 #                     sha256 + size, in H4 layout) and the manifest JSON that
@@ -158,7 +159,7 @@ BUCKET_DEFAULT="s0ma-dist"
 DIST_PREFIX="dist"
 MANIFEST_KEY="dist/manifest.json"
 # The four wheels, by distribution stem (digit-zero s0ma — INV-1).
-WHEEL_STEMS="s0ma_core s0ma_dsl s0ma_mcp s0ma_studi0"
+WHEEL_STEMS="s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0"
 
 PROG="$(basename "$0")"
 

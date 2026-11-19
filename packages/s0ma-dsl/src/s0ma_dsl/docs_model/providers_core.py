@@ -1,4 +1,4 @@
-"""The core provider: what ``s0ma-core`` registers, serves and can be asked.
+"""The core provider: what ``s0ma-lang-core`` registers, serves and can be asked.
 
 Milestone C3 of the docs-function plan (internal) §8, completed by D5a,
 architecture plan §7.2. One adapter over five readings of one package,
@@ -535,7 +535,7 @@ def _rest_drafts(
     except ImportError as error:  # pragma: no cover - exercised by hand
         raise CoreProviderError(
             "the REST surface cannot be read without core's api extra; "
-            "install s0ma-core[api]. A documentation build that quietly "
+            "install s0ma-lang-core[api]. A documentation build that quietly "
             "skipped a served channel would describe a smaller product "
             "than the one that ships."
         ) from error
@@ -604,7 +604,7 @@ def _mcp_drafts(registry: ComponentRegistry) -> tuple[_SurfaceDraft, ...]:
     except ImportError as error:  # pragma: no cover - exercised by hand
         raise CoreProviderError(
             "core's MCP surface cannot be listed without core's mcp extra; "
-            "install s0ma-core[mcp]. A documentation build that quietly "
+            "install s0ma-lang-core[mcp]. A documentation build that quietly "
             "skipped a served channel would describe a smaller product "
             "than the one that ships."
         ) from error
@@ -887,7 +887,7 @@ def _prose_locator(registration: Any, kind: str, name: str) -> str:
 
 
 class CoreProvider:
-    """One deterministic reading of ``s0ma-core``.
+    """One deterministic reading of ``s0ma-lang-core``.
 
     Everything is read when the provider is built, and :meth:`provide`
     hands over what was read. That is what the contract means by "reads

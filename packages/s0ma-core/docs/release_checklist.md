@@ -2,8 +2,8 @@
 
 **This checklist is superseded.** It described the release process for the
 pre-consolidation, multi-repo era (separate versions and tags per repo).
-Since the monorepo consolidation (0.5.0), all packages — `s0ma-core`,
-`s0ma-dsl`, `s0ma-mcp` — release together: one lockstep version, one root
+Since the monorepo consolidation (0.5.0), all packages — `s0ma-lang-core`,
+`s0ma-lang-dsl`, `s0ma-lang-mcp` — release together: one lockstep version, one root
 `CHANGELOG.md`, one annotated `v<version>` tag (PRD INV-4).
 
 **The canonical release runbook is

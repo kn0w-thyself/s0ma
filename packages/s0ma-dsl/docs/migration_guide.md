@@ -57,10 +57,10 @@ and found nothing to rule out.
 
 **What a built application needs.** `none` adds nothing to the built Python,
 but a sentence does: the build passes it to the part's `Contract` as
-`forbids=[...]`, and only the `s0ma-core` of the release that carries this
-change accepts that field. An older `s0ma-core` refuses it with a registration
-error when the module loads. Install the matching `s0ma-core` alongside
-`s0ma-dsl` wherever the application runs, and rebuild. s0ma then shows the
+`forbids=[...]`, and only the `s0ma-lang-core` of the release that carries this
+change accepts that field. An older `s0ma-lang-core` refuses it with a registration
+error when the module loads. Install the matching `s0ma-lang-core` alongside
+`s0ma-lang-dsl` wherever the application runs, and rebuild. s0ma then shows the
 sentence with the part's contract, under `Forbids:`, and never executes it.
 
 ---

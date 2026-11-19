@@ -101,7 +101,7 @@ def test_declared_and_installed_runtime_passes_with_fingerprint(tmp_path: Path) 
     project = _write_project(
         tmp_path,
         {"app": "import s0ma\nimport s0ma_dsl\nVALUE = 1\n"},
-        dependencies=("s0ma-core", "s0ma-dsl"),
+        dependencies=("s0ma-lang-core", "s0ma-lang-dsl"),
     )
     report = verify_host(
         project, explicit_python=sys.executable, gate_mode="release"
@@ -113,7 +113,7 @@ def test_declared_and_installed_runtime_passes_with_fingerprint(tmp_path: Path) 
     assert report["interpreter"]["python_version"]
     assert report["interpreter"]["implementation"]
     assert report["interpreter"]["platform"]
-    assert report["interpreter"]["s0ma_distributions"]["s0ma-core"]
+    assert report["interpreter"]["s0ma_distributions"]["s0ma-lang-core"]
     assert [row["status"] for row in report["dependencies"]] == [
         "declared_installed",
         "declared_installed",
@@ -142,7 +142,7 @@ def test_runtime_import_without_host_declaration_fails(tmp_path: Path) -> None:
         if d["code"] == "HOST_RUNTIME_UNDECLARED"
     ]
     assert len(undeclared) == 1
-    assert undeclared[0]["dependency"] == "s0ma-core"
+    assert undeclared[0]["dependency"] == "s0ma-lang-core"
     assert undeclared[0]["modules"] == ["s0ma"]
     assert report["gate"]["passes"] is False
 
@@ -239,7 +239,7 @@ def test_static_emission_warning_names_missing_s0ma_runtime(tmp_path: Path) -> N
     assert warning is not None
     assert warning.code == "HOST_RUNTIME_UNDECLARED"
     assert warning.severity == "warning"
-    assert warning.context["missing_dependencies"] == ["s0ma-core", "s0ma-dsl"]
+    assert warning.context["missing_dependencies"] == ["s0ma-lang-core", "s0ma-lang-dsl"]
 
 
 def test_the_static_warning_says_what_clears_it_and_what_it_cannot_see(
@@ -269,7 +269,7 @@ def test_static_warning_clears_when_runtime_is_declared(tmp_path: Path) -> None:
     project = _write_project(
         tmp_path,
         {"app": "VALUE = 1\n"},
-        dependencies=("s0ma-core", "s0ma-dsl"),
+        dependencies=("s0ma-lang-core", "s0ma-lang-dsl"),
     )
     assert static_runtime_dependency_warning(project) is None
 

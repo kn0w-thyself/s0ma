@@ -115,7 +115,7 @@ def make_venv() -> Any:
         windows: bool = False,
         programs: tuple[str, ...] = ("s0ma-mcp", "s0ma"),
         version: str | None = None,
-        distribution: str = "s0ma_mcp",
+        distribution: str = "s0ma_lang_mcp",
     ) -> Path:
         suffix = ".exe" if windows else ""
         bin_dir = root / ("Scripts" if windows else "bin")

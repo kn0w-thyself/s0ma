@@ -42,7 +42,7 @@ Do not use interoception for structural facts, which hold whether or not anythin
 
 - `references/s0ma-prd.md#1`
 - `references/s0ma-prd.md#11. Glossary`
-- `references/s0ma-prd.md#7.1 `s0ma-core` — the runtime (FR-CORE)`
+- `references/s0ma-prd.md#7.1 `s0ma-lang-core` — the runtime (FR-CORE)`
 
 ## Where to look next
 
@@ -62,4 +62,4 @@ Do not use interoception for structural facts, which hold whether or not anythin
 
 - Topic id: `concept:interoception`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:82ce6f97a65a7d0d`
+- Documentation snapshot: `sha256:44869a9495538c55`

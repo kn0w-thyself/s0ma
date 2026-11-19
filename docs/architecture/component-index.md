@@ -6,14 +6,14 @@ Every component s0ma registers about itself: 161 of them, across 4 distributions
 
 By layer: 74 framework, 54 presentation, 33 application. 81 of the 161 declare themselves public and 75 declare no visibility at all, which is the honest answer for a component registered from hand-written Python: visibility is a field of the s0ma language, and a Python registration has nowhere to put one.
 
-This page describes the build stamped `sha256:82ce6f97a65a7d0d` at version `0.21.1`. The same rows in a form a program can read, with the reading each fact came from, are in [`docs/_generated/inventory-components.json`](../_generated/inventory-components.json).
+This page describes the build stamped `sha256:44869a9495538c55` at version `0.21.1`. The same rows in a form a program can read, with the reading each fact came from, are in [`docs/_generated/inventory-components.json`](../_generated/inventory-components.json).
 
 ## Contents
 
-- [s0ma-core](#s0ma-core)
-- [s0ma-dsl](#s0ma-dsl)
-- [s0ma-mcp](#s0ma-mcp)
-- [s0ma-studi0](#s0ma-studi0)
+- [s0ma-lang-core](#s0ma-lang-core)
+- [s0ma-lang-dsl](#s0ma-lang-dsl)
+- [s0ma-lang-mcp](#s0ma-lang-mcp)
+- [s0ma-lang-studi0](#s0ma-lang-studi0)
 
 ## How to read the tables
 
@@ -21,7 +21,7 @@ This page describes the build stamped `sha256:82ce6f97a65a7d0d` at version `0.21
 
 **Visible** is the declared visibility, or `not declared` where the registration carries none. **What it is for** is the component's own stated intent, quoted rather than rewritten — every registered component has to say what it is for, and this is what each of them said.
 
-## s0ma-core
+## s0ma-lang-core
 
 63 of the 161 components: all of them framework. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
@@ -36,7 +36,7 @@ This page describes the build stamped `sha256:82ce6f97a65a7d0d` at version `0.21
 | `component:s0ma.examples.runner.ExampleResult` | framework | framework | not declared | Structured outcome of a single example execution, carrying pass/fail summary, captured stdout/stderr, duration, return code, and timeout state |
 | `component:s0ma.examples.runner.ExampleRunner` | framework | framework | not declared | Discovers registered examples from a registry snapshot and executes each body in an isolated subprocess with per-example timeout enforcement |
 | `component:s0ma.examples.timeout.TimeoutResult` | framework | framework | not declared | Uniform subprocess outcome representation including returncode, captured stdout/stderr, duration, and whether the process was killed for exceeding its timeout budget |
-| `component:s0ma.import_hook.S0maDSLLoader` | framework | framework | not declared | Module loader for .s0ma source files that transpiles on-the-fly via the s0ma-dsl package and caches the emitted Python alongside the source |
+| `component:s0ma.import_hook.S0maDSLLoader` | framework | framework | not declared | Module loader for .s0ma source files that transpiles on-the-fly via the s0ma-lang-dsl package and caches the emitted Python alongside the source |
 | `component:s0ma.import_hook.S0maFinder` | framework | framework | not declared | Meta-path finder that determines whether a module is in scope for registration enforcement |
 | `component:s0ma.import_hook.S0maLoader` | framework | framework | not declared | Module loader wrapper that scans for unregistered public entities after module execution |
 | `component:s0ma.lifecycle.manager.LifecycleManager` | framework | framework | not declared | Orchestrates component lifecycle operations (create, update, remove) with verification integration and automatic rollback |
@@ -91,7 +91,7 @@ This page describes the build stamped `sha256:82ce6f97a65a7d0d` at version `0.21
 | `component:s0ma.verifiers.interoception.MetricsCollector` | framework | framework | not declared | Thread-safe collector of per-component runtime performance metrics |
 | `component:s0ma.verifiers.structural.StructuralVerifier` | framework | framework | not declared | AST-based structural drift detection comparing registry declarations against actual source code |
 
-## s0ma-dsl
+## s0ma-lang-dsl
 
 10 of the 161 components: 9 function, 1 service. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
@@ -105,17 +105,17 @@ This page describes the build stamped `sha256:82ce6f97a65a7d0d` at version `0.21
 | `component:s0ma_dsl.cli.docs_commands.cmd_docs_search` | function | framework | not declared | Handler for `s0ma docs search`: prints every topic a question could have meant, strongest match first, each with the reason it matched. |
 | `component:s0ma_dsl.cli.docs_commands.cmd_docs_show` | function | framework | not declared | Handler for `s0ma docs show`: renders one resolved topic in full, or the ranked candidates a question could have meant. |
 | `component:s0ma_dsl.cli.docs_commands.cmd_docs_verify` | function | framework | not declared | Handler for `s0ma docs verify`: runs documentation validation layers 1-5 without rendering output files. |
-| `component:s0ma_dsl.cli.examples_commands.cmd_examples_run` | function | framework | not declared | Handler for `s0ma examples run`: discovers .s0ma examples and delegates execution to s0ma-core's ExampleRunner. |
+| `component:s0ma_dsl.cli.examples_commands.cmd_examples_run` | function | framework | not declared | Handler for `s0ma examples run`: discovers .s0ma examples and delegates execution to s0ma-lang-core's ExampleRunner. |
 | `component:s0ma_dsl.cli.main.S0maCLI` | service | framework | not declared | Command-line interface for the s0ma DSL transpiler. Provides the s0ma command, whose subcommands include transpile, check, build, inspect and graph. |
 
-## s0ma-mcp
+## s0ma-lang-mcp
 
 40 of the 161 components: 36 function, 2 adapter, 1 framework, 1 orchestrator. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |
 | `component:s0ma_mcp.create_server` | orchestrator | application | not declared | Builds the s0ma-authoring FastMCP server by deriving every tool, resource, and prompt registration from the package self-model registry — the registered component set IS the served surface |
-| `component:s0ma_mcp.get_self_registry` | framework | framework | not declared | Holds the s0ma-mcp self-model: a dedicated component registry of every tool, resource, prompt, and factory this server exposes, kept apart from the process-global registry |
+| `component:s0ma_mcp.get_self_registry` | framework | framework | not declared | Holds the s0ma-lang-mcp self-model: a dedicated component registry of every tool, resource, prompt, and factory this server exposes, kept apart from the process-global registry |
 | `component:s0ma_mcp.prompts.author_module_prompt` | function | presentation | public | Walks an agent through authoring one new module end to end, rendering the steps of journey:mcp-authoring-loop from the record rather than from a copy in the prompt text, wrapped in the framing the record does not carry: the golden rule, the survival card, the argument shapes, and the editing that happens between steps |
 | `component:s0ma_mcp.prompts.diagnose_fault_prompt` | function | presentation | public | Guides an agent from an observed runtime fault through project_status, declared runtime/runbook context, suspect and dependency-neighbor inspection, host evidence when needed, and a state-preserving live behavior probe. |
 | `component:s0ma_mcp.prompts.feedback_prompt` | function | presentation | public | Walks an agent through carrying one piece of the user's own feedback to the s0ma team: identify it, confirm it is about s0ma when the user never said so, draft from evidence, prepare, show the exact feedback data and what redaction removed, submit only through the client's approval form, and relay the receipt or the saved draft |
@@ -125,7 +125,7 @@ This page describes the build stamped `sha256:82ce6f97a65a7d0d` at version `0.21
 | `component:s0ma_mcp.resources.docs_concepts_resource` | function | presentation | public | Serves the whole concept vocabulary in one read: every concept this build records, its id, its term and its authored one-sentence summary, in id order |
 | `component:s0ma_mcp.resources.docs_index_resource` | function | presentation | public | Serves the documentation index: which build this is, every category of topic it addresses with a count and an example id, how to ask for one, how many earlier names still answer, where the full pages are, and which s0ma://docs addresses belong to the other server |
 | `component:s0ma_mcp.resources.docs_journeys_resource` | function | presentation | public | Serves every worked path this build records, step by step: what the path is for, each step's surface, why it is taken, what a good result looks like, any approval it needs, and what to do when a named thing goes wrong |
-| `component:s0ma_mcp.resources.errors_resource` | function | presentation | public | Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix |
+| `component:s0ma_mcp.resources.errors_resource` | function | presentation | public | Serves the generated diagnostic error catalog — every s0ma-lang-dsl error code with its severity by mode and canonical fix |
 | `component:s0ma_mcp.resources.getting_started_resource` | function | presentation | public | Serves the canonical outcome-first cold-start journey: product fit, project creation, model orientation, dependency inspection, drift and release-gate proof, and explicit host verification. |
 | `component:s0ma_mcp.resources.load_doc` | adapter | presentation | public | Resolves the packaged agent-guide documents from s0ma_mcp/_docs package data via importlib.resources so they load from an installed wheel |
 | `component:s0ma_mcp.resources.patterns_resource` | function | presentation | public | Serves the DSL patterns guide of worked idioms and recipes for structuring non-trivial s0ma applications |
@@ -155,7 +155,7 @@ This page describes the build stamped `sha256:82ce6f97a65a7d0d` at version `0.21
 | `component:s0ma_mcp.tools.transpile_tool` | function | presentation | public | Compiles .s0ma source (one file or directory) into .py plus .s0ma.json IR plus .s0ma.map artifacts via the DSL pipeline |
 | `component:s0ma_mcp.tools.verify_host_tool` | function | presentation | public | Explicitly executes each built production module under the host application's selected Python and reports interpreter, dependency, and isolated import evidence without pretending project code is sandboxed |
 
-## s0ma-studi0
+## s0ma-lang-studi0
 
 48 of the 161 components: 22 constant, 20 function, 4 model, 2 configuration. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 

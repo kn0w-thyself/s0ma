@@ -96,7 +96,7 @@ def content_hash(
             ``covers`` / ``examples`` references. The snapshot must be
             self-consistent (taken in one call) or the walk can see a
             torn registry.
-        transpiler_version: Version of the s0ma-dsl transpiler that
+        transpiler_version: Version of the s0ma-lang-dsl transpiler that
             produced the registration. Included in the hash so that
             two DSL versions emitting identical registrations do not
             collide if their emission rules are drifting.
@@ -183,7 +183,7 @@ def _resolve_filter(
 
     v1 resolver: matches by ``target_kind`` only. Predicates are
     included verbatim in the doc's own canonicalization (step 2) but
-    are not interpreted here — an s0ma-dsl upgrade can replace this
+    are not interpreted here — an s0ma-lang-dsl upgrade can replace this
     helper without touching the rest of the algorithm.
     """
     kind = filter_expr.target_kind
@@ -208,7 +208,7 @@ def _resolve_by_component_kind(
 ) -> list[bytes]:
     # ComponentSpec.kind is an enum; comparison is by its string value
     # so ``SERVICE`` matches ``"service"``. Case-insensitive to match
-    # the s0ma-dsl filter source language.
+    # the s0ma-lang-dsl filter source language.
     kind_lower = kind.lower()
     matched: list[ComponentSpec] = []
     for spec in snapshot.components.values():
@@ -246,7 +246,7 @@ def _canon_component_spec(spec: ComponentSpec) -> bytes:
       Including it would make two runs of the same code produce
       different hashes, which defeats the purpose of drift detection.
     * ``source_file`` — an absolute path that depends on where the
-      checkout lives. Two developers running the same s0ma-dsl source
+      checkout lives. Two developers running the same s0ma-lang-dsl source
       would produce different hashes purely because of their
       filesystem layout.
 

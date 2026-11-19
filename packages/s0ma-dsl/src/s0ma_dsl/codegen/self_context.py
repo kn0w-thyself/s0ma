@@ -55,7 +55,7 @@ SELF_CONTEXT_DEFAULT_ROLES: tuple[str, ...] = ("source",)
 #: The card's size contract, in UTF-8 bytes and whitespace-delimited words.
 #:
 #: The byte ceiling was 1,800 until 2026-08-30. At that number the inventory
-#: of this repo's own ``s0ma-mcp`` package no longer fit: 12 of its 78
+#: of this repo's own ``s0ma-lang-mcp`` package no longer fit: 12 of its 78
 #: components rendered as an omission count, and one of the twelve was
 #: ``learn_s0ma``, the tool an agent reads the documentation with. A bound
 #: that hides the way in is the one thing this card cannot afford to do, so
@@ -63,7 +63,7 @@ SELF_CONTEXT_DEFAULT_ROLES: tuple[str, ...] = ("source",)
 #: (measured 2,558 B), not chosen for roundness. The word ceiling is
 #: unchanged: it never bound at either size (that card renders 110 words).
 #:
-#: ``s0ma-core`` re-verifies both numbers at load time and cannot import
+#: ``s0ma-lang-core`` re-verifies both numbers at load time and cannot import
 #: them from here — the runtime never depends on the build tool — so the
 #: literals in ``s0ma.runtime`` are a deliberate second copy and move with
 #: these. The contract is deliberately not a model-specific token count.

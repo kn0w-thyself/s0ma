@@ -1,7 +1,7 @@
 """A transpiled module with a CONSTANT cell and a TYPE cell verifies clean.
 
 The emitter registers those cells through ``register_constant`` and
-``register_type`` with the owning ``module_path``; s0ma-core derives
+``register_type`` with the owning ``module_path``; s0ma-lang-core derives
 ``qualified_name`` from it. Without that derivation the phantom-limb
 check rejected the empty name as an ERROR in both the Structural
 Verifier and the Coverage Auditor, so any application with one such

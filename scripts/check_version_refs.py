@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Version-currency guard — the ``docs-version-currency`` stage.
 
-Two invariants, both anchored on one lockstep version — s0ma-core's
+Two invariants, both anchored on one lockstep version — s0ma-lang-core's
 ``project.version`` (the bottom of the dependency stack; PRD INV-4):
 
 1. LOCKSTEP INTEGRITY. All four distributions ship the same version. The
@@ -56,7 +56,7 @@ The same stage carries one adjacent shape check (PACKAGE_MAPS below): every
 distribution under ``packages/*/pyproject.toml`` must be named in
 ``CONTRIBUTING.md``'s workspace tree and in ``AGENTS.md``'s package map. The
 toolchain was documented as three packages for several releases after
-``s0ma-studi0`` joined it, because adding a package to the repo and adding it
+``s0ma-lang-studi0`` joined it, because adding a package to the repo and adding it
 to those two maps are separate acts and only the first one is enforced by
 anything. The expected list is derived from the manifests, so a fifth package
 is required in both maps from the moment its manifest exists.
@@ -78,7 +78,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-#: The lockstep version is read from s0ma-core's pyproject: all four
+#: The lockstep version is read from s0ma-lang-core's pyproject: all four
 #: distributions carry the same version (PRD INV-4), and core is the anchor
 #: at the bottom of the dependency stack.
 VERSION_SOURCE = "packages/s0ma-core/pyproject.toml"
@@ -278,10 +278,10 @@ ALLOWLIST: tuple[Historical, ...] = (
         "dates when the build began refusing NEW check errors (0.13.0 M2)",
     ),
     # --- editors/README.md ---
-    # The DSL language spec versions on its own axis (see the s0ma-dsl README
+    # The DSL language spec versions on its own axis (see the s0ma-lang-dsl README
     # status note) and has its own currency gates: test_editor_grammar.py
-    # harvests the highest on-disk spec, and s0ma-mcp's doc-drift test asserts
-    # the packaged spec is the highest s0ma-dsl ships. The lockstep release
+    # harvests the highest on-disk spec, and s0ma-lang-mcp's doc-drift test asserts
+    # the packaged spec is the highest s0ma-lang-dsl ships. The lockstep release
     # version was never the right value here.
     Historical(
         "editors/README.md",
@@ -370,7 +370,7 @@ ALLOWLIST: tuple[Historical, ...] = (
     ),
     # --- docs/documentation-subsystem.md (beta-prep-5 B3) ---
     # The DSL language spec versions on its own axis, exactly as the editors
-    # and s0ma-dsl README entries above record; this page cites it twice.
+    # and s0ma-lang-dsl README entries above record; this page cites it twice.
     Historical(
         "docs/documentation-subsystem.md",
         "0.17.0",
@@ -445,7 +445,7 @@ def read_pyproject_version(root: Path, rel: str) -> str:
 
 
 def read_lockstep_version(root: Path) -> str:
-    """The current lockstep version, from s0ma-core's pyproject (the anchor)."""
+    """The current lockstep version, from s0ma-lang-core's pyproject (the anchor)."""
     return read_pyproject_version(root, VERSION_SOURCE)
 
 

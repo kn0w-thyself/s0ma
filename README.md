@@ -135,7 +135,7 @@ connects a brain, such as an LLM, to the body of software it acts on.
 | `ganglion` | A part that watches and responds. |
 | `axon` | A declared dependency between two parts. |
 
-Plain Python works too: decorate with `@component` from `s0ma-core` and the
+Plain Python works too: decorate with `@component` from `s0ma-lang-core` and the
 same registry, verifiers and query surfaces apply, with no `.s0ma` file
 anywhere. And the self-model reaches past Python. s0ma compiles Python today,
 and an outside service, a part in another language or a physical device is
@@ -147,7 +147,7 @@ left out of it. More languages are on the roadmap. Hardware starts at
 
 s0ma is **not on PyPI yet**. All four packages are published there from the
 first release cut of this repository
-([PRD](references/s0ma-prd.md) NFR-8). Until that lands, `pip install s0ma-core`
+([PRD](references/s0ma-prd.md) NFR-8). Until that lands, `pip install s0ma-lang-core`
 does not work and the way in is this repository. This section is the one place
 that route is written down.
 
@@ -171,7 +171,7 @@ written.
 From the checkout:
 
 ```bash
-uv build --package s0ma-core && uv build --package s0ma-dsl   # add --package s0ma-mcp / --package s0ma-studi0 as needed
+uv build --package s0ma-lang-core && uv build --package s0ma-lang-dsl   # add --package s0ma-lang-mcp / --package s0ma-lang-studi0 as needed
 ```
 
 Then, in your own project, add each wheel by path. Their inter-dependencies
@@ -179,17 +179,17 @@ name PyPI packages that do not exist there yet, so a resolver cannot find them
 on its own:
 
 ```bash
-uv add /path/to/s0ma/dist/s0ma_core-*.whl /path/to/s0ma/dist/s0ma_dsl-*.whl
+uv add /path/to/s0ma/dist/s0ma_lang_core-*.whl /path/to/s0ma/dist/s0ma_lang_dsl-*.whl
 ```
 
-Or `pip install` the same wheels into any virtual environment, `s0ma-core`
+Or `pip install` the same wheels into any virtual environment, `s0ma-lang-core`
 first. The globs assume a clean `dist/`: one wheel per package, at the version
 you just built.
 
-`s0ma-core` on its own is fully supported: the runtime, with zero hard
-dependencies. `s0ma-dsl` adds the `.s0ma` compiler and the `s0ma` command,
-`s0ma-mcp` adds the authoring server, and `s0ma-studi0` adds the visual
-environment. The optional extras of `s0ma-core` are `[api]` for REST, `[mcp]`
+`s0ma-lang-core` on its own is fully supported: the runtime, with zero hard
+dependencies. `s0ma-lang-dsl` adds the `.s0ma` compiler and the `s0ma` command,
+`s0ma-lang-mcp` adds the authoring server, and `s0ma-lang-studi0` adds the visual
+environment. The optional extras of `s0ma-lang-core` are `[api]` for REST, `[mcp]`
 for the introspection MCP server, and `[all]`.
 
 </details>
@@ -250,7 +250,7 @@ from it. The root `README.md` "Install" section has the exact commands, both
 for working inside the checkout and for building the wheels and installing them
 into a project of your own. s0ma is not on PyPI yet: all four packages are
 published there from the first release cut of the public repository (PRD
-NFR-8), so until then `pip install s0ma-core` will not work.
+NFR-8), so until then `pip install s0ma-lang-core` will not work.
 
 Then create a project:
 
@@ -351,7 +351,7 @@ the proof that the self-model participates in what can ship.
 Static checks deliberately do not execute project code. The host probe runs
 under the application's own Python, and a fresh project does not have one yet:
 it has no environment and declares no dependencies. Give it both in one step —
-from inside `my-app`, `uv add` the `s0ma-core` and `s0ma-dsl` wheels from the
+from inside `my-app`, `uv add` the `s0ma-lang-core` and `s0ma-lang-dsl` wheels from the
 Install section, which creates `.venv`, installs them, and names them in
 `[project].dependencies` (the build's `HOST_RUNTIME_UNDECLARED` warning asks
 for exactly that declaration; with pip, install the two wheels into a `.venv`
@@ -444,13 +444,13 @@ installable packages, all Apache-2.0:
 
 | Distribution | Module | What it is |
 |---|---|---|
-| [`s0ma-core`](packages/s0ma-core) | `s0ma` | The runtime: the registry every part is declared into, the verifiers, the lifecycle, and the surfaces that answer what exists and why. |
-| [`s0ma-dsl`](packages/s0ma-dsl) | `s0ma_dsl` | The `.s0ma` language, its compiler, and the `s0ma` command line. |
-| [`s0ma-mcp`](packages/s0ma-mcp) | `s0ma_mcp` | The authoring server a coding agent works through, over the Model Context Protocol. |
-| [`s0ma-studi0`](packages/s0ma-studi0) | `s0ma_studi0` | studi0, the local visual environment (`s0ma studi0`), whose sh0w renderer draws a project's component graph from its build artifacts. **Early preview, with more coming.** |
+| [`s0ma-lang-core`](packages/s0ma-core) | `s0ma` | The runtime: the registry every part is declared into, the verifiers, the lifecycle, and the surfaces that answer what exists and why. |
+| [`s0ma-lang-dsl`](packages/s0ma-dsl) | `s0ma_dsl` | The `.s0ma` language, its compiler, and the `s0ma` command line. |
+| [`s0ma-lang-mcp`](packages/s0ma-mcp) | `s0ma_mcp` | The authoring server a coding agent works through, over the Model Context Protocol. |
+| [`s0ma-lang-studi0`](packages/s0ma-studi0) | `s0ma_studi0` | studi0, the local visual environment (`s0ma studi0`), whose sh0w renderer draws a project's component graph from its build artifacts. **Early preview, with more coming.** |
 
-Dependencies point one way: `s0ma-mcp` and `s0ma-studi0` depend on `s0ma-dsl`,
-which depends on `s0ma-core`. `s0ma-core` stands alone with zero hard runtime
+Dependencies point one way: `s0ma-lang-mcp` and `s0ma-lang-studi0` depend on `s0ma-lang-dsl`,
+which depends on `s0ma-lang-core`. `s0ma-lang-core` stands alone with zero hard runtime
 dependencies, so an application can take the runtime and nothing else.
 
 **The spelling.** It is `s0ma` with a digit **zero**, everywhere, and
@@ -471,7 +471,7 @@ Agents meet s0ma in two ways.
   it to the agent that operates it, as quoted project data and never as an
   instruction.
 
-[`s0ma-mcp`](packages/s0ma-mcp/README.md) is itself a s0ma application,
+[`s0ma-lang-mcp`](packages/s0ma-mcp/README.md) is itself a s0ma application,
 served from its own self-model, which makes it the worked example of a
 production s0ma project.
 
@@ -535,7 +535,7 @@ agents are in [AGENTS.md](AGENTS.md).
 
 ## License
 
-s0ma-core: Apache-2.0
-s0ma-dsl: Apache-2.0
-s0ma-mcp: Apache-2.0
-s0ma-studi0: Apache-2.0
+s0ma-lang-core: Apache-2.0
+s0ma-lang-dsl: Apache-2.0
+s0ma-lang-mcp: Apache-2.0
+s0ma-lang-studi0: Apache-2.0

@@ -64,7 +64,7 @@ are found and refused.
 lines fail `s0ma check` in every mode, so a half-finished conversion cannot
 build green.
 
-**Declare the runtime:** built code imports `s0ma-core` and `s0ma-dsl`: name
+**Declare the runtime:** built code imports `s0ma-lang-core` and `s0ma-lang-dsl`: name
 both in `[project].dependencies`, and install them where it runs.
 
 **When stuck:** `s0ma adopt status` has the next command at every rung, and
@@ -216,7 +216,7 @@ because the package sits one directory nearer the top. The command prints the
 lines for your layout, so there is no number to work out.
 
 **Declare the s0ma runtime now, before the first conversion.** A converted
-module imports `s0ma-core` and `s0ma-dsl` when it loads, so a project that
+module imports `s0ma-lang-core` and `s0ma-lang-dsl` when it loads, so a project that
 converts anything and has not declared them ships an application that cannot
 import itself. Add both to `[project].dependencies` and install them in the
 environment that runs the application. The build says so once, as
@@ -551,7 +551,7 @@ Before you delete src/bookshelf/errors.py:
       errors = _BUILT["errors"]
       sys.modules[f"{__name__}.errors"] = errors
 
-  2. Declare the s0ma runtime: the built module imports s0ma-core and s0ma-dsl when it
+  2. Declare the s0ma runtime: the built module imports s0ma-lang-core and s0ma-lang-dsl when it
      loads, so name both in [project].dependencies and install them in the environment
      that runs this application.
   3. Ship bookshelf_build with the application. It is imported at run time now, so it

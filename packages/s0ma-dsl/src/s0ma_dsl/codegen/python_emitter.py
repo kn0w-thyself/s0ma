@@ -1345,7 +1345,7 @@ class PythonEmitter:
 
         # DSL-M1 (0.8.0, ADR-011 §(b)): the public serving name rides
         # the registered metadata under the reserved ``serves_as`` key
-        # so registry-deriving consumers (the s0ma-mcp bootstrap bridge
+        # so registry-deriving consumers (the s0ma-lang-mcp bootstrap bridge
         # being the motivating one) read the served name without IR
         # access. Written BEFORE the authored merge below — it is an
         # emitter-written reserved key, not an authored entry.
@@ -1847,7 +1847,7 @@ class PythonEmitter:
 
         * ``get_factory()`` — wraps the named SERVICE-kind factory nerve
           and returns whatever the factory returns (typically a dict of
-          callables). Module-scoped registration leverages the s0ma-core
+          callables). Module-scoped registration leverages the s0ma-lang-core
           ``module_scoped=True`` flag so two integrations in different
           modules can share the helper name without registry collision.
         * ``get_manifest() -> dict`` — returns the declaration's
@@ -2042,7 +2042,7 @@ class PythonEmitter:
     def _doc_span_filename(self) -> str:
         """Return the filename to bake into doc-* registration source spans.
 
-        Doc registrations participate in the s0ma-core ``content_hash``
+        Doc registrations participate in the s0ma-lang-core ``content_hash``
         transitive walk; including an absolute path leaks filesystem
         layout into the hash and makes drift detection / golden tests
         non-portable. We normalise to ``basename(self.filename)`` so the

@@ -100,7 +100,7 @@ def lockstep_version() -> str:
 
 
 def real_server_tools() -> list[str]:
-    """Every tool the real ``s0ma-mcp`` offers, by name."""
+    """Every tool the real ``s0ma-lang-mcp`` offers, by name."""
     surface = json.loads(MCP_SURFACE.read_text(encoding="utf-8"))
     return sorted(tool["name"] for tool in surface["tools"])
 
@@ -428,7 +428,7 @@ def test_no_user_facing_text_says_payload() -> None:
 # ---------------------------------------------------------------------------
 
 #: Anthropic's directory requires a `title` on every tool. Until 2026-09-18 no
-#: tool in `s0ma-mcp` had one, and this module carried the list of the fifteen
+#: tool in `s0ma-lang-mcp` had one, and this module carried the list of the fifteen
 #: that lacked it (X1.T3's finding) so the gap could not go stale unnoticed. The
 #: owner approved fifteen titles that day (surface contract revision R3), the
 #: list emptied, and - as its own docstring asked - it was deleted. What stands

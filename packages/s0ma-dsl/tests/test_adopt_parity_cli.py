@@ -1049,7 +1049,7 @@ class TestTheCleanVerdictSaysWhatIsLeftToDo:
         said = _flat(out)
 
         assert "Before you delete src/bookshelf/errors.py:" in out
-        assert "s0ma-core and s0ma-dsl" in said, "the runtime, named"
+        assert "s0ma-lang-core and s0ma-lang-dsl" in said, "the runtime, named"
         assert "[project].dependencies" in said
         assert "Ship bookshelf_build with the application" in said
         assert "packages your wheel installs" in said
@@ -1126,7 +1126,7 @@ class TestTheCleanVerdictSaysWhatIsLeftToDo:
 
         assert document["schema"] == PARITY_SCHEMA, "additive, under the same schema"
         plan = document["before_you_delete"]
-        assert plan["declare_runtime"] == ["s0ma-core", "s0ma-dsl"]
+        assert plan["declare_runtime"] == ["s0ma-lang-core", "s0ma-lang-dsl"]
         assert plan["ship_build_dir"] == "bookshelf_build"
         assert plan["alias"]["package_init"] == "src/bookshelf/__init__.py"
         assert plan["alias"]["lines"] == _printed_alias_lines(
@@ -1151,7 +1151,7 @@ class TestTheCleanVerdictSaysWhatIsLeftToDo:
         assert "Before you delete the Python of bookshelf.config, bookshelf.errors" in said
         assert "`s0ma adopt verify-parity <module>` prints the exact lines" in said
         assert "import sys" not in out, "no block where there is no one answer"
-        assert "s0ma-core and s0ma-dsl" in said
+        assert "s0ma-lang-core and s0ma-lang-dsl" in said
         assert "Ship bookshelf_build" in said
 
     def test_nothing_extra_once_the_original_is_gone(

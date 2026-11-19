@@ -13,7 +13,7 @@ bootstrap_files = []
 # some other), so the budget silently no-opped. F3 marks `cycle_a` as
 # the explicit page composer; the walker terminates correctly thanks
 # to the seen set; the budget walks every reachable nerve exactly
-# once (A, B, C). The s0ma-dsl resolver also detects the cycle and
+# once (A, B, C). The s0ma-lang-dsl resolver also detects the cycle and
 # emits MODULE_DEPENDENCY_CYCLE — that is unrelated to F3 and is
 # exercised by the cycle-detection tests; the F3 test exercises the
 # budget walker directly via check_attribute_budgets() to verify

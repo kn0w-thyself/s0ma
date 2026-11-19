@@ -2,10 +2,10 @@
 ## How to Build and Modify Applications with s0ma
 
 **Audience:** Coding agents (primary), human developers (secondary)
-**Subject:** the s0ma-core Python runtime — registration, verification, and the self-model API
-**Status:** the one canonical user guide. Merged 2026-08-30 from the two copies that had drifted apart (one here, one under `s0ma-dsl`) plus the condensed abridgement of both; those paths are now pointers to this file. Maintained by hand and checked by the documentation build's link, catalog, and mirror gates.
+**Subject:** the s0ma-lang-core Python runtime — registration, verification, and the self-model API
+**Status:** the one canonical user guide. Merged 2026-08-30 from the two copies that had drifted apart (one here, one under `s0ma-lang-dsl`) plus the condensed abridgement of both; those paths are now pointers to this file. Maintained by hand and checked by the documentation build's link, catalog, and mirror gates.
 
-> **What this guide is not.** It teaches the **Python** way of using s0ma-core:
+> **What this guide is not.** It teaches the **Python** way of using s0ma-lang-core:
 > you write classes and functions and decorate them. If you are authoring in the
 > **`.s0ma` language** instead — the usual route today — the language is
 > specified in
@@ -47,14 +47,14 @@ Every time you add, change, or remove functionality, follow this loop:
 
 ### 1.1 Install s0ma
 
-s0ma is not on PyPI yet, so `pip install s0ma-core` will not work: all four packages are published there from the first release cut of the public repository. Until then the way in is the repository itself, and it is written down once, outside this guide:
+s0ma is not on PyPI yet, so `pip install s0ma-lang-core` will not work: all four packages are published there from the first release cut of the public repository. Until then the way in is the repository itself, and it is written down once, outside this guide:
 [`docs/getting-started.md` §1](../../../docs/getting-started.md#1-create-a-real-project)
 states the route, and the
 [root `README.md`](../../../README.md) "Install" section has its commands —
 working inside a checkout, or building the wheels and installing them into a
 project of your own. Install that way, then come back here for the runtime.
 
-From a checkout you may install `s0ma-core` alone — the runtime framework on its own is fully supported — and then the optional extras matter:
+From a checkout you may install `s0ma-lang-core` alone — the runtime framework on its own is fully supported — and then the optional extras matter:
 
 | Extra | What it adds |
 |---|---|
@@ -68,7 +68,7 @@ From a checkout you may install `s0ma-core` alone — the runtime framework on i
 import s0ma
 ```
 
-> **Distribution name vs. import name.** The distribution is `s0ma-core`; the
+> **Distribution name vs. import name.** The distribution is `s0ma-lang-core`; the
 > import name is `s0ma`. They differ because Python packaging conventions do not
 > allow a leading digit in a distribution name — the import name is the one that
 > matches the framework's identity.
@@ -748,9 +748,9 @@ server = create_mcp_server(registry)
 
 Requires the `mcp` extra (see §1.1).
 
-> **Two MCP servers, two jobs.** The server in this section is s0ma-core's
+> **Two MCP servers, two jobs.** The server in this section is s0ma-lang-core's
 > *introspection* server — it answers questions about a running system's
-> self-model. The separate [`s0ma-mcp`](../../s0ma-mcp/README.md) package is the
+> self-model. The separate [`s0ma-lang-mcp`](../../s0ma-mcp/README.md) package is the
 > *authoring* server: it drives the `.s0ma` toolchain (scaffold → check →
 > transpile/build) through a set of honestly annotated tools including read-only
 > `project_status` orientation, derived roster inspection, and explicit host
@@ -769,7 +769,7 @@ Requires the `mcp` extra (see §1.1).
 The MCP server includes teaching capabilities that help coding agents learn the s0ma framework at runtime — no pre-loaded documentation required.
 
 **Where the answers come from.** The teaching content ships *inside* the
-`s0ma-core` package as a generated data file, so an agent gets the same answers
+`s0ma-lang-core` package as a generated data file, so an agent gets the same answers
 from an installed wheel as from a source checkout. Reading this guide off disk
 is the **fallback** and only fires in a checkout that has it, which is why the
 section headings in this guide are load-bearing: the fallback addresses them by
@@ -1577,7 +1577,7 @@ my_registry.register_from_module(mod)
 
 The documentation subsystem extends registration-as-creation to documentation artifacts. In the same way that a public class or function cannot exist without a `@component` registration, a piece of generated documentation, a doc-guide, or an executable example cannot exist without a runtime registration that the rest of the system can query.
 
-This section describes the s0ma-core **runtime** surface — the registration functions and queries that exist in Python. The **authoring** surface that emits calls into it (the `.s0ma` grammar and its transpiler) lives in the `s0ma-dsl` package of this repository and is specified by [the current DSL spec](../../s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md). Everything below is usable from plain Python without the DSL.
+This section describes the s0ma-lang-core **runtime** surface — the registration functions and queries that exist in Python. The **authoring** surface that emits calls into it (the `.s0ma` grammar and its transpiler) lives in the `s0ma-lang-dsl` package of this repository and is specified by [the current DSL spec](../../s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md). Everything below is usable from plain Python without the DSL.
 
 ### 10.1 The Three Registration Kinds
 
@@ -1632,7 +1632,7 @@ register_example(
 
 ### 10.3 Import-Hook Marker Attributes
 
-Generated `.py` files emitted by `s0ma-dsl` carry three module-level marker attributes. Each marker advertises the names of the registrations the module is expected to install by the time its body finishes executing:
+Generated `.py` files emitted by `s0ma-lang-dsl` carry three module-level marker attributes. Each marker advertises the names of the registrations the module is expected to install by the time its body finishes executing:
 
 | Attribute | Registration | Import-hook constant |
 |-----------|-------------|-----------------------|

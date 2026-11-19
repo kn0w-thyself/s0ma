@@ -277,7 +277,7 @@ def test_each_fixture_suite_passes_from_inside_the_fixture(
 
 def test_the_fixtures_are_clean_under_the_repository_ruff_settings() -> None:
     # There is no ruff exclusion for tests/fixtures/ and this milestone did not
-    # add one: the fixtures simply lint clean under the s0ma-dsl package's own
+    # add one: the fixtures simply lint clean under the s0ma-lang-dsl package's own
     # [tool.ruff] settings, which is what `ruff check packages/` enforces at
     # every gate. This test says so where a fixture author will read it.
     if importlib.util.find_spec("ruff") is None:  # pragma: no cover - env-dependent

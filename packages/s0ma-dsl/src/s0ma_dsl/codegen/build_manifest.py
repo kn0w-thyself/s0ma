@@ -39,7 +39,7 @@ re-exported here under their historical names (the same objects, so
 either reader's failures). The runtime read path —
 :func:`s0ma.bootstrap.bootstrap_imports`, which a *deployed* application
 calls at boot — must not import the authoring packages (INV-9), so the
-schema identity it needs lives in Apache-licensed ``s0ma-core``. This
+schema identity it needs lives in Apache-licensed ``s0ma-lang-core``. This
 module remains the authoring-side view of the same file: the dataclasses,
 hashes, source maps, external content files and self-context references
 that only the build pipeline and its tooling read.

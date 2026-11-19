@@ -24,9 +24,9 @@ The implementation plan this subsystem was built from is archived at
 
 ## Import-hook marker attributes
 
-The s0ma-dsl transpiler emits three module-level marker attributes on
+The s0ma-lang-dsl transpiler emits three module-level marker attributes on
 generated `.py` output. Each is a contract between the transpiler and the
-s0ma-core import hook: the marker advertises the names of the
+s0ma-lang-core import hook: the marker advertises the names of the
 documentation-subsystem registrations that the module is *expected* to install
 into the registry by the time its module body finishes executing.
 
@@ -79,7 +79,7 @@ return the stored registration. Each raises
 | `RegistrySnapshot.doc_guides` | `dict[str, DocGuideRegistration]`. |
 | `RegistrySnapshot.examples` | `dict[str, ExampleRegistration]`. |
 | `RegistrySnapshot.examples_for(ref)` | Returns the `ExampleRegistration`s whose `demonstrates` matches the target. Accepts either an `EntityRef` or a `"module::name"` / bare `"name"` string shortcut. |
-| `RegistrySnapshot.docs_for(ref)` | Returns a `DocsForResult` with separate `.refs` / `.guides` lists. Doc-guide matches use name+module; doc-ref matches use textual containment against each filter's `raw` source (full predicate evaluation is `s0ma-dsl`-side). |
+| `RegistrySnapshot.docs_for(ref)` | Returns a `DocsForResult` with separate `.refs` / `.guides` lists. Doc-guide matches use name+module; doc-ref matches use textual containment against each filter's `raw` source (full predicate evaluation is `s0ma-lang-dsl`-side). |
 | `DocsForResult` | Structured wrapper around `refs` / `guides` lists. Carries `to_dict()` and `is_empty()`. |
 
 `to_dict()` / `to_json()` emit the `doc_refs` / `doc_guides` / `examples` keys

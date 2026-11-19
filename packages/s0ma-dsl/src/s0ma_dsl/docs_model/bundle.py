@@ -27,8 +27,8 @@ and where it was found:
 
     That copy is the fix for a defect that outlived the milestone which
     opened this seam. F8 packaged the composed snapshot into the
-    ``s0ma-mcp`` wheel, where the MCP resources read it, and a teaching
-    slice into ``s0ma-core``; nothing ever filled the place this loader
+    ``s0ma-lang-mcp`` wheel, where the MCP resources read it, and a teaching
+    slice into ``s0ma-lang-core``; nothing ever filled the place this loader
     looks, so every read command answered an installed person "no
     documentation snapshot was found" while answering a contributor
     perfectly. The lesson is written into the gates rather than only into
@@ -370,7 +370,7 @@ def load_snapshot(start: Path | None = None) -> Snapshot:
         f"no documentation snapshot was found. A checkout answers from "
         f"{snapshot_relative_path()} at or above the directory you ran "
         f"this in, and an installed toolchain answers from the snapshot "
-        f"inside the s0ma-dsl wheel, at s0ma_dsl/{PACKAGED_SNAPSHOT} "
+        f"inside the s0ma-lang-dsl wheel, at s0ma_dsl/{PACKAGED_SNAPSHOT} "
         f"(loaders registered: {names}). This installation has neither, "
         f"which means one of two things: it is a development install being "
         f"run outside its own checkout, or its package files are "

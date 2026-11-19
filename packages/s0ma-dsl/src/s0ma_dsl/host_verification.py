@@ -33,9 +33,9 @@ OUTPUT_TAIL_BYTES = 4096
 _GATE_MODES = frozenset({"migration", "dev", "strict", "release"})
 _DIST_NAME = re.compile(r"^\s*([A-Za-z0-9][A-Za-z0-9._-]*)")
 _IMPORT_TO_DIST = {
-    "s0ma": "s0ma-core",
-    "s0ma_dsl": "s0ma-dsl",
-    "s0ma_mcp": "s0ma-mcp",
+    "s0ma": "s0ma-lang-core",
+    "s0ma_dsl": "s0ma-lang-dsl",
+    "s0ma_mcp": "s0ma-lang-mcp",
 }
 
 
@@ -222,7 +222,7 @@ def _host_info(
     runtime_imports: tuple[str, ...],
 ) -> dict[str, Any]:
     requested_distributions = sorted(
-        set(declared) | {"s0ma-core", "s0ma-dsl", "s0ma-mcp"}
+        set(declared) | {"s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp"}
     )
     request = json.dumps(
         {
@@ -522,7 +522,7 @@ def verify_host(
         "platform": str(host_info.get("platform", "unknown")),
         "s0ma_distributions": {
             name: versions.get(name) if isinstance(versions, dict) else None
-            for name in ("s0ma-core", "s0ma-dsl", "s0ma-mcp")
+            for name in ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp")
         },
     }
     dependencies, dependency_diagnostics = _dependencies_and_diagnostics(
@@ -568,7 +568,7 @@ def static_runtime_dependency_warning(project: S0maProject) -> S0maError | None:
     if project.synthetic:
         return None
     declared = set(_project_dependencies(project.root))
-    required = {"s0ma-core", "s0ma-dsl"}
+    required = {"s0ma-lang-core", "s0ma-lang-dsl"}
     missing = sorted(required - declared)
     if not missing:
         return None
@@ -589,7 +589,7 @@ def static_runtime_dependency_warning(project: S0maProject) -> S0maError | None:
             # know besides is a fact about somewhere else: the
             # environment that runs the application needs both installed,
             # or it will not import.
-            "Name s0ma-core and s0ma-dsl in [project].dependencies — that "
+            "Name s0ma-lang-core and s0ma-lang-dsl in [project].dependencies — that "
             "alone clears this warning. Separately, the environment that runs "
             "the application has to have both installed; `s0ma verify-host` "
             "is how you prove it does."

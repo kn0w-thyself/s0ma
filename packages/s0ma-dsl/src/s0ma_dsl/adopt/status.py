@@ -497,7 +497,7 @@ def ladder_status(root: Path) -> LadderStatus:
 #: decorator, ``s0ma_dsl.runtime_bridge`` for the registration calls — so
 #: a project that converts a module and does not declare them ships an
 #: application that cannot import itself (pilot defect G2-4).
-RUNTIME_DISTRIBUTIONS: tuple[str, ...] = ("s0ma-core", "s0ma-dsl")
+RUNTIME_DISTRIBUTIONS: tuple[str, ...] = ("s0ma-lang-core", "s0ma-lang-dsl")
 
 #: Where the block goes inside the package's ``__init__.py``, in the one
 #: form a reader can follow to the letter. "At the top" is wrong for most

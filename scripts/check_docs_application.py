@@ -41,7 +41,7 @@ step below so a reader can check the promise against the code:
 
 **What rides here rather than in ``selfhost-build``.** The committed
 ``docs/_built/`` tree is byte-gated by step 4 of this stage, not by the
-self-host stage that gates the s0ma-mcp and s0ma-studi0 builds, for three
+self-host stage that gates the s0ma-lang-mcp and s0ma-lang-studi0 builds, for three
 reasons that all point the same way. The self-host stage rebuilds **in
 place** and restores afterwards, and charter item 5 forbids this
 application from writing into the repository at all — ``s0ma build

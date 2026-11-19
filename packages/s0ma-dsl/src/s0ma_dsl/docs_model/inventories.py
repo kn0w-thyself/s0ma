@@ -117,13 +117,13 @@ COMPONENT_PREFIX = "component:"
 
 #: Top-level module name to the distribution that ships it. The four
 #: distributions of INV-6, and the mapping is declared rather than derived
-#: because ``s0ma`` and ``s0ma-core`` differ and no rule turns one into the
+#: because ``s0ma`` and ``s0ma-lang-core`` differ and no rule turns one into the
 #: other.
 DISTRIBUTION_BY_MODULE: Mapping[str, str] = {
-    "s0ma": "s0ma-core",
-    "s0ma_dsl": "s0ma-dsl",
-    "s0ma_mcp": "s0ma-mcp",
-    "s0ma_studi0": "s0ma-studi0",
+    "s0ma": "s0ma-lang-core",
+    "s0ma_dsl": "s0ma-lang-dsl",
+    "s0ma_mcp": "s0ma-lang-mcp",
+    "s0ma_studi0": "s0ma-lang-studi0",
 }
 
 #: How the ``@component`` reading names itself. One string for the whole

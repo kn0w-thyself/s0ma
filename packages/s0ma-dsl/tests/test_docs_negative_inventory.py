@@ -26,7 +26,7 @@ module's whole subject:
    written down, and every entry is held against the thing it claims exists.
 3. **The two discovery contracts never met.** §9.3's seven human routes are
    registered in this package's F9 suite and §9.6's seven agent routes in
-   s0ma-mcp's; each suite asserts its own seven and neither can see the other,
+   s0ma-lang-mcp's; each suite asserts its own seven and neither can see the other,
    so nothing held the fourteen together or against the application's own
    ledger. This module is where all three readings meet.
 

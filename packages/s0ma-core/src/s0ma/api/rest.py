@@ -23,7 +23,7 @@ All endpoints return JSON with both a ``text`` field (natural language
 for LLM consumption) and structured ``data`` fields (for programmatic
 access).
 
-Requires: ``pip install s0ma-core[api]``
+Requires: ``pip install s0ma-lang-core[api]``
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ try:
 except ImportError as _exc:
     raise ImportError(
         "The s0ma REST API requires FastAPI. "
-        "Install it with: pip install s0ma-core[api]"
+        "Install it with: pip install s0ma-lang-core[api]"
     ) from _exc
 
 from s0ma import __version__

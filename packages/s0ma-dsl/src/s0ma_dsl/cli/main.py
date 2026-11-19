@@ -2286,19 +2286,19 @@ def _scaffold_template(
 # ---------------------------------------------------------------------------
 #
 # G5 (feedback 5–6 cleanup) versions every generated conftest with a banner
-# carrying the s0ma-dsl version and a content checksum of the body below the
+# carrying the s0ma-lang-dsl version and a content checksum of the body below the
 # banner. ``s0ma test`` reads the banner before invoking pytest (see
-# :meth:`S0maCLI._cmd_test`); any mismatch with the running s0ma-dsl version
+# :meth:`S0maCLI._cmd_test`); any mismatch with the running s0ma-lang-dsl version
 # triggers the four-state classifier in :func:`_classify_conftest`.
 #
-# The version-checksum registry below records, for each released s0ma-dsl
+# The version-checksum registry below records, for each released s0ma-lang-dsl
 # version, the canonical body checksum that ``s0ma test-conftest`` would have
 # produced. It powers the ``untouched_stale`` branch of the classifier:
 # a conftest whose banner version is older than the current version *and*
 # whose body checksum matches the registered checksum for that older version
 # is provably untouched and can be auto-regenerated non-destructively.
 #
-# **Initial state (G5 ship): the registry is empty.** No prior s0ma-dsl
+# **Initial state (G5 ship): the registry is empty.** No prior s0ma-lang-dsl
 # release embedded the banner (this is the first release that does), so no
 # pre-G5 conftest can be classified ``untouched_stale``. Every pre-G5
 # generated conftest is therefore ``unrecognized`` (no banner) →
@@ -2309,7 +2309,7 @@ def _scaffold_template(
 # that asks the user to inspect, preserve, and run ``s0ma test-conftest
 # --force``.
 #
-# **Future maintenance.** When a future s0ma-dsl release changes the
+# **Future maintenance.** When a future s0ma-lang-dsl release changes the
 # generated body shape and the maintainer wants the prior version's bodies
 # to auto-regenerate non-destructively, they add an entry mapping the
 # *prior* version string to the SHA256 hex digest of the body that prior
@@ -2350,7 +2350,7 @@ def _render_conftest_body(
     The body is everything that follows the four banner comment lines.
     It is the input to the content checksum: the banner itself is
     excluded so re-running ``s0ma test-conftest`` against the same
-    s0ma-dsl version produces a banner whose checksum line matches the
+    s0ma-lang-dsl version produces a banner whose checksum line matches the
     body's actual hash, byte-for-byte. See :func:`_generate_conftest`
     for the assembly.
     """
@@ -2408,7 +2408,7 @@ def _compute_conftest_body_checksum(body: str) -> str:
 
     The body is the bytes :func:`_render_conftest_body` produces;
     excluding the banner makes the checksum stable across re-runs of
-    ``s0ma test-conftest`` against the same s0ma-dsl version.
+    ``s0ma test-conftest`` against the same s0ma-lang-dsl version.
     """
     return hashlib.sha256(body.encode("utf-8")).hexdigest()
 
@@ -2436,7 +2436,7 @@ def _generate_conftest(
     """Generate a conftest.py that mocks the s0ma runtime for testing.
 
     The returned content carries a four-line banner identifying the
-    s0ma-dsl version and a SHA256 content checksum of the body below
+    s0ma-lang-dsl version and a SHA256 content checksum of the body below
     the banner. ``s0ma test`` reads the banner via
     :func:`_classify_conftest` before invoking pytest; banner mismatches
     surface ``STALE_GENERATED_CONFTEST`` rather than letting pytest
@@ -3252,7 +3252,7 @@ class S0maCLI:
         # --- score (STD-M8, usability plan) ---
         # The self-knowledge score: one visible number + a per-faculty
         # breakdown, composed from existing dsl/core surfaces (no new
-        # engine; never imports s0ma-mcp — plan D-7). Report-only by
+        # engine; never imports s0ma-lang-mcp — plan D-7). Report-only by
         # default; ``--gate`` exits non-zero below the caller-pinned mode's
         # floor. The score formula is recorded here (and in the
         # patterns guide "Measuring self-knowledge" section).
@@ -3390,7 +3390,7 @@ class S0maCLI:
 
         # --- studi0 ---
         # M1 (studi0 v1, FR-STUDI0): a thin launcher for the optional
-        # `s0ma-studi0` package. The transpiler never imports it at
+        # `s0ma-lang-studi0` package. The transpiler never imports it at
         # module scope — the import happens inside the handler, so a
         # missing viewer costs nothing on every other command and
         # surfaces one actionable hint when it is actually asked for.
@@ -3405,7 +3405,7 @@ class S0maCLI:
                 "repainting as builds land. It reads build artifacts "
                 "only: nothing is written to the project, and the "
                 "target application is never executed. Requires the "
-                "optional `s0ma-studi0` package."
+                "optional `s0ma-lang-studi0` package."
             ),
         )
         sp.add_argument(
@@ -7085,7 +7085,7 @@ class S0maCLI:
         Implementation lives in ``s0ma_dsl.cli.doctor`` per the
         migrate-ext separate-module precedent. Doctor diagnoses, it
         does not gate: exit 0 with findings; non-zero only when the
-        environment itself is broken (e.g. s0ma-core unimportable).
+        environment itself is broken (e.g. s0ma-lang-core unimportable).
         """
         from s0ma_dsl.cli.doctor import run_doctor
 
@@ -7101,7 +7101,7 @@ class S0maCLI:
         Implementation lives in ``s0ma_dsl.cli.score`` per the
         doctor/migrate-ext separate-module precedent. Composes the three
         faculty sub-scores from existing dsl/core surfaces (no new engine;
-        never imports s0ma-mcp — plan D-7). Report-only by default; with
+        never imports s0ma-lang-mcp — plan D-7). Report-only by default; with
         ``--gate`` exits non-zero below the resolved mode's floor.
         """
         from s0ma_dsl.cli.score import run_score
@@ -8620,7 +8620,7 @@ class S0maCLI:
     def _cmd_studi0(self, args: argparse.Namespace) -> int:
         """Launch the studi0 viewer for a project (optional package).
 
-        The transpiler does not depend on ``s0ma-studi0``: the import is
+        The transpiler does not depend on ``s0ma-lang-studi0``: the import is
         deferred to this handler so the viewer stays an install-time
         opt-in. When it is absent the command prints one structured hint
         block naming what studi0 is and how to install it, and exits
@@ -8643,7 +8643,7 @@ class S0maCLI:
             # the project is wrong, the optional viewer is simply not
             # installed. One block, in the house hint shape.
             print(
-                "s0ma studi0: the optional `s0ma-studi0` package is "
+                "s0ma studi0: the optional `s0ma-lang-studi0` package is "
                 "not importable in this environment.\n"
                 "studi0 is the local viewer for a built s0ma project: "
                 "it serves this project's component graph — the same "
@@ -8652,7 +8652,7 @@ class S0maCLI:
                 "reads build artifacts only and never writes to the "
                 "project.\n"
                 "Remediation:\n"
-                "  - Install the `s0ma-studi0` wheel next to the other s0ma "
+                "  - Install the `s0ma-lang-studi0` wheel next to the other s0ma "
                 "packages: the keyed installer from the hosting "
                 "getting-started guide does this for you; from a source "
                 "checkout, build and install the studi0 wheel. "
@@ -9027,7 +9027,7 @@ class S0maCLI:
                 newline="\n",
             )
             print(
-                f"s0ma-dsl: regenerated stale conftest at {conftest_path} "
+                f"s0ma-lang-dsl: regenerated stale conftest at {conftest_path} "
                 f"from {banner_version} -> {_dsl_version}",
                 file=sys.stderr,
             )

@@ -573,7 +573,7 @@ class TestS0maDSLLoaderCacheArtifacts:
     ) -> None:
         """The cache IR's ``transpiled_file`` is the cached .py's basename.
 
-        Same policy as the s0ma-dsl build artifacts (WIN-M3): the IR is
+        Same policy as the s0ma-lang-dsl build artifacts (WIN-M3): the IR is
         always written next to the cached ``.py`` it describes, so the
         basename is a complete, directory-independent reference — and
         emitted artifacts must not embed absolute machine paths (INV-5).
@@ -581,7 +581,7 @@ class TestS0maDSLLoaderCacheArtifacts:
         artifact bytes in either its raw or its JSON-escaped rendering
         (the two differ on Windows, where escaping hid the WIN-M3 leak).
         """
-        pytest.importorskip("s0ma_dsl", reason="s0ma-dsl not installed")
+        pytest.importorskip("s0ma_dsl", reason="s0ma-lang-dsl not installed")
 
         s0ma_path = tmp_path / "cache_probe.s0ma"
         s0ma_path.write_text(self.MINIMAL_S0MA_SOURCE, encoding="utf-8")

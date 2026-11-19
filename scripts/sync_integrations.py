@@ -71,8 +71,8 @@ LAUNCHER_COPIES: tuple[str, ...] = (
     "integrations/claude/desktop/server/s0ma_launch.py",
 )
 
-#: The monorepo's lockstep version, read from one manifest. s0ma-mcp is the
-#: one the integration ships (``s0ma-mcp`` is the server the launcher starts);
+#: The monorepo's lockstep version, read from one manifest. s0ma-lang-mcp is the
+#: one the integration ships (``s0ma-lang-mcp`` is the server the launcher starts);
 #: all four packages carry the same string by INV-4, and the
 #: ``docs-version-currency`` stage is what proves that.
 VERSION_SOURCE = "packages/s0ma-mcp/pyproject.toml"
@@ -199,7 +199,7 @@ def scaffolded_feedback_body() -> str:
     """
     try:
         new_project = importlib.import_module("s0ma_dsl.cli.new_project")
-    except ImportError as exc:  # pragma: no cover - a workspace without s0ma-dsl
+    except ImportError as exc:  # pragma: no cover - a workspace without s0ma-lang-dsl
         raise SyncError(
             f"cannot import s0ma_dsl.cli.new_project ({exc}); run this through "
             f"the workspace, with `uv run python scripts/sync_integrations.py`."

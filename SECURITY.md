@@ -83,7 +83,7 @@ versioning.
 
 ## What is in scope
 
-- **The four packages** — `s0ma-core`, `s0ma-dsl`, `s0ma-mcp` and `s0ma-studi0`.
+- **The four packages** — `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`.
 - **The launcher, the Claude Code plugin and the Claude Desktop extension**
   under [`integrations/`](integrations) — the pieces that start s0ma for a
   coding agent and keep it current.

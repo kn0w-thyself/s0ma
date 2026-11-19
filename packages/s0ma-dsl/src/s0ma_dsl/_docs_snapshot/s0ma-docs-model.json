@@ -268,43 +268,43 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "0aafbb6c9367a015556492930806ff2caf126f193ed22616c8755cd4a6d704cd",
+      "content_sha256": "c7b2e1d1e4e61a299adf0f610cc31961623ad72d214f749325032218ee4ca3af",
       "delegates": [],
-      "id": "authority:declared/package.s0ma-core",
+      "id": "authority:declared/package.s0ma-lang-core",
       "section": "[project]",
       "source": "packages/s0ma-core/pyproject.toml",
       "status": "Declared; depends=none; version=0.21.1"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "3d43eb2eff0627c6292220ca3bc850b738049c978d952f577ea04c31a531564b",
+      "content_sha256": "cbd56891c4848cd989d7310aeec6894c551e35d81673f726969412a463e5b768",
       "delegates": [],
-      "id": "authority:declared/package.s0ma-dsl",
+      "id": "authority:declared/package.s0ma-lang-dsl",
       "section": "[project]",
       "source": "packages/s0ma-dsl/pyproject.toml",
-      "status": "Declared; depends=s0ma-core; version=0.21.1"
+      "status": "Declared; depends=s0ma-lang-core; version=0.21.1"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "b5717241a6485da0bbb8aa89e956f37bac156b13a5797c22fbf24621dbdf325e",
+      "content_sha256": "e9850f466eb98f71056e9ed636aefe96b8fe80dc6a41ba508a5b210fa40cd7c2",
       "delegates": [],
-      "id": "authority:declared/package.s0ma-mcp",
+      "id": "authority:declared/package.s0ma-lang-mcp",
       "section": "[project]",
       "source": "packages/s0ma-mcp/pyproject.toml",
-      "status": "Declared; depends=s0ma-core,s0ma-dsl; version=0.21.1"
+      "status": "Declared; depends=s0ma-lang-core,s0ma-lang-dsl; version=0.21.1"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "bc0be32709dfff4bb3d0a835012d1459c2c34de3fd1516846b1394a85d671cd4",
+      "content_sha256": "1f20247849ae8d18f7ad62b20c50c1ff922103d0dcd214f8ed4a30f89dfe8cd3",
       "delegates": [],
-      "id": "authority:declared/package.s0ma-studi0",
+      "id": "authority:declared/package.s0ma-lang-studi0",
       "section": "[project]",
       "source": "packages/s0ma-studi0/pyproject.toml",
-      "status": "Declared; depends=s0ma-core,s0ma-dsl; version=0.21.1"
+      "status": "Declared; depends=s0ma-lang-core,s0ma-lang-dsl; version=0.21.1"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "2600a2abdcf1697b8ce1bda8adca7fcc0cf90e57294afed00570bde630e58cac",
+      "content_sha256": "5049ad37b2e5481b8584c9240c55c2a0933536b6c8231460e3d3449b70e32f53",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.21.1] — 2026-10-30",
@@ -385,7 +385,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-COM-1",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -394,7 +394,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-COM-2",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -403,7 +403,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-COM-3",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -412,7 +412,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-COM-4",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -421,7 +421,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-COM-5",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -430,88 +430,88 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-1",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-2",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-3",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-4",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-5",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-6",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-7",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-8",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-CORE-9",
-      "section": "7.1 `s0ma-core` — the runtime (FR-CORE)",
+      "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [
         {
           "domain": "language",
@@ -520,76 +520,76 @@
         }
       ],
       "id": "authority:prd/FR-DSL-1",
-      "section": "7.2 `s0ma-dsl` — the language and compiler (FR-DSL)",
+      "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-DSL-2",
-      "section": "7.2 `s0ma-dsl` — the language and compiler (FR-DSL)",
+      "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-DSL-3",
-      "section": "7.2 `s0ma-dsl` — the language and compiler (FR-DSL)",
+      "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-DSL-4",
-      "section": "7.2 `s0ma-dsl` — the language and compiler (FR-DSL)",
+      "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-DSL-5",
-      "section": "7.2 `s0ma-dsl` — the language and compiler (FR-DSL)",
+      "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-DSL-6",
-      "section": "7.2 `s0ma-dsl` — the language and compiler (FR-DSL)",
+      "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-DSL-7",
-      "section": "7.2 `s0ma-dsl` — the language and compiler (FR-DSL)",
+      "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-DSL-8",
-      "section": "7.2 `s0ma-dsl` — the language and compiler (FR-DSL)",
+      "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-1",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -598,7 +598,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-10",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -607,7 +607,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-11",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -616,7 +616,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-12",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -625,7 +625,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-2",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -634,7 +634,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-3",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -643,7 +643,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-4",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -652,7 +652,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-5",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -661,7 +661,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-6",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -670,7 +670,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-7",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -679,7 +679,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-8",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -688,7 +688,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-FB-9",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -697,196 +697,196 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-1",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-10",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-11",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-2",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-3",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-4",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-5",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-6",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-7",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-8",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-MCP-9",
-      "section": "7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
+      "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-1",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-10",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-2",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-3",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-4",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-5",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-6",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-7",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-8",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-9",
-      "section": "7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
+      "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
       "source": "references/s0ma-prd.md",
       "status": "Current"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-X-1",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -895,7 +895,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-X-2",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -904,7 +904,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-X-3",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -913,7 +913,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-X-4",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -922,7 +922,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/FR-X-5",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -931,7 +931,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-1",
       "section": "6. Invariants (INV-#) — never break these",
@@ -940,7 +940,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-2",
       "section": "6. Invariants (INV-#) — never break these",
@@ -949,7 +949,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-3",
       "section": "6. Invariants (INV-#) — never break these",
@@ -958,7 +958,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-4",
       "section": "6. Invariants (INV-#) — never break these",
@@ -967,7 +967,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-5",
       "section": "6. Invariants (INV-#) — never break these",
@@ -976,7 +976,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-6",
       "section": "6. Invariants (INV-#) — never break these",
@@ -985,7 +985,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-7",
       "section": "6. Invariants (INV-#) — never break these",
@@ -994,7 +994,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-8",
       "section": "6. Invariants (INV-#) — never break these",
@@ -1003,7 +1003,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/INV-9",
       "section": "6. Invariants (INV-#) — never break these",
@@ -1012,7 +1012,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/NFR-1",
       "section": "8. Non-functional requirements (NFR)",
@@ -1021,7 +1021,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/NFR-2",
       "section": "8. Non-functional requirements (NFR)",
@@ -1030,7 +1030,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/NFR-3",
       "section": "8. Non-functional requirements (NFR)",
@@ -1039,7 +1039,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/NFR-4",
       "section": "8. Non-functional requirements (NFR)",
@@ -1048,7 +1048,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/NFR-5",
       "section": "8. Non-functional requirements (NFR)",
@@ -1057,7 +1057,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/NFR-6",
       "section": "8. Non-functional requirements (NFR)",
@@ -1066,7 +1066,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/NFR-7",
       "section": "8. Non-functional requirements (NFR)",
@@ -1075,7 +1075,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/NFR-8",
       "section": "8. Non-functional requirements (NFR)",
@@ -1084,7 +1084,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-1",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1093,7 +1093,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-2",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1102,7 +1102,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-3",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1111,7 +1111,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-4",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1120,7 +1120,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-5",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1129,7 +1129,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-6",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1138,7 +1138,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-7",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1147,7 +1147,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-8",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1156,7 +1156,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/P-9",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1165,16 +1165,16 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/document",
       "section": "",
       "source": "references/s0ma-prd.md",
-      "status": "Living; version=1.16"
+      "status": "Living; version=1.17"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.adoption-ladder",
       "section": "11. Glossary",
@@ -1183,7 +1183,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.axon",
       "section": "11. Glossary",
@@ -1192,7 +1192,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.cell",
       "section": "11. Glossary",
@@ -1201,7 +1201,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.component",
       "section": "11. Glossary",
@@ -1210,7 +1210,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.dead-code-pathology",
       "section": "11. Glossary",
@@ -1219,7 +1219,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.declaration-kind",
       "section": "11. Glossary",
@@ -1228,7 +1228,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.derived-edge",
       "section": "11. Glossary",
@@ -1237,7 +1237,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.doc-guide",
       "section": "11. Glossary",
@@ -1246,7 +1246,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.doc-ref",
       "section": "11. Glossary",
@@ -1255,7 +1255,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.drift",
       "section": "11. Glossary",
@@ -1264,7 +1264,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.embodiment",
       "section": "11. Glossary",
@@ -1273,7 +1273,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.example",
       "section": "11. Glossary",
@@ -1282,7 +1282,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.ganglion",
       "section": "11. Glossary",
@@ -1291,7 +1291,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.import-hook",
       "section": "11. Glossary",
@@ -1300,7 +1300,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.interoception",
       "section": "11. Glossary",
@@ -1309,7 +1309,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.ir",
       "section": "11. Glossary",
@@ -1318,7 +1318,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.metacognition",
       "section": "11. Glossary",
@@ -1327,7 +1327,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.mirror",
       "section": "11. Glossary",
@@ -1336,7 +1336,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.naming-law",
       "section": "11. Glossary",
@@ -1345,7 +1345,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.nerve",
       "section": "11. Glossary",
@@ -1354,7 +1354,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.parity-baseline",
       "section": "11. Glossary",
@@ -1363,7 +1363,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.perimeter",
       "section": "11. Glossary",
@@ -1372,7 +1372,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.proprioception",
       "section": "11. Glossary",
@@ -1381,7 +1381,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.release-channel",
       "section": "11. Glossary",
@@ -1390,7 +1390,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.self-knowledge",
       "section": "11. Glossary",
@@ -1399,7 +1399,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.self-model",
       "section": "11. Glossary",
@@ -1408,7 +1408,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.sh0w",
       "section": "11. Glossary",
@@ -1417,7 +1417,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.strictness-modes",
       "section": "11. Glossary",
@@ -1426,7 +1426,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.studi0",
       "section": "11. Glossary",
@@ -1435,7 +1435,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/glossary.verifier",
       "section": "11. Glossary",
@@ -1444,7 +1444,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/section.problem-statement",
       "section": "2",
@@ -1453,7 +1453,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/section.product-thesis",
       "section": "3",
@@ -1462,7 +1462,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bcb5299271761e468dcdc18a07968eec42757632095e449b965b31ff2043f33f",
+      "content_sha256": "8b930b0778b7163d64a2f93228571e706c9a7cefe35251cdc32d159fe7bef4bb",
       "delegates": [],
       "id": "authority:prd/section.vision",
       "section": "1",
@@ -1471,7 +1471,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/axon-declaration",
       "section": "4.4",
@@ -1480,7 +1480,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/body-separator",
       "section": "4.9",
@@ -1489,7 +1489,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/build-pipeline",
       "section": "2.1",
@@ -1498,7 +1498,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/canonical-ir",
       "section": "4.14.5",
@@ -1507,7 +1507,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/cell-declaration",
       "section": "4.2",
@@ -1516,7 +1516,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/current",
       "section": "s0ma DSL — Language Specification & Coding Agent Rulebook",
@@ -1525,7 +1525,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/declaration-types",
       "section": "4",
@@ -1534,7 +1534,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/dependency-categories",
       "section": "4.5.1",
@@ -1543,7 +1543,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/doc-guide-declaration",
       "section": "4.12.2",
@@ -1552,7 +1552,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/doc-ref-declaration",
       "section": "4.12.1",
@@ -1561,7 +1561,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/doc-validation-layers",
       "section": "4.12.4",
@@ -1570,7 +1570,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/documentation-declarations",
       "section": "4.12",
@@ -1579,7 +1579,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/drift-check",
       "section": "4.12.5",
@@ -1588,7 +1588,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/example-declaration",
       "section": "4.12.3",
@@ -1597,7 +1597,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/ganglion-declaration",
       "section": "4.3",
@@ -1606,7 +1606,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/helper-declaration",
       "section": "4.4a",
@@ -1615,7 +1615,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/integration-declaration",
       "section": "4.4b",
@@ -1624,7 +1624,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/intermediate-representation",
       "section": "4.10.5",
@@ -1633,7 +1633,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/kind-taxonomy",
       "section": "3.1",
@@ -1642,7 +1642,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/layer-consistency",
       "section": "4.0.1",
@@ -1651,7 +1651,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/layer-reachability",
       "section": "4.0.2",
@@ -1660,7 +1660,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/module-declaration",
       "section": "4.5",
@@ -1669,7 +1669,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/namespace-model",
       "section": "4.10.1",
@@ -1678,7 +1678,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/nerve-declaration",
       "section": "4.1",
@@ -1687,7 +1687,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/primitive-vocabulary",
       "section": "3",
@@ -1696,7 +1696,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/registry-storage",
       "section": "4.10.4",
@@ -1705,7 +1705,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/strictness-modes",
       "section": "2.4",
@@ -1714,7 +1714,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/test-declaration",
       "section": "4.8",
@@ -1723,7 +1723,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/test-execution",
       "section": "4.15",
@@ -1732,7 +1732,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/validation-command",
       "section": "4.16",
@@ -1741,7 +1741,7 @@
     },
     {
       "authority_class": "spec",
-      "content_sha256": "95e173b78e1fb5393a34d324bc351d5209ad18058acaff95f43a99c0036cdc95",
+      "content_sha256": "c467a568608e46094dbbcc88055f8b64382a2d06ff2c7358e4a118b2e34fb9e0",
       "delegates": [],
       "id": "authority:spec/visibility-system",
       "section": "5",
@@ -2734,7 +2734,7 @@
       "use_when": "List an entry for every outside module or name the file's code refers to, and choose the sibling list that matches how the dependency should fail: quietly absent, invisible to the checker, or deferred to the first call."
     },
     {
-      "do_not_use_when": "Do not use s0ma for a single package: the runtime is s0ma-core, the language is s0ma-dsl, the authoring interface is s0ma-mcp, and the viewer is s0ma-studi0. Do not use it for something somebody built on the platform either — that is a s0ma project. And it is always written with a digit zero.",
+      "do_not_use_when": "Do not use s0ma for a single package: the runtime is s0ma-lang-core, the language is s0ma-lang-dsl, the authoring interface is s0ma-lang-mcp, and the viewer is s0ma-lang-studi0. Do not use it for something somebody built on the platform either — that is a s0ma project. And it is always written with a digit zero.",
       "examples": [],
       "governed_by": [
         "authority:prd/INV-1",
@@ -3608,7 +3608,7 @@
       "governed_by": [],
       "id": "doc:generated/s0ma-dsl-common-errors",
       "prose_locator": "packages/s0ma-dsl/docs/_generators/common_errors.s0ma#doc-ref:CommonErrorsTable",
-      "title": "Common s0ma-dsl errors"
+      "title": "Common s0ma-lang-dsl errors"
     },
     {
       "authority": "",
@@ -4151,7 +4151,7 @@
       "governed_by": [],
       "id": "doc:guide/s0ma-core-readme",
       "prose_locator": "packages/s0ma-core/README.md",
-      "title": "s0ma-core"
+      "title": "s0ma-lang-core"
     },
     {
       "authority": "",
@@ -4205,7 +4205,7 @@
       "governed_by": [],
       "id": "doc:guide/s0ma-dsl-readme",
       "prose_locator": "packages/s0ma-dsl/README.md",
-      "title": "s0ma-dsl"
+      "title": "s0ma-lang-dsl"
     },
     {
       "authority": "",
@@ -4241,7 +4241,7 @@
       "governed_by": [],
       "id": "doc:guide/s0ma-mcp-readme",
       "prose_locator": "packages/s0ma-mcp/README.md",
-      "title": "s0ma-mcp"
+      "title": "s0ma-lang-mcp"
     },
     {
       "authority": "",
@@ -4250,7 +4250,7 @@
       "governed_by": [],
       "id": "doc:guide/s0ma-studi0-readme",
       "prose_locator": "packages/s0ma-studi0/README.md",
-      "title": "s0ma-studi0"
+      "title": "s0ma-lang-studi0"
     },
     {
       "authority": "",
@@ -4609,7 +4609,7 @@
       "governed_by": [],
       "id": "doc:mirror/s0ma-mcp-common-errors",
       "prose_locator": "packages/s0ma-dsl/docs/_generated/common_errors.md",
-      "title": "Common s0ma-dsl errors"
+      "title": "Common s0ma-lang-dsl errors"
     },
     {
       "authority": "",
@@ -4784,7 +4784,7 @@
       "governed_by": [],
       "id": "doc:normative/s0ma-core-spec-v0-21-1",
       "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.21.1.md",
-      "title": "s0ma-core — Runtime Specification & Coding Agent Rulebook"
+      "title": "s0ma-lang-core — Runtime Specification & Coding Agent Rulebook"
     },
     {
       "authority": "authority:adr/s0ma-dsl.ADR-001",
@@ -5040,7 +5040,7 @@
           "when": "GENERATED_FILE_DRIFT"
         },
         {
-          "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-core and s0ma-dsl in the project's own list of dependencies.",
+          "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-lang-core and s0ma-lang-dsl in the project's own list of dependencies.",
           "next_surface": "cli:s0ma/doctor",
           "when": "HOST_RUNTIME_UNDECLARED"
         },
@@ -5496,7 +5496,7 @@
     "build_channel": "preview",
     "release_version": "0.21.1",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:82ce6f97a65a7d0d"
+    "snapshot_hash": "sha256:44869a9495538c55"
   },
   "surfaces": [
     {
@@ -6458,7 +6458,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].adoption_exempt",
       "side_effects": [
@@ -6481,7 +6481,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].attribute_budgets",
       "side_effects": [
@@ -6504,7 +6504,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].authoring",
       "side_effects": [
@@ -6527,7 +6527,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].bootstrap_files",
       "side_effects": [
@@ -6550,7 +6550,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].build_dir",
       "side_effects": [
@@ -6573,7 +6573,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].env",
       "side_effects": [
@@ -6596,7 +6596,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].fixtures_format",
       "side_effects": [
@@ -6618,7 +6618,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].health_command",
       "side_effects": [
@@ -6641,7 +6641,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].mode",
       "side_effects": [
@@ -6664,7 +6664,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].package_markers",
       "side_effects": [
@@ -6686,7 +6686,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].run_command",
       "side_effects": [
@@ -6708,7 +6708,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].runbook_notes",
       "side_effects": [
@@ -6731,7 +6731,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].source_roots",
       "side_effects": [
@@ -6753,7 +6753,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].state_paths",
       "side_effects": [
@@ -6776,7 +6776,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].test_layering",
       "side_effects": [
@@ -6798,7 +6798,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].test_module_name_prefix_by_dir",
       "side_effects": [
@@ -6821,7 +6821,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].test_roots",
       "side_effects": [
@@ -6844,7 +6844,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].test_runner",
       "side_effects": [
@@ -6866,7 +6866,7 @@
         "adapter_id": "config",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/project.py",
-        "source_sha256": "3ffadafb75ea8f6ae8b4b4e3eaeb720ae05d673a13d2b2723d6a1595d1006c69"
+        "source_sha256": "20f90f1d410925e2754e43eabd2e39a658903e152c3886310b4328bbbabef9d1"
       },
       "public_name": "[tool.s0ma].venv_path",
       "side_effects": [
@@ -6887,7 +6887,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "ADOPTED_CHURN",
       "side_effects": [
@@ -6912,7 +6912,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "ADOPT_PLACEHOLDER_INTENT",
       "side_effects": [
@@ -6937,7 +6937,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "ADOPT_UNPLACED_CODE",
       "side_effects": [
@@ -6962,7 +6962,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "AMBIGUOUS_TEST_TARGET",
       "side_effects": [
@@ -6987,7 +6987,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "ASSERT_FAILED",
       "side_effects": [
@@ -7012,7 +7012,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "ASSERT_SYNTAX_ERROR",
       "side_effects": [
@@ -7037,7 +7037,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "ASSERT_UNEVALUABLE",
       "side_effects": [
@@ -7062,7 +7062,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "ATTRIBUTE_BUDGET_VIOLATION",
       "side_effects": [
@@ -7087,7 +7087,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "BARE_IMPORT",
       "side_effects": [
@@ -7108,7 +7108,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "BUILD_DIR_OVERRIDE_CONFLICT",
       "side_effects": [
@@ -7133,7 +7133,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "CIRCULAR_DEPENDENCY",
       "side_effects": [
@@ -7158,7 +7158,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "CLASS_BODY_IN_NERVE",
       "side_effects": [
@@ -7179,7 +7179,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "CONFLICTING_PACKAGE_DECLARATION",
       "side_effects": [
@@ -7204,7 +7204,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "CONSTANT_NAME_MISMATCH",
       "side_effects": [
@@ -7229,7 +7229,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "CONSUMES_VIA_DICT_INVALID",
       "side_effects": [
@@ -7254,7 +7254,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "COVERED_BY_EMPTY",
       "side_effects": [
@@ -7279,7 +7279,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "CROSS_LAYER_DEPENDENCY",
       "side_effects": [
@@ -7304,7 +7304,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "CROSS_MODULE_USES_ASYMMETRY",
       "side_effects": [
@@ -7329,7 +7329,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DEFERRED_IMPORT_MODULE_SCOPE",
       "side_effects": [
@@ -7354,7 +7354,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DOC_RENDER_ERROR",
       "side_effects": [
@@ -7379,7 +7379,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DOC_SOURCE_FORMAT_UNSUPPORTED",
       "side_effects": [
@@ -7404,7 +7404,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DOES_NOT_EXIST",
       "side_effects": [
@@ -7429,7 +7429,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DRIFT_DETECTED",
       "side_effects": [
@@ -7454,7 +7454,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DUPLICATE_AXON",
       "side_effects": [
@@ -7479,7 +7479,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DUPLICATE_DECLARATION",
       "side_effects": [
@@ -7504,7 +7504,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DUPLICATE_INNER_FUNCTION",
       "side_effects": [
@@ -7529,7 +7529,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DUPLICATE_PROVIDES_NAME",
       "side_effects": [
@@ -7554,7 +7554,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "DUPLICATE_REQUIRES_ENTRY",
       "side_effects": [
@@ -7579,7 +7579,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "EMBEDDED_FILE_NOT_FOUND",
       "side_effects": [
@@ -7604,7 +7604,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "EMPTY_BLOCK_LIST",
       "side_effects": [
@@ -7629,7 +7629,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "EMPTY_DOC_FILTER",
       "side_effects": [
@@ -7654,7 +7654,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "EMPTY_OBSERVES",
       "side_effects": [
@@ -7679,7 +7679,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "ENTITY_KIND_MISMATCH",
       "side_effects": [
@@ -7704,7 +7704,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "EXPORTED_HELPER_NOT_FOUND",
       "side_effects": [
@@ -7729,7 +7729,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "FIELD_NOT_FOUND",
       "side_effects": [
@@ -7754,7 +7754,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "FIXTURE_FORMAT_INVALID",
       "side_effects": [
@@ -7775,7 +7775,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "GENERATED_FILE_DRIFT",
       "side_effects": [
@@ -7796,7 +7796,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "GRAMMAR_MIGRATION_APPLY_FAILED",
       "side_effects": [
@@ -7817,7 +7817,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "GRAMMAR_MIGRATION_CONFLICT",
       "side_effects": [
@@ -7838,7 +7838,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "GRAMMAR_MIGRATION_OUTPUT_INVALID",
       "side_effects": [
@@ -7859,7 +7859,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "GRAMMAR_MIGRATION_PARSE_ERROR",
       "side_effects": [
@@ -7880,7 +7880,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "GRAMMAR_MIGRATION_ROLLBACK_FAILED",
       "side_effects": [
@@ -7901,7 +7901,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "HELPER_NAME_COLLISION",
       "side_effects": [
@@ -7926,7 +7926,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "HELPER_PRIVATE_TO_MODULE",
       "side_effects": [
@@ -7947,7 +7947,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "HOLLOW_MODEL",
       "side_effects": [
@@ -7966,13 +7966,13 @@
       ],
       "governed_by": [],
       "id": "diagnostic:HOST_RUNTIME_UNDECLARED",
-      "intent": "Generated Python imports s0ma-core and s0ma-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved.",
+      "intent": "Generated Python imports s0ma-lang-core and s0ma-lang-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved.",
       "manual_exception": "No registered component implements a diagnostic. A code is raised from validator passes, parser helpers and command pre-flight checks that the component registry does not carry, so this record names the registry it was read from rather than a component that would have to be invented. The binding is left to the milestone that completes every surface's binding.",
       "provenance": {
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "HOST_RUNTIME_UNDECLARED",
       "side_effects": [
@@ -7997,7 +7997,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INCONSISTENT_BLOCK_LIST_INDENT",
       "side_effects": [
@@ -8022,7 +8022,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INTEGRATION_FACTORY_NOT_FOUND",
       "side_effects": [
@@ -8047,7 +8047,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INTEGRATION_FACTORY_NOT_SERVICE",
       "side_effects": [
@@ -8072,7 +8072,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INTEGRATION_INVALID_MANIFEST_KEY",
       "side_effects": [
@@ -8097,7 +8097,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INTEGRATION_SMOKE_TEST_NOT_FOUND",
       "side_effects": [
@@ -8122,7 +8122,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INTERFACE_ON_NON_ABSTRACT",
       "side_effects": [
@@ -8147,7 +8147,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INVALID_AXON_RELATION",
       "side_effects": [
@@ -8172,7 +8172,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INVALID_DATACLASS_INVARIANT",
       "side_effects": [
@@ -8197,7 +8197,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INVALID_KIND",
       "side_effects": [
@@ -8222,7 +8222,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INVALID_PROJECT_NAME_FOR_BUILD_DIR",
       "side_effects": [
@@ -8247,7 +8247,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INVALID_RAISES_TARGET",
       "side_effects": [
@@ -8272,7 +8272,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "INVALID_VERSION",
       "side_effects": [
@@ -8297,7 +8297,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "LAYER_MISMATCH",
       "side_effects": [
@@ -8322,7 +8322,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "METADATA_INVALID_KEY",
       "side_effects": [
@@ -8347,7 +8347,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "METADATA_INVALID_VALUE",
       "side_effects": [
@@ -8372,7 +8372,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "METADATA_RESERVED_KEY",
       "side_effects": [
@@ -8397,7 +8397,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MISSING_EMBEDDED_EXAMPLE",
       "side_effects": [
@@ -8422,7 +8422,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MISSING_FIELD",
       "side_effects": [
@@ -8447,7 +8447,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MISSING_INTERFACE_METHODS",
       "side_effects": [
@@ -8472,7 +8472,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MISSING_PACKAGE",
       "side_effects": [
@@ -8497,7 +8497,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MISSING_PROVIDED_FUNCTION",
       "side_effects": [
@@ -8522,7 +8522,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MISSING_PUBLIC_DOC_REF",
       "side_effects": [
@@ -8547,7 +8547,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MISSING_RETURN_KEY",
       "side_effects": [
@@ -8572,7 +8572,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MISSING_TEST_COVERAGE",
       "side_effects": [
@@ -8597,7 +8597,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MIXED_PROVIDES_FORMS",
       "side_effects": [
@@ -8622,7 +8622,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MOCK_KEY_MISMATCH",
       "side_effects": [
@@ -8647,7 +8647,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MODULE_DEPENDENCY_CYCLE",
       "side_effects": [
@@ -8672,7 +8672,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MODULE_NAME_COLLISION",
       "side_effects": [
@@ -8697,7 +8697,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MODULE_NAME_STEM_MISMATCH",
       "side_effects": [
@@ -8722,7 +8722,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MODULE_OUTSIDE_PROJECT_ROOTS",
       "side_effects": [
@@ -8747,7 +8747,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MODULE_SHADOWS_STDLIB",
       "side_effects": [
@@ -8772,7 +8772,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MODULE_SUBSCRIPT",
       "side_effects": [
@@ -8797,7 +8797,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "MUTABLE_DEFAULT",
       "side_effects": [
@@ -8822,7 +8822,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "NAMESPACE_COLLISION",
       "side_effects": [
@@ -8847,7 +8847,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "NEW_FILE_ROSTER_ONLY",
       "side_effects": [
@@ -8872,7 +8872,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "NOT_EXPORTED",
       "side_effects": [
@@ -8897,7 +8897,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "NO_PAGE_COMPOSER_DECLARED",
       "side_effects": [
@@ -8922,7 +8922,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "OVERLAPPING_DISCOVERY_ROOTS",
       "side_effects": [
@@ -8947,7 +8947,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "PARSE_DOC_REF_BODY_PROHIBITED",
       "side_effects": [
@@ -8972,7 +8972,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "PARSE_ERROR",
       "side_effects": [
@@ -8997,7 +8997,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "PARSE_GRAMMAR_FORWARD_INCOMPAT",
       "side_effects": [
@@ -9022,7 +9022,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "PLACEHOLDER_NOT_FOUND",
       "side_effects": [
@@ -9047,7 +9047,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "POSSIBLE_UNRESOLVED_REFERENCE",
       "side_effects": [
@@ -9072,7 +9072,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "PROHIBITED_CONSTRUCT",
       "side_effects": [
@@ -9097,7 +9097,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "PROSE_RAW_CODE_BLOCK",
       "side_effects": [
@@ -9122,7 +9122,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "PROVIDES_KEY_MISMATCH",
       "side_effects": [
@@ -9147,7 +9147,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "REQUIRES_DOTTED_LOWERCASE_HINT",
       "side_effects": [
@@ -9172,7 +9172,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SEMANTIC_DERIVED_FIELD_AUTHORED",
       "side_effects": [
@@ -9197,7 +9197,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SEMANTIC_NONE_NOT_ALLOWED",
       "side_effects": [
@@ -9222,7 +9222,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SEMANTIC_PENDING_DEBT",
       "side_effects": [
@@ -9247,7 +9247,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SEMANTIC_PENDING_INVALID",
       "side_effects": [
@@ -9272,7 +9272,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SEMANTIC_PENDING_NOT_ALLOWED",
       "side_effects": [
@@ -9297,7 +9297,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SEMANTIC_PENDING_REASON_EMPTY",
       "side_effects": [
@@ -9322,7 +9322,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SEMANTIC_REQUIRED_STATE_OMITTED",
       "side_effects": [
@@ -9347,7 +9347,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SERVES_AS_COLLISION",
       "side_effects": [
@@ -9372,7 +9372,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "SERVES_AS_INVALID",
       "side_effects": [
@@ -9391,13 +9391,13 @@
       ],
       "governed_by": [],
       "id": "diagnostic:STALE_GENERATED_CONFTEST",
-      "intent": "The project's generated `conftest.py` was emitted by an older s0ma-dsl version and may have diverged from the runtime contract.",
+      "intent": "The project's generated `conftest.py` was emitted by an older s0ma-lang-dsl version and may have diverged from the runtime contract.",
       "manual_exception": "No registered component implements a diagnostic. A code is raised from validator passes, parser helpers and command pre-flight checks that the component registry does not carry, so this record names the registry it was read from rather than a component that would have to be invented. The binding is left to the milestone that completes every surface's binding.",
       "provenance": {
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "STALE_GENERATED_CONFTEST",
       "side_effects": [
@@ -9422,7 +9422,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "TEMPLATE_SYNTAX_ERROR",
       "side_effects": [
@@ -9447,7 +9447,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "TEST_NOT_COLLECTED",
       "side_effects": [
@@ -9472,7 +9472,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "TEST_VISIBILITY_VIOLATION",
       "side_effects": [
@@ -9497,7 +9497,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "UNDECLARED_PLACEHOLDER",
       "side_effects": [
@@ -9522,7 +9522,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "UNKNOWN_FIELD",
       "side_effects": [
@@ -9547,7 +9547,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "UNRECOGNIZED_LINE",
       "side_effects": [
@@ -9572,7 +9572,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "UNREGISTERED_EXAMPLE",
       "side_effects": [
@@ -9593,7 +9593,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "UNREGISTERED_SURFACE",
       "side_effects": [
@@ -9618,7 +9618,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "UNRESOLVED_REFERENCE",
       "side_effects": [
@@ -9639,7 +9639,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "UNSUPPORTED_IR_SCHEMA_MAJOR",
       "side_effects": [
@@ -9664,7 +9664,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "VESTIGIAL_IMPORT",
       "side_effects": [
@@ -9689,7 +9689,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "8c2432bc164f195d0853754f389265807c93a268ac34b1f3b0292f4b75ab6e73"
+        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
       },
       "public_name": "VISIBILITY_MISMATCH",
       "side_effects": [

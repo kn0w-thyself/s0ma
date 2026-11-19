@@ -687,7 +687,7 @@ nerve do_soft_a :: DOMAIN
     covered_by: none
     ---
     def do_soft_a():
-        return metadata.version('s0ma-dsl') if metadata else 'unknown'
+        return metadata.version('s0ma-lang-dsl') if metadata else 'unknown'
 """).lstrip()
         module = parse_s0ma(source, filename="soft_a.s0ma")
         output = emit_python(module)

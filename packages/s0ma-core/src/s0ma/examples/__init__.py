@@ -16,7 +16,7 @@ Typical usage::
 
 The pytest plugin (activated by ``--s0ma-examples``) plugs the same
 runner into the host project's test session so that ``pytest`` on the
-s0ma-core repo can exercise registered examples alongside its regular
+s0ma-lang-core repo can exercise registered examples alongside its regular
 test suite.
 """
 

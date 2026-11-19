@@ -78,7 +78,7 @@ def test_install_really_installs_a_working_copy_of_s0ma(
     # also the proof that `uv venv --relocatable` did its job.
     finished = subprocess.run([str(program)], capture_output=True, text=True, check=False)
     assert finished.returncode == 0
-    assert finished.stdout.strip() == "s0ma_mcp 0.18.0"
+    assert finished.stdout.strip() == "s0ma_lang_mcp 0.18.0"
 
     assert "s0ma 0.18.0 is installed." in err
     state = state_of(isolated_home)
@@ -157,7 +157,7 @@ def test_a_file_that_does_not_match_its_checksum_stops_everything(
     code, _, err = run_cli("install")
 
     assert code == 6
-    assert "s0ma_core-0.18.0-py3-none-any.whl" in err
+    assert "s0ma_lang_core-0.18.0-py3-none-any.whl" in err
     assert "Nothing has been installed" in err
     assert list((isolated_home / "downloads").glob("*")) == []
     assert not (isolated_home / "toolchains" / "0.18.0").exists()
@@ -180,7 +180,7 @@ def test_a_damaged_file_in_the_downloads_folder_is_fetched_again(
 ) -> None:
     downloads = isolated_home / "downloads"
     downloads.mkdir(parents=True)
-    (downloads / "s0ma_core-0.18.0-py3-none-any.whl").write_bytes(b"not a wheel")
+    (downloads / "s0ma_lang_core-0.18.0-py3-none-any.whl").write_bytes(b"not a wheel")
 
     code, _, err = run_cli("install")
 
@@ -345,13 +345,13 @@ def test_a_manifest_that_is_missing_a_package_stops_with_a_plain_sentence(
     run_cli: Any, keyed: FakeControlPlane
 ) -> None:
     keyed.versions["0.18.0"] = [
-        wheel for wheel in keyed.versions["0.18.0"] if "s0ma_studi0" not in wheel.name
+        wheel for wheel in keyed.versions["0.18.0"] if "s0ma_lang_studi0" not in wheel.name
     ]
 
     code, _, err = run_cli("install")
 
     assert code == 5
-    assert "s0ma_studi0" in err
+    assert "s0ma_lang_studi0" in err
     assert "could not use" in err
 
 

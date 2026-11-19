@@ -76,7 +76,7 @@
       "source_root": "s0ma_src"
     }
   ],
-  "project": "s0ma-studi0",
+  "project": "s0ma-lang-studi0",
   "schema": "s0ma-build-manifest@1",
   "self_context": {
     "json": {

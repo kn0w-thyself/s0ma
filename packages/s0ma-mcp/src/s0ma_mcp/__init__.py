@@ -1,4 +1,4 @@
-"""s0ma-mcp — the s0ma authoring MCP server, and its single bootstrap module.
+"""s0ma-lang-mcp — the s0ma authoring MCP server, and its single bootstrap module.
 
 Exposes the s0ma DSL toolchain (transpile, build, check, verify-host,
 inspect, run-example, migrate, scaffold) and the agent-alignment guides
@@ -148,7 +148,7 @@ them is out of scope); the closest-fit choices, per surface class:
   / ``FRAMEWORK`` and is the only component flagged
   ``is_framework=True`` — it is the one piece of s0ma self-model
   *machinery* this package adds, while everything else is an ordinary
-  component of the s0ma-mcp application.
+  component of the s0ma-lang-mcp application.
 """
 
 from __future__ import annotations
@@ -237,9 +237,9 @@ _registry_lock = threading.Lock()
 
 
 def _package_version() -> str:
-    """The installed s0ma-mcp distribution version (fallback: module)."""
+    """The installed s0ma-lang-mcp distribution version (fallback: module)."""
     try:
-        return _distribution_metadata.version("s0ma-mcp")
+        return _distribution_metadata.version("s0ma-lang-mcp")
     except _distribution_metadata.PackageNotFoundError:  # pragma: no cover
         return __version__
 
@@ -255,7 +255,7 @@ def self_component(
     metadata: dict[str, Any] | None = None,
     is_framework: bool = False,
 ) -> Callable[[_T], _T]:
-    """Register a s0ma-mcp surface in the package self-model (FR-MCP-7).
+    """Register a s0ma-lang-mcp surface in the package self-model (FR-MCP-7).
 
     Mirrors ``s0ma.decorators.component`` — same required metadata, same
     auto-derived fields, same ``__component__`` attachment, entity
@@ -652,7 +652,7 @@ def _dependency_ordered(catalog: dict[str, ComponentSpec]) -> list[ComponentSpec
     ComponentKind.FRAMEWORK,
     Layer.FRAMEWORK,
     intent=(
-        "Holds the s0ma-mcp self-model: a dedicated component registry "
+        "Holds the s0ma-lang-mcp self-model: a dedicated component registry "
         "of every tool, resource, prompt, and factory this server "
         "exposes, kept apart from the process-global registry"
     ),
@@ -700,7 +700,7 @@ def self_model_document() -> dict[str, Any]:
     return {
         "server": {
             "name": SERVER_NAME,
-            "package": "s0ma-mcp",
+            "package": "s0ma-lang-mcp",
             "version": _package_version(),
         },
         "component_count": snapshot.component_count,
@@ -716,7 +716,7 @@ def self_model_json() -> str:
 def self_model_text() -> str:
     """Core's human/LLM rendering of the graph (FR-CORE-6 dogfooded).
 
-    ``RegistrySnapshot.describe()`` is the same renderer s0ma-core's
+    ``RegistrySnapshot.describe()`` is the same renderer s0ma-lang-core's
     bootstrap test validates for the framework's own self-description.
     """
     return get_self_registry().snapshot().describe()
@@ -772,7 +772,7 @@ def tool_journey_map() -> dict[str, list[str]]:
 
 
 if not TYPE_CHECKING:
-    # M10: the loader lives in Apache-licensed s0ma-core, so a package
+    # M10: the loader lives in Apache-licensed s0ma-lang-core, so a package
     # that ships its own committed build boots without the authoring
     # packages on the runtime path (INV-9).
     from s0ma.bootstrap import bootstrap_imports
@@ -1453,7 +1453,7 @@ def create_server() -> FastMCP:
     except ImportError as exc:  # pragma: no cover - exercised only sans SDK
         raise ImportError(
             "The s0ma authoring MCP server requires the MCP SDK. "
-            "Install it with: pip install s0ma-mcp"
+            "Install it with: pip install s0ma-lang-mcp"
         ) from exc
     from mcp.types import ToolAnnotations
 

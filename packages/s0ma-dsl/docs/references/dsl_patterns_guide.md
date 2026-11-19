@@ -697,7 +697,7 @@ bootstrap_files = [
 
 **`bootstrap_imports(build_dir)` contract:**
 
-- Lives in `s0ma.bootstrap` (s0ma-core, Apache-2.0) since 0.16.x, so a deployed app boots without the authoring packages installed. The old `s0ma_dsl.runtime` import still works and delegates here, with a `DeprecationWarning` naming the new path.
+- Lives in `s0ma.bootstrap` (s0ma-lang-core, Apache-2.0) since 0.16.x, so a deployed app boots without the authoring packages installed. The old `s0ma_dsl.runtime` import still works and delegates here, with a `DeprecationWarning` naming the new path.
 - Reads `build_dir/build.s0ma.json`. A missing or schema-mismatched manifest raises `ManifestSchemaError` with a remediation pointing at `s0ma build` — there is no silent fallback.
 - Idempotently inserts `build_dir` at the head of `sys.path`. Re-invoking the helper does not duplicate the entry.
 - Imports each module via `importlib.import_module` in the topological order recorded in the manifest's `topological_import_order` field (M10 build) or, when absent, the `modules` list's alphabetical order (pre-M10 build).
@@ -784,7 +784,7 @@ The companions describe the application's `source` modules; the test modules `s0
 - **Counts first, names second, authored text only on request.** `describe` is counts and module names: 2,264 characters on fr3d, down from 130,808 when it listed every component id and IR record, tests included. `components` is names. Only `component <name>` carries authored text, as quoted project data.
 - **Never repeat the tool's description in an answer.** The model already holds the tool list, and `tool_spec` is where the commands are taught.
 - **Every authored line is paid for on every answer that carries it.** One sentence added to an intent grew fr3d's full capabilities answer by 235 characters. Intents and contracts are product copy: write them once and keep them short.
-- **Budget each default answer and test the budget against a real build.** The adapter's own `describe` is held under 8,000 characters by the adapter itself, which trades module names for module counts past that line, and by two tests: one on 3,000 synthetic components over 200 modules, one on the s0ma-mcp package's own build.
+- **Budget each default answer and test the budget against a real build.** The adapter's own `describe` is held under 8,000 characters by the adapter itself, which trades module names for module counts past that line, and by two tests: one on 3,000 synthetic components over 200 modules, one on the s0ma-lang-mcp package's own build.
 - **Estimate a result by its words or a quarter of its characters, whichever is larger.** A word count reads space-free JSON as one token.
 
 ---
@@ -1545,11 +1545,11 @@ The full reference for the documentation subsystem lives in [`docs/references/do
 
 ### 17.1 `doc-ref` source-registry form (G7a)
 
-Most `doc-ref` declarations point at project entities — "every PUBLIC nerve", "every cell whose `kind:` is in `[MODEL, CONSTANT]`", and so on. As of 0.12 (G7a), `covers:` accepts a second shape that pulls from a derived non-component registry instead. Today the only registered source is `error_codes`, and it's the canonical recipe for any project that wants the s0ma-dsl error catalogue rendered from the registry rather than hand-maintained:
+Most `doc-ref` declarations point at project entities — "every PUBLIC nerve", "every cell whose `kind:` is in `[MODEL, CONSTANT]`", and so on. As of 0.12 (G7a), `covers:` accepts a second shape that pulls from a derived non-component registry instead. Today the only registered source is `error_codes`, and it's the canonical recipe for any project that wants the s0ma-lang-dsl error catalogue rendered from the registry rather than hand-maintained:
 
 ```
 doc-ref ErrorCodesTable
-    intent: "Generated table of every registered s0ma-dsl error code."
+    intent: "Generated table of every registered s0ma-lang-dsl error code."
     format: markdown
     output: docs/error_codes.md
     covers: { source: error_codes }
@@ -2396,7 +2396,7 @@ The principle: when inlining is inefficient or impossible, the external thing is
 
 ### 28.5 A shadow implementation is never the fifth category — STOP and REPORT
 
-If the s0ma runtime cannot be deployed where the code must run — the environment refuses to install `s0ma-core`, the built output will not import, the platform forbids the dependency — **stop and report the blocker**. Name the failing import and the environment. Do NOT hand-write a plain-Python copy of a modeled component to keep going.
+If the s0ma runtime cannot be deployed where the code must run — the environment refuses to install `s0ma-lang-core`, the built output will not import, the platform forbids the dependency — **stop and report the blocker**. Name the failing import and the environment. Do NOT hand-write a plain-Python copy of a modeled component to keep going.
 
 A parallel implementation of something already declared in `.s0ma` is the single worst outcome available:
 
@@ -2406,7 +2406,7 @@ A parallel implementation of something already declared in `.s0ma` is the single
 
 Observed failure mode: an agent under acceptance pressure, unable to import the runtime in its target venv, wrote plain-Python re-implementations of built modules so its demo would pass. The demo passed; the project no longer knew itself.
 
-**The move instead:** report — "cannot deploy the s0ma runtime here: `<import> → <error>`" — and stop. Whether the environment gets the runtime or the component leaves s0ma is an owner decision, not a coping strategy. (Deployment needs `s0ma-core` only: the bootstrap is `s0ma.bootstrap.bootstrap_imports` since 0.16.x — see §10.2.)
+**The move instead:** report — "cannot deploy the s0ma runtime here: `<import> → <error>`" — and stop. Whether the environment gets the runtime or the component leaves s0ma is an owner decision, not a coping strategy. (Deployment needs `s0ma-lang-core` only: the bootstrap is `s0ma.bootstrap.bootstrap_imports` since 0.16.x — see §10.2.)
 
 ## 29. The app-map pattern
 
@@ -2508,7 +2508,7 @@ The score names its three dimensions from the **three faculties of self-knowledg
 - **layer compliance** — clean (100) iff the dependency resolver reports no `CROSS_LAYER_DEPENDENCY` (the layer reachability matrix, §13/§26).
 - **structural-verifier clean** — clean (100) iff resolution surfaces no structural errors (cycles, unresolved `uses:`, undeclared targets, parse/semantic errors).
 
-**Interoception — runtime state ("how am I behaving vs. how I declared").** This faculty is backed by runtime metrics checked against **declared resource profiles** — a `s0ma-core` runtime concept with **no `.s0ma` declaration surface**. A `.s0ma` project therefore has nothing the toolchain can measure here, so the faculty reports **`n/a — no resource profiles declared`** — honestly, never a misleading 0 or 100 — and is **excluded from the overall roll-up**. (This is the same honesty the app-map's interoception section states: declare resource profiles and this faculty grows teeth; until then it is `n/a`.)
+**Interoception — runtime state ("how am I behaving vs. how I declared").** This faculty is backed by runtime metrics checked against **declared resource profiles** — a `s0ma-lang-core` runtime concept with **no `.s0ma` declaration surface**. A `.s0ma` project therefore has nothing the toolchain can measure here, so the faculty reports **`n/a — no resource profiles declared`** — honestly, never a misleading 0 or 100 — and is **excluded from the overall roll-up**. (This is the same honesty the app-map's interoception section states: declare resource profiles and this faculty grows teeth; until then it is `n/a`.)
 
 **Metacognition — reasoning over the model ("reasoning about my own model").** The reasoning surfaces (impact, extension-point, doc/test queries) are trustworthy only if docs and tests track the code, so this faculty is the mean of:
 
@@ -2613,7 +2613,7 @@ Extension is by necessity: a second project needing a key amends ADR-003 §2. Pr
 
 Declare physical roles with the existing structural-attribute mechanism — `declares_attributes: [sense:light]`, `[actuator:servo]` — modality slugs under the two conventional namespaces. Where a role must be unique per body, use the ordinary attribute budgets (§16).
 
-### 31.3 Runtime wiring (s0ma-core surfaces)
+### 31.3 Runtime wiring (s0ma-lang-core surfaces)
 
 - **Declared physical bounds** ride `ResourceProfile`: `expected_max_current_ma` and `expected_max_temperature_c` are upper bounds, `expected_min_voltage_v` is a lower bound (supply sag). Breaches are INFLAMMATION, exactly like every other resource-profile deviation.
 - **Ingestion is app-driven** — s0ma never reads hardware itself. `get_metrics_collector().record_physical("DoorServo", current_ma=520.0, profile=spec.resource_profile)` stores the latest gauges and immediately returns + publishes any crossing.

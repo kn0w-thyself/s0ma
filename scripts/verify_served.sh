@@ -63,7 +63,7 @@
 #
 # ---------------------------------------------------------------------------
 # This is OPERATOR / CI TOOLING the owner (or the release workflow) runs.
-# Nothing in s0ma-core / s0ma-dsl / s0ma-mcp / s0ma-studi0 imports or invokes
+# Nothing in s0ma-lang-core / s0ma-lang-dsl / s0ma-lang-mcp / s0ma-lang-studi0 imports or invokes
 # it (plan D-1 / PRD P-6: no network in product code). It only ever reads:
 # no upload, no deploy, no write outside its own scratch dir.
 #
@@ -100,7 +100,7 @@ CP_HOST_DEFAULT="https://account.kn0wthyself.ai"
 DIST_DIR_DEFAULT="dist"
 # The four distributions, by wheel stem (digit-zero s0ma — INV-1). The
 # manifest must name exactly these, and no more.
-WHEEL_STEMS="s0ma_core s0ma_dsl s0ma_mcp s0ma_studi0"
+WHEEL_STEMS="s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0"
 EXPECTED_WHEEL_COUNT=4
 
 # Exit classes (see the header table).

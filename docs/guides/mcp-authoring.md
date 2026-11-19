@@ -173,8 +173,8 @@ runtime and the project has not declared it:
       {
         "code": "HOST_RUNTIME_UNDECLARED",
         ...
-        "message": "Generated Python imports the s0ma runtime, but the host project does not declare s0ma-core, s0ma-dsl in [project].dependencies.",
-        "remediation": "Name s0ma-core and s0ma-dsl in [project].dependencies — that alone clears this warning. Separately, the environment that runs the application has to have both installed; `s0ma verify-host` is how you prove it does.",
+        "message": "Generated Python imports the s0ma runtime, but the host project does not declare s0ma-lang-core, s0ma-lang-dsl in [project].dependencies.",
+        "remediation": "Name s0ma-lang-core and s0ma-lang-dsl in [project].dependencies — that alone clears this warning. Separately, the environment that runs the application has to have both installed; `s0ma verify-host` is how you prove it does.",
         "severity": "warning"
       }
     ]

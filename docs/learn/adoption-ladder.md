@@ -42,7 +42,7 @@ Do not use it for the strictness modes, which are the ratchet at the top of it r
 
 - `references/s0ma-prd.md#11. Glossary`
 - `references/s0ma-prd.md#5. Principles (P-#) — the philosophy, enforced`
-- `references/s0ma-prd.md#7.2 `s0ma-dsl` — the language and compiler (FR-DSL)`
+- `references/s0ma-prd.md#7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)`
 
 ## Where to look next
 
@@ -63,4 +63,4 @@ Do not use it for the strictness modes, which are the ratchet at the top of it r
 
 - Topic id: `concept:adoption-ladder`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:82ce6f97a65a7d0d`
+- Documentation snapshot: `sha256:44869a9495538c55`

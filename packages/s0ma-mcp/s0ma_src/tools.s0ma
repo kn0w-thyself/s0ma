@@ -579,7 +579,7 @@ helper _outside_tree_error :: PRESENTATION
             "ok": False,
             "error": (
                 f"{what} {path} is outside the given project root {root}; "
-                "s0ma-mcp tools never write outside the project tree (PRD NFR-6)."
+                "s0ma-lang-mcp tools never write outside the project tree (PRD NFR-6)."
             ),
         }
 

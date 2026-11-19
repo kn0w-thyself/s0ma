@@ -1728,7 +1728,7 @@
           ]
         }
       ],
-      "says": "Once the agent is connected to s0ma's authoring server, `s0ma-mcp`, ask it in your own words: \"what is a ganglion?\", \"why did the check fail?\", \"what does this project contain?\". To connect one, register the command `s0ma-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:"
+      "says": "Once the agent is connected to s0ma's authoring server, `s0ma-lang-mcp`, ask it in your own words: \"what is a ganglion?\", \"why did the check fail?\", \"what does this project contain?\". To connect one, register the command `s0ma-lang-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:"
     },
     "ask_s0ma": {
       "commands": [
@@ -1961,7 +1961,7 @@
         "name = \"library\"",
         "version = \"0.1.0\"",
         "requires-python = \">=3.11\"",
-        "dependencies = [\"s0ma-core\", \"s0ma-dsl\"]",
+        "dependencies = [\"s0ma-lang-core\", \"s0ma-lang-dsl\"]",
         "",
         "[tool.s0ma]",
         "source_roots = [\"src\"]",

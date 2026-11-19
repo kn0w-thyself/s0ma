@@ -1,4 +1,4 @@
-"""Doc-consistency meta-tests for s0ma-core's specification surface.
+"""Doc-consistency meta-tests for s0ma-lang-core's specification surface.
 
 CI guardrails against drift between core's formal documentation surface and
 the package it describes. They are intentionally lightweight: each reads a
@@ -126,7 +126,7 @@ def test_current_spec_version_matches_package_version() -> None:
     package_version = _package_version()
     assert package_version == CURRENT_CORE_SPEC_VERSION, (
         f"CURRENT_CORE_SPEC_VERSION is {CURRENT_CORE_SPEC_VERSION!r} but "
-        f"s0ma-core's project.version is {package_version!r}. A version roll "
+        f"s0ma-lang-core's project.version is {package_version!r}. A version roll "
         f"must cut a matching spec: copy the current spec to "
         f"docs/s0ma-core-spec-v{package_version}.md, update its "
         f"'**Version:**' banner and its contents for what changed, banner the "

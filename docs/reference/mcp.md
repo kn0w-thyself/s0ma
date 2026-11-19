@@ -22,9 +22,9 @@ The complete list of everything s0ma serves — every channel, not just this one
 
 ## The authoring server
 
-What a coding agent talks to while it writes s0ma. It scaffolds modules, runs the check-and-build loop, reads the language guides, and reports what a project currently looks like. This is the server the getting-started journey configures, and every capability below is served by the s0ma-mcp wheel.
+What a coding agent talks to while it writes s0ma. It scaffolds modules, runs the check-and-build loop, reads the language guides, and reports what a project currently looks like. This is the server the getting-started journey configures, and every capability below is served by the s0ma-lang-mcp wheel.
 
-36 of the 56 capabilities, shipped in `s0ma-mcp`. Every one of them reaches a registered component, so a reader can follow any row back to the code that answers it.
+36 of the 56 capabilities, shipped in `s0ma-lang-mcp`. Every one of them reaches a registered component, so a reader can follow any row back to the code that answers it.
 
 ### Tools
 
@@ -87,7 +87,7 @@ What a coding agent talks to while it writes s0ma. It scaffolds modules, runs th
 
 What an application built with s0ma serves about itself. It answers questions from the running self-model — what the system contains, what depends on what, what would be affected by a change — and it ships in the runtime wheel, so an application can offer it without the authoring toolchain being installed.
 
-20 of the 56 capabilities, shipped in `s0ma-core`. None of them reaches a registered component: the protocol's public listing gives a capability its name, its description and its schema, and not the callable behind it. Each carries a written reason saying so.
+20 of the 56 capabilities, shipped in `s0ma-lang-core`. None of them reaches a registered component: the protocol's public listing gives a capability its name, its description and its schema, and not the callable behind it. Each carries a written reason saying so.
 
 ### Tools
 

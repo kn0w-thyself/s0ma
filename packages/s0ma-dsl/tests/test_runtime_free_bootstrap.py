@@ -1,4 +1,4 @@
-"""M10 — the bootstrap loader lives in s0ma-core, and the old path still works.
+"""M10 — the bootstrap loader lives in s0ma-lang-core, and the old path still works.
 
 Three contracts are locked down here:
 
@@ -10,7 +10,7 @@ Three contracts are locked down here:
    the authoring reader in ``s0ma_dsl.codegen.build_manifest`` must agree
    about a real build — they read the same file for different purposes
    and must never drift apart.
-3. **The runtime-honesty boundary.** In a venv holding **s0ma-core
+3. **The runtime-honesty boundary.** In a venv holding **s0ma-lang-core
    only**, the documented bootstrap runs: the loader imports, reads the
    manifest and starts importing built modules without any authoring
    package present. The remaining blocker is *emitted* code — every
@@ -216,12 +216,12 @@ def test_manifest_schema_identity_is_shared() -> None:
 
 @pytest.fixture(scope="module")
 def core_only_python(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """A venv containing s0ma-core and nothing else."""
+    """A venv containing s0ma-lang-core and nothing else."""
     uv = shutil.which("uv")
     if uv is None:  # pragma: no cover - depends on the developer's box
         pytest.skip("uv is not on PATH; cannot build a core-only venv")
     if not (CORE_PACKAGE_ROOT / "pyproject.toml").is_file():  # pragma: no cover
-        pytest.skip("not a repo checkout; s0ma-core sources unavailable")
+        pytest.skip("not a repo checkout; s0ma-lang-core sources unavailable")
 
     venv = tmp_path_factory.mktemp("core_only") / "venv"
     subprocess.run(
@@ -249,7 +249,7 @@ def test_bootstrap_runs_without_the_authoring_packages(
     Before M10 the blessed one-liner could not even be imported in a
     deployment environment: ``from s0ma_dsl.runtime import
     bootstrap_imports`` raised ``ModuleNotFoundError`` before any build
-    output was touched. Now the loader imports from s0ma-core, reads the
+    output was touched. Now the loader imports from s0ma-lang-core, reads the
     manifest and reaches the first built module.
 
     The failure that remains belongs to *emitted code*: every transpiled
@@ -279,7 +279,7 @@ def test_bootstrap_runs_without_the_authoring_packages(
 
     assert proc.returncode == 0, proc.stderr
     assert "BOOTSTRAP-IMPORTED" in proc.stdout, (
-        "the loader itself could not be imported from s0ma-core alone:\n"
+        "the loader itself could not be imported from s0ma-lang-core alone:\n"
         f"{proc.stderr}"
     )
     if "FULL-BOOT" in proc.stdout:  # pragma: no cover - the future win

@@ -1,4 +1,4 @@
-"""The core teaching slice: what s0ma-core can honestly teach, on its own.
+"""The core teaching slice: what s0ma-lang-core can honestly teach, on its own.
 
 Milestone F8 of the docs-function plan (internal) §11, owner decision D-9.
 
@@ -13,8 +13,8 @@ model of itself shipped unable to say what it was.
 
 **The rule D-9 sets.** Core's teaching content ships *inside* the wheel,
 is *generated* rather than hand-copied, and creates **no upward
-dependency**: nothing in s0ma-core may import s0ma-dsl, s0ma-mcp or
-s0ma-studi0 to read it. So this module renders a self-contained JSON
+dependency**: nothing in s0ma-lang-core may import s0ma-lang-dsl, s0ma-lang-mcp or
+s0ma-lang-studi0 to read it. So this module renders a self-contained JSON
 document — plain objects, arrays, strings and numbers — that the standard
 library alone can read, and core reads it with :mod:`json` and nothing
 else. The direction of knowledge is preserved: the documentation
@@ -176,7 +176,7 @@ ENVELOPE: Mapping[str, str] = {
     ),
     "index-surfaces-title": "What this package serves",
     "index-surfaces-summary": (
-        "Every capability s0ma-core answers to, grouped by where it is "
+        "Every capability s0ma-lang-core answers to, grouped by where it is "
         "served. Ask for one by name to read what it does and what it "
         "changes."
     ),
@@ -296,7 +296,7 @@ LIVE_EXAMPLE_TOPICS: tuple[str, ...] = (
 
 
 def core_surfaces(bundle: DocsBundle) -> tuple[SurfaceRecord, ...]:
-    """Every capability s0ma-core itself serves, sorted by id.
+    """Every capability s0ma-lang-core itself serves, sorted by id.
 
     By provenance rather than by channel: ``CoreProvider`` stamps its
     adapter id on every record it emits, and asking that question keeps
@@ -632,7 +632,7 @@ def core_teaching_slice(bundle: DocsBundle, *, aliases: AliasIndex) -> str:
 
     Readable with the standard library alone: the document is objects,
     arrays, strings and numbers, and nothing in it is a Python
-    construction s0ma-core would need s0ma-dsl to understand. That is the
+    construction s0ma-lang-core would need s0ma-lang-dsl to understand. That is the
     whole point of the file — see this module's own notes for what it
     carries and why each rule of selection is the honest one.
     """

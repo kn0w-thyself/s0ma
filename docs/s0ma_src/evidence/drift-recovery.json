@@ -242,7 +242,7 @@
           },
           {
             "match": "line",
-            "text": "  Generated Python imports the s0ma runtime, but the host project does not declare s0ma-core, s0ma-dsl in [project].dependencies."
+            "text": "  Generated Python imports the s0ma runtime, but the host project does not declare s0ma-lang-core, s0ma-lang-dsl in [project].dependencies."
           },
           {
             "match": "line",

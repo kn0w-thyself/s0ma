@@ -44,7 +44,7 @@ Do not use drift gate for the condition it detects — the divergence itself is 
 
 - `references/s0ma-prd.md#2`
 - `references/s0ma-prd.md#5. Principles (P-#) — the philosophy, enforced`
-- `references/s0ma-prd.md#7.2 `s0ma-dsl` — the language and compiler (FR-DSL)`
+- `references/s0ma-prd.md#7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)`
 
 ## Where to look next
 
@@ -66,4 +66,4 @@ Do not use drift gate for the condition it detects — the divergence itself is 
 
 - Topic id: `concept:drift-gate`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:82ce6f97a65a7d0d`
+- Documentation snapshot: `sha256:44869a9495538c55`

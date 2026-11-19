@@ -20,7 +20,7 @@ Use s0ma for the platform as a whole — the four packages, the language, and th
 
 ## When not to use it
 
-Do not use s0ma for a single package: the runtime is s0ma-core, the language is s0ma-dsl, the authoring interface is s0ma-mcp, and the viewer is s0ma-studi0. Do not use it for something somebody built on the platform either — that is a s0ma project. And it is always written with a digit zero.
+Do not use s0ma for a single package: the runtime is s0ma-lang-core, the language is s0ma-lang-dsl, the authoring interface is s0ma-lang-mcp, and the viewer is s0ma-lang-studi0. Do not use it for something somebody built on the platform either — that is a s0ma project. And it is always written with a digit zero.
 
 ## Related ideas
 
@@ -67,4 +67,4 @@ Do not use s0ma for a single package: the runtime is s0ma-core, the language is 
 
 - Topic id: `concept:s0ma`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:82ce6f97a65a7d0d`
+- Documentation snapshot: `sha256:44869a9495538c55`

@@ -2,7 +2,7 @@
 """Strict-typing probe corpus for emitted s0ma DSL Python (selfhost plan, M0).
 
 Answers ONE question, repeatably: does the transpiler's emitted Python meet
-``mypy --strict`` — the same gate handwritten ``s0ma-mcp`` code meets (PRD
+``mypy --strict`` — the same gate handwritten ``s0ma-lang-mcp`` code meets (PRD
 INV-8, FR-MCP-11)? Used by the selfhost plan's M0 GO/NO-GO decision and
 re-runnable by every later milestone (and CI debugging) as the emitter or
 the typing floor evolves.
@@ -10,8 +10,8 @@ the typing floor evolves.
 What it does:
 
 1. Copies each corpus fixture into a scratch ``[tool.s0ma]`` project under a
-   temp dir (3 real fixtures from the s0ma-dsl test suite + 1 synthetic
-   module exercising the construct families s0ma-mcp authoring actually
+   temp dir (3 real fixtures from the s0ma-lang-dsl test suite + 1 synthetic
+   module exercising the construct families s0ma-lang-mcp authoring actually
    uses: typed function bodies, module-level constants, dataclass models,
    helpers, third-party typed imports like the MCP SDK's ToolAnnotations).
 2. Runs ``s0ma build`` on each scratch project (the same pipeline M1 wires
@@ -35,7 +35,7 @@ What it does:
      friction log), not transpiler defects.
    - (D) dependency — ``import-untyped`` / ``import-not-found``: a py.typed
      gap in an imported distribution. Sub-tagged ``D-core`` (must be ZERO
-     since s0ma-core ships py.typed), ``D-dsl`` (expected exactly one per
+     since s0ma-lang-core ships py.typed), ``D-dsl`` (expected exactly one per
      module — ``s0ma_dsl.runtime_bridge.registration`` — accepted by the
      M0 decision to defer dsl's py.typed; the package gate covers it with
      the documented ``ignore_missing_imports`` override in
@@ -68,7 +68,7 @@ DSL_FIXTURES = ROOT / "packages" / "s0ma-dsl" / "tests" / "fixtures"
 # Corpus definition
 # ---------------------------------------------------------------------------
 
-#: The synthetic module: the construct families s0ma-mcp code actually uses
+#: The synthetic module: the construct families s0ma-lang-mcp code actually uses
 #: (mirrors resources.py / tools.py shapes — typed str/JSON bodies, a frozen
 #: dataclass, a dict constant, helpers, importlib.resources, and a
 #: third-party typed import: the MCP SDK's ToolAnnotations).
@@ -77,7 +77,7 @@ module mcp_like
     layer: PRESENTATION
     version: 0.1.0
     intent: "Synthetic probe module exercising the construct families
-        s0ma-mcp authoring uses: typed function bodies, module-level
+        s0ma-lang-mcp authoring uses: typed function bodies, module-level
         constants, dataclass models, helpers, and third-party typed
         imports (the MCP SDK ToolAnnotations)."
     requires: [json, dataclasses.dataclass, importlib:resources, mcp.types:ToolAnnotations, typing.Any]
@@ -116,7 +116,7 @@ helper _normalize_key :: PRESENTATION
 
 helper _read_packaged_text :: PRESENTATION
     intent: "Resolve a packaged data file as UTF-8 text via importlib.resources,
-        the way the s0ma-mcp guide loader does."
+        the way the s0ma-lang-mcp guide loader does."
     ---
     def _read_packaged_text(package: str, filename: str) -> str:
         return resources.files(package).joinpath("_docs", filename).read_text(encoding="utf-8")
@@ -178,7 +178,7 @@ CORPUS: tuple[Fixture, ...] = (
         name="golden_project",
         source_dir=DSL_FIXTURES / "valid" / "golden_project",
         # task_tests.s0ma is a test-role module; the probe targets the
-        # production construct families (s0ma-mcp tests stay plain pytest
+        # production construct families (s0ma-lang-mcp tests stay plain pytest
         # per the selfhost plan's D-2).
         skip=frozenset({"task_tests.s0ma"}),
     ),

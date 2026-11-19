@@ -21,7 +21,7 @@ Three things are proved, in the order the milestone asks for them:
   and a four-channel identity sweep — committed page, terminal, tool,
   resource — over three topics.
 
-The human half is ``s0ma-dsl``'s ``tests/test_docs_discovery_contract.py``.
+The human half is ``s0ma-lang-dsl``'s ``tests/test_docs_discovery_contract.py``.
 The two meet at the composed snapshot and nowhere else, which is the
 point: this package reads the copy packaged inside its own wheel, and the
 parity proof below is what says the two copies answer alike.

@@ -1,6 +1,6 @@
 """Synthesise a :class:`s0ma.RegistrySnapshot` from parsed AST modules.
 
-The s0ma-core M7 ``content_hash`` utility walks a registry snapshot to
+The s0ma-lang-core M7 ``content_hash`` utility walks a registry snapshot to
 compute a transitive content hash over the entities a doc-ref or
 doc-guide references. At transpile time the live registry is empty —
 the ``.s0ma`` files have not been imported yet — so the transpiler

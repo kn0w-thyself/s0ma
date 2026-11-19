@@ -1,7 +1,7 @@
 """Gates for C3 — the core provider, held against the live boundary.
 
 Milestone C3 of the docs-function plan (internal) §8, completed by D5a.
-The provider reads ``s0ma-core`` in process, so almost every check here
+The provider reads ``s0ma-lang-core`` in process, so almost every check here
 can be made against the thing itself rather than against a fixture: the
 registry is asked how many components it has, the application is asked
 what routes it serves, the MCP server is asked what it lists, and the
@@ -351,7 +351,7 @@ class TestComponentsAreNotRecords:
         assert readings
         for fact in facts:
             assert fact.kind and fact.layer and fact.intent, fact.id
-            assert fact.distribution == "s0ma-core", fact.id
+            assert fact.distribution == "s0ma-lang-core", fact.id
 
 
 # ---------------------------------------------------------------------------

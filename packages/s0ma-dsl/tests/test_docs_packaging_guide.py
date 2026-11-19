@@ -183,8 +183,8 @@ def _make_project(root: Path) -> Path:
     (root / "src" / "nightwatch").mkdir(parents=True)
     (root / "tests").mkdir()
     pyproject = _pyproject_source().replace(
-        'dependencies = ["s0ma-core", "s0ma-dsl", "croniter"]',
-        f'dependencies = ["s0ma-core", "s0ma-dsl", "{PACKAGE}"]',
+        'dependencies = ["s0ma-lang-core", "s0ma-lang-dsl", "croniter"]',
+        f'dependencies = ["s0ma-lang-core", "s0ma-lang-dsl", "{PACKAGE}"]',
     )
     (root / "pyproject.toml").write_text(pyproject, encoding="utf-8")
     (root / "hatch_build.py").write_text(_hook_source(), encoding="utf-8")

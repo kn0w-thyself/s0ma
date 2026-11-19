@@ -967,7 +967,7 @@
       "kind": "reference",
       "prose_locator": "packages/s0ma-dsl/docs/_generators/common_errors.s0ma#doc-ref:CommonErrorsTable",
       "status": "generated",
-      "title": "Common s0ma-dsl errors"
+      "title": "Common s0ma-lang-dsl errors"
     },
     {
       "audiences": [
@@ -1712,7 +1712,7 @@
       "kind": "guide",
       "prose_locator": "packages/s0ma-core/README.md",
       "status": "living",
-      "title": "s0ma-core"
+      "title": "s0ma-lang-core"
     },
     {
       "audiences": [
@@ -1796,7 +1796,7 @@
       "kind": "guide",
       "prose_locator": "packages/s0ma-dsl/README.md",
       "status": "living",
-      "title": "s0ma-dsl"
+      "title": "s0ma-lang-dsl"
     },
     {
       "audiences": [
@@ -1852,7 +1852,7 @@
       "kind": "guide",
       "prose_locator": "packages/s0ma-mcp/README.md",
       "status": "living",
-      "title": "s0ma-mcp"
+      "title": "s0ma-lang-mcp"
     },
     {
       "audiences": [
@@ -1866,7 +1866,7 @@
       "kind": "guide",
       "prose_locator": "packages/s0ma-studi0/README.md",
       "status": "living",
-      "title": "s0ma-studi0"
+      "title": "s0ma-lang-studi0"
     },
     {
       "audiences": [
@@ -2369,7 +2369,7 @@
       "kind": "reference",
       "prose_locator": "packages/s0ma-dsl/docs/_generated/common_errors.md",
       "status": "mirror",
-      "title": "Common s0ma-dsl errors"
+      "title": "Common s0ma-lang-dsl errors"
     },
     {
       "audiences": [
@@ -2639,7 +2639,7 @@
       "kind": "normative",
       "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.21.1.md",
       "status": "normative",
-      "title": "s0ma-core — Runtime Specification & Coding Agent Rulebook"
+      "title": "s0ma-lang-core — Runtime Specification & Coding Agent Rulebook"
     },
     {
       "audiences": [

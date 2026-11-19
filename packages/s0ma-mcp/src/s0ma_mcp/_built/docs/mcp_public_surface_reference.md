@@ -5,7 +5,7 @@ module: "tools"
 format: "markdown"
 intent: "Generated reference of every PUBLIC nerve the s0ma authoring MCP server registers — served tools, resource providers, and prompt renderers with their contracts — rendered from the registry so it cannot drift from the served surface."
 schema_version: "3.0.0"
-content_hash: "1:a0f4b4294c9049b6a660980ae1766bebbdabb7c76319e288e2dc27dcb49b5984"
+content_hash: "1:64d31e9c8c5f4a4c35002dfa107978c6d298f2ccfed5bffb7148a8b5aa7bb448"
 ---
 
 # mcp_public_surface_reference
@@ -80,7 +80,7 @@ Hands out the resolver's index over the packaged snapshot: everything this build
 
 ### nerve::errors_resource
 
-Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix
+Serves the generated diagnostic error catalog — every s0ma-lang-dsl error code with its severity by mode and canonical fix
 
 ### nerve::feedback_prompt
 

@@ -11,7 +11,7 @@ Four questions, and each of them is one this package got wrong before:
    available in this installation". :class:`TestPackagedSlice` and
    :class:`TestWheelCarriesTheSlice` are that failure, pinned from both
    sides — in this process, and inside a real wheel installed into an
-   empty environment with no s0ma-dsl and no s0ma-mcp beside it.
+   empty environment with no s0ma-lang-dsl and no s0ma-lang-mcp beside it.
 2. **Is the copy the same file?** The slice is generated into
    ``docs/_generated/core-teaching-slice.json`` and mirrored into the
    packaged tree; two copies of anything is a drift surface, so
@@ -26,7 +26,7 @@ Four questions, and each of them is one this package got wrong before:
    retired, and :class:`TestLegacyVocabulary` walks the whole vocabulary,
    one pinned case per keyword.
 4. **Did it cost a dependency?** D-9 says the slice must create no upward
-   dependency on s0ma-dsl, s0ma-mcp or s0ma-studi0.
+   dependency on s0ma-lang-dsl, s0ma-lang-mcp or s0ma-lang-studi0.
    :class:`TestNoUpwardDependency` reads the imports out of the module's
    own source and then proves the runtime claim the source can only
    suggest: after a real teaching answer, in a fresh interpreter, none of
@@ -575,9 +575,9 @@ class TestWheelCarriesTheSlice:
     reasoning ``scripts/wheel_smoke.py`` applies to the other three
     distributions.
 
-    It installs s0ma-core and nothing else, which also settles D-9's other
-    half: the answer comes back with no s0ma-dsl, no s0ma-mcp and no
-    s0ma-studi0 anywhere on the path.
+    It installs s0ma-lang-core and nothing else, which also settles D-9's other
+    half: the answer comes back with no s0ma-lang-dsl, no s0ma-lang-mcp and no
+    s0ma-lang-studi0 anywhere on the path.
     """
 
     def test_a_cold_install_answers_a_teaching_question(self) -> None:
@@ -589,10 +589,10 @@ class TestWheelCarriesTheSlice:
             temporary = Path(raw)
             dist = temporary / "dist"
             _run(
-                ["uv", "build", "--package", "s0ma-core", "--wheel", "--out-dir", dist],
+                ["uv", "build", "--package", "s0ma-lang-core", "--wheel", "--out-dir", dist],
                 cwd=workspace,
             )
-            wheels = sorted(dist.glob("s0ma_core-*.whl"))
+            wheels = sorted(dist.glob("s0ma_lang_core-*.whl"))
             assert len(wheels) == 1, wheels
             self._assert_wheel_payload(wheels[0])
 
@@ -623,7 +623,7 @@ class TestWheelCarriesTheSlice:
         with zipfile.ZipFile(wheel) as archive:
             names = archive.namelist()
             assert "s0ma/_teaching/slice.json" in names, (
-                "the s0ma-core wheel does not carry the teaching slice; check "
+                "the s0ma-lang-core wheel does not carry the teaching slice; check "
                 "[tool.hatch.build.targets.wheel] in packages/s0ma-core/pyproject.toml"
             )
             assert archive.read("s0ma/_teaching/slice.json") == MIRROR.read_bytes()

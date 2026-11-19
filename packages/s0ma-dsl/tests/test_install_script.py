@@ -57,7 +57,7 @@ MCP_ADD_LINE = "claude mcp add s0ma --scope project -- uv run s0ma-mcp"
 #: ``uv add`` line names every one explicitly — their inter-deps are not on
 #: PyPI). This tuple PINS the intended set: install.sh's $WHEELS drifting
 #: from it — a stem dropped OR added — fails the sequence test below.
-WHEEL_STEMS = ("s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0")
+WHEEL_STEMS = ("s0ma_lang_core", "s0ma_lang_dsl", "s0ma_lang_mcp", "s0ma_lang_studi0")
 
 #: The default control-plane host (HOST-H6 / H4 contract). The installer
 #: targets this unless ``--cp-host`` overrides it.

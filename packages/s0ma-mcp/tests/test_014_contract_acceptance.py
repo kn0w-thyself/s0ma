@@ -154,28 +154,30 @@ def test_derived_surface_cannot_masquerade_as_canonical_ir(project: Path) -> Non
 def test_license_and_surface_metadata_are_current_and_generated() -> None:
     """The repaired license metadata stays pinned while stale inventories stay red."""
     expected = {
-        "s0ma-core": (
+        "s0ma-lang-core": (
             "Apache-2.0",
             "License :: OSI Approved :: Apache Software License",
             "Apache License",
         ),
-        "s0ma-dsl": (
+        "s0ma-lang-dsl": (
             "Apache-2.0",
             "License :: OSI Approved :: Apache Software License",
             "Apache License",
         ),
-        "s0ma-mcp": (
+        "s0ma-lang-mcp": (
             "Apache-2.0",
             "License :: OSI Approved :: Apache Software License",
             "Apache License",
         ),
     }
     for package, (expression, classifier, license_heading) in expected.items():
-        package_root = REPO_ROOT / "packages" / package
+        # The folders keep the short names; the distributions carry `lang`.
+        package_root = REPO_ROOT / "packages" / package.replace("s0ma-lang-", "s0ma-", 1)
         pyproject = tomllib.loads(
             (package_root / "pyproject.toml").read_text(encoding="utf-8")
         )
         project = pyproject["project"]
+        assert project["name"] == package
         assert project["license"] == expression
         assert classifier in project["classifiers"]
         # lstrip: the canonical Apache-2.0 text opens with a centered

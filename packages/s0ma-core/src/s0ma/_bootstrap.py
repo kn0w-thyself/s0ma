@@ -794,13 +794,13 @@ def _build_framework_specs(
             layer=Layer.FRAMEWORK,
             intent=(
                 "Module loader for .s0ma source files that transpiles "
-                "on-the-fly via the s0ma-dsl package and caches the "
+                "on-the-fly via the s0ma-lang-dsl package and caches the "
                 "emitted Python alongside the source"
             ),
             contracts=Contract(
                 preconditions=[
                     "s0ma_path points to an existing .s0ma file under project_root",
-                    "s0ma-dsl package is importable when transpilation is required",
+                    "s0ma-lang-dsl package is importable when transpilation is required",
                 ],
                 postconditions=[
                     "module namespace is populated from the cached transpiled .py",

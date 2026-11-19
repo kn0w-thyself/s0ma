@@ -28,8 +28,8 @@ side-effect facts are derived from — and raises
 difference, rather than emitting a record set that is quietly the
 intersection or quietly the union of three disagreeing accounts.
 
-**Why the import of ``s0ma_mcp`` is deferred.** ``s0ma-dsl`` does not
-depend on ``s0ma-mcp``; the dependency runs the other way, and a
+**Why the import of ``s0ma_mcp`` is deferred.** ``s0ma-lang-dsl`` does not
+depend on ``s0ma-lang-mcp``; the dependency runs the other way, and a
 module-level import here would invert it and make ``docs_model``
 unimportable for everyone who only wanted the transpiler. The import
 therefore happens inside the reading, refused with a sentence that says
@@ -871,7 +871,7 @@ class McpProvider:
     def _imports(self) -> tuple[Any, Any]:
         """The MCP package's registry and a server, imported here on purpose.
 
-        ``s0ma-dsl`` does not depend on ``s0ma-mcp``. A module-level
+        ``s0ma-lang-dsl`` does not depend on ``s0ma-lang-mcp``. A module-level
         import would invert the dependency direction and make
         ``docs_model`` unimportable wherever only the transpiler was
         wanted, so the import lives inside the reading that needs it and
@@ -881,7 +881,7 @@ class McpProvider:
             from s0ma_mcp import create_server, get_self_registry
         except ImportError as error:  # pragma: no cover - exercised by hand
             raise McpProviderError(
-                "the authoring MCP surface cannot be read without s0ma-mcp "
+                "the authoring MCP surface cannot be read without s0ma-lang-mcp "
                 "installed. A documentation build that quietly skipped a "
                 "served channel would describe a smaller product than the "
                 "one that ships."
@@ -975,7 +975,7 @@ class McpProvider:
         except ImportError as error:  # pragma: no cover - exercised by hand
             raise McpProviderError(
                 "the packaged guide documents cannot be read without "
-                "s0ma-mcp installed."
+                "s0ma-lang-mcp installed."
             ) from error
 
         found: list[MirrorDocument] = []

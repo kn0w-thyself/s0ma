@@ -90,7 +90,7 @@ __all__ = [
 #: mode, for the same reason ``DOC_RENDER_ERROR`` is unconditional: a doc
 #: that cannot produce its declared output is structurally broken, and
 #: silently dropping it is the failure mode "no silent failures" exists to
-#: prevent. ADR-013 §4's naming boundary: this is a s0ma-dsl diagnostic and
+#: prevent. ADR-013 §4's naming boundary: this is a s0ma-lang-dsl diagnostic and
 #: must never collide with the application-level ``DOC_*`` names of the
 #: architecture plan §11.
 DOC_SOURCE_FORMAT_UNSUPPORTED = "DOC_SOURCE_FORMAT_UNSUPPORTED"
@@ -718,7 +718,7 @@ register(DerivedSource(
     formats=SUPPORTED_DOC_FORMATS,
     schema_version=_ERROR_CODES_SCHEMA_VERSION,
     intent=(
-        "Every registered s0ma-dsl diagnostic: code, per-mode severity, and "
+        "Every registered s0ma-lang-dsl diagnostic: code, per-mode severity, and "
         "a one-sentence description."
     ),
 ))
@@ -964,7 +964,7 @@ def package_inventory_provider(value: DerivedInput) -> DerivedRecordSet:
     without moving in the composed graph.
 
     Only in-workspace dependencies appear. ``fastapi`` and ``lark`` are
-    facts about a build environment; ``s0ma-mcp → s0ma-dsl → s0ma-core`` is
+    facts about a build environment; ``s0ma-lang-mcp → s0ma-lang-dsl → s0ma-lang-core`` is
     the direction INV-6 names, and a distribution that depends on none of
     its siblings says so with ``None`` rather than with an empty cell.
     """

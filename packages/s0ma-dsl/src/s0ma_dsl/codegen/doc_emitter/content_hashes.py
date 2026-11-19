@@ -1,6 +1,6 @@
 """Project-wide content-hash computation for doc declarations (plan M6).
 
-This module is the bridge between the DSL-side AST and the s0ma-core
+This module is the bridge between the DSL-side AST and the s0ma-lang-core
 :func:`s0ma.hashing.content_hash` utility. It:
 
 1. Synthesises a :class:`s0ma.RegistrySnapshot` covering every nerve,
@@ -14,7 +14,7 @@ This module is the bridge between the DSL-side AST and the s0ma-core
    that the Python emitter and renderer pipeline read from when baking
    hashes into emitted output.
 
-Examples are not hashed directly — per the s0ma-core M7 design, examples
+Examples are not hashed directly — per the s0ma-lang-core M7 design, examples
 participate only as dependencies of guides that reference them.
 
 The transpiler version stamped into every hash comes from

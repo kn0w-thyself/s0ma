@@ -1,7 +1,7 @@
 """Tests for the ``project_status`` orientation tool (PRD FR-MCP-9).
 
 Exercised end to end against *real* temp projects (the conftest fixture
-assembled from s0ma-dsl's own ``valid/multi_module`` files) — no mocks:
+assembled from s0ma-lang-dsl's own ``valid/multi_module`` files) — no mocks:
 
 * orientation — a non-project directory is a valid ``ok: true,
   is_project: false`` answer, never an error (plan M2);

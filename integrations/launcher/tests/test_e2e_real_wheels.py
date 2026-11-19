@@ -7,7 +7,7 @@ s0ma wheels from this tree, publishes them on the fake control plane, and then
 does exactly what a subscriber's machine does:
 
 * **T1** ``install`` fetches, verifies and installs them; ``serve`` starts the
-  real ``s0ma-mcp``; a real MCP handshake and ``tools/list`` go through the
+  real ``s0ma-lang-mcp``; a real MCP handshake and ``tools/list`` go through the
   launcher's pipes; the tool names are the ones the surface snapshot pins.
 * **T2** a newer version is published; ``serve`` leaves a detached update
   behind; the newer version arrives on its own; the next ``serve`` runs it and
@@ -87,7 +87,7 @@ SURFACE_SNAPSHOT = REPO_ROOT / "packages" / "s0ma-mcp" / "tests" / "snapshots" /
 
 #: The four distributions a copy of s0ma is made of. The build asks for each by
 #: name, so a fifth package would have to be named here on purpose.
-DISTRIBUTIONS = ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0")
+DISTRIBUTIONS = ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
 
 #: The eight places the version is written (``scripts/check_version_refs.py``
 #: calls them LOCKSTEP_SITES): one per package manifest and one per package
@@ -492,7 +492,7 @@ class ServeSession:
     Newline-delimited JSON-RPC over the process's own pipes, one message at a
     time, with a reader thread so a server that says nothing cannot hang the
     test: every read is bounded. This is what ``test_stub_server.py`` does to
-    the built-in stub, done to the real ``s0ma-mcp`` instead - and reaching it
+    the built-in stub, done to the real ``s0ma-lang-mcp`` instead - and reaching it
     through ``serve`` is the point, because the thing being proved is that the
     launcher hands over to the real server correctly.
     """
@@ -730,7 +730,7 @@ def test_t1_install_then_serve_the_real_mcp_server(
     for request in plane.requests:
         assert FAKE_KEY not in request, f"the key reached a URL: {request}"
 
-    with Phase("starting the real s0ma-mcp through the launcher and talking to it"):
+    with Phase("starting the real s0ma-lang-mcp through the launcher and talking to it"):
         with ServeSession(environment, smoke_project) as session:
             result = session.handshake()
             server = result["serverInfo"]

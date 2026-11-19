@@ -113,7 +113,7 @@ CLI_PROGRAM = "s0ma"
 #: The distribution whose version is the toolchain's version. The s0ma
 #: distributions version in lockstep, so any one of them would answer; this is
 #: the one that provides the MCP server.
-VERSION_DISTRIBUTION = "s0ma_mcp"
+VERSION_DISTRIBUTION = "s0ma_lang_mcp"
 
 #: Owner-only permissions, applied on POSIX and a documented no-op elsewhere
 #: (Windows ACLs are not expressible as a POSIX mode).
@@ -132,7 +132,7 @@ DEFAULT_CP_HOST = "account.kn0wthyself.ai"
 #: fetched. The same four the keyed installer downloads
 #: (``scripts/install.sh``); the manifest may carry more, and anything else in
 #: it is left alone.
-WHEEL_STEMS = ("s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0")
+WHEEL_STEMS = ("s0ma_lang_core", "s0ma_lang_dsl", "s0ma_lang_mcp", "s0ma_lang_studi0")
 
 #: How long one request may take before the launcher gives up and says so.
 #: Read through :func:`_timeout` so a test can shorten them.
@@ -1335,7 +1335,7 @@ def _serve_without_toolchain(resolution: Resolution) -> int:
 
 
 #: The protocol revisions this stub speaks, newest first. This is exactly the
-#: set the MCP Python SDK (1.27.2) supports, which is what the real ``s0ma-mcp``
+#: set the MCP Python SDK (1.27.2) supports, which is what the real ``s0ma-lang-mcp``
 #: server speaks, so a host that can talk to one can talk to the other.
 STUB_PROTOCOL_VERSIONS = ("2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05")
 
@@ -1702,7 +1702,7 @@ def serve_stub(
     ``2025-11-25`` (lifecycle, transports and server/tools pages, read at
     modelcontextprotocol.io on 2026-09-17), and negotiates down to the earlier
     revisions ``2025-06-18``, ``2025-03-26`` and ``2024-11-05`` - the same set
-    the MCP Python SDK the real ``s0ma-mcp`` server is built on supports, so the
+    the MCP Python SDK the real ``s0ma-lang-mcp`` server is built on supports, so the
     stub and the real server look the same to a host. The published
     specification has since moved on to revision ``2026-07-28``, which drops the
     handshake in favour of per-request metadata and a ``server/discover`` method;

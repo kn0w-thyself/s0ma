@@ -309,7 +309,7 @@ class TestBundleLoader:
         docstring "the seam is a code path, not a promise about one". The
         premise was true when it was written and stopped being true without
         anybody noticing: the packaging milestone shipped the snapshot into
-        the ``s0ma-mcp`` wheel and the teaching slice into ``s0ma-core``,
+        the ``s0ma-lang-mcp`` wheel and the teaching slice into ``s0ma-lang-core``,
         and left the place this loader looks empty — so every ``s0ma docs``
         command from an installed wheel answered "no documentation snapshot
         was found", and this test passed the whole time, because a loader
@@ -437,8 +437,8 @@ class TestPackagedMirrorDrift:
         cp docs/_generated/s0ma-docs-model.json \\
            packages/s0ma-dsl/src/s0ma_dsl/_docs_snapshot/s0ma-docs-model.json
 
-    and commit the two together — the same drift gate the ``s0ma-mcp``
-    ``_docs`` snapshot and the ``s0ma-core`` teaching slice each have, in
+    and commit the two together — the same drift gate the ``s0ma-lang-mcp``
+    ``_docs`` snapshot and the ``s0ma-lang-core`` teaching slice each have, in
     the same words, because it is the same loop
     (``docs/operations/docs-maintenance.md``, step 3).
 

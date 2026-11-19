@@ -1,7 +1,7 @@
-"""Round-trip tests for the s0ma-mcp tool implementations.
+"""Round-trip tests for the s0ma-lang-mcp tool implementations.
 
 Each tool is exercised against a real temporary project assembled from
-s0ma-dsl's own fixtures (consolidation plan M5 step 5): scaffold →
+s0ma-lang-dsl's own fixtures (consolidation plan M5 step 5): scaffold →
 check → transpile, full builds, IR inspection, example execution, the
 migrate-ext dry-run contract, structured diagnostics for invalid
 source, and the NFR-6 write fence.
@@ -34,7 +34,7 @@ class TestVerifyHost:
         pyproject.write_text(
             pyproject.read_text(encoding="utf-8").replace(
                 'version = "0.1.0"',
-                'version = "0.1.0"\ndependencies = ["s0ma-core", "s0ma-dsl"]',
+                'version = "0.1.0"\ndependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]',
             ),
             encoding="utf-8",
         )
@@ -71,7 +71,7 @@ class TestVerifyHost:
         pyproject.write_text(
             pyproject.read_text(encoding="utf-8").replace(
                 'version = "0.1.0"',
-                'version = "0.1.0"\ndependencies = ["s0ma-core", "s0ma-dsl"]',
+                'version = "0.1.0"\ndependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]',
             ),
             encoding="utf-8",
         )

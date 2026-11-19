@@ -64,15 +64,15 @@ COHORT = "beta"
 #: Absent distributions report ``None`` rather than dropping the key, so a
 #: core+dsl-only install is legible in the inbox (INV-6).
 DISTRIBUTIONS: tuple[tuple[str, str], ...] = (
-    ("s0ma_core", "s0ma-core"),
-    ("s0ma_dsl", "s0ma-dsl"),
-    ("s0ma_mcp", "s0ma-mcp"),
-    ("s0ma_studi0", "s0ma-studi0"),
+    ("s0ma_core", "s0ma-lang-core"),
+    ("s0ma_dsl", "s0ma-lang-dsl"),
+    ("s0ma_mcp", "s0ma-lang-mcp"),
+    ("s0ma_studi0", "s0ma-lang-studi0"),
 )
 
 #: The distribution whose version answers "which s0ma is this?". Versions
-#: are released in lockstep, and this code ships inside s0ma-dsl.
-S0MA_VERSION_DISTRIBUTION = "s0ma-dsl"
+#: are released in lockstep, and this code ships inside s0ma-lang-dsl.
+S0MA_VERSION_DISTRIBUTION = "s0ma-lang-dsl"
 
 #: Operating-system families (contract §5). Anything else reports
 #: ``other`` rather than leaking an unmapped platform string.

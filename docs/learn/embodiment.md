@@ -47,7 +47,7 @@ Do not use embodiment for a system that merely talks to a device over a wire and
 - `docs/adr/ADR-003-hardware-embodiment-foundation.md#ADR-003: Hardware embodiment foundation — physical-facts vocabulary and runtime surfaces`
 - `references/s0ma-prd.md#11. Glossary`
 - `references/s0ma-prd.md#5. Principles (P-#) — the philosophy, enforced`
-- `references/s0ma-prd.md#7.1 `s0ma-core` — the runtime (FR-CORE)`
+- `references/s0ma-prd.md#7.1 `s0ma-lang-core` — the runtime (FR-CORE)`
 - `references/s0ma-prd.md#7.4 Cross-cutting (FR-X)`
 
 ## Where to look next
@@ -68,4 +68,4 @@ Do not use embodiment for a system that merely talks to a device over a wire and
 
 - Topic id: `concept:embodiment`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:82ce6f97a65a7d0d`
+- Documentation snapshot: `sha256:44869a9495538c55`

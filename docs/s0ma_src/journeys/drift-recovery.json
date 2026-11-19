@@ -26,7 +26,7 @@
         "when": "GENERATED_FILE_DRIFT"
       },
       {
-        "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-core and s0ma-dsl in the project's own list of dependencies.",
+        "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-lang-core and s0ma-lang-dsl in the project's own list of dependencies.",
         "next_surface": "cli:s0ma/doctor",
         "when": "HOST_RUNTIME_UNDECLARED"
       },

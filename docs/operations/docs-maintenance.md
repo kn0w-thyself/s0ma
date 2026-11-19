@@ -298,8 +298,8 @@ repository, and the
 explains the circularity that ordering avoids.
 
 The third copy is the newest, and it is there because its absence was invisible
-for four milestones. The snapshot went into the `s0ma-mcp` wheel, where the MCP
-resources read it, and a teaching slice into `s0ma-core`; the `s0ma-dsl` wheel —
+for four milestones. The snapshot went into the `s0ma-lang-mcp` wheel, where the MCP
+resources read it, and a teaching slice into `s0ma-lang-core`; the `s0ma-lang-dsl` wheel —
 the one carrying the command line — got nothing, so `s0ma docs`, `docs list`,
 `docs show` and `docs search` answered every installed person "no documentation
 snapshot was found" while answering a contributor perfectly. Every gate in this

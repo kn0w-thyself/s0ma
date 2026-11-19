@@ -1,7 +1,7 @@
-"""Shared fixtures for the s0ma-mcp test suite.
+"""Shared fixtures for the s0ma-lang-mcp test suite.
 
 Round-trip tests run against *real* temporary projects assembled from
-s0ma-dsl's own valid fixtures (the consolidation plan's M5 step 5), so
+s0ma-lang-dsl's own valid fixtures (the consolidation plan's M5 step 5), so
 the tools are exercised end to end through the actual toolchain — no
 mocks.
 """
@@ -137,7 +137,7 @@ def make_project(root: Path, *, sources: dict[str, str] | None = None) -> Path:
 def project(tmp_path: Path) -> Path:
     """A real temp project built from the dsl's valid multi_module fixture."""
     if not VALID_MULTI_MODULE.is_dir():  # pragma: no cover - repo layout guard
-        pytest.skip("s0ma-dsl fixtures not available (not a repo checkout)")
+        pytest.skip("s0ma-lang-dsl fixtures not available (not a repo checkout)")
     return make_project(tmp_path / "proj")
 
 

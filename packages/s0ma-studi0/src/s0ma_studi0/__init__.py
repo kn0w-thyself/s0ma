@@ -1,4 +1,4 @@
-"""s0ma-studi0 — the local studi0 viewer, and its single bootstrap module.
+"""s0ma-lang-studi0 — the local studi0 viewer, and its single bootstrap module.
 
 studi0 serves one page on loopback and shows a s0ma project its own
 component graph, read from that project's build artifacts and nothing
@@ -23,7 +23,7 @@ Self-hosting: THE single bootstrap module
 =========================================
 
 This package is itself a s0ma application, and this file is its **one
-handwritten Python module** (the s0ma-mcp precedent, ADR-001): the
+handwritten Python module** (the s0ma-lang-mcp precedent, ADR-001): the
 server's behavior is authored in ``s0ma_src/*.s0ma`` and shipped as the
 transpiler's committed build output in the generated subpackage
 ``_built/``. What stays handwritten here is exactly what cannot be
@@ -89,7 +89,7 @@ __all__ = [
 ]
 
 if not TYPE_CHECKING:
-    # M10: the loader lives in Apache-licensed s0ma-core, so a package
+    # M10: the loader lives in Apache-licensed s0ma-lang-core, so a package
     # that ships its own committed build boots without the authoring
     # packages on the runtime path (INV-9).
     from s0ma.bootstrap import bootstrap_imports

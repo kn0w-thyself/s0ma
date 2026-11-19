@@ -14,7 +14,7 @@ project model:
     ``test_layering``.
 
 The MCP server's ``project_status`` tool and ``s0ma doctor`` both read
-this posture back (tested in s0ma-mcp's ``test_project_status.py`` and
+this posture back (tested in s0ma-lang-mcp's ``test_project_status.py`` and
 ``test_doctor.py`` respectively); this module proves the loader half.
 """
 

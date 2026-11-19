@@ -1,4 +1,4 @@
-"""Tests for the s0ma-mcp self-model (PRD FR-MCP-7, plan invariants D-1/D-3/D-6).
+"""Tests for the s0ma-lang-mcp self-model (PRD FR-MCP-7, plan invariants D-1/D-3/D-6).
 
 Three layers:
 
@@ -589,7 +589,7 @@ class TestSelfModelResource:
         assert len(contents) == 1
         document = json.loads(contents[0].content)
         assert document["server"]["name"] == SERVER_NAME
-        assert document["server"]["package"] == "s0ma-mcp"
+        assert document["server"]["package"] == "s0ma-lang-mcp"
         assert document["server"]["version"] == s0ma_mcp.__version__
         assert document["component_count"] >= 9
 

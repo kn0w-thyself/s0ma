@@ -193,7 +193,7 @@ def test_declared_but_not_installed_host_dependency_fails(
         pyproject.read_text(encoding="utf-8").replace(
             'version = "0.1.0"',
             'version = "0.1.0"\ndependencies = ['
-            '"s0ma-core", "s0ma-dsl", '
+            '"s0ma-lang-core", "s0ma-lang-dsl", '
             '"definitely-not-installed-s0ma-m0-fixture"]',
         ),
         encoding="utf-8",

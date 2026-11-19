@@ -244,7 +244,7 @@ _ADR_FILE = re.compile(r"^ADR-(?P<number>\d+)-")
 _SPEC_FILE = re.compile(r"^s0ma-dsl-spec-v(?P<version>\d+(?:\.\d+)*)$")
 
 #: The distribution name at the front of a dependency specifier:
-#: ``s0ma-core[mcp] >= 0.16.2`` → ``s0ma-core``.
+#: ``s0ma-lang-core[mcp] >= 0.16.2`` → ``s0ma-lang-core``.
 _DIST = re.compile(r"^\s*(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)")
 
 #: Everything that is not a lowercase letter or digit, for slugs.
@@ -870,8 +870,8 @@ class PackageFacts:
     the same file rather than a second one.
 
     ``depends_on`` holds only *in-workspace* dependencies, sorted.
-    ``fastapi`` and ``lark`` are facts about a build environment; ``s0ma-mcp
-    → s0ma-dsl → s0ma-core`` is the direction INV-6 names, and it is the
+    ``fastapi`` and ``lark`` are facts about a build environment; ``s0ma-lang-mcp
+    → s0ma-lang-dsl → s0ma-lang-core`` is the direction INV-6 names, and it is the
     only one this reading has any business asserting.
     """
 

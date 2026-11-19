@@ -198,10 +198,10 @@ def test_distribution_versions_cover_all_four_distributions() -> None:
     versions = distribution_versions()
     assert set(versions) == {"s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0"}
     assert [name for _, name in DISTRIBUTIONS] == [
-        "s0ma-core",
-        "s0ma-dsl",
-        "s0ma-mcp",
-        "s0ma-studi0",
+        "s0ma-lang-core",
+        "s0ma-lang-dsl",
+        "s0ma-lang-mcp",
+        "s0ma-lang-studi0",
     ]
 
 

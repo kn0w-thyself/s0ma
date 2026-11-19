@@ -5,9 +5,9 @@
 | **Product** | s0ma — software self-knowledge platform |
 | **Document** | `references/s0ma-prd.md` |
 | **Status** | Living document — canonical alignment reference for developers and coding agents |
-| **Version** | 1.16 (2026-10-14) |
+| **Version** | 1.17 (2026-11-18) |
 | **Owner** | Rob (kn0wthyself) |
-| **Applies to** | The consolidated `s0ma` monorepo: `s0ma-core`, `s0ma-dsl`, `s0ma-mcp`, `s0ma-studi0` |
+| **Applies to** | The consolidated `s0ma` monorepo: `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0` |
 | **Related** | `plans/complete/s0ma-new-consolidation-1.md` (how we get here) · package docs under `packages/*/docs/` |
 
 > **How to use this document.** This PRD defines *what s0ma is for* and *what must remain true*
@@ -53,11 +53,11 @@ differ:
    that the compiler then holds the code to, and works inside guardrails that refuse an
    undeclared, undescribed or drifted change before a person sees it. The benefits are
    efficiency, captured intent and enforcement. It works from the checkout with the `s0ma`
-   command line and the committed artifacts, or through the authoring MCP server (`s0ma-mcp`,
+   command line and the committed artifacts, or through the authoring MCP server (`s0ma-lang-mcp`,
    §7.3) when its host speaks MCP; MCP is one channel and never a requirement.
 2. **Using or operating a s0ma application** — an LLM or agent the running system hands its own
    model to. The self-context the build emits (ADR-002) and the runtime query surfaces of
-   `s0ma-core` — the Python API, the optional REST view, the introspection MCP server — let an
+   `s0ma-lang-core` — the Python API, the optional REST view, the introspection MCP server — let an
    operating agent ask the system what it is made of, what each part promises, what it depends
    on and what would break, and be answered by the system itself. The benefits here are
    autonomy and safety: an agent that acts on a system can first ask the system, and what it is
@@ -97,10 +97,10 @@ s0ma realises this with four layered products in one repo, one version, one phil
 
 | Layer | Package | What it does | Enforcement moment |
 |---|---|---|---|
-| Runtime | **`s0ma-core`** (module `s0ma`) | Registry, decorators, import-hook enforcement, four-verifier engine, lifecycle management, self-model query surfaces (Python API, REST, introspection MCP) | **Import time & runtime** |
-| Language | **`s0ma-dsl`** (module `s0ma_dsl`, CLI `s0ma`) | The `.s0ma` DSL and transpiler: grammar-level enforcement of declaration, description, dependency resolution, and documentation; deterministic compilation to `@component`-decorated Python + IR + source maps | **Parse/build time** |
-| Agent interface | **`s0ma-mcp`** (module `s0ma_mcp`) | MCP server exposing the authoring toolchain (transpile, build, check, inspect, scaffold, migrate) and the agent-facing guides to coding agents | **Authoring time** |
-| Visualization | **`s0ma-studi0`** (module `s0ma_studi0`, launched by CLI `s0ma studi0`) | studi0, the visual development environment: a local, read-only viewer hosting sh0w, the live canonical-graph renderer, fed exclusively from existing deterministic build artifacts | **Viewing time (read-only; enforces nothing, displays truth)** |
+| Runtime | **`s0ma-lang-core`** (module `s0ma`) | Registry, decorators, import-hook enforcement, four-verifier engine, lifecycle management, self-model query surfaces (Python API, REST, introspection MCP) | **Import time & runtime** |
+| Language | **`s0ma-lang-dsl`** (module `s0ma_dsl`, CLI `s0ma`) | The `.s0ma` DSL and transpiler: grammar-level enforcement of declaration, description, dependency resolution, and documentation; deterministic compilation to `@component`-decorated Python + IR + source maps | **Parse/build time** |
+| Agent interface | **`s0ma-lang-mcp`** (module `s0ma_mcp`) | MCP server exposing the authoring toolchain (transpile, build, check, inspect, scaffold, migrate) and the agent-facing guides to coding agents | **Authoring time** |
+| Visualization | **`s0ma-lang-studi0`** (module `s0ma_studi0`, launched by CLI `s0ma studi0`) | studi0, the visual development environment: a local, read-only viewer hosting sh0w, the live canonical-graph renderer, fed exclusively from existing deterministic build artifacts | **Viewing time (read-only; enforces nothing, displays truth)** |
 
 The same rule is enforced three times, earliest possible first: the DSL refuses to *parse* an
 undeclared component, the import hook refuses to *load* one, and the verifiers refuse to *pass*
@@ -114,7 +114,7 @@ one that has drifted. Defense in depth for truthfulness.
 
 An LLM-based agent (Claude Code or similar) building or maintaining a s0ma application — the
 first of the two ways an agent meets s0ma (§1). Works from the checkout with the `s0ma` command
-line and the committed artifacts, or connects via `s0ma-mcp` where its host speaks MCP; either
+line and the committed artifacts, or connects via `s0ma-lang-mcp` where its host speaks MCP; either
 way it needs: a one-page survival guide it can hold in context, structured
 diagnostics (not prose tracebacks), deterministic tools, an IR it can read instead of re-parsing
 source, and a scaffold-check-transpile loop with fast feedback.
@@ -204,22 +204,22 @@ language queries) for overviews, impact analysis, dead-code reports, and doc-cov
 - **INV-5 — Deterministic artifacts.** No emitted artifact may embed wall-clock time, randomness,
   absolute machine paths, or environment-dependent ordering. (Hash fields derive from content
   only.)
-- **INV-6 — Core stands alone.** `s0ma-core` must remain installable and fully functional with
-  zero hard dependencies on `s0ma-dsl` or `s0ma-mcp` (the DSL import stays lazy/optional;
-  FastAPI/MCP stay optional extras). Dependency direction: `s0ma-mcp → s0ma-dsl → s0ma-core`
-  and `s0ma-studi0 → s0ma-dsl → s0ma-core` *(v1.6)*, never backwards. Nothing depends on
-  `s0ma-studi0` (it is a leaf): the `s0ma studi0` CLI subcommand discovers it lazily, and its
+- **INV-6 — Core stands alone.** `s0ma-lang-core` must remain installable and fully functional with
+  zero hard dependencies on `s0ma-lang-dsl` or `s0ma-lang-mcp` (the DSL import stays lazy/optional;
+  FastAPI/MCP stay optional extras). Dependency direction: `s0ma-lang-mcp → s0ma-lang-dsl → s0ma-lang-core`
+  and `s0ma-lang-studi0 → s0ma-lang-dsl → s0ma-lang-core` *(v1.6)*, never backwards. Nothing depends on
+  `s0ma-lang-studi0` (it is a leaf): the `s0ma studi0` CLI subcommand discovers it lazily, and its
   absence yields a structured install hint, never a hard dependency or a traceback.
-- **INV-7 — The framework eats its own dog food.** `s0ma-core` registers its own components and
+- **INV-7 — The framework eats its own dog food.** `s0ma-lang-core` registers its own components and
   passes its own verification (`scripts/check.py` runs the bootstrap and self-model tests).
   A change that makes s0ma unable to describe itself is rejected.
 - **INV-8 — Quality gates.** mypy `--strict` (core), ruff, and the full test suites are
   non-negotiable CI gates. New public components in the platform itself carry intent,
   contracts, and tests per the same rules we impose on users.
-- **INV-9 — The runtime is never gated.** *(v1.1; license amended 2026-08-10)* `s0ma-core` is Apache-2.0-licensed and fully
+- **INV-9 — The runtime is never gated.** *(v1.1; license amended 2026-08-10)* `s0ma-lang-core` is Apache-2.0-licensed and fully
   functional with no account, license key, subscription, or network access — in perpetuity.
   Applications built on s0ma keep running regardless of any subscription state. Commercial
-  gating applies only to authoring-time tooling (`s0ma-dsl`, `s0ma-mcp`) and never to anything
+  gating applies only to authoring-time tooling (`s0ma-lang-dsl`, `s0ma-lang-mcp`) and never to anything
   a deployed system needs at import time or runtime. *(v1.7 note: accordingly the runtime
   bootstrap loader lives in `s0ma.bootstrap` (FR-CORE-9); the remaining authoring-package
   import inside emitted modules is tracked as the runtime-free-emission design round.)*
@@ -231,7 +231,7 @@ language queries) for overviews, impact analysis, dead-code reports, and doc-cov
 Requirements use RFC-2119 keywords (MUST/SHOULD/MAY). Most codify behavior that already exists
 and **must be preserved** through the consolidation; items marked **[NEW]** are introduced by it.
 
-### 7.1 `s0ma-core` — the runtime (FR-CORE)
+### 7.1 `s0ma-lang-core` — the runtime (FR-CORE)
 
 - **FR-CORE-1** MUST provide `@component` (registers name, kind, layer, intent, contracts,
   dependencies; returns the entity unmodified) and `@internal` (explicit exemption), with the
@@ -240,7 +240,7 @@ and **must be preserved** through the consolidation; items marked **[NEW]** are 
   kind, dependency relationships), registry diffing, and optional SQLite persistence.
 - **FR-CORE-3** MUST provide an import hook that, in strict mode, raises
   `UnregisteredComponentError` for unregistered public code at import time, and that
-  transparently loads `.s0ma` modules by invoking the DSL transpiler **when `s0ma-dsl` is
+  transparently loads `.s0ma` modules by invoking the DSL transpiler **when `s0ma-lang-dsl` is
   installed** (lazy import; absence of the DSL MUST NOT break non-DSL usage). Import-time
   anomalies MUST be queryable (`import_hook_anomalies`).
 - **FR-CORE-4** MUST provide the four-verifier engine — structural drift, contract coverage,
@@ -262,13 +262,13 @@ and **must be preserved** through the consolidation; items marked **[NEW]** are 
 - **FR-CORE-8** MUST self-register its own framework components and verify itself (INV-7).
 - **FR-CORE-9** *(v1.7)* MUST provide the runtime bootstrap for built output:
   `s0ma.bootstrap.bootstrap_imports` reads `build.s0ma.json` and imports built modules in
-  `topological_import_order`, stdlib-only — so loading a build requires `s0ma-core` alone
+  `topological_import_order`, stdlib-only — so loading a build requires `s0ma-lang-core` alone
   (INV-9). Relocated from FR-DSL-4 (2026-08-17), evidence-driven: a bench spike showed the
   dsl-hosted bootstrap made deployed apps import the proprietary authoring package at runtime.
   Known boundary: emitted modules still import `s0ma_dsl.runtime_bridge.registration`; closing
   that is the runtime-free-emission design round, pinned by a failing-forward boundary test.
 
-### 7.2 `s0ma-dsl` — the language and compiler (FR-DSL)
+### 7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)
 
 - **FR-DSL-1** MUST implement the s0ma DSL as specified in the versioned spec under
   `packages/s0ma-dsl/docs/` (the spec is the normative language authority; this PRD does not
@@ -337,7 +337,7 @@ and **must be preserved** through the consolidation; items marked **[NEW]** are 
   every difference with what it was and what it became, rather than returning a verdict alone.
   Diagnostics MUST be available as structured JSON, not only prose (FR-DSL-5).
 
-### 7.3 `s0ma-mcp` — the agent authoring interface (FR-MCP) **[NEW]**
+### 7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**
 
 - **FR-MCP-1** MUST expose an MCP server (stdio; FastMCP; server name `s0ma-authoring`,
   console script `s0ma-mcp`) installable as a single package that transitively provides the
@@ -389,7 +389,7 @@ and **must be preserved** through the consolidation; items marked **[NEW]** are 
   convertible by `s0ma migrate-ext` plus documented steps in the migration guide, idempotently
   and without data loss (refuse-don't-clobber on collisions).
 - **FR-X-2** Each package MUST remain independently installable from a wheel
-  (`pip install s0ma-core` alone is a supported, useful configuration — INV-6).
+  (`pip install s0ma-lang-core` alone is a supported, useful configuration — INV-6).
 - **FR-X-3** All user-facing docs (READMEs, spec, guides, agent prompt) MUST use post-
   consolidation naming exclusively (INV-1/2/3), with legacy names appearing only in migration
   documentation, clearly marked as historical.
@@ -480,7 +480,7 @@ commercial settings rather than requirements, and this document does not state t
 - **FR-COM-5** Nothing in FR-COM may violate INV-9 or P-6: no entitlement check may enter the
   runtime path of a built application.
 
-### 7.6 `s0ma-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**
+### 7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**
 
 > v1 scope decided 2026-08-15 (`plans/notes/studi0-v1-scope-and-decisions.md`; execution plan
 > `plans/s0ma-new-studi0-v1-1.md`). studi0 is the environment; **sh0w** is the graph renderer
@@ -490,22 +490,22 @@ commercial settings rather than requirements, and this document does not state t
 > Proposed-component "ghosts", evidence badges, the pause protocol, and session retention
 > remain deferred and re-enter only the same way.
 
-- **FR-STUDI0-1** *(amended v1.12)* MUST ship as a separate distribution `s0ma-studi0` (module
+- **FR-STUDI0-1** *(amended v1.12)* MUST ship as a separate distribution `s0ma-lang-studi0` (module
   `s0ma_studi0`) launched by the `s0ma studi0` CLI subcommand. The subcommand discovers the package lazily:
   when it is not installed, the CLI prints a structured install hint — never a traceback — and
-  `s0ma-dsl` gains no hard dependency on it (INV-6).
+  `s0ma-lang-dsl` gains no hard dependency on it (INV-6).
 - **FR-STUDI0-2** MUST render the canonical component graph exclusively from existing
   deterministic artifacts — canonical `.s0ma.json` IR, `build.s0ma.json`, self-context — and
   MUST NOT execute the target application, parse ordinary source, infer structure
   heuristically, or make any model call (P-6). Registry-snapshot-backed live introspection is
   a post-v1 opt-in, not a v1 truth source.
 - **FR-STUDI0-3** MUST consume the same graph export mechanism as every other consumer: the
-  versioned `s0ma graph` payload produced by `s0ma-dsl` is the single graph contract, extended
+  versioned `s0ma graph` payload produced by `s0ma-lang-dsl` is the single graph contract, extended
   in place (never paralleled) when studi0 needs more. A duplicate extraction path is a defect
   (owner directive 2026-08-15: no duplicate mechanisms).
 - **FR-STUDI0-4** MUST implement live refresh by observing build artifacts from the studi0
   process (hash/mtime polling). No watcher, daemon, or push channel may be added to
-  `s0ma-core`, `s0ma-dsl`, or `s0ma-mcp` for visualization; v1 adds zero MCP surface.
+  `s0ma-lang-core`, `s0ma-lang-dsl`, or `s0ma-lang-mcp` for visualization; v1 adds zero MCP surface.
 - **FR-STUDI0-5** MUST present truth states honestly per the visual truth language
   (`plans/notes/studi0-visual-truth-language.md`): canonical vs stale distinguished via the
   manifest's recorded source hashes; a stale model is labeled last-known and never presented
@@ -573,7 +573,7 @@ commercial settings rather than requirements, and this document does not state t
 
 ## 8. Non-functional requirements (NFR)
 
-- **NFR-1 — Quality gates (binding, amended v1.2).** mypy `--strict` on `s0ma-core`; ruff on
+- **NFR-1 — Quality gates (binding, amended v1.2).** mypy `--strict` on `s0ma-lang-core`; ruff on
   everything; full test suites green on Python 3.11/3.12/3.13 across the CI platform matrix
   (NFR-7); the spelling guard (INV-1); doc drift gate.
   One command runs it all: `uv run python scripts/check.py`.
@@ -583,7 +583,7 @@ commercial settings rather than requirements, and this document does not state t
   with diffs reviewed as mechanical-only.
 - **NFR-3 — Versioning & releases.** Lockstep SemVer (INV-4); Keep-a-Changelog at the root;
   annotated tags `v<version>`; tag-triggered release workflow building all wheels. The line runs
-  from `0.5.0` (consolidation) to `1.0.0` (GA, once the rename has soaked and `s0ma-mcp` is
+  from `0.5.0` (consolidation) to `1.0.0` (GA, once the rename has soaked and `s0ma-lang-mcp` is
   proven against real agent workloads). Which version is current is answered by the root
   `CHANGELOG.md` and the package `pyproject.toml` files, never by a number written here.
 - **NFR-4 — Performance.** Build performance MUST scale with the content-hash cache: unchanged
@@ -611,7 +611,7 @@ commercial settings rather than requirements, and this document does not state t
   a user-approved, locally-redacted feedback envelope over HTTPS to the control plane.
   Preparation is always local and network-free; submission always requires the per-item approval
   interaction (or, later, an explicit standing policy per FR-FB-1); feedback failures never alter
-  any authoring, build, check, import, or runtime result; `s0ma-core` gains no feedback,
+  any authoring, build, check, import, or runtime result; `s0ma-lang-core` gains no feedback,
   credential, or network code (INV-9, INV-6). The frozen contract is
   `docs/contracts/feedback-v1.md`.
   *Narrow launcher exception (v1.12):* the launcher that starts s0ma for an agent host
@@ -623,7 +623,7 @@ commercial settings rather than requirements, and this document does not state t
   nothing the user wrote, is ever sent. Installing a version invokes `uv`, which fetches from
   whichever Python package index the machine is configured to use; the launcher MUST hand it an
   environment with the license key removed. No such request may sit on the path that starts a
-  session, and none may block, retry or prompt. `s0ma-core` gains no launcher, credential or
+  session, and none may block, retry or prompt. `s0ma-lang-core` gains no launcher, credential or
   network code (INV-9, INV-6).
 - **NFR-7 — Platform (amended v1.2).** Python ≥ 3.11; macOS, Linux, and **Windows** are
   first-class, CI-enforced platforms (Windows added v1.2; native CPython, not WSL). `uv` is
@@ -631,10 +631,10 @@ commercial settings rather than requirements, and this document does not state t
   only third-party runtime dependency; core has none outside optional extras). Artifact
   determinism (INV-5, P-4) holds **across** platforms: building the same input on any
   supported OS yields byte-identical artifacts.
-- **NFR-8 — Licensing (amended v1.1; license amended 2026-08-10; v1.6 adds studi0; v1.11 relicenses `s0ma-dsl`; v1.12 relicenses the remaining two and opens distribution).** **Every distribution the monorepo ships is Apache-2.0**, so the model is open source plus a paid convenience channel (§7.5), not open core. `s0ma-core`: Apache-2.0, in perpetuity (INV-9; relicensed from MIT by owner decision 2026-08-10).
-  `s0ma-dsl`: Apache-2.0 (relicensed from the commercial license by owner decision 2026-09-17;
+- **NFR-8 — Licensing (amended v1.1; license amended 2026-08-10; v1.6 adds studi0; v1.11 relicenses `s0ma-lang-dsl`; v1.12 relicenses the remaining two and opens distribution).** **Every distribution the monorepo ships is Apache-2.0**, so the model is open source plus a paid convenience channel (§7.5), not open core. `s0ma-lang-core`: Apache-2.0, in perpetuity (INV-9; relicensed from MIT by owner decision 2026-08-10).
+  `s0ma-lang-dsl`: Apache-2.0 (relicensed from the commercial license by owner decision 2026-09-17;
   releases up to and including 0.18.1 remain under the license they shipped with).
-  `s0ma-mcp` and `s0ma-studi0`: Apache-2.0 (relicensed from LicenseRef-Proprietary by owner
+  `s0ma-lang-mcp` and `s0ma-lang-studi0`: Apache-2.0 (relicensed from LicenseRef-Proprietary by owner
   decision 2026-09-18, superseding both the commercial split this requirement carried from v1.1
   and the studi0 decision of 2026-08-15). Two historical facts the superseded text carried stand:
   `s0ma-mcp` v0.5.0 as distributed to the initial testers shipped MIT, and `s0ma-studi0` shipped
@@ -650,12 +650,20 @@ commercial settings rather than requirements, and this document does not state t
   installer (`plans/s0ma-hosting-entitlement-1.md`) serve wheels of all four packages from the
   owner's R2 bucket, and that channel — not the software — is what a subscription buys, once it
   is offered. All four packages are additionally published to PyPI
-  from the first release cut of the public repository (owner decisions: 2026-09-18 for `s0ma-core`
-  and `s0ma-dsl`, 2026-10-04 for `s0ma-mcp` and `s0ma-studi0`), so that a project's runtime and
+  from the first release cut of the public repository (owner decisions: 2026-09-18 for the
+  runtime and the language, 2026-10-04 for the authoring server and the viewer), so that a
+  project's runtime and
   authoring dependencies are ordinary Python dependencies rather than machine-specific wheel
   paths, and so that each name is held by the project it belongs to; nothing built from the
-  private source tree is ever published there. The bare name `s0ma` is to be held as well, by a
-  small umbrella distribution that depends on the others (owner decision 2026-10-04); how it is
+  private source tree is ever published there. They are published as `s0ma-lang-core`,
+  `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0` (owner ruling 2026-11-18): the index
+  refuses a new name that matches an existing project once separators are dropped and a zero
+  is read as the letter o, and unrelated projects already hold the letter-o spellings of the
+  bare name `s0ma`, of `s0ma-core` and of `s0ma-mcp`. Only the distribution names changed; the
+  import packages, the `s0ma` and `s0ma-mcp` commands, the `.s0ma` extension and the product's
+  name are what they were. The name `s0ma-lang` is to be held as well, by a
+  small umbrella distribution that depends on the others (owner decisions 2026-10-04 and
+  2026-11-18); how it is
   versioned and where it lives is decided when it is built, before that first public release, and
   until then the name stays open. Publishing the software does not change what a subscription
   buys. A name on a public index is held only by publishing under it — configuring a trusted
@@ -676,7 +684,8 @@ commercial settings rather than requirements, and this document does not state t
 2. **An LLM inside s0ma.** No bundled model calls; s0ma is the substrate agents stand on (P-6).
 3. **PyPI publication in 0.5.0.** *(Superseded in v1.1; restated in v1.10; resolved in v1.12;
    widened in v1.14 — all four packages publish to PyPI from the first release cut of the public
-   repository, by owner decisions 2026-09-18 and 2026-10-04, and the bare name `s0ma` is to be
+   repository, by owner decisions 2026-09-18 and 2026-10-04, under the `s0ma-lang` names of
+   v1.17, and the name `s0ma-lang` is to be
    held by an umbrella distribution. NFR-8 is the authority on what is distributed and how. The
    earlier claim here that names are reserved by trusted-publisher setup was wrong and is
    withdrawn: a name is held only by publishing under it.)*
@@ -695,7 +704,7 @@ commercial settings rather than requirements, and this document does not state t
 
 | # | Metric | Target |
 |---|---|---|
-| M-1 | Cold-start agent authoring: fresh agent + `s0ma-mcp` only, produce a valid documented module | ≤ 2 check/fix iterations |
+| M-1 | Cold-start agent authoring: fresh agent + `s0ma-lang-mcp` only, produce a valid documented module | ≤ 2 check/fix iterations |
 | M-2 | Drift escapes: model-vs-reality discrepancies discovered downstream of a green `release`-mode CI run | 0 |
 | M-3 | Determinism: repeated builds of an unchanged project | byte-identical artifacts, 100% |
 | M-4 | Self-hosting: s0ma's own check pipeline (incl. bootstrap + self-model verification) | green on every commit to `main` |
@@ -729,7 +738,7 @@ commercial settings rather than requirements, and this document does not state t
 | **Parity baseline** | The record of what a module's original Python offered — its public names, signatures, declared types, documentation and values — captured before that module is replaced, so the built replacement can be compared against it and every difference named (FR-DSL-8) |
 | **Derived edge** | A relationship computed from code (`RAISES`, `TYPE_USES`); authoring one is an error (P-2) |
 | **Dead-code pathology** | Coverage verifier's biological classification of unused components (phantom limbs, vestigial organs, …) |
-| **studi0** | s0ma's visual development environment (`s0ma-studi0`): a local, read-only viewer launched by `s0ma studi0` that makes the self-model legible without reading code. Not a coding agent, not a second brain (§7.6) |
+| **studi0** | s0ma's visual development environment (`s0ma-lang-studi0`): a local, read-only viewer launched by `s0ma studi0` that makes the self-model legible without reading code. Not a coding agent, not a second brain (§7.6) |
 | **sh0w** | The live graph renderer inside studi0: draws the canonical component graph from build artifacts and refreshes as builds land, per the visual truth language |
 | **Embodiment** | Physical parts brought inside the self-knowing boundary and declared as ordinary components, so the runtime holds the machine to its physical declarations. Hardware is *embodied*, never "modeled" (FR-X-4) |
 | **Release channel** | The label a published documentation page carries saying which build it came from — *release*, *preview*, or *historical* — and therefore how far it can be trusted (FR-X-5) |
@@ -769,3 +778,4 @@ commercial settings rather than requirements, and this document does not state t
 | 1.14 | 2026-10-04 | Owner ruling: every package's name is published. NFR-8's distribution paragraph and non-goal 3 now say that all four packages — `s0ma-mcp` and `s0ma-studi0` beside `s0ma-core` and `s0ma-dsl` — are published to PyPI from the first release cut of the public repository, and that the bare name `s0ma` is to be held by a small umbrella distribution built before that release. The reasons: a name is held only by publishing under it (all five were unclaimed when checked on 2026-10-04, and the letter-o spelling already belongs to an unrelated project), and the channel, not the software, is what a subscription buys, so withholding two wheels protected nothing. Unchanged: nothing built from the private source tree is ever published there. No principle and no invariant changes; how the umbrella distribution is versioned is decided when it is built. |
 | 1.15 | 2026-10-14 | Owner rulings of 2026-10-14, made while reviewing the documentation for the public repository's first release. **Non-goal 1 is a horizon, not a verdict:** languages other than Python stay outside the current horizon, and the line now says expanding to other languages is on the development roadmap and will be examined, with the way a part in another language is declared from the Python side today recorded beside it. **The codebase is released first, through GitHub alone:** NFR-8's distribution paragraph now says the public repository's first release is the source tree under its licences, reached by cloning and building, with nothing that depends on an account offered or described as a route by it, and that the paid convenience channel of §7.5 comes after that release; §7.5 says the same in one sentence and conditions its two ways in on the channel being offered. PyPI publication from the first release cut, the umbrella name and the never-removed rule are unchanged. No principle and no invariant changes. Evidence: the root README and the pages carried through on branch `pre-release-doc-updates-1`, recorded in the changelog under Unreleased. |
 | 1.16 | 2026-10-14 | Owner rulings of 2026-10-14, second set, from the same documentation review. **MCP is one channel, not the way in:** §1's end state no longer says a coding agent "connects to a s0ma project over MCP" — it opens the project from the checkout, with the `.s0ma` sources, the committed artifacts and the `s0ma` command line, or over MCP where its host offers that — and persona P1 says the same; `s0ma-mcp` and its requirements (§7.3) are unchanged. **Two ways an agent meets s0ma, kept distinct:** a new §1 subsection separates the coding agent building or maintaining a s0ma application (efficiency, captured intent, enforcement; P1) from an LLM or agent using or operating one, which the running system hands its own model to through the self-context and the runtime query surfaces (autonomy and safety; P4 now names that agent beside the human stakeholder). No principle and no invariant changes. |
+| 1.17 | 2026-11-18 | Owner ruling: the four packages are published as `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, and the umbrella name to hold is `s0ma-lang`. The Python package index refuses a new project whose name matches an existing one once separators are dropped and a zero is read as the letter o (and a one as the letters l or i). Checked on 2026-11-18, the bare name `s0ma`, `s0ma-core` and `s0ma-mcp` were each blocked by an unrelated project holding the letter-o spelling, which the exact-name check recorded in v1.14 could not see, while all five `s0ma-lang` names were free in every such spelling. **Only distribution names change:** the import packages (`s0ma`, `s0ma_dsl`, `s0ma_mcp`, `s0ma_studi0`), the `s0ma` and `s0ma-mcp` commands, the `.s0ma` extension, the repository's `packages/s0ma-*` directories and the product's name are unchanged. The current text of this document uses the new names throughout; the rows above this one, like released changelog sections, accepted ADRs and earlier specs, keep the names their decisions were made under. NFR-8's distribution paragraph and non-goal 3 are amended to match. The umbrella distribution is still to be built. No principle and no invariant changes. |

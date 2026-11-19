@@ -127,7 +127,7 @@ Read from the top:
 - The `# s0ma:` comment above the function names the source file and the declaration the code below came from.
 - Last comes your code, as you wrote it.
 
-**Who reads it: Python.** Importing the module runs `register_module` and every `@component`, and each one records its part in s0ma's runtime registry. That record is the self-model, the running system's own account of what it is made of, and it is what s0ma's verifiers and introspection read. It is also why the file imports s0ma: a project that runs its built code needs `s0ma-core` and `s0ma-dsl` among its dependencies, and the build warns with `HOST_RUNTIME_UNDECLARED` when they are missing.
+**Who reads it: Python.** Importing the module runs `register_module` and every `@component`, and each one records its part in s0ma's runtime registry. That record is the self-model, the running system's own account of what it is made of, and it is what s0ma's verifiers and introspection read. It is also why the file imports s0ma: a project that runs its built code needs `s0ma-lang-core` and `s0ma-lang-dsl` among its dependencies, and the build warns with `HOST_RUNTIME_UNDECLARED` when they are missing.
 
 ## 4. `greeter.s0ma.json` — the canonical IR
 
@@ -181,13 +181,13 @@ The source map records which lines of `greeter.py` came from which lines of `gre
 
 Lines 1 to 11 of your file became the docstring, the imports, `__all__` and the registration of `greeter.py`. Each declaration has an entry of the same kind under `declarations`: the lines it came from, the lines it became, and, within those, where the decorator is and where your code is.
 
-**Who reads it: tools that need to turn a line of the running Python back into the line you wrote,** such as a debugger, an error reporter or an editor. `s0ma-dsl` ships a small reader for it, `resolve_output_line` in `s0ma_dsl.codegen`. A person reading `greeter.py` has the `# s0ma:` comments, which do the same job by eye.
+**Who reads it: tools that need to turn a line of the running Python back into the line you wrote,** such as a debugger, an error reporter or an editor. `s0ma-lang-dsl` ships a small reader for it, `resolve_output_line` in `s0ma_dsl.codegen`. A person reading `greeter.py` has the `# s0ma:` comments, which do the same job by eye.
 
 ## 6. The files that describe the whole build
 
 **`build.s0ma.json`, the manifest.** It has one entry for each module the build wrote. The entry gives its source, its `.py`, IR and source map, a fingerprint of the source and of the output, and its `role`. The role comes from where the module's `.s0ma` file lives: `source` under one of the project's `source_roots`, and `test` under one of its `test_roots`, whichever command built it. A module under neither is recorded as `source`, and the build tells you so with a `MODULE_OUTSIDE_PROJECT_ROOTS` warning. The manifest also lists `topological_import_order`, the modules in an order in which each comes after everything it depends on.
 
-- `bootstrap_imports` in `s0ma-core` loads a built project's modules in that order, the source modules only unless it is asked for more.
+- `bootstrap_imports` in `s0ma-lang-core` loads a built project's modules in that order, the source modules only unless it is asked for more.
 - `s0ma doctor`, the MCP server's `project_status` and studi0 compare each module's recorded source fingerprint with the file as it is now, and tell you whether the module is fresh, stale or not built yet.
 
 The manifest keeps what earlier builds recorded. A module you delete keeps its entry, and its files stay in the build directory, until you run `s0ma build --clean`. A build made with `--without-runtime-packages`, the way a wheel is built, also lists under `unverified_packages` the packages its `requires:` entries name that it could not find in its environment; [Packaging a s0ma project as a wheel](packaging.md) says why.

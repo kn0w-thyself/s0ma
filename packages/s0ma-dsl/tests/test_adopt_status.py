@@ -471,7 +471,7 @@ class TestEachRungOfTheLadder:
         """The three facts as fields, additive under the same schema."""
         plan = _document(built, capsys)["before_you_delete"]
 
-        assert plan["declare_runtime"] == ["s0ma-core", "s0ma-dsl"]
+        assert plan["declare_runtime"] == ["s0ma-lang-core", "s0ma-lang-dsl"]
         assert plan["ship_build_dir"] == "bookshelf_build"
         assert plan["modules"] == ["bookshelf.errors"]
         alias = plan["alias"]

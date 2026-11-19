@@ -56,19 +56,19 @@ four independently installable packages:
 ```
 s0ma-new/
 ├── packages/
-│   ├── s0ma-core/    # the self-knowledge framework (module: s0ma)
-│   ├── s0ma-dsl/     # the .s0ma transpiler + s0ma CLI (module: s0ma_dsl)
-│   ├── s0ma-mcp/     # the authoring MCP server (module: s0ma_mcp)
-│   └── s0ma-studi0/  # the local visual environment `s0ma studi0`, hosting
-│                     # the sh0w graph renderer (module: s0ma_studi0)
+│   ├── s0ma-core/    # s0ma-lang-core: the self-knowledge framework (module: s0ma)
+│   ├── s0ma-dsl/     # s0ma-lang-dsl: the .s0ma transpiler + s0ma CLI (module: s0ma_dsl)
+│   ├── s0ma-mcp/     # s0ma-lang-mcp: the authoring MCP server (module: s0ma_mcp)
+│   └── s0ma-studi0/  # s0ma-lang-studi0: the local visual environment `s0ma studi0`,
+│                     # hosting the sh0w graph renderer (module: s0ma_studi0)
 ├── scripts/check.py  # the unified quality gate (what CI runs)
 ├── docs/             # repo-level docs (e.g. RELEASING.md)
 ├── references/       # the product PRD
 └── CHANGELOG.md      # single Keep-a-Changelog for all packages (lockstep versions)
 ```
 
-Dependency direction is one-way: `s0ma-mcp` / `s0ma-studi0` → `s0ma-dsl` →
-`s0ma-core` (INV-6); core must stay fully functional without the other three.
+Dependency direction is one-way: `s0ma-lang-mcp` / `s0ma-lang-studi0` → `s0ma-lang-dsl` →
+`s0ma-lang-core` (INV-6); core must stay fully functional without the other three.
 
 ## Licensing
 
@@ -96,7 +96,7 @@ uv sync --all-packages --all-extras
 
 macOS, Linux, and Windows are all first-class dev environments (native CPython; CI runs the full gate on Linux and Windows — NFR-7).
 
-**Windows note — no `make` required.** The Makefiles are thin typing-savers over commands you can always run directly: the whole gate is `uv run python scripts/check.py` (below), and the one package-local convenience, `make docs-derived` (regenerates s0ma-dsl's derived docs when `tests/test_doc_consistency.py` asks for it), is equivalently `uv run s0ma docs render docs/_generators/ --output-dir docs/` run from `packages/s0ma-dsl/`.
+**Windows note — no `make` required.** The Makefiles are thin typing-savers over commands you can always run directly: the whole gate is `uv run python scripts/check.py` (below), and the one package-local convenience, `make docs-derived` (regenerates s0ma-lang-dsl's derived docs when `tests/test_doc_consistency.py` asks for it), is equivalently `uv run s0ma docs render docs/_generators/ --output-dir docs/` run from `packages/s0ma-dsl/`.
 
 ## The check pipeline
 

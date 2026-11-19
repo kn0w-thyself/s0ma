@@ -46,7 +46,7 @@ to whatever you like. That single command:
 1. fetches the entitlement-gated **manifest** from the control plane (using your
    key as `Authorization: Bearer <KEY>`),
 2. downloads and **sha256-verifies** the released wheels named in that
-   manifest (`s0ma_core`, `s0ma_dsl`, `s0ma_mcp`, `s0ma_studi0`),
+   manifest (`s0ma_lang_core`, `s0ma_lang_dsl`, `s0ma_lang_mcp`, `s0ma_lang_studi0`),
 3. creates a `uv` project and installs the wheels,
 4. runs `s0ma doctor` (a health check),
 5. connects this machine to the **feedback** function — one request that swaps

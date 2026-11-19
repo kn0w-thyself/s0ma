@@ -839,7 +839,7 @@
       "id": "resources::errors_resource",
       "intent": {
         "state": "value",
-        "value": "Serves the generated diagnostic error catalog — every s0ma-dsl error code with its severity by mode and canonical fix"
+        "value": "Serves the generated diagnostic error catalog — every s0ma-lang-dsl error code with its severity by mode and canonical fix"
       },
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
@@ -2148,11 +2148,11 @@
     },
     {
       "path": "resources.s0ma.json",
-      "sha256": "sha256:f0c964b3e862705c305fe9b64aeb7d8864fd661b26e71f9210e7a4c2f3a8c9af"
+      "sha256": "sha256:9a5e9604bea0de4a356f3bcbee4f390150b0bcfffe6a6518f741811dbf1f42f4"
     },
     {
       "path": "tools.s0ma.json",
-      "sha256": "sha256:5aa71055753c06a7757af62427b9a5b179f93f77892c7c2daea1305bbb5ad74b"
+      "sha256": "sha256:6c30484ceb30645d946d6afdc5f67b05c9bec263d823e2b3463815eef32976c3"
     }
   ]
 }

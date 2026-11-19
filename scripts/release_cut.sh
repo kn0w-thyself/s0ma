@@ -31,7 +31,7 @@
 #   * It makes no network calls at all.
 #   * It bumps ONLY the four pyproject version lines. The other version
 #     sites in docs/RELEASING.md step 2 — the four `__version__` strings,
-#     the s0ma-studi0 `.s0ma` module headers, the s0ma-core capstone
+#     the s0ma-lang-studi0 `.s0ma` module headers, the s0ma-lang-core capstone
 #     assertion, the core specification cut at the new version, the
 #     documentation-diagnostics test's `RELEASE` line, and
 #     version-bearing prose — are printed as the remaining

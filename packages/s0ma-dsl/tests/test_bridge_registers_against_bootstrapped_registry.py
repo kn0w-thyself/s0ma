@@ -1,7 +1,7 @@
 """The runtime bridge registers against a registry that already knows s0ma.
 
 The bridge's helpers are decorated at import time and declare dependencies
-on s0ma-core components. The core singleton now registers the framework as
+on s0ma-lang-core components. The core singleton now registers the framework as
 it is created, so importing the bridge before ``s0ma.initialize()`` — as
 every toolchain process does — logs nothing and leaves every declared
 dependency resolvable.

@@ -281,7 +281,7 @@ class TestCircularGraphWithExplicitPage:
     def test_circular_graph_with_explicit_page(self) -> None:
         """The budget walker handles cycles via the ``seen`` set.
 
-        The s0ma-dsl resolver's cycle-detection phase (Phase 1) bails
+        The s0ma-lang-dsl resolver's cycle-detection phase (Phase 1) bails
         out on circular graphs before reaching attribute-budget
         enforcement; that path is exercised by the cycle-detection
         tests elsewhere. F3's contribution to the cyclic case is

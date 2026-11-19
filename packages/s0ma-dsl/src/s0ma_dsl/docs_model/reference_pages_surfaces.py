@@ -302,19 +302,19 @@ SERVERS: tuple[Server, ...] = (
     Server(
         adapter=AUTHORING_ADAPTER,
         title="The authoring server",
-        distribution="s0ma-mcp",
+        distribution="s0ma-lang-mcp",
         blurb=(
             "What a coding agent talks to while it writes s0ma. It scaffolds "
             "modules, runs the check-and-build loop, reads the language "
             "guides, and reports what a project currently looks like. This is "
             "the server the getting-started journey configures, and every "
-            "capability below is served by the s0ma-mcp wheel."
+            "capability below is served by the s0ma-lang-mcp wheel."
         ),
     ),
     Server(
         adapter=RUNTIME_ADAPTER,
         title="The runtime's own server",
-        distribution="s0ma-core",
+        distribution="s0ma-lang-core",
         blurb=(
             "What an application built with s0ma serves about itself. It "
             "answers questions from the running self-model — what the system "

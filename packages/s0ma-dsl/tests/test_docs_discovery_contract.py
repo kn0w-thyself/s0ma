@@ -24,7 +24,7 @@ flipped below: all seven routes are now asserted as present.
 out of B6's ``fixtures/budgets.json``. A suite that agreed with a number
 nobody declared would be agreeing with itself.
 
-**The agent half lives elsewhere.** ``s0ma-mcp``'s
+**The agent half lives elsewhere.** ``s0ma-lang-mcp``'s
 ``tests/test_docs_discovery_mcp.py`` holds architecture §9.6's seven and
 the four-channel parity sweep, because those need a running server and
 this package may not depend on one (SDA-INV-5). The two halves meet at
@@ -806,7 +806,7 @@ class TestChannelParityHumanHalf:
     """The committed page and the terminal say the same things (§9.7).
 
     The four-channel sweep needs a running MCP server for its other two
-    channels and lives in ``s0ma-mcp``'s F9 suite. What is provable here
+    channels and lives in ``s0ma-lang-mcp``'s F9 suite. What is provable here
     without one is the pair that share a renderer but not a frame: the
     page a reader opens in the repository, and the frame ``s0ma docs
     show`` puts around the same rendering.

@@ -3,14 +3,14 @@ s0ma_kind: "doc-ref"
 name: "CommonErrorsTable"
 module: "common_errors"
 format: "markdown"
-intent: "Derived table of every s0ma-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
+intent: "Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
 schema_version: "3.0.0"
-content_hash: "1:529d1e7ccde8654324e334951bbb926d5b264165d3337bbd14746e6c46fa1e19"
+content_hash: "1:0b8a9ae55f711b22833a61b81cdd339548a9b43f9d73ac7c21d8ebcc8af95ff4"
 ---
 
 # CommonErrorsTable
 
-Derived table of every s0ma-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`).
+Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`).
 
 | Code | Migration | Dev | Strict | Release | Description |
 |---|---|---|---|---|---|
@@ -59,7 +59,7 @@ Derived table of every s0ma-dsl error code, severity by mode, and a one-sentence
 | `HELPER_NAME_COLLISION` | — | — | — | — | Two test bodies in one module define a same-named top-level `def` / `async def`. |
 | `HELPER_PRIVATE_TO_MODULE` | error | error | error | error | A production module attempts to consume a `helper` declaration from another module via `uses:`. |
 | `HOLLOW_MODEL` | — | — | — | — | Verification found zero modeled s0ma modules; roster adoption verifies bytes but cannot answer semantic questions about the code. |
-| `HOST_RUNTIME_UNDECLARED` | warning | warning | warning | warning | Generated Python imports s0ma-core and s0ma-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved. |
+| `HOST_RUNTIME_UNDECLARED` | warning | warning | warning | warning | Generated Python imports s0ma-lang-core and s0ma-lang-dsl, but the project does not declare both host runtime distributions. Naming them in [project].dependencies clears the finding; the environment that runs the application must also have them installed, and `s0ma verify-host` is how that is proved. |
 | `INCONSISTENT_BLOCK_LIST_INDENT` | error | error | error | error | Items in a YAML-style block list use different indentation columns; all '- item' lines under a field must share the same indent. |
 | `INTEGRATION_FACTORY_NOT_FOUND` | error | error | error | error | An `integration` declaration's `factory:` field names a nerve that does not exist in the same module. |
 | `INTEGRATION_FACTORY_NOT_SERVICE` | error | error | error | error | An `integration` declaration's `factory:` field names a nerve whose `kind:` is not `SERVICE`. |
@@ -116,7 +116,7 @@ Derived table of every s0ma-dsl error code, severity by mode, and a one-sentence
 | `SEMANTIC_REQUIRED_STATE_OMITTED` | error | error | error | error | A semantic-required declaration field was omitted instead of carrying an explicit value, none, or reasoned pending state. |
 | `SERVES_AS_COLLISION` | error | error | error | error | Two declarations carry the same `serves_as:` value (served names form one flat namespace, validated per module and per project build). |
 | `SERVES_AS_INVALID` | error | error | error | error | A `serves_as:` value is not identifier-shaped — the served name becomes the emitted callable's `__name__`. |
-| `STALE_GENERATED_CONFTEST` | error | error | error | error | The project's generated `conftest.py` was emitted by an older s0ma-dsl version and may have diverged from the runtime contract. |
+| `STALE_GENERATED_CONFTEST` | error | error | error | error | The project's generated `conftest.py` was emitted by an older s0ma-lang-dsl version and may have diverged from the runtime contract. |
 | `TEMPLATE_SYNTAX_ERROR` | error | error | error | error | A template expression `{{...}}` or `covers:` filter fails the narrow doc-subsystem grammar. |
 | `TEST_NOT_COLLECTED` | warning | warning | error | error | A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`. |
 | `TEST_VISIBILITY_VIOLATION` | error | error | error | error | A production module attempts to `uses:` a `visibility: TEST` component cross-module. |

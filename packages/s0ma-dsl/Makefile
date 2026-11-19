@@ -1,6 +1,6 @@
-# s0ma-dsl Makefile.
+# s0ma-lang-dsl Makefile.
 #
-# This repo is not itself a `[tool.s0ma]` project (intentional — s0ma-dsl is
+# This repo is not itself a `[tool.s0ma]` project (intentional — s0ma-lang-dsl is
 # the transpiler, not a project that consumes the transpiler). Targets here
 # stand in for the conveniences a fully-dogfooded project would get from
 # `[tool.s0ma]` discovery — today, that is one target: `make docs-derived`,
@@ -9,7 +9,7 @@
 #
 # G7b (feedback 5–6 cleanup) introduced this target. Running it updates
 # `docs/_generated/common_errors.md`, the rendered Common Errors table, which
-# `s0ma-mcp` serves to agents as `s0ma://guide/errors` from a byte-identical
+# `s0ma-lang-mcp` serves to agents as `s0ma://guide/errors` from a byte-identical
 # copy. The meta-test
 # `tests/test_doc_consistency.py::test_common_errors_generated_artifact_matches_doc_ref_output`
 # fails loudly if the generated artifact drifts from the renderer's current

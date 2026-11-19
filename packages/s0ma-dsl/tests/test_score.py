@@ -135,7 +135,7 @@ class TestScoreOnTheFlagship:
 
         assert rc == EXIT_SUCCESS
         _assert_report_shape(report)
-        assert report["project"] == "s0ma-mcp"
+        assert report["project"] == "s0ma-lang-mcp"
 
         # The flagship is the worked example of the boundary doctrine at the
         # release gate: a high overall, with the two measurable faculties at

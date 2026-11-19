@@ -520,7 +520,7 @@ class TestIdForms:
         *package* segment: four packages share one registry, and
         ``s0ma_mcp.create_server`` says which one. Insisting on a module
         segment as well addressed nothing and left two real registrations
-        of ``s0ma-mcp`` uncountable — D3 counted them in
+        of ``s0ma-lang-mcp`` uncountable — D3 counted them in
         ``unaddressable_components`` precisely because of this line.
         """
         assert validate_id("component:s0ma.QueryEngine") == "component"

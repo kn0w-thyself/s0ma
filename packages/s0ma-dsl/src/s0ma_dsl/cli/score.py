@@ -11,11 +11,11 @@ What it measures (the three faculties of self-knowledge, §1.3)
 -------------------------------------------------------------
 
 This command introduces **no new analysis engine** (plan D-7: compose what
-the toolchain already computes; never import ``s0ma-mcp``). Every signal is
-read from s0ma-dsl's own surfaces — the parsed ``.s0ma`` modules, the
+the toolchain already computes; never import ``s0ma-lang-mcp``). Every signal is
+read from s0ma-lang-dsl's own surfaces — the parsed ``.s0ma`` modules, the
 dependency resolver, the release-mode doc/test coverage passes, the doc
 drift validator, the build manifest, and the ``s0ma verify`` drift
-classifier — or from ``s0ma-core`` (the allowed import direction,
+classifier — or from ``s0ma-lang-core`` (the allowed import direction,
 ``mcp → dsl → core``).
 
 **Proprioception** (structure — "what am I made of, how is it wired"):
@@ -34,7 +34,7 @@ classifier — or from ``s0ma-core`` (the allowed import direction,
 
 **Interoception** (runtime state — "how am I behaving vs. how I declared"):
 the interoception faculty is backed by runtime metrics checked against
-**declared resource profiles** — a ``s0ma-core`` runtime concept with no
+**declared resource profiles** — a ``s0ma-lang-core`` runtime concept with no
 ``.s0ma`` declaration surface. A ``.s0ma`` project therefore has nothing
 the toolchain can measure here, so this faculty reports
 ``n/a — no resource profiles declared`` rather than a misleading 0 or 100
@@ -838,7 +838,7 @@ def _build_interoception() -> dict[str, Any]:
     """Assemble the interoception (runtime state) faculty.
 
     Always ``n/a``: declared resource profiles — the only thing this faculty
-    can be scored against — are a ``s0ma-core`` runtime concept with no
+    can be scored against — are a ``s0ma-lang-core`` runtime concept with no
     ``.s0ma`` declaration surface, so there is nothing measurable on a
     ``.s0ma`` project. Reported honestly rather than fabricated (plan
     HONESTY rule). Excluded from the overall roll-up.

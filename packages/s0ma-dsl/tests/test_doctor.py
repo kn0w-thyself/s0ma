@@ -68,7 +68,7 @@ class TestDoctorOnTheMonorepo:
         assert set(report) >= SECTION_KEYS
         assert report["ok"] is True
         versions = report["versions"]
-        # core + dsl resolve from the workspace; s0ma-mcp/s0ma-studi0/
+        # core + dsl resolve from the workspace; s0ma-lang-mcp/s0ma-lang-studi0/
         # mcp_sdk are tolerated as None (core+dsl-only installs
         # supported, INV-6 — both packages are optional add-ons).
         assert versions["python"]
@@ -105,22 +105,22 @@ class TestDoctorOnTheMonorepo:
 
 
 class TestOptionalDistributions:
-    """s0ma-studi0 is an add-on: absence is diagnosed, never failed (INV-6).
+    """s0ma-lang-studi0 is an add-on: absence is diagnosed, never failed (INV-6).
 
-    The same contract s0ma-mcp has had since FR-DSL-5 v1.1 — the viewer
+    The same contract s0ma-lang-mcp has had since FR-DSL-5 v1.1 — the viewer
     joined the versions block at studi0-v1 M7.
     """
 
     @staticmethod
     def _without_studi0(monkeypatch: pytest.MonkeyPatch) -> None:
-        """Report s0ma-studi0 as absent, leaving every other lookup real."""
+        """Report s0ma-lang-studi0 as absent, leaving every other lookup real."""
         from s0ma_dsl.cli import doctor
 
         installed = doctor._dist_version
         monkeypatch.setattr(
             doctor,
             "_dist_version",
-            lambda name: None if name == "s0ma-studi0" else installed(name),
+            lambda name: None if name == "s0ma-lang-studi0" else installed(name),
         )
 
     def test_absence_is_an_info_finding_and_still_exits_zero(
@@ -140,7 +140,7 @@ class TestOptionalDistributions:
         studi0 = [
             f
             for f in report["findings"]
-            if f["section"] == "versions" and "s0ma-studi0" in f["message"]
+            if f["section"] == "versions" and "s0ma-lang-studi0" in f["message"]
         ]
         assert len(studi0) == 1, studi0
         assert studi0[0]["severity"] == "info", studi0[0]
@@ -159,7 +159,7 @@ class TestOptionalDistributions:
 
         assert rc == EXIT_SUCCESS
         out = capsys.readouterr().out
-        assert "s0ma-studi0 not installed" in out
+        assert "s0ma-lang-studi0 not installed" in out
 
 
 # ---------------------------------------------------------------------------
@@ -411,10 +411,10 @@ class TestDoctorTextRendering:
         # so this holds in any environment the suite runs in.
         for label in (
             "python",
-            "s0ma-core",
-            "s0ma-dsl",
-            "s0ma-mcp",
-            "s0ma-studi0",
+            "s0ma-lang-core",
+            "s0ma-lang-dsl",
+            "s0ma-lang-mcp",
+            "s0ma-lang-studi0",
             "mcp SDK",
         ):
             assert f"\n  {label:<12}" in out

@@ -1,4 +1,4 @@
-# s0ma-core — Runtime Specification & Coding Agent Rulebook
+# s0ma-lang-core — Runtime Specification & Coding Agent Rulebook
 
 **Version:** 0.21.1
 
@@ -12,7 +12,7 @@
 
 ## 0. What this document is, and what it deliberately is not
 
-This is the normative statement of what `s0ma-core` **promises**: its
+This is the normative statement of what `s0ma-lang-core` **promises**: its
 invariants, its contracts, and the rules an agent writing against it must
 follow. It is the runtime half of the toolchain's normative surface. The
 [s0ma DSL specification](../../s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md) is the
@@ -113,7 +113,7 @@ Repair is a separate, named, transactional act (Section 8).
 
 ### INV-CORE-5 — Core stands at the bottom and depends on nothing
 
-`s0ma-core` requires none of the other distributions in this workspace, and it
+`s0ma-lang-core` requires none of the other distributions in this workspace, and it
 requires nothing outside the standard library to do its own work.
 Dependencies point down the stack and never back up. The web and agent-facing
 surfaces are optional extras, so a project that wants the registry and the

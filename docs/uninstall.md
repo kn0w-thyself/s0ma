@@ -189,7 +189,7 @@ s0ma installed and leave your files where they are:
 
 ```bash
 cd my-app
-uv remove s0ma-core s0ma-dsl s0ma-mcp s0ma-studi0
+uv remove s0ma-lang-core s0ma-lang-dsl s0ma-lang-mcp s0ma-lang-studi0
 rm -rf .venv .wheels
 ```
 
@@ -197,13 +197,18 @@ rm -rf .venv .wheels
 project's package list; deleting `.venv/` and `.wheels/` reclaims the disk
 space. Your source files, including everything you authored, are untouched.
 
+A copy of s0ma installed from 0.21.1 or earlier carries the four packages
+under their former names. If `uv remove` says a package is not a dependency of
+the project, name them as `s0ma-core s0ma-dsl s0ma-mcp s0ma-studi0` instead.
+The same holds for the `pip uninstall` and `uv cache clean` lines below.
+
 ### B. A virtual environment you made yourself
 
 If you installed the s0ma packages into a Python environment you created — with
 `pip install` and the four installation files — remove them the same way:
 
 ```bash
-pip uninstall s0ma-studi0 s0ma-mcp s0ma-dsl s0ma-core
+pip uninstall s0ma-lang-studi0 s0ma-lang-mcp s0ma-lang-dsl s0ma-lang-core
 ```
 
 `pip` asks you to confirm each one. The order shown removes the add-ons before
@@ -223,7 +228,7 @@ installation files may still be sitting in it. This step is only about disk
 space, and it is safe:
 
 ```bash
-uv cache clean s0ma-core s0ma-dsl s0ma-mcp s0ma-studi0
+uv cache clean s0ma-lang-core s0ma-lang-dsl s0ma-lang-mcp s0ma-lang-studi0
 ```
 
 Naming the four packages matters. `uv cache clean` with no names clears the
