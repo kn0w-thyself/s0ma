@@ -145,9 +145,9 @@ left out of it. More languages are on the roadmap. Hardware starts at
 
 ## Install
 
-s0ma is on [PyPI](https://pypi.org/project/s0ma-lang-core/), as four packages
-that share one version. It runs on macOS, Linux and Windows with native CPython
-3.11 or newer.
+s0ma is on [PyPI](https://pypi.org/project/s0ma-lang/), as four packages that
+share one version and an umbrella, `s0ma-lang`, that installs all four. It runs
+on macOS, Linux and Windows with native CPython 3.11 or newer.
 
 The runtime on its own:
 
@@ -165,6 +165,15 @@ uv run s0ma doctor                    # what is installed here, and whether it i
 
 With pip, the same two names install into the active environment, and the
 command is plain `s0ma`.
+
+All of it under one name, the authoring server and the viewer included:
+
+```bash
+pip install s0ma-lang
+```
+
+`s0ma-lang` carries no code. It requires each of the four at exactly its own
+version, so one name installs the toolchain as it was released together.
 
 The packages carry `lang` in their names and nothing else does: you still
 `import s0ma` and type `s0ma`. `s0ma-lang-core` on its own is fully supported:
@@ -268,8 +277,9 @@ rule is enforced by packages/s0ma-dsl/tests/test_docs_guide_bindings.py.
 If the `s0ma` command is not installed yet, there are two ways in, and they are
 written down once. The short one is **the package route**: s0ma is on PyPI as
 `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, and
-installing `s0ma-lang-dsl` installs the command. The other is **the source
-route**: clone this repository and build from it. The root `README.md`
+as `s0ma-lang`, one name that installs all four. Installing `s0ma-lang-dsl`
+installs the command. The other is **the source route**: clone this repository
+and build from it. The root `README.md`
 "Install" section has the exact commands for both: installing from PyPI,
 working inside the checkout, and building the wheels and installing them into
 a project of your own.

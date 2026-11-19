@@ -28,8 +28,12 @@ What can be held still before that day is held here:
 6. **It publishes every distribution the workspace builds**, a dependency
    before its dependents. A package added under ``packages/`` and not
    added to the job's one list fails here, not at a tag.
+7. **Every project it publishes has what its page needs.** A project's
+   page on PyPI is its README and its manifest, frozen at upload. The
+   umbrella arrived after the other four had been given their project
+   links and had none of its own, which is how this came to be checked.
 
-The last three are also *run*: the job's own shell steps are executed
+Items 4 to 6 are also *run*: the job's own shell steps are executed
 against a stub ``uv``, the way ``test_install_script.py`` drives the
 installer, because reading a shell loop is not the same as watching it
 stop.
@@ -63,6 +67,10 @@ BUILD_JOB = "release"
 
 #: The only repository this job may publish from.
 PUBLIC_REPOSITORY = "kn0w-thyself/s0ma"
+
+#: The links a project's page on PyPI shows beside its README, by the label
+#: each manifest gives them under ``[project.urls]``.
+PROJECT_LINKS: tuple[str, ...] = ("Homepage", "Repository", "Changelog", "Issues")
 
 #: Every job of the workflow, in the order the header lists them and the
 #: order they run in.
@@ -285,6 +293,30 @@ class TestItPublishesWhatTheReleaseJobBuilt:
                     assert stems.index(needed) < position, (
                         f"{stem} depends on {needed}, so {needed} is uploaded first"
                     )
+
+
+class TestEveryProjectHasWhatItsPageNeeds:
+    def test_every_distribution_names_its_links(self) -> None:
+        """A package added without them gets a page with no way back here."""
+        for stem, project in _workspace_projects().items():
+            links = project.get("urls", {})
+            missing = [label for label in PROJECT_LINKS if label not in links]
+            assert not missing, f"{stem}: [project.urls] is missing {missing}"
+            for label, address in links.items():
+                assert address.startswith("https://"), (stem, label, address)
+
+    def test_every_distribution_has_a_readme_for_its_page(self) -> None:
+        for manifest in sorted((REPO_ROOT / "packages").glob("*/pyproject.toml")):
+            with manifest.open("rb") as handle:
+                project = tomllib.load(handle)["project"]
+            assert project.get("readme") == "README.md", manifest
+            assert (manifest.parent / "README.md").is_file(), manifest
+
+    def test_the_environment_links_to_a_project_this_job_publishes(self) -> None:
+        address = str(_jobs()[PUBLISH_JOB]["environment"]["url"])
+        match = re.fullmatch(r"https://pypi\.org/project/([a-z0-9-]+)/", address)
+        assert match is not None, address
+        assert _stem(match.group(1)) in _published_stems(), address
 
 
 # ---------------------------------------------------------------------------

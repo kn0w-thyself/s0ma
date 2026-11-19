@@ -21,7 +21,7 @@ Two ground rules that save time:
   it.
 
 Related pages: [`getting-started.md`](getting-started.md) for the first
-journey and the one route in the public repository offers, and
+journey and the two routes in the public repository offers, and
 [`uninstall.md`](uninstall.md) for taking s0ma back off. Two sections below
 are about the hosted channel's routes — the keyed installer and installing
 through Claude — which the public repository's first release does not offer;

@@ -28,8 +28,9 @@ rule is enforced by packages/s0ma-dsl/tests/test_docs_guide_bindings.py.
 If the `s0ma` command is not installed yet, there are two ways in, and they are
 written down once. The short one is **the package route**: s0ma is on PyPI as
 `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, and
-installing `s0ma-lang-dsl` installs the command. The other is **the source
-route**: clone this repository and build from it. The root `README.md`
+as `s0ma-lang`, one name that installs all four. Installing `s0ma-lang-dsl`
+installs the command. The other is **the source route**: clone this repository
+and build from it. The root `README.md`
 "Install" section has the exact commands for both: installing from PyPI,
 working inside the checkout, and building the wheels and installing them into
 a project of your own.

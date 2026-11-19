@@ -63,4 +63,4 @@ Do not reach for a forgiving mode to get a release out. The extra release requir
 
 - Topic id: `concept:strictness-mode`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:0d644bcf4920841a`
+- Documentation snapshot: `sha256:cfa5678439689711`

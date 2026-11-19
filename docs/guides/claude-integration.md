@@ -24,10 +24,11 @@ behave, how to hold a project still, and how to take it all off again.
 
 ## Not the route the public repository offers
 
-**Nothing on this page is part of the public repository's first release.** That
-release offers one way in — clone the repository and build from it — stated
+**Nothing on this page is part of the public repository's first release.** The
+public repository offers two ways in, installing from PyPI and cloning the
+repository to build from it, both stated
 once in [Getting started §1](../getting-started.md#1-create-a-real-project),
-with its commands in the root `README.md` "Install" section. The plugin, the
+with their commands in the root `README.md` "Install" section. The plugin, the
 marketplace and the Desktop extension are built and work; publishing them is a
 later step, and this page is the account of the route they make, kept for when
 that step is taken. Until then:

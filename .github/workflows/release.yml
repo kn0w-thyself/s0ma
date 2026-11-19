@@ -449,7 +449,7 @@ jobs:
     # here until the owner approves. Setting it up is in docs/RELEASING.md.
     environment:
       name: pypi
-      url: https://pypi.org/project/s0ma-lang-core/
+      url: https://pypi.org/project/s0ma-lang/
     permissions:
       contents: read # read this tag's GitHub Release, to compare bytes
       id-token: write # prove this run's identity to PyPI; no token is stored

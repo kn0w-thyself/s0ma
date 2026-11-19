@@ -268,7 +268,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "bb37aef715f8e701d83abc0d1bdd99fbc0f47fc6e17e45e8165c983f45303044",
+      "content_sha256": "6ca06b2d1c777b3551981daff7ba817cf11cf7e159a1d71c4126dc27731955f0",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang",
       "section": "[project]",
@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "259eeb1bd894caf48b152e1111bcb32c3779a891051fdc8e6aff0c471c743a15",
+      "content_sha256": "692188a54d8db17207aaa5da8fb3a802154c226efe925b995dc30b832e840a18",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.21.1] — 2026-10-30",
@@ -5514,7 +5514,7 @@
     "build_channel": "preview",
     "release_version": "0.21.1",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:0d644bcf4920841a"
+    "snapshot_hash": "sha256:cfa5678439689711"
   },
   "surfaces": [
     {
