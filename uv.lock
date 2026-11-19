@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = ">=3.11"
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -11,6 +11,7 @@ resolution-markers = [
 
 [manifest]
 members = [
+    "s0ma-lang",
     "s0ma-lang-core",
     "s0ma-lang-dsl",
     "s0ma-lang-mcp",
@@ -1407,6 +1408,25 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/2c/a5/2e136dede2a88aaaf54498bbbdc81bc810f788ef6ef01efb97037d73cd1d/ruff-0.17.5-py3-none-win32.whl", hash = "sha256:e1546609b2ad73f1d6c5c076881b788672b7b3cc3283981182cbdbb6524ed88a", size = 9929908, upload-time = "2026-11-12T17:54:47.067Z" },
     { url = "https://files.pythonhosted.org/packages/ec/8c/e4db9ae1e0ee233c04df007ab6d0d42f799ae9abd95d352b6092ee7bc4bf/ruff-0.17.5-py3-none-win_amd64.whl", hash = "sha256:aa415d57c244299279901d776607fee3df7831c2a7435433fbfacde8632c6550", size = 10275454, upload-time = "2026-11-12T17:54:49.401Z" },
     { url = "https://files.pythonhosted.org/packages/e6/65/a1648bc1550e7683bf7bf1e2ce2485c9f8535cbca6cca9ec7b73cc12fb8e/ruff-0.17.5-py3-none-win_arm64.whl", hash = "sha256:64a6fd668a336df959c522991de33e9e3c8be463afc0c9ac8f029f9d19ef756e", size = 9849020, upload-time = "2026-11-12T17:54:52.055Z" },
+]
+
+[[package]]
+name = "s0ma-lang"
+version = "0.21.1"
+source = { editable = "packages/s0ma-lang" }
+dependencies = [
+    { name = "s0ma-lang-core" },
+    { name = "s0ma-lang-dsl" },
+    { name = "s0ma-lang-mcp" },
+    { name = "s0ma-lang-studi0" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "s0ma-lang-core", editable = "packages/s0ma-core" },
+    { name = "s0ma-lang-dsl", editable = "packages/s0ma-dsl" },
+    { name = "s0ma-lang-mcp", editable = "packages/s0ma-mcp" },
+    { name = "s0ma-lang-studi0", editable = "packages/s0ma-studi0" },
 ]
 
 [[package]]

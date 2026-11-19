@@ -178,7 +178,7 @@ jobs:
           tag = sys.argv[1]
           version = tag.removeprefix("v")
           mismatches = []
-          for pkg in ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0"):
+          for pkg in ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0", "s0ma-lang"):
               pyproject = pathlib.Path("packages", pkg, "pyproject.toml")
               with pyproject.open("rb") as fh:
                   found = tomllib.load(fh)["project"]["version"]
@@ -186,16 +186,16 @@ jobs:
                   mismatches.append(f"{pyproject}: {found} != {version}")
           if mismatches:
               sys.exit("tag/version mismatch (INV-4):\n  " + "\n  ".join(mismatches))
-          print(f"tag {tag} matches lockstep version {version} in all four packages")
+          print(f"tag {tag} matches lockstep version {version} in all five packages")
           EOF
 
       - name: Build every workspace package (wheel + sdist into dist/)
         run: uv build --all-packages
 
-      - name: Assert all four packages built at the tag version
+      - name: Assert all five packages built at the tag version
         run: |
           version="${GITHUB_REF_NAME#v}"
-          for pkg in s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0; do
+          for pkg in s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0 s0ma_lang; do
             ls "dist/${pkg}-${version}-py3-none-any.whl" "dist/${pkg}-${version}.tar.gz"
           done
 
@@ -272,6 +272,11 @@ jobs:
       - name: Build every workspace package (wheel + sdist into dist/)
         run: uv build --all-packages
 
+      # Four, not five: the build above also writes the umbrella wheel
+      # (s0ma_lang-<version>), and the keyed channel does not serve it. The
+      # installer puts the four in place by file, which is what the umbrella
+      # would otherwise be for. scripts/mirror_to_r2.sh picks its wheels by
+      # name, so the fifth file in dist/ is left where it is.
       - name: Assert all four wheels built at the tag version
         run: |
           version="${GITHUB_REF_NAME#v}"
@@ -403,11 +408,12 @@ jobs:
   # strips them. So this job publishes the four packages, and only when
   # it runs in the public repository. Register all four projects with
   # that repository + this workflow + the `pypi` environment, then uncomment;
-  # OIDC means no long-lived token. The bare name `s0ma` is to be held by an
-  # umbrella distribution (PRD NFR-8); add it to this job when it exists.
+  # OIDC means no long-lived token. The name `s0ma-lang` is held by the
+  # umbrella distribution (PRD NFR-8), which this job publishes last, after
+  # the four it requires: it needs a fifth registered project of its own.
   #
   # publish-pypi:
-  #   name: publish the four packages to PyPI
+  #   name: publish the four packages and the umbrella to PyPI
   #   if: github.repository == 'kn0w-thyself/s0ma'
   #   runs-on: ubuntu-latest
   #   needs: release
@@ -426,5 +432,5 @@ jobs:
   #     - name: Build every workspace package
   #       run: uv build --all-packages
   #
-  #     - name: Publish the four distributions, and only those
-  #       run: uv publish dist/s0ma_lang_core-* dist/s0ma_lang_dsl-* dist/s0ma_lang_mcp-* dist/s0ma_lang_studi0-*
+  #     - name: Publish the five distributions, and only those
+  #       run: uv publish dist/s0ma_lang_core-* dist/s0ma_lang_dsl-* dist/s0ma_lang_mcp-* dist/s0ma_lang_studi0-* dist/s0ma_lang-*

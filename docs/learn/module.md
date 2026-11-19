@@ -77,4 +77,4 @@ module <name>
 
 - Topic id: `concept:module`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:0170503312d72027`
+- Documentation snapshot: `sha256:ea504d14be224c40`

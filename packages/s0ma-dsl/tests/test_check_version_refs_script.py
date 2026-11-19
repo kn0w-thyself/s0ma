@@ -71,6 +71,10 @@ SCRATCH_VERSION = "0.7.3"
 #: A version that is not SCRATCH_VERSION, for the faults to carry.
 STALE_VERSION = "0.4.0"
 
+#: The scratch tree's four parts, and the umbrella that requires them.
+PARTS = ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0")
+UMBRELLA = "s0ma-lang"
+
 
 @cache
 def _checker() -> ModuleType:
@@ -106,7 +110,7 @@ def _tree(
     *,
     version: str = SCRATCH_VERSION,
     references: int | None = None,
-    packages: tuple[str, ...] = ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0"),
+    packages: tuple[str, ...] = PARTS,
 ) -> dict[str, str]:
     """A green scratch tree: every file both entry points require.
 
@@ -139,9 +143,19 @@ def _tree(
     for name in packages:
         manifest = f"packages/{name}/pyproject.toml"
         files.setdefault(manifest, f'[project]\nname = "{name}"\nversion = "{version}"\n')
+    files[checker.UMBRELLA_SOURCE] = _umbrella_manifest(version, packages)
     for spec in checker.PACKAGE_MAPS:
-        files[spec.path] += _map_block(spec.heading, packages)
+        files[spec.path] += _map_block(spec.heading, (*packages, UMBRELLA))
     return files
+
+
+def _umbrella_manifest(version: str, parts: tuple[str, ...], *, operator: str = "==") -> str:
+    """The umbrella's manifest: its own version and one requirement per part."""
+    listed = "".join(f'    "{name} {operator} {version}",\n' for name in parts)
+    return (
+        f'[project]\nname = "{UMBRELLA}"\nversion = "{version}"\n'
+        f"dependencies = [\n{listed}]\n"
+    )
 
 
 def _write(tmp_path: Path, files: dict[str, str]) -> Path:
@@ -303,7 +317,7 @@ def test_the_real_tree_clears_the_floor_with_headroom(
 def test_a_site_out_of_lockstep_is_red_and_names_the_site(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """The eight-site invariant, proved by breaking one of them."""
+    """The nine-site invariant, proved by breaking one of them."""
     files = _tree()
     files["packages/s0ma-mcp/src/s0ma_mcp/__init__.py"] = (
         f'"""Scratch package."""\n\n__version__ = "{STALE_VERSION}"\n'
@@ -325,6 +339,62 @@ def test_a_missing_lockstep_site_is_counted_not_skipped(
     (root / "packages" / "s0ma-studi0" / "pyproject.toml").unlink()
     assert _check(root) == 1
     assert "lockstep site missing (INV-4)" in capsys.readouterr().out
+
+
+# ---------------------------------------------------------------------------
+# The umbrella's pins
+# ---------------------------------------------------------------------------
+
+
+def test_the_umbrella_pins_are_reported_when_green(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The check says what it counted, so a green line is not a silent skip."""
+    assert _check(_scratch(tmp_path)) == 0
+    output = capsys.readouterr().out
+    assert f"umbrella OK, {UMBRELLA} pins {len(PARTS)} distribution(s)" in output
+
+
+def test_an_umbrella_pin_left_at_the_previous_version_is_red(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The fault a hand bump makes: the version line moved and a pin did not."""
+    checker = _checker()
+    files = _tree()
+    files[checker.UMBRELLA_SOURCE] = files[checker.UMBRELLA_SOURCE].replace(
+        f'"s0ma-mcp == {SCRATCH_VERSION}"', f'"s0ma-mcp == {STALE_VERSION}"'
+    )
+    assert _check(_write(tmp_path, files)) == 1
+    output = capsys.readouterr().out
+    assert f"VIOLATION {checker.UMBRELLA_SOURCE}: s0ma-mcp is pinned to {STALE_VERSION}" in output
+    assert f"not the lockstep version {SCRATCH_VERSION}" in output
+
+
+def test_an_umbrella_floor_is_red_even_at_the_current_version(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A floor resolves today and pairs this version with a later part tomorrow."""
+    checker = _checker()
+    files = _tree()
+    files[checker.UMBRELLA_SOURCE] = _umbrella_manifest(SCRATCH_VERSION, PARTS, operator=">=")
+    assert _check(_write(tmp_path, files)) == 2 * len(PARTS)
+    output = capsys.readouterr().out
+    assert "is not an exact pin" in output
+    # Every part is also unpinned, which is the second thing wrong with it.
+    assert f"{UMBRELLA} does not require s0ma-core" in output
+
+
+def test_a_distribution_the_umbrella_does_not_require_is_red(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A new package joins the umbrella from the moment its manifest exists."""
+    checker = _checker()
+    files = _tree()
+    files[checker.UMBRELLA_SOURCE] = _umbrella_manifest(SCRATCH_VERSION, PARTS[:-1])
+    assert _check(_write(tmp_path, files)) == 1
+    output = capsys.readouterr().out
+    assert f"{UMBRELLA} does not require {PARTS[-1]}" in output
+    assert f"add `{PARTS[-1]} == {SCRATCH_VERSION}`" in output
 
 
 # ---------------------------------------------------------------------------
@@ -411,6 +481,20 @@ def test_a_package_missing_from_the_maps_is_red_in_both(
         assert f"VIOLATION {spec.path}:" in output
 
 
+def test_a_longer_name_does_not_stand_in_for_the_umbrella(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """``s0ma-lang`` is the front of ``s0ma-lang-core``; a map must name it whole."""
+    checker = _checker()
+    files = _tree()
+    for spec in checker.PACKAGE_MAPS:
+        files[spec.path] = files[spec.path].replace(f"  {UMBRELLA}/\n", f"  {UMBRELLA}-core/\n")
+    root = _write(tmp_path, files)
+
+    assert checker.check_package_maps(root) == len(checker.PACKAGE_MAPS)
+    assert f"does not name {UMBRELLA}." in capsys.readouterr().out
+
+
 def test_a_map_whose_fenced_block_vanished_is_red(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
@@ -427,12 +511,14 @@ def test_a_map_whose_fenced_block_vanished_is_red(
 def test_the_package_floor_refuses_a_thin_scan(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """Two packages where four are expected is a lost scan, not a verdict."""
+    """Two packages where five are expected is a lost scan, not a verdict."""
     checker = _checker()
     files = {
         rel: text
         for rel, text in _tree(packages=("s0ma-core", "s0ma-dsl")).items()
-        if not rel.startswith(("packages/s0ma-mcp/", "packages/s0ma-studi0/"))
+        if not rel.startswith(
+            ("packages/s0ma-mcp/", "packages/s0ma-studi0/", f"packages/{UMBRELLA}/")
+        )
     }
     assert checker.check_package_maps(_write(tmp_path, files)) == 1
     output = capsys.readouterr().out

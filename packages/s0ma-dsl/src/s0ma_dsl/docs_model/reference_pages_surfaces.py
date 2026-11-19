@@ -1060,10 +1060,16 @@ def packages_reference(
             "bottom of the stack."
         )
         count = per_package.get(item.distribution, 0)
-        lines.append(
-            f"{depends} It registers {count} components, listed with what "
-            f"each is for in the [component index]({to_components})."
+        # A distribution with nothing registered has no section in the
+        # component index to be sent to. The umbrella is the one today: it
+        # is a manifest and no code.
+        registers = (
+            f"It registers {count} components, listed with what each is for "
+            f"in the [component index]({to_components})."
+            if count
+            else "It registers no components."
         )
+        lines.append(f"{depends} {registers}")
         lines.append("")
         door = doors.get(item.source.rpartition("/")[0])
         if door is not None:

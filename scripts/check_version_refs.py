@@ -4,16 +4,19 @@
 Two invariants, both anchored on one lockstep version — s0ma-lang-core's
 ``project.version`` (the bottom of the dependency stack; PRD INV-4):
 
-1. LOCKSTEP INTEGRITY. All four distributions ship the same version. The
+1. LOCKSTEP INTEGRITY. All five distributions ship the same version. The
    ``project.version`` field of each ``packages/*/pyproject.toml`` and the
    ``__version__`` literal of each package ``__init__`` must equal the
    anchor. Before this gate that was enforced only by convention and the
-   release script, so a hand-bump that missed one of the eight sites — or a
+   release script, so a hand-bump that missed one of the nine sites — or a
    merge that reverted one — shipped mismatched wheels with nothing in CI to
-   catch it. LOCKSTEP_SITES below makes it mechanical.
+   catch it. LOCKSTEP_SITES below makes it mechanical. The umbrella
+   distribution ``s0ma-lang`` carries no module, so it has no
+   ``__version__``; what it carries instead is one exact pin on each of the
+   other four, and ``check_umbrella_pins`` holds those to the same anchor.
 
 2. LIVING-DOCS CURRENCY. Version strings in prose rot silently. A release
-   bumps the eight lockstep sites, but a wheel filename buried in a README
+   bumps the nine lockstep sites, but a wheel filename buried in a README
    example or a version stamped in a page title is only ever caught by a
    human noticing. After a bump, every version-shaped string in the LIVING
    DOCS below must be the current lockstep version or an explicitly
@@ -78,10 +81,18 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-#: The lockstep version is read from s0ma-lang-core's pyproject: all four
-#: distributions carry the same version (PRD INV-4), and core is the anchor
+#: The lockstep version is read from s0ma-lang-core's pyproject: every
+#: distribution carries the same version (PRD INV-4), and core is the anchor
 #: at the bottom of the dependency stack.
 VERSION_SOURCE = "packages/s0ma-core/pyproject.toml"
+
+#: The umbrella distribution's manifest. ``s0ma-lang`` is no code and four
+#: requirements, each an exact pin on its own version, so that installing it
+#: at a version can only resolve to the parts released together as that
+#: version. A release therefore moves five things in this one file, the
+#: version line and four pins, and ``check_umbrella_pins`` is what notices a
+#: pin left behind.
+UMBRELLA_SOURCE = "packages/s0ma-lang/pyproject.toml"
 
 
 @dataclass(frozen=True)
@@ -98,8 +109,9 @@ class LockstepSite:
 
 
 #: Every site that must carry the anchor version verbatim (PRD INV-4): the
-#: four ``project.version`` fields and the four package ``__version__``
-#: literals. VERSION_SOURCE is itself listed — the check compares it to
+#: five ``project.version`` fields and the four package ``__version__``
+#: literals (the umbrella has no module to carry a fifth). VERSION_SOURCE is
+#: itself listed — the check compares it to
 #: itself, which costs nothing and keeps this the single complete roster of
 #: INV-4 sites. Enforced here so a bump or bad merge that misses one site
 #: fails CI, not only the release script (its sole guard before).
@@ -108,6 +120,7 @@ LOCKSTEP_SITES: tuple[LockstepSite, ...] = (
     LockstepSite("packages/s0ma-dsl/pyproject.toml", "pyproject"),
     LockstepSite("packages/s0ma-mcp/pyproject.toml", "pyproject"),
     LockstepSite("packages/s0ma-studi0/pyproject.toml", "pyproject"),
+    LockstepSite(UMBRELLA_SOURCE, "pyproject"),
     LockstepSite("packages/s0ma-core/src/s0ma/__init__.py", "module"),
     LockstepSite("packages/s0ma-dsl/src/s0ma_dsl/__init__.py", "module"),
     LockstepSite("packages/s0ma-mcp/src/s0ma_mcp/__init__.py", "module"),
@@ -124,7 +137,7 @@ LIVING_DOCS: tuple[str, ...] = (
     "docs/hosting-getting-started.md",
     "docs/RELEASING.md",
     "AGENTS.md",
-    # The contributor front door and the four package front doors. Each is the
+    # The contributor front door and the five package front doors. Each is the
     # first page a reader lands on for its subject and each names versions a
     # reader is expected to install or run, so each rots exactly the way the
     # root README does. Before they were scanned, docs/RELEASING.md told the
@@ -134,6 +147,7 @@ LIVING_DOCS: tuple[str, ...] = (
     "editors/README.md",
     "packages/s0ma-core/README.md",
     "packages/s0ma-dsl/README.md",
+    "packages/s0ma-lang/README.md",
     "packages/s0ma-mcp/README.md",
     "packages/s0ma-studi0/README.md",
     # beta-prep-5 B3. The rule was "no stale s0ma version numbers in living
@@ -409,11 +423,12 @@ PACKAGE_MAPS: tuple[PackageMap, ...] = (
     PackageMap("AGENTS.md", "## Package and dependency map", "the package and dependency map"),
 )
 
-#: Anti-vacuity floor. The workspace ships four distributions; a scan finding
-#: fewer has lost its way (wrong root, renamed directory) rather than proving
-#: anything. Deliberately dropping a package should be a recorded decision
-#: here, not a silently weaker gate.
-MIN_PACKAGES = 4
+#: Anti-vacuity floor. The workspace ships five distributions, the four that
+#: carry code and the umbrella that depends on them; a scan finding fewer has
+#: lost its way (wrong root, renamed directory) rather than proving anything.
+#: Deliberately dropping a package should be a recorded decision here, not a
+#: silently weaker gate.
+MIN_PACKAGES = 5
 
 #: Anti-vacuity floor for the doc scan. The living docs carried 22 version
 #: references when this floor was set (6 current, 16 allowlisted), and the
@@ -487,7 +502,7 @@ def _site_version(root: Path, site: LockstepSite) -> str:
 def check_lockstep(root: Path, current: str) -> int:
     """Assert every LOCKSTEP_SITES version equals *current*. Return the mismatch count.
 
-    PRD INV-4: the four distributions ship one version in step. A missing
+    PRD INV-4: the distributions ship one version in step. A missing
     file or an unreadable version field is itself a failure (named and
     counted), never a silent skip.
     """
@@ -512,15 +527,92 @@ def check_lockstep(root: Path, current: str) -> int:
 
     if mismatches:
         print(
-            f"\n{mismatches} lockstep version mismatch(es). All four "
-            f"packages/*/pyproject.toml project.version fields and all four package "
-            f"__version__ strings must equal {current} (PRD INV-4). Bump the named "
+            f"\n{mismatches} lockstep version mismatch(es). Every "
+            f"packages/*/pyproject.toml project.version field and every package "
+            f"__version__ string must equal {current} (PRD INV-4). Bump the named "
             f"file(s) into lockstep — mid-release, re-run the release script so every "
             f"site moves together."
         )
     else:
         print(f"version-currency: lockstep OK — {len(LOCKSTEP_SITES)} sites at {current}")
     return mismatches
+
+
+#: One umbrella requirement in the only shape it may take: a bare
+#: distribution name and an exact version, nothing else. No extras, no
+#: markers, no second clause.
+EXACT_PIN_RE = re.compile(r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)\s*==\s*(?P<version>[^\s,;]+)$")
+
+
+def _canonical(name: str) -> str:
+    """A distribution name as an installer compares it (PEP 503)."""
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def check_umbrella_pins(root: Path, current: str) -> int:
+    """Hold the umbrella's requirements to the lockstep version. Count failures.
+
+    Two rules, and each closes a way the umbrella stops meaning what its
+    README says. Every requirement must be an exact pin at *current*: a
+    floor or a range lets an installer pair this version with a later part,
+    and a pin left at the previous version makes the release uninstallable.
+    Every other distribution under ``packages/`` must be among them: the
+    expected set is read from the manifests, so a sixth package is required
+    here from the moment its manifest exists, the way it is required in the
+    package maps.
+
+    A missing umbrella manifest is not counted here. It is a lockstep site,
+    so ``check_lockstep`` has already named it.
+    """
+    source = root / UMBRELLA_SOURCE
+    if not source.is_file():
+        return 0
+    try:
+        with source.open("rb") as handle:
+            project = tomllib.load(handle)["project"]
+        umbrella = str(project["name"])
+        requirements = [str(item) for item in project.get("dependencies", [])]
+    except (KeyError, TypeError, tomllib.TOMLDecodeError, OSError) as exc:
+        print(f"VIOLATION {UMBRELLA_SOURCE}: cannot read the umbrella's requirements: {exc}")
+        return 1
+
+    failures = 0
+    pinned: set[str] = set()
+    for requirement in requirements:
+        found = EXACT_PIN_RE.match(requirement.strip())
+        if found is None:
+            print(
+                f"VIOLATION {UMBRELLA_SOURCE}: requirement {requirement!r} is not an "
+                f"exact pin. The umbrella requires each part as `<name> == {current}` "
+                f"and nothing looser, so one version of it installs one release."
+            )
+            failures += 1
+            continue
+        pinned.add(_canonical(found.group("name")))
+        if found.group("version") != current:
+            print(
+                f"VIOLATION {UMBRELLA_SOURCE}: {found.group('name')} is pinned to "
+                f"{found.group('version')}, not the lockstep version {current} "
+                f"(from {VERSION_SOURCE}; INV-4)"
+            )
+            failures += 1
+
+    others = [name for name in distribution_names(root) if _canonical(name) != _canonical(umbrella)]
+    for name in others:
+        if _canonical(name) not in pinned:
+            print(
+                f"VIOLATION {UMBRELLA_SOURCE}: {umbrella} does not require {name}. "
+                f"The umbrella depends on every other distribution the workspace "
+                f"ships; add `{name} == {current}` to its dependencies."
+            )
+            failures += 1
+
+    if failures == 0:
+        print(
+            f"version-currency: umbrella OK, {umbrella} pins {len(pinned)} "
+            f"distribution(s) at {current}"
+        )
+    return failures
 
 
 def _is_s0ma_version(line: str, match: re.Match[str]) -> bool:
@@ -559,6 +651,7 @@ def check(root: Path = ROOT, allowlist: tuple[Historical, ...] = ALLOWLIST) -> i
     # doc-currency scan below checks prose against this same version, so a
     # drifted anchor would quietly invalidate its result — catch it up front.
     lockstep_mismatches = check_lockstep(root, current)
+    lockstep_mismatches += check_umbrella_pins(root, current)
 
     for entry in allowlist:
         if entry.path not in LIVING_DOCS:  # pragma: no cover - config error
@@ -685,6 +778,17 @@ def _first_code_block(text: str, heading: str) -> tuple[int, str] | None:
     return None
 
 
+def _names_distribution(body: str, name: str) -> bool:
+    """True when *body* names the distribution *name* as a whole name.
+
+    A substring test stopped being enough when the umbrella arrived:
+    ``s0ma-lang`` is the front of every other distribution's name, so a map
+    listing only the four parts would have passed for it without ever
+    naming it.
+    """
+    return re.search(rf"(?<![\w.-]){re.escape(name)}(?![\w-])", body) is not None
+
+
 def check_package_maps(root: Path = ROOT) -> int:
     """Every distributed package must be named in both maps. Count failures."""
     names = distribution_names(root)
@@ -715,7 +819,7 @@ def check_package_maps(root: Path = ROOT) -> int:
             continue
         lineno, body = found
         for name in names:
-            if name not in body:
+            if not _names_distribution(body, name):
                 print(
                     f"VIOLATION {spec.path}:{lineno}: {spec.what} does not name "
                     f"{name}. The workspace ships {len(names)} distributions "
