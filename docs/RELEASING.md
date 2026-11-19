@@ -2,7 +2,7 @@
 
 The canonical runbook for cutting a release of the s0ma monorepo. It supersedes the pre-consolidation per-repo checklists (`packages/*/docs/release_checklist.md`, now pointers to this file).
 
-The flow is automated end to end: one command cuts the version, and **pushing the `v<version>` tag is the release act** — it builds the wheels, records the GitHub Release, mirrors the wheels to R2, and verifies what production actually serves. Only the owner performs that push.
+The flow is automated end to end: one command cuts the version, and **pushing the `v<version>` tag is the release act** — it builds the wheels, records the GitHub Release, mirrors the wheels to R2, verifies what production actually serves, and publishes the packages to PyPI. Only the owner performs that push, and the PyPI step waits for the owner's approval.
 
 ## The versioning model (PRD INV-4, NFR-3)
 
@@ -15,6 +15,7 @@ The flow is automated end to end: one command cuts the version, and **pushing th
 
 - You are on a release branch made from the tip of `main` (`git switch -c release-X.Y.Z`), because the cut lands there as [three commits](#the-three-commits-of-a-cut). The tree is clean, and the full gate is green: `uv run python scripts/check.py` (ruff, mypy, all four suites, selfhost/release integrity — including the wheel-license and cold-install checks — the INV-1 spelling guard, and the living-docs version-currency guard).
 - Every user-facing change since the last release is captured in the root CHANGELOG's `## [Unreleased]` section. The package changelogs are frozen pre-monorepo history; never add to them.
+- The four `packages/*/README.md` say what their PyPI pages should say. Each one becomes its package's page on PyPI, frozen into this version: a mistake found after the tag stays on that page until the next release. Their links are absolute for the same reason, and the `docs-links` stage still checks them against the tree.
 
 ## The three commits of a cut
 
@@ -139,15 +140,18 @@ A cut lands as three commits on its release branch, so that every gate reads a t
 
    `AGENTS.md`: "Never push a `v*` tag merely to test a release: the release workflow fires on pushed tags. Create/push only when the owner explicitly authorizes it." No agent creates or pushes a `v*` tag.
 
+   The run ends at `publish-pypi`, which waits for your approval before anything reaches PyPI. Before the first release that publishes, do the one-time setup and add the first pending publisher, both under [PyPI](#pypi), and only then push the tag.
+
 ## What the tag push triggers
 
-[`.github/workflows/release.yml`](../.github/workflows/release.yml) runs five jobs in order on every `v*` tag; each needs the one before it.
+[`.github/workflows/release.yml`](../.github/workflows/release.yml) runs six jobs in order on every `v*` tag; each needs the ones before it.
 
 1. **check** — the full `scripts/check.py` gate on Python 3.11/3.12/3.13, against the tagged commit.
 2. **verify-docs-identity** — opens the wheels this tag would ship and requires the documentation inside them to be the documentation this commit composed: the embedded teaching slice's snapshot, the served `_docs` payload, the `s0ma-lang-dsl` wheel's packaged snapshot, and the version every identity line renders. It gates the job below, so a disagreement stops the tag before anything is published. Verification only — it builds wheels into a temporary directory, reads them, and uploads nothing. **Armed by a repository variable, not by merging:** see [The teaching-slice build order](#the-teaching-slice-build-order).
-3. **release** — guards that the tag matches the lockstep version in all four pyprojects (INV-4), builds wheels + sdists (`uv build --all-packages`), asserts all four built at the tag version, extracts the `## [X.Y.Z]` CHANGELOG section (a missing section **fails** the release), and creates the GitHub Release with the eight artifacts attached and that section as the notes. That release is the **record of what shipped** — the eight artifacts and this version's changelog section, kept together under the tag, so "what was in X.Y.Z" has one answer that survives the working tree. It is not an install route: testers install from R2, never from it.
+3. **release** — guards that the tag matches the lockstep version in all four pyprojects (INV-4), builds wheels + sdists (`uv build --all-packages`), asserts all four built at the tag version, extracts the `## [X.Y.Z]` CHANGELOG section (a missing section **fails** the release), hands the eight artifacts to the last job as a workflow artifact, and creates the GitHub Release with the same eight attached and that section as the notes. That release is the **record of what shipped** — the eight artifacts and this version's changelog section, kept together under the tag, so "what was in X.Y.Z" has one answer that survives the working tree. It is not an install route: testers install from R2, never from it.
 4. **mirror-r2** — mirrors the four wheels plus a merged `dist/manifest.json` into the R2 bucket `s0ma-dist`, the exact layout the control plane serves. Wheel objects are immutable (a re-run verifies the already-mirrored bytes back and aborts on any mismatch); the only mutation is the manifest, whose `latest` is **forward-only** by semver. Without the `CF_API_TOKEN` secret the R2 steps skip with a loud notice — the wheels still build, but prod keeps serving the previous `latest`.
 5. **verify-served** — [`scripts/verify_served.sh`](../scripts/verify_served.sh) asks the control plane, from the outside with a real tester key, what it now serves: `latest` resolves to this version, the manifest names exactly four wheels, every served wheel's sha256 matches the manifest **and** the freshly built wheel, and the published `install.sh` matches the canonical one. Served-installer drift is downgraded to a `::notice` ("CP deploy pending") because control-plane deploys are manual (hardening R10/R11); every other failure class is red. Without the `S0MA_SMOKE_KEY` secret the job skips with a notice — and a green release then does **not** mean testers can install it.
+6. **publish-pypi** uploads the eight artifacts to PyPI. It is last on purpose: a file on PyPI can never be replaced, so nothing goes there until the five jobs above are green. It builds nothing. It downloads the files the `release` job built, requires them to be exactly the wheels and sdists this version names, and requires them to be byte for byte the assets of the GitHub Release before it uploads one. It runs only in the public repository, signs in by identity so no token is stored, and waits in the `pypi` environment for the owner's approval. [PyPI](#pypi) below is the whole account, including what the first publication needs.
 
 ## ☐ OWNER — deploy the control plane, only when it changed
 
@@ -225,8 +229,63 @@ The job is in the workflow and **is armed by a repository variable, not by mergi
 
 One decision is still open and is deliberately not taken here: whether the compose-and-mirror step belongs in `make release-cut` (which today writes only version bumps and the changelog carve) or stays a named step somebody runs. Automating it would mean the cut script writes into two package trees, which no other step of it does.
 
-## PyPI (ruled; not yet switched on)
+## PyPI
 
-PRD NFR-8 records the decision: all four packages are published to the Python package index **starting with the first release cut from the public repository**, and nothing built from the private source tree is ever published there — the documentation snapshot inside a wheel built from the private tree lists private planning documents by title, and only the public export strips them. The bare name `s0ma` is to be held as well, by a small umbrella distribution that depends on the others and is built before that release. Until that first public release, all four packages reach testers only as wheels from the owner's R2 bucket, through the entitlement-gated control plane and keyed installer.
+All four packages are published to PyPI, as `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0` (PRD NFR-8). Publication is the last job of the release workflow, `publish-pypi`, and it follows three rules.
 
-The release workflow carries the `publish-pypi` job commented out (`# TODO: enable after PyPI account/trusted-publisher setup` marks the spot). As written it publishes the four packages, and only when it runs in the public repository; the umbrella distribution joins it when it exists. Switching it on is the last of four steps, all the owner's: create the index account with two-factor sign-in; add a trusted publisher for each of the four projects, naming the public repository, this workflow file and a `pypi` environment; create that environment in the repository's settings; then uncomment the job. The workflow signs in by identity, so no token is stored. A name on the index is held only by publishing under it, and a published release can never be removed.
+- **Only the public repository publishes.** Nothing built from the private source tree is ever published: the documentation snapshot inside a wheel built there lists private planning documents by title, and only the public export strips them. The job carries the guard `github.repository == 'kn0w-thyself/s0ma'` and is skipped anywhere else.
+- **One build, three destinations.** The job never builds. It uploads the files the `release` job built and attached to the GitHub Release, and it compares the two byte for byte first. The R2 mirror is built from the same commit by the same pinned `uv`, the build is reproducible, and `verify-served` compares what production serves with a build of its own on every release.
+- **No stored secret.** The job proves its identity to PyPI (trusted publishing) and gets a token that lasts fifteen minutes. There is no PyPI token in this repository and none to rotate. The identity PyPI trusts is three things together: this repository, the workflow file name `release.yml`, and the environment name `pypi`. Renaming any of the three breaks publication until the publisher is changed on PyPI to match.
+
+### What cannot be undone
+
+A file on PyPI can never be replaced, and a version number used there is used for good, even if the release is later deleted. So a bad release is fixed by cutting the next patch version, never by re-uploading. If a published version must not be installed, **yank** it on its PyPI project page: it stays downloadable for anyone who pins it and is skipped by everyone else. A name is held only by publishing under it; nothing reserves one in advance.
+
+The four releases the public repository cut before publication was switched on are not on PyPI and are not going to be: their files carry the former distribution names, which PyPI refuses. The changelog entry for the first published version names them.
+
+### ☐ OWNER: one-time setup
+
+No agent can do these, and the first publishing tag must not be pushed before both exist. The second matters most: GitHub creates a missing environment the first time a job names it, with no reviewer on it, so a tag pushed early would reach PyPI without waiting for anyone.
+
+1. **A PyPI account.** Register at <https://pypi.org/account/register/>, verify the email address (a pending publisher cannot be added without a verified one), and turn on two-factor sign-in. Keep the recovery codes somewhere that is not this machine.
+2. **The `pypi` environment in this repository.** Settings → Environments → New environment, named exactly `pypi`. On it:
+   - **Required reviewers:** add yourself. This is the review the release waits for: the job stops at the environment until a reviewer approves it, and it fails if nobody does within 30 days. Leave "Prevent self-review" off, because the person who pushes the tag is the person who approves.
+   - **Deployment branches and tags:** choose "Selected branches and tags" and add the tag rule `v*`, so nothing but a release tag can reach the environment.
+   - No environment secrets. There is nothing to store.
+
+### ☐ OWNER: the first publication, one project at a time
+
+PyPI creates a new project from a **pending publisher**: a note on your account saying which repository, workflow and environment may create which project name. Two PyPI rules shape the first publication, and both are in PyPI's own source (`warehouse`, read 2026-11-18):
+
+- PyPI holds **one** pending publisher at a time for a given repository, workflow and environment, whatever project it names. A second one for `kn0w-thyself/s0ma`, `release.yml`, `pypi` is refused with "already been registered for a different project name" until the first has been used.
+- One run of the job turns one pending publisher into one project.
+
+So the four projects are created in four rounds, in dependency order. `publish-pypi` is written for this: it uploads one distribution at a time, a dependency before its dependents, stops at the first project it may not publish and names it, and on a re-run skips every file PyPI already holds.
+
+1. **Before pushing the tag**, add the pending publisher for the first project at <https://pypi.org/manage/account/publishing/> (the GitHub tab):
+
+   | Field | Value |
+   |---|---|
+   | PyPI Project Name | `s0ma-lang-core` |
+   | Owner | `kn0w-thyself` |
+   | Repository name | `s0ma` |
+   | Workflow name | `release.yml` |
+   | Environment name | `pypi` |
+
+2. **Push the tag** ([step 7](#cut-a-release)). When the run reaches `publish-pypi` it asks for review: approve it. The job publishes `s0ma-lang-core`, then fails at `s0ma-lang-dsl` with an error that names it. That failure is expected in this round.
+3. **Add the next pending publisher**: the same form, the same four values, and `s0ma-lang-dsl` as the project name. PyPI accepts it now because the first one was used up when the project was created.
+4. **Re-run the job**: on the run's page, "Re-run failed jobs", then approve it again. It skips the files already on PyPI, publishes `s0ma-lang-dsl`, and stops at the next project.
+5. **Repeat steps 3 and 4** for `s0ma-lang-mcp`, then `s0ma-lang-studi0`. The last run is green.
+6. **Check the result.** Each of the four project pages shows this version, and each project's Settings → Publishing lists the `release.yml` publisher. No pending publisher is left on the account.
+
+Between rounds the index is consistent: everything already published can be installed, because nothing is uploaded before what it depends on. A re-run uses the files the first attempt built, kept as the run's `release-dist` artifact for the repository's retention period (90 days unless it was changed), so there is no hurry between rounds and nothing is ever rebuilt.
+
+A distribution added later, the `s0ma-lang` umbrella for one, goes through the same round once: add its pending publisher before the tag that first builds it, and add its wheel stem to the `DISTRIBUTIONS` line of the job, after everything it depends on.
+
+### Every release after the first
+
+Nothing to prepare. Push the tag, and approve `publish-pypi` when the run asks. The one publisher covers every project created through it, so all four upload in a single run.
+
+### If a publication stops part-way
+
+Read the error: it names the distribution the job stopped at. Fix the cause, then "Re-run failed jobs". Files PyPI already holds with the same hash are skipped, so a re-run can only add what is missing. If PyPI holds a file of the same name with different bytes, the job fails and nothing is overwritten; that cannot happen from this workflow, which uploads one build, and it means someone published by hand.
