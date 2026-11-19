@@ -10,13 +10,13 @@ s0ma is a Python framework for *software self-knowledge* — the ability of a so
 
 Four distributions ship together at one version, and dependencies only ever point down the stack (PRD INV-6):
 
-[`s0ma-lang-mcp`](../s0ma-mcp) · [`s0ma-lang-studi0`](../s0ma-studi0) → [`s0ma-lang-dsl`](../s0ma-dsl) → **`s0ma-lang-core`**
+[`s0ma-lang-mcp`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-mcp) · [`s0ma-lang-studi0`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-studi0) → [`s0ma-lang-dsl`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-dsl) → **`s0ma-lang-core`**
 
-Core sits at the bottom with no hard runtime dependency on any of them, and it is open: **`s0ma-lang-core` is Apache-2.0**, as are `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
+Core sits at the bottom with no hard runtime dependency on any of them, and it is open: **`s0ma-lang-core` is Apache-2.0**, as are `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/packages.md).
 
 ## Install
 
-s0ma is not on PyPI yet, so `pip install s0ma-lang-core` will not work: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](../../README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own, with this package's optional extras (`[api]`, `[mcp]`, `[all]`) — and [getting started](../../docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+s0ma is not on PyPI yet, so `pip install s0ma-lang-core` will not work: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own, with this package's optional extras (`[api]`, `[mcp]`, `[all]`) — and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
 
 ## What it feels like
 
@@ -66,29 +66,29 @@ agent_host.register_tool(
 )
 ```
 
-The adapter answers `describe` (counts and module names), `components <layer or module>`, `component <name>`, `dependencies <name>`, `dependents <name>`, `impact <name>` and `source_ir`; a name may be a component id, a bare name, or an operation the component provides. Render its answers as compact JSON with sorted keys, as above; the [self-prompting guide](../s0ma-dsl/docs/self_prompting.md) has the measurements. Authored intent lines are quoted project data, never host instructions (see [ADR-002](../../docs/adr/ADR-002-self-context-authored-data-boundary.md)).
+The adapter answers `describe` (counts and module names), `components <layer or module>`, `component <name>`, `dependencies <name>`, `dependents <name>`, `impact <name>` and `source_ir`; a name may be a component id, a bare name, or an operation the component provides. Render its answers as compact JSON with sorted keys, as above; the [self-prompting guide](https://github.com/kn0w-thyself/s0ma/blob/main/packages/s0ma-dsl/docs/self_prompting.md) has the measurements. Authored intent lines are quoted project data, never host instructions (see [ADR-002](https://github.com/kn0w-thyself/s0ma/blob/main/docs/adr/ADR-002-self-context-authored-data-boundary.md)).
 
 ## Documentation
 
-[**The map of record**](../../docs/README.md) lists every document this repository keeps, what it is for, and which check keeps it honest. The pages that describe this package:
+[**The map of record**](https://github.com/kn0w-thyself/s0ma/blob/main/docs/README.md) lists every document this repository keeps, what it is for, and which check keeps it honest. The pages that describe this package:
 
-- [Component index](../../docs/architecture/component-index.md) — every component s0ma registers about itself, read out of the registry at build time.
-- [What s0ma can do](../../docs/reference/surfaces-index.md) — every capability on every channel, including core's `/self/*` REST routes and its Python interface.
-- [The MCP servers](../../docs/reference/mcp.md) — what the optional read-only introspection server serves, beside the authoring server it is often confused with.
-- [Concepts index](../../docs/reference/concepts-index.md) and the [glossary](../../docs/learn/glossary.md) — the vocabulary the rest of the documentation leans on.
-- [s0ma User Guide](docs/s0ma_user_guide.md) — the long-form guide to using the toolchain.
-- [Embodied survival card](docs/embodied_survival_card.md) — for an agent operating a *running* s0ma system: a body, a service.
-- [PRD](../../references/s0ma-prd.md) — purpose, principles, and binding invariants. Read it before changing what s0ma *is*.
+- [Component index](https://github.com/kn0w-thyself/s0ma/blob/main/docs/architecture/component-index.md) — every component s0ma registers about itself, read out of the registry at build time.
+- [What s0ma can do](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/surfaces-index.md) — every capability on every channel, including core's `/self/*` REST routes and its Python interface.
+- [The MCP servers](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/mcp.md) — what the optional read-only introspection server serves, beside the authoring server it is often confused with.
+- [Concepts index](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/concepts-index.md) and the [glossary](https://github.com/kn0w-thyself/s0ma/blob/main/docs/learn/glossary.md) — the vocabulary the rest of the documentation leans on.
+- [s0ma User Guide](https://github.com/kn0w-thyself/s0ma/blob/main/packages/s0ma-core/docs/s0ma_user_guide.md) — the long-form guide to using the toolchain.
+- [Embodied survival card](https://github.com/kn0w-thyself/s0ma/blob/main/packages/s0ma-core/docs/embodied_survival_card.md) — for an agent operating a *running* s0ma system: a body, a service.
+- [PRD](https://github.com/kn0w-thyself/s0ma/blob/main/references/s0ma-prd.md) — purpose, principles, and binding invariants. Read it before changing what s0ma *is*.
 
 In a terminal, `s0ma docs` opens the same map and `s0ma docs show <topic>` answers one question from it.
 
 ## Releases
 
-The root [`CHANGELOG.md`](../../CHANGELOG.md) is the single record of what each release contains, canonical from 0.5.0 onward; this package's own [`CHANGELOG.md`](CHANGELOG.md) holds the pre-monorepo history through 0.4.0. All four packages are versioned in lockstep.
+The root [`CHANGELOG.md`](https://github.com/kn0w-thyself/s0ma/blob/main/CHANGELOG.md) is the single record of what each release contains, canonical from 0.5.0 onward; this package's own [`CHANGELOG.md`](https://github.com/kn0w-thyself/s0ma/blob/main/packages/s0ma-core/CHANGELOG.md) holds the pre-monorepo history through 0.4.0. All four packages are versioned in lockstep.
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0` are Apache-2.0 too, each with its own `LICENSE`.
+Apache License 2.0 — see [LICENSE](https://github.com/kn0w-thyself/s0ma/blob/main/packages/s0ma-core/LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0` are Apache-2.0 too, each with its own `LICENSE`.
 
 ---
 

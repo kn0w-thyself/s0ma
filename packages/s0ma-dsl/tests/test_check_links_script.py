@@ -338,6 +338,28 @@ def test_own_tree_target_reads_only_the_default_branch() -> None:
         assert checker.own_tree_target(foreign) is None, foreign
 
 
+def test_the_package_readmes_carry_no_relative_link() -> None:
+    """Each package README is its PyPI project page, frozen into the release.
+    A relative link there is dead, so every link is absolute, and the rule
+    above is what keeps those absolute links checked."""
+    checker = _checker()
+    readmes = sorted((REPO_ROOT / "packages").glob("*/README.md"))
+    assert len(readmes) >= 4, readmes
+    for readme in readmes:
+        rel = readme.relative_to(REPO_ROOT).as_posix()
+        links = checker.document_links(rel, readme.read_text(encoding="utf-8"))
+        assert links, rel
+        relative = [
+            f"{rel}:{link.lineno}: {link.target}"
+            for link in links
+            if not checker._EXTERNAL_RE.match(link.target.strip())
+        ]
+        assert relative == [], (
+            "a package README is shown on PyPI, where these links are dead; "
+            f"write them as {checker.OWN_REPOSITORY_URL}/blob/main/<path>: {relative}"
+        )
+
+
 def test_excluded_directories_are_not_scanned(tmp_path: Path) -> None:
     """Mirrors are byte-gated at their source; history and plans are frozen."""
     files = _baseline()

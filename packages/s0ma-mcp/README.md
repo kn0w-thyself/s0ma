@@ -8,13 +8,13 @@ It is also the **flagship `.s0ma` application** (FR-MCP-11): every tool, resourc
 
 Four distributions ship together at one version, and dependencies only ever point down the stack (PRD INV-6):
 
-**`s0ma-lang-mcp`** · [`s0ma-lang-studi0`](../s0ma-studi0) → [`s0ma-lang-dsl`](../s0ma-dsl) → [`s0ma-lang-core`](../s0ma-core)
+**`s0ma-lang-mcp`** · [`s0ma-lang-studi0`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-studi0) → [`s0ma-lang-dsl`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-dsl) → [`s0ma-lang-core`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-core)
 
-Installing this one package transitively provides the full toolchain (`s0ma-lang-dsl` and `s0ma-lang-core[mcp]`). `s0ma-lang-mcp` is **Apache-2.0**, and so are `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](../../docs/reference/packages.md).
+Installing this one package transitively provides the full toolchain (`s0ma-lang-dsl` and `s0ma-lang-core[mcp]`). `s0ma-lang-mcp` is **Apache-2.0**, and so are `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-studi0`. What each distribution contains, and the license each one declares, is in [the distributions s0ma ships](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/packages.md).
 
 ## Install and register
 
-s0ma is not on PyPI yet: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](../../README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own — and [getting started](../../docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+s0ma is not on PyPI yet: all four packages are published there from the first release cut of the public repository, and until that lands the way in is the repository itself. That route is written down once, in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install) — working inside a checkout, or building the wheels and installing them into a project of your own — and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
 
 To register the server with Claude Code — `claude mcp add s0ma -- s0ma-mcp` where the wheel is installed, or `claude mcp add s0ma -- uv run s0ma-mcp` from a checkout of this repository. Any other client takes the same command as JSON:
 
@@ -29,7 +29,7 @@ To register the server with Claude Code — `claude mcp add s0ma -- s0ma-mcp` wh
 }
 ```
 
-The server name is `s0ma-authoring`. [Authoring through the agent's own tool channel](../../docs/guides/mcp-authoring.md) walks the loop an agent then follows, call by call.
+The server name is `s0ma-authoring`. [Authoring through the agent's own tool channel](https://github.com/kn0w-thyself/s0ma/blob/main/docs/guides/mcp-authoring.md) walks the loop an agent then follows, call by call.
 
 ## Served surface
 
@@ -110,7 +110,7 @@ The tables below are generated from the served-surface snapshot. Do not edit the
 | `migrate_project` | `project_root` (required) | Migrate a pre-consolidation project to the current s0ma surface. |
 <!-- END GENERATED MCP SURFACE -->
 
-Implementation note: tools invoke the `s0ma` CLI's own command surface (`s0ma_dsl.cli.main.S0maCLI`) **in-process** with `--format json` — no re-implemented pipeline, diagnostics byte-identical to the CLI's. `run_example` and the explicitly dangerous `verify_host` surface launch their documented isolated subprocesses for project-code execution. The same capabilities with their ids, effects, and approval behaviour — beside the runtime's own separate introspection server — are in [the MCP servers](../../docs/reference/mcp.md).
+Implementation note: tools invoke the `s0ma` CLI's own command surface (`s0ma_dsl.cli.main.S0maCLI`) **in-process** with `--format json` — no re-implemented pipeline, diagnostics byte-identical to the CLI's. `run_example` and the explicitly dangerous `verify_host` surface launch their documented isolated subprocesses for project-code execution. The same capabilities with their ids, effects, and approval behaviour — beside the runtime's own separate introspection server — are in [the MCP servers](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/mcp.md).
 
 ## The surface is derived, not enumerated (FR-MCP-7)
 
@@ -141,7 +141,7 @@ A red `selfhost-build` stage means exactly one of two things, and both are real 
 
 The file-backed document resources — the agent guides, the error catalog, the changelog, and the quick reference in both its forms (the page at `s0ma://guide/quick-reference` and the same facts as data at `s0ma://guide/quick-reference.json`) — are **committed copies** of their in-repo sources, shipped as package data in `s0ma_mcp/_docs/` and resolved with `importlib.resources`, so they work from an installed wheel and not only from a checkout (PRD FR-MCP-3/FR-MCP-10). `s0ma://meta/version` is the exception: no file — it renders live from `importlib.metadata` at read time.
 
-The copies exist because the `s0ma-lang-dsl` wheel packages only `src/s0ma_dsl` (its `docs/` tree is repo-only, the root `CHANGELOG.md` belongs to no wheel at all, and the quick reference is written by the documentation build under the repository's `docs/`), so cross-package resolution from installed distributions is impossible without changing those packages. They cannot drift silently: `tests/test_resources.py::TestDocDrift` byte-compares every file in `_docs/` against its in-repo source on every CI run, and CI stays red until the copy here is refreshed (`cp` the file and commit). Each copy and its original are listed in [the MCP servers](../../docs/reference/mcp.md). The error catalog's source is itself generated from the DSL's error-code registry: after grammar or diagnostic changes, regenerate it first (`make -C packages/s0ma-dsl docs-derived S0MA="uv run s0ma"`), then refresh the copy here.
+The copies exist because the `s0ma-lang-dsl` wheel packages only `src/s0ma_dsl` (its `docs/` tree is repo-only, the root `CHANGELOG.md` belongs to no wheel at all, and the quick reference is written by the documentation build under the repository's `docs/`), so cross-package resolution from installed distributions is impossible without changing those packages. They cannot drift silently: `tests/test_resources.py::TestDocDrift` byte-compares every file in `_docs/` against its in-repo source on every CI run, and CI stays red until the copy here is refreshed (`cp` the file and commit). Each copy and its original are listed in [the MCP servers](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/mcp.md). The error catalog's source is itself generated from the DSL's error-code registry: after grammar or diagnostic changes, regenerate it first (`make -C packages/s0ma-dsl docs-derived S0MA="uv run s0ma"`), then refresh the copy here.
 
 ## Telemetry (off by default, invisible to agents)
 
@@ -162,15 +162,15 @@ Every record is self-describing. It leads with a `telemetry_schema` tag — `s0m
 
 ## Documentation
 
-[**The map of record**](../../docs/README.md) lists every document this repository keeps, what it is for, and which check keeps it honest. The paths through this server:
+[**The map of record**](https://github.com/kn0w-thyself/s0ma/blob/main/docs/README.md) lists every document this repository keeps, what it is for, and which check keeps it honest. The paths through this server:
 
-- [Authoring through the agent's own tool channel](../../docs/guides/mcp-authoring.md) — the five-call loop an agent walks in a s0ma project.
-- [The MCP servers](../../docs/reference/mcp.md) — the generated reference for both servers and the documents this one ships.
-- [What s0ma can do](../../docs/reference/surfaces-index.md) — every capability s0ma serves, on every channel.
-- [ADR-001](docs/adr/ADR-001-selfhost-layout.md) — why this package is laid out the way it is.
+- [Authoring through the agent's own tool channel](https://github.com/kn0w-thyself/s0ma/blob/main/docs/guides/mcp-authoring.md) — the five-call loop an agent walks in a s0ma project.
+- [The MCP servers](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/mcp.md) — the generated reference for both servers and the documents this one ships.
+- [What s0ma can do](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/surfaces-index.md) — every capability s0ma serves, on every channel.
+- [ADR-001](https://github.com/kn0w-thyself/s0ma/blob/main/packages/s0ma-mcp/docs/adr/ADR-001-selfhost-layout.md) — why this package is laid out the way it is.
 
-In a terminal, `s0ma docs` opens the same map and `s0ma docs show <topic>` answers one question from it. [CONTRIBUTING.md](../../CONTRIBUTING.md) has the workspace setup and the one command that runs the whole gate.
+In a terminal, `s0ma docs` opens the same map and `s0ma docs show <topic>` answers one question from it. [CONTRIBUTING.md](https://github.com/kn0w-thyself/s0ma/blob/main/CONTRIBUTING.md) has the workspace setup and the one command that runs the whole gate.
 
 ## License
 
-Apache License 2.0 — see [`LICENSE`](LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-studi0` are Apache-2.0 too, each with its own `LICENSE`.
+Apache License 2.0 — see [`LICENSE`](https://github.com/kn0w-thyself/s0ma/blob/main/packages/s0ma-mcp/LICENSE) for details. The rest of the toolchain shares it: `s0ma-lang-core`, `s0ma-lang-dsl` and `s0ma-lang-studi0` are Apache-2.0 too, each with its own `LICENSE`.
