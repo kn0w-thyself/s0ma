@@ -11,6 +11,8 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+## [0.22.0] — 2026-11-19
+
 ### Added
 
 - **`s0ma-lang`, one name that installs all of s0ma.** A fifth distribution,

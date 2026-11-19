@@ -78,5 +78,5 @@ ganglion <name> :: <LAYER>
 ## Identity
 
 - Topic id: `concept:ganglion`
-- Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:cfa5678439689711`
+- Release: `0.22.0 (preview)`
+- Documentation snapshot: `sha256:ef1b48710ab0f64c`

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-lang-studi0"
-version = "0.21.1"
+version = "0.22.0"
 description = "s0ma studi0 — the local viewer that renders a s0ma project's canonical component graph from its build artifacts, truthfully and read-only."
 readme = "README.md"
 license = "Apache-2.0"
@@ -48,8 +48,13 @@ dependencies = [
     # as CALLS edges), which only that core's runtime reads and only that
     # dsl's transpiler emits, so an older dsl regenerates different bytes
     # from the same sources.
-    "s0ma-lang-core >= 0.21.1",
-    "s0ma-lang-dsl >= 0.21.1",
+    # Raised to 0.22.0 on the names, not on new code: 0.21.1 and every
+    # earlier release shipped as s0ma-core and s0ma-dsl, so 0.22.0 is the
+    # first release of s0ma-lang-core and s0ma-lang-dsl and the oldest that
+    # reads and emits generation 3. A build labeled 0.21.1 under either name
+    # is an unreleased build of main.
+    "s0ma-lang-core >= 0.22.0",
+    "s0ma-lang-dsl >= 0.22.0",
 ]
 
 [project.urls]

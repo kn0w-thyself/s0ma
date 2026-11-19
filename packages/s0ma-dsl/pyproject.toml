@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-lang-dsl"
-version = "0.21.1"
+version = "0.22.0"
 description = "The s0ma DSL transpiler — compiles .s0ma source files into self-describing Python for software self-knowledge."
 readme = "README.md"
 license = "Apache-2.0"
@@ -38,7 +38,11 @@ dependencies = [
     # writes is generation 3 (a body's calls to its own module's components
     # as CALLS edges, and the enforced layer matrix as layer_rules), and only
     # that core's runtime reads generation 3.
-    "s0ma-lang-core >= 0.21.1",
+    # Raised to 0.22.0 on the name, not on new code: 0.21.1 and every earlier
+    # release shipped as s0ma-core, so 0.22.0 is the first release of
+    # s0ma-lang-core and the oldest one that reads generation 3. A build
+    # labeled s0ma-lang-core 0.21.1 is an unreleased build of main.
+    "s0ma-lang-core >= 0.22.0",
     "lark[interegular] >= 1.1.0",
 ]
 

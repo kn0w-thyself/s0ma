@@ -59,5 +59,5 @@ Do not use self-knowledge where one faculty is meant; the specific words exist a
 ## Identity
 
 - Topic id: `concept:self-knowledge`
-- Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:cfa5678439689711`
+- Release: `0.22.0 (preview)`
+- Documentation snapshot: `sha256:ef1b48710ab0f64c`

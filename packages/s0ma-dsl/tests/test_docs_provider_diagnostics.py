@@ -100,7 +100,7 @@ MODULE = (
     / "providers_diagnostics.py"
 )
 
-RELEASE = "0.21.1"
+RELEASE = "0.22.0"
 
 #: The four modes as the enum spells them, in ladder order. Read from the
 #: live enum rather than written out, for the same reason the provider

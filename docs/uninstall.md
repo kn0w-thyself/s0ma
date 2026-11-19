@@ -197,8 +197,8 @@ rm -rf .venv .wheels
 project's package list; deleting `.venv/` and `.wheels/` reclaims the disk
 space. Your source files, including everything you authored, are untouched.
 
-A copy of s0ma installed from 0.21.1 or earlier carries the four packages
-under their former names. If `uv remove` says a package is not a dependency of
+A copy of s0ma installed before the packages were renamed carries the four
+packages under their former names. If `uv remove` says a package is not a dependency of
 the project, name them as `s0ma-core s0ma-dsl s0ma-mcp s0ma-studi0` instead.
 The same holds for the `pip uninstall` and `uv cache clean` lines below.
 
