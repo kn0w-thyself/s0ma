@@ -27,6 +27,15 @@ What it checks, for every scanned link:
   other URI scheme are never touched: this gate is offline by construction
   (INV: no network in a check stage), and link-rot on somebody else's
   server is not a defect in this tree.
+* **Except a link back into this tree, written in full.** A package README
+  is frozen into its PyPI project page, where a relative link resolves
+  against pypi.org and is dead, so those READMEs spell their links as
+  ``https://github.com/kn0w-thyself/s0ma/blob/main/<path>``. That is still
+  a link into this repository, and it is checked exactly like the relative
+  link it replaced: the path must be tracked, the ``#fragment`` must be a
+  real heading. Nothing is fetched. Any other address on the same host (a
+  tag, a commit, an issue, a release) names something that is not this
+  working tree, and stays external.
 
 What it scans, and what it deliberately does not. The scanned set is the
 prose a reader actually navigates: the three root docs, ``docs/``, and each
@@ -79,7 +88,7 @@ import difflib
 import re
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
 from urllib.parse import unquote
 
@@ -241,6 +250,18 @@ _LINK_RE = re.compile(
 #: URL. Everything matching is external and skipped without inspection.
 _EXTERNAL_RE = re.compile(r"^(?:[A-Za-z][A-Za-z0-9+.-]*:|//)")
 
+#: This repository's own address, as a page outside it has to spell it.
+OWN_REPOSITORY_URL = "https://github.com/kn0w-thyself/s0ma"
+
+#: A file (``blob``) or a directory (``tree``) on the default branch of this
+#: repository, written as an absolute URL. See the module docstring: such a
+#: link is resolved against the tree, not skipped as external.
+_OWN_TREE_RE = re.compile(
+    "^"
+    + re.escape(OWN_REPOSITORY_URL)
+    + r"/(?:blob|tree)/main/(?P<path>[^?#]+)(?P<rest>[?#].*)?$"
+)
+
 #: A markdown link in heading text — only the link TEXT is rendered, so only
 #: the text may reach the slug. (No heading in the tree carries one today;
 #: this keeps a future one from slugging its URL.)
@@ -365,6 +386,19 @@ def document_links(path: str, text: str) -> list[Link]:
 # ---------------------------------------------------------------------------
 # The tracked universe and the scanned set
 # ---------------------------------------------------------------------------
+
+
+def own_tree_target(target: str) -> str | None:
+    """*target* as a repo-root-relative link, when it points into this tree.
+
+    ``https://github.com/kn0w-thyself/s0ma/blob/main/docs/x.md#y`` becomes
+    ``/docs/x.md#y``, which the rest of the checker already reads the way
+    GitHub does. Anything else returns None and is left to the external rule.
+    """
+    match = _OWN_TREE_RE.match(target)
+    if match is None:
+        return None
+    return "/" + match.group("path") + (match.group("rest") or "")
 
 
 def tracked_files(root: Path) -> frozenset[str]:
@@ -563,11 +597,25 @@ def check(root: Path = ROOT, allowlist: tuple[Allowed, ...] = ALLOWLIST) -> int:
         read[rel] = (root / rel).read_text(encoding="utf-8")
         for link in document_links(rel, read[rel]):
             target = link.target.strip()
-            if not target or _EXTERNAL_RE.match(target):
+            own = own_tree_target(target)
+            if own is None and (not target or _EXTERNAL_RE.match(target)):
                 external += 1
                 continue
             checked += 1
-            miss = _link_miss(link, root, tracked, directories, read)
+            if own is None:
+                miss = _link_miss(link, root, tracked, directories, read)
+            else:
+                # Resolved as the root-relative link it stands for, and
+                # reported as the URL the document actually carries.
+                miss = _link_miss(
+                    Link(link.path, link.lineno, link.text, own),
+                    root,
+                    tracked,
+                    directories,
+                    read,
+                )
+                if miss is not None:
+                    miss = replace(miss, target=link.target)
             if miss is None:
                 continue
             covered = False
