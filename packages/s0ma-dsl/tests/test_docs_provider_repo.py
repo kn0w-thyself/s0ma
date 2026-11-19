@@ -106,11 +106,17 @@ ADR_FLOOR = {"repo": 5, "s0ma-dsl": 10, "s0ma-mcp": 1}
 #: The four distributions, and nothing pretends there could be fewer.
 PACKAGES = ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
 
+#: The umbrella: no code, and a requirement on each of the four above. It is a
+#: distribution like them, so it is recorded like them.
+UMBRELLA = "s0ma-lang"
+DISTRIBUTIONS = (*PACKAGES, UMBRELLA)
+
 
 def _folder(distribution: str) -> str:
     """The folder under ``packages/`` a distribution is built from.
 
-    The folders keep the short names; the distributions carry ``lang``.
+    The folders keep the short names; the distributions carry ``lang``. The
+    umbrella's folder is named for the distribution and passes through.
     """
     return distribution.replace("s0ma-lang-", "s0ma-", 1)
 
@@ -600,7 +606,7 @@ class TestDistributions:
     against, so they belong in the graph even in a stopgap shape.
     """
 
-    def test_all_four_distributions_are_recorded(
+    def test_every_distribution_is_recorded(
         self, index: dict[str, AuthorityRef]
     ) -> None:
         recorded = {
@@ -608,13 +614,13 @@ class TestDistributions:
             for key in index
             if key.startswith("authority:declared/package.")
         }
-        assert recorded == set(PACKAGES)
+        assert recorded == set(DISTRIBUTIONS)
 
     def test_the_versions_are_in_lockstep(self, index: dict[str, AuthorityRef]) -> None:
         """INV-4, checkable because the records carry the versions."""
         versions = {
             facts_of(index[f"authority:declared/package.{name}"].status)["version"]
-            for name in PACKAGES
+            for name in DISTRIBUTIONS
         }
         assert len(versions) == 1
 
@@ -637,11 +643,14 @@ class TestDistributions:
         assert depends("s0ma-lang-mcp") == {"s0ma-lang-core", "s0ma-lang-dsl"}
         assert depends("s0ma-lang-studi0") == {"s0ma-lang-core", "s0ma-lang-dsl"}
         assert "s0ma-lang-studi0" not in set().union(*(depends(name) for name in PACKAGES))
+        # The umbrella sits above all four and under nothing.
+        assert depends(UMBRELLA) == set(PACKAGES)
+        assert UMBRELLA not in set().union(*(depends(name) for name in DISTRIBUTIONS))
 
     def test_a_package_record_points_at_its_own_pyproject(
         self, index: dict[str, AuthorityRef]
     ) -> None:
-        for name in PACKAGES:
+        for name in DISTRIBUTIONS:
             record = index[f"authority:declared/package.{name}"]
             assert record.source == f"packages/{_folder(name)}/pyproject.toml"
             assert record.section == "[project]"
@@ -745,7 +754,7 @@ def _copy_sources(destination: Path) -> Path:
         shutil.copy2(REPO_ROOT / relative, target)
     for tree in ("docs/adr", CONTRACTS_DIR):
         shutil.copytree(REPO_ROOT / tree, root / tree)
-    for name in PACKAGES:
+    for name in DISTRIBUTIONS:
         folder = _folder(name)
         (root / "packages" / folder).mkdir(parents=True, exist_ok=True)
         shutil.copy2(

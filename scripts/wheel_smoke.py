@@ -49,6 +49,8 @@ class PackageLicense:
         """The folder under ``packages/`` this distribution is built from.
 
         The folders keep the short names; the distributions carry ``lang``.
+        The umbrella is the exception that needs no rule: its folder is
+        named for the distribution, so the replacement leaves it alone.
         """
         return self.distribution.replace("s0ma-lang-", "s0ma-", 1)
 
@@ -74,6 +76,15 @@ EXPECTED = (
     ),
     PackageLicense(
         "s0ma-lang-studi0",
+        "Apache-2.0",
+        "License :: OSI Approved :: Apache Software License",
+        "Apache License",
+    ),
+    # The umbrella: no code, four exact pins. It is built, inspected and
+    # installed here beside the four it requires, last, so the cold install
+    # proves its pins resolve to the wheels this commit builds.
+    PackageLicense(
+        "s0ma-lang",
         "Apache-2.0",
         "License :: OSI Approved :: Apache Software License",
         "Apache License",
@@ -131,6 +142,19 @@ for module in (s0ma, s0ma_dsl, s0ma_mcp):
 versions = {name: metadata.version(name) for name in ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp")}
 assert len(set(versions.values())) == 1, versions
 print("cold: versions/imports", versions)
+
+# The umbrella is installed beside them and is nothing but four exact pins on
+# its own version: what `pip install s0ma-lang==X` promises is that the parts
+# it brings are the ones released as X, and a floor here would not promise it.
+umbrella_version = metadata.version("s0ma-lang")
+assert {umbrella_version} == set(versions.values()), (umbrella_version, versions)
+umbrella_requires = sorted(re.sub(r"\s+", "", item) for item in metadata.requires("s0ma-lang") or [])
+assert umbrella_requires == [
+    f"{name}=={umbrella_version}"
+    for name in ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
+], umbrella_requires
+assert metadata.version("s0ma-lang-studi0") == umbrella_version
+print("cold: umbrella", umbrella_version, umbrella_requires)
 
 BIN = Path(sys.executable).absolute().parent
 EXE = ".exe" if sys.platform == "win32" else ""
@@ -408,6 +432,7 @@ def _assert_source_posture() -> None:
     assert "s0ma-lang-dsl: Apache-2.0" in root_readme
     assert "s0ma-lang-mcp: Apache-2.0" in root_readme
     assert "s0ma-lang-studi0: Apache-2.0" in root_readme
+    assert "s0ma-lang: Apache-2.0" in root_readme
     assert "`s0ma-lang-core`: Apache-2.0, in perpetuity" in prd
     assert "`s0ma-lang-dsl`: Apache-2.0 (relicensed from the commercial license" in prd
     assert (

@@ -11,6 +11,28 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Added
+
+- **`s0ma-lang`, one name that installs all of s0ma.** A fifth distribution,
+  built from `packages/s0ma-lang`, carries no code and requires
+  `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`,
+  each at exactly its own version. It is released in lockstep with them, so
+  installing one version of `s0ma-lang` installs the four as they were
+  released together and cannot resolve to a mixed set. Each of the four still
+  installs on its own, and an application that only runs s0ma components
+  still needs `s0ma-lang-core` alone. s0ma is still not on the package index:
+  this adds the distribution that will hold the name there. The keyed
+  installer does not serve it, because it puts the four in place by file.
+  PRD v1.18 records where the umbrella lives and how it is versioned.
+- **The gate holds the umbrella to the release.** `docs-version-currency`
+  fails when one of the umbrella's requirements is anything but an exact pin
+  at the lockstep version, or when a distribution under `packages/` is
+  missing from them. `scripts/release_cut.sh` moves the four pins with the
+  five version lines and refuses a tree where a pin is already out of step.
+  The cold install in `selfhost-build` installs the umbrella wheel beside the
+  four it requires. A package map now has to name a distribution whole: a
+  longer name that merely begins with it no longer counts.
+
 ### Changed
 
 - **s0ma is on PyPI.** `pip install s0ma-lang-core` installs the runtime, and

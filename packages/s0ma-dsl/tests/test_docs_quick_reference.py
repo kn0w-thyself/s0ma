@@ -1123,7 +1123,12 @@ class TestOneValueTwoRenderings:
 
     def test_packages_out_of_step_are_named_with_their_versions(self, document, words):
         uneven = copy.deepcopy(document)
-        uneven["identity"]["packages"][0]["version"] = "9.9.9"
+        core = next(
+            item
+            for item in uneven["identity"]["packages"]
+            if item["distribution"] == "s0ma-lang-core"
+        )
+        core["version"] = "9.9.9"
         page = render_readable(uneven, words)
         assert "`s0ma-lang-core` 9.9.9" in page
         assert words["identity"]["packages_note"] not in page

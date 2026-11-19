@@ -525,6 +525,10 @@
     "machine": "docs/_generated/quick-reference-machine.json",
     "packages": [
       {
+        "distribution": "s0ma-lang",
+        "version": "0.21.1"
+      },
+      {
         "distribution": "s0ma-lang-core",
         "version": "0.21.1"
       },
@@ -551,7 +555,7 @@
     "release": "0.21.1 (preview)",
     "release_version": "0.21.1",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:5b13d0bbddd07c3d",
+    "snapshot_hash": "sha256:0d644bcf4920841a",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",

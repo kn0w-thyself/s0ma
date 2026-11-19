@@ -752,6 +752,26 @@ class TestThePackagesPage:
         for name, count in tally.items():
             assert f"It registers {count} components" in page, name
 
+    def test_a_distribution_that_registers_nothing_says_so(
+        self, pages: dict[str, str], facts: tuple[Any, ...]
+    ) -> None:
+        """The umbrella is a manifest and no code. Its section says it
+        registers nothing, and does not send a reader to an index that has
+        no entry for it."""
+        page = pages[PACKAGES_OUTPUT]
+        registering = {item.distribution for item in facts}
+        empty = [
+            item.distribution
+            for item in distribution_facts(REPO_ROOT)
+            if item.distribution not in registering
+        ]
+        assert empty == ["s0ma-lang"]
+        for name in empty:
+            section = page.split(f"\n## {name}\n", 1)[1].split("\n## ", 1)[0]
+            assert "It registers no components." in section, name
+            assert "component index" not in section, name
+        assert "It registers 0 components" not in page
+
     def test_a_distribution_with_no_license_is_refused(self, tmp_path: Path) -> None:
         """An empty license cell is the one blank this page may not have."""
         package = tmp_path / "packages" / "thing"

@@ -51,7 +51,8 @@ invariants — see [`references/s0ma-prd.md`](references/s0ma-prd.md)
 ## Workspace layout
 
 This is a single uv workspace (one lockfile, one virtualenv) containing
-four independently installable packages:
+four independently installable packages, and an umbrella distribution that
+installs all four:
 
 ```
 s0ma-new/
@@ -59,8 +60,10 @@ s0ma-new/
 │   ├── s0ma-core/    # s0ma-lang-core: the self-knowledge framework (module: s0ma)
 │   ├── s0ma-dsl/     # s0ma-lang-dsl: the .s0ma transpiler + s0ma CLI (module: s0ma_dsl)
 │   ├── s0ma-mcp/     # s0ma-lang-mcp: the authoring MCP server (module: s0ma_mcp)
-│   └── s0ma-studi0/  # s0ma-lang-studi0: the local visual environment `s0ma studi0`,
-│                     # hosting the sh0w graph renderer (module: s0ma_studi0)
+│   ├── s0ma-studi0/  # s0ma-lang-studi0: the local visual environment `s0ma studi0`,
+│   │                 # hosting the sh0w graph renderer (module: s0ma_studi0)
+│   └── s0ma-lang/    # s0ma-lang: the umbrella. No module: a manifest that requires
+│                     # each of the four above at exactly its own version
 ├── scripts/check.py  # the unified quality gate (what CI runs)
 ├── docs/             # repo-level docs (e.g. RELEASING.md)
 ├── references/       # the product PRD
@@ -75,15 +78,16 @@ Dependency direction is one-way: `s0ma-lang-mcp` / `s0ma-lang-studi0` → `s0ma-
 The whole workspace is under one license, and a contribution inherits it:
 
 - **All four packages are Apache-2.0** — the runtime foundation, the language,
-  compiler and `s0ma` CLI, the authoring server, and the viewer.
+  compiler and `s0ma` CLI, the authoring server, and the viewer. So is the
+  umbrella distribution that installs them.
 - The repository root carries the same `LICENSE`, and a `NOTICE` beside it.
   Under Apache-2.0 section 5, a contribution you submit is offered under that
   same license unless you say otherwise in writing, so no separate agreement
   is needed.
 
 Wheel metadata, classifiers, bundled `LICENSE` files, the PRD, and the
-package docs must all agree; the `selfhost-build` stage checks all four
-wheels' license metadata as part of the gate.
+package docs must all agree; the `selfhost-build` stage checks every
+wheel's license metadata as part of the gate.
 
 ## Getting set up
 

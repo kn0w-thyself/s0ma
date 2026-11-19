@@ -10,8 +10,10 @@
 #      version strictly greater than the current lockstep version; the root
 #      `## [Unreleased]` section non-empty; the served changelog mirror in
 #      sync; `git` and `uv` on PATH.
-#   2. Bumps `version = "..."` in all four packages/*/pyproject.toml, in
-#      lockstep (PRD INV-4: one version, one tag, one changelog).
+#   2. Bumps `version = "..."` in all five packages/*/pyproject.toml, in
+#      lockstep (PRD INV-4: one version, one tag, one changelog), and with
+#      it the four exact pins the umbrella manifest
+#      packages/s0ma-lang/pyproject.toml carries on the other four.
 #   3. Carves the root CHANGELOG.md: `## [Unreleased]` becomes
 #      `## [X.Y.Z] — <date>` and a fresh, empty `## [Unreleased]` heading is
 #      opened above it. Nothing else in the file moves.
@@ -29,7 +31,8 @@
 #     act — it fires .github/workflows/release.yml (build, GitHub Release,
 #     R2 mirror, PyPI). Only the owner performs it, deliberately.
 #   * It makes no network calls at all.
-#   * It bumps ONLY the four pyproject version lines. The other version
+#   * It bumps ONLY the five pyproject version lines and the umbrella's
+#     four pins. The other version
 #     sites in docs/RELEASING.md step 2 — the four `__version__` strings,
 #     the s0ma-lang-studi0 `.s0ma` module headers, the s0ma-lang-core capstone
 #     assertion, the core specification cut at the new version, the
@@ -70,8 +73,12 @@ ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 # ---------------------------------------------------------------------------
 # Constants — the files this script owns.
 # ---------------------------------------------------------------------------
-# The four lockstep distributions (digit-zero s0ma — INV-1).
-PACKAGES="s0ma-core s0ma-dsl s0ma-mcp s0ma-studi0"
+# The lockstep distributions, by folder (digit-zero s0ma — INV-1): the four
+# that carry code, then the umbrella that requires them.
+PACKAGES="s0ma-core s0ma-dsl s0ma-mcp s0ma-studi0 s0ma-lang"
+# The umbrella's manifest also carries one exact pin (`<name> == X.Y.Z`) on
+# each of the other four, and a cut moves those with its version line.
+UMBRELLA="s0ma-lang"
 CHANGELOG_REL="CHANGELOG.md"
 CHANGELOG_MIRROR_REL="packages/s0ma-mcp/src/s0ma_mcp/_docs/CHANGELOG.md"
 # The em dash used by every existing heading (`## [0.17.0] — 2026-08-17`).
@@ -200,8 +207,35 @@ done <<EOF
 $PYPROJECTS
 EOF
 
-[ -z "$LOCKSTEP_MISMATCH" ] || die "the four packages are NOT on one lockstep version (PRD INV-4):
+[ -z "$LOCKSTEP_MISMATCH" ] || die "the packages are NOT on one lockstep version (PRD INV-4):
 ${LOCKSTEP_MISMATCH}Reconcile them by hand before cutting a release."
+
+# The umbrella's pins are lockstep sites too. Print every `<name> == X`
+# requirement in its manifest whose X is not the current version, and refuse
+# a manifest that carries no exact pin at all: it would be bumped to a
+# version whose parts it no longer names.
+UMBRELLA_PYPROJECT="$ROOT/packages/$UMBRELLA/pyproject.toml"
+umbrella_pin_drift() {
+    python3 - "$1" "$2" <<'PY'
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+current = sys.argv[2]
+text = path.read_bytes().decode("utf-8")
+pins = re.findall(r'(?m)^\s*"([A-Za-z0-9._-]+) == ([^"\s]+)",?$', text)
+if not pins:
+    sys.exit(f'{path}: expected the exact pins of the umbrella (`"<name> == X.Y.Z"`), found none')
+for name, version in pins:
+    if version != current:
+        print(f"{path}: {name} == {version} (expected {current})")
+PY
+}
+UMBRELLA_DRIFT="$(umbrella_pin_drift "$UMBRELLA_PYPROJECT" "$CURRENT")" || exit 1
+[ -z "$UMBRELLA_DRIFT" ] || die "the umbrella's pins are NOT on the lockstep version (PRD INV-4):
+${UMBRELLA_DRIFT}
+Reconcile them by hand before cutting a release."
 
 # ---------------------------------------------------------------------------
 # Changelog helpers.
@@ -305,6 +339,27 @@ if len(re.findall(pattern, text)) != 1:
     sys.exit(f'{path}: expected exactly one `version = "{current}"` line')
 text = re.sub(pattern, f'version = "{new}"', text, count=1)
 path.write_bytes(text.encode("utf-8"))
+PY
+}
+
+# Move every exact pin in the umbrella manifest from one version to the next,
+# and print how many moved. The structural check above already proved each
+# pin is at the current version, so that count is every pin the manifest has.
+bump_umbrella_pins() {
+    python3 - "$1" "$2" "$3" <<'PY'
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+current, new = sys.argv[2], sys.argv[3]
+text = path.read_bytes().decode("utf-8")
+pattern = rf'(?m)^(\s*"[A-Za-z0-9._-]+ == ){re.escape(current)}(",?)$'
+text, moved = re.subn(pattern, rf"\g<1>{new}\g<2>", text)
+if moved == 0:
+    sys.exit(f'{path}: expected at least one `"<name> == {current}"` pin')
+path.write_bytes(text.encode("utf-8"))
+print(moved)
 PY
 }
 
@@ -441,10 +496,13 @@ fi
 # The edit plan (shared by dry run and --write).
 # ---------------------------------------------------------------------------
 print_edit_plan() {
-    printf '# files this cut edits (4 manifests + 2 changelogs):\n'
+    printf '# files this cut edits (5 manifests + 2 changelogs):\n'
     for _pkg in $PACKAGES; do
         printf '#   packages/%s/pyproject.toml\n' "$_pkg"
         printf '#       version = "%s"  ->  version = "%s"\n' "$CURRENT" "$VERSION"
+        if [ "$_pkg" = "$UMBRELLA" ]; then
+            printf '#       each pin "<name> == %s"  ->  "<name> == %s"\n' "$CURRENT" "$VERSION"
+        fi
     done
     printf '#   %s\n' "$CHANGELOG_REL"
     printf '#       "## [Unreleased]"  ->  fresh empty "## [Unreleased]" + "%s"\n' "$HEADING"
@@ -576,6 +634,13 @@ for _pkg in $PACKAGES; do
     _path="$ROOT/packages/$_pkg/pyproject.toml"
     bump_pyproject "$_path" "$CURRENT" "$VERSION"
     printf '+   packages/%s/pyproject.toml -> version = "%s"\n' "$_pkg" "$VERSION"
+    if [ "$_pkg" = "$UMBRELLA" ]; then
+        _moved="$(bump_umbrella_pins "$_path" "$CURRENT" "$VERSION")" || \
+            die "could not move the umbrella's pins in $_path.
+The version lines ARE already bumped on disk. Fix the manifest and re-run, or
+'git checkout -- .' to abandon this cut."
+        printf '+   packages/%s/pyproject.toml -> %s pin(s) == %s\n' "$_pkg" "$_moved" "$VERSION"
+    fi
 done
 
 carve_changelog "$CHANGELOG" "$VERSION" "$DATE"

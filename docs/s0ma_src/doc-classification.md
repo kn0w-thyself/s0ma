@@ -45,14 +45,14 @@ migration map; the catalog is what the build reads.
 | Disposition | Meaning | Count |
 |---|---|---|
 | `normative-current` | Binding today. The PRD, the current DSL spec, the current core spec, accepted ADRs, frozen contracts, and the repo agent contract. | 25 |
-| `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 50 |
+| `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 51 |
 | `generated` | A rendered output of a generator or the s0ma build. Never hand-edited. | 60 |
 | `mirror` | A byte-for-byte copy of another file in this repo, kept honest by a gate. | 9 |
 | `historical` | A record of the past. Kept for provenance; must not be read as current guidance. | 17 |
 | `superseded-pointer` | A short stub whose only content is "this moved — go here". | 11 |
 | `working-plan` | Plans, notes, and review records: those under `plans/`, this summary beside the ledger it explains, and the result records of the B-phase spikes under `scripts/spikes/`. | 1 |
 | `non-documentation` | A `.md` file that is test data or test scaffolding, not part of the documentation corpus. | 4 |
-| **Total** | | **177** |
+| **Total** | | **178** |
 
 158 files were tracked at Phase A finalization (the walkthrough pointer stub added at the A5-findings pass is the 156th, and A7's two tester documents — `docs/troubleshooting.md` and `docs/uninstall.md` — are the 157th and 158th); the 159th row was this summary, which the ledger
 classifies in advance of its own commit.
@@ -332,6 +332,12 @@ generation 3. The new `packages/s0ma-core/docs/s0ma-core-spec-v0.21.1.md` is
 `normative-current`; the 0.21.0 cut becomes `historical` under its existing
 name. Net: historical 16 to 17, normative-current remains 25, total 176 to 177.
 
+The umbrella distribution `s0ma-lang` (2026-11-18) adds one row, its front door
+`packages/s0ma-lang/README.md`, `living-authored`. It is the fifth package
+README and the only one written with absolute links, because it is also the
+page the package index shows for that distribution. Net: living-authored 50 to
+51, total 177 to 178.
+
 The plan for authored lines that stand on their own
 (`plans/s0ma-durable-authored-lines-1.md`, commissioned by the owner
 2026-10-05 as a required to-do, to run after `forbids-field-1` ships) adds
@@ -428,6 +434,7 @@ and the audit's table does not name them as a location at all:
 |---|---|
 | `packages/s0ma-core/README.md` | `living-authored` |
 | `packages/s0ma-dsl/README.md` | `living-authored` |
+| `packages/s0ma-lang/README.md` | `living-authored` |
 | `packages/s0ma-mcp/README.md` | `living-authored` |
 | `packages/s0ma-studi0/README.md` | `living-authored` |
 | `packages/s0ma-mcp/docs/adr/ADR-001-selfhost-layout.md` | `normative-current` |

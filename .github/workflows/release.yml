@@ -192,7 +192,7 @@ jobs:
           tag = sys.argv[1]
           version = tag.removeprefix("v")
           mismatches = []
-          for pkg in ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0"):
+          for pkg in ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0", "s0ma-lang"):
               pyproject = pathlib.Path("packages", pkg, "pyproject.toml")
               with pyproject.open("rb") as fh:
                   found = tomllib.load(fh)["project"]["version"]
@@ -200,16 +200,16 @@ jobs:
                   mismatches.append(f"{pyproject}: {found} != {version}")
           if mismatches:
               sys.exit("tag/version mismatch (INV-4):\n  " + "\n  ".join(mismatches))
-          print(f"tag {tag} matches lockstep version {version} in all four packages")
+          print(f"tag {tag} matches lockstep version {version} in all five packages")
           EOF
 
       - name: Build every workspace package (wheel + sdist into dist/)
         run: uv build --all-packages
 
-      - name: Assert all four packages built at the tag version
+      - name: Assert all five packages built at the tag version
         run: |
           version="${GITHUB_REF_NAME#v}"
-          for pkg in s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0; do
+          for pkg in s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0 s0ma_lang; do
             ls "dist/${pkg}-${version}-py3-none-any.whl" "dist/${pkg}-${version}.tar.gz"
           done
 
@@ -300,6 +300,11 @@ jobs:
       - name: Build every workspace package (wheel + sdist into dist/)
         run: uv build --all-packages
 
+      # Four, not five: the build above also writes the umbrella wheel
+      # (s0ma_lang-<version>), and the keyed channel does not serve it. The
+      # installer puts the four in place by file, which is what the umbrella
+      # would otherwise be for. scripts/mirror_to_r2.sh picks its wheels by
+      # name, so the fifth file in dist/ is left where it is.
       - name: Assert all four wheels built at the tag version
         run: |
           version="${GITHUB_REF_NAME#v}"
@@ -451,11 +456,13 @@ jobs:
     env:
       # The distributions this job publishes, by wheel stem, in upload
       # order: a dependency before its dependents, so whatever is on PyPI
-      # part-way through can be installed. Adding a distribution is this
-      # line and nothing else in the job;
+      # part-way through can be installed. The umbrella, `s0ma_lang`, is
+      # last because it requires the other four at exactly this version: it
+      # is not installable until all of them are up. Adding a distribution
+      # is this line and nothing else in the job;
       # packages/s0ma-dsl/tests/test_release_publish_job.py fails until
       # the line names every package the workspace builds.
-      DISTRIBUTIONS: s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0
+      DISTRIBUTIONS: s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0 s0ma_lang
     steps:
       # No checkout and no build. The only files this job can publish are
       # the ones the `release` job built from the tagged commit.

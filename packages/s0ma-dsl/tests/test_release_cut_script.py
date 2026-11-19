@@ -1,12 +1,13 @@
 """Tests for the release-cut helper ``scripts/release_cut.sh`` (plan RP-M1).
 
 The script performs the mechanical half of ``docs/RELEASING.md``: bump the
-four lockstep ``pyproject.toml`` versions, carve ``## [Unreleased]`` into a
+five lockstep ``pyproject.toml`` versions and the umbrella's four pins, carve
+``## [Unreleased]`` into a
 dated release heading (in the root changelog AND its served mirror), refresh
 the lockfile, and **print** the commit/tag/push commands it must never run.
 
 Everything here runs against a **temp fixture repo** — a minimal copy of the
-monorepo's shape (four manifests, a changelog, its ``_docs`` mirror, a git
+monorepo's shape (five manifests, a changelog, its ``_docs`` mirror, a git
 repo, and the script itself) — so ``--write`` can be exercised for real
 without touching the working tree. Three properties make that safe and
 deterministic:
@@ -36,10 +37,15 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[3]
 RELEASE_CUT_SH = REPO_ROOT / "scripts" / "release_cut.sh"
 
-#: The four lockstep distributions (PRD INV-4). This tuple PINS the set the
-#: cut must bump: a package added to (or dropped from) the script without a
-#: matching change here fails the fixture tests below.
-PACKAGES = ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0")
+#: The lockstep distributions, by folder (PRD INV-4). This tuple PINS the set
+#: the cut must bump: a package added to (or dropped from) the script without
+#: a matching change here fails the fixture tests below.
+PACKAGES = ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0", "s0ma-lang")
+
+#: The umbrella: no code, one exact pin on each of the other four. Its pins
+#: are version sites the cut moves with its version line.
+UMBRELLA = "s0ma-lang"
+PINNED = ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
 
 #: Where the served changelog mirror lives, relative to the repo root.
 MIRROR_REL = "packages/s0ma-mcp/src/s0ma_mcp/_docs/CHANGELOG.md"
@@ -83,8 +89,14 @@ def _pyproject(name: str, version: str) -> str:
     """A minimal manifest with the same shape as the real ones.
 
     The trailing ``target-version`` line is the decoy that matters: the
-    script must bump the ``version = "..."`` line and nothing else.
+    script must bump the ``version = "..."`` line and nothing else. The
+    umbrella's manifest additionally carries its pins, in the real one's
+    shape, with a floor on something else as the decoy among them.
     """
+    dependencies = ""
+    if name == UMBRELLA:
+        pins = "".join(f'    "{part} == {version}",\n' for part in PINNED)
+        dependencies = f'dependencies = [\n{pins}    "decoy >= {version}",\n]\n'
     return f"""[build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -94,7 +106,7 @@ name = "{name}"
 version = "{version}"
 description = "fixture package {name}"
 requires-python = ">=3.11"
-
+{dependencies}
 [tool.ruff]
 target-version = "py311"
 """
@@ -465,7 +477,7 @@ def test_dry_run_on_a_clean_tree_reports_all_preflights_ok(
 # ---------------------------------------------------------------------------
 
 
-def test_write_bumps_all_four_pyprojects(cut_repo: CutRepo) -> None:
+def test_write_bumps_every_pyproject(cut_repo: CutRepo) -> None:
     result = cut_repo.cut("--write")
     assert result.returncode == 0, result.stderr
     for package in PACKAGES:
@@ -474,6 +486,75 @@ def test_write_bumps_all_four_pyprojects(cut_repo: CutRepo) -> None:
         assert f'version = "{FIXTURE_VERSION}"' not in text
         # The decoy line is untouched: only the release version moved.
         assert 'target-version = "py311"' in text
+
+
+def test_write_moves_the_umbrella_pins_with_its_version(cut_repo: CutRepo) -> None:
+    """The umbrella at X requires each part at exactly X. A cut that moved
+    the version line and left a pin behind would publish an umbrella no
+    installer can resolve."""
+    result = cut_repo.cut("--write")
+    assert result.returncode == 0, result.stderr
+    text = cut_repo.pyproject(UMBRELLA).read_text(encoding="utf-8")
+    for part in PINNED:
+        assert f'"{part} == {NEXT_VERSION}",' in text
+    assert f"== {FIXTURE_VERSION}" not in text
+    # A requirement that is not an exact pin is not the cut's to move.
+    assert f'"decoy >= {FIXTURE_VERSION}",' in text
+    assert f"{len(PINNED)} pin(s) == {NEXT_VERSION}" in result.stdout
+    # And only the umbrella carries pins: no other manifest gained any.
+    for package in PACKAGES:
+        if package != UMBRELLA:
+            assert " == " not in cut_repo.pyproject(package).read_text(encoding="utf-8")
+
+
+def test_dry_run_names_the_umbrella_pins_it_would_move(cut_repo: CutRepo) -> None:
+    result = cut_repo.cut()
+    assert result.returncode == 0, result.stderr
+    assert "5 manifests + 2 changelogs" in result.stdout
+    assert (
+        f'each pin "<name> == {FIXTURE_VERSION}"  ->  "<name> == {NEXT_VERSION}"'
+        in result.stdout
+    )
+
+
+def test_an_umbrella_pin_off_the_lockstep_version_is_a_hard_error_in_both_modes(
+    cut_repo: CutRepo,
+) -> None:
+    """A pin is a lockstep site. One left at an older version is refused
+    before any plan is printed, the way a skewed manifest is."""
+    path = cut_repo.pyproject(UMBRELLA)
+    path.write_text(
+        path.read_text(encoding="utf-8").replace(
+            f'"s0ma-lang-mcp == {FIXTURE_VERSION}"', '"s0ma-lang-mcp == 0.16.1"'
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    cut_repo.git("add", "-A")
+    cut_repo.git("commit", "-q", "-m", "stale pin")
+    before = cut_repo.snapshot()
+
+    for args in ((), ("--write",)):
+        result = cut_repo.cut(*args)
+        assert result.returncode == 1
+        assert "pins are NOT on the lockstep version" in result.stderr
+        assert f"s0ma-lang-mcp == 0.16.1 (expected {FIXTURE_VERSION})" in result.stderr
+        assert cut_repo.snapshot() == before
+
+
+def test_an_umbrella_with_no_pins_is_refused(cut_repo: CutRepo) -> None:
+    """An umbrella that names no part is not one a cut can stamp a version on."""
+    cut_repo.pyproject(UMBRELLA).write_text(
+        _pyproject("not-the-umbrella", FIXTURE_VERSION), encoding="utf-8", newline="\n"
+    )
+    cut_repo.git("add", "-A")
+    cut_repo.git("commit", "-q", "-m", "no pins")
+    before = cut_repo.snapshot()
+
+    result = cut_repo.cut("--write")
+    assert result.returncode == 1
+    assert "found none" in result.stderr
+    assert cut_repo.snapshot() == before
 
 
 def test_write_carves_the_changelog_byte_exactly(cut_repo: CutRepo) -> None:
@@ -666,7 +747,7 @@ def test_write_refuses_a_version_already_in_the_changelog(
 def test_lockstep_mismatch_is_a_hard_error_in_both_modes(
     cut_repo: CutRepo,
 ) -> None:
-    """Four packages, one version (INV-4). A skewed manifest is refused
+    """Every package, one version (INV-4). A skewed manifest is refused
     before any plan is printed — a half-bumped tree is not cuttable."""
     cut_repo.pyproject("s0ma-mcp").write_text(
         _pyproject("s0ma-mcp", "0.16.1"), encoding="utf-8", newline="\n"

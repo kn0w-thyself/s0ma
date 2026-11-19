@@ -590,7 +590,7 @@ class TestTheRegisteredSources:
             else:
                 assert row["options"] is None
 
-    def test_package_inventory_renders_the_four_distributions(self) -> None:
+    def test_package_inventory_renders_the_five_distributions(self) -> None:
         rendered = records_for(
             "package_inventory",
             doc_format="markdown",
@@ -600,6 +600,7 @@ class TestTheRegisteredSources:
         rows = rendered.as_mappings()
         assert rendered.field_names() == ("distribution", "version", "depends_on")
         assert [row["distribution"] for row in rows] == [
+            "s0ma-lang",
             "s0ma-lang-core",
             "s0ma-lang-dsl",
             "s0ma-lang-mcp",
@@ -611,6 +612,10 @@ class TestTheRegisteredSources:
         assert direction["s0ma-lang-core"] is None
         assert direction["s0ma-lang-dsl"] == "s0ma-lang-core"
         assert direction["s0ma-lang-mcp"] == "s0ma-lang-core, s0ma-lang-dsl"
+        # The umbrella is the four and nothing of its own.
+        assert direction["s0ma-lang"] == (
+            "s0ma-lang-core, s0ma-lang-dsl, s0ma-lang-mcp, s0ma-lang-studi0"
+        )
 
     def test_the_inventory_and_the_authority_records_are_one_reading(
         self, composed: Build

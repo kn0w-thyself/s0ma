@@ -476,6 +476,10 @@ Dependencies point one way: `s0ma-lang-mcp` and `s0ma-lang-studi0` depend on `s0
 which depends on `s0ma-lang-core`. `s0ma-lang-core` stands alone with zero hard runtime
 dependencies, so an application can take the runtime and nothing else.
 
+A fifth distribution, [`s0ma-lang`](packages/s0ma-lang), is the umbrella. It
+carries no code: it requires each of the four at exactly its own version, so
+that one name installs the whole toolchain as it was released together.
+
 **The spelling.** It is `s0ma` with a digit **zero**, everywhere, and
 `studi0`, `sh0w` and `kn0wthyself` likewise. The letter-o spelling is a build
 failure rather than a preference ([PRD](references/s0ma-prd.md) INV-1).
@@ -562,3 +566,4 @@ s0ma-lang-core: Apache-2.0
 s0ma-lang-dsl: Apache-2.0
 s0ma-lang-mcp: Apache-2.0
 s0ma-lang-studi0: Apache-2.0
+s0ma-lang: Apache-2.0

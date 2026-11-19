@@ -414,6 +414,7 @@ VERSION_CHECKED: frozenset[str] = frozenset(
         "integrations/claude/plugin/skills/update/SKILL.md",
         "packages/s0ma-core/README.md",
         "packages/s0ma-dsl/README.md",
+        "packages/s0ma-lang/README.md",
         "packages/s0ma-mcp/README.md",
         "packages/s0ma-studi0/README.md",
     }

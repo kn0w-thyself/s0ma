@@ -2,13 +2,14 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-s0ma is 4 installable distributions rather than one, so you take the parts you need: the runtime alone if you are shipping an application, the whole toolchain if you are writing s0ma. All 4 are released together at version `0.21.1`, which is what lets one of them declare a floor on another and mean it.
+s0ma is 5 installable distributions rather than one, so you take the parts you need: the runtime alone if you are shipping an application, the whole toolchain if you are writing s0ma. All 5 are released together at version `0.21.1`, which is what lets one of them declare a floor on another and mean it.
 
 They are all under the same license, `Apache-2.0`. Each row below names the license exactly as the distribution declares it, and the license file that ships beside it is the authority on what the identifier means.
 
 ## Contents
 
 - [What ships, and on what terms](#what-ships-and-on-what-terms)
+- [s0ma-lang](#s0ma-lang)
 - [s0ma-lang-core](#s0ma-lang-core)
 - [s0ma-lang-dsl](#s0ma-lang-dsl)
 - [s0ma-lang-mcp](#s0ma-lang-mcp)
@@ -22,10 +23,21 @@ The sentence quoted under each name below is the distribution's own, taken from 
 
 | Distribution | Version | License | Depends on | Components |
 | --- | --- | --- | --- | --- |
+| `s0ma-lang` | `0.21.1` | `Apache-2.0` | `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0` | 0 |
 | `s0ma-lang-core` | `0.21.1` | `Apache-2.0` | nothing | 63 |
 | `s0ma-lang-dsl` | `0.21.1` | `Apache-2.0` | `s0ma-lang-core` | 10 |
 | `s0ma-lang-mcp` | `0.21.1` | `Apache-2.0` | `s0ma-lang-core`, `s0ma-lang-dsl` | 40 |
 | `s0ma-lang-studi0` | `0.21.1` | `Apache-2.0` | `s0ma-lang-core`, `s0ma-lang-dsl` | 48 |
+
+## s0ma-lang
+
+> All of s0ma, the software self-knowledge platform, as one install: the runtime, the .s0ma language and its command line, the authoring server and the studi0 viewer, at one version.
+
+Version `0.21.1`, licensed `Apache-2.0` — an open license: you may use, change and redistribute it, including commercially, on the terms in the license file. The license text ships as `LICENSE` inside the wheel.
+
+It depends on `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0`, and on nothing else in this workspace. It registers no components.
+
+Declared in [`packages/s0ma-lang/pyproject.toml`](../../packages/s0ma-lang/pyproject.toml); its front door is [`packages/s0ma-lang/README.md`](../../packages/s0ma-lang/README.md).
 
 ## s0ma-lang-core
 
