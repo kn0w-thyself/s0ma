@@ -355,6 +355,53 @@ def test_a_manifest_that_is_missing_a_package_stops_with_a_plain_sentence(
     assert "could not use" in err
 
 
+def _wheel(launcher: ModuleType, stem: str) -> Any:
+    name = f"{stem}-0.18.0-py3-none-any.whl"
+    return launcher.Wheel(name=name, path=f"dist/0.18.0/{name}", sha256="a" * 64, size=10)
+
+
+def test_a_manifest_in_the_former_names_is_still_read(launcher: ModuleType) -> None:
+    """Versions up to 0.21.1 list their wheels without `lang` in the name.
+
+    A project can be pinned to one of them, so the launcher has to go on
+    understanding what their manifests say.
+    """
+    manifest = launcher.Manifest(
+        version="0.18.0",
+        wheels=tuple(_wheel(launcher, stem) for stem in launcher.FORMER_WHEEL_STEMS),
+    )
+
+    chosen = launcher.wheels_to_install(manifest)
+
+    assert [wheel.name.split("-")[0] for wheel in chosen] == list(launcher.FORMER_WHEEL_STEMS)
+
+
+def test_a_manifest_in_the_current_names_is_read_in_those(launcher: ModuleType) -> None:
+    manifest = launcher.Manifest(
+        version="0.18.0",
+        wheels=tuple(_wheel(launcher, stem) for stem in launcher.WHEEL_STEMS),
+    )
+
+    chosen = launcher.wheels_to_install(manifest)
+
+    assert [wheel.name.split("-")[0] for wheel in chosen] == list(launcher.WHEEL_STEMS)
+
+
+def test_a_former_manifest_missing_a_package_is_reported_in_its_own_names(
+    launcher: ModuleType,
+) -> None:
+    manifest = launcher.Manifest(
+        version="0.18.0",
+        wheels=tuple(_wheel(launcher, stem) for stem in launcher.FORMER_WHEEL_STEMS[:3]),
+    )
+
+    with pytest.raises(launcher.ControlPlaneError) as caught:
+        launcher.wheels_to_install(manifest)
+
+    assert "s0ma_studi0" in str(caught.value)
+    assert "s0ma_lang" not in str(caught.value)
+
+
 # ---------------------------------------------------------------------------
 # Where the key does, and does not, go.
 # ---------------------------------------------------------------------------

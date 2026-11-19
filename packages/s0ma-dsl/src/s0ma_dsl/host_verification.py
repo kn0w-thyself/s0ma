@@ -38,6 +38,19 @@ _IMPORT_TO_DIST = {
     "s0ma_mcp": "s0ma-lang-mcp",
 }
 
+#: What the four distributions were called up to and including 0.21.1, and
+#: what each is called now. The import packages did not change, so a project
+#: that still declares a former name asks for a package no later release is
+#: published under, and an environment that still holds one has two
+#: distributions writing the same files. Both are said in so many words where
+#: they are found, here and in ``s0ma doctor``.
+FORMER_DISTRIBUTION_NAMES: dict[str, str] = {
+    "s0ma-core": "s0ma-lang-core",
+    "s0ma-dsl": "s0ma-lang-dsl",
+    "s0ma-mcp": "s0ma-lang-mcp",
+    "s0ma-studi0": "s0ma-lang-studi0",
+}
+
 
 class HostVerificationUsageError(ValueError):
     """The host probe cannot begin safely with the supplied configuration."""
@@ -572,6 +585,24 @@ def static_runtime_dependency_warning(project: S0maProject) -> S0maError | None:
     missing = sorted(required - declared)
     if not missing:
         return None
+    former = sorted(
+        name
+        for name, current in FORMER_DISTRIBUTION_NAMES.items()
+        if name in declared and current in missing
+    )
+    renaming = ""
+    if former:
+        swaps = " and ".join(
+            f"{name} with {FORMER_DISTRIBUTION_NAMES[name]}" for name in former
+        )
+        renaming = (
+            f"[project].dependencies names {' and '.join(former)}, which is "
+            "what the runtime packages were called up to 0.21.1: replace "
+            f"{swaps}. "
+        )
+    context: dict[str, Any] = {"missing_dependencies": missing}
+    if former:
+        context["former_names_declared"] = former
     return S0maError(
         code="HOST_RUNTIME_UNDECLARED",
         message=(
@@ -589,18 +620,20 @@ def static_runtime_dependency_warning(project: S0maProject) -> S0maError | None:
             # know besides is a fact about somewhere else: the
             # environment that runs the application needs both installed,
             # or it will not import.
+            f"{renaming}"
             "Name s0ma-lang-core and s0ma-lang-dsl in [project].dependencies — that "
             "alone clears this warning. Separately, the environment that runs "
             "the application has to have both installed; `s0ma verify-host` "
             "is how you prove it does."
         ),
-        context={"missing_dependencies": missing},
+        context=context,
     )
 
 
 __all__ = [
     "DEFAULT_MODULE_TIMEOUT_SECONDS",
     "DEFAULT_RUN_TIMEOUT_SECONDS",
+    "FORMER_DISTRIBUTION_NAMES",
     "HOST_VERIFICATION_SCHEMA",
     "HostVerificationUsageError",
     "resolve_host_interpreter",

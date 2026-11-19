@@ -161,6 +161,27 @@ def _versions_section(
                 f"graph, then run `{STUDI0_HINT}`.",
             )
         )
+    # A distribution left behind under the name it carried before the rename
+    # writes the same import package as its successor, so removing either one
+    # later takes files out from under the other. It is worth saying before
+    # that happens rather than after.
+    from s0ma_dsl.host_verification import FORMER_DISTRIBUTION_NAMES
+
+    for former, current in FORMER_DISTRIBUTION_NAMES.items():
+        former_version = _dist_version(former)
+        if former_version is None:
+            continue
+        findings.append(
+            _finding(
+                "warning",
+                "versions",
+                f"{former} {former_version} is still installed under the name "
+                f"this package carried up to 0.21.1. It is {current} now, and "
+                "the two install the same files",
+                f"Uninstall {former}, then reinstall {current} so that its "
+                "files are whole again.",
+            )
+        )
     return versions, broken
 
 

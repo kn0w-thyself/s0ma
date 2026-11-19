@@ -60,4 +60,4 @@ Do not use self-knowledge where one faculty is meant; the specific words exist a
 
 - Topic id: `concept:self-knowledge`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:44869a9495538c55`
+- Documentation snapshot: `sha256:cbe70ae943739d77`

@@ -167,6 +167,50 @@ class TestOptionalDistributions:
 # ---------------------------------------------------------------------------
 
 
+class TestFormerDistributionNames:
+    """A package left installed under its pre-rename name is said, not hidden.
+
+    `s0ma-core` and `s0ma-lang-core` install the same import package, so an
+    environment holding both has two owners for one set of files.
+    """
+
+    def test_a_leftover_former_name_is_a_warning_that_names_its_successor(
+        self,
+        cli: S0maCLI,
+        capsys: pytest.CaptureFixture[str],
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        from s0ma_dsl.cli import doctor
+
+        installed = doctor._dist_version
+        monkeypatch.setattr(
+            doctor,
+            "_dist_version",
+            lambda name: "0.21.1" if name == "s0ma-core" else installed(name),
+        )
+
+        rc, report = _doctor_json(cli, capsys, tmp_path)
+
+        assert rc == EXIT_SUCCESS
+        leftover = [
+            f
+            for f in report["findings"]
+            if f["section"] == "versions" and f["message"].startswith("s0ma-core 0.21.1")
+        ]
+        assert len(leftover) == 1, report["findings"]
+        assert leftover[0]["severity"] == "warning"
+        assert "s0ma-lang-core" in leftover[0]["message"]
+        assert "Uninstall s0ma-core" in leftover[0]["remediation"]
+
+    def test_a_clean_environment_carries_no_such_finding(
+        self, cli: S0maCLI, capsys: pytest.CaptureFixture[str], tmp_path: Path
+    ) -> None:
+        _, report = _doctor_json(cli, capsys, tmp_path)
+
+        assert not [f for f in report["findings"] if "carried up to 0.21.1" in f["message"]]
+
+
 class TestDoctorOnATempProject:
     def test_fresh_project(
         self,

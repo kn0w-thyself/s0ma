@@ -62,4 +62,4 @@ Do not use interoception for structural facts, which hold whether or not anythin
 
 - Topic id: `concept:interoception`
 - Release: `0.21.1 (preview)`
-- Documentation snapshot: `sha256:44869a9495538c55`
+- Documentation snapshot: `sha256:cbe70ae943739d77`

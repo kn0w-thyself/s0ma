@@ -115,6 +115,11 @@ CLI_PROGRAM = "s0ma"
 #: the one that provides the MCP server.
 VERSION_DISTRIBUTION = "s0ma_lang_mcp"
 
+#: The name that distribution carried up to and including 0.21.1. A toolchain
+#: installed from one of those versions is still on disk under it, so it is
+#: read as well.
+FORMER_VERSION_DISTRIBUTION = "s0ma_mcp"
+
 #: Owner-only permissions, applied on POSIX and a documented no-op elsewhere
 #: (Windows ACLs are not expressible as a POSIX mode).
 DIR_MODE = 0o700
@@ -133,6 +138,11 @@ DEFAULT_CP_HOST = "account.kn0wthyself.ai"
 #: (``scripts/install.sh``); the manifest may carry more, and anything else in
 #: it is left alone.
 WHEEL_STEMS = ("s0ma_lang_core", "s0ma_lang_dsl", "s0ma_lang_mcp", "s0ma_lang_studi0")
+
+#: The stems the same four wheels carried up to and including 0.21.1. The
+#: manifest for one of those versions lists them this way, and a project may
+#: be pinned to one, so a manifest written in either set is understood.
+FORMER_WHEEL_STEMS = ("s0ma_core", "s0ma_dsl", "s0ma_mcp", "s0ma_studi0")
 
 #: How long one request may take before the launcher gives up and says so.
 #: Read through :func:`_timeout` so a test can shorten them.
@@ -699,26 +709,35 @@ def site_packages_dirs(root: Path) -> list[Path]:
     return found
 
 
-def installed_version_of(root: Path, distribution: str = VERSION_DISTRIBUTION) -> str | None:
+def installed_version_of(root: Path, distribution: str | None = None) -> str | None:
     """Return the version installed in the environment at *root*, if it is cheap.
 
     The answer comes from the name of the ``*.dist-info`` directory that pip and
     uv both leave behind - no program is executed and nothing is imported. When
     there is no such directory the answer is ``None``, and the caller says
     something honest instead of guessing.
+
+    With no *distribution* named, the toolchain's own is looked for under its
+    current name and then under the one it carried up to 0.21.1, so an
+    environment installed from either is read.
     """
-    prefix = distribution.replace("-", "_") + "-"
-    for site_packages in site_packages_dirs(root):
-        try:
-            entries = sorted(site_packages.glob(prefix + "*.dist-info"))
-        except OSError:
-            continue
-        for entry in entries:
-            if not entry.is_dir():
+    if distribution is None:
+        candidates: tuple[str, ...] = (VERSION_DISTRIBUTION, FORMER_VERSION_DISTRIBUTION)
+    else:
+        candidates = (distribution,)
+    for candidate in candidates:
+        prefix = candidate.replace("-", "_") + "-"
+        for site_packages in site_packages_dirs(root):
+            try:
+                entries = sorted(site_packages.glob(prefix + "*.dist-info"))
+            except OSError:
                 continue
-            version = entry.name.removeprefix(prefix).removesuffix(".dist-info")
-            if version:
-                return version
+            for entry in entries:
+                if not entry.is_dir():
+                    continue
+                version = entry.name.removeprefix(prefix).removesuffix(".dist-info")
+                if version:
+                    return version
     return None
 
 
@@ -2253,9 +2272,17 @@ def _safe_relative_path(path: str) -> bool:
 
 
 def wheels_to_install(manifest: Manifest) -> list[Wheel]:
-    """The four wheels a copy of s0ma is made of, in a fixed order."""
+    """The four wheels a copy of s0ma is made of, in a fixed order.
+
+    A manifest is read in the current names unless it plainly uses the former
+    ones, so what a broken manifest is reported as missing is always a name
+    from the set it was written in.
+    """
+    stems = WHEEL_STEMS
+    if manifest.named(WHEEL_STEMS[0]) is None and manifest.named(FORMER_WHEEL_STEMS[0]) is not None:
+        stems = FORMER_WHEEL_STEMS
     chosen: list[Wheel] = []
-    for stem in WHEEL_STEMS:
+    for stem in stems:
         wheel = manifest.named(stem)
         if wheel is None:
             raise _manifest_problem(f"it does not include {stem}")
