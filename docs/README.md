@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 178 documents. 139 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 179 documents. 140 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -78,6 +78,7 @@ What s0ma is, the words it uses, and how its four packages fit together. Start h
 | [s0ma](../README.md) | `README.md` | users | maintained | links checked, version checked |
 | [s0ma — Product Requirements Document](../references/s0ma-prd.md) | `references/s0ma-prd.md` | owner | binding | listed only |
 | [s0ma, explained](learn/s0ma.md) | `docs/learn/s0ma.md` | agents, users | generated | rebuilt and compared, links checked |
+| [s0ma-lang](../packages/s0ma-lang/README.md) | `packages/s0ma-lang/README.md` | users | maintained | links checked, version checked |
 | [s0ma-lang-core](../packages/s0ma-core/README.md) | `packages/s0ma-core/README.md` | users | maintained | links checked, version checked |
 | [s0ma-lang-dsl](../packages/s0ma-dsl/README.md) | `packages/s0ma-dsl/README.md` | users | maintained | links checked, version checked |
 | [s0ma-lang-mcp](../packages/s0ma-mcp/README.md) | `packages/s0ma-mcp/README.md` | users | maintained | links checked, version checked |

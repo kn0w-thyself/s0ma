@@ -86,7 +86,9 @@ PACKAGES_DIR = REPO_ROOT / "packages"
 SURFACE_SNAPSHOT = REPO_ROOT / "packages" / "s0ma-mcp" / "tests" / "snapshots" / "mcp_surface.json"
 
 #: The four distributions a copy of s0ma is made of. The build asks for each by
-#: name, so a fifth package would have to be named here on purpose.
+#: name, so a fifth package would have to be named here on purpose. The
+#: umbrella distribution is deliberately not one of them: the keyed channel
+#: installs the four by file, and an umbrella wheel would add nothing to that.
 DISTRIBUTIONS = ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
 
 #: The eight places the version is written (``scripts/check_version_refs.py``
@@ -229,6 +231,12 @@ def copy_buildable_tree(into: Path) -> Path:
     skip = shutil.ignore_patterns("__pycache__", "*.pyc", ".s0ma.cache")
     for package in sorted(PACKAGES_DIR.iterdir()):
         if not (package / "pyproject.toml").is_file():
+            continue
+        if not (package / "src").is_dir():
+            # The umbrella distribution: a manifest and no code. The keyed
+            # channel serves the four wheels it requires and not the umbrella
+            # itself, so a copy made to build those four leaves it out, and
+            # the eight version sites below stay the eight this copy has.
             continue
         destination = into / "packages" / package.name
         destination.mkdir(parents=True, exist_ok=True)

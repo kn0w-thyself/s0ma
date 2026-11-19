@@ -957,6 +957,12 @@
     {
       "audience": "user",
       "disposition": "living-authored",
+      "note": "Front door of the umbrella distribution, which carries no code. It is also that distribution's page on the package index, so its links are absolute.",
+      "path": "packages/s0ma-lang/README.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
       "note": "Richest of the four package READMEs; documents the served surface and the self-hosted layout.",
       "path": "packages/s0ma-mcp/README.md"
     },

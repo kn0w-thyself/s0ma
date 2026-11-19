@@ -158,7 +158,11 @@ set -euo pipefail
 BUCKET_DEFAULT="s0ma-dist"
 DIST_PREFIX="dist"
 MANIFEST_KEY="dist/manifest.json"
-# The four wheels, by distribution stem (digit-zero s0ma — INV-1).
+# The four wheels, by distribution stem (digit-zero s0ma — INV-1). The
+# umbrella wheel (s0ma_lang-<version>) that `uv build --all-packages` writes
+# into the same directory is deliberately not one of them: the keyed
+# installer puts the four in place by file, so this channel has no use for a
+# fifth that only names them.
 WHEEL_STEMS="s0ma_lang_core s0ma_lang_dsl s0ma_lang_mcp s0ma_lang_studi0"
 
 PROG="$(basename "$0")"

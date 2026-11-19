@@ -1845,6 +1845,20 @@
         "user"
       ],
       "authority": "",
+      "canonical_source": "packages/s0ma-lang/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/s0ma-lang-readme",
+      "kind": "guide",
+      "prose_locator": "packages/s0ma-lang/README.md",
+      "status": "living",
+      "title": "s0ma-lang"
+    },
+    {
+      "audiences": [
+        "user"
+      ],
+      "authority": "",
       "canonical_source": "packages/s0ma-mcp/README.md",
       "covers": [],
       "governed_by": [],

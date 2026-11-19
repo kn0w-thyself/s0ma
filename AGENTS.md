@@ -22,6 +22,7 @@ implementation fix. Escalate a real conflict to the owner.
 The distributions version in lockstep, but remain independently installable:
 
 ```text
+s0ma-lang (umbrella: no code, requires each of the four below at exactly its own version)
 s0ma-lang-mcp (agent authoring server)
 s0ma-lang-studi0 (local visual environment: studi0 and its sh0w graph renderer)
     -> s0ma-lang-dsl (language, compiler, CLI)
@@ -30,7 +31,8 @@ s0ma-lang-studi0 (local visual environment: studi0 and its sh0w graph renderer)
 
 Dependencies never point upward. In particular, `s0ma-lang-core` stays fully useful
 with zero hard dependency on the DSL, MCP, or studi0 packages. Optional API/MCP
-extras in core remain optional.
+extras in core remain optional. The umbrella lives in `packages/s0ma-lang`, the
+one folder whose name is its distribution's name, and nothing depends on it.
 
 ## Authored and generated paths
 
@@ -120,10 +122,11 @@ Before editing:
   them; the documentation application is the one that is easy to miss. Add
   `--no-cache` to those rebuilds: the build cache is keyed on the s0ma-lang-dsl
   version, which does not move between unreleased commits.
-- A version is released in lockstep across all four packages. Follow
+- A version is released in lockstep across all four packages and the umbrella,
+  whose four pins move with its version (`scripts/release_cut.sh` moves both). Follow
   `docs/RELEASING.md`; update the root `CHANGELOG.md`, keep package changelogs as
   historical pre-monorepo records, and never leave an empty release heading.
-- All four packages are Apache-2.0, and the repository root carries the same
+- All four packages and the umbrella are Apache-2.0, and the repository root carries the same
   `LICENSE` plus a `NOTICE`. Wheel metadata, classifiers, bundled LICENSE
   files, PRD, and current package docs must agree.
 - Never push a `v*` tag merely to test a release: the release workflow fires on

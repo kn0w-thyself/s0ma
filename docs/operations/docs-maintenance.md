@@ -272,7 +272,7 @@ most often:
 |---|---|
 | `docs-application` | The committed artifacts are not what the sources compose. Almost always compose step 1, not run. |
 | `docs-links` | A relative link naming an untracked path, or an anchor naming no heading. It prints the nearest real headings for a miss. |
-| `docs-version-currency` | A stale version in a page that describes the current release, or the four distributions out of step with each other. |
+| `docs-version-currency` | A stale version in a page that describes the current release, or the distributions out of step with each other, including a requirement of the umbrella `s0ma-lang` that is not an exact pin at the release version. |
 | `authored-lines` | An `intent`, `guarantees`, `invariants`, `schema` or `forbids` line in a `.s0ma` source, fixture or spike fixture, or in a registration written in Python (`@component`, `ComponentSpec` or `Contract` under `packages/*/src`), that names a milestone, a run, a plan, a date or a ruling, or that cites a requirement, an invariant, an ADR, a revision or a section that does not resolve. It prints the line and the three answers. |
 | `spelling` | The letter-o spelling of the product name, anywhere in the tree. |
 | `selfhost-build` | The packaged copies inside the wheels are not the artifacts they mirror — or a cold install cannot answer `s0ma docs`. Usually mirror step 3, skipped. |
