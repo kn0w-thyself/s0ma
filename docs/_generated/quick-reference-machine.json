@@ -555,7 +555,7 @@
     "release": "0.22.0 (preview)",
     "release_version": "0.22.0",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:ef1b48710ab0f64c",
+    "snapshot_hash": "sha256:5dec7f075cd83ba7",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",

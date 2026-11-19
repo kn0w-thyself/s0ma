@@ -11,6 +11,22 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The package READMEs count the umbrella.** The READMEs of `s0ma-lang-core`,
+  `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, which are their
+  pages on PyPI, said four distributions ship together at one version. Five
+  do: those four and the umbrella `s0ma-lang`, which carries no code and
+  requires each of them at exactly its own version. The stability guide said
+  four in three places and now says five as well.
+- **The publish hint quotes what PyPI says.** When `publish-pypi` stops at a
+  project that has no pending publisher, its hint described the refusal as a
+  403. PyPI answered each of the four refusals of the first publication with
+  `400 Bad Request` and "Non-user identities cannot create new projects". The
+  hint and the first-publication steps in `docs/RELEASING.md` now lead with
+  that message and name the status only as what was observed, since the
+  status is PyPI's to change.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
