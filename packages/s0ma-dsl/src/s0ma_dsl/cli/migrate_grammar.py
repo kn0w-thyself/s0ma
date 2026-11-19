@@ -3,6 +3,11 @@
 ``s0ma migrate grammar`` is dry-run by default.  It parses every authored
 source before planning a write, emits a deterministic manifest, and applies
 the complete plan with per-file atomic replacement plus whole-plan rollback.
+
+When the target is the root of the project the command resolved, only that
+project's source and test roots are read; any other target is read whole.
+Whatever git ignores is left out, and a directory that cannot be read is
+skipped with a warning on stderr.
 """
 
 from __future__ import annotations
@@ -10,6 +15,10 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
+import stat
+import subprocess
+import sys
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,6 +30,7 @@ from s0ma_dsl.semantic_state import semantic_fields, semantic_source_field
 
 if TYPE_CHECKING:
     import argparse
+    from collections.abc import Sequence
 
 EXIT_SUCCESS = 0
 EXIT_VALIDATION_ERROR = 1
@@ -66,6 +76,8 @@ class GrammarMigrationPlan:
 
     root: Path
     changes: tuple[GrammarMigrationChange, ...]
+    warnings: tuple[str, ...] = ()
+    """One line per directory the walk skipped; never part of the manifest."""
 
     def manifest(self, *, applied: bool) -> dict[str, Any]:
         return {
@@ -85,21 +97,183 @@ class GrammarMigrationError(ValueError):
         self.code = code
 
 
-def _discover_sources(root: Path) -> list[Path]:
+_WARNING_PREFIX = "warning: s0ma migrate grammar:"
+
+
+def _relative_label(path: Path, root: Path) -> str:
+    """POSIX path of *path* relative to *root*, ``.`` for *root* itself."""
+
+    return path.relative_to(root).as_posix() or "."
+
+
+def _run_git(root: Path, *arguments: str) -> subprocess.CompletedProcess[str] | None:
+    """Run one fixed git command in *root*; ``None`` when it cannot run at all.
+
+    Output is always captured, so nothing git prints reaches the terminal.
+    """
+
+    try:
+        return subprocess.run(  # noqa: S603 - fixed argv, no shell, repo-local
+            ["git", "-C", str(root), *arguments],  # noqa: S607
+            capture_output=True,
+            stdin=subprocess.DEVNULL,
+            text=True,
+            encoding="utf-8",
+            errors="surrogateescape",
+            check=False,
+        )
+    except (OSError, ValueError):
+        return None
+
+
+def _git_ignored(root: Path) -> tuple[frozenset[str], frozenset[str]]:
+    """Return the (directories, files) under *root* that git ignores.
+
+    Both sets hold POSIX paths relative to *root*. They are empty, which
+    means nothing is filtered, when git is not on PATH, *root* is not in a
+    work tree, an enclosing repository ignores *root* itself, or any git
+    command fails.
+    """
+
+    nothing: tuple[frozenset[str], frozenset[str]] = (frozenset(), frozenset())
+    if shutil.which("git") is None:
+        return nothing
+    inside = _run_git(root, "rev-parse", "--is-inside-work-tree")
+    if inside is None or inside.returncode != 0 or inside.stdout.strip() != "true":
+        return nothing
+    # Exit 0 means an enclosing repository ignores the root itself; 1 means
+    # it does not; anything else is a failure. Only 1 lets filtering proceed.
+    root_ignored = _run_git(root, "check-ignore", "-q", ".")
+    if root_ignored is None or root_ignored.returncode != 1:
+        return nothing
+    listed = _run_git(
+        root, "ls-files", "--others", "--ignored", "--exclude-standard",
+        "--directory", "-z",
+    )
+    if listed is None or listed.returncode != 0:
+        return nothing
+    directories: set[str] = set()
+    files: set[str] = set()
+    for item in listed.stdout.split("\0"):
+        if not item:
+            continue
+        if item.endswith("/"):
+            directories.add(item.rstrip("/"))
+        else:
+            files.add(item)
+    return frozenset(directories), frozenset(files)
+
+
+def _discover_sources(
+    root: Path,
+    *,
+    start_directories: Sequence[Path] | None = None,
+) -> tuple[list[Path], list[str]]:
+    """Return the ``.s0ma`` files to plan under *root* and one warning per skip.
+
+    *start_directories* are walked in order, each directory once; ``None``
+    walks *root* itself. Every start directory must lie inside *root*. A
+    directory whose listing, or the classification of whose entries, raises
+    ``OSError`` is skipped whole and named in one warning. Directories and
+    files git ignores are left out without being read.
+    """
+
+    ignored_directories, ignored_files = _git_ignored(root)
     sources: list[Path] = []
+    warnings: list[str] = []
+    visited: set[Path] = set()
+
+    def ignored_directory(relative: str) -> bool:
+        if relative == ".":
+            return False
+        parts = relative.split("/")
+        return any(
+            "/".join(parts[:end]) in ignored_directories
+            for end in range(1, len(parts) + 1)
+        )
 
     def walk(directory: Path) -> None:
-        for entry in sorted(directory.iterdir(), key=lambda item: item.name):
-            if entry.is_symlink():
-                continue
-            if entry.is_dir():
-                if entry.name not in _PRUNE:
+        visited.add(directory)
+        # Classify every entry before acting on any, so an unreadable
+        # directory contributes nothing rather than a partial listing.
+        # ``lstat`` raises on every supported Python, whereas the pathlib
+        # query methods may answer ``False`` and hide the error.
+        classified: list[tuple[Path, bool]] = []
+        try:
+            for entry in sorted(directory.iterdir(), key=lambda item: item.name):
+                try:
+                    mode = entry.lstat().st_mode
+                except FileNotFoundError:
+                    continue
+                if not stat.S_ISLNK(mode):
+                    classified.append((entry, stat.S_ISDIR(mode)))
+        except OSError as exc:
+            warnings.append(
+                f"{_WARNING_PREFIX} cannot read directory "
+                f"{_relative_label(directory, root)} "
+                f"({exc.strerror or exc}); it was skipped, so no .s0ma file "
+                "under it is in this plan."
+            )
+            return
+        for entry, is_directory in classified:
+            relative = entry.relative_to(root).as_posix()
+            if is_directory:
+                if (
+                    entry.name not in _PRUNE
+                    and relative not in ignored_directories
+                    and entry not in visited
+                ):
                     walk(entry)
-            elif entry.name.endswith(".s0ma"):
+            elif entry.name.endswith(".s0ma") and relative not in ignored_files:
                 sources.append(entry)
 
-    walk(root)
-    return sources
+    for start in start_directories if start_directories is not None else (root,):
+        if start in visited:
+            continue
+        if ignored_directory(_relative_label(start, root)):
+            continue
+        walk(start)
+    return sources, warnings
+
+
+def _start_directories(
+    root: Path, configured_roots: Sequence[Path],
+) -> tuple[list[Path] | None, list[str]]:
+    """Pick the configured roots to walk; ``None`` means walk all of *root*.
+
+    Keeps declared order and drops duplicates. A root outside *root* is not
+    walked and gets one warning. When no configured root is a directory on
+    disk the whole of *root* is walked instead.
+    """
+
+    starts: list[Path] = []
+    warnings: list[str] = []
+    any_directory = False
+    for configured in configured_roots:
+        candidate = configured.resolve()
+        # ``stat`` rather than ``is_dir`` so a root that exists but cannot be
+        # inspected is told apart from one that is missing.
+        try:
+            is_directory = stat.S_ISDIR(candidate.stat().st_mode)
+        except (FileNotFoundError, NotADirectoryError):
+            is_directory = False
+        except OSError:
+            # Present but not inspectable: walking it records the warning.
+            is_directory = True
+        if not is_directory:
+            continue
+        any_directory = True
+        if not candidate.is_relative_to(root):
+            warnings.append(
+                f"{_WARNING_PREFIX} configured root {candidate.as_posix()} "
+                f"is outside {root.as_posix()}; it was not walked."
+            )
+            continue
+        if candidate not in starts:
+            starts.append(candidate)
+    if not any_directory:
+        return None, warnings
+    return starts, warnings
 
 
 def _missing_explicit_fields(raw: _RawDeclaration) -> tuple[str, ...]:
@@ -172,14 +346,30 @@ def current_grammar_source(source: str, filename: str = "<generated>") -> str:
     return rewritten
 
 
-def plan_grammar_migration(root: Path) -> GrammarMigrationPlan:
-    """Parse the whole project, then return a deterministic immutable plan."""
+def plan_grammar_migration(
+    root: Path,
+    *,
+    configured_roots: Sequence[Path] | None = None,
+) -> GrammarMigrationPlan:
+    """Parse the whole project, then return a deterministic immutable plan.
+
+    With *configured_roots* (a project's source roots, then its test roots)
+    only those that are directories inside *root* are walked; when none is
+    a directory on disk, or without them, all of *root* is walked. Paths in
+    the plan stay relative to *root* either way.
+    """
 
     resolved = root.resolve()
     if not resolved.is_dir():
         raise NotADirectoryError(resolved)
+    starts: list[Path] | None = None
+    warnings: list[str] = []
+    if configured_roots is not None:
+        starts, warnings = _start_directories(resolved, configured_roots)
+    sources, walk_warnings = _discover_sources(resolved, start_directories=starts)
+    warnings.extend(walk_warnings)
     changes: list[GrammarMigrationChange] = []
-    for path in _discover_sources(resolved):
+    for path in sources:
         relative = path.relative_to(resolved).as_posix()
         try:
             before = path.read_bytes()
@@ -217,7 +407,9 @@ def plan_grammar_migration(root: Path) -> GrammarMigrationPlan:
             before=before,
             after=after,
         ))
-    return GrammarMigrationPlan(root=resolved, changes=tuple(changes))
+    return GrammarMigrationPlan(
+        root=resolved, changes=tuple(changes), warnings=tuple(warnings),
+    )
 
 
 def _stage_bytes(path: Path, data: bytes) -> Path:
@@ -303,8 +495,17 @@ def run_migrate_grammar(args: argparse.Namespace) -> int:
         else Path(project.root) if project is not None and not project.synthetic
         else Path.cwd()
     )
+    configured_roots: tuple[Path, ...] | None = None
+    if (
+        project is not None
+        and not project.synthetic
+        and Path(project.root).resolve() == root.resolve()
+    ):
+        configured_roots = (*project.source_roots, *project.test_roots)
     try:
-        plan = plan_grammar_migration(root)
+        plan = plan_grammar_migration(root, configured_roots=configured_roots)
+        for warning in plan.warnings:
+            print(warning, file=sys.stderr)
         applied = bool(getattr(args, "apply", False))
         if applied:
             apply_grammar_migration(plan)
