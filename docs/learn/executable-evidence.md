@@ -58,5 +58,5 @@ The standard does not reach writing that names no part of the system. Conceptual
 ## Identity
 
 - Topic id: `concept:executable-evidence`
-- Release: `0.22.0`
+- Release: `0.22.0 (preview)`
 - Documentation snapshot: `sha256:ef1b48710ab0f64c`
