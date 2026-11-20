@@ -4121,6 +4121,12 @@ class S0maCLI:
                 "Discover the project, build source + tests, run pytest "
                 "(args after `--` pass through to pytest)"
             ),
+            description=(
+                "Discover the project, build its source and test roots, "
+                "then run pytest on the build. Everything after `--` goes "
+                "to pytest unchanged, so `s0ma test -q -- -k <name>` runs "
+                "only the tests or test modules whose names match <name>."
+            ),
         )
         test_p.add_argument(
             "test_dir",

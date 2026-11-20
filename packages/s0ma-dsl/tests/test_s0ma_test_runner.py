@@ -351,3 +351,15 @@ def test_s0ma_test_prints_pytest_summary_last_in_a_pipe(
     lines = [line for line in result.stdout.splitlines() if line.strip()]
     assert any(line.startswith("Running: ") for line in lines), result.stdout
     assert re.fullmatch(r"=+ 4 passed\b.* in [0-9.]+s =+", lines[-1]), result.stdout
+
+
+def test_s0ma_test_help_names_the_pytest_passthrough(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """``s0ma test --help`` says that what follows ``--`` goes to pytest."""
+    with pytest.raises(SystemExit) as exited:
+        S0maCLI().run(["test", "--help"])
+    assert exited.value.code == 0
+    out = " ".join(capsys.readouterr().out.split())
+    assert "after `--` goes to pytest" in out
+    assert "s0ma test -q -- -k <name>" in out
