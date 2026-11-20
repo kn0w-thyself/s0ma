@@ -176,6 +176,24 @@ Historical entries describe artifacts as they were named at the time.
   before, and a check given paths still compares against
   `.s0ma/check-baseline.json` without writing it.
 
+- **`s0ma test` ends with pytest's summary in a pipe.** When its output went
+  to a pipe or a file, `s0ma test` printed its own build lines and the
+  `Running: ...` line after pytest's summary, because Python held them in a
+  buffer while pytest wrote to the same output as a child process. It now
+  flushes stdout and stderr before pytest starts, so the summary is the last
+  thing printed in a terminal, a pipe, or a file. The text and the exit code
+  are unchanged.
+- **`s0ma test --help` names the pytest passthrough.** The help for
+  `s0ma test` listed its options but never said that everything after `--`
+  goes to pytest unchanged. It now says so, with the example
+  `s0ma test -q -- -k <name>`. The quick reference says it too: arguments
+  after `--` go to pytest, `s0ma test -q -- -k <name>` runs one test or one
+  module, and `-q` quiets the build lines. The documentation build used to
+  refuse that line, since it checks every option a command line names and
+  `--` is not an option. A command now declares where its passthrough goes,
+  and the check accepts a bare `--` for a command that declares one and
+  still refuses it, and any unknown option, for every other command.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
