@@ -16,11 +16,20 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 from s0ma_dsl.cli import migrate_grammar
-from s0ma_dsl.cli.main import EXIT_SUCCESS, EXIT_VALIDATION_ERROR, S0maCLI
+from s0ma_dsl.cli.main import (
+    EXIT_SUCCESS,
+    EXIT_USAGE_ERROR,
+    EXIT_VALIDATION_ERROR,
+    S0maCLI,
+)
 from s0ma_dsl.cli.migrate_grammar import (
     GrammarMigrationError,
     apply_grammar_migration,
     plan_grammar_migration,
+)
+from s0ma_dsl.config import (
+    ERROR_CODE_DESCRIPTIONS,
+    OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE,
 )
 from s0ma_dsl.errors import S0maParseError
 from s0ma_dsl.parser import parse_s0ma
@@ -533,6 +542,41 @@ def test_a_target_that_is_not_the_project_root_is_walked_whole(
     ]
 
 
+def _project_with_a_file_outside_its_roots(root: Path) -> None:
+    _project_with_both_roots(root)
+    outside = root / "scratch" / "outside.s0ma"
+    outside.parent.mkdir()
+    outside.write_text(_legacy("outside"), encoding="utf-8")
+
+
+@pytest.mark.parametrize("working_directory", ["plain", "other-project"])
+@pytest.mark.parametrize("absolute", [False, True], ids=["relative", "absolute"])
+def test_a_project_root_named_from_outside_walks_only_its_configured_roots(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    working_directory: str,
+    absolute: bool,
+) -> None:
+    project = tmp_path / "project"
+    project.mkdir()
+    _project_with_a_file_outside_its_roots(project)
+    inside = _plan_from_the_root(project, monkeypatch, capsys)
+    elsewhere = tmp_path / working_directory
+    elsewhere.mkdir()
+    if working_directory == "other-project":
+        _project_with_both_roots(elsewhere)
+    monkeypatch.chdir(elsewhere)
+    target = str(project) if absolute else "../project"
+    code, out, err = _run_cli(["migrate", "grammar", target], capsys)
+    assert (code, _migration_warnings(err)) == (EXIT_SUCCESS, [])
+    manifest = _manifest(out)
+    assert [change["path"] for change in manifest["changes"]] == [
+        "src/a.s0ma", "tests/test_a.s0ma",
+    ]
+    assert manifest == inside
+
+
 # ---------------------------------------------------------------------------
 # A directory the walk cannot read is a warning
 # ---------------------------------------------------------------------------
@@ -575,12 +619,12 @@ def _tree_with_locked_sibling(root: Path) -> tuple[Path, Path]:
     return readable, locked
 
 
-def _refuse_listing(monkeypatch: pytest.MonkeyPatch, refused: Path) -> None:
-    refused = refused.resolve()
+def _refuse_listing(monkeypatch: pytest.MonkeyPatch, *refused: Path) -> None:
+    refused_paths = {path.resolve() for path in refused}
     real_iterdir = Path.iterdir
 
     def iterdir(self: Path) -> Iterator[Path]:
-        if self.resolve() == refused:
+        if self.resolve() in refused_paths:
             raise PermissionError(13, "Permission denied", str(self))
         return real_iterdir(self)
 
@@ -628,7 +672,17 @@ def test_a_refused_listing_is_skipped_with_a_warning(
     assert "Internal error" not in err
 
 
-def test_a_refused_listing_of_the_root_names_the_root(
+def _root_refusal(out: str) -> dict[str, Any]:
+    """The report for a migration root that cannot be read; no plan in it."""
+
+    report = _manifest(out)
+    assert (report["code"], report["ok"]) == ("GRAMMAR_MIGRATION_ROOT_INVALID", False)
+    assert "changes" not in report
+    assert "change_count" not in report
+    return report
+
+
+def test_a_refused_listing_of_the_root_refuses_the_run(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
@@ -636,9 +690,119 @@ def test_a_refused_listing_of_the_root_names_the_root(
     (tmp_path / "a.s0ma").write_text(_legacy("a"), encoding="utf-8")
     _refuse_listing(monkeypatch, tmp_path.resolve())
     code, out, err = _run_cli(["migrate", "grammar", str(tmp_path)], capsys)
+    assert code == EXIT_USAGE_ERROR
+    report = _root_refusal(out)
+    assert report["message"] == (
+        "GRAMMAR_MIGRATION_ROOT_INVALID: "
+        f"cannot read directory {tmp_path.resolve().as_posix()} "
+        "(Permission denied); nothing was planned or changed."
+    )
+    assert _migration_warnings(err) == []
+    assert "Internal error" not in err
+
+
+@pytest.mark.skipif(_mode_change_cannot_lock() is not None,
+                    reason=_mode_change_cannot_lock() or "")
+@pytest.mark.parametrize("apply", [False, True], ids=["dry-run", "apply"])
+def test_an_unreadable_root_is_refused(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    apply: bool,
+) -> None:
+    _project_with_both_roots(tmp_path)
+    extra = tmp_path / "extra"
+    extra.mkdir()
+    legacy = extra / "e.s0ma"
+    legacy.write_text(_legacy("e"), encoding="utf-8")
+    before = legacy.read_bytes()
+    monkeypatch.chdir(tmp_path)
+    argv = ["migrate", "grammar", *(["--apply"] if apply else []), "extra"]
+    with _mode(extra, 0):
+        code, out, err = _run_cli(argv, capsys)
+    assert code == EXIT_USAGE_ERROR
+    assert "cannot read directory" in _root_refusal(out)["message"]
+    assert _migration_warnings(err) == []
+    assert legacy.read_bytes() == before
+
+
+@pytest.mark.skipif(_mode_change_cannot_lock() is not None,
+                    reason=_mode_change_cannot_lock() or "")
+def test_a_project_whose_configured_roots_are_all_unreadable_is_refused(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    _project_with_both_roots(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    with _mode(tmp_path / "src", 0), _mode(tmp_path / "tests", 0):
+        code, out, err = _run_cli(["migrate", "grammar", "."], capsys)
+    assert code == EXIT_USAGE_ERROR
+    assert _root_refusal(out)["message"] == (
+        "GRAMMAR_MIGRATION_ROOT_INVALID: "
+        "cannot read directory src (Permission denied), "
+        "tests (Permission denied); nothing was planned or changed."
+    )
+    assert _migration_warnings(err) == []
+
+
+def test_refused_listings_of_every_configured_root_refuse_the_run(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    _project_with_both_roots(tmp_path)
+    _refuse_listing(monkeypatch, tmp_path / "src", tmp_path / "tests")
+    monkeypatch.chdir(tmp_path)
+    code, out, _err = _run_cli(["migrate", "grammar", "--apply", "."], capsys)
+    assert code == EXIT_USAGE_ERROR
+    assert "cannot read directory src" in _root_refusal(out)["message"]
+
+
+def test_one_unreadable_configured_root_is_skipped_with_a_warning(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    _project_with_both_roots(tmp_path)
+    _refuse_listing(monkeypatch, tmp_path / "src")
+    monkeypatch.chdir(tmp_path)
+    code, out, err = _run_cli(["migrate", "grammar", "."], capsys)
     assert code == EXIT_SUCCESS
-    assert _manifest(out)["changes"] == []
-    assert _migration_warnings(err) == [_unreadable_warning(".")]
+    assert [change["path"] for change in _manifest(out)["changes"]] == [
+        "tests/test_a.s0ma",
+    ]
+    assert _migration_warnings(err) == [_unreadable_warning("src")]
+
+
+def test_an_unreadable_directory_below_a_readable_root_is_still_a_warning(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    _project_with_both_roots(tmp_path)
+    deep = tmp_path / "src" / "deep"
+    deep.mkdir()
+    (deep / "d.s0ma").write_text(_legacy("d"), encoding="utf-8")
+    _refuse_listing(monkeypatch, deep)
+    monkeypatch.chdir(tmp_path)
+    code, out, err = _run_cli(["migrate", "grammar", "."], capsys)
+    assert code == EXIT_SUCCESS
+    assert [change["path"] for change in _manifest(out)["changes"]] == [
+        "src/a.s0ma", "tests/test_a.s0ma",
+    ]
+    assert _migration_warnings(err) == [_unreadable_warning("src/deep")]
+
+
+def test_the_root_refusal_code_is_registered() -> None:
+    assert "GRAMMAR_MIGRATION_ROOT_INVALID" in ERROR_CODE_DESCRIPTIONS
+    description = ERROR_CODE_DESCRIPTIONS["GRAMMAR_MIGRATION_ROOT_INVALID"]
+    assert "not a directory" in description
+    assert "cannot be read" in description
+    assert (
+        "GRAMMAR_MIGRATION_ROOT_INVALID"
+        in OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE
+    )
 
 
 def test_apply_migrates_the_readable_source_beside_a_refused_directory(

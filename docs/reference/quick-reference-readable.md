@@ -9,7 +9,7 @@ One page to find your way around s0ma: what the parts of a `.s0ma` file are, wha
 | **Describes** | s0ma 0.22.0 (preview) |
 | **Packages** | `s0ma-lang`, `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0`, which all share that version |
 | **Language specification** | [s0ma DSL — Language Specification & Coding Agent Rulebook](../../packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md) |
-| **Documentation snapshot** | `sha256:ebb101336797e94e` |
+| **Documentation snapshot** | `sha256:5ad5e6dcc85f34fc` |
 | **This page** | edition 2, last revised 2026-10-05 — [what has changed](#what-has-changed) |
 
 A version marked `(preview)` is the latest release together with the changes made since, which are not released yet.
@@ -758,7 +758,7 @@ s0ma studi0                # look at what you made
 | `strict` | the automated checks before a merge | What the first two warn about is refused. | 94 | 5 | 3 |
 | `release` | shipping | As `strict`, and it makes checks the others do not: they are named under the table. | 98 | 4 | 0 |
 
-The numbers count the 102 reports whose weight depends on the mode. 73 of them are refused in every mode, so the modes differ over the rest. 13 more reports are made the same way whatever the mode.
+The numbers count the 102 reports whose weight depends on the mode. 73 of them are refused in every mode, so the modes differ over the rest. 14 more reports are made the same way whatever the mode.
 
 Made only in `release`: [`MISSING_EMBEDDED_EXAMPLE`](diagnostics.md#missing_embedded_example), [`MISSING_PUBLIC_DOC_REF`](diagnostics.md#missing_public_doc_ref), [`MISSING_TEST_COVERAGE`](diagnostics.md#missing_test_coverage).
 

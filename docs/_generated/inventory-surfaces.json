@@ -2,12 +2,12 @@
   "counts": {
     "by_binding": {
       "bound": 92,
-      "exception": 170
+      "exception": 171
     },
     "by_channel": {
       "cli": 44,
       "config": 19,
-      "diagnostic": 115,
+      "diagnostic": 116,
       "mcp_prompt": 5,
       "mcp_resource": 24,
       "mcp_tool": 27,
@@ -19,12 +19,12 @@
       "approval": 5,
       "credential": 1,
       "network": 7,
-      "none": 142,
+      "none": 143,
       "read": 82,
       "subprocess": 6,
       "write": 29
     },
-    "surfaces": 262,
+    "surfaces": 263,
     "undeclared_side_effects": 29
   },
   "entries": [
@@ -1782,6 +1782,21 @@
       "id": "diagnostic:GRAMMAR_MIGRATION_ROLLBACK_FAILED",
       "intent": "The grammar migrator could not restore one or more files after an apply failure.",
       "public_name": "GRAMMAR_MIGRATION_ROLLBACK_FAILED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GRAMMAR_MIGRATION_ROOT_INVALID",
+      "intent": "The grammar-migration root is not a directory or cannot be read, or none of the project's configured roots can be read; nothing was planned.",
+      "public_name": "GRAMMAR_MIGRATION_ROOT_INVALID",
       "side_effects": [
         "none"
       ]
@@ -4336,6 +4351,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:ebb101336797e94e"
+    "snapshot_hash": "sha256:5ad5e6dcc85f34fc"
   }
 }

@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "192582b14b867fe93de3326a55fe09b4f2c3ab99b3a9ce40bbacb4187c34d079",
+      "content_sha256": "803ac9e07fdef6929605833ec5612041ff48fb2f71c1126136e5e105b796ee07",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.22.0] — 2026-11-19",
@@ -5523,7 +5523,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:ebb101336797e94e"
+    "snapshot_hash": "sha256:5ad5e6dcc85f34fc"
   },
   "surfaces": [
     {
@@ -6914,7 +6914,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "ADOPTED_CHURN",
       "side_effects": [
@@ -6939,7 +6939,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "ADOPT_PLACEHOLDER_INTENT",
       "side_effects": [
@@ -6964,7 +6964,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "ADOPT_UNPLACED_CODE",
       "side_effects": [
@@ -6989,7 +6989,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "AMBIGUOUS_TEST_TARGET",
       "side_effects": [
@@ -7014,7 +7014,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "ASSERT_FAILED",
       "side_effects": [
@@ -7039,7 +7039,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "ASSERT_SYNTAX_ERROR",
       "side_effects": [
@@ -7064,7 +7064,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "ASSERT_UNEVALUABLE",
       "side_effects": [
@@ -7089,7 +7089,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "ATTRIBUTE_BUDGET_VIOLATION",
       "side_effects": [
@@ -7114,7 +7114,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "BARE_IMPORT",
       "side_effects": [
@@ -7135,7 +7135,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "BUILD_DIR_OVERRIDE_CONFLICT",
       "side_effects": [
@@ -7160,7 +7160,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "CIRCULAR_DEPENDENCY",
       "side_effects": [
@@ -7185,7 +7185,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "CLASS_BODY_IN_NERVE",
       "side_effects": [
@@ -7206,7 +7206,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "CONFLICTING_PACKAGE_DECLARATION",
       "side_effects": [
@@ -7231,7 +7231,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "CONSTANT_NAME_MISMATCH",
       "side_effects": [
@@ -7256,7 +7256,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "CONSUMES_VIA_DICT_INVALID",
       "side_effects": [
@@ -7281,7 +7281,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "COVERED_BY_EMPTY",
       "side_effects": [
@@ -7306,7 +7306,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "CROSS_LAYER_DEPENDENCY",
       "side_effects": [
@@ -7331,7 +7331,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "CROSS_MODULE_USES_ASYMMETRY",
       "side_effects": [
@@ -7356,7 +7356,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DEFERRED_IMPORT_MODULE_SCOPE",
       "side_effects": [
@@ -7381,7 +7381,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DOC_RENDER_ERROR",
       "side_effects": [
@@ -7406,7 +7406,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DOC_SOURCE_FORMAT_UNSUPPORTED",
       "side_effects": [
@@ -7431,7 +7431,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DOES_NOT_EXIST",
       "side_effects": [
@@ -7456,7 +7456,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DRIFT_DETECTED",
       "side_effects": [
@@ -7481,7 +7481,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DUPLICATE_AXON",
       "side_effects": [
@@ -7506,7 +7506,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DUPLICATE_DECLARATION",
       "side_effects": [
@@ -7531,7 +7531,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DUPLICATE_INNER_FUNCTION",
       "side_effects": [
@@ -7556,7 +7556,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DUPLICATE_PROVIDES_NAME",
       "side_effects": [
@@ -7581,7 +7581,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "DUPLICATE_REQUIRES_ENTRY",
       "side_effects": [
@@ -7606,7 +7606,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "EMBEDDED_FILE_NOT_FOUND",
       "side_effects": [
@@ -7631,7 +7631,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "EMPTY_BLOCK_LIST",
       "side_effects": [
@@ -7656,7 +7656,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "EMPTY_DOC_FILTER",
       "side_effects": [
@@ -7681,7 +7681,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "EMPTY_OBSERVES",
       "side_effects": [
@@ -7706,7 +7706,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "ENTITY_KIND_MISMATCH",
       "side_effects": [
@@ -7731,7 +7731,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "EXPORTED_HELPER_NOT_FOUND",
       "side_effects": [
@@ -7756,7 +7756,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "FIELD_NOT_FOUND",
       "side_effects": [
@@ -7781,7 +7781,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "FIXTURE_FORMAT_INVALID",
       "side_effects": [
@@ -7802,7 +7802,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "GENERATED_FILE_DRIFT",
       "side_effects": [
@@ -7823,7 +7823,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "GRAMMAR_MIGRATION_APPLY_FAILED",
       "side_effects": [
@@ -7844,7 +7844,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "GRAMMAR_MIGRATION_CONFLICT",
       "side_effects": [
@@ -7865,7 +7865,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "GRAMMAR_MIGRATION_OUTPUT_INVALID",
       "side_effects": [
@@ -7886,7 +7886,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "GRAMMAR_MIGRATION_PARSE_ERROR",
       "side_effects": [
@@ -7907,9 +7907,30 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "GRAMMAR_MIGRATION_ROLLBACK_FAILED",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "registry=out_of_matrix"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GRAMMAR_MIGRATION_ROOT_INVALID",
+      "intent": "The grammar-migration root is not a directory or cannot be read, or none of the project's configured roots can be read; nothing was planned.",
+      "manual_exception": "No registered component implements a diagnostic. A code is raised from validator passes, parser helpers and command pre-flight checks that the component registry does not carry, so this record names the registry it was read from rather than a component that would have to be invented. The binding is left to the milestone that completes every surface's binding.",
+      "provenance": {
+        "adapter_id": "diagnostics",
+        "schema_version": "s0ma-docs-model@1",
+        "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
+      },
+      "public_name": "GRAMMAR_MIGRATION_ROOT_INVALID",
       "side_effects": [
         "none"
       ]
@@ -7928,7 +7949,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "HELPER_NAME_COLLISION",
       "side_effects": [
@@ -7953,7 +7974,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "HELPER_PRIVATE_TO_MODULE",
       "side_effects": [
@@ -7974,7 +7995,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "HOLLOW_MODEL",
       "side_effects": [
@@ -7999,7 +8020,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "HOST_RUNTIME_UNDECLARED",
       "side_effects": [
@@ -8024,7 +8045,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INCONSISTENT_BLOCK_LIST_INDENT",
       "side_effects": [
@@ -8049,7 +8070,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INTEGRATION_FACTORY_NOT_FOUND",
       "side_effects": [
@@ -8074,7 +8095,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INTEGRATION_FACTORY_NOT_SERVICE",
       "side_effects": [
@@ -8099,7 +8120,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INTEGRATION_INVALID_MANIFEST_KEY",
       "side_effects": [
@@ -8124,7 +8145,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INTEGRATION_SMOKE_TEST_NOT_FOUND",
       "side_effects": [
@@ -8149,7 +8170,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INTERFACE_ON_NON_ABSTRACT",
       "side_effects": [
@@ -8174,7 +8195,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INVALID_AXON_RELATION",
       "side_effects": [
@@ -8199,7 +8220,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INVALID_DATACLASS_INVARIANT",
       "side_effects": [
@@ -8224,7 +8245,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INVALID_KIND",
       "side_effects": [
@@ -8249,7 +8270,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INVALID_PROJECT_NAME_FOR_BUILD_DIR",
       "side_effects": [
@@ -8274,7 +8295,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INVALID_RAISES_TARGET",
       "side_effects": [
@@ -8299,7 +8320,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "INVALID_VERSION",
       "side_effects": [
@@ -8324,7 +8345,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "LAYER_MISMATCH",
       "side_effects": [
@@ -8349,7 +8370,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "METADATA_INVALID_KEY",
       "side_effects": [
@@ -8374,7 +8395,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "METADATA_INVALID_VALUE",
       "side_effects": [
@@ -8399,7 +8420,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "METADATA_RESERVED_KEY",
       "side_effects": [
@@ -8424,7 +8445,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MISSING_EMBEDDED_EXAMPLE",
       "side_effects": [
@@ -8449,7 +8470,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MISSING_FIELD",
       "side_effects": [
@@ -8474,7 +8495,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MISSING_INTERFACE_METHODS",
       "side_effects": [
@@ -8499,7 +8520,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MISSING_PACKAGE",
       "side_effects": [
@@ -8524,7 +8545,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MISSING_PROVIDED_FUNCTION",
       "side_effects": [
@@ -8549,7 +8570,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MISSING_PUBLIC_DOC_REF",
       "side_effects": [
@@ -8574,7 +8595,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MISSING_RETURN_KEY",
       "side_effects": [
@@ -8599,7 +8620,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MISSING_TEST_COVERAGE",
       "side_effects": [
@@ -8624,7 +8645,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MIXED_PROVIDES_FORMS",
       "side_effects": [
@@ -8649,7 +8670,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MOCK_KEY_MISMATCH",
       "side_effects": [
@@ -8674,7 +8695,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MODULE_DEPENDENCY_CYCLE",
       "side_effects": [
@@ -8699,7 +8720,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MODULE_NAME_COLLISION",
       "side_effects": [
@@ -8724,7 +8745,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MODULE_NAME_STEM_MISMATCH",
       "side_effects": [
@@ -8749,7 +8770,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MODULE_OUTSIDE_PROJECT_ROOTS",
       "side_effects": [
@@ -8774,7 +8795,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MODULE_SHADOWS_STDLIB",
       "side_effects": [
@@ -8799,7 +8820,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MODULE_SUBSCRIPT",
       "side_effects": [
@@ -8824,7 +8845,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "MUTABLE_DEFAULT",
       "side_effects": [
@@ -8849,7 +8870,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "NAMESPACE_COLLISION",
       "side_effects": [
@@ -8874,7 +8895,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "NEW_FILE_ROSTER_ONLY",
       "side_effects": [
@@ -8899,7 +8920,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "NOT_EXPORTED",
       "side_effects": [
@@ -8924,7 +8945,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "NO_PAGE_COMPOSER_DECLARED",
       "side_effects": [
@@ -8949,7 +8970,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "OVERLAPPING_DISCOVERY_ROOTS",
       "side_effects": [
@@ -8974,7 +8995,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "PARSE_DOC_REF_BODY_PROHIBITED",
       "side_effects": [
@@ -8999,7 +9020,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "PARSE_ERROR",
       "side_effects": [
@@ -9024,7 +9045,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "PARSE_GRAMMAR_FORWARD_INCOMPAT",
       "side_effects": [
@@ -9049,7 +9070,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "PLACEHOLDER_NOT_FOUND",
       "side_effects": [
@@ -9074,7 +9095,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "POSSIBLE_UNRESOLVED_REFERENCE",
       "side_effects": [
@@ -9099,7 +9120,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "PROHIBITED_CONSTRUCT",
       "side_effects": [
@@ -9124,7 +9145,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "PROSE_RAW_CODE_BLOCK",
       "side_effects": [
@@ -9149,7 +9170,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "PROVIDES_KEY_MISMATCH",
       "side_effects": [
@@ -9174,7 +9195,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "REQUIRES_DOTTED_LOWERCASE_HINT",
       "side_effects": [
@@ -9199,7 +9220,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SEMANTIC_DERIVED_FIELD_AUTHORED",
       "side_effects": [
@@ -9224,7 +9245,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SEMANTIC_NONE_NOT_ALLOWED",
       "side_effects": [
@@ -9249,7 +9270,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SEMANTIC_PENDING_DEBT",
       "side_effects": [
@@ -9274,7 +9295,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SEMANTIC_PENDING_INVALID",
       "side_effects": [
@@ -9299,7 +9320,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SEMANTIC_PENDING_NOT_ALLOWED",
       "side_effects": [
@@ -9324,7 +9345,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SEMANTIC_PENDING_REASON_EMPTY",
       "side_effects": [
@@ -9349,7 +9370,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SEMANTIC_REQUIRED_STATE_OMITTED",
       "side_effects": [
@@ -9374,7 +9395,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SERVES_AS_COLLISION",
       "side_effects": [
@@ -9399,7 +9420,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "SERVES_AS_INVALID",
       "side_effects": [
@@ -9424,7 +9445,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "STALE_GENERATED_CONFTEST",
       "side_effects": [
@@ -9449,7 +9470,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "TEMPLATE_SYNTAX_ERROR",
       "side_effects": [
@@ -9474,7 +9495,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "TEST_NOT_COLLECTED",
       "side_effects": [
@@ -9499,7 +9520,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "TEST_VISIBILITY_VIOLATION",
       "side_effects": [
@@ -9524,7 +9545,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "UNDECLARED_PLACEHOLDER",
       "side_effects": [
@@ -9549,7 +9570,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "UNKNOWN_FIELD",
       "side_effects": [
@@ -9574,7 +9595,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "UNRECOGNIZED_LINE",
       "side_effects": [
@@ -9599,7 +9620,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "UNREGISTERED_EXAMPLE",
       "side_effects": [
@@ -9620,7 +9641,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "UNREGISTERED_SURFACE",
       "side_effects": [
@@ -9645,7 +9666,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "UNRESOLVED_REFERENCE",
       "side_effects": [
@@ -9666,7 +9687,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "UNSUPPORTED_IR_SCHEMA_MAJOR",
       "side_effects": [
@@ -9691,7 +9712,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "VESTIGIAL_IMPORT",
       "side_effects": [
@@ -9716,7 +9737,7 @@
         "adapter_id": "diagnostics",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
-        "source_sha256": "a6befa4ab1bc0c196482b0b4e7480bc48c742c0df2800dfd5c7dae070b3ad5ef"
+        "source_sha256": "bca6eeb783965702391402e6924fdd87eff1a1ad2df66def1c9aaf971c940a4b"
       },
       "public_name": "VISIBILITY_MISMATCH",
       "side_effects": [

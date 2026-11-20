@@ -555,7 +555,7 @@
     "release": "0.22.0 (preview)",
     "release_version": "0.22.0",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:ebb101336797e94e",
+    "snapshot_hash": "sha256:5ad5e6dcc85f34fc",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
@@ -1937,7 +1937,7 @@
   "modes": {
     "refused_in_every_mode": 73,
     "reports": 102,
-    "unchanging": 13,
+    "unchanging": 14,
     "values": [
       {
         "meant_for": "bringing existing code across",

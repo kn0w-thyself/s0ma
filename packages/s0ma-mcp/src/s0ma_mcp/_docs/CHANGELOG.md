@@ -11,6 +11,42 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Changed
+
+- **`s0ma migrate grammar` refuses a root it cannot read.** When the
+  directory being migrated could not be listed, or none of a project's
+  configured `source_roots` and `test_roots` could be listed, the command
+  printed a warning on stderr, an empty manifest on stdout, and exited 0,
+  which reads as "nothing to migrate". It now exits 2 and prints
+  `GRAMMAR_MIGRATION_ROOT_INVALID` on stdout, the code and exit it already
+  gave for a root that is not a directory, with a message that starts
+  `cannot read directory` and names each directory and the reason. No plan is
+  printed and nothing is written, with or without `--apply`. A script that
+  read exit 0 and an empty plan now sees exit 2. A directory below a root
+  that can be read is still skipped with a warning, and the run goes on, as
+  before; so is one configured root when another can be read.
+
+- **`GRAMMAR_MIGRATION_ROOT_INVALID` is in the diagnostics registry.** The
+  command has used this code for a root that is not a directory, but it was
+  missing from the registry, so the diagnostics reference did not list it. It
+  is now registered beside the other `GRAMMAR_MIGRATION_*` codes, and its
+  description covers a root that is not a directory, a root that cannot be
+  read, and a project none of whose configured roots can be read.
+
+- **`s0ma migrate grammar` on a project root walks that project's roots from
+  anywhere.** A target whose own `pyproject.toml` has a `[tool.s0ma]` table is
+  now read as that project even when the command runs outside it, so
+  `s0ma migrate grammar path/to/project` walks only the project's
+  `source_roots` and `test_roots`, as a run from inside the project does.
+  Before, a run from outside the project walked the whole target directory, so
+  it also planned `.s0ma` files outside the configured roots; those are no
+  longer in the plan. To migrate such a file, name its directory as the
+  target. Every other form is unchanged: a target that is not a project root
+  is walked whole, and a run from inside the project reads the same roots as
+  before. The warning that the `[tool.s0ma]` table "was not used" is still
+  printed for this form, by project discovery, which this change does not
+  touch.
+
 ### Fixed
 
 - **The package READMEs count the umbrella.** The READMEs of `s0ma-lang-core`,

@@ -123,6 +123,7 @@ Maps DSL specification rules (R-01 through R-32), declaration types, and depende
 | `GRAMMAR_MIGRATION_CONFLICT` | §4.14.5 | A migration target changes or stops being a regular file after planning | `cli/migrate_grammar.py` | 0.14 M3A | ✓ implemented (whole-plan refusal) |
 | `GRAMMAR_MIGRATION_APPLY_FAILED` | §4.14.5 | An atomic replacement fails while applying a migration plan | `cli/migrate_grammar.py` | 0.14 M3A | ✓ implemented (restores prior replacements) |
 | `GRAMMAR_MIGRATION_ROLLBACK_FAILED` | §4.14.5 | A failed apply cannot restore one or more prior source bytes | `cli/migrate_grammar.py` | 0.14 M3A | ✓ implemented (names every failed restoration) |
+| `GRAMMAR_MIGRATION_ROOT_INVALID` | §4.14.5 | The migration root is not a directory or cannot be read, or none of a project's configured roots can be read | `cli/migrate_grammar.py` | 0.14 M3A | ✓ implemented (exit 2, nothing planned) |
 | `PARSE_ERROR` | §2.4.2 | Invalid syntax | `parser/s0ma_parser.py` | M4 | ✓ implemented (golden tests: `missing_module.s0ma`, `authored_raises_axon.s0ma`) |
 | `EMPTY_BLOCK_LIST` | §2.4.2 (PRE-7) | Block-style YAML list with no items on uses/requires/exports/raises | `parser/s0ma_parser.py` (`_consume_block_list`) | PRE-7 / 0.14.0 | ✓ implemented (`tests/test_block_list_fields.py`) |
 | `INCONSISTENT_BLOCK_LIST_INDENT` | §2.4.2 (PRE-7) | Block-style YAML list with mismatched item indents | `parser/s0ma_parser.py` (`_consume_block_list`) | PRE-7 / 0.14.0 | ✓ implemented (`tests/test_block_list_fields.py`) |

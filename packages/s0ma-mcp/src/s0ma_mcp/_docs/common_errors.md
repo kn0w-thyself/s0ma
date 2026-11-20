@@ -5,7 +5,7 @@ module: "common_errors"
 format: "markdown"
 intent: "Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
 schema_version: "3.0.0"
-content_hash: "1:0b8a9ae55f711b22833a61b81cdd339548a9b43f9d73ac7c21d8ebcc8af95ff4"
+content_hash: "1:cbebcd35efc04661c4b8464f9f9774386915fbcd19e1dfa903eb6a7379b3a6e8"
 ---
 
 # CommonErrorsTable
@@ -56,6 +56,7 @@ Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sen
 | `GRAMMAR_MIGRATION_OUTPUT_INVALID` | — | — | — | — | A proposed grammar migration rewrite failed the parser invariant before apply. |
 | `GRAMMAR_MIGRATION_PARSE_ERROR` | — | — | — | — | Whole-project grammar migration preflight could not parse one authored source. |
 | `GRAMMAR_MIGRATION_ROLLBACK_FAILED` | — | — | — | — | The grammar migrator could not restore one or more files after an apply failure. |
+| `GRAMMAR_MIGRATION_ROOT_INVALID` | — | — | — | — | The grammar-migration root is not a directory or cannot be read, or none of the project's configured roots can be read; nothing was planned. |
 | `HELPER_NAME_COLLISION` | — | — | — | — | Two test bodies in one module define a same-named top-level `def` / `async def`. |
 | `HELPER_PRIVATE_TO_MODULE` | error | error | error | error | A production module attempts to consume a `helper` declaration from another module via `uses:`. |
 | `HOLLOW_MODEL` | — | — | — | — | Verification found zero modeled s0ma modules; roster adoption verifies bytes but cannot answer semantic questions about the code. |
