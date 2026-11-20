@@ -1333,6 +1333,116 @@ class TestAbstractNerveEmission:
         assert '"interface": ["chat", "chat_stream"]' in output
         compile(output, "<test>", "exec")
 
+    @staticmethod
+    def _port_nerve(name: str, **overrides: object) -> NerveDecl:
+        fields: dict[str, object] = {
+            "name": name,
+            "layer": Layer.INFRASTRUCTURE,
+            "kind": Kind.ADAPTER,
+            "visibility": Visibility.PUBLIC,
+            "intent": "Storage port",
+            "expects": "None",
+            "guarantees": "Saves and loads",
+            "evaluates_at": EvaluatesAt.FUNCTION_BOUNDARY,
+            "location": _loc(10, 20),
+        }
+        fields.update(overrides)
+        return NerveDecl(**fields)  # type: ignore[arg-type]
+
+    @staticmethod
+    def _load_emitted(output: str, tmp_path, module_name: str):  # type: ignore[no-untyped-def]
+        import importlib.util
+        import sys
+
+        out_path = tmp_path / f"{module_name}.py"
+        out_path.write_text(output, encoding="utf-8")
+        spec = importlib.util.spec_from_file_location(module_name, str(out_path))
+        assert spec is not None
+        assert spec.loader is not None
+        loaded = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(loaded)
+        finally:
+            sys.modules.pop(module_name, None)
+        return loaded
+
+    def test_abstract_port_factory_returns_its_stubs(self, tmp_path) -> None:
+        """Calling an abstract port returns a dict of its interface stubs.
+
+        Before this, the emitted factory defined the stubs and fell off
+        the end, so ``StorageAdapter()`` returned ``None`` and the stubs
+        could never be reached.
+        """
+        mod = _minimal_module(exports=("StorageAdapter",))
+        nerve = self._port_nerve(
+            "StorageAdapter",
+            abstract=True,
+            interface=("save", "load"),
+            body=None,
+        )
+        output = emit_python(S0maModule(module=mod, nerves=(nerve,)))
+        compile(output, "<test>", "exec")
+        loaded = self._load_emitted(output, tmp_path, "abstract_port_emitted")
+        port = loaded.StorageAdapter()
+        assert isinstance(port, dict)
+        assert list(port) == ["save", "load"]
+        for method in ("save", "load"):
+            with pytest.raises(NotImplementedError) as excinfo:
+                port[method]("anything", key="value")
+            assert str(excinfo.value) == method
+
+        assert (
+            "def StorageAdapter():\n"
+            "    def save(*args, **kwargs):\n"
+            "        raise NotImplementedError(\"save\")\n"
+            "\n"
+            "    def load(*args, **kwargs):\n"
+            "        raise NotImplementedError(\"load\")\n"
+            "\n"
+            "    return {\"save\": save, \"load\": load}"
+        ) in output
+
+    def test_concrete_adapter_factory_unchanged_beside_a_port(self) -> None:
+        """A concrete adapter's emitted factory is its body, as before."""
+        mod = _minimal_module(exports=("StorageAdapter", "FileStorage"))
+        port = self._port_nerve(
+            "StorageAdapter",
+            abstract=True,
+            interface=("save", "load"),
+            body=None,
+        )
+        concrete_body = (
+            "def FileStorage():\n"
+            "    def save(x):\n"
+            "        return x\n"
+            "\n"
+            "    def load():\n"
+            "        return None\n"
+            "\n"
+            "    return {\"save\": save, \"load\": load}"
+        )
+        concrete = self._port_nerve("FileStorage", body=concrete_body)
+        output = emit_python(
+            S0maModule(module=mod, nerves=(port, concrete))
+        )
+        compile(output, "<test>", "exec")
+        expected = (
+            "@component(\n"
+            "    name=\"FileStorage\",\n"
+            "    kind=ComponentKind.ADAPTER,\n"
+            "    layer=Layer.INFRASTRUCTURE,\n"
+            "    intent=\"Storage port\",\n"
+            "    contracts=Contract(\n"
+            "        preconditions=[\"None\"],\n"
+            "        postconditions=[\"Saves and loads\"],\n"
+            "    ),\n"
+            "    metadata={\"visibility\": \"PUBLIC\", "
+            "\"evaluates_at\": \"FUNCTION_BOUNDARY\"},\n"
+            ")\n"
+            + concrete_body
+        )
+        assert output.rstrip().endswith(expected)
+
     def test_abstract_nerve_with_explicit_body(self) -> None:
         """Abstract nerve with user-provided body uses that body as-is."""
         mod = _minimal_module(exports=("LLMAdapter",))
