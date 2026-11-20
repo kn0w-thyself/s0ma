@@ -194,6 +194,19 @@ Historical entries describe artifacts as they were named at the time.
   and the check accepts a bare `--` for a command that declares one and
   still refuses it, and any unknown option, for every other command.
 
+- **A body Python cannot compile fails check and build.** s0ma read each
+  body with `ast.parse` and never compiled what it emitted, so code that
+  parses and still cannot compile passed. A nerve whose inner function
+  assigns `total` and then declares `nonlocal total` checked clean in strict
+  mode, built with exit 0, and failed only on import. `s0ma check` and
+  `s0ma build` now compile each emitted module in memory, without running
+  it, and report the new error `GENERATED_FILE_COMPILE_ERROR` at the
+  `.s0ma` line of the body it came from, in every mode, with Python's own
+  reason in the message. The build writes nothing for that module. A
+  project with such a body now fails check and build where it passed
+  before; fix the body at the reported line. A module that compiles builds
+  byte for byte as before.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
