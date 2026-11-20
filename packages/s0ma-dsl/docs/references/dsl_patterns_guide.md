@@ -1332,7 +1332,7 @@ module object, not a dict — `registry[...]` raises `TypeError: 'module'
 object is not subscriptable` at runtime.
 ```
 
-with the remediation: *import the symbol itself — `uses: [registry.<symbol>]` emits `from registry import <symbol>` — then call it; for a shared factory, declare a module-level `helper`, list it under `exports_helpers:`, and consume it via `uses: [registry.<helper>]`.* This is the run that took bench `P1_P_r02` to 1/24 acceptance — an author-written subscript, not a codegen bug.
+with the remediation: *import the symbol itself — `uses: [registry.<symbol>]` emits `from registry import <symbol>` — then call it; for a shared factory, declare it as a `nerve` in `registry`, list it under that module's `exports:`, and import it via `uses: [registry.<nerve>]`. A `helper` will not do: production modules cannot consume another module's helpers, even ones listed in `exports_helpers:`.* This is the run that took bench `P1_P_r02` to 1/24 acceptance — an author-written subscript, not a codegen bug.
 
 **The three real mechanisms.** s0ma already has first-class homes for "several functions"; pick by what the operations *are*.
 

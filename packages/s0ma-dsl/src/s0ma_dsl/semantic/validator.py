@@ -3563,10 +3563,12 @@ class IntraModuleValidator:
                         f"symbol itself: `uses: [{name}.<symbol>]` emits "
                         f"`from {name} import <symbol>`, then call it "
                         f"(e.g. `result = <symbol>(...)`). For a shared "
-                        f"factory, declare a module-level `helper` in "
-                        f"'{name}', list it under that module's "
-                        f"`exports_helpers:`, and consume it via "
-                        f"`uses: [{name}.<helper>]`."
+                        f"factory, declare it as a `nerve` in '{name}', "
+                        f"list it under that module's `exports:`, and "
+                        f"import it via `uses: [{name}.<nerve>]`. A "
+                        f"`helper` will not do: production modules cannot "
+                        f"consume another module's helpers, even ones "
+                        f"listed in `exports_helpers:`."
                     ),
                     context={
                         "declaration": decl_name,
