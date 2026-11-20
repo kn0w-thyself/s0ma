@@ -987,6 +987,17 @@ class TestCommands:
         assert _run(["docs", "show", "s0ma check"]) == 0
         assert "Topic id: `cli:s0ma/check`" in capsys.readouterr().out
 
+    def test_show_forbids_opens_on_the_forbids_decision(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """The bare word ``forbids`` resolves to ADR-014, the decision that
+        defines the ``forbids`` line, rather than to a list of candidates."""
+        assert _run(["docs", "show", "forbids"]) == 0
+        out = capsys.readouterr().out
+        assert "Topic id: `doc:normative/adr-014-the-forbids-line`" in out
+        title = next(line for line in out.splitlines() if line.startswith("# "))
+        assert title.startswith("# ADR-014:")
+
     def test_an_ambiguous_question_lists_the_candidates_with_reasons(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:
