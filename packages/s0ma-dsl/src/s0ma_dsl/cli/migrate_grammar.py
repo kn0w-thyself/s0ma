@@ -4,11 +4,11 @@
 source before planning a write, emits a deterministic manifest, and applies
 the complete plan with per-file atomic replacement plus whole-plan rollback.
 
-When the target is the root of the project the command resolved, only that
-project's source and test roots are read; any other target is read whole.
-Whatever git ignores is left out, and a directory below the root that cannot
-be read is skipped with a warning on stderr. A root that cannot be read is
-refused.
+When the target is the root of a project, the one the command resolved or
+one the target holds itself, only that project's source and test roots are
+read; any other target is read whole. Whatever git ignores is left out, and
+a directory below the root that cannot be read is skipped with a warning on
+stderr. A root that cannot be read is refused.
 """
 
 from __future__ import annotations
@@ -22,12 +22,14 @@ import stat
 import subprocess
 import sys
 import tempfile
+import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from s0ma_dsl.errors import S0maError
 from s0ma_dsl.parser.s0ma_parser import _RawDeclaration, _split_declarations, parse_s0ma
+from s0ma_dsl.project import S0maProject
 from s0ma_dsl.semantic_state import semantic_fields, semantic_source_field
 
 if TYPE_CHECKING:
@@ -532,11 +534,36 @@ def apply_grammar_migration(plan: GrammarMigrationPlan) -> None:
             temp_path.unlink(missing_ok=True)
 
 
+def _project_at(target: Path) -> S0maProject | None:
+    """The project whose root *target* is, or ``None`` when it is not one.
+
+    *target* is a project root when its own ``pyproject.toml`` carries a
+    ``[tool.s0ma]`` table. Anything that keeps the project from being read
+    answers ``None``, so the target is then walked as it was before.
+    """
+
+    try:
+        with (target / "pyproject.toml").open("rb") as stream:
+            data = tomllib.load(stream)
+        if data.get("tool", {}).get("s0ma") is None:
+            return None
+        project = S0maProject.discover(target)
+    except (OSError, ValueError):
+        return None
+    if Path(project.root).resolve() != target.resolve():
+        return None
+    return project
+
+
 def run_migrate_grammar(args: argparse.Namespace) -> int:
     """CLI entry point for ``s0ma migrate grammar``."""
 
     explicit = getattr(args, "project_dir", None)
     project = getattr(args, "s0ma_project", None)
+    if explicit is not None:
+        # A target that is itself a project root is that project, wherever
+        # the command was run from, so its configured roots are walked.
+        project = _project_at(Path(explicit)) or project
     root = (
         Path(explicit) if explicit is not None
         else Path(project.root) if project is not None and not project.synthetic

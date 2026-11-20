@@ -542,6 +542,41 @@ def test_a_target_that_is_not_the_project_root_is_walked_whole(
     ]
 
 
+def _project_with_a_file_outside_its_roots(root: Path) -> None:
+    _project_with_both_roots(root)
+    outside = root / "scratch" / "outside.s0ma"
+    outside.parent.mkdir()
+    outside.write_text(_legacy("outside"), encoding="utf-8")
+
+
+@pytest.mark.parametrize("working_directory", ["plain", "other-project"])
+@pytest.mark.parametrize("absolute", [False, True], ids=["relative", "absolute"])
+def test_a_project_root_named_from_outside_walks_only_its_configured_roots(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    working_directory: str,
+    absolute: bool,
+) -> None:
+    project = tmp_path / "project"
+    project.mkdir()
+    _project_with_a_file_outside_its_roots(project)
+    inside = _plan_from_the_root(project, monkeypatch, capsys)
+    elsewhere = tmp_path / working_directory
+    elsewhere.mkdir()
+    if working_directory == "other-project":
+        _project_with_both_roots(elsewhere)
+    monkeypatch.chdir(elsewhere)
+    target = str(project) if absolute else "../project"
+    code, out, err = _run_cli(["migrate", "grammar", target], capsys)
+    assert (code, _migration_warnings(err)) == (EXIT_SUCCESS, [])
+    manifest = _manifest(out)
+    assert [change["path"] for change in manifest["changes"]] == [
+        "src/a.s0ma", "tests/test_a.s0ma",
+    ]
+    assert manifest == inside
+
+
 # ---------------------------------------------------------------------------
 # A directory the walk cannot read is a warning
 # ---------------------------------------------------------------------------
