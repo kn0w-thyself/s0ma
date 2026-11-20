@@ -333,7 +333,7 @@ def test_non_array_topological_order_raises(tmp_path: Path) -> None:
 class TestCoreOnlyVenv:
     """Boot a build in an environment that has only s0ma-lang-core installed.
 
-    The venv is built once per module: ``uv venv`` + ``uv pip install
+    The venv is built once per class: ``uv venv`` + ``uv pip install
     --no-deps <repo>/packages/s0ma-core``. Nothing else goes in, so an
     import of the authoring packages inside it is a hard failure — which
     is the point.

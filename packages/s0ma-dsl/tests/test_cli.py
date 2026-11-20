@@ -1502,6 +1502,31 @@ class TestCheckDriftDetection:
         ])
         assert exit_code == EXIT_VALIDATION_ERROR
 
+    def test_check_build_before_any_build_reports_drift_then_passes_after(
+        self, cli: S0maCLI, tmp_path: Path, capsys, monkeypatch
+    ):
+        """s0ma build . --check with nothing built yet returns 1 and reports
+        drift; after a plain build the same check returns 0."""
+        project_dir = tmp_path / "project"
+        project_dir.mkdir()
+        (project_dir / "test_module.s0ma").write_text(MINIMAL_S0MA, encoding="utf-8")
+        monkeypatch.chdir(project_dir)
+
+        exit_code = cli.run(["build", ".", "--mode", "dev", "--check"])
+        assert exit_code == EXIT_VALIDATION_ERROR
+        captured = capsys.readouterr()
+        assert "DRIFT" in captured.out
+        assert "test_module.py" in captured.out
+        # --check reports; it does not build.
+        assert not (project_dir / "test_module.py").exists()
+
+        assert cli.run(["build", ".", "--mode", "dev"]) == EXIT_SUCCESS
+        capsys.readouterr()
+
+        exit_code = cli.run(["build", ".", "--mode", "dev", "--check"])
+        assert exit_code == EXIT_SUCCESS
+        assert "DRIFT" not in capsys.readouterr().out
+
 
 # ===========================================================================
 # Test: inspect accepts .s0ma files (Task 5.4)

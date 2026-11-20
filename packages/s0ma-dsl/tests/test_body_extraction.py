@@ -20,9 +20,12 @@ Covers:
 - Strictness mode modulates severity
 """
 
+import ast
+
 import pytest
 
 from s0ma_dsl.ast_nodes.enums import Kind
+from s0ma_dsl.codegen.python_emitter import emit_python
 from s0ma_dsl.config import StrictnessMode
 from s0ma_dsl.errors import S0maParseError, S0maSemanticError
 from s0ma_dsl.parser.body_extractor import (
@@ -32,6 +35,7 @@ from s0ma_dsl.parser.body_extractor import (
     validate_body,
 )
 from s0ma_dsl.parser.s0ma_parser import parse_s0ma
+from s0ma_dsl.semantic.validator import validate_module
 
 # =====================================================================
 # extract_body — basic functionality
@@ -474,6 +478,87 @@ class TestGanglionTestBodyValidation:
         errors = validate_body(info, "test", "test_something", None, "<test>", 1)
         assert len(errors) == 1
         assert "function definition" in errors[0].message.lower()
+
+    def test_test_body_opening_with_def_may_add_a_class_and_a_constant(self):
+        """A test body whose first statement is a def may go on with a class
+        and a constant. Strict checking accepts it, and the build writes all
+        three at module scope, where the test function can reach them."""
+        source = (
+            "module greeter\n"
+            "    layer: DOMAIN\n"
+            "    version: 0.1.0\n"
+            '    intent: "Greets people by name."\n'
+            "    exports: [greet]\n"
+            "    requires: none\n"
+            "    uses: none\n"
+            "    soft_requires: none\n"
+            "    runtime_only_requires: none\n"
+            "    deferred_requires: none\n"
+            "    exports_helpers: none\n"
+            "nerve greet :: DOMAIN\n"
+            "    kind: FUNCTION\n"
+            "    visibility: PUBLIC\n"
+            '    intent: "Greet a person by name."\n'
+            '    expects: "name: str"\n'
+            '    guarantees: "Returns a greeting string"\n'
+            "    forbids: none\n"
+            "    evaluates_at: FUNCTION_BOUNDARY\n"
+            "    provides: none\n"
+            "    returns: none\n"
+            "    raises: none\n"
+            "    interface: none\n"
+            "    latency_ms: none\n"
+            "    depends_on: none\n"
+            "    internal: none\n"
+            "    expected_exceptions: none\n"
+            "    consumes_via_dict: none\n"
+            "    declares_attributes: none\n"
+            "    covered_by: none\n"
+            "    ---\n"
+            "    def greet(name: str) -> str:\n"
+            '        return f"Hello, {name}!"\n'
+            "test test_greet :: DOMAIN\n"
+            '    intent: "The greeting names the person."\n'
+            "    tests: [greeter.greet]\n"
+            "    expects: none\n"
+            "    depends_on: none\n"
+            "    mocks: none\n"
+            "    ---\n"
+            "    def test_greet() -> None:\n"
+            "        assert greet(NAME) == Greeting(NAME).text\n"
+            "\n"
+            "    class Greeting:\n"
+            "        def __init__(self, name: str) -> None:\n"
+            '            self.text = f"Hello, {name}!"\n'
+            "\n"
+            '    NAME = "Ada"\n'
+        )
+        mode = StrictnessMode.STRICT
+        module = parse_s0ma(source, "greeter.s0ma", mode=mode)
+        errors = [
+            e
+            for e in validate_module(module, mode=mode, filename="greeter.s0ma")
+            if e.severity == "error"
+        ]
+        assert errors == []
+
+        tree = ast.parse(emit_python(module))
+        top_level_functions = {
+            node.name for node in tree.body if isinstance(node, ast.FunctionDef)
+        }
+        top_level_classes = {
+            node.name for node in tree.body if isinstance(node, ast.ClassDef)
+        }
+        top_level_assigned = {
+            target.id
+            for node in tree.body
+            if isinstance(node, ast.Assign)
+            for target in node.targets
+            if isinstance(target, ast.Name)
+        }
+        assert "test_greet" in top_level_functions
+        assert "Greeting" in top_level_classes
+        assert "NAME" in top_level_assigned
 
 
 # =====================================================================

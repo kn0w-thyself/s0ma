@@ -122,6 +122,59 @@ def test_inspect_by_module_name_json(built_project: Path, capsys) -> None:
     assert payload["module"]["layer"] == "APPLICATION"
 
 
+def test_inspect_json_locates_components_and_helpers(
+    tmp_path: Path, capsys
+) -> None:
+    """``--format json`` gives each component and helper its source lines.
+
+    Built from the ``helper_declarations/clean`` fixture, whose module has
+    two helpers and one nerve. Every entry carries
+    ``location.start_line`` and ``location.end_line``, and a helper's
+    start line is the line of its ``helper`` declaration in the source.
+    """
+    project_root = tmp_path / "helpers_project"
+    shutil.copytree(_FIXTURES_DIR / "helper_declarations" / "clean", project_root)
+    source = project_root / "src" / "sample" / "event_builder.s0ma"
+
+    cli = S0maCLI()
+    rc = cli.run([
+        "--project-root", str(project_root),
+        "build", str(source.parent),
+        "--mode", "dev",
+        "--no-cache",
+    ])
+    assert rc == EXIT_SUCCESS, "fixture build failed"
+    capsys.readouterr()
+
+    rc = cli.run([
+        "--project-root", str(project_root),
+        "inspect", "event_builder", "--format", "json",
+    ])
+    captured = capsys.readouterr()
+    assert rc == EXIT_SUCCESS, captured.err
+    payload = json.loads(captured.out)
+
+    assert payload["components"]
+    assert payload["helpers"]
+    for entry in payload["components"] + payload["helpers"]:
+        location = entry["location"]
+        assert isinstance(location["start_line"], int)
+        assert isinstance(location["end_line"], int)
+        assert location["end_line"] >= location["start_line"]
+
+    declared_at = {
+        line.split()[1]: number
+        for number, line in enumerate(
+            source.read_text(encoding="utf-8").splitlines(), start=1
+        )
+        if line.startswith("helper ")
+    }
+    assert {
+        helper["name"]: helper["location"]["start_line"]
+        for helper in payload["helpers"]
+    } == declared_at
+
+
 # ---------------------------------------------------------------------------
 # 2) test_inspect_by_path_still_works (legacy)
 # ---------------------------------------------------------------------------

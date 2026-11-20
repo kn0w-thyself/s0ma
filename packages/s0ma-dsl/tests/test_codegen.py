@@ -46,6 +46,7 @@ from s0ma_dsl.config import StrictnessMode
 # unit tests now exercise that single source of truth.
 from s0ma_dsl.parser.body_extractor import _dedent_body
 from s0ma_dsl.parser.s0ma_parser import parse_s0ma
+from s0ma_dsl.semantic.validator import validate_module
 from tests.conftest import VALID_FIXTURES_DIR
 
 # ---------------------------------------------------------------------------
@@ -375,6 +376,39 @@ module m
         assert "from functools import wraps" in output
         assert "import os.path" in output
         compile(output, "<known_exc_test>", "exec")
+
+    def test_two_submodules_of_one_package_pass_strict_and_import_apart(self):
+        """``urllib.error`` and ``urllib.request as urlreq`` in one requires list.
+
+        Both start with ``urllib``, but the alias gives the second its own
+        local name, so strict checking reports nothing and each entry is
+        emitted as its own import line.
+        """
+        source = """\
+module m
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Two submodules of one package."
+    requires: [urllib.error, urllib.request as urlreq]
+    exports: []
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+"""
+        parsed = parse_s0ma(source, "m.s0ma", mode=StrictnessMode.STRICT)
+        errors = [
+            e
+            for e in validate_module(parsed, mode=StrictnessMode.STRICT, filename="m.s0ma")
+            if e.severity == "error"
+        ]
+        assert errors == []
+        output = emit_python(parsed)
+        lines = output.splitlines()
+        assert "import urllib.error" in lines
+        assert "import urllib.request as urlreq" in lines
+        compile(output, "<two_submodules_test>", "exec")
 
 
 # ---------------------------------------------------------------------------
