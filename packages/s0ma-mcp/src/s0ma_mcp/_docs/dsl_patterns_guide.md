@@ -108,6 +108,8 @@ However, if you also need the `datetime` module itself (e.g., for `datetime.date
 requires: [datetime.datetime, datetime as dt_mod]
 ```
 
+**NAMESPACE_COLLISION with sibling submodules:** `requires: [urllib.error, urllib.request]` is a `NAMESPACE_COLLISION`, because each plain dotted entry binds the package name `urllib`. Import the names instead (`urllib.error:URLError, urllib.request:Request`), or alias one entry (`urllib.request as urlreq`).
+
 **`typing` module is usually unnecessary:** Python 3.11+ supports `X | None` instead of `Optional[X]`, and built-in generics (`list[str]`, `dict[str, int]`) instead of `typing.List`, `typing.Dict`. Only include `typing.Any` or `typing.Optional` if your body code explicitly uses the `Any` annotation or `Optional[X]` form. The transpiler's VESTIGIAL_IMPORT check will flag unused typing imports.
 
 **Lowercase stdlib from-imports:** Entries like `dataclasses.dataclass` have a lowercase final segment but need a from-import. If they're not in the known-exceptions list, use the colon override: `dataclasses:dataclass`.
@@ -394,6 +396,8 @@ test test_suite :: DOMAIN
 
 Both `test_basic` and `test_empty` are pytest-discoverable (they start with `test_`). The `_setup` helper is also emitted at module scope but is not collected by pytest (leading `_`).
 
+The first top-level statement of a `test` body must be a `def`. Classes and constants may follow it and are emitted at module scope too, but a body that opens with one is a `PARSE_ERROR`.
+
 ---
 
 ## 4. Layer Assignment for Cross-Cutting Tests
@@ -466,6 +470,8 @@ nerve orchestrate :: DOMAIN
 - **`raises` field entries:** Must be s0ma cells in the same module — no declaration needed
 - **Explicit architectural dependencies:** Use `depends_on` when you want the edge in the IR
 - **Cross-module references:** Use `uses` at the module level and `axon` for standalone edges
+
+A `CALLS` edge needs the call in the declaring nerve's own body. A call made inside a `helper` is not evidence for it, and a helper cannot carry `depends_on:`, so such an edge is reported as `VESTIGIAL_IMPORT`. Make the call in the nerve's body to keep the edge; if the call stays in the helper, the model records no `CALLS` edge from the nerve to its target.
 
 ---
 
@@ -596,7 +602,7 @@ nerve FileStorageAdapter :: INFRASTRUCTURE
     visibility: PUBLIC
     intent: "File-system implementation of the storage adapter"
     abstract: false
-    interface: [save, load, delete]
+    interface: none
     ---
     def FileStorageAdapter(base_path: str):
         def save(key: str, data: bytes) -> None:
@@ -620,14 +626,26 @@ nerve FileStorageAdapter :: INFRASTRUCTURE
         }
 ```
 
-### 9.3 Cross-Module Abstract Validation
+Only the abstract port lists methods. A concrete that declares `interface:` with a list is refused with `INTERFACE_ON_NON_ABSTRACT` in every mode, so it writes `interface: none` and is tied to its port by a `CONSTRUCTS` edge (§9.3).
 
-When using `--include` to build with cross-module context, the transpiler validates that concrete nerves implementing abstract interfaces define **all required methods**. Missing methods produce an error:
+### 9.3 Abstract Interface Validation
+
+`s0ma check` reports `MISSING_INTERFACE_METHODS` when a concrete that `CONSTRUCTS` an abstract nerve does not define every method in the port's `interface:`. It checks two forms: a `CONSTRUCTS` edge in the concrete's `depends_on:` when the port is in the same module, and a standalone `axon` when the port is in another module (the concrete's module lists the port in `uses:`):
 
 ```
-ERROR: FileStorageAdapter implements abstract interface StorageAdapter
-       but is missing methods: [delete]
+axon FileStorageAdapter -> StorageAdapter
+    relation: CONSTRUCTS
+    intent: "FileStorageAdapter implements the storage port."
+    carries: "concrete impl of the port"
+    coupling: TIGHT
 ```
+
+```
+ERROR [MISSING_INTERFACE_METHODS] Nerve 'FileStorageAdapter' in module 'storage_infrastructure'
+      CONSTRUCTS abstract nerve 'StorageAdapter' in module 'storage_domain' but is missing interface methods: delete.
+```
+
+The check does not reach a `CONSTRUCTS` edge written in `depends_on:` to a port in another module: a concrete written that way can leave a method out and still check clean.
 
 ### 9.4 When to Use Abstract Nerves
 
@@ -1253,6 +1271,7 @@ If a *production* module tries the same import — adding `event_builder._build_
 - Helpers are **not** registered components. They do not appear in `IRDocument.components`, do not get a `@component` decorator, and do not produce a `register_*()` call. They do appear in `IRDocument.helpers` (a separate top-level array) and in `s0ma inspect` under a `[helpers]` section.
 - Helpers do **not** carry `kind`, `visibility`, `expects`, `guarantees`, `forbids`, `provides`, `returns`, `raises`, `evaluates_at`, `latency_ms`, or `depends_on`. The parser rejects those fields on a `helper`. If you need any of those, you want a `nerve`.
 - Helpers do **not** appear in the module's public surface. They are excluded from `__all__` and from the `exports` list.
+- Helpers do **not** cross module boundaries in production code, even when listed in `exports_helpers:`: a production module whose `uses:` names another module's helper gets `HELPER_PRIVATE_TO_MODULE`. When you split a feature across modules, a function both production modules need is a `nerve`, exported by one and imported dotted by the other. Test modules may still import a helper through `uses:` (§15.3).
 
 ### 15.5 Real logic in modules — the multi-function pattern, not the factory-dict trap
 
@@ -1611,7 +1630,7 @@ nerve AnthropicAdapter :: INFRASTRUCTURE
     forbids: none
     evaluates_at: SUBSYSTEM
     abstract: false
-    interface: [chat, chat_stream]
+    interface: none
     depends_on:
         LLMAdapter: {relation: CONSTRUCTS, carries: "concrete impl of the port", coupling: TIGHT}
     ---
@@ -1625,6 +1644,10 @@ nerve AnthropicAdapter :: INFRASTRUCTURE
         def chat_stream(self, messages: list):
             return self._client.messages.stream(messages=messages)
 ```
+
+The concrete writes `interface: none`; only the port lists methods (§9.2). Its `CONSTRUCTS` edge is inline and the port is in another module, so `s0ma check` does not compare its methods with the port's `interface:`. Write the edge as a standalone `axon` (§9.3) to have them compared.
+
+If the concrete's module also imports another part of `llm_adapter` that a body calls, leave the port out of `uses:` and write the inline target qualified, as `llm_adapter.LLMAdapter`. Next to a sibling that a body calls, a `uses:` entry that only an edge names draws `CROSS_MODULE_USES_ASYMMETRY`, because that check counts only the names the bodies reference.
 
 ```
 # application/orchestrator.s0ma — the consumer, layer APPLICATION

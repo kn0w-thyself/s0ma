@@ -9,7 +9,7 @@ One page to find your way around s0ma: what the parts of a `.s0ma` file are, wha
 | **Describes** | s0ma 0.22.0 (preview) |
 | **Packages** | `s0ma-lang`, `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0`, which all share that version |
 | **Language specification** | [s0ma DSL — Language Specification & Coding Agent Rulebook](../../packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md) |
-| **Documentation snapshot** | `sha256:5dec7f075cd83ba7` |
+| **Documentation snapshot** | `sha256:e8bd84f2df8286c3` |
 | **This page** | edition 2, last revised 2026-10-05 — [what has changed](#what-has-changed) |
 
 A version marked `(preview)` is the latest release together with the changes made since, which are not released yet.
@@ -582,7 +582,7 @@ A check that a part keeps its promises. First line: `test <name> :: <LAYER>`. Te
 | `depends_on` | Always | `none` · `pending` | block | The parts it leans on by decision, one to a line: `name: {relation: …, carries: "…", coupling: …}`. |
 | `mocks` | Always | `none` · `pending` | list of nerve names | The nerves it replaces with stand-ins. |
 | `tags` | Optional | — | list of names | Labels for searching and grouping. |
-| the code | Always | — | code, after the `---` line | One `def` whose name starts with `test_`. The function's name decides whether the test runs; the declaration's name does not. |
+| the code | Always | — | code, after the `---` line | Opens with a `def`, and at least one function's name starts with `test_`. That name decides whether the test runs; the declaration's name does not. Every function, class and constant in it is emitted at module scope. |
 
 ```s0ma
 test test_due_date_is_three_weeks_out :: DOMAIN
@@ -776,7 +776,7 @@ Made only in `release`: [`MISSING_EMBEDDED_EXAMPLE`](diagnostics.md#missing_embe
 
 **Ask s0ma itself.** In a terminal, `s0ma docs` shows the map, `s0ma docs show <topic>` explains one topic, and `s0ma docs search <word>` finds the topics a word could mean. A topic can be an idea (`nerve`), a command, a setting, or the code name of a report such as `VISIBILITY_MISMATCH`.
 
-**Ask your coding agent.** Once the agent is connected to s0ma's authoring server, `s0ma-lang-mcp`, ask it in your own words: "what is a ganglion?", "why did the check fail?", "what does this project contain?". To connect one, register the command `s0ma-lang-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:
+**Ask your coding agent.** Once the agent is connected to s0ma's authoring server, `s0ma-lang-mcp`, ask it in your own words: "what is a ganglion?", "why did the check fail?", "what does this project contain?". To connect one, register the command `s0ma-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:
 
 | The agent can | By using |
 | --- | --- |

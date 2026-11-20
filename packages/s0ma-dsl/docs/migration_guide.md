@@ -35,8 +35,12 @@ s0ma build path/to/project_root                     # rebuild
 `migrate grammar` does three things, and is idempotent (a second run finds
 nothing to add and changes nothing):
 
-1. **Reads the whole project first.** It parses every authored `.s0ma` file
-   before it plans a single write, and without `--apply` it writes nothing.
+1. **Reads the whole project first.** It parses every `.s0ma` file it
+   reaches before it plans a single write, and without `--apply` it writes
+   nothing. Given the project root, it walks the `source_roots` and
+   `test_roots` the project declares and leaves out what git ignores; to
+   migrate a file outside those roots, name its directory. A directory it
+   cannot read is skipped with a warning on stderr.
 2. **Writes `forbids: none`** into every nerve and ganglion that lacks the
    line, directly above that part's `---`. A part that already carries a
    `forbids:` line is left exactly as it is.

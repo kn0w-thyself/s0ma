@@ -26,6 +26,18 @@ Historical entries describe artifacts as they were named at the time.
   hint and the first-publication steps in `docs/RELEASING.md` now lead with
   that message and name the status only as what was observed, since the
   status is PyPI's to change.
+- **The guides say what the tools do.** The patterns guide's concrete adapter
+  examples carried an `interface:` list, which `s0ma check` refuses with
+  `INTERFACE_ON_NON_ABSTRACT`; they now write `interface: none`, and the guide
+  says which `CONSTRUCTS` forms `MISSING_INTERFACE_METHODS` checks. It also
+  says when a `uses:` entry kept for an edge draws
+  `CROSS_MODULE_USES_ASYMMETRY`, that a call inside a `helper` is no evidence
+  for a `CALLS` edge, what a `test` body may open with, that helpers stay in
+  their module, and how sibling submodules in `requires:` collide. The
+  troubleshooting page says what `s0ma build --check` compares and what a
+  check given paths resolves `uses:` against. The quick reference describes a
+  `test` body as it is read, and names `s0ma-mcp` as the command to register
+  for the authoring server. The migration guide says which files `s0ma migrate grammar` reads.
 
 ## [0.22.0] — 2026-11-19
 

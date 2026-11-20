@@ -1307,7 +1307,7 @@
       "after_samples": [],
       "before_samples": [],
       "code": {
-        "says": "One `def` whose name starts with `test_`. The function's name decides whether the test runs; the declaration's name does not.",
+        "says": "Opens with a `def`, and at least one function's name starts with `test_`. That name decides whether the test runs; the declaration's name does not. Every function, class and constant in it is emitted at module scope.",
         "type": "code",
         "write": "Always"
       },
@@ -1728,7 +1728,7 @@
           ]
         }
       ],
-      "says": "Once the agent is connected to s0ma's authoring server, `s0ma-lang-mcp`, ask it in your own words: \"what is a ganglion?\", \"why did the check fail?\", \"what does this project contain?\". To connect one, register the command `s0ma-lang-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:"
+      "says": "Once the agent is connected to s0ma's authoring server, `s0ma-lang-mcp`, ask it in your own words: \"what is a ganglion?\", \"why did the check fail?\", \"what does this project contain?\". To connect one, register the command `s0ma-mcp` with your agent as an MCP server; `s0ma doctor` prints the line that does it for Claude Code. The server gives the agent:"
     },
     "ask_s0ma": {
       "commands": [
