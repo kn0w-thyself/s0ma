@@ -8,13 +8,12 @@
 #
 # What this file deliberately does NOT do:
 #
-#   * scan for credentials — that is a repository setting (secret
-#     scanning and push protection, free on a public repository), not a
-#     file. The milestone note
-#     `plans/notes/front-door-a5-ci-additions.md` carries it as an owner
-#     step;
-#   * raise security advisories — once the repository is public those
-#     arrive through the dependency graph whether this file exists or not.
+#   * scan for credentials. That is a repository setting, not a file:
+#     secret scanning and push protection are both on for this
+#     repository;
+#   * raise security advisories. The repository is public and Dependabot
+#     alerts are on, so those arrive through the dependency graph whether
+#     this file exists or not.
 #
 # Nothing here changes what CI runs. A Dependabot pull request is an
 # ordinary pull request: it passes the same gate as everybody else's, and
@@ -41,7 +40,7 @@ updates:
       prefix: s0ma
 
   # 2. The Python workspace. The lockfile is the root `uv.lock` and the
-  #    four packages are uv workspace members, so the workspace is one
+  #    five packages are uv workspace members, so the workspace is one
   #    update unit and `directory: "/"` is where its manifest lives.
   #    Dependabot's `uv` ecosystem does read a workspace lockfile: its
   #    pull requests here regenerate the root `uv.lock`, and CI installs
@@ -55,7 +54,7 @@ updates:
   #      * a floor is a statement about what the packages support. The
   #        extras ship in wheel metadata, so raising one forces every
   #        installer up with it. Floors move on evidence, by hand;
-  #      * the four package pyproject files are sources the documentation
+  #      * the five package pyproject files are sources the documentation
   #        build hashes. A pull request that edits one fails the gate
   #        until the documentation loop is rerun
   #        (`docs/operations/docs-maintenance.md`), which Dependabot
@@ -65,12 +64,12 @@ updates:
   #    `<2` cap, say) is never proposed. Widening a range stays a person's
   #    job.
   #
-  #    UNVERIFIED: GitHub's reference lists `uv` among the ecosystems that
+  #    Observed: GitHub's reference lists `uv` among the ecosystems that
   #    support `versioning-strategy` without saying which values each one
-  #    honors. How to check: the first pull request this entry opens
-  #    should change `uv.lock` and nothing else. If it still edits a
-  #    pyproject file, Insights -> Dependency graph -> Dependabot shows
-  #    the log of that run.
+  #    honors, so this was checked on the first pull request this entry
+  #    opened with the setting in place. Pull request #23 changed `uv.lock`
+  #    and nothing else. If a later one edits a pyproject file, Insights ->
+  #    Dependency graph -> Dependabot shows the log of that run.
   - package-ecosystem: uv
     directory: "/"
     schedule:
