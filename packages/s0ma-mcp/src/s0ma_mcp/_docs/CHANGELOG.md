@@ -107,6 +107,23 @@ Historical entries describe artifacts as they were named at the time.
   installed at run time as well. The README and the patterns guide (section
   10.2 and section 28.5) now say so.
 
+- **More of the guides say what the tools do.** The patterns guide says that
+  a builtin such as `ValueError` in `raises:` fails with `DOES_NOT_EXIST`, and
+  that an `@file` target is hashed and embedded with its line endings read as
+  `\n`, so a CRLF and an LF checkout record the same hash. The packaging guide
+  says that only a bare `s0ma check` records the first check baseline, and
+  that `.s0ma/` matches the `*.s0ma` glob. The quick reference says where a
+  constant several tests share goes, that test modules follow the layer rule
+  unless `test_layering = "permissive"`, that a `CONSTANT` may call a nerve
+  from `uses`, and that only a plain literal is carried as its `value`; the
+  `cell` and canonical IR concepts say what a constant binds and where
+  `s0ma inspect --format json` gives source lines. The troubleshooting page
+  covers bare `pytest` on built tests, LF `conftest.py` under
+  `core.autocrlf=true`, and when the bare `s0ma-mcp` registration needs
+  `PATH`. The migration guide names the directories and links
+  `s0ma migrate grammar` skips without a warning. `AGENTS.md` says the gate
+  needs `uv sync --all-packages --all-extras` in a fresh worktree.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added

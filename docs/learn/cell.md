@@ -8,7 +8,7 @@ A declared piece of structure — a data shape, a fixed value, a setting, a type
 
 ## What it is
 
-A cell is a part of a system that holds a shape or a value rather than doing work. Data models, configuration objects, fixed constants, enumerations, type names and error types are all cells. Like every other part it declares why it exists and what it represents, so a system can describe its own vocabulary and not only its own actions.
+A cell is a part of a system that holds a shape or a value rather than doing work. Data models, configuration objects, fixed constants, enumerations, type names and error types are all cells. A constant binds its name once; the object it names may still change inside, as a context variable or a lock does. Like every other part it declares why it exists and what it represents, so a system can describe its own vocabulary and not only its own actions.
 
 ## Why it exists
 
@@ -77,4 +77,4 @@ cell <Name> :: <LAYER>
 
 - Topic id: `concept:cell`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:c16f35eaefad084a`
+- Documentation snapshot: `sha256:ebb101336797e94e`

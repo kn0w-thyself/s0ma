@@ -455,6 +455,22 @@ uv run s0ma --project-root /path/to/project build /path/to/project
 That flag is the one the authoring server's own `build_project` tool passes,
 which is why a build run by a coding agent never meets this.
 
+## Bare `pytest` finds no tests, or cannot import a module
+
+Built test modules import the modules they test by module name, and a
+scaffolded project names them to end in `_tests.py`. `s0ma test` puts the
+build directory first on `PYTHONPATH` and tells pytest to collect `test_*.py`
+and `*_tests.py` files, so bare `pytest build` collects no `_tests.py` tests and `pytest build/<module>_tests.py` stops with `ModuleNotFoundError`. To
+run one module, use `uv run s0ma test -- -k <module>_tests`.
+
+## Windows: git warns about line endings in `conftest.py`
+
+s0ma writes every file with LF line endings on every operating system, the
+generated `conftest.py` included, so its output is the same everywhere. With
+`core.autocrlf=true`, git checks that file out as CRLF and warns once s0ma
+rewrites it. Add `conftest.py text eol=lf` to `.gitattributes` and git keeps it
+LF.
+
 ## The s0ma server does not show up in your agent
 
 **What you see:** in Claude Code, `/mcp` does not list `s0ma-authoring`; or the
@@ -482,7 +498,10 @@ happened somewhere other than where you are working.
 
    The installer skips this step, with a printed note, when it cannot find
    Claude Code on your machine — so if you installed Claude Code afterwards,
-   this line is simply the step that was skipped.
+   this line is simply the step that was skipped. The bare form that
+   `s0ma doctor` prints, `-- s0ma-mcp`, works only when the environment
+   holding `s0ma-mcp` is on `PATH` when your agent starts; `uv run s0ma-mcp`,
+   as above, or the full path `doctor` reports avoids that.
 4. **Restart your agent.** A newly added server is picked up when the client
    next starts, not mid-session. In Claude Code you will also be asked to
    approve the project's server the first time.

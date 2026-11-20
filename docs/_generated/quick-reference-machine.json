@@ -555,7 +555,7 @@
     "release": "0.22.0 (preview)",
     "release_version": "0.22.0",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:c16f35eaefad084a",
+    "snapshot_hash": "sha256:ebb101336797e94e",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
@@ -998,11 +998,14 @@
       "when": "something that acts: it computes, decides, fetches or serves"
     },
     {
+      "after_samples": [
+        "A `CONSTANT`'s code may call a nerve listed in `uses`. The result is not a plain literal, so that constant carries no `value`."
+      ],
       "code": {
         "applies": "representation required by cell kind",
         "holds": "code, after the `---` line",
         "in_words": "Always, unless `content`",
-        "says": "A class, a value, or a type. A `CONSTANT` assigns to its own name: `LOAN_DAYS = 21`.",
+        "says": "A class, a value, or a type. A `CONSTANT` assigns to its own name once: `LOAN_DAYS = 21`. The object it names may still change inside, as a `ContextVar` or a lock does; only a plain literal is carried as `value` in `s0ma inspect --format json`.",
         "type": "code",
         "write": "when-it-applies"
       },
@@ -1408,7 +1411,8 @@
     },
     {
       "after_samples": [
-        "A helper that fits on one line can also be written inside the module header, under `helpers:`."
+        "A helper that fits on one line can also be written inside the module header, under `helpers:`.",
+        "A value several tests share is not a helper: declare it as a `cell` with `kind: CONSTANT` and `visibility: TEST`, and list it in each test file's `uses`."
       ],
       "code": {
         "holds": "code, after the `---` line",
@@ -1569,6 +1573,9 @@
       "when": "a connection to a service you do not control"
     },
     {
+      "after_samples": [
+        "A test module follows the same layer rule as any other module, so a test file in a lower layer cannot use a part from a higher one. `[tool.s0ma].test_layering = \"permissive\"` lifts that rule for test modules."
+      ],
       "code": {
         "holds": "code, after the `---` line",
         "in_words": "Always",

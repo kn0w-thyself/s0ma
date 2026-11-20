@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "6f97e90b5f5c3781b6c72d7eafc417f3642ed29c378ed135ab2054fa2adc5f75",
+      "content_sha256": "192582b14b867fe93de3326a55fe09b4f2c3ab99b3a9ce40bbacb4187c34d079",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.22.0] — 2026-11-19",
@@ -1861,7 +1861,7 @@
       "summary": "The normalised record of one file's declarations that the build writes beside the code, for tools to read.",
       "syntax": [],
       "term": "canonical IR",
-      "use_when": "Read this record whenever a tool needs the structure of a system rather than its behaviour: building a reference page, answering a question about a part, or working out what a change would touch."
+      "use_when": "Read this record whenever a tool needs the structure of a system rather than its behaviour: building a reference page, answering a question about a part, or working out what a change would touch. `s0ma inspect <module> --format json` gives each component and helper a `location` with the `start_line` and `end_line` of its declaration."
     },
     {
       "do_not_use_when": "Do not use a cell for anything that computes, decides, fetches, or serves — that is a nerve, even when it is three lines long. A method that keeps a data structure internally consistent belongs on a cell; a method that acts on the system around it does not.",
@@ -1870,7 +1870,7 @@
         "authority:spec/cell-declaration"
       ],
       "id": "concept:cell",
-      "plain_definition": "A cell is a part of a system that holds a shape or a value rather than doing work. Data models, configuration objects, fixed constants, enumerations, type names and error types are all cells. Like every other part it declares why it exists and what it represents, so a system can describe its own vocabulary and not only its own actions.",
+      "plain_definition": "A cell is a part of a system that holds a shape or a value rather than doing work. Data models, configuration objects, fixed constants, enumerations, type names and error types are all cells. A constant binds its name once; the object it names may still change inside, as a context variable or a lock does. Like every other part it declares why it exists and what it represents, so a system can describe its own vocabulary and not only its own actions.",
       "purpose": "It draws the line between what a system is made of and what a system does. A tool asking what data a program handles reads the cells; a tool asking what a program does reads the nerves. Keeping structure out of the behaviour declarations is what makes both questions answerable at all.",
       "related_concepts": [
         [
@@ -5523,7 +5523,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:c16f35eaefad084a"
+    "snapshot_hash": "sha256:ebb101336797e94e"
   },
   "surfaces": [
     {

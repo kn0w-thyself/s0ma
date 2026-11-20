@@ -108,6 +108,8 @@ Before editing:
 
 - `uv run python scripts/check.py` is the canonical repository gate. It runs
   every stage (`--list` names them) and does not stop after the first failure.
+  In a fresh worktree, run `uv sync --all-packages --all-extras` first; without
+  it `mypy-dsl`, `pytest-dsl` and `docs-application` fail on a clean tree.
   Do not substitute an ad-hoc set of commands for the final run.
 - While iterating, run focused package tests from that package's directory.
   Before handoff, run all relevant focused tests, the full gate, and

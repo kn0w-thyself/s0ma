@@ -348,7 +348,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:c16f35eaefad084a"
+    "snapshot_hash": "sha256:ebb101336797e94e"
   },
   "topics": [
     {
@@ -691,7 +691,7 @@
         {
           "fact": "use_when",
           "heading": "When to use it",
-          "text": "Read this record whenever a tool needs the structure of a system rather than its behaviour: building a reference page, answering a question about a part, or working out what a change would touch."
+          "text": "Read this record whenever a tool needs the structure of a system rather than its behaviour: building a reference page, answering a question about a part, or working out what a change would touch. `s0ma inspect <module> --format json` gives each component and helper a `location` with the `start_line` and `end_line` of its declaration."
         },
         {
           "fact": "do_not_use_when",
@@ -773,7 +773,7 @@
         {
           "fact": "plain_definition",
           "heading": "What it is",
-          "text": "A cell is a part of a system that holds a shape or a value rather than doing work. Data models, configuration objects, fixed constants, enumerations, type names and error types are all cells. Like every other part it declares why it exists and what it represents, so a system can describe its own vocabulary and not only its own actions."
+          "text": "A cell is a part of a system that holds a shape or a value rather than doing work. Data models, configuration objects, fixed constants, enumerations, type names and error types are all cells. A constant binds its name once; the object it names may still change inside, as a context variable or a lock does. Like every other part it declares why it exists and what it represents, so a system can describe its own vocabulary and not only its own actions."
         },
         {
           "fact": "purpose",
