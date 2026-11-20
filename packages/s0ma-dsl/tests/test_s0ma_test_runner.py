@@ -335,6 +335,10 @@ def test_s0ma_test_prints_pytest_summary_last_in_a_pipe(
     """
     env = dict(os.environ)
     env.pop("PYTHONUNBUFFERED", None)
+    # The CLI writes utf-8 to a pipe on Windows, where the parent would
+    # otherwise decode with a legacy code page; pytest's own output goes
+    # to the same pipe, so it is asked for utf-8 too.
+    env["PYTHONIOENCODING"] = "utf-8"
     result = subprocess.run(
         [
             sys.executable, "-m", "s0ma_dsl",
@@ -344,6 +348,8 @@ def test_s0ma_test_prints_pytest_summary_last_in_a_pipe(
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         env=env,
         check=False,
     )
