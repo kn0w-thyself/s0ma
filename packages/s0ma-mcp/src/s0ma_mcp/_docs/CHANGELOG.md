@@ -275,6 +275,20 @@ Historical entries describe artifacts as they were named at the time.
   keeps its own message and exit code. That includes `s0ma check --format
   json` on a locked path, which still ends `Internal error` and exit 3.
 
+- **Calling an abstract port returns its stubs.** For a nerve with
+  `abstract: true`, an `interface:` list, and no body, the emitted factory
+  defined one stub per interface method, each raising `NotImplementedError`
+  with the method's name, and then returned nothing. Calling the port gave
+  `None`, so code that called it by mistake failed later, far from the cause,
+  and the stubs could never be reached. The factory now ends with
+  `return {"save": save, "load": load}`, the dict shape a concrete adapter
+  returns, so the mistake fails at the method it calls with
+  `NotImplementedError("save")`. This changes the emitted code for every
+  abstract port: a project that declares one must rebuild to get it. Nothing
+  else changes: what `s0ma check` accepts, the IR, the registration of the
+  port, an abstract nerve that has its own body, and every concrete nerve
+  build as before. The patterns guide's section 9.1 shows the new `return`.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added

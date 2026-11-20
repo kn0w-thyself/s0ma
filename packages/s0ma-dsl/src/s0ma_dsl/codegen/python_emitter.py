@@ -1095,13 +1095,20 @@ class PythonEmitter:
         return self._emit_function_nerve(nerve, module, body)
 
     def _generate_abstract_stub(self, nerve: NerveDecl) -> str:
-        """Generate a stub body raising NotImplementedError for each interface method."""
+        """Generate a stub body raising NotImplementedError for each interface method.
+
+        The factory returns its stubs in the dict-of-functions shape a
+        concrete adapter returns, so a port called by mistake fails with
+        ``NotImplementedError`` naming the method, not later on ``None``.
+        """
         stubs: list[str] = []
         for method in nerve.interface:
             stubs.append(f"    def {method}(*args, **kwargs):")
             stubs.append(f"        raise NotImplementedError(\"{method}\")")
             stubs.append("")
-        stub_body = "\n".join(stubs).rstrip()
+        entries = ", ".join(f"\"{method}\": {method}" for method in nerve.interface)
+        stubs.append(f"    return {{{entries}}}")
+        stub_body = "\n".join(stubs)
         return f"def {nerve.name}():\n{stub_body}"
 
     def _emit_function_nerve(
