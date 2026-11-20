@@ -50,7 +50,9 @@ PRD references: feedback-5.5 (POST-8), this milestone is M-12 in
 from __future__ import annotations
 
 import ast
+import io
 import re
+import tokenize
 from dataclasses import dataclass
 
 from s0ma.decorators import component
@@ -262,10 +264,56 @@ def requires_python_includes_311(
 # ---------------------------------------------------------------------------
 
 
-# Matches an f-string opener (``f"``, ``f'``, ``F"``, etc.) and
-# captures the quote character so we can scan the rest of the body
-# for the same quote inside an embedded brace expression.
-_FSTRING_OPENER_RE = re.compile(r"""(?P<prefix>[fF])(?P<quote>"{3}|'{3}|"|')""")
+# The string-literal quote that follows a token's prefix: a triple quote
+# first, so ``f"""`` is not read as ``f"`` followed by ``""``.
+_STRING_QUOTE_RE = re.compile(r"""\"{3}|'{3}|"|'""")
+
+# On Python 3.12+ the tokenizer reports an f-string as FSTRING_START,
+# FSTRING_MIDDLE, FSTRING_END; on 3.11 it is one STRING token.
+_OPENER_TOKEN_TYPES = frozenset(
+    {tokenize.STRING}
+    | ({tokenize.FSTRING_START} if hasattr(tokenize, "FSTRING_START") else set())
+)
+
+
+def _fstring_openers(body: str) -> list[tuple[int, int, int, str]]:
+    """Return ``(line, column, quote_start, quote)`` for every f-string opener.
+
+    An opener is a place where Python's own tokenizer starts a string
+    token whose prefix contains ``f`` or ``F`` (``f``, ``F``, ``rf``,
+    ``fR``, and so on). ``line`` is 1-based, ``column`` is the offset of
+    the prefix's ``f``, and ``quote_start`` is the offset of the opening
+    quote on that line. A name or a string that only ends in ``f`` before
+    a quote is never an opener.
+
+    The tokenizer runs on the whole body so a string's start is read in
+    context. A body it cannot tokenize (an unclosed bracket, a bad
+    unindent) keeps the openers found before the failure; the scan never
+    raises.
+    """
+    openers: list[tuple[int, int, int, str]] = []
+    tokens = tokenize.generate_tokens(io.StringIO(body).readline)
+    try:
+        for tok in tokens:
+            if tok.type not in _OPENER_TOKEN_TYPES:
+                continue
+            quote_match = _STRING_QUOTE_RE.search(tok.string)
+            if quote_match is None:
+                continue
+            prefix = tok.string[:quote_match.start()]
+            f_index = prefix.lower().find("f")
+            if f_index < 0:
+                continue
+            line, col = tok.start
+            openers.append((
+                line,
+                col + f_index,
+                col + quote_match.start(),
+                quote_match.group(),
+            ))
+    except (tokenize.TokenError, SyntaxError):
+        pass
+    return openers
 
 
 def _scan_nested_quote_fstrings(body: str) -> list[Python312OnlyFinding]:
@@ -278,7 +326,11 @@ def _scan_nested_quote_fstrings(body: str) -> list[Python312OnlyFinding]:
     the *same* quote character. Pre-PEP-701 this was a syntax error;
     PEP 701 (3.12) lifts the restriction.
 
-    The scan is line-based and conservative. False negatives are
+    The openers come from Python's tokenizer (``_fstring_openers``),
+    so only a real string prefix containing ``f`` starts a walk; a
+    name or a string that ends in ``f`` before a quote does not.
+
+    The walk is line-based and conservative. False negatives are
     acceptable (rare edge case grammar nesting); false positives
     would erode author trust.
 
@@ -292,68 +344,72 @@ def _scan_nested_quote_fstrings(body: str) -> list[Python312OnlyFinding]:
     Returns a list of findings, one per detected occurrence.
     """
     findings: list[Python312OnlyFinding] = []
-    lines = body.splitlines()
-    for line_idx, line in enumerate(lines):
-        pos = 0
-        while pos < len(line):
-            m = _FSTRING_OPENER_RE.search(line, pos)
-            if not m:
+    # Split the same way the tokenizer reads the body, so a token's line
+    # number indexes the right line.
+    lines = [
+        raw.rstrip("\r\n") for raw in io.StringIO(body).readlines()
+    ]
+    # Where the walk of the last opener stopped, per line. An f-string
+    # nested inside one already walked is not scanned again.
+    walked_to: dict[int, int] = {}
+    for line_no, column, quote_start, quote in _fstring_openers(body):
+        if line_no > len(lines) or column < walked_to.get(line_no, 0):
+            continue
+        line = lines[line_no - 1]
+        opener_end = quote_start + len(quote)
+        # Walk the f-string body, tracking brace depth. The
+        # f-string ends when we hit the matching quote sequence
+        # at brace_depth == 0.
+        brace_depth = 0
+        i = opener_end
+        same_quote_in_braces = False
+        while i < len(line):
+            ch = line[i]
+            if ch == "\\" and i + 1 < len(line):
+                # Skip escape sequences (incl. \\" inside the body).
+                i += 2
+                continue
+            if brace_depth == 0 and line.startswith(quote, i):
+                # End of the f-string.
+                i += len(quote)
                 break
-            quote = m.group("quote")
-            opener_end = m.end()
-            # Walk the f-string body, tracking brace depth. The
-            # f-string ends when we hit the matching quote sequence
-            # at brace_depth == 0.
-            brace_depth = 0
-            i = opener_end
-            same_quote_in_braces = False
-            while i < len(line):
-                ch = line[i]
-                if ch == "\\" and i + 1 < len(line):
-                    # Skip escape sequences (incl. \\" inside the body).
+            if ch == "{":
+                if line[i:i + 2] == "{{":
+                    # Literal ``{{`` escape — not a brace expr.
                     i += 2
                     continue
-                if brace_depth == 0 and line.startswith(quote, i):
-                    # End of the f-string.
-                    i += len(quote)
-                    break
-                if ch == "{":
-                    if line[i:i + 2] == "{{":
-                        # Literal ``{{`` escape — not a brace expr.
-                        i += 2
-                        continue
-                    brace_depth += 1
-                    i += 1
-                    continue
-                if ch == "}":
-                    if line[i:i + 2] == "}}":
-                        # Literal ``}}`` escape.
-                        i += 2
-                        continue
-                    if brace_depth > 0:
-                        brace_depth -= 1
-                    i += 1
-                    continue
-                if brace_depth > 0 and line.startswith(quote, i):
-                    # Same quote char nested inside a brace
-                    # expression — the 3.12-only signal.
-                    same_quote_in_braces = True
-                    i += len(quote)
-                    continue
+                brace_depth += 1
                 i += 1
-            if same_quote_in_braces:
-                findings.append(Python312OnlyFinding(
-                    kind="nested_quote_fstring",
-                    description=(
-                        f"Nested-quote f-string (the same {quote!r} quote "
-                        f"character appears inside a brace expression). "
-                        f"PEP 701 lifted this restriction in Python 3.12; "
-                        f"earlier 3.x versions raise SyntaxError at import."
-                    ),
-                    line=line_idx + 1,
-                    column=m.start(),
-                ))
-            pos = max(i, opener_end + 1)
+                continue
+            if ch == "}":
+                if line[i:i + 2] == "}}":
+                    # Literal ``}}`` escape.
+                    i += 2
+                    continue
+                if brace_depth > 0:
+                    brace_depth -= 1
+                i += 1
+                continue
+            if brace_depth > 0 and line.startswith(quote, i):
+                # Same quote char nested inside a brace
+                # expression — the 3.12-only signal.
+                same_quote_in_braces = True
+                i += len(quote)
+                continue
+            i += 1
+        if same_quote_in_braces:
+            findings.append(Python312OnlyFinding(
+                kind="nested_quote_fstring",
+                description=(
+                    f"Nested-quote f-string (the same {quote!r} quote "
+                    f"character appears inside a brace expression). "
+                    f"PEP 701 lifted this restriction in Python 3.12; "
+                    f"earlier 3.x versions raise SyntaxError at import."
+                ),
+                line=line_no,
+                column=column,
+            ))
+        walked_to[line_no] = max(i, opener_end)
     return findings
 
 

@@ -52,6 +52,19 @@ Historical entries describe artifacts as they were named at the time.
   `MISSING_RETURN_KEY`, so a nested helper's dict no longer counts as the
   nerve's return there either.
 
+- **The f-string check reads only real f-strings.** With a
+  `requires-python` floor that admits 3.11, `s0ma check` refused correct
+  bodies with `PARSE_GRAMMAR_FORWARD_INCOMPAT` and "Nested-quote
+  f-string" whenever a name or a string ending in `f` stood right before a
+  quote and a brace with a quote inside followed on the same line:
+  `return {"brief": {"asks": 1}}`, `[{"id": "brief"}, {"id": "other"}]`,
+  `flag["ref"] == {"usage": {}}`, and the single- and triple-quote forms of
+  each. The scan now starts only where Python's own tokenizer opens a string
+  whose prefix contains `f`, so those lines check clean. A nested same-quote
+  f-string still fails with the same code, severity and message, and that now
+  includes the `fr` and `fR` prefixes, which the scan used to miss. The
+  reported line is unchanged.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
