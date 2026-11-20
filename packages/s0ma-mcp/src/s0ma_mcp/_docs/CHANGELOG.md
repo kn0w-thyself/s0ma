@@ -86,6 +86,16 @@ Historical entries describe artifacts as they were named at the time.
   script that reads the exit code sees 1 where it saw 3. As before, nothing
   is written, with or without `--apply`.
 
+- **`s0ma check` reads a named file once when `--include` also reaches it.**
+  A check given files and an `--include` directory that holds them, such as
+  `s0ma check src/a.s0ma src/b.s0ma --include src`, reported
+  `MODULE_NAME_COLLISION` for each named file, "found in both" the same path
+  twice, and exited 1. A file reached both ways is now one file: it is checked
+  as a named file, and the `--include` copy is not read again. Paths are
+  compared as real paths, so a relative path, an absolute path and a
+  symlinked directory that reach one file count once. Two different files that
+  declare one module name still report `MODULE_NAME_COLLISION` as before.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
