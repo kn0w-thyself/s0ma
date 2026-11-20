@@ -5242,10 +5242,21 @@ class S0maCLI:
                 )
                 return EXIT_USAGE_ERROR
 
-        # Discover context modules from --include paths
+        # Discover context modules from --include paths. A file that is
+        # already a target (compared by real path, so a relative path,
+        # an absolute path, or a symlinked directory all name one file)
+        # is checked once as a target and is not read again as context;
+        # nor is a file reached through two overlapping --include paths.
+        # Two different files that declare one module name still
+        # collide below.
         context_files: list[Path] = []
         for include_path in args.include or []:
-            context_files.extend(_discover_s0ma_files(str(include_path)))
+            for path in _discover_s0ma_files(str(include_path)):
+                resolved = path.resolve()
+                if resolved in seen:
+                    continue
+                seen.add(resolved)
+                context_files.append(path)
         target_names: set[str] = set()
 
         all_diagnostics: list[S0maError] = []
