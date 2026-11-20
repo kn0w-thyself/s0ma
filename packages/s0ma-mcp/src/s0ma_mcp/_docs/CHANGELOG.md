@@ -289,6 +289,26 @@ Historical entries describe artifacts as they were named at the time.
   port, an abstract nerve that has its own body, and every concrete nerve
   build as before. The patterns guide's section 9.1 shows the new `return`.
 
+- **A finding on a `requires:` or `uses:` entry names that entry's line.**
+  The parser kept no source line for the entries of a module's `requires:`,
+  `uses:`, `soft_requires:`, `runtime_only_requires:` and
+  `deferred_requires:` lists, or an integration's `requires:` and `uses:`,
+  so every finding about one entry printed line 0: `DOES_NOT_EXIST`,
+  `NOT_EXPORTED`, `HELPER_PRIVATE_TO_MODULE`, `VESTIGIAL_IMPORT`,
+  `NAMESPACE_COLLISION`, `MISSING_PACKAGE`, `CROSS_LAYER_DEPENDENCY`,
+  `CROSS_MODULE_USES_ASYMMETRY` and `REQUIRES_DOTTED_LOWERCASE_HINT` among
+  them. The line reported for these findings moves from 0 to the entry's
+  line: the field's line for an inline list such as `uses: [a.x, b.y]`, the
+  line of each `- item` in a block list, and the line an entry continues on
+  when an inline list wraps. The `line` field of `--format json` keeps its
+  name and type and only its value moves, as does the number after
+  `at line` in a `NAMESPACE_COLLISION` message. The text output sorts a
+  file's findings by line, so these now sit at their line instead of first.
+  A recorded `.s0ma/check-baseline.json` still matches them, since it keys a
+  finding on its code, module and symbol and never on its line. The codes,
+  the severities, the wording of each message, the IR, and the emitted
+  Python do not change.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added

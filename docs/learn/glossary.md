@@ -91,4 +91,4 @@ s0ma's vocabulary is 39 ideas. Each row gives the short form; the term links to 
 ## Identity
 
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:263f0ab1c72a1831`
+- Documentation snapshot: `sha256:8aead1e76ed96d80`
