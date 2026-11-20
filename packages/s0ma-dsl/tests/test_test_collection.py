@@ -143,6 +143,66 @@ class TestWhatTheRunnerCollects:
             "suggestion": "test_sums_are_right",
         }
 
+    def test_one_misnamed_function_keeps_the_rename_suggestion(self):
+        found = reports(module_with("def sums_are_right() -> None:\n    assert 2 + 2 == 4"))
+        assert found[0].remediation == (
+            "Name the function `test_sums_are_right`. The declaration's own "
+            "name does not decide what runs; the function's does."
+        )
+
+    def test_a_fixture_block_suggests_helpers_not_a_rename(self):
+        body = (
+            "@pytest.fixture\n"
+            "def widget() -> dict:\n"
+            "    return {\"name\": \"widget\"}"
+        )
+        found = reports(module_with(body))
+        assert len(found) == 1
+        report = found[0]
+        assert report.severity == "warning"
+        assert report.remediation == (
+            "This block holds `widget`, which read as fixtures or shared code "
+            "rather than one test. Do not rename them to `test_...`: pytest "
+            "would run a renamed fixture or factory as a test that asserts "
+            "nothing. Declare each definition as its own `helper` in this "
+            "module instead; if one of them is the test itself, keep only that "
+            "one here and name it `test_...`."
+        )
+        assert "Name the function" not in report.remediation
+
+    def test_a_called_fixture_decorator_counts_as_a_fixture(self):
+        body = (
+            "@pytest.fixture(scope=\"module\")\n"
+            "def widget() -> dict:\n"
+            "    return {}"
+        )
+        found = reports(module_with(body))
+        assert found[0].remediation.startswith("This block holds `widget`,")
+
+    def test_several_definitions_suggest_one_helper_each(self):
+        body = (
+            "@pytest.fixture\n"
+            "def widget() -> dict:\n"
+            "    return {}\n"
+            "\n"
+            "def make_product() -> dict:\n"
+            "    return {}\n"
+            "\n"
+            "class Stub:\n"
+            "    pass"
+        )
+        found = reports(module_with(body))
+        assert len(found) == 1
+        assert found[0].remediation.startswith(
+            "This block holds `widget`, `make_product`, `Stub`, which read as "
+            "fixtures or shared code rather than one test."
+        )
+        assert "own `helper`" in found[0].remediation
+        # The finding's code, severity and context keys are unchanged.
+        assert set(found[0].context) == {
+            "test", "defined", "collected_patterns", "suggestion",
+        }
+
     def test_the_declarations_own_name_does_not_make_it_run(self):
         body = "def sums() -> None:\n    assert 2 + 2 == 4"
         found = reports(module_with(body, name="test_sums_are_right"))

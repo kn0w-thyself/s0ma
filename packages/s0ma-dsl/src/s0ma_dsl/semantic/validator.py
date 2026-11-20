@@ -1800,6 +1800,23 @@ class IntraModuleValidator:
                 else f"test_{(function_names or [test_decl.name])[0].lstrip('_')}"
             )
             line = test_decl.location.start_line if test_decl.location else 0
+            non_test_definitions = _non_test_block_definitions(test_decl.body)
+            if non_test_definitions:
+                named = ", ".join(f"`{name}`" for name in non_test_definitions)
+                remediation = (
+                    f"This block holds {named}, which read as fixtures or "
+                    f"shared code rather than one test. Do not rename them "
+                    f"to `test_...`: pytest would run a renamed fixture or "
+                    f"factory as a test that asserts nothing. Declare each "
+                    f"definition as its own `helper` in this module instead; "
+                    f"if one of them is the test itself, keep only that one "
+                    f"here and name it `test_...`."
+                )
+            else:
+                remediation = (
+                    f"Name the function `{suggested}`. The declaration's own "
+                    f"name does not decide what runs; the function's does."
+                )
             errors.append(S0maSemanticError(
                 code="TEST_NOT_COLLECTED",
                 message=(
@@ -1812,10 +1829,7 @@ class IntraModuleValidator:
                 line=line,
                 column=0,
                 severity=severity,
-                remediation=(
-                    f"Name the function `{suggested}`. The declaration's own "
-                    f"name does not decide what runs; the function's does."
-                ),
+                remediation=remediation,
                 context={
                     "test": test_decl.name,
                     "defined": list(function_names),
@@ -4362,6 +4376,49 @@ def _top_level_definitions(
                 if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef))
             ]
     return functions, classes
+
+
+def _is_fixture_decorator(node: ast.expr) -> bool:
+    """True for ``@fixture``, ``@pytest.fixture`` and their called forms."""
+    if isinstance(node, ast.Call):
+        node = node.func
+    if isinstance(node, ast.Attribute):
+        return node.attr == "fixture"
+    return isinstance(node, ast.Name) and node.id == "fixture"
+
+
+def _non_test_block_definitions(body: str) -> list[str]:
+    """The definitions of a ``test`` block that is plainly not one test.
+
+    Used only to choose the ``TEST_NOT_COLLECTED`` remediation. Returns the
+    block's top-level function and class names, in order, when its first
+    function is decorated as a fixture or the block defines more than one
+    function or class; an empty list for the plain case of one misnamed
+    test function, and for a body that does not parse.
+    """
+    try:
+        tree = ast.parse(body)
+    except SyntaxError:
+        return []
+    definitions = [
+        node
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+    ]
+    first_function = next(
+        (
+            node
+            for node in definitions
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        ),
+        None,
+    )
+    is_fixture = first_function is not None and any(
+        _is_fixture_decorator(decorator) for decorator in first_function.decorator_list
+    )
+    if is_fixture or len(definitions) > 1:
+        return [node.name for node in definitions]
+    return []
 
 
 # pytest's own defaults for ``python_functions`` and ``python_classes``.

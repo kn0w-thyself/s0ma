@@ -1464,7 +1464,8 @@ ERROR_CODE_DESCRIPTIONS: dict[str, str] = {
     "TEST_NOT_COLLECTED": (
         "A `test` declaration's code defines no function named `test...`, so the test runner "
         "never runs it, while the declaration still counts as coverage for the parts it names. "
-        "Name the function `test_<something>`."
+        "Name the function `test_<something>`; when the block holds fixtures or several "
+        "definitions, declare each one as a `helper` instead of renaming it."
     ),
     "MISSING_TEST_COVERAGE": (
         "A PUBLIC nerve has no `test` declaration covering it (release-mode only)."
