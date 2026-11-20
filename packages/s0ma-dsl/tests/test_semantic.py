@@ -883,6 +883,45 @@ class TestRaisesFieldValidation:
         errors = validate_module(mod)
         assert "DOES_NOT_EXIST" in _error_codes(errors)
 
+    def test_raises_builtin_exception_names_the_two_fixes(self):
+        """A builtin in raises keeps DOES_NOT_EXIST but says what is true."""
+        nerve = _make_nerve("thrower", raises=("ValueError",), line=20)
+        mod = _simple_module(nerves=(nerve,))
+        errors = validate_module(mod)
+        found = [
+            e for e in errors
+            if e.code == "DOES_NOT_EXIST" and "ValueError" in e.message
+        ]
+        assert len(found) == 1
+        finding = found[0]
+        assert finding.severity == "error"
+        assert finding.message == (
+            "Nerve 'thrower' raises 'ValueError', which is a Python builtin "
+            "exception, not a s0ma EXCEPTION cell. The raises field names only "
+            "EXCEPTION cells visible in the component-reference namespace."
+        )
+        assert finding.remediation == (
+            "Write 'raises: none' and state in 'guarantees:' that the nerve "
+            "raises 'ValueError', or declare an EXCEPTION cell for this failure "
+            "(in this module or one imported via uses) and list that cell in "
+            "raises instead of 'ValueError'."
+        )
+        assert "spelling" not in finding.remediation.lower()
+
+    def test_raises_unknown_non_builtin_keeps_generic_text(self):
+        """A missing name that is not a builtin keeps today's remediation."""
+        nerve = _make_nerve("thrower", raises=("GhostError",), line=20)
+        mod = _simple_module(nerves=(nerve,))
+        errors = validate_module(mod)
+        found = [e for e in errors if e.code == "DOES_NOT_EXIST" and "GhostError" in e.message]
+        assert len(found) == 1
+        assert found[0].message == (
+            "Nerve 'thrower' raises 'GhostError', which does not exist in the "
+            "component-reference namespace."
+        )
+        assert "Check spelling" in found[0].remediation
+        assert "builtin" not in found[0].remediation
+
     def test_multiple_raises_checked(self):
         """All entries in the raises tuple should be validated."""
         exc = _make_cell("RealError", kind=Kind.EXCEPTION, line=10)

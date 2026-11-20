@@ -13,6 +13,7 @@ Spec references: §7.1 rules R-04, R-05, R-09, R-10, R-16, R-17,
 from __future__ import annotations
 
 import ast
+import builtins
 import configparser
 import dataclasses
 import fnmatch
@@ -127,6 +128,17 @@ def _authored_bodies(
             line = helper.location.start_line if helper.location else 0
             bodies.append((helper.name, helper.body, line))
     return bodies
+
+
+def _is_builtin_exception_name(name: str) -> bool:
+    """Return True when *name* is a Python builtin exception class.
+
+    Used only to choose the text of the raises ``DOES_NOT_EXIST`` finding:
+    a builtin such as ``ValueError`` is never a s0ma EXCEPTION cell, so the
+    generic "check spelling" advice does not apply to it.
+    """
+    candidate = getattr(builtins, name, None)
+    return isinstance(candidate, type) and issubclass(candidate, BaseException)
 
 
 def _body_bound_names(tree: ast.AST) -> set[str]:
@@ -1352,23 +1364,41 @@ class IntraModuleValidator:
                         },
                     ))
                 elif not ns.is_in_component_ref_namespace(exc_name):
-                    errors.append(S0maSemanticError(
-                        code="DOES_NOT_EXIST",
-                        message=(
+                    if _is_builtin_exception_name(exc_name):
+                        message = (
+                            f"Nerve '{nerve.name}' raises '{exc_name}', "
+                            f"which is a Python builtin exception, not a s0ma "
+                            f"EXCEPTION cell. The raises field names only "
+                            f"EXCEPTION cells visible in the "
+                            f"component-reference namespace."
+                        )
+                        remediation = (
+                            f"Write 'raises: none' and state in 'guarantees:' "
+                            f"that the nerve raises '{exc_name}', or declare "
+                            f"an EXCEPTION cell for this failure (in this "
+                            f"module or one imported via uses) and list that "
+                            f"cell in raises instead of '{exc_name}'."
+                        )
+                    else:
+                        message = (
                             f"Nerve '{nerve.name}' raises '{exc_name}', "
                             f"which does not exist in the component-reference "
                             f"namespace."
-                        ),
-                        file=self.filename,
-                        line=line,
-                        column=0,
-                        severity="error",
-                        remediation=(
+                        )
+                        remediation = (
                             f"Ensure '{exc_name}' is declared as an exception "
                             f"cell in this module or imported via a uses entry. "
                             f"Check spelling and ensure the target is a s0ma "
                             f"component."
-                        ),
+                        )
+                    errors.append(S0maSemanticError(
+                        code="DOES_NOT_EXIST",
+                        message=message,
+                        file=self.filename,
+                        line=line,
+                        column=0,
+                        severity="error",
+                        remediation=remediation,
                         context={
                             "nerve": nerve.name,
                             "exception": exc_name,
@@ -1770,6 +1800,23 @@ class IntraModuleValidator:
                 else f"test_{(function_names or [test_decl.name])[0].lstrip('_')}"
             )
             line = test_decl.location.start_line if test_decl.location else 0
+            non_test_definitions = _non_test_block_definitions(test_decl.body)
+            if non_test_definitions:
+                named = ", ".join(f"`{name}`" for name in non_test_definitions)
+                remediation = (
+                    f"This block holds {named}, which read as fixtures or "
+                    f"shared code rather than one test. Do not rename them "
+                    f"to `test_...`: pytest would run a renamed fixture or "
+                    f"factory as a test that asserts nothing. Declare each "
+                    f"definition as its own `helper` in this module instead; "
+                    f"if one of them is the test itself, keep only that one "
+                    f"here and name it `test_...`."
+                )
+            else:
+                remediation = (
+                    f"Name the function `{suggested}`. The declaration's own "
+                    f"name does not decide what runs; the function's does."
+                )
             errors.append(S0maSemanticError(
                 code="TEST_NOT_COLLECTED",
                 message=(
@@ -1782,10 +1829,7 @@ class IntraModuleValidator:
                 line=line,
                 column=0,
                 severity=severity,
-                remediation=(
-                    f"Name the function `{suggested}`. The declaration's own "
-                    f"name does not decide what runs; the function's does."
-                ),
+                remediation=remediation,
                 context={
                     "test": test_decl.name,
                     "defined": list(function_names),
@@ -3533,10 +3577,12 @@ class IntraModuleValidator:
                         f"symbol itself: `uses: [{name}.<symbol>]` emits "
                         f"`from {name} import <symbol>`, then call it "
                         f"(e.g. `result = <symbol>(...)`). For a shared "
-                        f"factory, declare a module-level `helper` in "
-                        f"'{name}', list it under that module's "
-                        f"`exports_helpers:`, and consume it via "
-                        f"`uses: [{name}.<helper>]`."
+                        f"factory, declare it as a `nerve` in '{name}', "
+                        f"list it under that module's `exports:`, and "
+                        f"import it via `uses: [{name}.<nerve>]`. A "
+                        f"`helper` will not do: production modules cannot "
+                        f"consume another module's helpers, even ones "
+                        f"listed in `exports_helpers:`."
                     ),
                     context={
                         "declaration": decl_name,
@@ -4330,6 +4376,49 @@ def _top_level_definitions(
                 if isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef))
             ]
     return functions, classes
+
+
+def _is_fixture_decorator(node: ast.expr) -> bool:
+    """True for ``@fixture``, ``@pytest.fixture`` and their called forms."""
+    if isinstance(node, ast.Call):
+        node = node.func
+    if isinstance(node, ast.Attribute):
+        return node.attr == "fixture"
+    return isinstance(node, ast.Name) and node.id == "fixture"
+
+
+def _non_test_block_definitions(body: str) -> list[str]:
+    """The definitions of a ``test`` block that is plainly not one test.
+
+    Used only to choose the ``TEST_NOT_COLLECTED`` remediation. Returns the
+    block's top-level function and class names, in order, when its first
+    function is decorated as a fixture or the block defines more than one
+    function or class; an empty list for the plain case of one misnamed
+    test function, and for a body that does not parse.
+    """
+    try:
+        tree = ast.parse(body)
+    except SyntaxError:
+        return []
+    definitions = [
+        node
+        for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+    ]
+    first_function = next(
+        (
+            node
+            for node in definitions
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        ),
+        None,
+    )
+    is_fixture = first_function is not None and any(
+        _is_fixture_decorator(decorator) for decorator in first_function.decorator_list
+    )
+    if is_fixture or len(definitions) > 1:
+        return [node.name for node in definitions]
+    return []
 
 
 # pytest's own defaults for ``python_functions`` and ``python_classes``.

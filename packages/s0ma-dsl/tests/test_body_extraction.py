@@ -259,8 +259,8 @@ class TestNerveBodyValidation:
 
 class TestParseErrorRemediationTeachesBodyRules:
     """Pilot01 (b): the must-be-a-def PARSE_ERROR remediation teaches
-    the two rules that kill first-time users — exactly ONE def in the
-    body, and imports go in the module header's ``requires:`` list —
+    the two rules that kill first-time users (the body's first top-level
+    statement is the def, and imports go in the module header's ``requires:`` list —
     and, when the body detectably mixes imports with a def (normal
     Python pasted in), leads with that state-aware diagnosis."""
 
@@ -289,7 +289,11 @@ class TestParseErrorRemediationTeachesBodyRules:
         assert "The body contains import statements outside the def." in remediation
         # The two rules.
         assert "`requires:` list" in remediation
-        assert "exactly ONE `def do_work(...)`" in remediation
+        assert (
+            "so that the body's first top-level statement is "
+            "`def do_work(...)`." in remediation
+        )
+        assert "exactly ONE" not in remediation
         # Compact valid example.
         assert "A valid nerve body looks like:" in remediation
         assert "def do_work(arg):" in remediation
@@ -299,15 +303,22 @@ class TestParseErrorRemediationTeachesBodyRules:
 
     def test_generic_unknown_body_remediation_still_teaches_both_rules(self):
         """An unknown body WITHOUT the imports+def shape still gets the
-        single-def rule, the requires: rule, and the example."""
+        first-statement rule, the requires: rule, and the example."""
         body = "    x = 1\n    y = 2\n"
         info = extract_body(body)
         errors = validate_body(info, "nerve", "do_work", Kind.FUNCTION, "<test>", 1)
         parse_errors = [e for e in errors if e.code == "PARSE_ERROR"]
         assert len(parse_errors) == 1
         remediation = parse_errors[0].remediation
-        assert "exactly ONE" in remediation
-        assert "`def do_work(...)`" in remediation
+        assert remediation.startswith(
+            "The first top-level statement in the body of nerve 'do_work' "
+            "must be `def do_work(...)`. Classes and constants may follow "
+            "the def, but not come before it. Imports never go in the body: "
+            "declare them in the module header's `requires:` list and the "
+            "transpiler generates the import lines.\n"
+        )
+        assert "exactly ONE" not in remediation
+        assert "nothing else" not in remediation
         assert "`requires:` list" in remediation
         assert "A valid nerve body looks like:" in remediation
         assert parse_errors[0].context["imports_in_body"] is False
@@ -321,6 +332,44 @@ class TestParseErrorRemediationTeachesBodyRules:
             remediation = parse_errors[0].remediation
             assert "The body contains import statements outside the def." in remediation
             assert f"A valid {decl_type} body looks like:" in remediation
+
+    def test_test_body_opening_with_constant_states_the_first_statement_rule(self):
+        """A test body that opens with a constant is refused, and the
+        remediation states the real rule: the def comes first, and
+        classes and constants may follow it."""
+        body = "    _NOW = 1.0\n\n    def test_now():\n        assert _NOW\n"
+        info = extract_body(body)
+        errors = validate_body(info, "test", "test_now", None, "<test>", 1)
+        parse_errors = [e for e in errors if e.code == "PARSE_ERROR"]
+        assert len(parse_errors) == 1
+        assert parse_errors[0].message == (
+            "Test 'test_now' body must be a function definition, found assignment."
+        )
+        remediation = parse_errors[0].remediation
+        assert remediation.startswith(
+            "The first top-level statement in the body of test 'test_now' "
+            "must be `def test_now(...)`. Classes and constants may follow "
+            "the def, but not come before it."
+        )
+        assert "exactly ONE" not in remediation
+
+    def test_test_body_with_def_then_class_and_constant_is_accepted(self):
+        """The rule the remediation states holds: a leading def may be
+        followed by a class and a constant."""
+        body = (
+            "    def test_now():\n"
+            "        assert _Clock().now() == _OFFSET\n"
+            "\n"
+            "    class _Clock:\n"
+            "        def now(self):\n"
+            "            return _OFFSET\n"
+            "\n"
+            "    _OFFSET = 1.0\n"
+        )
+        info = extract_body(body)
+        assert info.body_type == BodyType.FUNCTION
+        errors = validate_body(info, "test", "test_now", None, "<test>", 1)
+        assert [e for e in errors if e.code == "PARSE_ERROR"] == []
 
     def test_full_file_parse_surfaces_teaching_remediation(self):
         """End-to-end via the parser API: normal Python pasted into a
@@ -372,7 +421,7 @@ nerve do_foo :: DOMAIN
         assert err.code == "PARSE_ERROR"
         assert "The body contains import statements outside the def." in err.remediation
         assert "`requires:` list" in err.remediation
-        assert "exactly ONE `def do_foo(...)`" in err.remediation
+        assert "first top-level statement is `def do_foo(...)`" in err.remediation
 
 
 # =====================================================================

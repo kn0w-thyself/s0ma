@@ -89,9 +89,21 @@ class TestModuleSubscriptFires:
         err = subs[0]
         assert err.severity == "error"
         assert err.context["module_object"] == "registry"
-        # Remediation teaches the dotted-uses + helper/exports_helpers fix.
-        assert "uses: [registry.<symbol>]" in err.remediation
-        assert "exports_helpers:" in err.remediation
+        # Remediation teaches the dotted-uses fix and, for a shared
+        # factory, an exported nerve: a helper is refused across modules
+        # (HELPER_PRIVATE_TO_MODULE), so it must not be recommended.
+        assert err.remediation == (
+            "You are treating the module 'registry' as the value one of its "
+            "nerves returns. Import the symbol itself: "
+            "`uses: [registry.<symbol>]` emits "
+            "`from registry import <symbol>`, then call it "
+            "(e.g. `result = <symbol>(...)`). For a shared factory, declare "
+            "it as a `nerve` in 'registry', list it under that module's "
+            "`exports:`, and import it via `uses: [registry.<nerve>]`. A "
+            "`helper` will not do: production modules cannot consume another "
+            "module's helpers, even ones listed in `exports_helpers:`."
+        )
+        assert "consume it via `uses: [registry.<helper>]`" not in err.remediation
 
     def test_module_subscript_is_error_in_every_mode(self) -> None:
         """MODULE_SUBSCRIPT is a guaranteed runtime crash — error in all modes."""

@@ -131,6 +131,23 @@ _VERIFY_UNKNOWN_NOTE = (
 )
 
 
+def _baseline_recorded_at(path: Path) -> str | None:
+    """When the check-baseline record at *path* was last written, in UTC.
+
+    The record carries no timestamp of its own, so this is the file's
+    modification time, rendered as ``YYYY-MM-DDTHH:MM:SSZ`` so it reads the
+    same in every time zone. ``None`` when the file cannot be read.
+    """
+    import datetime as _datetime
+
+    try:
+        mtime = path.stat().st_mtime
+    except OSError:
+        return None
+    recorded = _datetime.datetime.fromtimestamp(mtime, tz=_datetime.UTC)
+    return recorded.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def _verify_note(status: str, count: int, explanation: str) -> str:
     """One status's explanation, said once, wrapped and hanging-indented.
 
@@ -5985,6 +6002,8 @@ class S0maCLI:
         name_environment_flag: bool = False,
         project_modules: Collection[str] = (),
         build_environment: dict[str, Any] | None = None,
+        baseline_file: Path | None = None,
+        baseline_found: bool = True,
     ) -> int:
         """Render the first-class build refusal for NEW check errors.
 
@@ -6015,8 +6034,32 @@ class S0maCLI:
         a refusal under the flag carries it too, as the ``build_environment``
         block of the JSON document and one text line, so the reader sees
         what was left out of the count and why.
+        *baseline_file* is the check-baseline record the NEW errors were
+        classified against, and *baseline_found* says whether a readable
+        record was there. The refusal names that file and when it was
+        recorded (its modification time, in UTC), in one text line and as
+        the ``baseline_path`` and ``baseline_recorded_at`` fields of the
+        JSON ``build_refused`` block, so a stale baseline left by another
+        branch or environment can be spotted.
         """
         from s0ma_dsl.check_baseline import is_environment_diagnostic
+
+        baseline_path_text: str | None = None
+        baseline_recorded_at: str | None = None
+        baseline_line: str | None = None
+        if baseline_file is not None:
+            baseline_path_text = baseline_file.as_posix()
+            if baseline_found:
+                baseline_recorded_at = _baseline_recorded_at(baseline_file)
+            if baseline_recorded_at is not None:
+                baseline_line = (
+                    f"Compared against the baseline {baseline_path_text}, "
+                    f"recorded {baseline_recorded_at}."
+                )
+            else:
+                baseline_line = (
+                    f"No readable baseline was found at {baseline_path_text}."
+                )
 
         environment_hint: str | None = None
         if name_environment_flag and all(
@@ -6060,6 +6103,9 @@ class S0maCLI:
                 "rule": self._BUILD_GATE_RULE,
                 "escape_hatch": escape_hatch,
             }
+            if baseline_path_text is not None:
+                doc["build_refused"]["baseline_path"] = baseline_path_text
+                doc["build_refused"]["baseline_recorded_at"] = baseline_recorded_at
             if environment_hint is not None:
                 doc["build_refused"]["environment_hint"] = environment_hint
             print(json.dumps(doc, indent=2, sort_keys=True))
@@ -6071,6 +6117,8 @@ class S0maCLI:
             f"BUILD REFUSED: {count} NEW check error(s) since your last "
             f"baseline. {self._BUILD_GATE_RULE}"
         )
+        if baseline_line is not None:
+            print(baseline_line)
         print()
         for diag in display_errors:
             label = delta.label_for_diag(diag) or "NEW"
@@ -6591,6 +6639,7 @@ class S0maCLI:
         overridden_new_error_keys: tuple[str, ...] = ()
         if gate_root is not None and not gate_exempt:
             from s0ma_dsl.check_baseline import (
+                baseline_path,
                 classify,
                 diagnostic_key,
                 is_check_severity_error,
@@ -6634,6 +6683,8 @@ class S0maCLI:
                         name_environment_flag=not without_runtime_packages,
                         project_modules=module_dict,
                         build_environment=build_environment,
+                        baseline_file=baseline_path(gate_root),
+                        baseline_found=record is not None,
                     )
                 if new_errors:  # allow_new_errors — override, record it
                     overridden_new_error_keys = tuple(

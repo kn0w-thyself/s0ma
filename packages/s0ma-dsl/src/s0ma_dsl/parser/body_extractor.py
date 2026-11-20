@@ -398,10 +398,11 @@ def _function_body_remediation(
 ) -> str:
     """Build the PARSE_ERROR remediation for a must-be-a-def body.
 
-    Teaches the two rules that kill first-time users: (1) the body must
-    be exactly ONE ``def``, and (2) imports never go in the body — they
-    are declared in the module header's ``requires:`` list and the
-    transpiler generates the import lines. When the body detectably
+    Teaches the two rules that kill first-time users: (1) the body's
+    first top-level statement must be the ``def`` (classes and constants
+    may follow it, never precede it), and (2) imports never go in the
+    body; they are declared in the module header's ``requires:`` list
+    and the transpiler generates the import lines. When the body detectably
     contains imports plus a def (normal Python pasted in), the
     remediation leads with that state-aware diagnosis.
     """
@@ -409,14 +410,15 @@ def _function_body_remediation(
         lead = (
             f"The body contains import statements outside the def. Move each "
             f"import to the module header's `requires:` list (the transpiler "
-            f"generates the import lines) and keep exactly ONE "
-            f"`def {decl_name}(...)` in the body."
+            f"generates the import lines), so that the body's first "
+            f"top-level statement is `def {decl_name}(...)`."
         )
     else:
         lead = (
-            f"The body of {decl_type} '{decl_name}' must be exactly ONE "
-            f"`def {decl_name}(...)` function — nothing else at the top "
-            f"level. Imports never go in the body: declare them in the "
+            f"The first top-level statement in the body of {decl_type} "
+            f"'{decl_name}' must be `def {decl_name}(...)`. Classes and "
+            f"constants may follow the def, but not come before it. "
+            f"Imports never go in the body: declare them in the "
             f"module header's `requires:` list and the transpiler generates "
             f"the import lines."
         )
