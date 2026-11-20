@@ -25,7 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from s0ma_dsl.errors import S0maError, S0maParseError
+from s0ma_dsl.errors import S0maError
 from s0ma_dsl.parser.s0ma_parser import _RawDeclaration, _split_declarations, parse_s0ma
 from s0ma_dsl.semantic_state import semantic_fields, semantic_source_field
 
@@ -406,7 +406,7 @@ def plan_grammar_migration(
             _parse_in_place(
                 source, path, relative, _allow_legacy_semantic_omissions=True,
             )
-        except (OSError, UnicodeDecodeError, S0maParseError) as exc:
+        except (OSError, UnicodeDecodeError, S0maError) as exc:
             raise GrammarMigrationError(
                 "GRAMMAR_MIGRATION_PARSE_ERROR",
                 f"{relative}: {exc}; nothing was "
@@ -419,7 +419,7 @@ def plan_grammar_migration(
         # Prove the proposed new grammar parses before it can reach the plan.
         try:
             _parse_in_place(after_text, path, relative)
-        except S0maParseError as exc:  # pragma: no cover - defensive invariant
+        except S0maError as exc:  # pragma: no cover - defensive invariant
             raise GrammarMigrationError(
                 "GRAMMAR_MIGRATION_OUTPUT_INVALID",
                 f"{relative}: {exc}; "

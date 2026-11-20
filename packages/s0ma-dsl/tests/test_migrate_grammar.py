@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 from s0ma_dsl.cli import migrate_grammar
-from s0ma_dsl.cli.main import EXIT_SUCCESS, S0maCLI
+from s0ma_dsl.cli.main import EXIT_SUCCESS, EXIT_VALIDATION_ERROR, S0maCLI
 from s0ma_dsl.cli.migrate_grammar import (
     GrammarMigrationError,
     apply_grammar_migration,
@@ -659,6 +659,56 @@ def test_apply_migrates_the_readable_source_beside_a_refused_directory(
     assert _migration_warnings(err) == [_unreadable_warning("locked")]
     parse_s0ma(readable.read_text(encoding="utf-8"), filename="open/a.s0ma")
     assert (locked / "hidden.s0ma").read_bytes() == hidden_before
+
+
+def _break_embed(module: Path, kind: str) -> None:
+    embed = module.parent / "page.html"
+    if kind == "missing":
+        embed.unlink()
+    elif kind == "unreadable":
+        embed.chmod(0)
+    else:
+        embed.write_bytes(b"\xff\xfe\x00bad")
+
+
+@pytest.mark.parametrize("kind", [
+    "missing",
+    pytest.param("unreadable", marks=pytest.mark.skipif(
+        _mode_change_cannot_lock() is not None,
+        reason=_mode_change_cannot_lock() or "",
+    )),
+    "not-utf-8",
+])
+@pytest.mark.parametrize("apply", [False, True], ids=["dry-run", "apply"])
+def test_an_embed_that_cannot_be_read_is_a_parse_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    kind: str,
+    apply: bool,
+) -> None:
+    module = _write_project(tmp_path)
+    before = module.read_bytes()
+    _break_embed(module, kind)
+    monkeypatch.chdir(tmp_path)
+    argv = ["migrate", "grammar", *(["--apply"] if apply else []), "."]
+    try:
+        code, out, err = _run_cli(argv, capsys)
+    finally:
+        (module.parent / "page.html").unlink(missing_ok=True)
+    assert "Internal error" not in err
+    assert code == EXIT_VALIDATION_ERROR
+    report = json.loads(out)
+    assert (report["code"], report["ok"]) == ("GRAMMAR_MIGRATION_PARSE_ERROR", False)
+    assert "EMBEDDED_FILE_NOT_FOUND" in report["message"]
+    assert report["message"].startswith(
+        "GRAMMAR_MIGRATION_PARSE_ERROR: src/site/page.s0ma: "
+        "src/site/page.s0ma:7: ERROR [EMBEDDED_FILE_NOT_FOUND]",
+    )
+    assert report["message"].endswith(
+        "; nothing was changed. Fix this source, then rerun `s0ma migrate grammar`.",
+    )
+    assert module.read_bytes() == before
 
 
 # ---------------------------------------------------------------------------
