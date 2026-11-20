@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import io
 import json
+import os
 from contextlib import redirect_stdout
 from typing import TYPE_CHECKING
 
@@ -193,6 +194,72 @@ class TestRefuse:
         assert err["code"] == "PROVIDES_KEY_MISMATCH"
         assert err["delta_label"] == "NEW"
         assert err["suggested_declaration"].startswith("provides: [")
+
+
+class TestRefusalNamesItsBaseline:
+    """The refusal names the baseline it compared against and when that
+    baseline was recorded, so a stale one is easy to spot."""
+
+    # 2026-11-18T11:06:40Z, set as the file's modification time so the
+    # assertion does not depend on the clock or the local time zone.
+    RECORDED_EPOCH = 1_795_000_000
+    RECORDED_TEXT = "2026-11-18T11:06:40Z"
+
+    def _refusing_project(self, tmp_path: Path) -> Path:
+        root = _make_project(tmp_path / "p", _GREEN)
+        assert _build(root, "--quiet") == 0  # green build -> green baseline
+        os.utime(baseline_path(root), (self.RECORDED_EPOCH, self.RECORDED_EPOCH))
+        _write(root, _BROKEN)
+        return root
+
+    def test_text_names_the_baseline_file_and_when_it_was_recorded(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        root = self._refusing_project(tmp_path)
+        capsys.readouterr()
+        assert _build(root) != 0
+        lines = capsys.readouterr().out.splitlines()
+        assert lines[0].startswith("BUILD REFUSED: 1 NEW check error(s) since your last baseline.")
+        assert lines[1] == (
+            f"Compared against the baseline {baseline_path(root).as_posix()}, "
+            f"recorded {self.RECORDED_TEXT}."
+        )
+
+    def test_json_block_carries_the_baseline_fields(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        root = self._refusing_project(tmp_path)
+        capsys.readouterr()
+        rc, doc = _build_json(root)
+        assert rc != 0
+        refused = doc["build_refused"]
+        assert refused["baseline_path"] == baseline_path(root).as_posix()
+        assert refused["baseline_recorded_at"] == self.RECORDED_TEXT
+        # Added fields only: the existing ones keep their names and values.
+        assert refused["reason"] == "NEW_CHECK_ERRORS"
+        assert refused["new_error_count"] == 1
+        assert {"reason", "new_error_count", "rule", "escape_hatch"} <= set(refused)
+
+    def test_recorded_time_is_utc_whatever_the_local_zone(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        import time
+
+        from s0ma_dsl.cli.main import _baseline_recorded_at
+
+        path = tmp_path / "check-baseline.json"
+        path.write_text("{}", encoding="utf-8")
+        os.utime(path, (self.RECORDED_EPOCH, self.RECORDED_EPOCH))
+        monkeypatch.setenv("TZ", "Pacific/Kiritimati")
+        if hasattr(time, "tzset"):
+            time.tzset()
+        try:
+            assert _baseline_recorded_at(path) == self.RECORDED_TEXT
+        finally:
+            monkeypatch.undo()
+            if hasattr(time, "tzset"):
+                time.tzset()
+        assert _baseline_recorded_at(tmp_path / "missing.json") is None
 
 
 # ---------------------------------------------------------------------------
