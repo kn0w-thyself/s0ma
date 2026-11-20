@@ -130,6 +130,26 @@ def test_reduced_motion_keeps_the_beat_and_drops_its_motion() -> None:
     assert reduced.count("animation: none !important") == 4
 
 
+def test_every_stylesheet_colour_is_a_token() -> None:
+    """Colours live only in the ``:root`` token block.
+
+    Every rule reaches a colour through ``var(--...)``, so a palette is
+    changed in one place and no rule keeps a stray literal behind.
+    """
+    app_css = read(APP_CSS)
+    # Each entry opens a block whose body may hold colour literals. A
+    # second palette (for example under prefers-color-scheme: dark) is
+    # allowed by adding its opening line here.
+    token_blocks = (":root {",)
+    outside = app_css
+    for opening in token_blocks:
+        start = outside.index(opening)
+        end = outside.index("\n}", start) + len("\n}")
+        outside = outside[:start] + outside[end:]
+    literal = re.compile(r"#[0-9A-Fa-f]{3,8}\b|\b(?:rgba?|hsla?)\(")
+    assert literal.findall(outside) == []
+
+
 @pytest.mark.parametrize(
     "path", (*SELF_CONTAINED_FILES, NARRATION_FIXTURE), ids=lambda p: p.name
 )

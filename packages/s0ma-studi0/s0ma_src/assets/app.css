@@ -39,6 +39,13 @@
   --band-infrastructure: #f7f3ef;
   --band-framework: #f3f3f5;
 
+  --edge: #8f98a3;
+  --edge-derived: #a9b1bb;
+  --edge-verification: #aab2bc;
+
+  --overlay: rgba(255, 255, 255, 0.92);
+  --shadow: rgba(20, 24, 30, 0.08);
+
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, "Noto Sans", sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
@@ -220,7 +227,7 @@ body {
 
 .chip--stale {
   border-color: var(--amber-line);
-  background: #fff;
+  background: var(--surface);
   color: var(--amber);
   font-weight: 600;
 }
@@ -355,7 +362,7 @@ body {
 }
 
 .svg-chip--stale .svg-chip-box {
-  fill: #fff;
+  fill: var(--surface);
   stroke: var(--amber-line);
 }
 
@@ -460,17 +467,17 @@ body {
 
 .edge-line {
   fill: none;
-  stroke: #8f98a3;
+  stroke: var(--edge);
   stroke-width: 1.3;
 }
 
 .edge--derived .edge-line {
-  stroke: #a9b1bb;
+  stroke: var(--edge-derived);
   stroke-dasharray: 5 4;
 }
 
 .edge--verification .edge-line {
-  stroke: #aab2bc;
+  stroke: var(--edge-verification);
   stroke-dasharray: 1 4;
   stroke-linecap: round;
 }
@@ -479,7 +486,7 @@ body {
  * edge's head follows its stroke. The presentation attribute in the
  * markup is the fallback where context-stroke is unsupported. */
 .edge-arrow {
-  fill: #8f98a3;
+  fill: var(--edge);
   fill: context-stroke;
 }
 
@@ -612,7 +619,7 @@ body {
   flex-direction: column;
   gap: 6px;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--overlay);
   border: 1px solid var(--line-soft);
   border-radius: var(--radius);
   font-size: 11px;
@@ -645,7 +652,7 @@ body {
   right: 16px;
   bottom: 16px;
   padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--overlay);
   border: 1px solid var(--line-soft);
   border-radius: var(--radius);
   font-size: 11px;
@@ -1048,7 +1055,7 @@ button.narration-subject:focus-visible {
     bottom: 0;
     width: min(var(--panel-width), 92vw);
     flex-basis: auto;
-    box-shadow: -8px 0 24px rgba(20, 24, 30, 0.08);
+    box-shadow: -8px 0 24px var(--shadow);
   }
 
   /* The same treatment on the other edge: too narrow for three
@@ -1062,7 +1069,7 @@ button.narration-subject:focus-visible {
     z-index: 1;
     width: min(var(--narration-width), 88vw);
     flex-basis: auto;
-    box-shadow: 8px 0 24px rgba(20, 24, 30, 0.08);
+    box-shadow: 8px 0 24px var(--shadow);
   }
 
   .legend {
