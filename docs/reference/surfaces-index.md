@@ -2,13 +2,13 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-s0ma serves 263 capabilities across 9 channels. Each row names one of them: what it is called, the id the model addresses it by, what it does, what calling it touches, and whether the model can point at the code behind it. 92 of the 263 reach a registered component; the rest carry a written reason instead, and both are listed with their reasons in `docs/_generated/inventory-surfaces.json`.
+s0ma serves 264 capabilities across 9 channels. Each row names one of them: what it is called, the id the model addresses it by, what it does, what calling it touches, and whether the model can point at the code behind it. 92 of the 264 reach a registered component; the rest carry a written reason instead, and both are listed with their reasons in `docs/_generated/inventory-surfaces.json`.
 
 Effects are read from the thing itself wherever the thing declares them: `none`, `read`, `write`, `network`, `subprocess`, `credential`, `approval`. Where a capability declares nothing, the row says so rather than guessing.
 
 ## Command line
 
-44 of the 263. Channel: `cli`.
+44 of the 264. Channel: `cli`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -59,7 +59,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Tools an agent can call
 
-27 of the 263. Channel: `mcp_tool`.
+27 of the 264. Channel: `mcp_tool`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -93,7 +93,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Resources an agent can read
 
-24 of the 263. Channel: `mcp_resource`.
+24 of the 264. Channel: `mcp_resource`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -124,7 +124,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Prompts an agent can start from
 
-5 of the 263. Channel: `mcp_prompt`.
+5 of the 264. Channel: `mcp_prompt`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -136,7 +136,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The studi0 viewer
 
-5 of the 263. Channel: `studi0`.
+5 of the 264. Channel: `studi0`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -148,7 +148,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The self-description interface
 
-14 of the 263. Channel: `rest`.
+14 of the 264. Channel: `rest`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -169,7 +169,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Project settings
 
-19 of the 263. Channel: `config`.
+19 of the 264. Channel: `config`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -195,7 +195,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Reports s0ma can make
 
-116 of the 263. Channel: `diagnostic`.
+117 of the 264. Channel: `diagnostic`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -235,6 +235,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 | EXPORTED_HELPER_NOT_FOUND | `diagnostic:EXPORTED_HELPER_NOT_FOUND` | A module's `exports_helpers:` entry names an identifier that is not a `helper` declaration in this module. | none | exception |
 | FIELD_NOT_FOUND | `diagnostic:FIELD_NOT_FOUND` | A `{{kind::name.field}}` token references a field that does not exist on the entity. | none | exception |
 | FIXTURE_FORMAT_INVALID | `diagnostic:FIXTURE_FORMAT_INVALID` | A non-`.s0ma` fixture file under a configured `test_roots` directory matches a glob declared in `[tool.s0ma].fixtures_format` but fails its declared format (e.g. an invalid line in a `.jsonl` file or a malformed `.yaml` document). | none | exception |
+| GENERATED_FILE_COMPILE_ERROR | `diagnostic:GENERATED_FILE_COMPILE_ERROR` | A body parses but Python cannot compile the module it is emitted into (a `nonlocal` or `global` declared after the name is used, a `return` with a value in an async generator), so the module would fail on import. Fix the body at the reported line; the message carries Python's own reason. | none | exception |
 | GENERATED_FILE_DRIFT | `diagnostic:GENERATED_FILE_DRIFT` | A generated .py was hand-edited after transpilation (its embedded `# s0ma-output-hash` no longer matches its content). A build will not overwrite it until the .s0ma source says the same thing: move the changes into the source, or pass --force to discard them. `s0ma check` surfaces this as a warning; `s0ma build` refuses, whether or not the source changed since the last build. | none | exception |
 | GRAMMAR_MIGRATION_APPLY_FAILED | `diagnostic:GRAMMAR_MIGRATION_APPLY_FAILED` | An atomic grammar-migration replacement failed and prior replacements were restored. | none | exception |
 | GRAMMAR_MIGRATION_CONFLICT | `diagnostic:GRAMMAR_MIGRATION_CONFLICT` | A grammar-migration target changed or ceased to be a regular file after planning. | none | exception |
@@ -318,7 +319,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The Python interface
 
-9 of the 263. Channel: `python`.
+9 of the 264. Channel: `python`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |

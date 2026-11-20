@@ -1466,6 +1466,131 @@ def _published_outputs(result: CacheResult, publish_dir: Path) -> list[str]:
     ]
 
 
+def _compile_emitted_module(
+    module: S0maModule,
+    python_output: str,
+    source_path: Path,
+    mode: StrictnessMode,
+) -> S0maError | None:
+    """Compile one emitted module; report a failure at its ``.s0ma`` line.
+
+    ``ast.parse`` accepts code that the compiler's symbol pass refuses: a
+    ``nonlocal`` or ``global`` declared after the name is used, a
+    ``return`` with a value inside an async generator. Such a module used
+    to check clean, build, and fail on import. This compiles the emitted
+    text in memory (``dont_inherit=True``, a filename that names no file,
+    the code object discarded, nothing executed) and, on failure, maps the
+    emitted line back to the authored body line through the same source
+    map the build writes. Returns ``None`` when the module compiles, so a
+    clean module costs one ``compile()`` and nothing else.
+
+    A text ``ast.parse`` itself rejects is a transpiler bug, not this
+    code: the build raises it through ``validate_emitted_python``, so it
+    is left alone here.
+    """
+    import ast
+
+    try:
+        compile(
+            python_output,
+            f"<s0ma emitted module {module.module.name}>",
+            "exec",
+            dont_inherit=True,
+        )
+    except SyntaxError as exc:
+        failure = exc
+    else:
+        return None
+    try:
+        ast.parse(python_output)
+    except SyntaxError:
+        return None
+
+    from s0ma_dsl.codegen.source_map import (
+        SourceMapGenerator,
+        resolve_output_line,
+    )
+
+    smap = SourceMapGenerator().generate(
+        module,
+        python_output,
+        source_file=str(source_path),
+        output_file=f"{module.module.name}.py",
+    )
+    output_line = failure.lineno or 1
+    location = resolve_output_line(smap, output_line)
+    line = location.source_line or 1
+    where = f" in '{location.declaration}'" if location.declaration else ""
+    return S0maError(
+        code="GENERATED_FILE_COMPILE_ERROR",
+        message=(
+            f"Python cannot compile module '{module.module.name}': "
+            f"{failure.msg}{where}. The body parses, but the module "
+            f"would fail on import."
+        ),
+        file=location.source_file,
+        line=line,
+        column=0,
+        severity=get_severity("GENERATED_FILE_COMPILE_ERROR", mode) or "error",
+        remediation=(
+            f"Fix the body at this line so Python can compile it: "
+            f"{failure.msg}. The build writes nothing for this module "
+            f"until it compiles."
+        ),
+        context={"python_error": failure.msg, "emitted_line": output_line},
+    )
+
+
+def _compile_check_modules(
+    modules: dict[str, S0maModule],
+    target_names: set[str],
+    module_filenames: dict[str, str],
+    diagnostics: list[S0maError],
+    mode: StrictnessMode,
+) -> list[S0maError]:
+    """The check side of :func:`_compile_emitted_module`.
+
+    ``check`` writes nothing, so it emits each target module in memory the
+    way the build does (the emitter with the project's modules as context,
+    then the source-pointer comments) and compiles that text.
+    *diagnostics* are the module-level findings the build checks before it
+    emits (parse, semantic, derived edges): a module whose file has an
+    error among them is skipped, because the build never emits it and
+    that error is the one to fix first. Cross-module findings such as
+    release-mode coverage do not stop emission, so they do not stop this
+    pass either. An emitter failure is skipped
+    too, because the build reports it where it happens; check only adds
+    this one finding.
+    """
+    from s0ma_dsl.codegen.observes_resolver import ProjectContext
+    from s0ma_dsl.codegen.python_emitter import PythonEmitter
+    from s0ma_dsl.codegen.source_map import annotate_source_pointers
+
+    blocked = {d.file for d in diagnostics if d.severity == "error"}
+    context = ProjectContext(modules=list(modules.values()))
+    findings: list[S0maError] = []
+    for name in sorted(target_names):
+        filename = module_filenames[name]
+        if filename in blocked:
+            continue
+        module = modules[name]
+        try:
+            emitter = PythonEmitter(
+                project_context=context, mode=mode, filename=filename,
+            )
+            python_output = annotate_source_pointers(
+                module, emitter.emit(module), source_file=filename,
+            )
+        except Exception:  # noqa: BLE001 - the build reports emitter faults
+            continue
+        finding = _compile_emitted_module(
+            module, python_output, Path(filename), mode,
+        )
+        if finding is not None:
+            findings.append(finding)
+    return findings
+
+
 def _transpile_single_file(
     source_path: Path,
     mode: StrictnessMode,
@@ -1669,6 +1794,17 @@ def _transpile_single_file(
     # Validate before writing so a transpiler bug raises loudly at build
     # time, not at runtime/handoff.
     validate_emitted_python(py_path, python_output)
+
+    # A body can parse and still be one Python refuses to compile (a
+    # ``nonlocal`` declared after the name is assigned). Compile the text
+    # about to be written; on failure report it at the body's ``.s0ma``
+    # line and write nothing for this module, as for any blocking error.
+    compile_error = _compile_emitted_module(
+        module, python_output, source_path, mode,
+    )
+    if compile_error is not None:
+        all_errors.append(compile_error)
+        return all_errors, output_files
 
     # B2 (0.11.0, batch-01a): refuse to silently overwrite a hand-edited
     # generated .py. If the target exists and its embedded output-hash
@@ -5469,6 +5605,11 @@ class S0maCLI:
             project_context_paths.add(source_path.resolve())
             project_context_names.add(declared_name)
 
+        # What the build checks before it emits a module: its own parse,
+        # semantic, and derived-edge findings. The compile pass below
+        # skips a module only when one of these is an error.
+        per_module_diagnostics = list(all_diagnostics)
+
         # Cross-module resolution (multiple files, or release mode)
         # M18 (feedback 5–6): always run resolution when attribute
         # budgets are configured, even for single-file invocations,
@@ -5505,6 +5646,13 @@ class S0maCLI:
                 test_layering=test_layering,
             )
             all_diagnostics.extend(resolution_errors)
+
+        # Compile what the build would emit for each target module, so a
+        # body that parses but cannot compile fails check as it fails build.
+        all_diagnostics.extend(_compile_check_modules(
+            modules, target_names, module_filenames,
+            per_module_diagnostics, mode,
+        ))
 
         # Doc-subsystem validation (plan M5 — wire DocValidator into pipeline)
         if modules and _has_doc_declarations(modules):
