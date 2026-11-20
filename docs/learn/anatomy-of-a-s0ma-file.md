@@ -264,4 +264,4 @@ nerve <name> :: <LAYER>
 ## Identity
 
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:9ff4baa9becf4b8d`
+- Documentation snapshot: `sha256:263f0ab1c72a1831`
