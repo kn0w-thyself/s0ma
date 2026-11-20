@@ -9326,6 +9326,11 @@ class S0maCLI:
         cmd = [sys.executable, "-m", "pytest", *pytest_args]
         if not args.quiet:
             print(f"\nRunning: {' '.join(cmd)}")
+        # pytest writes to the same stdout and stderr as a child process.
+        # In a pipe or a file Python buffers what this process printed, so
+        # without a flush the build lines land after pytest's summary.
+        sys.stdout.flush()
+        sys.stderr.flush()
         result = subprocess.run(cmd, env=env, check=False)
         return result.returncode
 

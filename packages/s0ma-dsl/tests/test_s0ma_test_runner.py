@@ -23,7 +23,10 @@ path are exercised end-to-end.
 from __future__ import annotations
 
 import os
+import re
 import shutil
+import subprocess
+import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from unittest.mock import patch
@@ -318,3 +321,33 @@ def test_s0ma_test_friendly_notice_when_no_test_roots(
     combined = captured.out + captured.err
     assert "test_roots" in combined
     assert "[tool.s0ma]" in combined
+
+
+def test_s0ma_test_prints_pytest_summary_last_in_a_pipe(
+    staged_project: Path,
+) -> None:
+    """Piped, pytest's summary is still the last thing ``s0ma test`` prints.
+
+    In a pipe Python buffers this process's stdout, and pytest writes to
+    the same pipe as a child process. Without a flush before the child
+    starts, the build lines and the ``Running:`` line land after the
+    summary, which is where an agent reading the output looks first.
+    """
+    env = dict(os.environ)
+    env.pop("PYTHONUNBUFFERED", None)
+    result = subprocess.run(
+        [
+            sys.executable, "-m", "s0ma_dsl",
+            "--project-root", str(staged_project),
+            "test",
+        ],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        env=env,
+        check=False,
+    )
+    assert result.returncode == EXIT_SUCCESS, result.stdout
+    lines = [line for line in result.stdout.splitlines() if line.strip()]
+    assert any(line.startswith("Running: ") for line in lines), result.stdout
+    assert re.fullmatch(r"=+ 4 passed\b.* in [0-9.]+s =+", lines[-1]), result.stdout
