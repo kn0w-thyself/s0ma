@@ -484,7 +484,9 @@ installable packages, all Apache-2.0:
 
 Dependencies point one way: `s0ma-lang-mcp` and `s0ma-lang-studi0` depend on `s0ma-lang-dsl`,
 which depends on `s0ma-lang-core`. `s0ma-lang-core` stands alone with zero hard runtime
-dependencies, so an application can take the runtime and nothing else.
+dependencies. An application built from `.s0ma` sources needs `s0ma-lang-dsl`
+installed as well, because every module the compiler emits imports
+`s0ma_dsl.runtime_bridge.registration` at run time.
 
 A fifth distribution, [`s0ma-lang`](packages/s0ma-lang), is the umbrella. It
 carries no code: it requires each of the four at exactly its own version, so
