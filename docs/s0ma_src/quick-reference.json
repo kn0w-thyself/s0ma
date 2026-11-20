@@ -414,7 +414,7 @@
           },
           {
             "command": "cli:s0ma/test",
-            "says": "Builds, then runs every test.",
+            "says": "Builds, then runs every test. Arguments after `--` go to pytest, so `s0ma test -q -- -k <name>` runs one test or one module, and `-q` quiets the build lines.",
             "write": "s0ma test"
           },
           {

@@ -4121,7 +4121,18 @@ class S0maCLI:
                 "Discover the project, build source + tests, run pytest "
                 "(args after `--` pass through to pytest)"
             ),
+            description=(
+                "Discover the project, build its source and test roots, "
+                "then run pytest on the build. Everything after `--` goes "
+                "to pytest unchanged, so `s0ma test -q -- -k <name>` runs "
+                "only the tests or test modules whose names match <name>."
+            ),
         )
+        # `run` splits a `--` suffix off before argparse sees the line, so
+        # the parser holds no action for it. This default is where the
+        # command says it takes that suffix and what receives it; the
+        # documentation build reads it to accept `--` for this command.
+        test_p.set_defaults(passthrough_to="pytest")
         test_p.add_argument(
             "test_dir",
             nargs="?",
@@ -9326,6 +9337,11 @@ class S0maCLI:
         cmd = [sys.executable, "-m", "pytest", *pytest_args]
         if not args.quiet:
             print(f"\nRunning: {' '.join(cmd)}")
+        # pytest writes to the same stdout and stderr as a child process.
+        # In a pipe or a file Python buffers what this process printed, so
+        # without a flush the build lines land after pytest's summary.
+        sys.stdout.flush()
+        sys.stderr.flush()
         result = subprocess.run(cmd, env=env, check=False)
         return result.returncode
 

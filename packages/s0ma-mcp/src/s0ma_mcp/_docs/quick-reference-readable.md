@@ -9,7 +9,7 @@ One page to find your way around s0ma: what the parts of a `.s0ma` file are, wha
 | **Describes** | s0ma 0.22.0 (preview) |
 | **Packages** | `s0ma-lang`, `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0`, which all share that version |
 | **Language specification** | [s0ma DSL — Language Specification & Coding Agent Rulebook](../../packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md) |
-| **Documentation snapshot** | `sha256:776b8bc5f9e77dd0` |
+| **Documentation snapshot** | `sha256:d90dcf06377ba870` |
 | **This page** | edition 2, last revised 2026-10-05 — [what has changed](#what-has-changed) |
 
 A version marked `(preview)` is the latest release together with the changes made since, which are not released yet.
@@ -713,7 +713,7 @@ s0ma studi0                # look at what you made
 | --- | --- |
 | [`s0ma check`](cli.md#s0ma-check) | Reads every `.s0ma` file and reports what is wrong and how to put it right. Builds nothing. |
 | [`s0ma build .`](cli.md#s0ma-build) | Turns the `.s0ma` files into Python in the build directory, with the record of each file beside it. |
-| [`s0ma test`](cli.md#s0ma-test) | Builds, then runs every test. |
+| [`s0ma test`](cli.md#s0ma-test) | Builds, then runs every test. Arguments after `--` go to pytest, so `s0ma test -q -- -k <name>` runs one test or one module, and `-q` quiets the build lines. |
 | [`s0ma inspect <module>`](cli.md#s0ma-inspect) | Asks a built file what it contains. `s0ma inspect --all` lists every file. |
 
 **See the whole**

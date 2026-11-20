@@ -434,6 +434,12 @@ def first_command(source: dict[str, Any]) -> dict[str, Any]:
     return source["commands"]["groups"][1]["commands"][0]
 
 
+def runner_command(source: dict[str, Any]) -> dict[str, Any]:
+    entry = source["commands"]["groups"][1]["commands"][2]
+    assert entry["command"] == "cli:s0ma/test"
+    return entry
+
+
 class TestWhatThePageNamesIsReal:
     def test_a_command_s0ma_does_not_serve(self, changed):
         def edit(source):
@@ -489,6 +495,45 @@ class TestWhatThePageNamesIsReal:
             entry["says"] = entry["says"].replace("--template service", "--template castle")
 
         assert "is given 'castle'" in refusal(changed, edit)
+
+    def test_a_bare_separator_where_the_command_passes_words_on(self, changed):
+        def edit(source):
+            entry = runner_command(source)
+            entry["write"] = "s0ma test -q -- -k <name> --maxfail 1"
+            entry["says"] = "Arguments after `--` go to pytest, as in `-- --maxfail 1`."
+
+        held = changed(edit)["commands"]["groups"][1]["commands"][2]
+        assert held["write"] == "s0ma test -q -- -k <name> --maxfail 1"
+
+    def test_a_bare_separator_where_the_command_takes_none(self, changed):
+        def says(source):
+            first_command(source)["says"] += " Then `--` and anything."
+
+        assert "mentions --, and s0ma check has no such option" in refusal(changed, says)
+
+        def writes(source):
+            first_command(source)["write"] = "s0ma check -- -k <name>"
+
+        assert "`s0ma check` has no option --" in refusal(changed, writes)
+
+    def test_an_option_before_the_separator_is_still_checked(self, changed):
+        def writes(source):
+            runner_command(source)["write"] = "s0ma test --fast -- -k <name>"
+
+        assert "`s0ma test` has no option --fast" in refusal(changed, writes)
+
+        def says(source):
+            runner_command(source)["says"] += " Add `--fast` to hurry."
+
+        assert "mentions --fast, and s0ma test has no such option" in refusal(changed, says)
+
+    def test_only_a_command_that_declares_it_passes_words_on(self):
+        passing = {
+            item.public_name: item.passthrough_to
+            for item in CliProvider().interface()
+            if item.passthrough_to
+        }
+        assert passing == {"s0ma test": "pytest"}
 
     def test_a_first_session_line_that_is_not_a_command(self, changed):
         def edit(source):

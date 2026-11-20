@@ -355,7 +355,7 @@
           },
           {
             "command": "cli:s0ma/test",
-            "says": "Builds, then runs every test.",
+            "says": "Builds, then runs every test. Arguments after `--` go to pytest, so `s0ma test -q -- -k <name>` runs one test or one module, and `-q` quiets the build lines.",
             "write": "s0ma test"
           },
           {
@@ -555,7 +555,7 @@
     "release": "0.22.0 (preview)",
     "release_version": "0.22.0",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:776b8bc5f9e77dd0",
+    "snapshot_hash": "sha256:d90dcf06377ba870",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
