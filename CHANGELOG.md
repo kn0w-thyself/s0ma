@@ -36,8 +36,8 @@ Historical entries describe artifacts as they were named at the time.
   their module, and how sibling submodules in `requires:` collide. The
   troubleshooting page says what `s0ma build --check` compares and what a
   check given paths resolves `uses:` against. The quick reference describes a
-  `test` body as it is read. The
-  migration guide says which files `s0ma migrate grammar` reads.
+  `test` body as it is read, and names `s0ma-mcp` as the command to register
+  for the authoring server. The migration guide says which files `s0ma migrate grammar` reads.
 
 ## [0.22.0] — 2026-11-19
 
