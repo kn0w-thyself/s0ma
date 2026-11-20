@@ -555,7 +555,7 @@
     "release": "0.22.0 (preview)",
     "release_version": "0.22.0",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:5dec7f075cd83ba7",
+    "snapshot_hash": "sha256:de5cce6e7816a07a",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
@@ -1572,7 +1572,7 @@
       "code": {
         "holds": "code, after the `---` line",
         "in_words": "Always",
-        "says": "One `def` whose name starts with `test_`. The function's name decides whether the test runs; the declaration's name does not.",
+        "says": "Opens with a `def`, and at least one function's name starts with `test_`. That name decides whether the test runs; the declaration's name does not. Every function, class and constant in it is emitted at module scope.",
         "type": "code",
         "write": "always"
       },

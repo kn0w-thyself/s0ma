@@ -9,7 +9,7 @@ One page to find your way around s0ma: what the parts of a `.s0ma` file are, wha
 | **Describes** | s0ma 0.22.0 (preview) |
 | **Packages** | `s0ma-lang`, `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0`, which all share that version |
 | **Language specification** | [s0ma DSL — Language Specification & Coding Agent Rulebook](../../packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md) |
-| **Documentation snapshot** | `sha256:5dec7f075cd83ba7` |
+| **Documentation snapshot** | `sha256:de5cce6e7816a07a` |
 | **This page** | edition 2, last revised 2026-10-05 — [what has changed](#what-has-changed) |
 
 A version marked `(preview)` is the latest release together with the changes made since, which are not released yet.
@@ -582,7 +582,7 @@ A check that a part keeps its promises. First line: `test <name> :: <LAYER>`. Te
 | `depends_on` | Always | `none` · `pending` | block | The parts it leans on by decision, one to a line: `name: {relation: …, carries: "…", coupling: …}`. |
 | `mocks` | Always | `none` · `pending` | list of nerve names | The nerves it replaces with stand-ins. |
 | `tags` | Optional | — | list of names | Labels for searching and grouping. |
-| the code | Always | — | code, after the `---` line | One `def` whose name starts with `test_`. The function's name decides whether the test runs; the declaration's name does not. |
+| the code | Always | — | code, after the `---` line | Opens with a `def`, and at least one function's name starts with `test_`. That name decides whether the test runs; the declaration's name does not. Every function, class and constant in it is emitted at module scope. |
 
 ```s0ma
 test test_due_date_is_three_weeks_out :: DOMAIN
