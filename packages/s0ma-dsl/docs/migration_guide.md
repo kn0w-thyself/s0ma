@@ -40,7 +40,10 @@ nothing to add and changes nothing):
    nothing. Given the project root, it walks the `source_roots` and
    `test_roots` the project declares and leaves out what git ignores; to
    migrate a file outside those roots, name its directory. A directory it
-   cannot read is skipped with a warning on stderr.
+   cannot read is skipped with a warning on stderr. It also skips, without a
+   warning, symbolic links and every directory named `build`, `dist`, `.git`,
+   `.hg`, `.svn`, `.claude`, `.venv`, `venv`, `node_modules`, `__pycache__`,
+   `.s0ma.cache` or `__s0ma_cache__`, at any depth.
 2. **Writes `forbids: none`** into every nerve and ganglion that lacks the
    line, directly above that part's `---`. A part that already carries a
    `forbids:` line is left exactly as it is.
