@@ -901,10 +901,12 @@
       "when": "something that acts: it computes, decides, fetches or serves"
     },
     {
-      "after_samples": [],
+      "after_samples": [
+        "A `CONSTANT`'s code may call a nerve listed in `uses`. The result is not a plain literal, so that constant carries no `value`."
+      ],
       "before_samples": [],
       "code": {
-        "says": "A class, a value, or a type. A `CONSTANT` assigns to its own name: `LOAN_DAYS = 21`.",
+        "says": "A class, a value, or a type. A `CONSTANT` assigns to its own name once: `LOAN_DAYS = 21`. The object it names may still change inside, as a `ContextVar` or a lock does; only a plain literal is carried as `value` in `s0ma inspect --format json`.",
         "type": "code",
         "write": "Always, unless `content`"
       },
@@ -1182,7 +1184,8 @@
     },
     {
       "after_samples": [
-        "A helper that fits on one line can also be written inside the module header, under `helpers:`."
+        "A helper that fits on one line can also be written inside the module header, under `helpers:`.",
+        "A value several tests share is not a helper: declare it as a `cell` with `kind: CONSTANT` and `visibility: TEST`, and list it in each test file's `uses`."
       ],
       "before_samples": [],
       "code": {
@@ -1304,7 +1307,9 @@
       "when": "a connection to a service you do not control"
     },
     {
-      "after_samples": [],
+      "after_samples": [
+        "A test module follows the same layer rule as any other module, so a test file in a lower layer cannot use a part from a higher one. `[tool.s0ma].test_layering = \"permissive\"` lifts that rule for test modules."
+      ],
       "before_samples": [],
       "code": {
         "says": "Opens with a `def`, and at least one function's name starts with `test_`. That name decides whether the test runs; the declaration's name does not. Every function, class and constant in it is emitted at module scope.",
