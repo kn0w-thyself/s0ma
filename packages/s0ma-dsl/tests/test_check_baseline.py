@@ -593,6 +593,39 @@ class TestAnchorSemantics:
         labels = _labels(doc)
         assert labels == {"alpha.s0ma": "PRE-EXISTING", "beta.s0ma": "NEW"}
 
+    def test_subset_check_resolves_project_without_recording(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """Named files resolve against the project; the baseline is not written."""
+        user = _valid("gamma", "g").replace(
+            "    uses: none\n", "    uses: [beta.b]\n", 1,
+        ).replace("        return 1\n", "        return b()\n", 1)
+        root = _make_project(
+            tmp_path / "p",
+            {
+                "alpha.s0ma": _broken("alpha", "a"),  # inherited debt
+                "beta.s0ma": _valid("beta", "b"),
+                "gamma.s0ma": user,
+                "delta.s0ma": _valid("delta", "d"),
+            },
+        )
+        rc, _ = _check_json(root, capsys)
+        assert rc == 1
+        before = baseline_path(root).read_bytes()
+
+        rc = S0maCLI().run([
+            "--project-root", str(root),
+            "check", str(root / "src" / "gamma.s0ma"),
+            str(root / "src" / "delta.s0ma"),
+            "--mode", "strict", "--format", "json",
+        ])
+        doc = json.loads(capsys.readouterr().out)
+        # beta resolves as context, and alpha's own failure is not this
+        # run's to report.
+        assert doc["errors"] == [], doc
+        assert rc == 0
+        assert baseline_path(root).read_bytes() == before
+
     def test_parse_error_shadowing_keeps_anchor(
         self, tmp_path: Path, capsys: pytest.CaptureFixture[str],
     ) -> None:

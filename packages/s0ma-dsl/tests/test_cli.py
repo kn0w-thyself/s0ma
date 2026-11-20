@@ -2033,6 +2033,197 @@ class TestIncludeFlag:
 
 
 # ===========================================================================
+# Test: a check given paths resolves against the whole project
+# ===========================================================================
+
+
+class TestCheckNamedPathsProjectContext:
+    """``s0ma check <paths>`` inside a project gives the bare check's answer.
+
+    The project's ``source_roots`` and ``test_roots`` are read as context,
+    so a module outside the named files still resolves, and findings are
+    reported only for the named files.
+    """
+
+    @pytest.fixture
+    def shop(
+        self, cli: S0maCLI, tmp_path: Path, monkeypatch, capsys
+    ) -> Path:
+        """A scaffolded service project whose bare check is clean."""
+        target = tmp_path / "shop"
+        assert cli.run(
+            ["new", "project", str(target), "--template", "service", "--quiet"]
+        ) == EXIT_SUCCESS
+        monkeypatch.chdir(target)
+        capsys.readouterr()
+        assert S0maCLI().run(["check", "--mode", "strict"]) == EXIT_SUCCESS
+        capsys.readouterr()
+        return target
+
+    @staticmethod
+    def _check(capsys, *argv: str) -> tuple[int, str]:
+        rc = S0maCLI().run(["check", *argv, "--mode", "strict"])
+        captured = capsys.readouterr()
+        return rc, captured.out + captured.err
+
+    @pytest.mark.parametrize(
+        "paths",
+        [
+            ("tests",),
+            (
+                "src/ordering/ordering_application.s0ma",
+                "src/api/api_presentation.s0ma",
+            ),
+            ("src/api/api_presentation.s0ma",),
+            ("tests/api/api_presentation_tests.s0ma",),
+        ],
+        ids=["test-root", "two-source-files", "qualified-depends-on",
+             "one-test-file"],
+    )
+    def test_named_paths_in_a_clean_project_check_clean(
+        self, shop: Path, capsys, paths: tuple[str, ...]
+    ):
+        """Modules outside the named files resolve against the project."""
+        rc, out = self._check(capsys, *paths)
+        assert "DOES_NOT_EXIST" not in out, out
+        assert "[NEW]" not in out, out
+        assert rc == EXIT_SUCCESS, out
+
+    def test_single_named_file_reports_a_real_cross_module_error(
+        self, shop: Path, capsys
+    ):
+        """One named file is resolved, so a bad cross-module name shows."""
+        named = shop / "tests" / "api" / "api_presentation_tests.s0ma"
+        named.write_text(
+            named.read_text(encoding="utf-8").replace(
+                "uses: [catalog_domain.Product,",
+                "uses: [catalog_domain.NoSuchThing,",
+            ),
+            encoding="utf-8",
+        )
+        rc, out = self._check(capsys, str(named.relative_to(shop)))
+        assert rc == EXIT_VALIDATION_ERROR, out
+        assert "NoSuchThing" in out
+        assert "DOES_NOT_EXIST" not in out
+
+    def test_named_file_using_a_missing_module_reports_does_not_exist(
+        self, shop: Path, capsys
+    ):
+        """A module missing from the whole project is still reported."""
+        named = shop / "src" / "ordering" / "ordering_application.s0ma"
+        named.write_text(
+            named.read_text(encoding="utf-8").replace(
+                "uses: [catalog_domain.Product, catalog_domain.price_of]",
+                "uses: [catalog_domain.Product, catalog_domain.price_of, "
+                "ghost_module.thing]",
+            ),
+            encoding="utf-8",
+        )
+        rc, out = self._check(
+            capsys,
+            "src/ordering/ordering_application.s0ma",
+            "src/api/api_presentation.s0ma",
+        )
+        assert rc == EXIT_VALIDATION_ERROR, out
+        assert out.count("ERROR [DOES_NOT_EXIST]") == 1, out
+        assert "module 'ghost_module' does not exist" in out
+
+    def test_findings_in_unnamed_project_files_are_not_reported(
+        self, shop: Path, capsys
+    ):
+        """A broken context module does not show in a check of another file."""
+        ordering = shop / "src" / "ordering" / "ordering_application.s0ma"
+        ordering.write_text(
+            ordering.read_text(encoding="utf-8").replace(
+                "uses: [catalog_domain.Product, catalog_domain.price_of]",
+                "uses: [catalog_domain.Product, catalog_domain.price_of, "
+                "ghost_module.thing]",
+            ),
+            encoding="utf-8",
+        )
+        (shop / "src" / "unparsable.s0ma").write_text(
+            "this is not a module\n", encoding="utf-8",
+        )
+        assert S0maCLI().run(["check", "--mode", "strict"]) == (
+            EXIT_VALIDATION_ERROR
+        )
+        capsys.readouterr()
+
+        rc, out = self._check(
+            capsys, "tests/catalog/catalog_domain_tests.s0ma",
+        )
+        assert "ordering_application" not in out, out
+        assert "unparsable" not in out, out
+        assert rc == EXIT_SUCCESS, out
+        assert "1 file(s) checked. No errors." in out
+
+    def test_include_still_adds_context_on_top(
+        self, shop: Path, tmp_path: Path, capsys
+    ):
+        """A module outside the project roots resolves through --include."""
+        extra = tmp_path / "extra"
+        extra.mkdir()
+        (extra / "source_mod.s0ma").write_text(
+            _SOURCE_MODULE_S0MA, encoding="utf-8",
+        )
+        named = shop / "tests" / "test_source_mod.s0ma"
+        named.write_text(
+            _TEST_MODULE_S0MA.replace(
+                "    def test_do_thing():\n        pass",
+                "    def test_do_thing():\n        assert do_thing() == \"done\"",
+            ),
+            encoding="utf-8",
+        )
+
+        rc, out = self._check(capsys, "tests/test_source_mod.s0ma")
+        assert "module 'source_mod' does not exist" in out, out
+        assert rc == EXIT_VALIDATION_ERROR
+
+        rc, out = self._check(
+            capsys, "tests/test_source_mod.s0ma", "--include", str(extra),
+        )
+        assert "DOES_NOT_EXIST" not in out, out
+        assert rc == EXIT_SUCCESS, out
+
+    def test_named_paths_do_not_write_the_baseline(
+        self, shop: Path, capsys
+    ):
+        """A check given paths compares against the baseline, never writes it."""
+        baseline = shop / ".s0ma" / "check-baseline.json"
+        before = baseline.read_bytes()
+        for paths in (
+            ("tests",),
+            ("src/api/api_presentation.s0ma",),
+            (
+                "src/ordering/ordering_application.s0ma",
+                "src/api/api_presentation.s0ma",
+            ),
+        ):
+            rc, out = self._check(capsys, *paths)
+            assert rc == EXIT_SUCCESS, out
+        assert baseline.read_bytes() == before
+
+    def test_directory_with_no_project_behaves_as_before(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """With no project around them, only the named files are read."""
+        loose = tmp_path / "loose"
+        (loose / "src").mkdir(parents=True)
+        (loose / "tests").mkdir()
+        (loose / "src" / "source_mod.s0ma").write_text(
+            _SOURCE_MODULE_S0MA, encoding="utf-8",
+        )
+        (loose / "tests" / "test_source_mod.s0ma").write_text(
+            _TEST_MODULE_S0MA, encoding="utf-8",
+        )
+
+        rc = cli.run(["check", str(loose / "tests"), "--mode", "release"])
+        out = capsys.readouterr().out
+        assert rc == EXIT_VALIDATION_ERROR
+        assert "module 'source_mod' does not exist" in out
+
+
+# ===========================================================================
 # Test: s0ma transpile output-dir mismatch info message (Task 10.2)
 # ===========================================================================
 

@@ -413,6 +413,17 @@ def _needs_module_local_resolution(modules: dict[str, S0maModule]) -> bool:
     return False
 
 
+def _diagnostic_in_paths(diagnostic: S0maError, paths: set[Path]) -> bool:
+    """Return True if *diagnostic* is located in one of *paths* (real paths)."""
+    file = getattr(diagnostic, "file", None)
+    if not file:
+        return False
+    try:
+        return Path(file).resolve() in paths
+    except (OSError, ValueError):
+        return False
+
+
 # ---------------------------------------------------------------------------
 # M14 (feedback 5–6): pretty-printers for multi-line metadata fields
 # ---------------------------------------------------------------------------
@@ -5257,6 +5268,34 @@ class S0maCLI:
                     continue
                 seen.add(resolved)
                 context_files.append(path)
+
+        # A check given paths inside a real project resolves against the
+        # whole project, as the bare check does: every other ``.s0ma``
+        # under ``source_roots`` and ``test_roots`` is read as project
+        # context. These files are parsed only, never validated, so they
+        # make their declarations resolvable without being re-checked,
+        # and no finding in them is reported. A synthetic project (no
+        # ``[tool.s0ma]``) reads only the named files, as before.
+        project_context_files: list[Path] = []
+        if (
+            source_args
+            and s0ma_project is not None
+            and not s0ma_project.synthetic
+        ):
+            for root in (
+                tuple(s0ma_project.source_roots)
+                + tuple(s0ma_project.test_roots)
+            ):
+                if not root.exists():
+                    continue
+                for path in _discover_s0ma_files(str(root)):
+                    resolved = path.resolve()
+                    if resolved in seen:
+                        continue
+                    seen.add(resolved)
+                    project_context_files.append(path)
+        project_context_paths: set[Path] = set()
+        project_context_names: set[str] = set()
         target_names: set[str] = set()
 
         all_diagnostics: list[S0maError] = []
@@ -5392,6 +5431,33 @@ class S0maCLI:
             modules[declared_name] = module
             module_filenames[module.module.name] = str(source_path)
 
+        # Parse project context modules (the rest of the project's
+        # roots). Parse only: their parse findings are dropped, and a
+        # module whose name is already taken by a named file or an
+        # --include file is skipped, so the file the user named wins.
+        for source_path in project_context_files:
+            if s0ma_project is None:
+                break
+            module, _context_parse_errors = _parse_single_file(
+                source_path, mode,
+            )
+            if module is None:
+                continue
+            declared_name = module.module.name
+            effective_name = s0ma_project.effective_module_name(
+                declared_name, source_path,
+            )
+            if (
+                effective_name in effective_to_file
+                or declared_name in modules
+            ):
+                continue
+            modules[declared_name] = module
+            module_filenames[declared_name] = str(source_path)
+            effective_to_file[effective_name] = str(source_path)
+            project_context_paths.add(source_path.resolve())
+            project_context_names.add(declared_name)
+
         # Cross-module resolution (multiple files, or release mode)
         # M18 (feedback 5–6): always run resolution when attribute
         # budgets are configured, even for single-file invocations,
@@ -5417,6 +5483,7 @@ class S0maCLI:
             or mode == StrictnessMode.RELEASE
             or attribute_budgets
             or _needs_module_local_resolution(modules)
+            or project_context_names
         ):
             from s0ma_dsl.resolver.dependency import resolve_dependencies
             resolution_errors = resolve_dependencies(
@@ -5441,6 +5508,15 @@ class S0maCLI:
             all_diagnostics.extend(check_release_doc_coverage(
                 modules, mode=mode, filenames=module_filenames,
             ))
+
+        # Findings located in project context files are not this run's
+        # to report: a check given paths reports on the named files (and
+        # on --include files, as before).
+        if project_context_paths:
+            all_diagnostics = [
+                d for d in all_diagnostics
+                if not _diagnostic_in_paths(d, project_context_paths)
+            ]
 
         # M-18 (POST-12g, 0.16.0): validate non-``.s0ma`` fixtures
         # under ``test_roots`` against the project's declared
@@ -5512,7 +5588,11 @@ class S0maCLI:
         # visible alongside any warnings/errors.
         if getattr(args, "report_deferred", False):
             self._render_deferred_surface(
-                modules, module_filenames,
+                {
+                    name: module for name, module in modules.items()
+                    if name not in project_context_names
+                },
+                module_filenames,
                 output_format=args.output_format,
             )
 
