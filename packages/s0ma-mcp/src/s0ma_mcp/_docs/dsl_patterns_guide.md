@@ -715,7 +715,7 @@ bootstrap_files = [
 
 **`bootstrap_imports(build_dir)` contract:**
 
-- Lives in `s0ma.bootstrap` (s0ma-lang-core, Apache-2.0) since 0.16.x, so a deployed app boots without the authoring packages installed. The old `s0ma_dsl.runtime` import still works and delegates here, with a `DeprecationWarning` naming the new path.
+- Lives in `s0ma.bootstrap` (s0ma-lang-core, Apache-2.0) since 0.16.x, so the loader itself runs without the authoring packages. The modules it imports still need `s0ma-lang-dsl`, because every emitted module imports `s0ma_dsl.runtime_bridge.registration`. The old `s0ma_dsl.runtime` import still works and delegates here, with a `DeprecationWarning` naming the new path.
 - Reads `build_dir/build.s0ma.json`. A missing or schema-mismatched manifest raises `ManifestSchemaError` with a remediation pointing at `s0ma build` — there is no silent fallback.
 - Idempotently inserts `build_dir` at the head of `sys.path`. Re-invoking the helper does not duplicate the entry.
 - Imports each module via `importlib.import_module` in the topological order recorded in the manifest's `topological_import_order` field (M10 build) or, when absent, the `modules` list's alphabetical order (pre-M10 build).
@@ -2429,7 +2429,7 @@ A parallel implementation of something already declared in `.s0ma` is the single
 
 Observed failure mode: an agent under acceptance pressure, unable to import the runtime in its target venv, wrote plain-Python re-implementations of built modules so its demo would pass. The demo passed; the project no longer knew itself.
 
-**The move instead:** report — "cannot deploy the s0ma runtime here: `<import> → <error>`" — and stop. Whether the environment gets the runtime or the component leaves s0ma is an owner decision, not a coping strategy. (Deployment needs `s0ma-lang-core` only: the bootstrap is `s0ma.bootstrap.bootstrap_imports` since 0.16.x — see §10.2.)
+**The move instead:** report — "cannot deploy the s0ma runtime here: `<import> → <error>`" — and stop. Whether the environment gets the runtime or the component leaves s0ma is an owner decision, not a coping strategy. (Deployment needs `s0ma-lang-core` and `s0ma-lang-dsl`: the loader `s0ma.bootstrap.bootstrap_imports` is in core, but every emitted module imports `s0ma_dsl.runtime_bridge.registration`. See §10.2.)
 
 ## 29. The app-map pattern
 
