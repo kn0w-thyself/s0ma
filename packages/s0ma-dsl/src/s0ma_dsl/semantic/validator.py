@@ -4449,26 +4449,79 @@ def _runner_ini_section(path: Path, section: str) -> dict[str, object] | None:
     return dict(parser.items(section))
 
 
-def _extract_return_dict_keys(body: str) -> set[str] | None:
-    """Extract string keys from ``return {"key": ...}`` patterns in a body.
+_RETURN_DICT_KEY_RE = re.compile(r"\w+")
 
-    Looks for ``return {`` followed by quoted string keys. Returns ``None``
-    if no return-dict pattern is found (indicating the body doesn't use
-    the dict-of-functions pattern and validation should be skipped).
+
+def _own_return_statements(statements: list[ast.stmt]) -> list[ast.Return]:
+    """The ``return`` statements of one scope, without nested scopes.
+
+    Descends into compound statements (``if``, ``for``, ``try``,
+    ``with``, ``match``, ...) but not into a nested ``def``,
+    ``async def``, or ``class``: their returns belong to them, not to
+    the function whose body this is.
     """
-    # Match return { ... } blocks — look for "key": patterns inside
-    match = re.search(r"\breturn\s*\{", body)
-    if match is None:
+    found: list[ast.Return] = []
+    pending: list[ast.AST] = list(statements)
+    while pending:
+        node = pending.pop()
+        if isinstance(node, ast.Return):
+            found.append(node)
+            continue
+        if isinstance(
+            node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef),
+        ):
+            continue
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.stmt, ast.excepthandler, ast.match_case)):
+                pending.append(child)
+    return found
+
+
+def _extract_return_dict_keys(body: str) -> set[str] | None:
+    """Literal string keys of the dict the nerve function itself returns.
+
+    The body is parsed with :mod:`ast`. The function read is the body's
+    top-level ``def`` (or ``async def``); when the body holds several,
+    each one's own returns are read. Only ``return {...}`` statements of
+    that function count: returns inside nested functions or classes,
+    dict literals passed as call arguments, and dicts nested as values
+    are not its public surface. Of each returned dict display, only the
+    literal string keys are read; a ``**`` spread or a computed key is
+    ignored.
+
+    Returns ``None`` when no such ``return {...}`` exists (a computed
+    return, a class-bodied SERVICE, a generator) or the body does not
+    parse, so the callers skip their check.
+    """
+    try:
+        tree = ast.parse(body)
+    except (SyntaxError, ValueError):
         return None
 
-    # Extract everything from the return { to the end of the body
-    rest = body[match.end():]
+    functions = [
+        node for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    ]
+    returns: list[ast.Return] = []
+    if functions:
+        for function in functions:
+            returns.extend(_own_return_statements(function.body))
+    else:
+        returns = _own_return_statements(tree.body)
+
+    dicts = [r.value for r in returns if isinstance(r.value, ast.Dict)]
+    if not dicts:
+        return None
 
     keys: set[str] = set()
-    # Match both "key": and 'key': patterns
-    for key_match in re.finditer(r'["\'](\w+)["\']\s*:', rest):
-        keys.add(key_match.group(1))
-
+    for display in dicts:
+        for key in display.keys:
+            if (
+                isinstance(key, ast.Constant)
+                and isinstance(key.value, str)
+                and _RETURN_DICT_KEY_RE.fullmatch(key.value)
+            ):
+                keys.add(key.value)
     return keys
 
 

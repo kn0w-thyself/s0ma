@@ -518,6 +518,220 @@ class TestProvidesKeyMismatch:
         assert len(missing) == 1
 
 
+class TestProvidesKeyMismatchOwnReturn:
+    """Only the dict the nerve function itself returns is compared.
+
+    Keys from a nested function's own ``return {...}``, from dict
+    literals passed as call arguments, and from nested dict values are
+    not the nerve's public surface and must not be counted.
+    """
+
+    _NO_TEST = _basic_test_block(
+        "",
+        (
+            "    def assembler_test():\n"
+            "        assert True\n"
+        ),
+    )
+
+    def _strict(self, provides_block: str, nerve_body: str) -> list:
+        src = _module_with_test(
+            provides_block, self._NO_TEST, nerve_body=nerve_body,
+        )
+        module = parse_s0ma(src, filename="own_return.s0ma")
+        return validate_module(
+            module, mode=StrictnessMode.STRICT, filename="own_return.s0ma",
+        )
+
+    @staticmethod
+    def _codes(errors: list, code: str) -> list:
+        return [e for e in errors if e.code == code]
+
+    def test_nested_helper_returning_its_own_dict_is_clean(self) -> None:
+        errors = self._strict(
+            "    provides: [assemble, validate]\n",
+            (
+                "    def assembler():\n"
+                "        def stats():\n"
+                "            return {'present': True, 'size': 0}\n"
+                "        def assemble():\n"
+                "            return stats()\n"
+                "        def validate():\n"
+                "            return True\n"
+                "        return {'assemble': assemble, 'validate': validate}\n"
+            ),
+        )
+        assert not self._codes(errors, "PROVIDES_KEY_MISMATCH")
+
+    def test_dict_literal_passed_as_call_argument_is_clean(self) -> None:
+        errors = self._strict(
+            "    provides: [assemble, validate]\n",
+            (
+                "    def assembler():\n"
+                "        settings = dict({'retries': 3, 'timeout': 5})\n"
+                "        def assemble():\n"
+                "            return str(settings)\n"
+                "        def validate():\n"
+                "            return True\n"
+                "        return {'assemble': assemble, 'validate': validate}\n"
+            ),
+        )
+        assert not self._codes(errors, "PROVIDES_KEY_MISMATCH")
+
+    def test_call_argument_after_the_outer_return_is_clean(self) -> None:
+        # The regex reading took every quoted key after the first
+        # ``return {``, so a call argument in a later branch counted.
+        errors = self._strict(
+            "    provides: [assemble, validate]\n",
+            (
+                "    def assembler(fallback=False):\n"
+                "        def assemble():\n"
+                "            return 'hi'\n"
+                "        def validate():\n"
+                "            return True\n"
+                "        if not fallback:\n"
+                "            return {'assemble': assemble, 'validate': validate}\n"
+                "        print({'mode': 'fallback'})\n"
+                "        return {'assemble': assemble, 'validate': validate}\n"
+            ),
+        )
+        assert not self._codes(errors, "PROVIDES_KEY_MISMATCH")
+
+    def test_nested_dict_value_is_clean(self) -> None:
+        errors = self._strict(
+            "    provides: [assemble, meta]\n",
+            (
+                "    def assembler():\n"
+                "        def assemble():\n"
+                "            return 'hi'\n"
+                "        return {\n"
+                "            'assemble': assemble,\n"
+                "            'meta': {'name': 'assembler', 'version': 1},\n"
+                "        }\n"
+            ),
+        )
+        assert not self._codes(errors, "PROVIDES_KEY_MISMATCH")
+
+    def test_real_mismatch_beside_a_nested_helper_still_fails(self) -> None:
+        errors = self._strict(
+            "    provides: [assemble, validate]\n",
+            (
+                "    def assembler():\n"
+                "        def stats():\n"
+                "            return {'present': True, 'size': 0}\n"
+                "        def assemble():\n"
+                "            return stats()\n"
+                "        return {'asemble': assemble}\n"
+            ),
+        )
+        (mismatch,) = self._codes(errors, "PROVIDES_KEY_MISMATCH")
+        assert mismatch.severity == "error"
+        assert mismatch.context["extra_keys"] == ["asemble"]
+        assert mismatch.context["missing_keys"] == ["assemble", "validate"]
+        assert mismatch.context["return_keys"] == ["asemble"]
+        assert mismatch.message == (
+            "Nerve 'assembler' declares `provides: [assemble, validate]` "
+            "but its body's `return {...}` literal-string keys do not "
+            "match: missing keys: assemble, validate; unexpected keys: "
+            "asemble."
+        )
+
+    def test_suggested_block_names_only_the_outer_return_keys(self) -> None:
+        errors = self._strict(
+            "    provides: [assemble]\n",
+            (
+                "    def assembler():\n"
+                "        def stats():\n"
+                "            return {'present': True, 'size': 0}\n"
+                "        def assemble():\n"
+                "            return stats()\n"
+                "        def validate():\n"
+                "            return dict({'ok': True})\n"
+                "        return {\n"
+                "            'assemble': assemble,\n"
+                "            'validate': validate,\n"
+                "            'meta': {'name': 'assembler'},\n"
+                "        }\n"
+            ),
+        )
+        (mismatch,) = self._codes(errors, "PROVIDES_KEY_MISMATCH")
+        assert mismatch.context["extra_keys"] == ["meta", "validate"]
+        assert mismatch.suggested_declaration == (
+            "provides: [assemble, meta, validate]"
+        )
+
+    def test_structured_form_reads_only_the_outer_return(self) -> None:
+        # The structured ``provides:`` check (``MISSING_RETURN_KEY``)
+        # shares the reading: a nested helper's dict does not stand in
+        # for the outer return, and its keys are not "unexpected".
+        errors = self._strict(
+            "    provides:\n"
+            "      - assemble:\n"
+            '          returns: "str"\n',
+            (
+                "    def assembler():\n"
+                "        def stats():\n"
+                "            return {'assemble': True, 'size': 0}\n"
+                "        def assemble():\n"
+                "            return 'hi'\n"
+                "        return {'assemble': assemble}\n"
+            ),
+        )
+        assert not self._codes(errors, "PROVIDES_KEY_MISMATCH")
+        assert not self._codes(errors, "MISSING_RETURN_KEY")
+
+
+class TestExtractReturnDictKeys:
+    """The helper behind ``PROVIDES_KEY_MISMATCH`` and ``MISSING_RETURN_KEY``."""
+
+    def _keys(self, body: str) -> set[str] | None:
+        from s0ma_dsl.semantic.validator import _extract_return_dict_keys
+
+        return _extract_return_dict_keys(body)
+
+    def test_reads_the_outer_function_return(self) -> None:
+        assert self._keys(
+            "def svc():\n"
+            "    def helper():\n"
+            "        return {'inner': 1}\n"
+            "    return {'get': helper, 'put': helper}\n"
+        ) == {"get", "put"}
+
+    def test_nested_helper_dict_does_not_stand_in_for_a_computed_return(
+        self,
+    ) -> None:
+        # The outer function returns a computed value, so there is no
+        # literal to compare: the check is skipped, not run on the
+        # helper's keys.
+        assert self._keys(
+            "def svc():\n"
+            "    def helper():\n"
+            "        return {'inner': 1}\n"
+            "    return dict(get=helper)\n"
+        ) is None
+
+    def test_returns_in_branches_are_unioned(self) -> None:
+        assert self._keys(
+            "def svc(flag):\n"
+            "    if flag:\n"
+            "        return {'a': 1}\n"
+            "    for _ in range(1):\n"
+            "        return {'b': 2}\n"
+            "    return {'c': {'nested': 3}}\n"
+        ) == {"a", "b", "c"}
+
+    def test_only_literal_string_keys_are_read(self) -> None:
+        # A ``**`` spread and a computed key are ignored, as before;
+        # the literal keys beside them are still read.
+        assert self._keys(
+            "def svc(base, name):\n"
+            "    return {**base, name: 0, 'get': 1}\n"
+        ) == {"get"}
+
+    def test_unparsable_body_skips(self) -> None:
+        assert self._keys("def svc(:\n    return {'a': 1}\n") is None
+
+
 # ---------------------------------------------------------------------------
 # IR round-trip
 # ---------------------------------------------------------------------------

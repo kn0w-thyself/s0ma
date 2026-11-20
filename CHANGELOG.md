@@ -39,6 +39,19 @@ Historical entries describe artifacts as they were named at the time.
   `test` body as it is read, and names `s0ma-mcp` as the command to register
   for the authoring server. The migration guide says which files `s0ma migrate grammar` reads.
 
+- **`PROVIDES_KEY_MISMATCH` reads only the dict the nerve returns.** The check
+  took the first `return {` in a nerve's body and then every quoted key after
+  it. That counted the keys of a nested helper's own `return {...}`, of a dict
+  literal passed to a call later in the body, and of a dict nested as a value.
+  So strict refused correct code, and the suggested `provides:` block declared
+  those keys as operations. The check now parses the body and reads only the
+  literal string keys of the `return {...}` statements of the nerve function
+  itself, leaving out nested functions and classes. A real mismatch is
+  reported as before, with the same code, severity and message. The
+  structured `provides:` form and `returns:` read the body the same way for
+  `MISSING_RETURN_KEY`, so a nested helper's dict no longer counts as the
+  nerve's return there either.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
