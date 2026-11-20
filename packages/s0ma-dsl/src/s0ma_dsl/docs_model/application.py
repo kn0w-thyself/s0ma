@@ -593,23 +593,25 @@ UNREGISTERED_HANDLERS: tuple[str, ...] = (
 
 #: The most surfaces this composition may leave reaching no component.
 #:
-#: One hundred and seventy today, in four groups of two kinds. The
+#: One hundred and seventy-two today, in four groups of two kinds. The
 #: thirty-six that are *decisions* — the seven above and core's
 #: twenty-nine MCP and Python surfaces — are enumerated by id in
 #: ``test_docs_binding_policy.py``, so any change to them fails a test
-#: that names them. The remaining hundred and thirty-four are *rulings
+#: that names them. The remaining hundred and thirty-six are *rulings
 #: about a source*: a diagnostic code is a label on a report and a
 #: configuration key is a value in a table, and neither has an
 #: implementing component by its nature rather than by anyone's
 #: omission. Those grow when the product grows a diagnostic or a key.
 #:
 #: So the ceiling is a backstop and the enumeration is the gate. The
-#: headroom under it (six today; two went to the retrofit draft's two
-#: refusal codes, and three to the reports on a line the check could
-#: not read and a test the runner would never run) lets an ordinary
-#: code or key land without a red test; anything larger than ordinary
-#: — a whole new unbound family — arrives through the enumerated list
-#: first and is refused there by name.
+#: headroom under it (three today; two went to the retrofit draft's two
+#: refusal codes, three to the reports on a line the check could not
+#: read and a test the runner would never run, one to a grammar
+#: migration root that cannot be read, and one to a module Python
+#: cannot compile) lets an ordinary code or key land without a
+#: red test; anything larger than ordinary — a whole new unbound family
+#: — arrives through the enumerated list first and is refused there by
+#: name.
 UNBOUND_CEILING = 175
 
 #: Which readings may leave ``side_effects`` empty, and why each cannot
