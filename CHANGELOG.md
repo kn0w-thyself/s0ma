@@ -65,6 +65,27 @@ Historical entries describe artifacts as they were named at the time.
   includes the `fr` and `fR` prefixes, which the scan used to miss. The
   reported line is unchanged.
 
+- **`s0ma migrate grammar` finds `@file(...)` embeds from any directory.** A
+  relative `@file(...)` path was looked up from the working directory, so only
+  a run made from the directory being migrated found its embeds. Every other
+  form ended with `Internal error` and exit code 3: a subdirectory as the
+  target, `..` from inside the project, the project named from its parent,
+  `--project-root` with or without a target, and a plain `s0ma migrate grammar`
+  from inside a source directory. The embed is now read from beside the
+  `.s0ma` file that names it, whatever the working directory, and each of
+  those forms plans the same change, with the same `before_sha256`
+  and `after_sha256`, as a run from the root. The manifest keeps its shape,
+  and its paths stay relative to the directory that was migrated.
+
+- **An embed `s0ma migrate grammar` cannot read is a parse error.** An
+  `@file(...)` that named a missing file, a file the process could not read,
+  or a file that is not UTF-8 ended the run with `Internal error` on stderr
+  and exit code 3. It now ends the way a source that does not parse does:
+  exit code 1, and `GRAMMAR_MIGRATION_PARSE_ERROR` on stdout with a message
+  that names the `.s0ma` file, the line, and `EMBEDDED_FILE_NOT_FOUND`. A
+  script that reads the exit code sees 1 where it saw 3. As before, nothing
+  is written, with or without `--apply`.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added

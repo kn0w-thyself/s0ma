@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 from s0ma_dsl.cli import migrate_grammar
-from s0ma_dsl.cli.main import EXIT_SUCCESS, S0maCLI
+from s0ma_dsl.cli.main import EXIT_SUCCESS, EXIT_VALIDATION_ERROR, S0maCLI
 from s0ma_dsl.cli.migrate_grammar import (
     GrammarMigrationError,
     apply_grammar_migration,
@@ -364,6 +364,89 @@ def test_project_root_run_resolves_embeds_against_root_relative_paths(
     ]
 
 
+def _hashes(manifest: dict[str, Any]) -> list[tuple[str, str]]:
+    return [
+        (change["before_sha256"], change["after_sha256"])
+        for change in manifest["changes"]
+    ]
+
+
+def _plan_from_the_root(
+    project: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> dict[str, Any]:
+    monkeypatch.chdir(project)
+    code, out, err = _run_cli(["migrate", "grammar", "."], capsys)
+    assert (code, err) == (EXIT_SUCCESS, "")
+    return _manifest(out)
+
+
+# (working directory, argv after `s0ma`, the manifest path), with the
+# working directory relative to the folder that holds the project `proj`.
+_EMBED_RUNS = [
+    pytest.param("proj", ["migrate", "grammar", "src"], "site/page.s0ma",
+                 id="subdirectory-target"),
+    pytest.param("proj", ["migrate", "grammar", "src/site"], "page.s0ma",
+                 id="nested-target"),
+    pytest.param("proj/src", ["migrate", "grammar", ".."], "src/site/page.s0ma",
+                 id="parent-from-inside"),
+    pytest.param(".", ["migrate", "grammar", "proj"], "src/site/page.s0ma",
+                 id="project-from-its-parent"),
+    pytest.param(".", ["--project-root", "proj", "migrate", "grammar"],
+                 "src/site/page.s0ma", id="project-root-no-target"),
+    pytest.param(".", ["--project-root", "proj", "migrate", "grammar", "proj"],
+                 "src/site/page.s0ma", id="project-root-and-target"),
+    pytest.param("elsewhere", ["migrate", "grammar", "<abs>"], "src/site/page.s0ma",
+                 id="absolute-target-from-elsewhere"),
+    pytest.param("proj/src/site", ["migrate", "grammar"], "src/site/page.s0ma",
+                 id="bare-run-in-a-source-directory"),
+]
+
+
+@pytest.mark.parametrize(("cwd", "argv", "path"), _EMBED_RUNS)
+def test_embeds_resolve_whatever_the_working_directory_and_target(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    cwd: str,
+    argv: list[str],
+    path: str,
+) -> None:
+    project = tmp_path / "proj"
+    project.mkdir()
+    _write_project(project)
+    (tmp_path / "elsewhere").mkdir()
+    expected = _hashes(_plan_from_the_root(project, monkeypatch, capsys))
+    monkeypatch.chdir(tmp_path / cwd)
+    argv = [str(project) if arg == "<abs>" else arg for arg in argv]
+    code, out, err = _run_cli(argv, capsys)
+    assert "Internal error" not in err
+    assert code == EXIT_SUCCESS
+    manifest = _manifest(out)
+    assert [change["path"] for change in manifest["changes"]] == [path]
+    assert _hashes(manifest) == expected
+
+
+def test_apply_from_inside_a_source_directory_writes_what_the_root_run_plans(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    project = tmp_path / "proj"
+    project.mkdir()
+    module = _write_project(project)
+    [planned] = _plan_from_the_root(project, monkeypatch, capsys)["changes"]
+    monkeypatch.chdir(module.parent)
+    code, out, err = _run_cli(["migrate", "grammar", "--apply"], capsys)
+    assert "Internal error" not in err
+    assert code == EXIT_SUCCESS
+    manifest = _manifest(out)
+    assert manifest["applied"] is True
+    assert _hashes(manifest) == [(planned["before_sha256"], planned["after_sha256"])]
+    assert migrate_grammar._sha256(module.read_bytes()) == planned["after_sha256"]
+
+
 def _project_with_both_roots(root: Path) -> None:
     (root / "pyproject.toml").write_text(_PROJECT_PYPROJECT, encoding="utf-8")
     for relative in ("src/a.s0ma", "tests/test_a.s0ma"):
@@ -576,6 +659,56 @@ def test_apply_migrates_the_readable_source_beside_a_refused_directory(
     assert _migration_warnings(err) == [_unreadable_warning("locked")]
     parse_s0ma(readable.read_text(encoding="utf-8"), filename="open/a.s0ma")
     assert (locked / "hidden.s0ma").read_bytes() == hidden_before
+
+
+def _break_embed(module: Path, kind: str) -> None:
+    embed = module.parent / "page.html"
+    if kind == "missing":
+        embed.unlink()
+    elif kind == "unreadable":
+        embed.chmod(0)
+    else:
+        embed.write_bytes(b"\xff\xfe\x00bad")
+
+
+@pytest.mark.parametrize("kind", [
+    "missing",
+    pytest.param("unreadable", marks=pytest.mark.skipif(
+        _mode_change_cannot_lock() is not None,
+        reason=_mode_change_cannot_lock() or "",
+    )),
+    "not-utf-8",
+])
+@pytest.mark.parametrize("apply", [False, True], ids=["dry-run", "apply"])
+def test_an_embed_that_cannot_be_read_is_a_parse_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    kind: str,
+    apply: bool,
+) -> None:
+    module = _write_project(tmp_path)
+    before = module.read_bytes()
+    _break_embed(module, kind)
+    monkeypatch.chdir(tmp_path)
+    argv = ["migrate", "grammar", *(["--apply"] if apply else []), "."]
+    try:
+        code, out, err = _run_cli(argv, capsys)
+    finally:
+        (module.parent / "page.html").unlink(missing_ok=True)
+    assert "Internal error" not in err
+    assert code == EXIT_VALIDATION_ERROR
+    report = json.loads(out)
+    assert (report["code"], report["ok"]) == ("GRAMMAR_MIGRATION_PARSE_ERROR", False)
+    assert "EMBEDDED_FILE_NOT_FOUND" in report["message"]
+    assert report["message"].startswith(
+        "GRAMMAR_MIGRATION_PARSE_ERROR: src/site/page.s0ma: "
+        "src/site/page.s0ma:7: ERROR [EMBEDDED_FILE_NOT_FOUND]",
+    )
+    assert report["message"].endswith(
+        "; nothing was changed. Fix this source, then rerun `s0ma migrate grammar`.",
+    )
+    assert module.read_bytes() == before
 
 
 # ---------------------------------------------------------------------------
