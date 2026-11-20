@@ -13,6 +13,7 @@ Spec references: §7.1 rules R-04, R-05, R-09, R-10, R-16, R-17,
 from __future__ import annotations
 
 import ast
+import builtins
 import configparser
 import dataclasses
 import fnmatch
@@ -127,6 +128,17 @@ def _authored_bodies(
             line = helper.location.start_line if helper.location else 0
             bodies.append((helper.name, helper.body, line))
     return bodies
+
+
+def _is_builtin_exception_name(name: str) -> bool:
+    """Return True when *name* is a Python builtin exception class.
+
+    Used only to choose the text of the raises ``DOES_NOT_EXIST`` finding:
+    a builtin such as ``ValueError`` is never a s0ma EXCEPTION cell, so the
+    generic "check spelling" advice does not apply to it.
+    """
+    candidate = getattr(builtins, name, None)
+    return isinstance(candidate, type) and issubclass(candidate, BaseException)
 
 
 def _body_bound_names(tree: ast.AST) -> set[str]:
@@ -1352,23 +1364,41 @@ class IntraModuleValidator:
                         },
                     ))
                 elif not ns.is_in_component_ref_namespace(exc_name):
-                    errors.append(S0maSemanticError(
-                        code="DOES_NOT_EXIST",
-                        message=(
+                    if _is_builtin_exception_name(exc_name):
+                        message = (
+                            f"Nerve '{nerve.name}' raises '{exc_name}', "
+                            f"which is a Python builtin exception, not a s0ma "
+                            f"EXCEPTION cell. The raises field names only "
+                            f"EXCEPTION cells visible in the "
+                            f"component-reference namespace."
+                        )
+                        remediation = (
+                            f"Write 'raises: none' and state in 'guarantees:' "
+                            f"that the nerve raises '{exc_name}', or declare "
+                            f"an EXCEPTION cell for this failure (in this "
+                            f"module or one imported via uses) and list that "
+                            f"cell in raises instead of '{exc_name}'."
+                        )
+                    else:
+                        message = (
                             f"Nerve '{nerve.name}' raises '{exc_name}', "
                             f"which does not exist in the component-reference "
                             f"namespace."
-                        ),
-                        file=self.filename,
-                        line=line,
-                        column=0,
-                        severity="error",
-                        remediation=(
+                        )
+                        remediation = (
                             f"Ensure '{exc_name}' is declared as an exception "
                             f"cell in this module or imported via a uses entry. "
                             f"Check spelling and ensure the target is a s0ma "
                             f"component."
-                        ),
+                        )
+                    errors.append(S0maSemanticError(
+                        code="DOES_NOT_EXIST",
+                        message=message,
+                        file=self.filename,
+                        line=line,
+                        column=0,
+                        severity="error",
+                        remediation=remediation,
                         context={
                             "nerve": nerve.name,
                             "exception": exc_name,
