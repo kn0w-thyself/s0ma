@@ -1307,7 +1307,7 @@
       "after_samples": [],
       "before_samples": [],
       "code": {
-        "says": "One `def` whose name starts with `test_`. The function's name decides whether the test runs; the declaration's name does not.",
+        "says": "Opens with a `def`, and at least one function's name starts with `test_`. That name decides whether the test runs; the declaration's name does not. Every function, class and constant in it is emitted at module scope.",
         "type": "code",
         "write": "Always"
       },
