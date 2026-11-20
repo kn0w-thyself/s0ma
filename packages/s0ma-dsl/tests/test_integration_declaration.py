@@ -235,6 +235,21 @@ class TestIntegrationParsing:
         names = [getattr(d, "name", None) for d in mod.all_declarations]
         assert "GoogleCalendarIntegration" in names
 
+    def test_requires_and_uses_entries_carry_their_lines(self) -> None:
+        """Each integration ``requires:`` / ``uses:`` entry carries its source line."""
+        src = _gcal_module().replace(
+            "    requires: none\n    uses: none\n    raises: none\n",
+            "    requires:\n      - json\n      - csv\n    uses: [alpha.one]\n    raises: none\n",
+        )
+        mod = parse_s0ma(src, filename="gcal_integration.s0ma")
+        integ = mod.integrations[0]
+        lines = src.split("\n")
+        found = [
+            lines[e.location.start_line - 1].strip()
+            for e in (*integ.requires, *integ.uses)
+        ]
+        assert found == ["- json", "- csv", "uses: [alpha.one]"]
+
 
 # ---------------------------------------------------------------------------
 # Parser — required-field errors
