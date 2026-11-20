@@ -5,7 +5,7 @@ module: "common_errors"
 format: "markdown"
 intent: "Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
 schema_version: "3.0.0"
-content_hash: "1:cbebcd35efc04661c4b8464f9f9774386915fbcd19e1dfa903eb6a7379b3a6e8"
+content_hash: "1:a3abc89d7979312ba8616d2a986ccb1ab95a627739ec8fc7d4ff0b9b2ed3b524"
 ---
 
 # CommonErrorsTable
@@ -50,6 +50,7 @@ Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sen
 | `EXPORTED_HELPER_NOT_FOUND` | error | error | error | error | A module's `exports_helpers:` entry names an identifier that is not a `helper` declaration in this module. |
 | `FIELD_NOT_FOUND` | error | error | error | error | A `{{kind::name.field}}` token references a field that does not exist on the entity. |
 | `FIXTURE_FORMAT_INVALID` | warning | warning | error | error | A non-`.s0ma` fixture file under a configured `test_roots` directory matches a glob declared in `[tool.s0ma].fixtures_format` but fails its declared format (e.g. an invalid line in a `.jsonl` file or a malformed `.yaml` document). |
+| `GENERATED_FILE_COMPILE_ERROR` | error | error | error | error | A body parses but Python cannot compile the module it is emitted into (a `nonlocal` or `global` declared after the name is used, a `return` with a value in an async generator), so the module would fail on import. Fix the body at the reported line; the message carries Python's own reason. |
 | `GENERATED_FILE_DRIFT` | — | — | — | — | A generated .py was hand-edited after transpilation (its embedded `# s0ma-output-hash` no longer matches its content). A build will not overwrite it until the .s0ma source says the same thing: move the changes into the source, or pass --force to discard them. `s0ma check` surfaces this as a warning; `s0ma build` refuses, whether or not the source changed since the last build. |
 | `GRAMMAR_MIGRATION_APPLY_FAILED` | — | — | — | — | An atomic grammar-migration replacement failed and prior replacements were restored. |
 | `GRAMMAR_MIGRATION_CONFLICT` | — | — | — | — | A grammar-migration target changed or ceased to be a regular file after planning. |

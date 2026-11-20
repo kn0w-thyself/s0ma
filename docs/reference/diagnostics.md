@@ -2,7 +2,7 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-Every report s0ma can make about a project, with what it means and how seriously it is taken. This build registers 116 of them: 102 get more serious as a project tightens its strictness, and 14 are the same whatever mode the project is in.
+Every report s0ma can make about a project, with what it means and how seriously it is taken. This build registers 117 of them: 103 get more serious as a project tightens its strictness, and 14 are the same whatever mode the project is in.
 
 Each report has an entry of its own further down, so a build that stopped on one can send you straight to it.
 
@@ -58,6 +58,7 @@ Read from `packages/s0ma-dsl/src/s0ma_dsl/config.py` when the documentation was 
 | [`EXPORTED_HELPER_NOT_FOUND`](#exported_helper_not_found) | `error` | `error` | `error` | `error` |
 | [`FIELD_NOT_FOUND`](#field_not_found) | `error` | `error` | `error` | `error` |
 | [`FIXTURE_FORMAT_INVALID`](#fixture_format_invalid) | `warning` | `warning` | `error` | `error` |
+| [`GENERATED_FILE_COMPILE_ERROR`](#generated_file_compile_error) | `error` | `error` | `error` | `error` |
 | [`GENERATED_FILE_DRIFT`](#generated_file_drift) | — | — | — | — |
 | [`GRAMMAR_MIGRATION_APPLY_FAILED`](#grammar_migration_apply_failed) | — | — | — | — |
 | [`GRAMMAR_MIGRATION_CONFLICT`](#grammar_migration_conflict) | — | — | — | — |
@@ -392,6 +393,13 @@ A non-`.s0ma` fixture file under a configured `test_roots` directory matches a g
 
 - **Severity by mode** — migration `warning`, dev `warning`, strict `error`, release `error`
 - **Addressed as** — `diagnostic:FIXTURE_FORMAT_INVALID`
+
+### GENERATED_FILE_COMPILE_ERROR
+
+A body parses but Python cannot compile the module it is emitted into (a `nonlocal` or `global` declared after the name is used, a `return` with a value in an async generator), so the module would fail on import. Fix the body at the reported line; the message carries Python's own reason.
+
+- **Severity by mode** — migration `error`, dev `error`, strict `error`, release `error`
+- **Addressed as** — `diagnostic:GENERATED_FILE_COMPILE_ERROR`
 
 ### GENERATED_FILE_DRIFT
 

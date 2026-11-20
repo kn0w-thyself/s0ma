@@ -101,7 +101,7 @@
     }
   ],
   "exception_kinds": {
-    "binding": 171,
+    "binding": 172,
     "not a document": 4,
     "reference-only channel": 5,
     "reference-only surface": 25
@@ -130,7 +130,7 @@
       "ceilings": {
         "unbound": {
           "ceiling": 175,
-          "used": 171
+          "used": 172
         }
       },
       "complete": true,
@@ -139,7 +139,7 @@
         "validate.check_surface_binding",
         "application.check_surface_index"
       ],
-      "exception_count": 171,
+      "exception_count": 172,
       "exceptions": [
         {
           "kind": "binding",
@@ -450,6 +450,11 @@
           "kind": "binding",
           "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
           "member": "diagnostic:FIXTURE_FORMAT_INVALID"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:GENERATED_FILE_COMPILE_ERROR"
         },
         {
           "kind": "binding",
@@ -1003,7 +1008,7 @@
         "DOC_SURFACE_UNBOUND",
         "DOC_SURFACE_UNCOVERED"
       ],
-      "required": 263,
+      "required": 264,
       "set": "surfaces",
       "uncovered": []
     },
@@ -1245,12 +1250,12 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:d90dcf06377ba870"
+    "snapshot_hash": "sha256:738fc41e123e4d34"
   },
   "totals": {
     "covered": 342,
-    "exceptions": 205,
-    "required": 513,
+    "exceptions": 206,
+    "required": 514,
     "sets": 5,
     "uncovered": 0
   }

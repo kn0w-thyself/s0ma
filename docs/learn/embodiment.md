@@ -68,4 +68,4 @@ Do not use embodiment for a system that merely talks to a device over a wire and
 
 - Topic id: `concept:embodiment`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:d90dcf06377ba870`
+- Documentation snapshot: `sha256:738fc41e123e4d34`

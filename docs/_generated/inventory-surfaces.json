@@ -2,12 +2,12 @@
   "counts": {
     "by_binding": {
       "bound": 92,
-      "exception": 171
+      "exception": 172
     },
     "by_channel": {
       "cli": 44,
       "config": 19,
-      "diagnostic": 116,
+      "diagnostic": 117,
       "mcp_prompt": 5,
       "mcp_resource": 24,
       "mcp_tool": 27,
@@ -19,12 +19,12 @@
       "approval": 5,
       "credential": 1,
       "network": 7,
-      "none": 143,
+      "none": 144,
       "read": 82,
       "subprocess": 6,
       "write": 29
     },
-    "surfaces": 263,
+    "surfaces": 264,
     "undeclared_side_effects": 29
   },
   "entries": [
@@ -1692,6 +1692,25 @@
       "id": "diagnostic:FIXTURE_FORMAT_INVALID",
       "intent": "A non-`.s0ma` fixture file under a configured `test_roots` directory matches a glob declared in `[tool.s0ma].fixtures_format` but fails its declared format (e.g. an invalid line in a `.jsonl` file or a malformed `.yaml` document).",
       "public_name": "FIXTURE_FORMAT_INVALID",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:GENERATED_FILE_COMPILE_ERROR",
+      "intent": "A body parses but Python cannot compile the module it is emitted into (a `nonlocal` or `global` declared after the name is used, a `return` with a value in an async generator), so the module would fail on import. Fix the body at the reported line; the message carries Python's own reason.",
+      "public_name": "GENERATED_FILE_COMPILE_ERROR",
       "side_effects": [
         "none"
       ]
@@ -4351,6 +4370,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:d90dcf06377ba870"
+    "snapshot_hash": "sha256:738fc41e123e4d34"
   }
 }

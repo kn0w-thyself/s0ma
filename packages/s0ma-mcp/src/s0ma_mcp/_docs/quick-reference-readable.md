@@ -9,7 +9,7 @@ One page to find your way around s0ma: what the parts of a `.s0ma` file are, wha
 | **Describes** | s0ma 0.22.0 (preview) |
 | **Packages** | `s0ma-lang`, `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0`, which all share that version |
 | **Language specification** | [s0ma DSL — Language Specification & Coding Agent Rulebook](../../packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md) |
-| **Documentation snapshot** | `sha256:d90dcf06377ba870` |
+| **Documentation snapshot** | `sha256:738fc41e123e4d34` |
 | **This page** | edition 2, last revised 2026-10-05 — [what has changed](#what-has-changed) |
 
 A version marked `(preview)` is the latest release together with the changes made since, which are not released yet.
@@ -753,12 +753,12 @@ s0ma studi0                # look at what you made
 
 | Mode | Meant for | How it treats what it finds | Refuses | Warns about | Does not check |
 | --- | --- | --- | --- | --- | --- |
-| `migration` | bringing existing code across | As `dev`, with a little more room. | 73 | 26 | 3 |
-| `dev` | day to day | A mistake the build can carry on past is a warning. | 74 | 25 | 3 |
-| `strict` | the automated checks before a merge | What the first two warn about is refused. | 94 | 5 | 3 |
-| `release` | shipping | As `strict`, and it makes checks the others do not: they are named under the table. | 98 | 4 | 0 |
+| `migration` | bringing existing code across | As `dev`, with a little more room. | 74 | 26 | 3 |
+| `dev` | day to day | A mistake the build can carry on past is a warning. | 75 | 25 | 3 |
+| `strict` | the automated checks before a merge | What the first two warn about is refused. | 95 | 5 | 3 |
+| `release` | shipping | As `strict`, and it makes checks the others do not: they are named under the table. | 99 | 4 | 0 |
 
-The numbers count the 102 reports whose weight depends on the mode. 73 of them are refused in every mode, so the modes differ over the rest. 14 more reports are made the same way whatever the mode.
+The numbers count the 103 reports whose weight depends on the mode. 74 of them are refused in every mode, so the modes differ over the rest. 14 more reports are made the same way whatever the mode.
 
 Made only in `release`: [`MISSING_EMBEDDED_EXAMPLE`](diagnostics.md#missing_embedded_example), [`MISSING_PUBLIC_DOC_REF`](diagnostics.md#missing_public_doc_ref), [`MISSING_TEST_COVERAGE`](diagnostics.md#missing_test_coverage).
 
