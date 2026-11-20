@@ -27,6 +27,10 @@ from s0ma_dsl.cli.migrate_grammar import (
     apply_grammar_migration,
     plan_grammar_migration,
 )
+from s0ma_dsl.config import (
+    ERROR_CODE_DESCRIPTIONS,
+    OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE,
+)
 from s0ma_dsl.errors import S0maParseError
 from s0ma_dsl.parser import parse_s0ma
 
@@ -754,6 +758,16 @@ def test_an_unreadable_directory_below_a_readable_root_is_still_a_warning(
     ]
     assert _migration_warnings(err) == [_unreadable_warning("src/deep")]
 
+
+def test_the_root_refusal_code_is_registered() -> None:
+    assert "GRAMMAR_MIGRATION_ROOT_INVALID" in ERROR_CODE_DESCRIPTIONS
+    description = ERROR_CODE_DESCRIPTIONS["GRAMMAR_MIGRATION_ROOT_INVALID"]
+    assert "not a directory" in description
+    assert "cannot be read" in description
+    assert (
+        "GRAMMAR_MIGRATION_ROOT_INVALID"
+        in OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE
+    )
 
 
 def test_apply_migrates_the_readable_source_beside_a_refused_directory(

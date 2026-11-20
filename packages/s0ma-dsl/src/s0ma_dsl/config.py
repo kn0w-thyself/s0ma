@@ -953,6 +953,7 @@ OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE: tuple[str, ...] = (
     "GRAMMAR_MIGRATION_CONFLICT",
     "GRAMMAR_MIGRATION_APPLY_FAILED",
     "GRAMMAR_MIGRATION_ROLLBACK_FAILED",
+    "GRAMMAR_MIGRATION_ROOT_INVALID",
     # 0.14 M1: verify pre-flight result when a tree contains zero
     # hash-bearing modeled modules. Always exits EXIT_NOTHING_VERIFIED (4),
     # independent of authoring strictness.
@@ -1091,6 +1092,10 @@ ERROR_CODE_DESCRIPTIONS: dict[str, str] = {
     ),
     "GRAMMAR_MIGRATION_ROLLBACK_FAILED": (
         "The grammar migrator could not restore one or more files after an apply failure."
+    ),
+    "GRAMMAR_MIGRATION_ROOT_INVALID": (
+        "The grammar-migration root is not a directory or cannot be read, or none of the "
+        "project's configured roots can be read; nothing was planned."
     ),
     "EMPTY_BLOCK_LIST": (
         "A YAML-style block list ('- item' per line) on uses/requires/exports/"
