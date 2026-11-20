@@ -366,6 +366,13 @@ move the change into the `.s0ma` source it belongs in, or discard it with
 uv run s0ma build src --force     # discards the hand edits, regenerates from source
 ```
 
+`s0ma build . --check` is a different test. It builds into a scratch folder
+and compares the result with the build directory on disk, so when that
+directory does not exist, as on a fresh clone of a project that does not
+commit `build/`, every file is reported as drifted. Use it when your project
+commits its build. If your project ignores `build/`, `s0ma check` and
+`s0ma test` are the gate.
+
 The same word covers documentation: a page s0ma generates from your model that
 no longer matches the model has drifted. `uv run s0ma docs check-drift src`
 names each page that no longer matches and how far apart they are, and
@@ -395,7 +402,7 @@ translated out of the shorthand:
 | `SEMANTIC_PENDING_DEBT` | You wrote `pending("...")` somewhere. That is allowed and honest, and it is recorded as a debt: it earns no credit and blocks a release-mode run. | Nothing, while you are still working. Replace it with a real value before you claim the project is releasable. |
 | `BARE_IMPORT` | An `import` line sits inside a body. s0ma writes the imports itself, from what the module header declares. | One edit with two halves: add the name to the header's `requires:` (or `uses:` if it is another s0ma component) **and** delete the `import` line. Doing only half leaves the error in place. |
 | `MISSING_PACKAGE` | The header requires something that is not installed in this environment. | Install it, or correct the spelling. Check you are running through `uv run` and inside the right project. A wheel build runs where the runtime packages are not installed, and its hook says so with `s0ma build --without-runtime-packages`; `docs/guides/packaging.md` is the guide. |
-| `DOES_NOT_EXIST` | A name you referred to is not in this project. | Usually a typo or a rename that did not reach every reference. |
+| `DOES_NOT_EXIST` | A name you referred to is not in this project. | Usually a typo or a rename that did not reach every reference. If you named files or a folder, `uses:` resolves only among those files and any `--include` directory, so a module outside them is reported here even though it exists. Run a bare `s0ma check` to check against the whole project. |
 | `NOT_EXPORTED` | The thing exists, but the module holding it does not publish it. | Add it to that module's `exports:` list, or refer to something that is already public. |
 | `MODULE_NAME_STEM_MISMATCH` | The filename and the `module` name inside the file disagree. | Rename one to match the other. |
 | `MODULE_NAME_COLLISION` / `DUPLICATE_DECLARATION` | Two things claim the same name — two files declaring one module, or one module declaring one name twice. | Rename one. The message suggests a name. |
