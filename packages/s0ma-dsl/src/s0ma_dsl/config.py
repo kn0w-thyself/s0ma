@@ -545,6 +545,17 @@ SEVERITY_MATRIX: dict[str, dict[StrictnessMode, str | None]] = {
     # See plan post-Phase-2 M-12, spec §4.13 (requires-python capture),
     # and the detection helpers in ``s0ma_dsl.semantic.python_compat``.
     "PARSE_GRAMMAR_FORWARD_INCOMPAT": dict.fromkeys(StrictnessMode, "error"),
+    # A body that ``ast.parse`` accepts can still be one Python refuses to
+    # compile: a ``nonlocal`` or ``global`` declared after the name is
+    # used, a ``return`` with a value inside an async generator. Those
+    # errors come from the compiler's symbol pass, which ``ast.parse``
+    # never runs, so the module checked clean, built, and failed on
+    # import. ``check`` and ``build`` now ``compile()`` each emitted
+    # module (nothing executed) and map a failure back to the ``.s0ma``
+    # body line through the source map. Always an error in every mode: a
+    # module Python cannot compile cannot be imported at all. Emit site:
+    # ``cli/main.py::_compile_emitted_module``.
+    "GENERATED_FILE_COMPILE_ERROR": dict.fromkeys(StrictnessMode, "error"),
 
     # 0.14 M2: build/transpile can prove only that emitted Python will
     # import the s0ma runtimes, not that the host has installed them.
@@ -1336,6 +1347,12 @@ ERROR_CODE_DESCRIPTIONS: dict[str, str] = {
         "A body authors Python 3.12-only grammar (PEP 701 nested-quote f-string, "
         "walrus-in-comprehension, or PEP 695 type-parameter / type-alias) while "
         "`[project].requires-python` still admits 3.11."
+    ),
+    "GENERATED_FILE_COMPILE_ERROR": (
+        "A body parses but Python cannot compile the module it is emitted into (a "
+        "`nonlocal` or `global` declared after the name is used, a `return` with a value "
+        "in an async generator), so the module would fail on import. Fix the body at "
+        "the reported line; the message carries Python's own reason."
     ),
     "PROHIBITED_CONSTRUCT": (
         "A body uses `exec()`, `eval()`, `__import__()`, or another prohibited dynamic-execution "
