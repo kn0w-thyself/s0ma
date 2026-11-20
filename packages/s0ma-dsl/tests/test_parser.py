@@ -376,6 +376,114 @@ module m
         assert result.module.tags == ("core", "signals")
 
 
+def _entry_lines(entries) -> list[int | None]:
+    """The source line each parsed ``requires:`` / ``uses:`` entry carries."""
+    return [e.location.start_line if e.location else None for e in entries]
+
+
+class TestImportEntryLines:
+    """Each ``requires:`` / ``uses:`` entry carries the line it was written on.
+
+    Every diagnostic about an entry reads its line from here, so an entry
+    without a location used to print line 0.
+    """
+
+    def test_inline_lists_give_every_entry_the_field_line(self) -> None:
+        source = """\
+module m
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Inline lists."
+    exports: []
+    requires: [time, uuid.UUID as Id]
+    uses: [routing.select_evaluator, errors.SignalError]
+    soft_requires: [json]
+    runtime_only_requires: [os]
+    deferred_requires: [csv]
+    exports_helpers: none
+"""
+        header = parse_s0ma(source, "m.s0ma").module
+        assert _entry_lines(header.requires) == [6, 6]
+        assert _entry_lines(header.uses) == [7, 7]
+        assert _entry_lines(header.soft_requires) == [8]
+        assert _entry_lines(header.runtime_only_requires) == [9]
+        assert _entry_lines(header.deferred_requires) == [10]
+        assert header.uses[0].location.file == "m.s0ma"
+
+    def test_block_lists_give_each_entry_its_own_line(self) -> None:
+        source = """\
+module m
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Block lists."
+    exports: []
+    requires:
+      - time
+      # a comment inside the block is not an entry
+      - unittest.mock:patch
+    uses:
+      - routing.select_evaluator
+      - errors.SignalError as Err
+      - store.save
+    soft_requires:
+      - json
+    runtime_only_requires:
+      - os
+    deferred_requires:
+      - csv
+      - zlib
+    exports_helpers: none
+"""
+        header = parse_s0ma(source, "m.s0ma").module
+        assert _entry_lines(header.requires) == [7, 9]
+        assert _entry_lines(header.uses) == [11, 12, 13]
+        assert _entry_lines(header.soft_requires) == [15]
+        assert _entry_lines(header.runtime_only_requires) == [17]
+        assert _entry_lines(header.deferred_requires) == [19, 20]
+
+    def test_inline_list_wrapped_over_lines(self) -> None:
+        """An inline list continued on the next line puts each entry on its own line."""
+        source = """\
+module m
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "A wrapped inline list."
+    exports: []
+    uses: [routing.select_evaluator,
+        errors.SignalError, store.save]
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+"""
+        header = parse_s0ma(source, "m.s0ma").module
+        assert _entry_lines(header.uses) == [6, 7, 7]
+
+    def test_repeated_field_takes_the_line_of_the_value_kept(self) -> None:
+        """When a field is written twice the later value wins, and so does its line."""
+        source = """\
+module m
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "A field written twice."
+    exports: []
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+    uses:
+      - routing.select_evaluator
+      - store.save
+    requires: [time]
+"""
+        header = parse_s0ma(source, "m.s0ma").module
+        assert _entry_lines(header.uses) == [13, 14]
+        assert _entry_lines(header.requires) == [15]
+
+
 # ---------------------------------------------------------------------------
 # Nerve declarations
 # ---------------------------------------------------------------------------

@@ -366,6 +366,13 @@ class _RawDeclaration:
     # dropped — see ``_check_declaration_lines``.
     field_lines: dict[str, int] = _dc_field(default_factory=dict)
     stray_lines: list[tuple[int, str]] = _dc_field(default_factory=list)
+    # Where the value each field keeps was written: the line of the
+    # field's last occurrence (a later occurrence replaces the value),
+    # and, for a block list, the line of each ``- item``. The
+    # ``requires:`` / ``uses:`` builders read both so every entry carries
+    # its own source line — see ``_list_entry_lines``.
+    value_lines: dict[str, int] = _dc_field(default_factory=dict)
+    item_lines: dict[str, tuple[int, ...]] = _dc_field(default_factory=dict)
 
 
 _SEMANTIC_LIST_FIELDS = frozenset({
@@ -1201,6 +1208,7 @@ def _consume_block_list(
     field_indent: int,
     field_line: int,
     filename: str,
+    item_lines: list[int] | None = None,
 ) -> tuple[str, int]:
     """Consume a YAML block-list (``- item`` per line) starting at ``start_index``.
 
@@ -1214,7 +1222,8 @@ def _consume_block_list(
     Returns ``(inline_form, next_index)`` where ``inline_form`` is the
     canonical ``"[item1, item2, item3]"`` shape so existing field
     parsers (``_parse_name_list``, ``_parse_import_list``) consume the
-    block-list output unchanged.
+    block-list output unchanged. When ``item_lines`` is given, the
+    1-based source line of each item is appended to it, in item order.
 
     Raises :class:`S0maParseError` on:
     - empty block (``EMPTY_BLOCK_LIST``),
@@ -1297,6 +1306,8 @@ def _consume_block_list(
         item_text = item_text.strip()
         if item_text:
             items.append(item_text)
+            if item_lines is not None:
+                item_lines.append(i + 1)
         i += 1
 
     if not items:
@@ -2831,6 +2842,8 @@ def _split_declarations(source: str, filename: str = "<string>") -> list[_RawDec
         # Collect fields (indented lines with key: value)
         fields: dict[str, str] = {}
         field_lines: dict[str, int] = {}
+        value_lines: dict[str, int] = {}
+        item_lines: dict[str, tuple[int, ...]] = {}
         stray_lines: list[tuple[int, str]] = []
         depends_on_lines: list[str] = []
         current_field: str | None = None
@@ -2880,6 +2893,8 @@ def _split_declarations(source: str, filename: str = "<string>") -> list[_RawDec
                 field_name = field_match.group(1)
                 field_value = field_match.group(2).rstrip()
                 field_lines.setdefault(field_name, i + 1)
+                value_lines[field_name] = i + 1
+                item_lines.pop(field_name, None)
 
                 if field_name == "depends_on" and not field_value:
                     in_depends_on = True
@@ -3080,6 +3095,7 @@ def _split_declarations(source: str, filename: str = "<string>") -> list[_RawDec
                         i = new_i
                         continue
 
+                    block_item_lines: list[int] = []
                     list_inline, new_i = _consume_block_list(
                         lines,
                         start_index=i + 1,
@@ -3087,8 +3103,10 @@ def _split_declarations(source: str, filename: str = "<string>") -> list[_RawDec
                         field_indent=_FIELD_INDENT,
                         field_line=i + 1,
                         filename=filename,
+                        item_lines=block_item_lines,
                     )
                     fields[field_name] = list_inline
+                    item_lines[field_name] = tuple(block_item_lines)
                     current_field = None
                     current_value = None
                     i = new_i
@@ -3167,6 +3185,8 @@ def _split_declarations(source: str, filename: str = "<string>") -> list[_RawDec
 
         decl.fields = fields
         decl.field_lines = field_lines
+        decl.value_lines = value_lines
+        decl.item_lines = item_lines
         decl.stray_lines = stray_lines
         decl.depends_on_lines = depends_on_lines
         decl.body = body
@@ -4183,15 +4203,23 @@ def _build_module(decl: _RawDeclaration, filename: str) -> ModuleDecl:
     uses_raw = fields.get("uses", "")
     tags_raw = fields.get("tags", "")
 
-    requires_entries = _build_requires(requires_raw, filename, decl.start_line)
-    soft_requires_entries = _build_requires(soft_requires_raw, filename, decl.start_line)
+    requires_entries = _build_requires(
+        requires_raw, filename, decl.start_line, decl=decl, field="requires",
+    )
+    soft_requires_entries = _build_requires(
+        soft_requires_raw, filename, decl.start_line, decl=decl, field="soft_requires",
+    )
     runtime_only_requires_entries = _build_requires(
-        runtime_only_requires_raw, filename, decl.start_line
+        runtime_only_requires_raw, filename, decl.start_line,
+        decl=decl, field="runtime_only_requires",
     )
     deferred_requires_entries = _build_requires(
-        deferred_requires_raw, filename, decl.start_line
+        deferred_requires_raw, filename, decl.start_line,
+        decl=decl, field="deferred_requires",
     )
-    uses_entries = _build_uses(uses_raw, filename, decl.start_line)
+    uses_entries = _build_uses(
+        uses_raw, filename, decl.start_line, decl=decl, field="uses",
+    )
     tags = tuple(_parse_name_list(tags_raw, filename, decl.start_line)) if tags_raw.strip() else ()
 
     # POST-4c (0.15.0): ``exports_helpers:`` — names of helpers that
@@ -4291,15 +4319,75 @@ _KNOWN_FROM_IMPORTS = frozenset({
 })
 
 
-def _build_requires(raw: str, filename: str, line: int) -> tuple[RequiresEntry, ...]:
-    """Build RequiresEntry tuple from raw requires field value."""
+def _list_entry_lines(
+    raw: str, count: int, decl: _RawDeclaration, field: str,
+) -> list[int]:
+    """The 1-based source line of each of the ``count`` entries in ``raw``.
+
+    ``raw`` is the value ``field`` kept on ``decl``. A block list
+    (``- item`` per line) was recorded item by item when it was read. An
+    inline list starts on the field's own line; a continuation line
+    (an inline list wrapped onto the next line) is joined with a
+    newline, so an entry's line is the field line plus the newlines
+    before it. Entries are names, so a top-level comma always separates
+    two of them. If the counts disagree the field line is used for
+    every entry rather than a guess.
+    """
+    recorded = decl.item_lines.get(field)
+    if recorded is not None and len(recorded) == count:
+        return list(recorded)
+    first = decl.value_lines.get(field, decl.field_lines.get(field, decl.start_line))
+    lines: list[int] = []
+    offset = 0
+    for segment in raw.split(","):
+        stripped = segment.strip().strip("[]").strip()
+        if stripped:
+            at = offset + segment.index(stripped[0])
+            lines.append(first + raw.count("\n", 0, at))
+        offset += len(segment) + 1
+    if len(lines) != count:
+        return [first] * count
+    return lines
+
+
+def _entry_location(filename: str, line: int | None) -> SourceLocation | None:
+    """A one-line location for a header list entry, or ``None`` without a line."""
+    if line is None:
+        return None
+    return SourceLocation(
+        start_line=line,
+        start_column=1,
+        end_line=line,
+        end_column=1,
+        file=filename,
+    )
+
+
+def _build_requires(
+    raw: str,
+    filename: str,
+    line: int,
+    *,
+    decl: _RawDeclaration | None = None,
+    field: str = "requires",
+) -> tuple[RequiresEntry, ...]:
+    """Build RequiresEntry tuple from raw requires field value.
+
+    With ``decl``, each entry carries the source line it was written on.
+    """
     if not raw.strip():
         return ()
     entries = _parse_import_list(raw, filename, line)
+    entry_lines: list[int | None] = (
+        list(_list_entry_lines(raw, len(entries), decl, field))
+        if decl is not None
+        else [None] * len(entries)
+    )
     result = []
-    for entry in entries:
+    for entry, entry_line in zip(entries, entry_lines, strict=True):
         path = entry["path"]
         alias = entry["alias"]
+        location = _entry_location(filename, entry_line)
 
         if entry.get("colon_form"):
             # Explicit colon syntax: package:name → always a from-import
@@ -4307,6 +4395,7 @@ def _build_requires(raw: str, filename: str, line: int) -> tuple[RequiresEntry, 
                 module_path=path,
                 alias=alias,
                 is_from_import=True,
+                location=location,
             ))
         else:
             # Heuristic: check known-exceptions, then capitalization
@@ -4319,20 +4408,37 @@ def _build_requires(raw: str, filename: str, line: int) -> tuple[RequiresEntry, 
                 module_path=path,
                 alias=alias,
                 is_from_import=is_from,
+                location=location,
             ))
     return tuple(result)
 
 
-def _build_uses(raw: str, filename: str, line: int) -> tuple[UsesEntry, ...]:
-    """Build UsesEntry tuple from raw uses field value."""
+def _build_uses(
+    raw: str,
+    filename: str,
+    line: int,
+    *,
+    decl: _RawDeclaration | None = None,
+    field: str = "uses",
+) -> tuple[UsesEntry, ...]:
+    """Build UsesEntry tuple from raw uses field value.
+
+    With ``decl``, each entry carries the source line it was written on.
+    """
     if not raw.strip():
         return ()
     entries = _parse_import_list(raw, filename, line)
+    entry_lines: list[int | None] = (
+        list(_list_entry_lines(raw, len(entries), decl, field))
+        if decl is not None
+        else [None] * len(entries)
+    )
     result = []
-    for entry in entries:
+    for entry, entry_line in zip(entries, entry_lines, strict=True):
         result.append(UsesEntry(
             qualified_name=entry["path"],
             alias=entry["alias"],
+            location=_entry_location(filename, entry_line),
         ))
     return tuple(result)
 
@@ -5582,8 +5688,12 @@ def _build_integration(decl: _RawDeclaration, filename: str) -> IntegrationDecl:
     raises_raw = fields.get("raises", "")
     tags_raw = fields.get("tags", "")
 
-    requires_entries = _build_requires(requires_raw, filename, decl.start_line)
-    uses_entries = _build_uses(uses_raw, filename, decl.start_line)
+    requires_entries = _build_requires(
+        requires_raw, filename, decl.start_line, decl=decl, field="requires",
+    )
+    uses_entries = _build_uses(
+        uses_raw, filename, decl.start_line, decl=decl, field="uses",
+    )
     raises = (
         tuple(_parse_name_list(raises_raw, filename, decl.start_line))
         if raises_raw.strip()

@@ -2070,6 +2070,7 @@ class TestIncludeFlag:
                 "uses: [source_mod.no_such_thing]",
             ),
             encoding="utf-8",
+            newline="\n",
         )
 
         exit_code = cli.run([
@@ -2081,8 +2082,9 @@ class TestIncludeFlag:
         captured = capsys.readouterr()
         assert "MODULE_NAME_COLLISION" not in captured.out
         assert captured.out.count("ERROR [NOT_EXPORTED]") == 1, captured.out
-        # Diagnostics print their file with forward slashes on every OS.
-        assert f"{broken.as_posix()}:0: ERROR [NOT_EXPORTED]" in captured.out
+        # Diagnostics print their file with forward slashes on every OS,
+        # and the line is the one the ``uses:`` entry is written on.
+        assert f"{broken.as_posix()}:5: ERROR [NOT_EXPORTED]" in captured.out
 
     def test_include_flag_parser_build(self, cli: S0maCLI):
         """--include / -I should be parseable on the build command."""

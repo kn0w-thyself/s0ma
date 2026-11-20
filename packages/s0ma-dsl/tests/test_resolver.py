@@ -2952,3 +2952,129 @@ class TestCrossModuleAbstractInterfaceValidation:
         assert len(missing) == 1
         assert "disconnect" in missing[0].message
         assert missing[0].context["target_module"] == "base_adapters"
+
+
+# ===========================================================================
+# Header entry lines: findings about a requires:/uses: entry name its line
+# ===========================================================================
+
+
+def _header_module(name: str, exports: str, requires: str, uses: str) -> str:
+    """A parsed-source module whose header lines are known.
+
+    Line 6 is ``requires:`` and line 7 is ``uses:``. A block value given
+    for either starts on the line after it, so later fields move down.
+    """
+    return (
+        f"module {name}\n"
+        "    layer: DOMAIN\n"
+        "    version: 1.0.0\n"
+        "    intent: \"A module whose header entries have known lines.\"\n"
+        f"    exports: [{exports}]\n"
+        f"    requires:{requires}\n"
+        f"    uses:{uses}\n"
+        "    soft_requires: none\n"
+        "    runtime_only_requires: none\n"
+        "    deferred_requires: none\n"
+        "    exports_helpers: none\n"
+        "\n"
+        "nerve one :: DOMAIN\n"
+        "    kind: FUNCTION\n"
+        "    visibility: PUBLIC\n"
+        "    intent: \"Return a constant for the entry-line tests.\"\n"
+        "    expects: \"no arguments\"\n"
+        "    guarantees: \"returns a constant integer\"\n"
+        "    forbids: none\n"
+        "    evaluates_at: FUNCTION_BOUNDARY\n"
+        "    provides: none\n"
+        "    returns: none\n"
+        "    raises: none\n"
+        "    interface: none\n"
+        "    latency_ms: none\n"
+        "    depends_on: none\n"
+        "    internal: none\n"
+        "    expected_exceptions: none\n"
+        "    consumes_via_dict: none\n"
+        "    declares_attributes: none\n"
+        "    covered_by: none\n"
+        "    ---\n"
+        "    def one():\n"
+        "        return 1\n"
+    )
+
+
+def _resolve_parsed(**sources: str) -> list:
+    from s0ma_dsl.parser import parse_s0ma
+
+    modules = {
+        name: parse_s0ma(text, f"{name}.s0ma") for name, text in sources.items()
+    }
+    return resolve_dependencies(
+        modules,
+        filenames={name: f"{name}.s0ma" for name in sources},
+        check_imports=False,
+    )
+
+
+def _lines_of(errors: list, code: str, file: str = "beta.s0ma") -> list[int]:
+    return sorted(e.line for e in errors if e.code == code and e.file == file)
+
+
+_ALPHA = _header_module("alpha", "one", " none", " none")
+
+
+class TestHeaderEntryLines:
+    """A finding about one header entry reports that entry's line, not line 0."""
+
+    def test_inline_uses_does_not_exist_and_not_exported(self):
+        beta = _header_module("beta", "one", " none", " [gamma.four, alpha.hidden]")
+        errors = _resolve_parsed(alpha=_ALPHA, beta=beta)
+        assert _lines_of(errors, "DOES_NOT_EXIST") == [7]
+        assert _lines_of(errors, "NOT_EXPORTED") == [7]
+
+    def test_block_uses_does_not_exist_and_not_exported(self):
+        beta = _header_module(
+            "beta", "one", " none",
+            "\n        - alpha.one\n        - gamma.four\n        - alpha.hidden",
+        )
+        errors = _resolve_parsed(alpha=_ALPHA, beta=beta)
+        assert _lines_of(errors, "DOES_NOT_EXIST") == [9]
+        assert _lines_of(errors, "NOT_EXPORTED") == [10]
+
+    def test_block_uses_entries_get_different_lines(self):
+        beta = _header_module(
+            "beta", "one", " none",
+            "\n        - gamma.four\n        - delta.five\n        - epsilon.six",
+        )
+        errors = _resolve_parsed(alpha=_ALPHA, beta=beta)
+        assert _lines_of(errors, "DOES_NOT_EXIST") == [8, 9, 10]
+
+    def test_inline_requires_vestigial_import(self):
+        beta = _header_module("beta", "one", " [json, csv]", " none")
+        errors = _resolve_parsed(alpha=_ALPHA, beta=beta)
+        assert _lines_of(errors, "VESTIGIAL_IMPORT") == [6, 6]
+
+    def test_block_requires_vestigial_import(self):
+        beta = _header_module("beta", "one", "\n        - json\n        - csv", " none")
+        errors = _resolve_parsed(alpha=_ALPHA, beta=beta)
+        assert _lines_of(errors, "VESTIGIAL_IMPORT") == [7, 8]
+
+    def test_inline_requires_namespace_collision(self):
+        from s0ma_dsl.parser import parse_s0ma
+
+        beta = _header_module("beta", "one", " [urllib.error, urllib.request]", " none")
+        _, errors = build_namespaces(parse_s0ma(beta, "beta.s0ma"), "beta.s0ma")
+        collisions = [e for e in errors if e.code == "NAMESPACE_COLLISION"]
+        assert [e.line for e in collisions] == [6]
+        assert collisions[0].context["first_line"] == 6
+
+    def test_block_requires_namespace_collision(self):
+        from s0ma_dsl.parser import parse_s0ma
+
+        beta = _header_module(
+            "beta", "one", "\n        - urllib.error\n        - urllib.request", " none",
+        )
+        _, errors = build_namespaces(parse_s0ma(beta, "beta.s0ma"), "beta.s0ma")
+        collisions = [e for e in errors if e.code == "NAMESPACE_COLLISION"]
+        assert [e.line for e in collisions] == [8]
+        assert "at line 7" in collisions[0].message
