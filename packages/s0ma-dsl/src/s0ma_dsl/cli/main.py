@@ -4128,6 +4128,11 @@ class S0maCLI:
                 "only the tests or test modules whose names match <name>."
             ),
         )
+        # `run` splits a `--` suffix off before argparse sees the line, so
+        # the parser holds no action for it. This default is where the
+        # command says it takes that suffix and what receives it; the
+        # documentation build reads it to accept `--` for this command.
+        test_p.set_defaults(passthrough_to="pytest")
         test_p.add_argument(
             "test_dir",
             nargs="?",

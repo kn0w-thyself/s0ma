@@ -951,6 +951,9 @@ def _command_line(write: str, interface: CommandInterface, where: str) -> None:
     index = 0
     while index < len(rest):
         token = rest[index]
+        if token == "--" and interface.passthrough_to:
+            # Everything after it goes to another program unparsed.
+            break
         if token.startswith("-") and len(token) > 1:
             option = options.get(token)
             if option is None:
@@ -1001,6 +1004,10 @@ def _options_said(says: str, interface: CommandInterface, where: str) -> None:
         for index, word in enumerate(words):
             if not word.startswith("--"):
                 continue
+            if word == "--" and interface.passthrough_to:
+                # The words after a bare `--` belong to the program it
+                # passes them to, not to this command.
+                break
             option = options.get(word)
             if option is None:
                 # The explanation may be pointing at a sibling command;

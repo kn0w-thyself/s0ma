@@ -741,6 +741,11 @@ class CommandInterface:
     has_subcommands: bool
     options: tuple[CommandOption, ...]
     arguments: tuple[CommandArgument, ...]
+    #: What receives the words after a bare ``--``, or "" when the command
+    #: takes none. ``run`` splits that suffix off before argparse parses,
+    #: so no action carries it; the command declares it with
+    #: ``set_defaults(passthrough_to=...)`` and this is read from there.
+    passthrough_to: str = ""
 
 
 @dataclass(frozen=True)
@@ -865,6 +870,7 @@ def _interface(
         # is the order they are typed in, which is the whole fact.
         options=tuple(sorted(options)),
         arguments=tuple(arguments),
+        passthrough_to=str(parser.get_default("passthrough_to") or ""),
     )
 
 
