@@ -876,6 +876,115 @@ button.narration-subject:focus-visible {
   color: var(--ink-faint);
 }
 
+/* Monospace is for real DSL words only: a field name, a declaration
+ * type, a relation word, an enum value, a canonical id. */
+.term {
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+
+/* The header under the part's name: its declaration type as a tag, then
+ * one line naming its module and layer. */
+.inspector-tagline {
+  margin: 2px 0 6px;
+}
+
+.decl-tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border: 1px solid var(--accent-line);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.inspector-where {
+  margin: 0 0 14px;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+/* A field label: the DSL term first, then the plain phrase. Never
+ * upper-cased, because the term is a word an author types. */
+.field-label {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.field-label .label-phrase {
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+.label-sep {
+  color: var(--ink-faint);
+}
+
+/* The other end of a relationship, as the control that selects it. */
+.rel-peer-button {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.rel-peer-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* "More about this part": one native disclosure for everything that
+ * is not above the fold. It opens at once, with no motion. */
+.inspector-more {
+  border-top: 1px solid var(--line-soft);
+  margin-top: 14px;
+  padding-top: 12px;
+}
+
+.inspector-more > summary,
+.inspector-undeclared > summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.inspector-more > summary:focus-visible,
+.inspector-undeclared > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.inspector-more[open] > summary {
+  margin-bottom: 10px;
+}
+
+.inspector-more-block {
+  margin-top: 12px;
+}
+
+.inspector-undeclared > summary {
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+
+.inspector-undeclared-list {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
 .intent-text {
   margin: 0;
   font-size: 13.5px;
