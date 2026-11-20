@@ -2,7 +2,7 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-Every report s0ma can make about a project, with what it means and how seriously it is taken. This build registers 115 of them: 102 get more serious as a project tightens its strictness, and 13 are the same whatever mode the project is in.
+Every report s0ma can make about a project, with what it means and how seriously it is taken. This build registers 116 of them: 102 get more serious as a project tightens its strictness, and 14 are the same whatever mode the project is in.
 
 Each report has an entry of its own further down, so a build that stopped on one can send you straight to it.
 
@@ -64,6 +64,7 @@ Read from `packages/s0ma-dsl/src/s0ma_dsl/config.py` when the documentation was 
 | [`GRAMMAR_MIGRATION_OUTPUT_INVALID`](#grammar_migration_output_invalid) | — | — | — | — |
 | [`GRAMMAR_MIGRATION_PARSE_ERROR`](#grammar_migration_parse_error) | — | — | — | — |
 | [`GRAMMAR_MIGRATION_ROLLBACK_FAILED`](#grammar_migration_rollback_failed) | — | — | — | — |
+| [`GRAMMAR_MIGRATION_ROOT_INVALID`](#grammar_migration_root_invalid) | — | — | — | — |
 | [`HELPER_NAME_COLLISION`](#helper_name_collision) | — | — | — | — |
 | [`HELPER_PRIVATE_TO_MODULE`](#helper_private_to_module) | `error` | `error` | `error` | `error` |
 | [`HOLLOW_MODEL`](#hollow_model) | — | — | — | — |
@@ -433,6 +434,13 @@ The grammar migrator could not restore one or more files after an apply failure.
 
 - **Severity by mode** — not in the table. The strictness mode a project is in does not change how this one is reported.
 - **Addressed as** — `diagnostic:GRAMMAR_MIGRATION_ROLLBACK_FAILED`
+
+### GRAMMAR_MIGRATION_ROOT_INVALID
+
+The grammar-migration root is not a directory or cannot be read, or none of the project's configured roots can be read; nothing was planned.
+
+- **Severity by mode** — not in the table. The strictness mode a project is in does not change how this one is reported.
+- **Addressed as** — `diagnostic:GRAMMAR_MIGRATION_ROOT_INVALID`
 
 ### HELPER_NAME_COLLISION
 

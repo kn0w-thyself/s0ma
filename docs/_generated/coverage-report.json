@@ -101,7 +101,7 @@
     }
   ],
   "exception_kinds": {
-    "binding": 170,
+    "binding": 171,
     "not a document": 4,
     "reference-only channel": 5,
     "reference-only surface": 25
@@ -130,7 +130,7 @@
       "ceilings": {
         "unbound": {
           "ceiling": 175,
-          "used": 170
+          "used": 171
         }
       },
       "complete": true,
@@ -139,7 +139,7 @@
         "validate.check_surface_binding",
         "application.check_surface_index"
       ],
-      "exception_count": 170,
+      "exception_count": 171,
       "exceptions": [
         {
           "kind": "binding",
@@ -480,6 +480,11 @@
           "kind": "binding",
           "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
           "member": "diagnostic:GRAMMAR_MIGRATION_ROLLBACK_FAILED"
+        },
+        {
+          "kind": "binding",
+          "ledger": "packages/s0ma-dsl/src/s0ma_dsl/config.py",
+          "member": "diagnostic:GRAMMAR_MIGRATION_ROOT_INVALID"
         },
         {
           "kind": "binding",
@@ -998,7 +1003,7 @@
         "DOC_SURFACE_UNBOUND",
         "DOC_SURFACE_UNCOVERED"
       ],
-      "required": 262,
+      "required": 263,
       "set": "surfaces",
       "uncovered": []
     },
@@ -1240,12 +1245,12 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:ebb101336797e94e"
+    "snapshot_hash": "sha256:5ad5e6dcc85f34fc"
   },
   "totals": {
     "covered": 342,
-    "exceptions": 204,
-    "required": 512,
+    "exceptions": 205,
+    "required": 513,
     "sets": 5,
     "uncovered": 0
   }
