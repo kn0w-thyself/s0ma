@@ -9,7 +9,7 @@ One page to find your way around s0ma: what the parts of a `.s0ma` file are, wha
 | **Describes** | s0ma 0.22.0 (preview) |
 | **Packages** | `s0ma-lang`, `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0`, which all share that version |
 | **Language specification** | [s0ma DSL — Language Specification & Coding Agent Rulebook](../../packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md) |
-| **Documentation snapshot** | `sha256:c16f35eaefad084a` |
+| **Documentation snapshot** | `sha256:ebb101336797e94e` |
 | **This page** | edition 2, last revised 2026-10-05 — [what has changed](#what-has-changed) |
 
 A version marked `(preview)` is the latest release together with the changes made since, which are not released yet.
@@ -412,7 +412,7 @@ A piece of structure. First line: `cell <Name> :: <LAYER>`.
 | `version` | Optional | — | version | This part's own version, when you track one. |
 | `tags` | Optional | — | list of names | Labels for searching and grouping. |
 | `metadata` | Optional | — | block | Facts of your own, as `key: value` lines, that travel with the part. A value is quoted text, a number, `true` or `false`, or a list. s0ma stores them and never reads them. |
-| the code | Always, unless `content` | — | code, after the `---` line | A class, a value, or a type. A `CONSTANT` assigns to its own name: `LOAN_DAYS = 21`. |
+| the code | Always, unless `content` | — | code, after the `---` line | A class, a value, or a type. A `CONSTANT` assigns to its own name once: `LOAN_DAYS = 21`. The object it names may still change inside, as a `ContextVar` or a lock does; only a plain literal is carried as `value` in `s0ma inspect --format json`. |
 
 A data shape:
 
@@ -452,6 +452,8 @@ cell LOAN_DAYS :: DOMAIN
     ---
     LOAN_DAYS = 21
 ```
+
+A `CONSTANT`'s code may call a nerve listed in `uses`. The result is not a plain literal, so that constant carries no `value`.
 
 ### ganglion
 
@@ -537,6 +539,8 @@ helper _tidy_title :: DOMAIN
 
 A helper that fits on one line can also be written inside the module header, under `helpers:`.
 
+A value several tests share is not a helper: declare it as a `cell` with `kind: CONSTANT` and `visibility: TEST`, and list it in each test file's `uses`.
+
 ### integration
 
 A connection to an outside service. First line: `integration <Name> :: INFRASTRUCTURE`. It can only live in an `INFRASTRUCTURE` file, beside the nerve that builds it.
@@ -597,6 +601,8 @@ test test_due_date_is_three_weeks_out :: DOMAIN
         assert LOAN_DAYS == 21
         assert due_date(date(2026, 1, 1)) == date(2026, 1, 22)
 ```
+
+A test module follows the same layer rule as any other module, so a test file in a lower layer cannot use a part from a higher one. `[tool.s0ma].test_layering = "permissive"` lifts that rule for test modules.
 
 ### doc-ref
 

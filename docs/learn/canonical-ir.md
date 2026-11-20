@@ -16,7 +16,7 @@ It is the interface between a s0ma system and anything that wants to reason abou
 
 ## When to use it
 
-Read this record whenever a tool needs the structure of a system rather than its behaviour: building a reference page, answering a question about a part, or working out what a change would touch.
+Read this record whenever a tool needs the structure of a system rather than its behaviour: building a reference page, answering a question about a part, or working out what a change would touch. `s0ma inspect <module> --format json` gives each component and helper a `location` with the `start_line` and `end_line` of its declaration.
 
 ## When not to use it
 
@@ -63,4 +63,4 @@ Do not hand-edit it. The build writes it and rewrites it on every build, so an e
 
 - Topic id: `concept:canonical-ir`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:c16f35eaefad084a`
+- Documentation snapshot: `sha256:ebb101336797e94e`

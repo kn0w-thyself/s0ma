@@ -558,7 +558,7 @@ cell MAX_RETRIES :: INFRASTRUCTURE
 
 **Common mistake:** Assuming `raises: [SomeError]` imports `SomeError`. It doesn't. If `SomeError` is in another module, you also need `uses: [errors.SomeError]` at the module level. If `SomeError` is in the same module, no additional declaration is needed.
 
-**`raises` entries must be s0ma cells**, not Python built-in exceptions. To declare that a nerve raises `ValueError`, simply raise it in the body — no `raises` entry is needed for built-in exceptions.
+**`raises` entries must be s0ma cells**, not Python built-in exceptions. To declare that a nerve raises `ValueError`, simply raise it in the body — no `raises` entry is needed for built-in exceptions. Writing `raises: [ValueError]` fails the check with `DOES_NOT_EXIST`. Write `raises: none` and say it in `guarantees:`, or declare an `EXCEPTION` cell (it may subclass `ValueError`) and list that.
 
 ---
 
@@ -1112,7 +1112,7 @@ When a `CONSTANT` cell's value is a large block of text — HTML, SQL, prompt te
 
 **The canonical motivating case.** The kn0wthyself viz plugin had a `viz_template.s0ma` file that grew to 1010+ lines, of which ~990 were embedded HTML/CSS/JS in a triple-quoted Python string. The metadata-to-content ratio was 1:80. Authors lost HTML/CSS/JS editor support; reviewers had to scroll through hundreds of lines of raw markup to find the cell's intent and schema. That experience is what M12 fixes.
 
-**The pattern.** Replace the inline `--- ... ---` body with a `content: @file("path")` field. The transpiler reads the file at build time, hashes it for cache invalidation, and emits the content into the generated Python verbatim:
+**The pattern.** Replace the inline `--- ... ---` body with a `content: @file("path")` field. The transpiler reads the file at build time, hashes it for the build manifest and cache invalidation, and emits the content into the generated Python verbatim:
 
 ```
 cell VIZ_TEMPLATE :: PRESENTATION
@@ -1145,9 +1145,9 @@ cell VIZ_TEMPLATE :: PRESENTATION
 </html>
 ```
 
-**Where the content goes.** The transpiler binds `VIZ_TEMPLATE` in the generated module to the file's exact UTF-8 bytes via `r"""..."""` (or `repr()` when the content contains the triple-quote sequence). Consumers `from <package> import VIZ_TEMPLATE` and use it identically to an inline-defined constant — the embed is a transpile-time mechanism, not a runtime one.
+**Where the content goes.** The transpiler binds `VIZ_TEMPLATE` in the generated module to the file's UTF-8 text, with its line endings read as `\n`, via `r"""..."""` (or `repr()` when the content contains the triple-quote sequence). Consumers `from <package> import VIZ_TEMPLATE` and use it identically to an inline-defined constant — the embed is a transpile-time mechanism, not a runtime one.
 
-**Build artifacts.** The `build.s0ma.json` manifest's `external_content_files` map records the embed under `"<module>::<cell>"` with the path the author wrote and the SHA-256 hash of the file's content. Editing the embedded file changes its hash, invalidates the consuming module's cache, and triggers a re-transpile on the next build — the `.py` is never stale relative to its inputs.
+**Build artifacts.** The `build.s0ma.json` manifest's `external_content_files` map records the embed under `"<module>::<cell>"` with the path the author wrote and the SHA-256 hash of the file's content. The hash is taken over that text after line endings are read as `\n`, so a CRLF checkout and an LF checkout of the same file record the same hash. Editing the embedded file changes its hash, invalidates the consuming module's cache, and triggers a re-transpile on the next build — the `.py` is never stale relative to its inputs.
 
 **Source maps.** The `.s0ma.map` records the embedded file as the canonical body source for the cell. Debuggers and error reporters follow this redirect so a runtime error in the embedded literal points at the original `.html` / `.sql` / `.txt` rather than the `.s0ma` line that holds the directive.
 
