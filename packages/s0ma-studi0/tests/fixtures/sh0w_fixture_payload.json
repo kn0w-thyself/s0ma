@@ -29,10 +29,10 @@
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
       "location": {
-        "end_line": 24,
+        "end_line": 21,
         "file": "s0ma_src/console.s0ma",
-        "line": 11,
-        "start_line": 11
+        "line": 13,
+        "start_line": 13
       },
       "module": "console",
       "visibility": "INTERNAL"
@@ -45,17 +45,16 @@
           "state": "none"
         },
         "covered_by": {
-          "state": "none"
+          "state": "value",
+          "value": [
+            "test_agenda_lists_every_due_reminder"
+          ]
         },
         "declares_attributes": {
           "state": "none"
         },
         "depends_on": {
-          "state": "value",
-          "value": [
-            "AGENDA_TEMPLATE",
-            "scheduling.due_reminders"
-          ]
+          "state": "none"
         },
         "evaluates_at": "FUNCTION_BOUNDARY",
         "expected_exceptions": {
@@ -64,6 +63,10 @@
         "expects": {
           "state": "value",
           "value": "person is a non-empty display name; window is a SchedulingWindow"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never leave a template marker in the text it returns."
         },
         "guarantees": {
           "state": "value",
@@ -85,10 +88,8 @@
           "state": "none"
         },
         "returns": {
-          "state": "value",
-          "value": "str"
-        },
-        "serves_as": "agenda"
+          "state": "none"
+        }
       },
       "intent": {
         "state": "value",
@@ -97,10 +98,10 @@
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
       "location": {
-        "end_line": 68,
+        "end_line": 48,
         "file": "s0ma_src/console.s0ma",
-        "line": 31,
-        "start_line": 31
+        "line": 23,
+        "start_line": 23
       },
       "module": "console",
       "visibility": "PUBLIC"
@@ -113,7 +114,10 @@
           "state": "none"
         },
         "covered_by": {
-          "state": "none"
+          "state": "value",
+          "value": [
+            "test_agenda_lists_every_due_reminder"
+          ]
         },
         "declares_attributes": {
           "state": "none"
@@ -128,6 +132,9 @@
         "expects": {
           "state": "value",
           "value": "rows is a list of Reminder records"
+        },
+        "forbids": {
+          "state": "none"
         },
         "guarantees": {
           "reason": "the overdue boundary is still under discussion with the owner",
@@ -149,8 +156,7 @@
           "state": "none"
         },
         "returns": {
-          "state": "value",
-          "value": "int"
+          "state": "none"
         }
       },
       "intent": {
@@ -160,10 +166,10 @@
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
       "location": {
-        "end_line": 92,
+        "end_line": 71,
         "file": "s0ma_src/console.s0ma",
-        "line": 74,
-        "start_line": 74
+        "line": 50,
+        "start_line": 50
       },
       "module": "console",
       "visibility": "INTERNAL"
@@ -181,7 +187,7 @@
         "mocks": {
           "state": "value",
           "value": [
-            "scheduling.due_reminders"
+            "due_reminders"
           ]
         },
         "tests": {
@@ -199,10 +205,10 @@
       "kind": null,
       "layer": "PRESENTATION",
       "location": {
-        "end_line": 131,
+        "end_line": 87,
         "file": "s0ma_src/console.s0ma",
-        "line": 98,
-        "start_line": 98
+        "line": 79,
+        "start_line": 79
       },
       "module": "console",
       "visibility": null
@@ -220,7 +226,8 @@
         "schema": {
           "state": "value",
           "value": "int milliseconds"
-        }
+        },
+        "value": 4000
       },
       "intent": {
         "state": "value",
@@ -229,7 +236,7 @@
       "kind": "CONSTANT",
       "layer": "INFRASTRUCTURE",
       "location": {
-        "end_line": 20,
+        "end_line": 21,
         "file": "s0ma_src/delivery.s0ma",
         "line": 13,
         "start_line": 13
@@ -249,7 +256,7 @@
         },
         "schema": {
           "state": "value",
-          "value": "channel: str, detail: str — the external system's own wording"
+          "value": "channel: str, detail: str, the external system's own wording"
         }
       },
       "intent": {
@@ -259,10 +266,10 @@
       "kind": "MODEL",
       "layer": "INFRASTRUCTURE",
       "location": {
-        "end_line": 226,
+        "end_line": 35,
         "file": "s0ma_src/delivery.s0ma",
-        "line": 214,
-        "start_line": 214
+        "line": 23,
+        "start_line": 23
       },
       "module": "delivery",
       "visibility": "PUBLIC"
@@ -281,10 +288,7 @@
           "state": "none"
         },
         "depends_on": {
-          "state": "value",
-          "value": [
-            "CHANNEL_TIMEOUT_MS"
-          ]
+          "state": "none"
         },
         "evaluates_at": "FUNCTION_BOUNDARY",
         "expected_exceptions": {
@@ -293,15 +297,16 @@
         "expects": {
           "state": "none"
         },
+        "forbids": {
+          "reason": "which relay this wraps decides what it must never do",
+          "state": "pending"
+        },
         "guarantees": {
           "reason": "the relay's delivery semantics are not settled yet",
           "state": "pending"
         },
         "interface": {
-          "state": "value",
-          "value": [
-            "send"
-          ]
+          "state": "none"
         },
         "internal_helpers": {
           "state": "none"
@@ -326,10 +331,10 @@
       "kind": "ADAPTER",
       "layer": "INFRASTRUCTURE",
       "location": {
-        "end_line": 138,
+        "end_line": 97,
         "file": "s0ma_src/delivery.s0ma",
-        "line": 101,
-        "start_line": 101
+        "line": 74,
+        "start_line": 74
       },
       "module": "delivery",
       "visibility": "PUBLIC"
@@ -342,17 +347,16 @@
           "state": "none"
         },
         "covered_by": {
-          "state": "none"
+          "state": "value",
+          "value": [
+            "test_push_channel_reports_gateway_refusal"
+          ]
         },
         "declares_attributes": {
           "state": "none"
         },
         "depends_on": {
-          "state": "value",
-          "value": [
-            "CHANNEL_TIMEOUT_MS",
-            "platform.RetryBudget"
-          ]
+          "state": "none"
         },
         "evaluates_at": "FUNCTION_BOUNDARY",
         "expected_exceptions": {
@@ -362,16 +366,16 @@
           "state": "value",
           "value": "reminder carries a person the gateway has a device token for"
         },
+        "forbids": {
+          "state": "value",
+          "value": "Never send a reminder twice for one call, and never swallow the gateway's refusal."
+        },
         "guarantees": {
           "state": "value",
           "value": "Returns the gateway's own acceptance record, or raises ChannelUnavailable; never retries beyond the declared budget"
         },
         "interface": {
-          "state": "value",
-          "value": [
-            "send",
-            "describe"
-          ]
+          "state": "none"
         },
         "internal_helpers": {
           "state": "none"
@@ -380,10 +384,7 @@
           "state": "none"
         },
         "metadata": {
-          "external_system": "push gateway",
-          "requires_env": [
-            "PUSH_TOKEN"
-          ]
+          "external_system": "push gateway"
         },
         "provides": {
           "state": "none"
@@ -395,21 +396,85 @@
           ]
         },
         "returns": {
-          "state": "value",
-          "value": "DeliveryReceipt"
+          "state": "none"
         }
       },
       "intent": {
         "state": "value",
         "value": "Sends one reminder through the push gateway and reports what the gateway returned; it does not decide whether the person saw it."
       },
-      "kind": "ADAPTER",
+      "kind": "SERVICE",
       "layer": "INFRASTRUCTURE",
       "location": {
-        "end_line": 95,
+        "end_line": 72,
         "file": "s0ma_src/delivery.s0ma",
-        "line": 26,
-        "start_line": 26
+        "line": 37,
+        "start_line": 37
+      },
+      "module": "delivery",
+      "visibility": "PUBLIC"
+    },
+    "delivery::describe_gateway": {
+      "canonical_id": "delivery::describe_gateway",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never send a message to a person."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the gateway's name and touches nothing outside this process"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The smoke check for the push gateway: names the system the adapter wraps without sending anything."
+      },
+      "kind": "FUNCTION",
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 120,
+        "file": "s0ma_src/delivery.s0ma",
+        "line": 99,
+        "start_line": 99
       },
       "module": "delivery",
       "visibility": "PUBLIC"
@@ -425,10 +490,7 @@
           "state": "none"
         },
         "mocks": {
-          "state": "value",
-          "value": [
-            "PushGateway"
-          ]
+          "state": "none"
         },
         "tests": {
           "state": "value",
@@ -444,10 +506,10 @@
       "kind": null,
       "layer": "INFRASTRUCTURE",
       "location": {
-        "end_line": 208,
+        "end_line": 149,
         "file": "s0ma_src/delivery.s0ma",
-        "line": 179,
-        "start_line": 179
+        "line": 137,
+        "start_line": 137
       },
       "module": "delivery",
       "visibility": null
@@ -462,11 +524,14 @@
         "depends_on": {
           "state": "none"
         },
+        "forbids": {
+          "state": "none"
+        },
         "observes": {
           "state": "value",
           "value": [
-            "PushChannel.send",
-            "EmailChannel.send"
+            "PushChannel",
+            "EmailChannel"
           ]
         },
         "on_anomaly": {
@@ -476,10 +541,7 @@
         "priors": {
           "state": "none"
         },
-        "scope": {
-          "state": "value",
-          "value": "SUBSYSTEM"
-        }
+        "scope": "SUBSYSTEM"
       },
       "intent": {
         "state": "value",
@@ -488,13 +550,13 @@
       "kind": null,
       "layer": "INFRASTRUCTURE",
       "location": {
-        "end_line": 173,
+        "end_line": 135,
         "file": "s0ma_src/delivery.s0ma",
-        "line": 144,
-        "start_line": 144
+        "line": 122,
+        "start_line": 122
       },
       "module": "delivery",
-      "visibility": "PUBLIC"
+      "visibility": "INTERNAL"
     },
     "platform::RetryBudget": {
       "canonical_id": "platform::RetryBudget",
@@ -505,10 +567,7 @@
         },
         "invariants": {
           "state": "value",
-          "value": [
-            "attempts >= 1",
-            "backoff_ms >= 0"
-          ]
+          "value": "[\"attempts >= 1\", \"backoff_ms >= 0\"]"
         },
         "schema": {
           "state": "value",
@@ -522,13 +581,13 @@
       "kind": "MODEL",
       "layer": "FRAMEWORK",
       "location": {
-        "end_line": 27,
+        "end_line": 24,
         "file": "s0ma_src/platform.s0ma",
-        "line": 10,
-        "start_line": 10
+        "line": 13,
+        "start_line": 13
       },
       "module": "platform",
-      "visibility": "INTERNAL"
+      "visibility": "PUBLIC"
     },
     "platform::clock_now": {
       "canonical_id": "platform::clock_now",
@@ -553,6 +612,10 @@
         "expects": {
           "state": "none"
         },
+        "forbids": {
+          "state": "value",
+          "value": "Never return a naive datetime or a local time."
+        },
         "guarantees": {
           "state": "value",
           "value": "Returns a timezone-aware instant in UTC"
@@ -573,8 +636,7 @@
           "state": "none"
         },
         "returns": {
-          "state": "value",
-          "value": "datetime"
+          "state": "none"
         }
       },
       "intent": {
@@ -584,13 +646,13 @@
       "kind": "FUNCTION",
       "layer": "FRAMEWORK",
       "location": {
-        "end_line": 48,
+        "end_line": 47,
         "file": "s0ma_src/platform.s0ma",
-        "line": 33,
-        "start_line": 33
+        "line": 26,
+        "start_line": 26
       },
       "module": "platform",
-      "visibility": "INTERNAL"
+      "visibility": "PUBLIC"
     },
     "reminders::Reminder": {
       "canonical_id": "reminders::Reminder",
@@ -604,11 +666,7 @@
         },
         "invariants": {
           "state": "value",
-          "value": [
-            "text is non-empty",
-            "recurrence in {daily, weekly, monthly, once}",
-            "last_run is none or <= now"
-          ]
+          "value": "[\"text is non-empty\", \"recurrence in {daily, weekly, monthly, once}\", \"last_run is none or <= now\"]"
         },
         "schema": {
           "state": "value",
@@ -622,10 +680,10 @@
       "kind": "MODEL",
       "layer": "DOMAIN",
       "location": {
-        "end_line": 44,
+        "end_line": 26,
         "file": "s0ma_src/reminders.s0ma",
-        "line": 12,
-        "start_line": 12
+        "line": 13,
+        "start_line": 13
       },
       "module": "reminders",
       "visibility": "PUBLIC"
@@ -652,10 +710,10 @@
       "kind": "CONSTANT",
       "layer": "DOMAIN",
       "location": {
-        "end_line": 61,
+        "end_line": 36,
         "file": "s0ma_src/reminders.s0ma",
-        "line": 50,
-        "start_line": 50
+        "line": 28,
+        "start_line": 28
       },
       "module": "reminders",
       "visibility": "INTERNAL"
@@ -677,11 +735,7 @@
           "state": "none"
         },
         "depends_on": {
-          "state": "value",
-          "value": [
-            "URGENCY_BANDS",
-            "Reminder"
-          ]
+          "state": "none"
         },
         "evaluates_at": "FUNCTION_BOUNDARY",
         "expected_exceptions": {
@@ -690,6 +744,10 @@
         "expects": {
           "state": "value",
           "value": "reminder.last_run is none or an instant at or before now"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never invent a band that URGENCY_BANDS does not declare, and never read the clock itself."
         },
         "guarantees": {
           "state": "value",
@@ -711,8 +769,7 @@
           "state": "none"
         },
         "returns": {
-          "state": "value",
-          "value": "str"
+          "state": "none"
         }
       },
       "intent": {
@@ -722,10 +779,10 @@
       "kind": "FUNCTION",
       "layer": "DOMAIN",
       "location": {
-        "end_line": 108,
+        "end_line": 65,
         "file": "s0ma_src/reminders.s0ma",
-        "line": 67,
-        "start_line": 67
+        "line": 38,
+        "start_line": 38
       },
       "module": "reminders",
       "visibility": "PUBLIC"
@@ -762,10 +819,7 @@
       "kind": null,
       "layer": "DOMAIN",
       "location": {
-        "end_line": 121,
-        "file": "s0ma_src/reminders.s0ma",
-        "line": 114,
-        "start_line": 114
+        "state": "none"
       },
       "module": "reminders",
       "visibility": null
@@ -799,10 +853,10 @@
       "kind": null,
       "layer": "DOMAIN",
       "location": {
-        "end_line": 168,
+        "end_line": 77,
         "file": "s0ma_src/reminders.s0ma",
-        "line": 127,
-        "start_line": 127
+        "line": 67,
+        "start_line": 67
       },
       "module": "reminders",
       "visibility": null
@@ -818,18 +872,10 @@
           "state": "none"
         },
         "declares_attributes": {
-          "state": "value",
-          "value": [
-            "_channels",
-            "_window"
-          ]
+          "state": "none"
         },
         "depends_on": {
-          "state": "value",
-          "value": [
-            "reminders.classify_urgency",
-            "delivery.PushChannel"
-          ]
+          "state": "none"
         },
         "evaluates_at": "SUBSYSTEM",
         "expected_exceptions": {
@@ -839,16 +885,16 @@
           "state": "value",
           "value": "channels is a non-empty list of channel adapters"
         },
+        "forbids": {
+          "state": "value",
+          "value": "Never hand a reminder to a channel before classify_urgency has placed it in a band."
+        },
         "guarantees": {
           "reason": "retry semantics for a channel that reports a partial send are undecided",
           "state": "pending"
         },
         "interface": {
-          "state": "value",
-          "value": [
-            "run_pass",
-            "due_reminders"
-          ]
+          "state": "none"
         },
         "internal_helpers": {
           "state": "none"
@@ -859,7 +905,7 @@
         "provides": {
           "state": "value",
           "value": [
-            "scheduling_pass"
+            "run_pass"
           ]
         },
         "raises": {
@@ -876,10 +922,10 @@
       "kind": "SERVICE",
       "layer": "APPLICATION",
       "location": {
-        "end_line": 118,
+        "end_line": 73,
         "file": "s0ma_src/scheduling.s0ma",
-        "line": 39,
-        "start_line": 39
+        "line": 40,
+        "start_line": 40
       },
       "module": "scheduling",
       "visibility": "PUBLIC"
@@ -893,10 +939,7 @@
         },
         "invariants": {
           "state": "value",
-          "value": [
-            "start < end",
-            "end - start <= 31 days"
-          ]
+          "value": "[\"start < end\", \"end - start <= 31 days\"]"
         },
         "schema": {
           "state": "value",
@@ -910,10 +953,10 @@
       "kind": "MODEL",
       "layer": "APPLICATION",
       "location": {
-        "end_line": 33,
+        "end_line": 25,
         "file": "s0ma_src/scheduling.s0ma",
-        "line": 14,
-        "start_line": 14
+        "line": 13,
+        "start_line": 13
       },
       "module": "scheduling",
       "visibility": "PUBLIC"
@@ -930,7 +973,7 @@
         },
         "schema": {
           "state": "value",
-          "value": "rule: str — the unrecognised recurrence rule, verbatim"
+          "value": "rule: str, the unrecognised recurrence rule, verbatim"
         }
       },
       "intent": {
@@ -940,10 +983,10 @@
       "kind": "MODEL",
       "layer": "APPLICATION",
       "location": {
-        "end_line": 266,
+        "end_line": 38,
         "file": "s0ma_src/scheduling.s0ma",
-        "line": 255,
-        "start_line": 255
+        "line": 27,
+        "start_line": 27
       },
       "module": "scheduling",
       "visibility": "PUBLIC"
@@ -962,11 +1005,7 @@
           "state": "none"
         },
         "depends_on": {
-          "state": "value",
-          "value": [
-            "SchedulingWindow",
-            "reminders.Reminder"
-          ]
+          "state": "none"
         },
         "evaluates_at": "FUNCTION_BOUNDARY",
         "expected_exceptions": {
@@ -975,6 +1014,9 @@
         "expects": {
           "state": "value",
           "value": "window is a SchedulingWindow; reminders is a list of Reminder"
+        },
+        "forbids": {
+          "state": "none"
         },
         "guarantees": {
           "state": "value",
@@ -997,8 +1039,7 @@
           "state": "none"
         },
         "returns": {
-          "state": "value",
-          "value": "list[Reminder]"
+          "state": "none"
         }
       },
       "intent": {
@@ -1008,10 +1049,10 @@
       "kind": "FUNCTION",
       "layer": "APPLICATION",
       "location": {
-        "end_line": 166,
+        "end_line": 99,
         "file": "s0ma_src/scheduling.s0ma",
-        "line": 124,
-        "start_line": 124
+        "line": 75,
+        "start_line": 75
       },
       "module": "scheduling",
       "visibility": "PUBLIC"
@@ -1040,6 +1081,10 @@
           "state": "value",
           "value": "reminder.recurrence is one of daily, weekly, monthly, once"
         },
+        "forbids": {
+          "state": "value",
+          "value": "Never guess a rule it does not know; an unknown recurrence raises UnknownRecurrence."
+        },
         "guarantees": {
           "state": "value",
           "value": "Returns an instant strictly after last_run; returns none for a once-only reminder that has already run"
@@ -1063,8 +1108,7 @@
           ]
         },
         "returns": {
-          "state": "value",
-          "value": "datetime | None"
+          "state": "none"
         }
       },
       "intent": {
@@ -1074,10 +1118,10 @@
       "kind": "FUNCTION",
       "layer": "APPLICATION",
       "location": {
-        "end_line": 214,
+        "end_line": 129,
         "file": "s0ma_src/scheduling.s0ma",
-        "line": 172,
-        "start_line": 172
+        "line": 101,
+        "start_line": 101
       },
       "module": "scheduling",
       "visibility": "INTERNAL"
@@ -1090,16 +1134,16 @@
           "state": "none"
         },
         "depends_on": {
+          "state": "none"
+        },
+        "forbids": {
           "state": "value",
-          "value": [
-            "ScheduleService"
-          ]
+          "value": "Never drop a reminder from the backlog to make the number smaller."
         },
         "observes": {
           "state": "value",
           "value": [
-            "ScheduleService.run_pass",
-            "delivery.PushChannel.send"
+            "ScheduleService"
           ]
         },
         "on_anomaly": {
@@ -1108,14 +1152,9 @@
         },
         "priors": {
           "state": "value",
-          "value": [
-            "a backlog above 500 has always followed a channel outage"
-          ]
+          "value": "a backlog above 500 has always followed a channel outage"
         },
-        "scope": {
-          "state": "value",
-          "value": "SUBSYSTEM"
-        }
+        "scope": "SUBSYSTEM"
       },
       "intent": {
         "state": "value",
@@ -1124,13 +1163,13 @@
       "kind": null,
       "layer": "APPLICATION",
       "location": {
-        "end_line": 249,
+        "end_line": 144,
         "file": "s0ma_src/scheduling.s0ma",
-        "line": 220,
-        "start_line": 220
+        "line": 131,
+        "start_line": 131
       },
       "module": "scheduling",
-      "visibility": "PUBLIC"
+      "visibility": "INTERNAL"
     }
   },
   "edges": {
@@ -1156,74 +1195,20 @@
       {
         "carries": "reminder rows to count",
         "coupling": "LOOSE",
-        "intent": "summarise_overdue READS reminders.Reminder: reminder rows to count",
+        "intent": "summarise_overdue reads the reminder rows it counts.",
         "origin": "standalone_axon",
         "relation": "READS",
         "source": "console::summarise_overdue",
         "target": "reminders::Reminder"
       },
       {
-        "carries": "one reminder's urgency band",
-        "coupling": "LOOSE",
-        "intent": "ScheduleService CALLS reminders.classify_urgency: one reminder's urgency band",
-        "origin": "inline_depends_on",
-        "relation": "CALLS",
-        "source": "scheduling::ScheduleService",
-        "target": "reminders::classify_urgency"
-      },
-      {
-        "carries": "the push channel used for this pass",
+        "carries": "the relay wait ceiling",
         "coupling": "TIGHT",
-        "intent": "ScheduleService CONSTRUCTS delivery.PushChannel: the push channel used for this pass",
-        "origin": "inline_depends_on",
-        "relation": "CONSTRUCTS",
-        "source": "scheduling::ScheduleService",
-        "target": "delivery::PushChannel"
-      },
-      {
-        "carries": "the reminder set to filter",
-        "coupling": "LOOSE",
-        "intent": "due_reminders READS reminders.Reminder: the reminder set to filter",
+        "intent": "EmailChannel READS CHANNEL_TIMEOUT_MS: the relay wait ceiling",
         "origin": "inline_depends_on",
         "relation": "READS",
-        "source": "scheduling::due_reminders",
-        "target": "reminders::Reminder"
-      },
-      {
-        "carries": "the window boundaries",
-        "coupling": "TIGHT",
-        "intent": "due_reminders READS SchedulingWindow: the window boundaries",
-        "origin": "inline_depends_on",
-        "relation": "READS",
-        "source": "scheduling::due_reminders",
-        "target": "scheduling::SchedulingWindow"
-      },
-      {
-        "carries": "backlog size per pass",
-        "coupling": "LOOSE",
-        "intent": "watch_backlog_growth READS ScheduleService: backlog size per pass",
-        "origin": "inline_depends_on",
-        "relation": "READS",
-        "source": "scheduling::watch_backlog_growth",
-        "target": "scheduling::ScheduleService"
-      },
-      {
-        "carries": "the declared band table",
-        "coupling": "TIGHT",
-        "intent": "classify_urgency READS URGENCY_BANDS: the declared band table",
-        "origin": "inline_depends_on",
-        "relation": "READS",
-        "source": "reminders::classify_urgency",
-        "target": "reminders::URGENCY_BANDS"
-      },
-      {
-        "carries": "classified reminder with its urgency band",
-        "coupling": "LOOSE",
-        "intent": "classify_urgency PRODUCES delivery.PushChannel: classified reminder with its urgency band",
-        "origin": "standalone_axon",
-        "relation": "PRODUCES",
-        "source": "reminders::classify_urgency",
-        "target": "delivery::PushChannel"
+        "source": "delivery::EmailChannel",
+        "target": "delivery::CHANNEL_TIMEOUT_MS"
       },
       {
         "carries": "the gateway wait ceiling",
@@ -1244,15 +1229,6 @@
         "target": "platform::RetryBudget"
       },
       {
-        "carries": "the relay wait ceiling",
-        "coupling": "TIGHT",
-        "intent": "EmailChannel READS CHANNEL_TIMEOUT_MS: the relay wait ceiling",
-        "origin": "inline_depends_on",
-        "relation": "READS",
-        "source": "delivery::EmailChannel",
-        "target": "delivery::CHANNEL_TIMEOUT_MS"
-      },
-      {
         "carries": "consecutive send failures",
         "coupling": "LOOSE",
         "intent": "watch_channel_failures READS PushChannel: consecutive send failures",
@@ -1262,6 +1238,60 @@
         "target": "delivery::PushChannel"
       },
       {
+        "carries": "the reminder to place",
+        "coupling": "TIGHT",
+        "intent": "classify_urgency READS Reminder: the reminder to place",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "reminders::classify_urgency",
+        "target": "reminders::Reminder"
+      },
+      {
+        "carries": "the declared band table",
+        "coupling": "TIGHT",
+        "intent": "classify_urgency READS URGENCY_BANDS: the declared band table",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "reminders::classify_urgency",
+        "target": "reminders::URGENCY_BANDS"
+      },
+      {
+        "carries": "the push channel used for this pass",
+        "coupling": "TIGHT",
+        "intent": "ScheduleService CONSTRUCTS delivery.PushChannel: the push channel used for this pass",
+        "origin": "inline_depends_on",
+        "relation": "CONSTRUCTS",
+        "source": "scheduling::ScheduleService",
+        "target": "delivery::PushChannel"
+      },
+      {
+        "carries": "one reminder's urgency band",
+        "coupling": "LOOSE",
+        "intent": "ScheduleService CALLS reminders.classify_urgency: one reminder's urgency band",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "scheduling::ScheduleService",
+        "target": "reminders::classify_urgency"
+      },
+      {
+        "carries": "the reminder set to filter",
+        "coupling": "LOOSE",
+        "intent": "due_reminders READS reminders.Reminder: the reminder set to filter",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "scheduling::due_reminders",
+        "target": "reminders::Reminder"
+      },
+      {
+        "carries": "the window boundaries",
+        "coupling": "TIGHT",
+        "intent": "due_reminders READS SchedulingWindow: the window boundaries",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "scheduling::due_reminders",
+        "target": "scheduling::SchedulingWindow"
+      },
+      {
         "carries": "the pass instant",
         "coupling": "LOOSE",
         "intent": "plan_next_run CALLS platform.clock_now: the pass instant",
@@ -1269,6 +1299,15 @@
         "relation": "CALLS",
         "source": "scheduling::plan_next_run",
         "target": "platform::clock_now"
+      },
+      {
+        "carries": "backlog size per pass",
+        "coupling": "LOOSE",
+        "intent": "watch_backlog_growth READS ScheduleService: backlog size per pass",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "scheduling::watch_backlog_growth",
+        "target": "scheduling::ScheduleService"
       }
     ],
     "derived": [
@@ -1276,7 +1315,31 @@
         "origin": "function_signature",
         "relation": "TYPE_USES",
         "source": "console::render_agenda",
+        "target": "reminders::Reminder"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "console::render_agenda",
         "target": "scheduling::SchedulingWindow"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "console::render_agenda",
+        "target": "scheduling::due_reminders"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "console::summarise_overdue",
+        "target": "reminders::Reminder"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "delivery::EmailChannel",
+        "target": "reminders::Reminder"
       },
       {
         "origin": "raises_field",
@@ -1288,10 +1351,46 @@
         "origin": "constructor_call",
         "relation": "TYPE_USES",
         "source": "delivery::PushChannel",
-        "target": "platform::RetryBudget"
+        "target": "delivery::ChannelUnavailable"
       },
       {
         "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "delivery::PushChannel",
+        "target": "platform::RetryBudget"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "delivery::PushChannel",
+        "target": "reminders::Reminder"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "reminders::classify_urgency",
+        "target": "reminders::Reminder"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "scheduling::ScheduleService",
+        "target": "delivery::PushChannel"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "scheduling::ScheduleService",
+        "target": "reminders::Reminder"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "scheduling::ScheduleService",
+        "target": "reminders::classify_urgency"
+      },
+      {
+        "origin": "function_signature",
         "relation": "TYPE_USES",
         "source": "scheduling::ScheduleService",
         "target": "scheduling::SchedulingWindow"
@@ -1303,8 +1402,32 @@
         "target": "reminders::Reminder"
       },
       {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "scheduling::due_reminders",
+        "target": "scheduling::SchedulingWindow"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "scheduling::plan_next_run",
+        "target": "platform::clock_now"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "scheduling::plan_next_run",
+        "target": "reminders::Reminder"
+      },
+      {
         "origin": "raises_field",
         "relation": "RAISES",
+        "source": "scheduling::plan_next_run",
+        "target": "scheduling::UnknownRecurrence"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
         "source": "scheduling::plan_next_run",
         "target": "scheduling::UnknownRecurrence"
       }
@@ -1344,7 +1467,7 @@
       "delivery"
     ],
     "status": "stale",
-    "transpiler_version": "0.15.1"
+    "transpiler_version": "0.22.0"
   },
   "integrations": [
     {
@@ -1358,13 +1481,17 @@
         "value": "The push gateway this project sends through: one external system, wrapped by one adapter, with its own smoke test."
       },
       "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 162,
+        "start_line": 151
+      },
       "manifest": {
         "state": "value",
         "value": {
           "provides": [
             "push_delivery"
           ],
-          "requires_env": [
+          "required_env": [
             "PUSH_TOKEN",
             "PUSH_ENDPOINT"
           ],
@@ -1377,6 +1504,7 @@
         "state": "value",
         "value": "describe_gateway"
       },
+      "tags": [],
       "version": "1.2.0"
     }
   ],
@@ -1401,6 +1529,7 @@
         "delivery::ChannelUnavailable",
         "delivery::EmailChannel",
         "delivery::PushChannel",
+        "delivery::describe_gateway",
         "delivery::test_push_channel_reports_gateway_refusal",
         "delivery::watch_channel_failures"
       ],
@@ -1433,7 +1562,7 @@
       ],
       "intent": {
         "state": "value",
-        "value": "What a reminder is and how urgent it is — the rules that hold regardless of how reminders are stored or sent."
+        "value": "What a reminder is and how urgent it is: the rules that hold regardless of how reminders are stored or sent."
       },
       "layer": "DOMAIN",
       "name": "reminders"
@@ -1464,6 +1593,7 @@
     "delivery::ChannelUnavailable",
     "delivery::EmailChannel",
     "delivery::PushChannel",
+    "delivery::describe_gateway",
     "delivery::test_push_channel_reports_gateway_refusal",
     "delivery::watch_channel_failures",
     "platform::RetryBudget",
