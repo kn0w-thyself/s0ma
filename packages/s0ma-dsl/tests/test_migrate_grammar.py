@@ -364,6 +364,89 @@ def test_project_root_run_resolves_embeds_against_root_relative_paths(
     ]
 
 
+def _hashes(manifest: dict[str, Any]) -> list[tuple[str, str]]:
+    return [
+        (change["before_sha256"], change["after_sha256"])
+        for change in manifest["changes"]
+    ]
+
+
+def _plan_from_the_root(
+    project: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> dict[str, Any]:
+    monkeypatch.chdir(project)
+    code, out, err = _run_cli(["migrate", "grammar", "."], capsys)
+    assert (code, err) == (EXIT_SUCCESS, "")
+    return _manifest(out)
+
+
+# (working directory, argv after `s0ma`, the manifest path), with the
+# working directory relative to the folder that holds the project `proj`.
+_EMBED_RUNS = [
+    pytest.param("proj", ["migrate", "grammar", "src"], "site/page.s0ma",
+                 id="subdirectory-target"),
+    pytest.param("proj", ["migrate", "grammar", "src/site"], "page.s0ma",
+                 id="nested-target"),
+    pytest.param("proj/src", ["migrate", "grammar", ".."], "src/site/page.s0ma",
+                 id="parent-from-inside"),
+    pytest.param(".", ["migrate", "grammar", "proj"], "src/site/page.s0ma",
+                 id="project-from-its-parent"),
+    pytest.param(".", ["--project-root", "proj", "migrate", "grammar"],
+                 "src/site/page.s0ma", id="project-root-no-target"),
+    pytest.param(".", ["--project-root", "proj", "migrate", "grammar", "proj"],
+                 "src/site/page.s0ma", id="project-root-and-target"),
+    pytest.param("elsewhere", ["migrate", "grammar", "<abs>"], "src/site/page.s0ma",
+                 id="absolute-target-from-elsewhere"),
+    pytest.param("proj/src/site", ["migrate", "grammar"], "src/site/page.s0ma",
+                 id="bare-run-in-a-source-directory"),
+]
+
+
+@pytest.mark.parametrize(("cwd", "argv", "path"), _EMBED_RUNS)
+def test_embeds_resolve_whatever_the_working_directory_and_target(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    cwd: str,
+    argv: list[str],
+    path: str,
+) -> None:
+    project = tmp_path / "proj"
+    project.mkdir()
+    _write_project(project)
+    (tmp_path / "elsewhere").mkdir()
+    expected = _hashes(_plan_from_the_root(project, monkeypatch, capsys))
+    monkeypatch.chdir(tmp_path / cwd)
+    argv = [str(project) if arg == "<abs>" else arg for arg in argv]
+    code, out, err = _run_cli(argv, capsys)
+    assert "Internal error" not in err
+    assert code == EXIT_SUCCESS
+    manifest = _manifest(out)
+    assert [change["path"] for change in manifest["changes"]] == [path]
+    assert _hashes(manifest) == expected
+
+
+def test_apply_from_inside_a_source_directory_writes_what_the_root_run_plans(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    project = tmp_path / "proj"
+    project.mkdir()
+    module = _write_project(project)
+    [planned] = _plan_from_the_root(project, monkeypatch, capsys)["changes"]
+    monkeypatch.chdir(module.parent)
+    code, out, err = _run_cli(["migrate", "grammar", "--apply"], capsys)
+    assert "Internal error" not in err
+    assert code == EXIT_SUCCESS
+    manifest = _manifest(out)
+    assert manifest["applied"] is True
+    assert _hashes(manifest) == [(planned["before_sha256"], planned["after_sha256"])]
+    assert migrate_grammar._sha256(module.read_bytes()) == planned["after_sha256"]
+
+
 def _project_with_both_roots(root: Path) -> None:
     (root / "pyproject.toml").write_text(_PROJECT_PYPROJECT, encoding="utf-8")
     for relative in ("src/a.s0ma", "tests/test_a.s0ma"):

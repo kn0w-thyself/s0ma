@@ -12,6 +12,7 @@ skipped with a warning on stderr.
 
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
 import os
@@ -24,7 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from s0ma_dsl.errors import S0maParseError
+from s0ma_dsl.errors import S0maError, S0maParseError
 from s0ma_dsl.parser.s0ma_parser import _RawDeclaration, _split_declarations, parse_s0ma
 from s0ma_dsl.semantic_state import semantic_fields, semantic_source_field
 
@@ -346,6 +347,33 @@ def current_grammar_source(source: str, filename: str = "<generated>") -> str:
     return rewritten
 
 
+def _parse_in_place(
+    source: str,
+    path: Path,
+    relative: str,
+    *,
+    _allow_legacy_semantic_omissions: bool = False,
+) -> None:
+    """Parse *source* as the file at *path*, reporting it as *relative*.
+
+    The parser resolves a relative ``@file(...)`` against the directory of
+    the filename it is given, so it gets the absolute path: the embed is
+    then found whatever the working directory. A diagnostic still names
+    the file by its path relative to the migration root, as the plan does.
+    """
+
+    try:
+        parse_s0ma(
+            source,
+            filename=str(path),
+            _allow_legacy_semantic_omissions=_allow_legacy_semantic_omissions,
+        )
+    except S0maError as exc:
+        if exc.file != str(path):
+            raise
+        raise dataclasses.replace(exc, file=relative) from exc
+
+
 def plan_grammar_migration(
     root: Path,
     *,
@@ -375,10 +403,8 @@ def plan_grammar_migration(
             before = path.read_bytes()
             source = before.decode("utf-8")
             # Whole-project preflight: any failure aborts before a plan can apply.
-            parse_s0ma(
-                source,
-                filename=relative,
-                _allow_legacy_semantic_omissions=True,
+            _parse_in_place(
+                source, path, relative, _allow_legacy_semantic_omissions=True,
             )
         except (OSError, UnicodeDecodeError, S0maParseError) as exc:
             raise GrammarMigrationError(
@@ -392,7 +418,7 @@ def plan_grammar_migration(
             continue
         # Prove the proposed new grammar parses before it can reach the plan.
         try:
-            parse_s0ma(after_text, filename=relative)
+            _parse_in_place(after_text, path, relative)
         except S0maParseError as exc:  # pragma: no cover - defensive invariant
             raise GrammarMigrationError(
                 "GRAMMAR_MIGRATION_OUTPUT_INVALID",
