@@ -5,7 +5,7 @@ module: "common_errors"
 format: "markdown"
 intent: "Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
 schema_version: "3.0.0"
-content_hash: "1:a3abc89d7979312ba8616d2a986ccb1ab95a627739ec8fc7d4ff0b9b2ed3b524"
+content_hash: "1:e6280c0066156291364626919588458ced2ff2c019c1e79b6420f02699d2dbc3"
 ---
 
 # CommonErrorsTable
@@ -120,7 +120,7 @@ Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sen
 | `SERVES_AS_INVALID` | error | error | error | error | A `serves_as:` value is not identifier-shaped — the served name becomes the emitted callable's `__name__`. |
 | `STALE_GENERATED_CONFTEST` | error | error | error | error | The project's generated `conftest.py` was emitted by an older s0ma-lang-dsl version and may have diverged from the runtime contract. |
 | `TEMPLATE_SYNTAX_ERROR` | error | error | error | error | A template expression `{{...}}` or `covers:` filter fails the narrow doc-subsystem grammar. |
-| `TEST_NOT_COLLECTED` | warning | warning | error | error | A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`. |
+| `TEST_NOT_COLLECTED` | warning | warning | error | error | A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`; when the block holds fixtures or several definitions, declare each one as a `helper` instead of renaming it. |
 | `TEST_VISIBILITY_VIOLATION` | error | error | error | error | A production module attempts to `uses:` a `visibility: TEST` component cross-module. |
 | `UNDECLARED_PLACEHOLDER` | warning | warning | error | error | A CONSTANT cell's `content: @file(...)` embedded content contains a placeholder-shaped string matching `__[A-Z][A-Z0-9_]*__` that is not listed in the cell's `placeholders:` field. |
 | `UNKNOWN_FIELD` | warning | warning | error | error | A declaration carries a field that kind of declaration does not have — usually a misspelt name, or a field that belongs to another kind. s0ma does not read the line, so whatever it was meant to say is not said; correct the name or remove the line. |

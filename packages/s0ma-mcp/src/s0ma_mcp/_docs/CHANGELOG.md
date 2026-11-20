@@ -59,6 +59,46 @@ Historical entries describe artifacts as they were named at the time.
   present still lists each drifted or missing file, and a build that matches
   still exits 0 with `All files match their .s0ma sources.`
 
+- **A builtin exception in `raises:` gets advice that works.** A nerve that
+  lists a Python builtin such as `raises: [ValueError]` is still
+  `DOES_NOT_EXIST`, at the same severity, but the message now says the name is
+  a Python builtin exception, not a s0ma `EXCEPTION` cell, and the remediation
+  gives the two fixes: write `raises: none` and state the exception in
+  `guarantees:`, or declare an `EXCEPTION` cell and list that. Before, it told
+  you to check the spelling. Any other missing name keeps the old text.
+
+- **The body remediation states the real rule for `def` bodies.** The
+  `PARSE_ERROR` remediation for a nerve, ganglion, or test body that does not
+  open with a `def` said the body must be "exactly ONE `def` ... nothing else
+  at the top level". The rule the parser applies is that the first top-level
+  statement must be the `def`; classes and constants may follow it. The
+  remediation now says that. The message and the context fields are unchanged.
+
+- **`MODULE_SUBSCRIPT` recommends an exported nerve for a shared factory.** Its
+  remediation told you to declare a `helper`, list it in `exports_helpers:`, and
+  import it from another module, which `HELPER_PRIVATE_TO_MODULE` then refuses
+  in production code. It now says to declare the factory as a `nerve`, export
+  it, and import it with `uses: [module.nerve]`, and says why a helper will not
+  do. The patterns guide's quote of the remediation is updated to match.
+
+- **`TEST_NOT_COLLECTED` stops suggesting you rename a fixture into a test.**
+  When a `test` block's first function is decorated as a fixture, or the block
+  defines more than one function or class, the remediation now names the
+  definitions and says to declare each one as its own `helper`, keeping only
+  the real test, named `test_...`, in the block. Renaming a fixture or factory
+  made pytest run it as a test that asserts nothing. One misnamed test
+  function still gets the rename suggestion. The code, severity, message, and
+  context fields are unchanged, and the registry description now gives both
+  fixes.
+
+- **`BUILD REFUSED` names the baseline it compared against.** The text refusal
+  has a second line, `Compared against the baseline <path>, recorded
+  <time>.`, with the path of `.s0ma/check-baseline.json` in forward slashes and
+  the file's modification time in UTC (`YYYY-MM-DDTHH:MM:SSZ`). The JSON
+  `build_refused` block gains `baseline_path` and `baseline_recorded_at`. No
+  existing field is renamed or removed. A stale baseline left by another branch
+  or environment is now visible in the refusal itself.
+
 ### Fixed
 
 - **The package READMEs count the umbrella.** The READMEs of `s0ma-lang-core`,

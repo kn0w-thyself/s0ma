@@ -70,4 +70,4 @@ nerve <name> :: <LAYER>
 
 - Topic id: `concept:contract`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:04c18e0e37155769`
+- Documentation snapshot: `sha256:9ff4baa9becf4b8d`

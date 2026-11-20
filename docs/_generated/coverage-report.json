@@ -1250,7 +1250,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:04c18e0e37155769"
+    "snapshot_hash": "sha256:9ff4baa9becf4b8d"
   },
   "totals": {
     "covered": 342,

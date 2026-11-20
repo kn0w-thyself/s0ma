@@ -3003,7 +3003,7 @@
       ],
       "governed_by": [],
       "id": "diagnostic:TEST_NOT_COLLECTED",
-      "intent": "A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`.",
+      "intent": "A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`; when the block holds fixtures or several definitions, declare each one as a `helper` instead of renaming it.",
       "public_name": "TEST_NOT_COLLECTED",
       "side_effects": [
         "none"
@@ -4370,6 +4370,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:04c18e0e37155769"
+    "snapshot_hash": "sha256:9ff4baa9becf4b8d"
   }
 }
