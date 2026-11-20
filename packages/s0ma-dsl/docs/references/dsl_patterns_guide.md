@@ -590,7 +590,11 @@ def StorageAdapter():
 
     def delete(*args, **kwargs):
         raise NotImplementedError("delete")
+
+    return {"save": save, "load": load, "delete": delete}
 ```
+
+Calling `StorageAdapter()` returns those stubs in the same dict shape a concrete adapter returns, so code that calls the port by mistake fails at the method it calls, with a `NotImplementedError` that names it.
 
 ### 9.2 Implementing a Concrete Adapter
 
