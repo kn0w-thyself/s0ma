@@ -1876,6 +1876,131 @@ class TestIncludeFlag:
         captured = capsys.readouterr()
         assert "MODULE_NAME_COLLISION" in captured.out
 
+    # A file named on the command line and also reached through an
+    # --include directory is one file: it is checked once, as a named
+    # file, and the --include copy of the same path is not a second
+    # module.
+
+    def test_check_named_files_inside_include_dir_are_not_a_collision(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """Two named files plus --include of their own directory check clean."""
+        src_dir, test_dir = self._setup_cross_module(tmp_path)
+
+        exit_code = cli.run([
+            "check",
+            str(src_dir / "source_mod.s0ma"),
+            str(test_dir / "test_source_mod.s0ma"),
+            "--include", str(src_dir),
+            "--include", str(test_dir),
+            "--mode", "dev",
+        ])
+        captured = capsys.readouterr()
+        assert "MODULE_NAME_COLLISION" not in captured.out
+        assert exit_code == EXIT_SUCCESS
+
+    def test_check_named_file_inside_include_parent_is_not_a_collision(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """One named file plus --include of a directory above it checks clean."""
+        _, test_dir = self._setup_cross_module(tmp_path)
+
+        exit_code = cli.run([
+            "check", str(test_dir / "test_source_mod.s0ma"),
+            "--include", str(tmp_path),
+            "--mode", "dev",
+        ])
+        captured = capsys.readouterr()
+        assert "MODULE_NAME_COLLISION" not in captured.out
+        assert exit_code == EXIT_SUCCESS
+
+    def test_check_overlap_compares_real_paths_absolute_and_relative(
+        self, cli: S0maCLI, tmp_path: Path, capsys, monkeypatch
+    ):
+        """An absolute named path and a relative --include are the same file."""
+        src_dir, test_dir = self._setup_cross_module(tmp_path)
+        monkeypatch.chdir(tmp_path)
+
+        exit_code = cli.run([
+            "check",
+            str(test_dir / "test_source_mod.s0ma"),
+            "src/source_mod.s0ma",
+            "--include", "tests",
+            "--include", str(src_dir),
+            "--mode", "dev",
+        ])
+        captured = capsys.readouterr()
+        assert "MODULE_NAME_COLLISION" not in captured.out
+        assert exit_code == EXIT_SUCCESS
+
+    def test_check_overlap_compares_real_paths_through_symlink(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """A named file reached again through a symlinked directory is one file."""
+        _, test_dir = self._setup_cross_module(tmp_path)
+        link = tmp_path / "linked_src"
+        link.symlink_to(tmp_path / "src", target_is_directory=True)
+
+        exit_code = cli.run([
+            "check",
+            str(tmp_path / "src" / "source_mod.s0ma"),
+            str(test_dir / "test_source_mod.s0ma"),
+            "--include", str(link),
+            "--mode", "dev",
+        ])
+        captured = capsys.readouterr()
+        assert "MODULE_NAME_COLLISION" not in captured.out
+        assert exit_code == EXIT_SUCCESS
+
+    def test_check_real_collision_still_fires_with_overlapping_include(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """Two different files declaring one module name still collide."""
+        src_dir, test_dir = self._setup_cross_module(tmp_path)
+        (test_dir / "source_mod.s0ma").write_text(
+            _DUPLICATE_MODULE_S0MA, encoding="utf-8"
+        )
+
+        exit_code = cli.run([
+            "check", str(src_dir / "source_mod.s0ma"),
+            "--include", str(src_dir),
+            "--include", str(test_dir),
+            "--mode", "dev",
+        ])
+        assert exit_code == EXIT_VALIDATION_ERROR
+        captured = capsys.readouterr()
+        assert captured.out.count("MODULE_NAME_COLLISION") == 1
+        assert (
+            f"found in both '{src_dir / 'source_mod.s0ma'}' and "
+            f"'{test_dir / 'source_mod.s0ma'}'"
+        ) in captured.out
+
+    def test_check_named_file_findings_reported_once_with_overlap(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """A named file's own finding is reported once, not again for its include copy."""
+        src_dir, test_dir = self._setup_cross_module(tmp_path)
+        broken = test_dir / "test_source_mod.s0ma"
+        broken.write_text(
+            _TEST_MODULE_S0MA.replace(
+                "uses: [source_mod.do_thing]",
+                "uses: [source_mod.no_such_thing]",
+            ),
+            encoding="utf-8",
+        )
+
+        exit_code = cli.run([
+            "check", str(broken),
+            "--include", str(tmp_path),
+            "--mode", "dev",
+        ])
+        assert exit_code == EXIT_VALIDATION_ERROR
+        captured = capsys.readouterr()
+        assert "MODULE_NAME_COLLISION" not in captured.out
+        assert captured.out.count("ERROR [NOT_EXPORTED]") == 1, captured.out
+        # Diagnostics print their file with forward slashes on every OS.
+        assert f"{broken.as_posix()}:0: ERROR [NOT_EXPORTED]" in captured.out
+
     def test_include_flag_parser_build(self, cli: S0maCLI):
         """--include / -I should be parseable on the build command."""
         parser = cli.build_parser()
