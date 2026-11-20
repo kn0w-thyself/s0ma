@@ -591,6 +591,124 @@ class TestASTParseFailureGraceful:
 
 
 # ---------------------------------------------------------------------------
+# Test 11 — the nested-quote scan starts only at real f-string openers
+# ---------------------------------------------------------------------------
+
+
+def _nested_quote_findings(body: str):
+    """Return only the nested-quote f-string findings for *body*."""
+    return [
+        f for f in flag_python_312_only(body)
+        if f.kind == "nested_quote_fstring"
+    ]
+
+
+class TestFStringOpenerIsARealStringStart:
+    """An ``f`` before a quote opens an f-string only as a string prefix.
+
+    A name or a string that ends in ``f`` right before a quote is not an
+    f-string opener, even when a brace with a quote inside follows on the
+    same line. Every shape below is valid Python 3.11 and must check clean.
+    """
+
+    @pytest.mark.parametrize(
+        "body",
+        [
+            # A dict key ending in ``f`` before ``": {"``.
+            'x = {"brief": {"asks": 1}}',
+            'return {"brief": {"asks": 1}}',
+            # A JSON-style key ending in ``f`` before ``": {"``.
+            'q = {"defaultBranchRef": {"name": "main"}}',
+            # A string value ending in ``f`` before ``"}, {"``.
+            'x = [{"id": "brief"}, {"id": "other"}]',
+            # A subscript key ending in ``f``, then a dict later on the line.
+            'ok = flag["ref"] == {"usage": {}}',
+            # A string that merely contains ``f"`` text.
+            'x = {"a f": {"b": 1}}',
+            'x = ["self", {"a": 1}]',
+            # Single-quote variants.
+            "x = {'brief': {'asks': 1}}",
+            "x = [{'id': 'brief'}, {'id': 'other'}]",
+            "ok = flag['ref'] == {'usage': {}}",
+            # Triple-quote variants.
+            'x = {"""brief""": {"""asks""": 1}}',
+            "x = {'''brief''': {'''asks''': 1}}",
+            # Other string prefixes that are not f-strings.
+            'x = {rb"brief": {b"asks": 1}}',
+            # A real f-string with mismatched quotes stays valid on 3.11.
+            'x = f"{d[\'brief\']}" + str({"a": {"b": 1}})',
+        ],
+    )
+    def test_not_an_fstring_checks_clean(self, body: str) -> None:
+        assert _nested_quote_findings(body) == []
+
+    def test_dict_key_shape_checks_clean_in_a_nerve(self) -> None:
+        body = _indent_body(dedent("""
+            def demo(x):
+                return {"brief": {"asks": 1}}
+        """).strip())
+        source = _NERVE_TEMPLATE.format(body=body)
+        diagnostics = _compat_only(_diagnostics(
+            source, requires_python=(">=3.11",),
+        ))
+        assert diagnostics == [], (
+            f"A dict key ending in 'f' is not an f-string opener; got "
+            f"{diagnostics}"
+        )
+
+    @pytest.mark.parametrize(
+        "body,column",
+        [
+            ('x = f"outer {f"inner"}"', 4),
+            ('x = f"{d["k"]}"', 4),
+            ('x = F"{d["k"]}"', 4),
+            ("x = f'{d['k']}'", 4),
+            ('x = f"""{d["""k"""]}"""', 4),
+            # Prefixed f-strings, in either order and either case. The
+            # column is the ``f`` of the prefix.
+            ('x = rf"{d["k"]}"', 5),
+            ('x = fr"{d["k"]}"', 4),
+            ('x = Rf"{d["k"]}"', 5),
+            ('x = fR"{d["k"]}"', 4),
+            # A real one after a decoy on the same line.
+            ('x = {"brief": f"{d["k"]}"}', 14),
+        ],
+    )
+    def test_real_nested_quote_fstring_still_fires(
+        self, body: str, column: int,
+    ) -> None:
+        findings = _nested_quote_findings(body)
+        assert len(findings) == 1, findings
+        assert findings[0].line == 1
+        assert findings[0].column == column
+        assert "PEP 701" in findings[0].description
+
+    def test_real_fstring_on_a_later_line_keeps_its_line(self) -> None:
+        body = 'a = {"brief": {"asks": 1}}\nb = f"{d["k"]}"\n'
+        findings = _nested_quote_findings(body)
+        assert [(f.line, f.column) for f in findings] == [(2, 4)]
+
+    @pytest.mark.parametrize(
+        "body",
+        [
+            # An unclosed bracket at the end of the body.
+            'x = f"{d["k"]}"\ny = (1,\n',
+            # An unindent that matches no outer level.
+            'x = f"{d["k"]}"\nif x:\n        a = 1\n    b = 2\n',
+        ],
+    )
+    def test_untokenizable_body_does_not_crash(self, body: str) -> None:
+        # The text scan has always run on bodies ``ast.parse`` rejects,
+        # and it never raises. A body the tokenizer gives up on keeps the
+        # openers it found before the failure.
+        findings = _nested_quote_findings(body)
+        assert [(f.line, f.column) for f in findings] == [(1, 4)]
+
+    def test_untokenizable_body_without_fstrings_is_clean(self) -> None:
+        assert flag_python_312_only('x = {"brief": (\n') == []
+
+
+# ---------------------------------------------------------------------------
 # Version-range predicate sanity checks (helper-level)
 # ---------------------------------------------------------------------------
 
