@@ -393,6 +393,7 @@ def test_inspector_labels_put_the_dsl_term_first() -> None:
         ("schema", "its shape"),
         ("invariants", "what must always be true of it"),
         ("covered_by", "checked by"),
+        ("value", "its value"),
     ):
         assert f'  {term}: "{phrase}",' in app_js, term
     assert 'label.appendChild(el("code", "term", term));' in app_js
@@ -406,7 +407,7 @@ def test_inspector_above_the_fold_order() -> None:
     app_js = read(APP_JS)
     assert 'nerve: ["intent", "guarantees", "forbids", "expects"],' in app_js
     assert 'ganglion: ["intent", "guarantees", "forbids", "expects"],' in app_js
-    assert 'cell: ["intent", "schema", "invariants"],' in app_js
+    assert 'cell: ["intent", "schema", "invariants", "value"],' in app_js
     body = _component_inspector(app_js)
     order = [
         body.index("componentHead(component);"),
@@ -465,3 +466,20 @@ def test_fixture_payload_carries_forbids_in_every_state() -> None:
         if "forbids" in component["fields"]
     }
     assert states == {"value", "none", "pending"}
+
+
+def test_inspector_rows_follow_the_keys_the_payload_carries() -> None:
+    """A field after intent is drawn only when the part carries its key.
+
+    A row saying "not declared" for a line the declaration type does not
+    have would be false. The one exception is forbids on a nerve or a
+    ganglion, which an older build's payload lacks.
+    """
+    app_js = read(APP_JS)
+    body = _component_inspector(app_js)
+    assert "if (!fieldIsCarried(name, declarationType, fields)) {" in body
+    assert 'if (name === "intent" || name in fields) {' in app_js
+    assert (
+        'name === "forbids" &&\n'
+        '    (declarationType === "nerve" || declarationType === "ganglion")'
+    ) in app_js

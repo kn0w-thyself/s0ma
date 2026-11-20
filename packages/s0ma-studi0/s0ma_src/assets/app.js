@@ -170,16 +170,19 @@ var FIELD_PHRASE = {
   schema: "its shape",
   invariants: "what must always be true of it",
   covered_by: "checked by",
+  value: "its value",
 };
 
 /* The fields the component inspector shows above the fold, in order,
- * by declaration type. Each is always shown: with nothing declared it
- * says so, it is never folded away. After these come the two
- * relationship sections, then one disclosure for everything else. */
+ * by declaration type. This sets the order only: a field after `intent`
+ * is shown when the part's payload carries its key, so a declaration
+ * type that has no such line shows no row for it. A key that is present
+ * is never folded away; with nothing declared it says so. After these
+ * come the two relationship sections, then one disclosure for the rest. */
 var ABOVE_THE_FOLD = {
   nerve: ["intent", "guarantees", "forbids", "expects"],
   ganglion: ["intent", "guarantees", "forbids", "expects"],
-  cell: ["intent", "schema", "invariants"],
+  cell: ["intent", "schema", "invariants", "value"],
 };
 var ABOVE_THE_FOLD_DEFAULT = ["intent"];
 
@@ -2264,6 +2267,9 @@ function renderComponentInspector(component) {
   var shownAbove = {};
   for (var i = 0; i < aboveTheFold.length; i += 1) {
     var name = aboveTheFold[i];
+    if (!fieldIsCarried(name, declarationType, fields)) {
+      continue;
+    }
     shownAbove[name] = true;
     var raw = name === "intent" ? component.intent : fields[name];
     var section = fieldSection(name);
@@ -2299,6 +2305,20 @@ function renderComponentInspector(component) {
   }
 
   renderMoreAboutThisPart(component, fields, rest, undeclared);
+}
+
+/* Whether an above-the-fold row is drawn: `intent` always, any other
+ * field only when the payload carries its key. The one exception is
+ * `forbids` on a nerve or a ganglion, which every current build writes:
+ * a payload without it is from an older build, and says "not declared". */
+function fieldIsCarried(name, declarationType, fields) {
+  if (name === "intent" || name in fields) {
+    return true;
+  }
+  return (
+    name === "forbids" &&
+    (declarationType === "nerve" || declarationType === "ganglion")
+  );
 }
 
 function componentHead(component) {
