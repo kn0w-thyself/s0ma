@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from unittest.mock import patch
 
@@ -103,6 +104,41 @@ def test_s0ma_test_passes_args_through(staged_project: Path) -> None:
     # pytest's exit code 5 means "no tests collected" — the filter
     # made it through. Argparse would not have produced this code.
     assert rc_empty == 5
+
+
+def test_s0ma_test_narrows_to_one_module_by_its_stem(
+    staged_project: Path, tmp_path: Path
+) -> None:
+    """``s0ma test -- -k <module>_tests`` runs only that built module.
+
+    pytest matches ``-k`` against the module's name as well as the
+    test's, so the stem of one built test module selects every test in
+    it and none from the others. The JUnit report written to
+    ``tmp_path`` names the module of each test that ran.
+    """
+    report = tmp_path / "report.xml"
+    cli = S0maCLI()
+    rc = cli.run([
+        "--project-root", str(staged_project),
+        "test",
+        "--",
+        "-k", "calculator_tests",
+        f"--junitxml={report}",
+    ])
+    assert rc == EXIT_SUCCESS
+
+    ran = [
+        (case.get("classname", ""), case.get("name", ""))
+        for case in ET.parse(report).getroot().iter("testcase")
+    ]
+    assert sorted(name for _, name in ran) == [
+        "test_add_returns_integer_sum",
+        "test_multiply_returns_integer_product",
+    ]
+    assert all(
+        classname.rsplit(".", 1)[-1] == "calculator_tests"
+        for classname, _ in ran
+    ), ran
 
 
 def test_s0ma_test_recognizes_tests_py_naming(staged_project: Path) -> None:
