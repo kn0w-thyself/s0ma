@@ -160,6 +160,22 @@ Historical entries describe artifacts as they were named at the time.
   `s0ma migrate grammar` skips without a warning. `AGENTS.md` says the gate
   needs `uv sync --all-packages --all-extras` in a fresh worktree.
 
+- **A check given paths gives the whole project's answer.** `s0ma check`
+  given files or folders inside a project now reads the rest of the
+  project's `source_roots` and `test_roots` as context, so `uses:` and
+  qualified `depends_on` resolve the same way they do in a bare
+  `s0ma check`. Before, it resolved only among the files it was given, so
+  `s0ma check tests` or a check of two source files reported
+  `DOES_NOT_EXIST`, labeled NEW, for modules that exist, on a project whose
+  bare check was clean. Findings are still reported only for the named
+  files: the context files are parsed so their declarations resolve, and are
+  not checked. A single named file is now resolved too, so it shows
+  cross-module errors it skipped before, such as a `uses:` entry naming
+  something another module does not export. `--include` still adds context
+  on top, a folder with no `[tool.s0ma]` project around it is checked as
+  before, and a check given paths still compares against
+  `.s0ma/check-baseline.json` without writing it.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
