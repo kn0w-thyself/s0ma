@@ -219,6 +219,22 @@ Historical entries describe artifacts as they were named at the time.
   before; fix the body at the reported line. A module that compiles builds
   byte for byte as before.
 
+- **A path s0ma cannot read while finding the project ends in one line, not
+  a Python traceback.** Before any command runs, s0ma looks for the project
+  around the path it was given: up from `--project-root` or the working
+  directory, and then in the positional path itself. When a `pyproject.toml`
+  on that walk could not be read, for example because its directory has mode
+  000, every command that takes a path (`check`, `build`, `transpile`,
+  `migrate grammar`, and the rest) stopped with an uncaught `PermissionError`
+  traceback and exit 1, before the command had started. It now prints one line
+  on stderr, `Cannot read <path> (<reason>) while resolving the project;
+  nothing ran.`, names the file with forward slashes on every OS, and exits 2,
+  the code s0ma uses for a path argument it cannot use. A script that read
+  exit 1 here now sees exit 2. A readable path is resolved exactly as before,
+  and a command that meets an unreadable directory later, in its own work,
+  keeps its own message and exit code. That includes `s0ma check --format
+  json` on a locked path, which still ends `Internal error` and exit 3.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
