@@ -1998,7 +1998,8 @@ class TestIncludeFlag:
         captured = capsys.readouterr()
         assert "MODULE_NAME_COLLISION" not in captured.out
         assert captured.out.count("ERROR [NOT_EXPORTED]") == 1, captured.out
-        assert f"{broken}:0: ERROR [NOT_EXPORTED]" in captured.out
+        # Diagnostics print their file with forward slashes on every OS.
+        assert f"{broken.as_posix()}:0: ERROR [NOT_EXPORTED]" in captured.out
 
     def test_include_flag_parser_build(self, cli: S0maCLI):
         """--include / -I should be parseable on the build command."""
