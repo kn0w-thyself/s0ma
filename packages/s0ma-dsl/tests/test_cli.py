@@ -1502,11 +1502,12 @@ class TestCheckDriftDetection:
         ])
         assert exit_code == EXIT_VALIDATION_ERROR
 
-    def test_check_build_before_any_build_reports_drift_then_passes_after(
+    def test_check_build_before_any_build_says_no_build_then_passes_after(
         self, cli: S0maCLI, tmp_path: Path, capsys, monkeypatch
     ):
-        """s0ma build . --check with nothing built yet returns 1 and reports
-        drift; after a plain build the same check returns 0."""
+        """s0ma build . --check with nothing built yet returns 1 with one
+        line saying there is no build to compare against; after a plain
+        build the same check returns 0."""
         project_dir = tmp_path / "project"
         project_dir.mkdir()
         (project_dir / "test_module.s0ma").write_text(MINIMAL_S0MA, encoding="utf-8")
@@ -1514,9 +1515,11 @@ class TestCheckDriftDetection:
 
         exit_code = cli.run(["build", ".", "--mode", "dev", "--check"])
         assert exit_code == EXIT_VALIDATION_ERROR
-        captured = capsys.readouterr()
-        assert "DRIFT" in captured.out
-        assert "test_module.py" in captured.out
+        lines = capsys.readouterr().out.splitlines()
+        assert len(lines) == 1, lines
+        assert lines[0].startswith("No build to compare against")
+        assert "commit the build" in lines[0]
+        assert "DRIFT" not in lines[0]
         # --check reports; it does not build.
         assert not (project_dir / "test_module.py").exists()
 
@@ -1525,7 +1528,87 @@ class TestCheckDriftDetection:
 
         exit_code = cli.run(["build", ".", "--mode", "dev", "--check"])
         assert exit_code == EXIT_SUCCESS
-        assert "DRIFT" not in capsys.readouterr().out
+        out = capsys.readouterr().out
+        assert "DRIFT" not in out
+        assert "All files match their .s0ma sources." in out
+
+    def test_check_build_with_no_build_directory_prints_one_line(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """An output directory that does not exist (a fresh clone of a
+        project that does not commit its build) gives one line, naming the
+        directory, and exit 1."""
+        project_dir = tmp_path / "project"
+        project_dir.mkdir()
+        (project_dir / "test_module.s0ma").write_text(MINIMAL_S0MA, encoding="utf-8")
+        out_dir = tmp_path / "out"
+
+        exit_code = cli.run([
+            "build", str(project_dir),
+            "--output-dir", str(out_dir),
+            "--mode", "dev",
+            "--check",
+        ])
+        assert exit_code == EXIT_VALIDATION_ERROR
+        lines = capsys.readouterr().out.splitlines()
+        assert len(lines) == 1, lines
+        assert lines[0].startswith("No build to compare against in ")
+        # The product prints the directory with forward slashes on every OS.
+        assert "/out: run `s0ma build` first" in lines[0]
+        assert not out_dir.exists()
+
+    def test_check_build_with_one_file_missing_names_it(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """A build with one file removed is a partial build, not a missing
+        one: --check still lists that file as drifted and exits 1."""
+        project_dir = tmp_path / "project"
+        project_dir.mkdir()
+        (project_dir / "test_module.s0ma").write_text(MINIMAL_S0MA, encoding="utf-8")
+        out_dir = tmp_path / "out"
+
+        assert cli.run([
+            "build", str(project_dir),
+            "--output-dir", str(out_dir),
+            "--mode", "dev",
+        ]) == EXIT_SUCCESS
+        (out_dir / "test_module.py").unlink()
+        capsys.readouterr()
+
+        exit_code = cli.run([
+            "build", str(project_dir),
+            "--output-dir", str(out_dir),
+            "--mode", "dev",
+            "--check",
+        ])
+        assert exit_code == EXIT_VALIDATION_ERROR
+        out = capsys.readouterr().out
+        assert "No build to compare against" not in out
+        drift_lines = [ln for ln in out.splitlines() if "DRIFT" in ln]
+        assert len(drift_lines) == 1, drift_lines
+        assert drift_lines[0].endswith("test_module.py")
+        assert "(file does not exist at expected location)" in out
+        assert "1 file(s) have drifted from their .s0ma sources." in out
+
+    def test_check_transpile_with_no_output_directory_prints_one_line(
+        self, cli: S0maCLI, tmp_path: Path, capsys
+    ):
+        """transpile --check shares the comparison: no output yet gives the
+        same single line and exit 1."""
+        s0ma_file = tmp_path / "test_module.s0ma"
+        s0ma_file.write_text(MINIMAL_S0MA, encoding="utf-8")
+        out_dir = tmp_path / "out"
+
+        exit_code = cli.run([
+            "transpile", str(s0ma_file),
+            "--output-dir", str(out_dir),
+            "--mode", "dev",
+            "--check",
+        ])
+        assert exit_code == EXIT_VALIDATION_ERROR
+        lines = capsys.readouterr().out.splitlines()
+        assert len(lines) == 1, lines
+        assert lines[0].startswith("No build to compare against")
 
 
 # ===========================================================================

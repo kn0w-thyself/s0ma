@@ -2116,6 +2116,7 @@ def _compare_outputs(
         if not original_path.exists():
             entry["status"] = "DRIFT"
             entry["detail"] = "(file does not exist at expected location)"
+            entry["missing"] = True
             results.append(entry)
             continue
 
@@ -2178,9 +2179,25 @@ def _print_drift_results(
     results: list[dict[str, object]],
     file_count: int,
     quiet: bool = False,
+    original_dir: Path | None = None,
 ) -> int:
-    """Print drift results and return the appropriate exit code."""
+    """Print drift results and return the appropriate exit code.
+
+    When none of the expected files exists (nothing was ever built there, or
+    the build is not committed and this is a fresh clone), there is nothing
+    to compare against: one line says so instead of one DRIFT line per file.
+    The exit code stays EXIT_VALIDATION_ERROR, so a gate that runs --check
+    without a build still fails.
+    """
     drifted = [r for r in results if r["status"] == "DRIFT"]
+
+    if results and all(r.get("missing") for r in results):
+        where = f" in {original_dir.as_posix()}" if original_dir else ""
+        print(
+            f"No build to compare against{where}: run `s0ma build` first, "
+            "or commit the build if this gate is meant to guard it."
+        )
+        return EXIT_VALIDATION_ERROR
 
     if not quiet:
         print(f"Checking {file_count} module(s) for drift...")
@@ -4895,7 +4912,8 @@ class S0maCLI:
                     original_dir = s0ma_files[0].parent
                 results = _compare_outputs(tmp_out, original_dir, all_outputs)
                 return _print_drift_results(
-                    results, len(s0ma_files), quiet=quiet
+                    results, len(s0ma_files), quiet=quiet,
+                    original_dir=original_dir,
                 )
 
         all_diagnostics = []
@@ -6674,7 +6692,8 @@ class S0maCLI:
                 original_dir = output_dir or project_dir
                 results = _compare_outputs(tmp_out, original_dir, all_outputs)
                 return _print_drift_results(
-                    results, len(modules), quiet=quiet
+                    results, len(modules), quiet=quiet,
+                    original_dir=original_dir,
                 )
 
         # Stage 5-6: Transpile only target files (not context modules)
