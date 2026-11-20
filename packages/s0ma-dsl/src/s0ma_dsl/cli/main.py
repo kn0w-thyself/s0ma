@@ -2802,6 +2802,20 @@ def _strip_banner(content: str) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _unreadable_during_resolution(exc: OSError) -> str:
+    """The one line printed when project resolution cannot read a path.
+
+    Names the path the filesystem refused, forward-slashed on every OS, and
+    the reason the operating system gave.
+    """
+    where = _display_path(exc.filename) if exc.filename else "a path"
+    reason = exc.strerror or str(exc)
+    return (
+        f"Cannot read {where} ({reason}) while resolving the project; "
+        f"nothing ran."
+    )
+
+
 def _resolve_project(args: argparse.Namespace) -> S0maProject:
     """Resolve a :class:`S0maProject` for this CLI invocation.
 
@@ -4767,9 +4781,21 @@ class S0maCLI:
             and getattr(args, "adopt_command", None)
             in {"scan", "init", "status"}
         )
-        args.s0ma_project = (
-            None if self_managed_resolution else _resolve_project(args)
-        )
+        # A path that project resolution cannot read (a ``pyproject.toml``
+        # under a directory the user may not search, or a file the user may
+        # not open) stops the command here, before any handler runs. It is
+        # not treated like a missing ``pyproject.toml``: discovery cannot
+        # tell whether the file carries a ``[tool.s0ma]`` table, and walking
+        # past it would resolve a parent project or the synthetic defaults
+        # in its place. This runs before the ``try`` below, so without the
+        # catch the error left as a Python traceback.
+        try:
+            args.s0ma_project = (
+                None if self_managed_resolution else _resolve_project(args)
+            )
+        except OSError as exc:
+            print(_unreadable_during_resolution(exc), file=sys.stderr)
+            return EXIT_USAGE_ERROR
 
         # DSL-M3 (F-M1-2): resolve the effective strictness mode now that
         # the project is known. ``--mode`` flag > ``[tool.s0ma].mode`` >
