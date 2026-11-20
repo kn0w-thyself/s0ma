@@ -367,11 +367,11 @@ uv run s0ma build src --force     # discards the hand edits, regenerates from so
 ```
 
 `s0ma build . --check` is a different test. It builds into a scratch folder
-and compares the result with the build directory on disk, so when that
-directory does not exist, as on a fresh clone of a project that does not
-commit `build/`, every file is reported as drifted. Use it when your project
-commits its build. If your project ignores `build/`, `s0ma check` and
-`s0ma test` are the gate.
+and compares the result with the build directory on disk. When there is no
+build there, as on a fresh clone of a project that does not commit `build/`,
+it prints one line saying there is no build to compare against and exits 1.
+Use it when your project commits its build. If your project ignores `build/`,
+`s0ma check` and `s0ma test` are the gate.
 
 The same word covers documentation: a page s0ma generates from your model that
 no longer matches the model has drifted. `uv run s0ma docs check-drift src`

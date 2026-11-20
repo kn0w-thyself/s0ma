@@ -65,4 +65,4 @@ Drift is not a word for a document that is badly written, out of date in its jud
 
 - Topic id: `concept:drift`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:738fc41e123e4d34`
+- Documentation snapshot: `sha256:862ef2717e65d557`
