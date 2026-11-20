@@ -6,8 +6,9 @@ the complete plan with per-file atomic replacement plus whole-plan rollback.
 
 When the target is the root of the project the command resolved, only that
 project's source and test roots are read; any other target is read whole.
-Whatever git ignores is left out, and a directory that cannot be read is
-skipped with a warning on stderr.
+Whatever git ignores is left out, and a directory below the root that cannot
+be read is skipped with a warning on stderr. A root that cannot be read is
+refused.
 """
 
 from __future__ import annotations
@@ -174,9 +175,11 @@ def _discover_sources(
 
     *start_directories* are walked in order, each directory once; ``None``
     walks *root* itself. Every start directory must lie inside *root*. A
-    directory whose listing, or the classification of whose entries, raises
-    ``OSError`` is skipped whole and named in one warning. Directories and
-    files git ignores are left out without being read.
+    directory below a start whose listing, or the classification of whose
+    entries, raises ``OSError`` is skipped whole and named in one warning.
+    When no start directory that was walked could be read, nothing is
+    planned: ``GRAMMAR_MIGRATION_ROOT_INVALID`` is raised instead. Directories
+    and files git ignores are left out without being read.
     """
 
     ignored_directories, ignored_files = _git_ignored(root)
@@ -193,7 +196,9 @@ def _discover_sources(
             for end in range(1, len(parts) + 1)
         )
 
-    def walk(directory: Path) -> None:
+    def walk(directory: Path) -> str | None:
+        """Walk *directory*; the reason it could not be listed, if it could not."""
+
         visited.add(directory)
         # Classify every entry before acting on any, so an unreadable
         # directory contributes nothing rather than a partial listing.
@@ -209,13 +214,14 @@ def _discover_sources(
                 if not stat.S_ISLNK(mode):
                     classified.append((entry, stat.S_ISDIR(mode)))
         except OSError as exc:
+            reason = str(exc.strerror or exc)
             warnings.append(
                 f"{_WARNING_PREFIX} cannot read directory "
                 f"{_relative_label(directory, root)} "
-                f"({exc.strerror or exc}); it was skipped, so no .s0ma file "
+                f"({reason}); it was skipped, so no .s0ma file "
                 "under it is in this plan."
             )
-            return
+            return reason
         for entry, is_directory in classified:
             relative = entry.relative_to(root).as_posix()
             if is_directory:
@@ -227,13 +233,28 @@ def _discover_sources(
                     walk(entry)
             elif entry.name.endswith(".s0ma") and relative not in ignored_files:
                 sources.append(entry)
+        return None
 
+    walked = 0
+    unreadable: list[str] = []
     for start in start_directories if start_directories is not None else (root,):
         if start in visited:
             continue
         if ignored_directory(_relative_label(start, root)):
             continue
-        walk(start)
+        walked += 1
+        reason = walk(start)
+        if reason is not None:
+            label = (
+                root.as_posix() if start == root else _relative_label(start, root)
+            )
+            unreadable.append(f"{label} ({reason})")
+    if walked and len(unreadable) == walked:
+        raise GrammarMigrationError(
+            "GRAMMAR_MIGRATION_ROOT_INVALID",
+            f"cannot read directory {', '.join(unreadable)}; "
+            "nothing was planned or changed.",
+        )
     return sources, warnings
 
 
@@ -552,4 +573,8 @@ def run_migrate_grammar(args: argparse.Namespace) -> int:
             "ok": False,
             "message": str(exc),
         }, indent=2, sort_keys=True))
+        # A root that cannot be read is unusable, as one that is not a
+        # directory is: the same code and the same exit.
+        if exc.code == "GRAMMAR_MIGRATION_ROOT_INVALID":
+            return EXIT_USAGE_ERROR
         return EXIT_VALIDATION_ERROR
