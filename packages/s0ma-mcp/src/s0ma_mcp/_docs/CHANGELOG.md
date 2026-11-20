@@ -47,6 +47,18 @@ Historical entries describe artifacts as they were named at the time.
   printed for this form, by project discovery, which this change does not
   touch.
 
+- **`s0ma build --check` with no build to compare against says so in one
+  line.** When none of the files the build would write exists, as on a fresh
+  clone of a project that does not commit `build/`, `--check` printed a
+  `DRIFT ... (file does not exist at expected location)` pair for every file
+  (23 files and 50 lines on the service scaffold). It now prints one line,
+  ``No build to compare against in <dir>: run `s0ma build` first, or commit
+  the build if this gate is meant to guard it.``, and still exits 1, so a job
+  that runs `--check` without a build still fails. `s0ma transpile --check`
+  shares the comparison and behaves the same way. A build with some files
+  present still lists each drifted or missing file, and a build that matches
+  still exits 0 with `All files match their .s0ma sources.`
+
 ### Fixed
 
 - **The package READMEs count the umbrella.** The READMEs of `s0ma-lang-core`,
