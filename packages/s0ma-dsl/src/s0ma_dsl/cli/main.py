@@ -5436,6 +5436,8 @@ class S0maCLI:
         # module whose name is already taken by a named file or an
         # --include file is skipped, so the file the user named wins.
         for source_path in project_context_files:
+            if s0ma_project is None:
+                break
             module, _context_parse_errors = _parse_single_file(
                 source_path, mode,
             )
