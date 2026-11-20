@@ -29,6 +29,7 @@ from pathlib import Path
 
 import pytest
 
+from s0ma_dsl.cli.main import EXIT_SUCCESS, S0maCLI
 from s0ma_dsl.config import StrictnessMode
 from s0ma_dsl.parser.s0ma_parser import parse_s0ma_with_warnings
 from s0ma_dsl.semantic.validator import (
@@ -135,6 +136,64 @@ class TestConstantNameMismatch:
             f"CONSTANT_NAME_MISMATCH when one assignment matches the "
             f"cell name, got: {[d.message for d in mismatches]}"
         )
+
+
+_CONTEXT_VAR_MODULE = '''\
+module request_scope
+    layer: DOMAIN
+    version: 1.0.0
+    intent: "Holds the id of the request being served."
+    requires: [contextvars]
+    uses: []
+    exports: [CURRENT_REQUEST_ID]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell CURRENT_REQUEST_ID :: DOMAIN
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The id of the request being served, or None outside one."
+    schema: "contextvars.ContextVar[str | None]"
+    invariants: none
+    covered_by: none
+    ---
+    CURRENT_REQUEST_ID = contextvars.ContextVar("current_request_id", default=None)
+'''
+
+
+class TestConstantBoundToACall:
+    """A CONSTANT cell may bind its name to the result of a call."""
+
+    def test_context_var_constant_passes_strict_and_builds(
+        self, tmp_path: Path,
+    ) -> None:
+        """``CURRENT_REQUEST_ID = contextvars.ContextVar(...)`` is a
+        top-level assignment to the cell's own name, so strict checking
+        reports nothing and the build writes the assignment as authored.
+        """
+        src = tmp_path / "src"
+        src.mkdir()
+        source_file = src / "request_scope.s0ma"
+        source_file.write_text(_CONTEXT_VAR_MODULE, encoding="utf-8")
+
+        _, diags = _parse_and_validate(source_file, mode=StrictnessMode.STRICT)
+        assert [d for d in diags if d.severity == "error"] == []
+
+        out = tmp_path / "out"
+        rc = S0maCLI().run([
+            "build", str(src),
+            "--output-dir", str(out),
+            "--mode", "strict",
+        ])
+        assert rc == EXIT_SUCCESS
+        built = (out / "request_scope.py").read_text(encoding="utf-8")
+        assert "import contextvars" in built.splitlines()
+        assert (
+            'CURRENT_REQUEST_ID = contextvars.ContextVar("current_request_id", '
+            "default=None)"
+        ) in built.splitlines()
 
 
 class TestConstantNameMismatchModeIndependence:
