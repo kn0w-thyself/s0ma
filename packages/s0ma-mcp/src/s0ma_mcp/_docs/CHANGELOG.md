@@ -96,6 +96,17 @@ Historical entries describe artifacts as they were named at the time.
   symlinked directory that reach one file count once. Two different files that
   declare one module name still report `MODULE_NAME_COLLISION` as before.
 
+- **The docs say what a built application installs.** The root README said
+  an application can take the `s0ma-lang-core` runtime and nothing else, and
+  the patterns guide said deployment needs `s0ma-lang-core` only and that a
+  deployed app boots without the authoring packages. `s0ma-lang-core` still
+  stands alone with zero hard runtime dependencies, and its loader
+  `s0ma.bootstrap.bootstrap_imports` runs without the others. But every
+  module the compiler emits imports `s0ma_dsl.runtime_bridge.registration`,
+  so an application built from `.s0ma` sources needs `s0ma-lang-dsl`
+  installed at run time as well. The README and the patterns guide (section
+  10.2 and section 28.5) now say so.
+
 ## [0.22.0] — 2026-11-19
 
 ### Added
