@@ -40,7 +40,13 @@ Pinned here:
   location alone), the parts the newest build added stay outlined until
   the next build that changes something, and the list of changes keeps
   each build's entry in page memory only, newest first, capped, behind a
-  toolbar toggle, with no storage and no clock.
+  toolbar toggle, with no storage and no clock;
+* a module that arrives is placed after the modules already drawn in
+  its band, and a large build is revealed module by module, in an order
+  that puts a module after the ones it leans on, with the counts said in
+  words, a "Show the rest" button, the usual beat and nothing new, an
+  early end for each thing that changes the question, and no reveal at
+  all under reduced motion.
 
 Whether the graph *looks* right is not decidable here; that is the
 browser pass over ``tests/fixtures/dev_harness.html``.
@@ -894,7 +900,7 @@ def test_the_not_built_sentence_and_its_command() -> None:
     assert "font-family: var(--font);" in _between(app_css, ".empty-sentence {", "}")
     assert "font-family: var(--mono);" in _between(app_css, ".empty-command {", "}")
     # The status line says the same in words.
-    assert 'ui.statusLine.textContent = "nothing is built yet";' in app_js
+    assert 'ui.statusText.textContent = "nothing is built yet";' in app_js
 
 
 def test_not_built_is_not_offline() -> None:
@@ -1116,7 +1122,7 @@ def test_an_entry_reads_in_its_order_and_its_words() -> None:
     assert order == sorted(order)
     # Part names: the relationship rows' control while the part exists,
     # plain text once it is gone; removed parts are always plain text.
-    assert "changePartName(added[i].id)" in item
+    assert "changePartName(addedShown[i].id)" in item
     assert "changePartName(changed[i].id)" in item
     assert "changeGoneName(removed[i].id)" in item
     name = _between(app_js, "function changePartName(", "\n}\n")
@@ -1199,3 +1205,165 @@ def test_a_module_that_arrives_is_placed_after_the_ones_drawn() -> None:
     assert "state.bandOrder[sorted[i]] = state.bandOrderNext;" in steady
     assert "return state.bandOrder[a] - state.bandOrder[b];" in steady
     assert "  bandOrder: {},\n  bandOrderNext: 0,\n" in app_js
+
+
+# ------------------------------------------------------------ the reveal
+
+REVEAL_BUTTON = "Show the rest"
+
+
+def test_a_reveal_needs_more_than_four_parts_in_view_in_two_modules() -> None:
+    """Anything smaller appears at once; "in view" is the list's own notion."""
+    app_js = read(APP_JS)
+    assert "var REVEAL_MORE_THAN = 4;" in app_js
+    groups = _between(app_js, "function revealGroups(", "\n}\n")
+    assert "changePartInView(changePart(ids[i], component))" in groups
+    assert "if (count <= REVEAL_MORE_THAN || names.length < 2) {\n    return null;" in groups
+    # One group per module, holding all of its new parts.
+    assert "byModule[moduleName].push(ids[i]);" in groups
+    assert "groups.push({ module: chosen, ids: byModule[chosen] });" in groups
+
+
+def test_a_module_comes_after_the_modules_it_leans_on() -> None:
+    """Dependencies first, among this build's modules; ties bottom band first."""
+    app_js = read(APP_JS)
+    groups = _between(app_js, "function revealGroups(", "\n}\n")
+    assert 'if (edge.family === "verification") {\n      continue;' in groups
+    assert "if (from !== to && byModule[from] && byModule[to]) {" in groups
+    assert "leansOnlyOnPlaced(leansOn[remaining[i]], placed)" in groups
+    # A cycle leaves nothing ready, and the tie rule decides.
+    assert "ready = remaining.slice();" in groups
+    assert "ready.sort(compareRevealModules);" in groups
+    compare = _between(app_js, "function compareRevealModules(", "\n}\n")
+    assert "revealBandRank(b) - revealBandRank(a)" in compare
+    assert "return compareStrings(a, b);" in compare
+    rank = _between(app_js, "function revealBandRank(", "\n}\n")
+    assert "LAYER_ORDER.indexOf(layer)" in rank
+
+
+def test_the_pause_is_one_named_constant_and_the_beat_is_reused() -> None:
+    """Each group gets the usual beat; the pace is one value to tune."""
+    app_js = read(APP_JS)
+    assert app_js.count("var REVEAL_PAUSE_MS = ") == 1
+    assert "var REVEAL_PAUSE_MS = 2000;" in app_js
+    assert app_js.count("window.setTimeout(revealNext, REVEAL_PAUSE_MS)") == 2
+    start = _between(app_js, "function startReveal(", "\n}\n")
+    assert "delete state.delta.added[groups[i].ids[j]];" in start
+    show = _between(app_js, "function showParts(", "\n}\n")
+    assert "state.delta.added[ids[i]] = true;" in show
+    assert "nodeElement(node, node.organ)" in show
+    assert "scheduleBeatEnd();" in show
+    # The reveal adds no motion of its own.
+    app_css = read(APP_CSS)
+    reveal_css = _between(app_css, ".status-reveal {", "/* ----")
+    assert "animation" not in reveal_css
+    assert "transition" not in reveal_css
+
+
+def test_what_is_not_yet_shown_is_not_drawn() -> None:
+    """Parts wait, edges wait for both ends, a new module waits for its group."""
+    app_js = read(APP_JS)
+    edges = _between(app_js, "function computeEdgeGroups(", "\n}\n")
+    assert "if (notYetShown(edge.source) || notYetShown(edge.target)) {" in edges
+    nodes = _between(app_js, "function renderNodes(", "\n}\n")
+    assert "if (!organShown(organ)) {" in nodes
+    assert "if (!notYetShown(organ.nodes[j].id)) {" in nodes
+    organs = _between(app_js, "function renderOrgans(", "\n}\n")
+    assert "if (organShown(layout.organs[i])) {" in organs
+    # Counted as not shown, and wearing no outline until it is.
+    status = _between(app_js, "function renderStatusLine(", "\n}\n")
+    assert "state.reveal.total - state.reveal.shownCount" in status
+    outlined = _between(app_js, "function outlinedInView(", "\n}\n")
+    assert "!notYetShown(nodes[j].id)" in outlined
+
+
+def test_the_status_line_says_how_many_are_showing_beside_a_real_button() -> None:
+    app_js = read(APP_JS)
+    sentence = _between(app_js, "function revealSentenceText(", "\n}\n")
+    assert '"This build added " +' in sentence
+    assert '" parts. Showing " +' in sentence
+    assert '", module by module."' in sentence
+    shell = _between(app_js, "function buildShell(", "\n}\n")
+    assert 'ui.revealButton = toolbarButton("' + REVEAL_BUTTON + '", showTheRest);' in shell
+    toolbar_button = _between(app_js, "function toolbarButton(", "\n}\n")
+    assert 'el("button", "btn", label)' in toolbar_button
+    assert 'button.type = "button";' in toolbar_button
+    assert "finishReveal(true);" in _between(app_js, "function showTheRest(", "\n}\n")
+    # Gone when the reveal ends.
+    note = _between(app_js, "function renderRevealNote(", "\n}\n")
+    assert "ui.revealNote.hidden = !reveal;" in note
+    assert "state.reveal = null;" in _between(app_js, "function endReveal(", "\n}\n")
+    # The status line takes no pointer, except on this button.
+    app_css = read(APP_CSS)
+    assert "pointer-events: auto;" in _between(app_css, ".status-line .status-button {", "}")
+    assert "display: none;" in _between(app_css, ".status-reveal[hidden] {", "}")
+
+
+def test_a_reveal_is_announced_once_politely() -> None:
+    """Said when a reveal starts, in words that stay true; not once per group."""
+    app_js = read(APP_JS)
+    shell = _between(app_js, "function buildShell(", "\n}\n")
+    assert 'ui.revealAnnounce.setAttribute("aria-live", "polite");' in shell
+    assert "ui.statusLine.appendChild(ui.revealAnnounce);" in shell
+    # Written in one place, and emptied in one place.
+    assert app_js.count("ui.revealAnnounce.textContent =") == 2
+    assert app_js.count('ui.revealAnnounce.textContent = "";') == 1
+    start = _between(app_js, "function startReveal(", "\n}\n")
+    assert '"This build added " + total + " parts. Showing them module by module."' in start
+    assert 'ui.changesList.setAttribute("aria-busy", "true");' in start
+    end = _between(app_js, "function endReveal(", "\n}\n")
+    assert 'ui.revealAnnounce.textContent = "";' in end
+    assert 'ui.changesList.removeAttribute("aria-busy");' in end
+    assert "ui.revealAnnounce" not in _between(app_js, "function showParts(", "\n}\n")
+    assert "clip-path: inset(50%);" in _between(read(APP_CSS), ".visually-hidden {", "}")
+
+
+def test_the_list_entry_says_showing_and_names_only_what_is_shown() -> None:
+    app_js = read(APP_JS)
+    item = _between(app_js, "function changeEntryItem(", "\n}\n")
+    assert "state.reveal && state.reveal.entry === entry.number ? state.reveal : null" in item
+    assert '"showing " + reveal.shownCount + " of " + reveal.total' in item
+    # The count is the build's whole count; the names wait for their group.
+    assert "changeCounts(added.length, changed.length, removed.length)" in item
+    assert "if (!reveal || !notYetShown(added[i].id)) {" in item
+    # Nothing is dropped: the record keeps every added part.
+    record = _between(app_js, "function changeRecord(", "\n}\n")
+    assert "record.added.push(changePart(ids[i], nextComponents[ids[i]]));" in record
+
+
+def test_each_thing_that_ends_a_reveal_early() -> None:
+    app_js = read(APP_JS)
+    # A newer build that adds, changes, or removes something, before its
+    # own delta takes over and its entry is made.
+    apply = _between(app_js, "function applyGraph(", "\n}\n")
+    ends = apply.index("finishReveal(false);")
+    assert apply.rindex("if (deltaChangesParts(delta)) {", 0, ends) < ends
+    assert ends < apply.index("state.delta = delta;")
+    assert ends < apply.index("recordChange(delta, previous, graph, firstBuild);")
+    assert apply.index("startReveal(delta);") < apply.index("render();")
+    # The toolbar controls that change what is in view.
+    shell = _between(app_js, "function buildShell(", "\n}\n")
+    for toggle in ("state.toggles.tests = !state.toggles.tests;",
+                   "state.toggles.framework = !state.toggles.framework;"):
+        assert "finishReveal(false);\n    " + toggle in shell
+    collapse = _between(app_js, "function setAllCollapsed(", "\n}\n")
+    assert collapse.index("finishReveal(false);") < collapse.index("render();")
+    # Selecting something not yet shown.
+    select_fn = _between(app_js, "function select(", "\n}\n")
+    assert "if (selectsWhatIsNotYetShown(selection)) {\n    finishReveal(true);" in select_fn
+    # The project becoming unbuilt.
+    not_built = _between(app_js, "function applyNotBuilt(", "\n}\n")
+    assert not_built.index("finishReveal(false);") < not_built.index("render();")
+    # Ending stops the pause.
+    end = _between(app_js, "function endReveal(", "\n}\n")
+    assert "window.clearTimeout(revealTimer);" in end
+
+
+def test_under_reduced_motion_there_is_no_reveal() -> None:
+    app_js = read(APP_JS)
+    reduced = _between(app_js, "function prefersReducedMotion(", "\n}\n")
+    assert 'window.matchMedia("(prefers-reduced-motion: reduce)").matches' in reduced
+    groups = _between(app_js, "function revealGroups(", "\n}\n")
+    assert groups.index("if (prefersReducedMotion()) {\n    return null;") < groups.index(
+        "Object.keys(delta.added)"
+    )
