@@ -38,7 +38,9 @@ import json
 import textwrap
 from typing import TYPE_CHECKING, Any
 
+import pytest
 from conftest import BUILD_DIR_NAME, PROBE_MODULE, build_project, touch_source, wait_until
+from s0ma.api.teaching import packaged_slice
 from s0ma_dsl.graph_export import collect_graph
 from s0ma_studi0.studi0_server import ROUTE_TABLE, route_request
 from s0ma_studi0.studi0_state import (
@@ -48,6 +50,8 @@ from s0ma_studi0.studi0_state import (
     NARRATION_BLOCK_KEYS,
     STATE_DOCUMENT_KEYS,
     STATE_SCHEMA,
+    teaching_terms,
+    terms_document,
 )
 
 import s0ma_studi0
@@ -163,6 +167,162 @@ def test_graph_is_exactly_what_collect_graph_produces(
     assert served["nodes"]
     assert served["components"]
     assert served["modules"]
+
+
+# ---------------------------------------------------------------------------
+# The terms block: s0ma's own definitions, copied from the teaching slice
+#
+# Every expectation below is read from the packaged slice itself, never
+# typed here, so a test cannot become a second place definitions live.
+# ---------------------------------------------------------------------------
+
+
+#: The keys a terms block carries, and the keys an entry may carry.
+TERMS_KEYS = {"source", "entries"}
+TERM_ENTRY_KEYS = {"id", "name", "names", "summary", "definition"}
+
+
+def _packaged_concepts() -> list[dict[str, Any]]:
+    """The slice's concept topics, read straight from the packaged file."""
+    found = packaged_slice()
+    assert found is not None, "s0ma-core carries no packaged teaching slice"
+    raw = json.loads(found[1])
+    return sorted(
+        (topic for topic in raw["topics"] if topic.get("group") == "concepts"),
+        key=lambda topic: str(topic["id"]),
+    )
+
+
+def _section(topic: dict[str, Any], fact: str) -> str | None:
+    for section in topic["sections"]:
+        if section.get("fact") == fact:
+            return str(section["text"])
+    return None
+
+
+@pytest.fixture()
+def fresh_terms(monkeypatch: pytest.MonkeyPatch) -> Any:
+    """The built studi0_state module with its once-per-process cache emptied.
+
+    The cache is emptied again afterwards, so a test that fed it a broken
+    slice cannot leave that answer behind for the next test.
+    """
+    module = s0ma_studi0.studi0_state
+    module._teaching_terms_once.cache_clear()
+    yield module
+    module._teaching_terms_once.cache_clear()
+
+
+def test_graph_document_carries_the_terms_block(
+    launch_studi0: Callable[..., ServedStudi0], built_project: Path
+) -> None:
+    """/api/graph serves the terms block beside the graph, never inside it."""
+    studi0 = launch_studi0(built_project)
+    document = studi0.json("/api/graph")
+
+    terms = document["terms"]
+    assert set(terms) == TERMS_KEYS
+    assert terms == teaching_terms()
+    assert "terms" not in document["graph"]
+    for entry in terms["entries"]:
+        assert set(entry) <= TERM_ENTRY_KEYS
+        assert {"id", "name", "names", "summary"} <= set(entry)
+        assert isinstance(entry["names"], list)
+
+
+def test_the_terms_block_is_the_packaged_slices_concepts() -> None:
+    """Count, ids, names and text all equal what the packaged slice says."""
+    found = packaged_slice()
+    assert found is not None
+    source = json.loads(found[1])["source"]
+    concepts = _packaged_concepts()
+    terms = teaching_terms()
+
+    assert terms["source"] == {
+        "release_version": source["release_version"],
+        "snapshot_hash": source["snapshot_hash"],
+    }
+    entries = terms["entries"]
+    assert len(entries) == len(concepts)
+    assert [entry["id"] for entry in entries] == [topic["id"] for topic in concepts]
+    assert [entry["id"] for entry in entries] == sorted(entry["id"] for entry in entries)
+    for entry, topic in zip(entries, concepts, strict=True):
+        assert entry["name"] == topic["title"]
+        assert entry["names"] == topic["search_terms"]
+        assert entry["summary"] == _section(topic, "summary")
+        definition = _section(topic, "plain_definition")
+        if definition is None:
+            assert "definition" not in entry
+        else:
+            assert entry["definition"] == definition
+
+
+def test_nerve_and_contract_are_copied_verbatim() -> None:
+    """The two words a first reader meets most, held to the slice's text."""
+    by_id = {entry["id"]: entry for entry in teaching_terms()["entries"]}
+    topics = {topic["id"]: topic for topic in _packaged_concepts()}
+    for topic_id in ("concept:nerve", "concept:contract"):
+        assert topic_id in by_id, topic_id
+        assert by_id[topic_id]["summary"] == _section(topics[topic_id], "summary")
+        assert by_id[topic_id]["definition"] == _section(topics[topic_id], "plain_definition")
+        assert by_id[topic_id]["summary"]
+        assert by_id[topic_id]["definition"]
+
+
+@pytest.mark.parametrize(
+    "found",
+    [
+        None,
+        ("broken", "this is not json"),
+        ("other", json.dumps({"schema": "something-else@9", "source": {}, "topics": []})),
+        ("empty", "{}"),
+    ],
+)
+def test_an_unreadable_slice_gives_no_source_and_no_entries(
+    found: tuple[str, str] | None,
+) -> None:
+    assert terms_document(found) == {"source": None, "entries": []}
+
+
+def test_a_missing_slice_never_reaches_the_request_path(
+    launch_studi0: Callable[..., ServedStudi0],
+    built_project: Path,
+    fresh_terms: Any,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """With no slice at all, /api/graph still answers, with an empty block."""
+
+    def _raises() -> tuple[str, str] | None:
+        raise OSError("no slice in this installation")
+
+    monkeypatch.setattr(fresh_terms, "packaged_slice", _raises)
+    studi0 = launch_studi0(built_project)
+    status, _, body = studi0.get("/api/graph")
+
+    assert status == 200
+    document = json.loads(body.decode("utf-8"))
+    assert set(document) == GRAPH_KEYS
+    assert document["terms"] == {"source": None, "entries": []}
+
+
+def test_the_terms_block_is_built_once_per_process(
+    fresh_terms: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The slice is read on the first answer and never again."""
+    reads: list[int] = []
+    real = fresh_terms.packaged_slice
+
+    def _counting() -> tuple[str, str] | None:
+        reads.append(1)
+        return real()
+
+    monkeypatch.setattr(fresh_terms, "packaged_slice", _counting)
+    first = fresh_terms.teaching_terms()
+    second = fresh_terms.teaching_terms()
+
+    assert first is second
+    assert len(reads) == 1
+    assert first["entries"]
 
 
 def test_state_wrappers_pass_through_untouched(
@@ -324,7 +484,7 @@ def test_the_declared_wire_identities_are_the_frozen_ones() -> None:
         "stale_modules",
     )
     assert NARRATION_BLOCK_KEYS == ("entries", "invalid", "total")
-    assert GRAPH_DOCUMENT_KEYS == ("graph", "schema", "seq")
+    assert GRAPH_DOCUMENT_KEYS == ("graph", "schema", "seq", "terms")
 
 
 # ---------------------------------------------------------------------------

@@ -56,10 +56,10 @@
       "logical_path": "studi0_state.s0ma",
       "name": "studi0_state",
       "output": "studi0_state.py",
-      "output_hash": "sha256:b67ff2a865fe66405d1be730e014be5c7bd5540e9cc3f196f3af69be168d7203",
+      "output_hash": "sha256:fca032a3a858446ab4090a236f509d080ac3ce4bf4623e20acecc1fcee44dd66",
       "role": "source",
       "source": "s0ma_src/studi0_state.s0ma",
-      "source_hash": "sha256:d48acbd3814c4930e209e21e7dcf32cdedea3c57b14c737fa41f7cbdc72a7702",
+      "source_hash": "sha256:30523f10281dcf02da6e6c5b9ff4c5dac12d97e8e270132fe409ae3dbd6f9f31",
       "source_map": "studi0_state.s0ma.map",
       "source_root": "s0ma_src"
     },
@@ -81,11 +81,11 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:c2e773a43dd2c356489d3d58557b97900218b5b61f6717e71b7f16dbfe3eae32"
+      "sha256": "sha256:a85bfcd85fc2a34da08be0334abb000e393a926770c707f999f2a0e44cfd878d"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",
-      "sha256": "sha256:dc8b7d7b775ed881fa1c87930c00e8d475e5866f1f83a95ed5d0d25ea371512f"
+      "sha256": "sha256:411623d830a0b56b8b6e40c599abbe72f1dda5b56170bdea7b7b83aa52841037"
     }
   },
   "topological_import_order": [
