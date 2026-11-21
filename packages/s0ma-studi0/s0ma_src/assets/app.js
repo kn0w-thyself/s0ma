@@ -106,6 +106,21 @@ var BEAT_SWEEP_MS = BEAT_OUT_MS + 120;
 /* How far the highlight ring sits outside the thing it highlights. */
 var BEAT_RING_INSET = 5;
 
+/* NOT_BUILT is the code /api/graph answers when the project has no build
+ * artifacts; the state document says the same with build_status
+ * "missing". Either answer means "nothing is built", never "offline". */
+var NOT_BUILT_CODE = "NOT_BUILT";
+
+/* An empty band is as tall as a band holding one row of parts, so the
+ * first build lands in bands of about the size they already had. */
+var EMPTY_BAND_H =
+  BAND_PAD_TOP +
+  ORGAN_HEADER_H +
+  ORGAN_PAD_TOP +
+  NODE_H +
+  ORGAN_PAD_BOTTOM +
+  BAND_PAD_BOTTOM;
+
 var LAYER_ORDER = [
   "PRESENTATION",
   "APPLICATION",
@@ -306,7 +321,15 @@ var state = {
   graph: null,
   model: null,
   layout: null,
-  buildStatus: "missing",
+  /* Null until something has said what the build is: the page infers
+   * nothing, so it does not claim "nothing is built" before the server
+   * has answered. */
+  buildStatus: null,
+  /* True from the moment the server answers that nothing is built until
+   * a graph arrives. While it holds, the canvas shows the empty bands,
+   * and the graph that ends it is diffed against nothing, so every part
+   * of the first build arrives with the added-part beat. */
+  notBuilt: false,
   staleModules: [],
   toggles: { tests: false, framework: false },
   collapseOverrides: {},
@@ -850,6 +873,39 @@ function computeLayout() {
   return layout;
 }
 
+/* The layout of a project with nothing built: every standard band, in
+ * the usual order and with the usual names, holding nothing. The
+ * FRAMEWORK band follows its toolbar toggle, as it does with a graph. */
+function emptyLayout() {
+  var width = CONTENT_X * 2 + ORGAN_MIN_W * 3 + ORGAN_GAP_X * 2;
+  var bands = [];
+  var y = 0;
+  for (var i = 0; i < LAYER_ORDER.length; i += 1) {
+    if (LAYER_ORDER[i] === "FRAMEWORK" && !state.toggles.framework) {
+      continue;
+    }
+    bands.push({
+      layer: LAYER_ORDER[i],
+      y: y,
+      height: EMPTY_BAND_H,
+      width: width,
+    });
+    y = y + EMPTY_BAND_H + BAND_GAP_Y;
+  }
+  return {
+    bands: bands,
+    organs: [],
+    organsByModule: {},
+    nodesById: {},
+    visible: {},
+    visibleCount: 0,
+    width: width,
+    height: Math.max(y - BAND_GAP_Y, 1),
+    defaultCollapsed: false,
+    edgeGroups: [],
+  };
+}
+
 function organCollapsed(moduleName, defaultCollapsed) {
   if (
     Object.prototype.hasOwnProperty.call(state.collapseOverrides, moduleName)
@@ -1326,7 +1382,24 @@ function buildShell(mount) {
   ui.legendTerms = [];
   ui.canvasWrap.appendChild(buildLegend());
   ui.statusLine = el("div", "status-line");
+  ui.statusLine.hidden = true;
   ui.canvasWrap.appendChild(ui.statusLine);
+  /* Shown over the empty bands once the server has said nothing is
+   * built: one plain sentence, and the command in the monospace face. */
+  ui.emptyState = el("div", "empty-state");
+  ui.emptyState.setAttribute("role", "status");
+  ui.emptyState.appendChild(
+    el(
+      "p",
+      "empty-sentence",
+      "Nothing is built yet. Parts appear here when the first build lands."
+    )
+  );
+  ui.emptyState.appendChild(
+    el("code", "empty-command", "s0ma build <project root>")
+  );
+  ui.emptyState.hidden = true;
+  ui.canvasWrap.appendChild(ui.emptyState);
   ui.stage.appendChild(ui.canvasWrap);
 
   ui.inspector = el("aside", "inspector");
@@ -1439,18 +1512,14 @@ function render() {
   renderBanners();
 
   if (state.buildStatus === "missing" || !state.model) {
-    /* There is no canvas to beat on. Drop the delta rather than let it
+    /* There is no graph to beat on. Drop the delta rather than let it
      * wait for a paint that would replay it out of its moment. */
     state.beatPending = false;
     state.delta = emptyDelta();
     renderEmptyState();
     return;
   }
-  if (ui.emptyState) {
-    ui.emptyState.parentNode.removeChild(ui.emptyState);
-    ui.emptyState = null;
-    ui.stage.style.display = "";
-  }
+  ui.emptyState.hidden = true;
 
   state.layout = computeLayout();
   dropSelectionOfVanishedEdge();
@@ -1551,37 +1620,30 @@ function renderBanners() {
   }
 }
 
+/* No graph on the page. Before anything has said what the build is, the
+ * canvas stays blank. Once it has been said that nothing is built, the
+ * canvas draws the standard bands, empty, with the sentence and the
+ * command over them, and the status line says the same in words. The
+ * next graph is fitted afresh, since these bands are not its layout. */
 function renderEmptyState() {
-  if (ui.emptyState) {
+  clear(ui.layerOrgans);
+  clear(ui.layerEdges);
+  clear(ui.layerGhosts);
+  clear(ui.layerNodes);
+  state.fitted = false;
+  if (state.buildStatus !== "missing") {
+    clear(ui.layerBands);
+    state.layout = null;
+    ui.emptyState.hidden = true;
+    ui.statusLine.hidden = true;
     return;
   }
-  ui.stage.style.display = "none";
-  var wrap = el("div", "empty-state");
-  var card = el("div", "empty-card");
-  card.appendChild(el("h1", "empty-title", "no canonical build to show"));
-  card.appendChild(
-    el(
-      "p",
-      "empty-body",
-      "sh0w draws the component graph from build artifacts. This project " +
-        "has none yet: no build.s0ma.json was found, so there is nothing " +
-        "canonical to draw."
-    )
-  );
-  card.appendChild(el("pre", "empty-command", "s0ma build <project root>"));
-  card.appendChild(
-    el(
-      "p",
-      "empty-hint",
-      state.live
-        ? "studi0 keeps watching: this page draws the graph as soon as the " +
-            "build lands."
-        : "run the build, then reload this page."
-    )
-  );
-  wrap.appendChild(card);
-  ui.emptyState = wrap;
-  ui.root.appendChild(wrap);
+  state.layout = emptyLayout();
+  renderBands(state.layout);
+  fitToView();
+  ui.emptyState.hidden = false;
+  ui.statusLine.textContent = "nothing is built yet";
+  ui.statusLine.hidden = false;
 }
 
 function renderBands(layout) {
@@ -2118,6 +2180,7 @@ function renderStatusLine(layout) {
     parts.push("built by s0ma " + freshness.transpiler_version);
   }
   ui.statusLine.textContent = parts.join(" · ");
+  ui.statusLine.hidden = false;
 }
 
 /* ------------------------------------------------------------------ *
@@ -4599,7 +4662,11 @@ function onDocumentKeyDown(event) {
  * ------------------------------------------------------------------ */
 
 function applyGraph(graph, stateDoc) {
-  var previous = state.graph;
+  /* After the server has said nothing is built, the page has shown that
+   * nothing is there, so the first build is a change from an empty graph
+   * and each of its parts gets the beat any added part gets. */
+  var previous = state.notBuilt ? { components: {} } : state.graph;
+  state.notBuilt = false;
   var delta = diffGraphs(previous, graph);
   var derived = stateDoc || deriveStateFromGraph(graph);
   var nextStale = (derived.stale_modules || []).slice().sort(compareStrings);
@@ -4611,8 +4678,9 @@ function applyGraph(graph, stateDoc) {
   state.buildStatus = derived.build_status || "missing";
   state.staleModules = nextStale;
   state.error = null;
-  /* Only a real change earns the beat. A first payload is not a
-   * change — nothing was on screen to change from. */
+  /* Only a real change earns the beat. A first payload on a page that
+   * opened on a built project is not a change: nothing was on screen to
+   * change from. The first build after "nothing is built" is one. */
   state.beatPending = deltaHasAny(delta);
 
   if (state.selection && state.selection.type === "node") {
@@ -4703,6 +4771,13 @@ function pollOnce() {
         showError(stateDoc.error.message || "the viewer reported an error");
         return null;
       }
+      if (stateDoc.build_status === "missing") {
+        /* The server has said nothing is built, so there is no graph to
+         * ask for. The viewer is connected; the project is unbuilt. */
+        state.seq = stateDoc.seq;
+        applyNotBuilt();
+        return null;
+      }
       if (stateDoc.seq !== state.seq || !state.graph) {
         state.seq = stateDoc.seq;
         /* Narration is applied on the far side of the graph fetch, so
@@ -4722,12 +4797,25 @@ function pollOnce() {
 function fetchGraph(stateDoc) {
   return fetch("/api/graph", { cache: "no-store" })
     .then(function (response) {
-      if (!response.ok) {
-        throw new Error("/api/graph responded " + response.status);
-      }
-      return response.json();
+      return response.json().then(function (document_) {
+        return { ok: response.ok, status: response.status, document: document_ };
+      });
     })
-    .then(function (document_) {
+    .then(function (answer) {
+      var document_ = answer.document;
+      /* The graph route's own answer for a project with no build: the
+       * server is there and has said so, which is not being offline. */
+      if (
+        document_ &&
+        document_.error &&
+        document_.error.code === NOT_BUILT_CODE
+      ) {
+        applyNotBuilt();
+        return;
+      }
+      if (!answer.ok) {
+        throw new Error("/api/graph responded " + answer.status);
+      }
       if (document_.error) {
         showError(document_.error.message || "the viewer reported an error");
         return;
@@ -4759,6 +4847,26 @@ function applyStateOnly(stateDoc) {
   state.buildStatus = nextStatus;
   state.staleModules = nextStale;
   state.beatPending = deltaHasAny(state.delta);
+  render();
+}
+
+/* The server has said nothing is built. Whatever graph was on the page
+ * is no longer a build, so it goes, and so does a selection in it. Said
+ * again on every poll, so it repaints only the first time. */
+function applyNotBuilt() {
+  if (state.notBuilt) {
+    return;
+  }
+  state.notBuilt = true;
+  state.graph = null;
+  state.model = null;
+  state.buildStatus = "missing";
+  state.staleModules = [];
+  state.error = null;
+  if (state.selection) {
+    state.selection = null;
+    renderInspector();
+  }
   render();
 }
 

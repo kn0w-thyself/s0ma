@@ -31,7 +31,11 @@ Pinned here:
 * the term controls, their card and the dictionary are still wired to
   the terms block /api/graph serves, keep only ids in the page, and
   leave the page as it was when there is no terms block; the harness's
-  terms data is what the server builds from the packaged slice.
+  terms data is what the server builds from the packaged slice;
+* a project with nothing built is not a lost connection: once the server
+  has said so, the canvas draws the standard bands, empty, with one plain
+  sentence and the command, and the first build's parts arrive with the
+  added-part beat.
 
 Whether the graph *looks* right is not decidable here; that is the
 browser pass over ``tests/fixtures/dev_harness.html``.
@@ -866,3 +870,80 @@ def test_dev_harness_terms_match_the_checked_in_fixture() -> None:
     harness = read(DEV_HARNESS)
     assert "__S0MA_TERMS__" in harness
     assert _embedded(harness, "sh0w-terms") == json.loads(read(TERMS_FIXTURE))
+
+
+# ---------------------------------------------------------------- not built
+
+
+NOT_BUILT_SENTENCE = "Nothing is built yet. Parts appear here when the first build lands."
+
+
+def test_the_not_built_sentence_and_its_command() -> None:
+    """One plain sentence in the plain face, and the command in monospace."""
+    app_js = read(APP_JS)
+    sentence_line = next(text for text in app_js.splitlines() if NOT_BUILT_SENTENCE in text)
+    assert '"code"' not in sentence_line
+    assert '"p",\n      "empty-sentence",' in app_js
+    assert 'el("code", "empty-command", "s0ma build <project root>")' in app_js
+    app_css = read(APP_CSS)
+    assert "font-family: var(--font);" in _between(app_css, ".empty-sentence {", "}")
+    assert "font-family: var(--mono);" in _between(app_css, ".empty-command {", "}")
+    # The status line says the same in words.
+    assert 'ui.statusLine.textContent = "nothing is built yet";' in app_js
+
+
+def test_not_built_is_not_offline() -> None:
+    """Both wire answers for an unbuilt project lead to the empty state.
+
+    The state document's ``build_status: "missing"`` is read before any
+    graph is asked for, and the graph route's ``NOT_BUILT`` answer is read
+    before a non-ok status is treated as a lost connection.
+    """
+    app_js = read(APP_JS)
+    assert 'var NOT_BUILT_CODE = "NOT_BUILT";' in app_js
+    poll = _between(app_js, "function pollOnce(", "\n}\n")
+    assert poll.index('stateDoc.build_status === "missing"') < poll.index("fetchGraph(")
+    assert "applyNotBuilt();" in poll
+    fetch = _between(app_js, "function fetchGraph(", "\n}\n")
+    assert fetch.index("document_.error.code === NOT_BUILT_CODE") < fetch.index("if (!answer.ok) {")
+    not_built = _between(app_js, "function applyNotBuilt(", "\n}\n")
+    assert "setOffline" not in not_built
+    assert 'state.buildStatus = "missing";' in not_built
+
+
+def test_the_empty_state_waits_for_the_server() -> None:
+    """Nothing is inferred: no "nothing is built" before an answer says so."""
+    app_js = read(APP_JS)
+    assert "  buildStatus: null,\n" in app_js
+    empty = _between(app_js, "function renderEmptyState(", "\n}\n")
+    assert empty.index('if (state.buildStatus !== "missing") {') < empty.index(
+        "ui.emptyState.hidden = false;"
+    )
+
+
+def test_the_empty_canvas_draws_the_standard_bands() -> None:
+    """Every layer band, in the usual order, the framework one on its toggle."""
+    app_js = read(APP_JS)
+    layout = _between(app_js, "function emptyLayout(", "\n}\n")
+    assert "LAYER_ORDER.length" in layout
+    assert 'LAYER_ORDER[i] === "FRAMEWORK" && !state.toggles.framework' in layout
+    empty = _between(app_js, "function renderEmptyState(", "\n}\n")
+    assert empty.index("state.layout = emptyLayout();") < empty.index("renderBands(state.layout);")
+
+
+def test_the_first_build_gets_the_added_part_beat() -> None:
+    """After "nothing is built", the first graph is diffed against nothing."""
+    app_js = read(APP_JS)
+    apply = _between(app_js, "function applyGraph(", "\n}\n")
+    assert apply.index("state.notBuilt ? { components: {} } : state.graph") < apply.index(
+        "diffGraphs(previous, graph)"
+    )
+    assert "state.beatPending = deltaHasAny(delta);" in apply
+
+
+def test_the_empty_state_adds_no_motion() -> None:
+    app_css = read(APP_CSS)
+    empty = _between(app_css, ".empty-state {", "@media (max-width: 900px)")
+    assert "animation" not in empty
+    assert "transition" not in empty
+    assert "@keyframes" not in empty
