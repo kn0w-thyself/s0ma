@@ -46,6 +46,10 @@
 
 var POLL_INTERVAL_MS = 1000;
 
+/* How many builds the list of changes keeps. Older ones drop off the
+ * end, and the list says how many have. */
+var CHANGES_KEPT = 30;
+
 /* Layout metrics, in user units. */
 var NODE_W = 132;
 var NODE_H = 82;
@@ -347,6 +351,12 @@ var state = {
   /* The parts the newest build added, kept outlined after the beat is
    * over (see "The outline that stays"). */
   outlined: {},
+  /* The list of changes: one entry per build that added, changed, or
+   * removed something since this page opened, newest first. It lives
+   * here and nowhere else (see "What changed since you opened this
+   * page"). `made` numbers the entries, `dropped` counts the ones past
+   * the cap, and `shown` is the toolbar toggle. */
+  changes: { entries: [], made: 0, dropped: 0, shown: true },
   /* Sticky layout memory, one entry per module (see organSlotting).
    * Wiped whenever `slotKey` changes, which is the only thing that
    * licenses a full relayout. */
@@ -1330,15 +1340,21 @@ function buildShell(mount) {
   toolbar.appendChild(zoomIn);
   toolbar.appendChild(fit);
 
+  toolbar.appendChild(el("span", "toolbar-sep"));
+
+  /* A real toggle for the list of changes, pressed by default. */
+  ui.changesButton = toolbarButton("changes", toggleChanges);
+  ui.changesButton.setAttribute("aria-pressed", "true");
+  ui.changesButton.title =
+    "the builds that landed since this page opened, and what each changed";
+  toolbar.appendChild(ui.changesButton);
+
   /* Hidden until /api/graph brings s0ma's definitions: with none, there
    * is no dictionary to open and the toolbar reads as it always has. */
-  ui.termsSep = el("span", "toolbar-sep");
-  ui.termsSep.hidden = true;
   ui.termsButton = toolbarButton("terms", toggleDictionary);
   ui.termsButton.setAttribute("aria-pressed", "false");
   ui.termsButton.title = "s0ma's own definitions of the words on this page";
   ui.termsButton.hidden = true;
-  toolbar.appendChild(ui.termsSep);
   toolbar.appendChild(ui.termsButton);
   topbar.appendChild(toolbar);
   root.appendChild(topbar);
@@ -1348,15 +1364,20 @@ function buildShell(mount) {
 
   ui.stage = el("main", "stage");
 
-  /* First in the stage, so Tab reaches the account of the work before
-   * the graph it is about. Hidden until something has actually been
-   * narrated: an empty pane would be a claim that nothing is happening,
-   * which is not the same as nobody saying anything. */
+  /* The left column, first in the stage so Tab reaches it before the
+   * graph: the list of changes on top, narration under it. */
+  ui.sideColumn = el("div", "side-column");
+  ui.stage.appendChild(ui.sideColumn);
+  buildChangesPane(ui.sideColumn);
+
+  /* Hidden until something has actually been narrated: an empty pane
+   * would be a claim that nothing is happening, which is not the same
+   * as nobody saying anything. */
   ui.narration = el("aside", "narration");
   ui.narration.setAttribute("aria-label", "agent narration (self-reported)");
   ui.narration.setAttribute("tabindex", "-1");
   ui.narration.hidden = true;
-  ui.stage.appendChild(ui.narration);
+  ui.sideColumn.appendChild(ui.narration);
 
   ui.canvasWrap = el("div", "canvas-wrap");
   ui.canvas = svgEl("svg", {
@@ -1513,6 +1534,7 @@ function render() {
   );
 
   renderBanners();
+  renderChanges();
 
   if (state.buildStatus === "missing" || !state.model) {
     /* There is no graph to beat on. Drop the delta rather than let it
@@ -4045,7 +4067,6 @@ function syncTermsButton() {
   }
   var has = state.terms.entries.length > 0;
   ui.termsButton.hidden = !has;
-  ui.termsSep.hidden = !has;
   ui.termsButton.setAttribute("aria-pressed", String(state.dictionary.open));
   var records = ui.legendTerms || [];
   for (var i = 0; i < records.length; i += 1) {
@@ -4288,6 +4309,302 @@ function toggleDictionaryRow(entryId) {
 }
 
 /* ------------------------------------------------------------------ *
+ * What changed since you opened this page
+ * ------------------------------------------------------------------ *
+ *
+ * The beat says what a build changed for a few seconds; this list keeps
+ * saying it. One entry per build that added, changed, or removed
+ * something a part declares, newest first. A build that only moved
+ * lines or only changed freshness makes no entry and uses no number.
+ *
+ * Nothing here is inferred: every line is read off the two graphs the
+ * page really received, the one on screen and the one that replaced it
+ * (diffGraphs). A build that follows "nothing is built" is said to be
+ * the first build, because the page was told so.
+ *
+ * It lives only in this page's memory. Nothing is written anywhere: no
+ * storage of any kind, no file, no request. A reload clears it. It
+ * keeps the newest CHANGES_KEPT entries and says how many have dropped.
+ * It carries no clock time, because this file reads no clock.
+ *
+ * Part names are DSL names, set in the monospace face; a name the
+ * current graph still carries is the same control a relationship row
+ * uses, and selects the part as a click on it does. A name that is gone
+ * is plain text. The pane follows the view toggles as the canvas does:
+ * a part they hide is counted in one line, not listed.
+ */
+
+function buildChangesPane(host) {
+  ui.changes = el("aside", "changes");
+  ui.changes.setAttribute("aria-label", "what changed since you opened this page");
+  ui.changes.setAttribute("tabindex", "-1");
+  ui.changes.appendChild(
+    el("h2", "changes-title", "What changed since you opened this page")
+  );
+  ui.changesEmpty = el(
+    "p",
+    "changes-empty",
+    "Nothing yet. Each build that lands is listed here and stays until you reload."
+  );
+  ui.changes.appendChild(ui.changesEmpty);
+  ui.changesList = el("ol", "changes-list");
+  ui.changesList.setAttribute("aria-live", "polite");
+  ui.changes.appendChild(ui.changesList);
+  ui.changesFoot = el("p", "changes-foot");
+  ui.changesFoot.hidden = true;
+  ui.changes.appendChild(ui.changesFoot);
+  host.appendChild(ui.changes);
+}
+
+/* Keep one build's changes. Called only for a delta that touched a
+ * part (deltaChangesParts), so a build that changed nothing declared
+ * makes no entry. Each part keeps what the view toggles need to know
+ * about it, read from the graph it was in. */
+function recordChange(delta, previousGraph, nextGraph, firstBuild) {
+  var record = changeRecord(delta, previousGraph, nextGraph);
+  state.changes.made += 1;
+  record.number = state.changes.made;
+  record.firstBuild = firstBuild;
+  state.changes.entries.unshift(record);
+  while (state.changes.entries.length > CHANGES_KEPT) {
+    state.changes.entries.pop();
+    state.changes.dropped += 1;
+  }
+}
+
+function changeRecord(delta, previousGraph, nextGraph) {
+  var record = { added: [], changed: [], removed: [] };
+  var nextComponents = nextGraph.components || {};
+  var previousComponents = previousGraph.components || {};
+  var ids = Object.keys(delta.added).sort(compareStrings);
+  var i;
+  for (i = 0; i < ids.length; i += 1) {
+    record.added.push(changePart(ids[i], nextComponents[ids[i]]));
+  }
+  ids = Object.keys(delta.changed).sort(compareStrings);
+  for (i = 0; i < ids.length; i += 1) {
+    var part = changePart(ids[i], nextComponents[ids[i]]);
+    part.lines = delta.changed[ids[i]].slice();
+    record.changed.push(part);
+  }
+  ids = Object.keys(delta.removed).sort(compareStrings);
+  for (i = 0; i < ids.length; i += 1) {
+    record.removed.push(changePart(ids[i], previousComponents[ids[i]]));
+  }
+  return record;
+}
+
+function changePart(canonicalId, component) {
+  var known = component || {};
+  return {
+    id: canonicalId,
+    declarationType: known.declaration_type || null,
+    layer: known.layer || null,
+  };
+}
+
+/* The same two rules isComponentVisible applies, on what the entry
+ * kept, so a removed part is judged the way it was drawn. */
+function changePartInView(part) {
+  if (TEST_AND_DOC_TYPES[part.declarationType] && !state.toggles.tests) {
+    return false;
+  }
+  if (part.layer === "FRAMEWORK" && !state.toggles.framework) {
+    return false;
+  }
+  return true;
+}
+
+function toggleChanges() {
+  state.changes.shown = !state.changes.shown;
+  renderChanges();
+}
+
+/* The column holds the list and narration; it goes only when both do. */
+function syncSideColumn() {
+  if (!ui.sideColumn) {
+    return;
+  }
+  var narrating = Boolean(ui.narration) && !ui.narration.hidden;
+  setClassFlag(ui.sideColumn, "has-narration", narrating);
+  ui.sideColumn.hidden = !state.changes.shown && !narrating;
+}
+
+function renderChanges() {
+  if (!ui.changes) {
+    return;
+  }
+  ui.changesButton.setAttribute("aria-pressed", String(state.changes.shown));
+  ui.changes.hidden = !state.changes.shown;
+  syncSideColumn();
+  var entries = state.changes.entries;
+  ui.changesEmpty.hidden = entries.length > 0;
+  var items = [];
+  for (var i = 0; i < entries.length; i += 1) {
+    items.push(changeEntryItem(entries[i]));
+  }
+  reconcileChangeItems(items);
+  var dropped = state.changes.dropped;
+  ui.changesFoot.hidden = dropped === 0;
+  ui.changesFoot.textContent =
+    dropped === 1
+      ? "1 earlier build is not listed."
+      : dropped + " earlier builds are not listed.";
+}
+
+/* The list is a polite live region, so it is updated in place: an entry
+ * that reads exactly as before is left alone, and only a new or
+ * different one is put in. A screen reader hears the new build, not the
+ * whole list again. */
+function reconcileChangeItems(items) {
+  var list = ui.changesList;
+  for (var i = 0; i < items.length; i += 1) {
+    var current = list.childNodes[i] || null;
+    if (current && current.isEqualNode(items[i])) {
+      continue;
+    }
+    if (
+      current &&
+      current.getAttribute("data-entry") === items[i].getAttribute("data-entry")
+    ) {
+      list.replaceChild(items[i], current);
+    } else {
+      list.insertBefore(items[i], current);
+    }
+  }
+  while (list.childNodes.length > items.length) {
+    list.removeChild(list.lastChild);
+  }
+}
+
+function changeEntryItem(entry) {
+  var item = el("li", "changes-item");
+  item.setAttribute("data-entry", String(entry.number));
+  var hidden = {};
+  var added = changePartsInView(entry.added, hidden);
+  var changed = changePartsInView(entry.changed, hidden);
+  var removed = changePartsInView(entry.removed, hidden);
+
+  var head = el("p", "changes-head");
+  head.appendChild(el("strong", null, "Build " + entry.number));
+  head.appendChild(el("span", "label-sep", " · "));
+  head.appendChild(
+    document.createTextNode(
+      (entry.firstBuild ? "the first build, " : "") +
+        changeCounts(added.length, changed.length, removed.length)
+    )
+  );
+  item.appendChild(head);
+
+  var i;
+  if (added.length > 0) {
+    var addedLine = el("p", "changes-line");
+    addedLine.appendChild(el("span", "changes-verb", "added "));
+    for (i = 0; i < added.length; i += 1) {
+      if (i > 0) {
+        addedLine.appendChild(document.createTextNode(", "));
+      }
+      addedLine.appendChild(changePartName(added[i].id));
+    }
+    item.appendChild(addedLine);
+  }
+  for (i = 0; i < changed.length; i += 1) {
+    var changedLine = el("p", "changes-line");
+    changedLine.appendChild(el("span", "changes-verb", "changed "));
+    changedLine.appendChild(changePartName(changed[i].id));
+    changedLine.appendChild(document.createTextNode(": "));
+    var lines = changed[i].lines;
+    for (var j = 0; j < lines.length; j += 1) {
+      if (j > 0) {
+        changedLine.appendChild(document.createTextNode(", "));
+      }
+      if (lines[j] === "dependencies") {
+        changedLine.appendChild(document.createTextNode("dependencies"));
+      } else {
+        changedLine.appendChild(el("code", "term", lines[j]));
+      }
+    }
+    item.appendChild(changedLine);
+  }
+  if (removed.length > 0) {
+    var removedLine = el("p", "changes-line");
+    removedLine.appendChild(el("span", "changes-verb", "removed "));
+    for (i = 0; i < removed.length; i += 1) {
+      if (i > 0) {
+        removedLine.appendChild(document.createTextNode(", "));
+      }
+      removedLine.appendChild(changeGoneName(removed[i].id));
+    }
+    item.appendChild(removedLine);
+  }
+  var hiddenCount = Object.keys(hidden).length;
+  if (hiddenCount > 0) {
+    item.appendChild(
+      el(
+        "p",
+        "changes-hidden",
+        hiddenCount === 1
+          ? "1 more part is hidden by the toolbar toggles."
+          : hiddenCount + " more parts are hidden by the toolbar toggles."
+      )
+    );
+  }
+  return item;
+}
+
+function changePartsInView(parts, hidden) {
+  var out = [];
+  for (var i = 0; i < parts.length; i += 1) {
+    if (changePartInView(parts[i])) {
+      out.push(parts[i]);
+    } else {
+      hidden[parts[i].id] = true;
+    }
+  }
+  return out;
+}
+
+/* "added 2 parts, changed 1": the noun rides on the first count only,
+ * singular and plural right. */
+function changeCounts(added, changed, removed) {
+  var phrases = [];
+  var counts = [
+    ["added", added],
+    ["changed", changed],
+    ["removed", removed],
+  ];
+  for (var i = 0; i < counts.length; i += 1) {
+    var n = counts[i][1];
+    if (n === 0) {
+      continue;
+    }
+    var noun = phrases.length > 0 ? "" : n === 1 ? " part" : " parts";
+    phrases.push(counts[i][0] + " " + n + noun);
+  }
+  if (phrases.length === 0) {
+    return "no parts in view";
+  }
+  return phrases.join(", ");
+}
+
+/* A part the current graph carries is the relationship rows' own
+ * control; one it no longer carries is plain text, never a dead one. */
+function changePartName(canonicalId) {
+  if (state.model && state.model.components[canonicalId]) {
+    var control = peerControl(canonicalId);
+    setClassFlag(control, "changes-name", true);
+    return control;
+  }
+  return changeGoneName(canonicalId);
+}
+
+function changeGoneName(canonicalId) {
+  var name = el("code", "changes-name", shortName(canonicalId));
+  name.title = canonicalId;
+  return name;
+}
+
+/* ------------------------------------------------------------------ *
  * Narration — the agent's account of its own work
  * ------------------------------------------------------------------ *
  *
@@ -4362,9 +4679,11 @@ function renderNarration() {
   var entries = narration.entries;
   if (!entries.length && !narration.invalid) {
     ui.narration.hidden = true;
+    syncSideColumn();
     return;
   }
   ui.narration.hidden = false;
+  syncSideColumn();
 
   var head = el("div", "narration-head");
   head.appendChild(el("h2", "narration-title", "agent narration"));
@@ -4746,6 +5065,7 @@ function applyGraph(graph, stateDoc) {
    * nothing is there, so the first build is a change from an empty graph
    * and each of its parts gets the beat any added part gets. */
   var previous = state.notBuilt ? { components: {} } : state.graph;
+  var firstBuild = state.notBuilt;
   state.notBuilt = false;
   var delta = diffGraphs(previous, graph);
   var derived = stateDoc || deriveStateFromGraph(graph);
@@ -4762,6 +5082,7 @@ function applyGraph(graph, stateDoc) {
         state.outlined[addedId] = true;
       }
     }
+    recordChange(delta, previous, graph, firstBuild);
   }
   state.graph = graph;
   state.model = buildModel(graph);

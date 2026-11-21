@@ -35,7 +35,12 @@ Pinned here:
 * a project with nothing built is not a lost connection: once the server
   has said so, the canvas draws the standard bands, empty, with one plain
   sentence and the command, and the first build's parts arrive with the
-  added-part beat.
+  added-part beat;
+* a part is changed only when something it declares differs (never its
+  location alone), the parts the newest build added stay outlined until
+  the next build that changes something, and the list of changes keeps
+  each build's entry in page memory only, newest first, capped, behind a
+  toolbar toggle, with no storage and no clock.
 
 Whether the graph *looks* right is not decidable here; that is the
 browser pass over ``tests/fixtures/dev_harness.html``.
@@ -1036,3 +1041,135 @@ def test_the_status_line_says_what_the_outline_means() -> None:
     assert status.index("if (outlinedInView(layout) > 0) {") < status.index(OUTLINE_SENTENCE)
     line = next(text for text in app_js.splitlines() if OUTLINE_SENTENCE in text)
     assert '"code"' not in line
+
+
+CHANGES_HEADING = "What changed since you opened this page"
+CHANGES_EMPTY = "Nothing yet. Each build that lands is listed here and stays until you reload."
+
+
+def test_the_list_of_changes_is_an_aside_with_a_polite_live_list() -> None:
+    app_js = read(APP_JS)
+    pane = _between(app_js, "function buildChangesPane(", "\n}\n")
+    assert 'ui.changes = el("aside", "changes");' in pane
+    label = 'ui.changes.setAttribute("aria-label", "what changed since you opened this page");'
+    assert label in pane
+    assert 'ui.changesList.setAttribute("aria-live", "polite");' in pane
+    assert '"' + CHANGES_HEADING + '"' in pane
+    assert '"' + CHANGES_EMPTY + '"' in pane
+    # Updated in place, so a screen reader hears the new build only.
+    reconcile = _between(app_js, "function reconcileChangeItems(", "\n}\n")
+    assert "current.isEqualNode(items[i])" in reconcile
+
+
+def test_the_list_sits_above_narration_in_the_left_column() -> None:
+    """Narration keeps its pane, heading and attribution, under the list."""
+    app_js = read(APP_JS)
+    shell = _between(app_js, "function buildShell(", "\n}\n")
+    assert shell.index("buildChangesPane(ui.sideColumn);") < shell.index(
+        "ui.sideColumn.appendChild(ui.narration);"
+    )
+    assert shell.index("ui.stage.appendChild(ui.sideColumn);") < shell.index(
+        "ui.stage.appendChild(ui.canvasWrap);"
+    )
+    column = _between(app_js, "function syncSideColumn(", "\n}\n")
+    assert "ui.sideColumn.hidden = !state.changes.shown && !narrating;" in column
+    narration = _between(app_js, "function renderNarration(", "\n}\n")
+    assert narration.count("syncSideColumn();") == 2
+
+
+def test_one_entry_per_build_that_changed_a_part_newest_first() -> None:
+    """Only a build that adds, changes, or removes makes an entry and a number."""
+    app_js = read(APP_JS)
+    apply = _between(app_js, "function applyGraph(", "\n}\n")
+    gate = apply.index("if (deltaChangesParts(delta)) {")
+    assert gate < apply.index("recordChange(delta, previous, graph, firstBuild);")
+    assert apply.index("var firstBuild = state.notBuilt;") < apply.index("state.notBuilt = false;")
+    record = _between(app_js, "function recordChange(", "\n}\n")
+    assert "state.changes.made += 1;" in record
+    assert "state.changes.entries.unshift(record);" in record
+    # A page opened on a built project has nothing to diff against.
+    diff = _between(app_js, "function diffGraphs(", "\n}\n")
+    assert "if (!previous) {\n    return delta;\n  }" in diff
+
+
+def test_the_list_keeps_the_newest_thirty_and_says_how_many_dropped() -> None:
+    app_js = read(APP_JS)
+    assert "var CHANGES_KEPT = 30;" in app_js
+    record = _between(app_js, "function recordChange(", "\n}\n")
+    assert "while (state.changes.entries.length > CHANGES_KEPT) {" in record
+    assert "state.changes.entries.pop();" in record
+    assert "state.changes.dropped += 1;" in record
+    assert '"1 earlier build is not listed."' in app_js
+    assert '" earlier builds are not listed."' in app_js
+
+
+def test_an_entry_reads_in_its_order_and_its_words() -> None:
+    app_js = read(APP_JS)
+    item = _between(app_js, "function changeEntryItem(", "\n}\n")
+    assert 'el("strong", null, "Build " + entry.number)' in item
+    assert '(entry.firstBuild ? "the first build, " : "")' in item
+    order = [
+        item.index('"changes-verb", "added "'),
+        item.index('"changes-verb", "changed "'),
+        item.index('"changes-verb", "removed "'),
+    ]
+    assert order == sorted(order)
+    # Part names: the relationship rows' control while the part exists,
+    # plain text once it is gone; removed parts are always plain text.
+    assert "changePartName(added[i].id)" in item
+    assert "changePartName(changed[i].id)" in item
+    assert "changeGoneName(removed[i].id)" in item
+    name = _between(app_js, "function changePartName(", "\n}\n")
+    assert "state.model.components[canonicalId]" in name
+    assert "peerControl(canonicalId)" in name
+    gone = _between(app_js, "function changeGoneName(", "\n}\n")
+    assert 'el("code", "changes-name", shortName(canonicalId))' in gone
+    assert "button" not in gone
+    # DSL terms in monospace, "dependencies" in the plain face.
+    assert 'document.createTextNode("dependencies")' in item
+    assert 'el("code", "term", lines[j])' in item
+
+
+def test_the_counts_are_said_in_words() -> None:
+    app_js = read(APP_JS)
+    counts = _between(app_js, "function changeCounts(", "\n}\n")
+    assert '["added", added],\n    ["changed", changed],\n    ["removed", removed],' in counts
+    assert 'n === 1 ? " part" : " parts"' in counts
+    assert 'phrases.join(", ")' in counts
+
+
+def test_the_changes_toggle_is_a_real_pressed_button_beside_terms() -> None:
+    app_js = read(APP_JS)
+    shell = _between(app_js, "function buildShell(", "\n}\n")
+    assert 'ui.changesButton = toolbarButton("changes", toggleChanges);' in shell
+    assert 'ui.changesButton.setAttribute("aria-pressed", "true");' in shell
+    assert shell.index("toolbar.appendChild(ui.changesButton);") < shell.index(
+        "toolbar.appendChild(ui.termsButton);"
+    )
+    assert "  changes: { entries: [], made: 0, dropped: 0, shown: true },\n" in app_js
+    toggle = _between(app_js, "function toggleChanges(", "\n}\n")
+    assert "state.changes.shown = !state.changes.shown;" in toggle
+    render_changes = _between(app_js, "function renderChanges(", "\n}\n")
+    assert 'ui.changesButton.setAttribute("aria-pressed", String(state.changes.shown));' in (
+        render_changes
+    )
+    assert "ui.changes.hidden = !state.changes.shown;" in render_changes
+
+
+def test_the_page_stores_nothing_and_reads_no_clock() -> None:
+    """The list lives in page memory only, and carries no clock time."""
+    app_js = read(APP_JS)
+    for storage in ("localStorage", "sessionStorage", "document.cookie", "indexedDB"):
+        assert storage not in app_js, storage
+    for clock in ("new Date", "Date.now", "performance.now", "toLocaleTimeString"):
+        assert clock not in app_js, clock
+
+
+def test_the_list_styles_add_no_motion_and_no_dashes() -> None:
+    app_css = read(APP_CSS)
+    pane = _between(app_css, ".side-column {", "-- narration */")
+    assert "animation" not in pane
+    assert "transition" not in pane
+    assert "px dashed" not in pane
+    assert "dasharray" not in pane
+    assert "font-family: var(--mono);" in _between(app_css, ".changes-name {", "}")
