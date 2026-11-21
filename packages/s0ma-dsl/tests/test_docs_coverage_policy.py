@@ -498,7 +498,7 @@ class TestThePolicyAgainstTheLiveComposition:
     ) -> None:
         """The vacuity control: the corpus it walks is the real, large one."""
         assert len(composed.surfaces) >= 200
-        assert len(composed.journeys) == 7
+        assert len(composed.journeys) == 8
         assert len(policy.claimed_surfaces()) >= 40
 
 
