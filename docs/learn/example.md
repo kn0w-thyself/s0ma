@@ -73,4 +73,4 @@ example <name>
 
 - Topic id: `concept:example`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:ebe6a8122c118b89`
+- Documentation snapshot: `sha256:162527b93a7e0092`
