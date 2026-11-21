@@ -6,7 +6,7 @@
       "path": "assets/app.css"
     },
     "sh0w_assets::APP_JS": {
-      "hash": "sha256:14e6de74d4d9268d5c049b93690794f7fb97c57302e97e9f986536a5c29d22a7",
+      "hash": "sha256:e4eb5f4893678498582bd1a472037b6100fddbebb907426dab9aced4bab12773",
       "path": "assets/app.js"
     },
     "sh0w_assets::INDEX_HTML": {
@@ -20,7 +20,7 @@
       "logical_path": "sh0w_assets.s0ma",
       "name": "sh0w_assets",
       "output": "sh0w_assets.py",
-      "output_hash": "sha256:49e5cb05194d1d9d9403a54c7652b0aa4b804d6f9a0306fd766accce70a45692",
+      "output_hash": "sha256:c503dc735eb2c19ad8c0a11986f8742b0f7c96be1aa9f40d8e15b57e5df5e90a",
       "role": "source",
       "source": "s0ma_src/sh0w_assets.s0ma",
       "source_hash": "sha256:8bf09a3eab410f723f4dd885120c073536e5e06ae41447e78d3549979ae51ca2",

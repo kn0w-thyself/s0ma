@@ -589,6 +589,33 @@ def test_used_by_is_a_reverse_index_of_declared_uses() -> None:
     assert '"show module " + moduleName + " in the graph"' in app_js
 
 
+def test_used_by_never_claims_completeness_it_cannot_know() -> None:
+    """A module whose ``uses`` is absent or pending makes the list partial."""
+    app_js = read(APP_JS)
+    reverse = app_js[
+        app_js.index("function modulesUsing(") : app_js.index(
+            "function moduleControl("
+        )
+    ]
+    assert 'if (!hasUses || projectValue(imports.uses).kind !== "none") {' in reverse
+    assert '"1 module has not declared its "' in reverse
+    assert '" modules have not declared their "' in reverse
+    assert '", so this list may be incomplete"' in reverse
+    # "none in this project" is said only when nothing is unknown.
+    assert reverse.index("if (reverse.unknown > 0) {") < reverse.index(
+        '"none in this project"'
+    )
+
+
+def test_module_fold_shows_a_privileged_list_with_entries() -> None:
+    app_js = read(APP_JS)
+    fold = app_js[app_js.index("function renderMoreAboutThisModule(") :]
+    fold = fold[: fold.index("\n}\n")]
+    assert "if (Array.isArray(privileged) && privileged.length > 0) {" in fold
+    assert 'fieldLabel("dt", null, "privileged", null)' in fold
+    assert 'el("code", "term", String(privileged[p]))' in fold
+
+
 def test_fixture_module_records_carry_the_module_panel_keys() -> None:
     """The harness has a module record to draw every module panel row for."""
     payload = json.loads(read(FIXTURE_PAYLOAD))

@@ -2955,9 +2955,12 @@ function renderModuleExports(moduleName, raw) {
 
 /* The modules whose declared `uses` name a part of `moduleName`: a
  * reverse index over every module's own `uses` list, built here from
- * declared data and nothing else. */
+ * declared data and nothing else. `unknown` counts the other modules
+ * whose `uses` cannot be read (no key, or pending), so the panel never
+ * calls the list complete when it cannot know. */
 function modulesUsing(moduleName) {
   var found = [];
+  var unknown = 0;
   var names = state.model.moduleNames;
   for (var i = 0; i < names.length; i += 1) {
     var other = names[i];
@@ -2966,8 +2969,12 @@ function modulesUsing(moduleName) {
     }
     var record = state.model.modules[other];
     var imports = record && record.imports;
-    var entries = imports ? declaredNames(imports.uses) : null;
+    var hasUses = Boolean(imports) && typeof imports === "object" && "uses" in imports;
+    var entries = hasUses ? declaredNames(imports.uses) : null;
     if (!entries) {
+      if (!hasUses || projectValue(imports.uses).kind !== "none") {
+        unknown += 1;
+      }
       continue;
     }
     for (var j = 0; j < entries.length; j += 1) {
@@ -2977,23 +2984,39 @@ function modulesUsing(moduleName) {
       }
     }
   }
-  return found;
+  return { found: found, unknown: unknown };
 }
 
 function renderModuleUsedBy(moduleName) {
   var section = plainSection("used by", "files that reach into it");
-  var users = modulesUsing(moduleName);
-  if (users.length === 0) {
+  var reverse = modulesUsing(moduleName);
+  var users = reverse.found;
+  if (users.length > 0) {
+    var list = el("ul", "rel-list");
+    for (var i = 0; i < users.length; i += 1) {
+      var item = el("li", "rel-item");
+      item.appendChild(moduleControl(users[i]));
+      list.appendChild(item);
+    }
+    section.appendChild(list);
+  }
+  if (reverse.unknown > 0) {
+    var note = el("p", "value-absent");
+    note.appendChild(
+      document.createTextNode(
+        reverse.unknown === 1
+          ? "1 module has not declared its "
+          : reverse.unknown + " modules have not declared their "
+      )
+    );
+    note.appendChild(el("code", "term", "uses"));
+    note.appendChild(
+      document.createTextNode(", so this list may be incomplete")
+    );
+    section.appendChild(note);
+  } else if (users.length === 0) {
     section.appendChild(el("p", "value-absent", "none in this project"));
-    return;
   }
-  var list = el("ul", "rel-list");
-  for (var i = 0; i < users.length; i += 1) {
-    var item = el("li", "rel-item");
-    item.appendChild(moduleControl(users[i]));
-    list.appendChild(item);
-  }
-  section.appendChild(list);
 }
 
 /* A module named in the panel, as the button that selects it through
@@ -3062,6 +3085,22 @@ function renderMoreAboutThisModule(module) {
         shown += 1;
       }
     }
+  }
+  /* `privileged` is a plain list on the imports block: a row when it
+   * holds names, left out when it is empty or absent. */
+  var privileged = imports ? imports.privileged : null;
+  if (Array.isArray(privileged) && privileged.length > 0) {
+    basics.appendChild(fieldLabel("dt", null, "privileged", null));
+    var privilegedHolder = el("dd");
+    var privilegedList = el("ul");
+    for (var p = 0; p < privileged.length; p += 1) {
+      var privilegedItem = el("li");
+      privilegedItem.appendChild(el("code", "term", String(privileged[p])));
+      privilegedList.appendChild(privilegedItem);
+    }
+    privilegedHolder.appendChild(privilegedList);
+    basics.appendChild(privilegedHolder);
+    shown += 1;
   }
   if (shown > 0) {
     more.appendChild(basics);
