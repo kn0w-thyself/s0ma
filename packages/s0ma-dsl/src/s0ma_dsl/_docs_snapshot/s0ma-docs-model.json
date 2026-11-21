@@ -358,7 +358,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "fca032a3a858446ab4090a236f509d080ac3ce4bf4623e20acecc1fcee44dd66",
+      "content_sha256": "9a36ffe4b4d65394bb52eb13fab4cc5b5fdf211b2b3fc4048cac26b6ca5d039b",
       "delegates": [],
       "id": "authority:declared/studi0.wire-graph",
       "section": "GRAPH_SCHEMA",
@@ -367,7 +367,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "fca032a3a858446ab4090a236f509d080ac3ce4bf4623e20acecc1fcee44dd66",
+      "content_sha256": "9a36ffe4b4d65394bb52eb13fab4cc5b5fdf211b2b3fc4048cac26b6ca5d039b",
       "delegates": [],
       "id": "authority:declared/studi0.wire-state",
       "section": "STATE_SCHEMA",
@@ -5523,7 +5523,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:603bfd17188e9be8"
+    "snapshot_hash": "sha256:b8a43b81e4ce04df"
   },
   "surfaces": [
     {
