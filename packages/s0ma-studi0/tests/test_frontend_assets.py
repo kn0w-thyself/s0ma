@@ -27,7 +27,10 @@ Pinned here:
   byte-identical to the checked-in payload;
 * the narration pane (M11) is still wired, still labelled as
   self-report, still visually unlike the graph, and still steers the
-  canvas only through the selection path a click already uses.
+  canvas only through the selection path a click already uses;
+* the term controls, their card and the dictionary are still wired to
+  the terms block /api/graph serves, keep only ids in the page, and
+  leave the page as it was when there is no terms block.
 
 Whether the graph *looks* right is not decidable here; that is the
 browser pass over ``tests/fixtures/dev_harness.html``.
@@ -629,3 +632,181 @@ def test_fixture_module_records_carry_the_module_panel_keys() -> None:
         for entry in module["imports"]["uses"]["value"]
     ]
     assert uses, "no declared uses to build used by from"
+
+
+# ---------------------------------------------------------------------------
+# Terms: s0ma's own definitions, opened from the words the page prints
+# ---------------------------------------------------------------------------
+
+
+def _between(text: str, start: str, end: str) -> str:
+    begin = text.index(start)
+    return text[begin : text.index(end, begin)]
+
+
+def test_terms_arrive_with_the_graph_and_with_the_fixture() -> None:
+    """Live mode reads the block /api/graph serves; fixture mode a global."""
+    app_js = read(APP_JS)
+    assert "function applyTerms(" in app_js
+    assert "applyTerms(document_.terms);" in app_js
+    assert "applyTerms(window.__S0MA_TERMS__);" in app_js
+    # Applied before the graph, so the repaint already knows the words.
+    fetch = _between(app_js, "function fetchGraph(", "\n}\n")
+    assert fetch.index("applyTerms(") < fetch.index("applyGraph(")
+
+
+def test_the_page_keeps_pointers_and_never_a_definition() -> None:
+    """Ids only: three role and field pointers, in their own constants."""
+    app_js = read(APP_JS)
+    pointers = _between(app_js, "var TERM_POINTERS = {", "};")
+    assert '"layer-name": "concept:layer",' in pointers
+    assert 'relation: "concept:axon",' in pointers
+    contract = _between(app_js, "var CONTRACT_FIELD_POINTERS = {", "};")
+    for field in ("guarantees", "forbids", "expects"):
+        assert f'  {field}: "concept:contract",' in contract, field
+    assert contract.count("concept:") == 3
+
+
+def test_one_resolver_and_its_order() -> None:
+    """A role pointer, then a contract line, then the entry's own names."""
+    resolver = _between(read(APP_JS), "function resolveTerm(", "\n}\n")
+    order = [
+        resolver.index("TERM_POINTERS[role]"),
+        resolver.index("CONTRACT_FIELD_POINTERS[text]"),
+        resolver.index("state.terms.byName"),
+    ]
+    assert order == sorted(order)
+    assert "return null;" in resolver
+    assert ".toLowerCase()" in _between(read(APP_JS), "function termKey(", "\n}\n")
+
+
+def test_a_term_control_is_a_real_button_with_aria_expanded() -> None:
+    app_js = read(APP_JS)
+    control = _between(app_js, "function inspectorTerm(", "\n}\n")
+    assert 'el("button", "term-control " + className, text)' in control
+    assert 'button.type = "button";' in control
+    assert 'button.setAttribute("aria-expanded", "false");' in control
+    assert 'button.setAttribute("aria-expanded", "true");' in app_js
+
+
+def test_the_term_positions_are_wired() -> None:
+    """Header, labels, fold names, relation words and the legend."""
+    app_js = read(APP_JS)
+    assert 'inspectorTerm(component.declaration_type, null, "decl-tag")' in app_js
+    assert 'inspectorTerm("module", null, "decl-tag")' in app_js
+    assert 'appendTermValue(where, component.layer, "layer-name");' in app_js
+    assert 'appendTermValue(where, module.layer, "layer-name");' in app_js
+    assert 'appendTermWord(where, "module");' in app_js
+    assert 'appendTermWord(where, "layer");' in app_js
+    label = _between(app_js, "function fieldLabel(", "\n}\n")
+    assert 'inspectorTerm(term, null, "term")' in label
+    # The plain phrase is appended after the control, never inside it.
+    assert label.index("inspectorTerm(") < label.index('"label-phrase"')
+    assert "appendTermWord(dt, term);" in app_js
+    assert "appendTermWord(item, undeclared[j]);" in app_js
+    assert 'appendTermValue(head, edge.relation, "relation");' in app_js
+    assert 'inspectorTerm(String(edge.relation), "relation", "rel-relation")' in app_js
+    assert 'el("button", "term-control legend-term", record.word)' in app_js
+
+
+def test_the_card_holds_its_parts_in_order() -> None:
+    """Where it is explained, the summary, Read more, then the command."""
+    card = _between(read(APP_JS), "function termCard(", "\n}\n")
+    order = [
+        card.index("!isOwnName(entry, word)"),
+        card.index('" is explained under "'),
+        card.index("entry.summary"),
+        card.index('el("details", "term-card-more")'),
+        card.index('"Read more"'),
+        card.index('el("p", "term-card-definition", entry.definition)'),
+        card.index('"Full entry: "'),
+        card.index('"s0ma docs show " + entry.id'),
+    ]
+    assert order == sorted(order)
+    # The command is text in the monospace face, never a link.
+    assert 'el("code", "term-card-command", "s0ma docs show " + entry.id)' in card
+    assert '"a"' not in card and "href" not in card
+
+
+def test_one_card_at_a_time_that_survives_a_repaint() -> None:
+    app_js = read(APP_JS)
+    toggle = _between(app_js, "function toggleTermCard(", "\n}\n")
+    assert "closeTermCard();" in toggle
+    restore = _between(app_js, "function restoreTermCard(", "\n}\n")
+    assert "wanted.selection !== selectionKey(state.selection)" in restore
+    inspector = _between(app_js, "function renderInspector(", "\n}\n")
+    assert "restoreTermCard();" in inspector
+
+
+def test_the_dictionary_is_wired() -> None:
+    """A terms button, the heading, its sections, back, and Esc."""
+    app_js = read(APP_JS)
+    assert 'ui.termsButton = toolbarButton("terms", toggleDictionary);' in app_js
+    assert 'ui.termsButton.setAttribute("aria-pressed", "false");' in app_js
+    assert 'ui.termsButton.setAttribute("aria-pressed", String(state.dictionary.open));' in (
+        app_js
+    )
+    dictionary = _between(app_js, "function renderDictionary(", "\n}\n")
+    order = [
+        dictionary.index('"Terms"'),
+        dictionary.index('"close"'),
+        dictionary.index("\"s0ma's own definitions, from s0ma\""),
+        dictionary.index('"back to " + selectionName(back)'),
+        dictionary.index('"On this page"'),
+        dictionary.index('" more terms from s0ma"'),
+    ]
+    assert order == sorted(order)
+    assert "source.release_version" in dictionary
+    assert 'el("details", "inspector-more terms-more")' in dictionary
+    assert "PAGE_TERM_WORDS" in _between(app_js, "function pageTermIds(", "\n}\n")
+    # A part chosen while the dictionary is open takes the panel back.
+    assert "closeDictionaryState();" in _between(app_js, "function select(", "\n}\n")
+    assert "if (state.selection || state.dictionary.open) {" in app_js
+    # A legend glyph name opens the dictionary on its entry.
+    assert "openDictionary(entryId);" in app_js
+    assert 'scrollIntoView({ block: "nearest" })' in app_js
+
+
+def test_with_no_terms_the_page_reads_as_before() -> None:
+    """No entries: no control anywhere, no terms button, the old elements."""
+    app_js = read(APP_JS)
+    resolver = _between(app_js, "function resolveTerm(", "\n}\n")
+    assert resolver.index("if (state.terms.entries.length === 0) {") < resolver.index(
+        "TERM_POINTERS"
+    )
+    assert "ui.termsButton.hidden = true;" in app_js
+    assert "ui.termsButton.hidden = !has;" in app_js
+    # Every position falls back to the element it drew before.
+    assert 'el("code", "decl-tag", component.declaration_type || "not declared")' in app_js
+    assert 'moduleTag || el("code", "decl-tag", "module")' in app_js
+    assert 'label.appendChild(el("code", "term", term));' in app_js
+    assert 'control || el("code", "term", word)' in app_js
+    assert 'relationControl || el("span", "rel-relation", relationText)' in app_js
+    assert 'next = el("span", null, record.word);' in app_js
+
+
+def test_the_plain_words_stay_in_the_plain_face() -> None:
+    """Monospace is for DSL words and commands; the card's own words are not."""
+    app_js = read(APP_JS)
+    for phrase in ('"Read more"', '"Full entry: "', '" is explained under "', '"Terms"'):
+        line = next(text for text in app_js.splitlines() if phrase in text)
+        assert '"code"' not in line, phrase
+    app_css = read(APP_CSS)
+    card = _between(app_css, ".term-card {", "}")
+    assert "font-family: var(--font);" in card
+
+
+def test_the_legend_takes_the_pointer_only_on_its_buttons() -> None:
+    app_css = read(APP_CSS)
+    legend = _between(app_css, ".legend {", "}")
+    assert "pointer-events: none;" in legend
+    assert ".legend .term-control {\n  pointer-events: auto;\n}" in app_css
+
+
+def test_terms_styles_add_no_motion() -> None:
+    app_css = read(APP_CSS)
+    terms = _between(app_css, "/* A word s0ma's own dictionary explains", ".empty-state {")
+    assert "animation" not in terms
+    assert "transition" not in terms
+    assert "@keyframes" not in terms
+

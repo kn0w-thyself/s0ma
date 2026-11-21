@@ -859,7 +859,7 @@
       "id": "sh0w_assets::APP_JS",
       "intent": {
         "state": "value",
-        "value": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, and the narration pane that shows what an agent says it is doing beside it. One file, no imports, no build step."
+        "value": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
@@ -1247,7 +1247,7 @@
   "source_ir": [
     {
       "path": "sh0w_assets.s0ma.json",
-      "sha256": "sha256:a42f10e6d8195d41b83f57121b13f663e70f74d57af213c2e6a59ceaaa5fb2d3"
+      "sha256": "sha256:488808c662cef96e6c1b21fb57515708ccd39eca370015b3f4a16ed5a3947462"
     },
     {
       "path": "studi0_narration.s0ma.json",

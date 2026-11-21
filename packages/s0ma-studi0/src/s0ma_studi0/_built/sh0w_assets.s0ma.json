@@ -72,13 +72,14 @@
         },
         "invariants": {
           "state": "value",
-          "value": "Served byte-for-byte as embedded: studi0 substitutes nothing at request time. The declared placeholders are not substitution targets but the names of the two JavaScript globals the fixture boot mode reads, the graph document and the optional narration block the dev harness supplies, declared here only so the cell's marker set matches the file's actual content."
+          "value": "Served byte-for-byte as embedded: studi0 substitutes nothing at request time. The declared placeholders are not substitution targets but the names of the three JavaScript globals the fixture boot mode reads, the graph document and the optional narration and terms blocks the dev harness supplies, declared here only so the cell's marker set matches the file's actual content."
         },
         "placeholders": {
           "state": "value",
           "value": [
             "__S0MA_FIXTURE__",
-            "__S0MA_NARRATION__"
+            "__S0MA_NARRATION__",
+            "__S0MA_TERMS__"
           ]
         },
         "schema": {
@@ -88,7 +89,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, and the narration pane that shows what an agent says it is doing beside it. One file, no imports, no build step."
+        "value": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
       },
       "kind": "CONSTANT",
       "location": {
@@ -137,7 +138,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:8bf09a3eab410f723f4dd885120c073536e5e06ae41447e78d3549979ae51ca2",
+    "content_hash": "sha256:3465075cd3d3cffb387cd70dd1c441a39bc883c78358606d35549a57085997c1",
     "exports_helpers": {
       "state": "none"
     },
@@ -153,6 +154,6 @@
     "version": "0.22.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:8bf09a3eab410f72",
+  "source_hash": "sha256:3465075cd3d3cffb",
   "transpiler_version": "1.0.0"
 }
