@@ -45,17 +45,17 @@
       },
       {
         "body_output": {
-          "end_line": 7023,
+          "end_line": 7054,
           "start_line": 1585
         },
         "body_source_file": "s0ma_src/assets/app.js",
         "body_source_lines": {
-          "end_line": 5439,
+          "end_line": 5470,
           "start_line": 1
         },
         "name": "APP_JS",
         "output": {
-          "end_line": 7030,
+          "end_line": 7061,
           "start_line": 1585
         },
         "source": {

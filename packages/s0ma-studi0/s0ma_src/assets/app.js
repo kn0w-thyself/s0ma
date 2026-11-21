@@ -363,6 +363,10 @@ var state = {
   slots: {},
   slotKey: null,
   defaultCollapsed: false,
+  /* Where each module sits in its band, by the order it was first
+   * placed (see "A steady band"). Wiped with `slots`. */
+  bandOrder: {},
+  bandOrderNext: 0,
   /* What an agent has said it is doing: the bounded window the server
    * serves, how many narrations there have been in all, and how many
    * session-log lines the server read and refused. Self-report, kept
@@ -722,6 +726,8 @@ function computeLayout() {
   var firstLayout = state.slotKey !== key;
   if (firstLayout) {
     state.slots = {};
+    state.bandOrder = {};
+    state.bandOrderNext = 0;
     state.slotKey = key;
     state.defaultCollapsed = visibleIds.length > COLLAPSE_THRESHOLD;
   }
@@ -779,7 +785,7 @@ function computeLayout() {
     if (!bandModules || bandModules.length === 0) {
       continue;
     }
-    bandModules = orderModulesInBand(bandModules, visible);
+    bandModules = steadyBandOrder(orderModulesInBand(bandModules, visible));
 
     var bandTop = y;
     var cursorX = CONTENT_X;
@@ -1145,6 +1151,31 @@ function orderModulesInBand(moduleNames, visible) {
     }
   }
   return ordered;
+}
+
+/* A steady band.
+ *
+ * orderModulesInBand sorts a band afresh, so a module that arrives with
+ * a build could land in front of the modules already drawn there and
+ * push every one of them sideways. So the order a module is first
+ * placed in is kept: a module already placed keeps its place, and a
+ * module that arrives is placed after them, the arrivals among
+ * themselves in the sorted order. That order holds for the life of the
+ * page. The first layout, and so a page opened on a built project, is
+ * the sorted order exactly as before, and a reload sorts again. A new
+ * band, or a module that grows a row, may still push what is below it
+ * down. */
+function steadyBandOrder(sorted) {
+  var i;
+  for (i = 0; i < sorted.length; i += 1) {
+    if (state.bandOrder[sorted[i]] === undefined) {
+      state.bandOrder[sorted[i]] = state.bandOrderNext;
+      state.bandOrderNext += 1;
+    }
+  }
+  return sorted.slice().sort(function (a, b) {
+    return state.bandOrder[a] - state.bandOrder[b];
+  });
 }
 
 /* ------------------------------------------------------------------ *

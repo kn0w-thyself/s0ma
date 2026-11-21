@@ -1173,3 +1173,29 @@ def test_the_list_styles_add_no_motion_and_no_dashes() -> None:
     assert "px dashed" not in pane
     assert "dasharray" not in pane
     assert "font-family: var(--mono);" in _between(app_css, ".changes-name {", "}")
+
+
+# ------------------------------------------------------------ a steady band
+
+
+def test_a_module_that_arrives_is_placed_after_the_ones_drawn() -> None:
+    """A band keeps the order its modules were first placed in.
+
+    The sort still decides the first layout, so a page opened on a built
+    project lays out as before, and it still decides the order among the
+    modules that arrive together; a module already placed never moves
+    over for one that arrives. The memory goes with the slot memory, so
+    a toggle that relays the view out sorts afresh, and a reload does.
+    """
+    app_js = read(APP_JS)
+    layout = _between(app_js, "function computeLayout(", "\n}\n")
+    assert "bandModules = steadyBandOrder(orderModulesInBand(bandModules, visible));" in layout
+    first = _between(layout, "if (firstLayout) {", "\n  }")
+    assert "state.slots = {};" in first
+    assert "state.bandOrder = {};" in first
+    assert "state.bandOrderNext = 0;" in first
+    steady = _between(app_js, "function steadyBandOrder(", "\n}\n")
+    assert "if (state.bandOrder[sorted[i]] === undefined) {" in steady
+    assert "state.bandOrder[sorted[i]] = state.bandOrderNext;" in steady
+    assert "return state.bandOrder[a] - state.bandOrder[b];" in steady
+    assert "  bandOrder: {},\n  bandOrderNext: 0,\n" in app_js
