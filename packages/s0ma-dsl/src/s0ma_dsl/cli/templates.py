@@ -1183,7 +1183,7 @@ doc-guide architecture_map
     - The coach file (APPLICATION) picks a small suggestion for the mood and watches whether the mood keeps flipping back and forth.
     - The page file (PRESENTATION) fills a small web page with the mood and the suggestion. {{nerve::song_to_page}} runs the whole way from a song to the finished page.
 
-    Each file may only use the layers below it, and the build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the page.
+    A file may only reach toward the middle of the app. The music file is the middle and uses no other file. The coach file uses the music file. The player file and the page file are the two edges: the player uses the music file, the page uses the coach and music files, and the two edges never use each other. The build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the page.
 
     ## Runtime state
 
