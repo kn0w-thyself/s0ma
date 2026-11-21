@@ -81,6 +81,20 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Changed
 
+- **studi0 says plainly when nothing is built yet.** Opened on a project with
+  no build, the page used to show a card and, next to it, a "viewer
+  disconnected" banner, although the viewer was connected and the server had
+  answered. Now, once the server says nothing is built (`build_status` is
+  `missing`, or `GET /api/graph` answers `NOT_BUILT`), there is no offline
+  banner. The canvas draws the usual layer bands, empty, with one sentence in
+  the middle, "Nothing is built yet. Parts appear here when the first build
+  lands.", and the command to run under it, and the status line says nothing
+  is built yet. Until the server has answered, the canvas stays blank. When
+  the first build lands, its parts arrive with the same mark and ring an
+  added part gets on any later build, where before they appeared with no
+  mark. No route, document, or status code changed, and no motion or color
+  was added.
+
 - **studi0's inspector leads with what a part is for.** Click a component
   and the panel opens on its short name, its declaration type as a tag, and
   one line with its `module` and `layer`. Each label now puts the DSL term
