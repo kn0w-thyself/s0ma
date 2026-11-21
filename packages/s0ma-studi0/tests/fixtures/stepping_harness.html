@@ -1,0 +1,3205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>sh0w stepping harness: three builds landing</title>
+    <!-- Stepping harness: the real page in its live mode, watching a small
+         app grow over three builds, with no server and no model call.
+
+         It loads app.css and app.js from the real asset directory by
+         relative path, the way dev_harness.html does, and sets none of the
+         fixture globals, so the page boots exactly as it does under
+         studi0 and polls /api/state. Before the page's script runs, a
+         replacement fetch answers the page's own requests from the data
+         below: the unbuilt answers studi0 gives (captured from its own
+         routing), then each build's real graph as "Land the next build"
+         moves the sequence number on. Any other path gets the answer
+         studi0 gives for a path it does not serve, and is recorded in
+         window.__S0MA_STEPS_ASKED__ with every other request.
+
+         The data blocks are written by tests/test_pipeline_builds.py
+         (`uv run python tests/test_pipeline_builds.py --write` from
+         packages/s0ma-studi0), which also checks they match the fixtures.
+
+         To open it, serve packages/s0ma-studi0 over a static server, for
+         example `uv run python -m http.server 8765 --bind 127.0.0.1
+         --directory packages/s0ma-studi0` from the repository root, and
+         browse to /tests/fixtures/stepping_harness.html on that port.
+         Opening the file directly works too. -->
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="../../s0ma_src/assets/app.css" />
+    <style>
+      /* The controls take a strip above the page, and the page keeps the
+         rest of the window, so nothing the page draws is covered. */
+      .stepper {
+        box-sizing: border-box;
+        height: 40px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--ink);
+        background: var(--canvas);
+        color: var(--ink);
+        font-family: var(--font);
+        font-size: 13px;
+      }
+      .stepper + .sh0w-mount {
+        height: calc(100% - 40px);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stepper" class="stepper" role="group" aria-label="stepping harness">
+      <button id="stepper-land" type="button">Land the next build</button>
+      <button id="stepper-reset" type="button">Start over</button>
+      <span id="stepper-line" aria-live="polite">Showing: nothing built yet.</span>
+    </div>
+    <div id="s0ma-sh0w" class="sh0w-mount"></div>
+    <script id="sh0w-unbuilt" type="application/json">
+{
+  "/api/graph": {
+    "body": {
+      "error": {
+        "code": "NOT_BUILT",
+        "message": "this project has no s0ma build artifacts to show — run `s0ma build` in it, and studi0 will pick the graph up without being restarted"
+      }
+    },
+    "content_type": "application/json; charset=utf-8",
+    "status": 500
+  },
+  "/api/state": {
+    "body": {
+      "build_status": "missing",
+      "narration": {
+        "entries": [],
+        "invalid": 0,
+        "total": 0
+      },
+      "schema": "s0ma-studi0-state@2",
+      "seq": 1,
+      "stale_modules": []
+    },
+    "content_type": "application/json; charset=utf-8",
+    "status": 200
+  },
+  "any other path": {
+    "body": {
+      "error": {
+        "code": "NOT_FOUND",
+        "message": "studi0 does not serve this path"
+      }
+    },
+    "content_type": "application/json; charset=utf-8",
+    "status": 404
+  }
+}
+    </script>
+    <script id="sh0w-build-1" type="application/json">
+{
+  "components": {
+    "music::Mood": {
+      "canonical_id": "music::Mood",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The name is one of lively, tense, calm, or low."
+        },
+        "schema": {
+          "state": "value",
+          "value": "name: str, description: str"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The mood a song puts across, as one word and a short plain description."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 40,
+        "file": "src/music/music.s0ma",
+        "line": 29,
+        "start_line": 29
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::Track": {
+      "canonical_id": "music::Track",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Loudness runs from 0, silent, to 1, as loud as the song gets."
+        },
+        "schema": {
+          "state": "value",
+          "value": "title: str, artist: str, beats_per_minute: int, loudness: float, major_key: bool"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A song that is playing: its title, who made it, how fast and how loud it is, and whether it is in a major key."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 27,
+        "file": "src/music/music.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::settle_mood": {
+      "canonical_id": "music::settle_mood",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A song."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never picks a mood outside those four."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back exactly one of four moods: lively, tense, calm, or low."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Decides which mood a song puts across, from how fast and loud it is and its key."
+      },
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 72,
+        "file": "src/music/music.s0ma",
+        "line": 42,
+        "start_line": 42
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music_tests::test_settle_mood_picks_one_of_four": {
+      "canonical_id": "music_tests::test_settle_mood_picks_one_of_four",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "music.settle_mood"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "How fast and loud a song is, and its key, decide which of the four moods it gets."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 27,
+        "file": "tests/music/music_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "music_tests",
+      "visibility": null
+    },
+    "player::read_now_playing": {
+      "canonical_id": "player::read_now_playing",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A turn number, which picks one of the built-in sample songs."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never contacts a music player or a music service; the four sample songs are built into this file."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back one of four built-in sample songs, and the same turn number always gives the same song."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tells the app which song is playing right now."
+      },
+      "kind": "ADAPTER",
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 45,
+        "file": "src/player/player.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "player",
+      "visibility": "PUBLIC"
+    },
+    "player_tests::test_read_now_playing_is_repeatable": {
+      "canonical_id": "player_tests::test_read_now_playing_is_repeatable",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "player.read_now_playing"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The same turn number always gives the same built-in song, and the songs take turns."
+      },
+      "kind": null,
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 24,
+        "file": "tests/player/player_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "player_tests",
+      "visibility": null
+    }
+  },
+  "edges": {
+    "authored": [],
+    "derived": [
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::settle_mood",
+        "target": "music::Mood"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::settle_mood",
+        "target": "music::Track"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "player::read_now_playing",
+        "target": "music::Track"
+      }
+    ],
+    "verification": [
+      {
+        "origin": "tests_field",
+        "test": "music_tests::test_settle_mood_picks_one_of_four",
+        "validates": "music::settle_mood"
+      },
+      {
+        "origin": "tests_field",
+        "test": "player_tests::test_read_now_playing_is_repeatable",
+        "validates": "player::read_now_playing"
+      }
+    ]
+  },
+  "freshness": {
+    "basis": "build.s0ma.json",
+    "manifest_found": true,
+    "stale_modules": [],
+    "status": "fresh",
+    "transpiler_version": "0.22.0"
+  },
+  "integrations": [],
+  "modules": [
+    {
+      "components": [],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file is the map of the app: a list of its public parts and a short tour of how they fit together."
+      },
+      "layer": "PRESENTATION",
+      "name": "app_map",
+      "source_file": "src/app_map.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "music::Mood",
+        "music::Track",
+        "music::settle_mood"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "Track",
+          "Mood",
+          "settle_mood"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file holds what the app knows about music: a song and the mood it settles on."
+      },
+      "layer": "DOMAIN",
+      "name": "music",
+      "source_file": "src/music/music.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "music_tests::test_settle_mood_picks_one_of_four"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Track",
+            "music.settle_mood"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for settling on a song's mood."
+      },
+      "layer": "DOMAIN",
+      "name": "music_tests",
+      "source_file": "tests/music/music_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "player::read_now_playing"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "read_now_playing"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Track"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file finds out what is playing right now."
+      },
+      "layer": "INFRASTRUCTURE",
+      "name": "player",
+      "source_file": "src/player/player.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "player_tests::test_read_now_playing_is_repeatable"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "player.read_now_playing"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for finding out what is playing."
+      },
+      "layer": "INFRASTRUCTURE",
+      "name": "player_tests",
+      "source_file": "tests/player/player_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    }
+  ],
+  "nodes": [
+    "music::Mood",
+    "music::Track",
+    "music::settle_mood",
+    "music_tests::test_settle_mood_picks_one_of_four",
+    "player::read_now_playing",
+    "player_tests::test_read_now_playing_is_repeatable"
+  ],
+  "schema": "s0ma-graph@2"
+}
+    </script>
+    <script id="sh0w-build-2" type="application/json">
+{
+  "components": {
+    "music::Features": {
+      "canonical_id": "music::Features",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Each score runs from 0 to 1."
+        },
+        "schema": {
+          "state": "value",
+          "value": "pace: float, energy: float, brightness: float"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "How a song sounds, as three scores: how fast it feels, how much energy it has, and how bright it sounds."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 41,
+        "file": "src/music/music.s0ma",
+        "line": 29,
+        "start_line": 29
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::Mood": {
+      "canonical_id": "music::Mood",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The name is one of lively, tense, calm, or low."
+        },
+        "schema": {
+          "state": "value",
+          "value": "name: str, description: str"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The mood a song puts across, as one word and a short plain description."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 54,
+        "file": "src/music/music.s0ma",
+        "line": 43,
+        "start_line": 43
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::Track": {
+      "canonical_id": "music::Track",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Loudness runs from 0, silent, to 1, as loud as the song gets."
+        },
+        "schema": {
+          "state": "value",
+          "value": "title: str, artist: str, beats_per_minute: int, loudness: float, major_key: bool"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A song that is playing: its title, who made it, how fast and how loud it is, and whether it is in a major key."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 27,
+        "file": "src/music/music.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::measure_features": {
+      "canonical_id": "music::measure_features",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A song."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never changes the song it is given; it only reads it."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back a pace, an energy, and a brightness score, each from 0 to 1."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Reads the facts about a song and scores how it sounds."
+      },
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 81,
+        "file": "src/music/music.s0ma",
+        "line": 56,
+        "start_line": 56
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::settle_mood": {
+      "canonical_id": "music::settle_mood",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "The scores for how a song sounds."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never picks a mood outside those four."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back exactly one of four moods: lively, tense, calm, or low."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Decides which mood a song puts across, from how it sounds."
+      },
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 113,
+        "file": "src/music/music.s0ma",
+        "line": 83,
+        "start_line": 83
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music_tests::test_measure_features_scores_a_song": {
+      "canonical_id": "music_tests::test_measure_features_scores_a_song",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "music.measure_features"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A fast, loud song in a major key scores high on every count."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 25,
+        "file": "tests/music/music_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "music_tests",
+      "visibility": null
+    },
+    "music_tests::test_settle_mood_picks_one_of_four": {
+      "canonical_id": "music_tests::test_settle_mood_picks_one_of_four",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "music.settle_mood"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Energy and brightness together decide which of the four moods a song gets."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 38,
+        "file": "tests/music/music_tests.s0ma",
+        "line": 27,
+        "start_line": 27
+      },
+      "module": "music_tests",
+      "visibility": null
+    },
+    "player::read_now_playing": {
+      "canonical_id": "player::read_now_playing",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A turn number, which picks one of the built-in sample songs."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never contacts a music player or a music service; the four sample songs are built into this file."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back one of four built-in sample songs, and the same turn number always gives the same song."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tells the app which song is playing right now."
+      },
+      "kind": "ADAPTER",
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 45,
+        "file": "src/player/player.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "player",
+      "visibility": "PUBLIC"
+    },
+    "player_tests::test_read_now_playing_is_repeatable": {
+      "canonical_id": "player_tests::test_read_now_playing_is_repeatable",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "player.read_now_playing"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The same turn number always gives the same built-in song, and the songs take turns."
+      },
+      "kind": null,
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 24,
+        "file": "tests/player/player_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "player_tests",
+      "visibility": null
+    }
+  },
+  "edges": {
+    "authored": [],
+    "derived": [
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::measure_features",
+        "target": "music::Features"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::measure_features",
+        "target": "music::Track"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::settle_mood",
+        "target": "music::Features"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::settle_mood",
+        "target": "music::Mood"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "player::read_now_playing",
+        "target": "music::Track"
+      }
+    ],
+    "verification": [
+      {
+        "origin": "tests_field",
+        "test": "music_tests::test_measure_features_scores_a_song",
+        "validates": "music::measure_features"
+      },
+      {
+        "origin": "tests_field",
+        "test": "music_tests::test_settle_mood_picks_one_of_four",
+        "validates": "music::settle_mood"
+      },
+      {
+        "origin": "tests_field",
+        "test": "player_tests::test_read_now_playing_is_repeatable",
+        "validates": "player::read_now_playing"
+      }
+    ]
+  },
+  "freshness": {
+    "basis": "build.s0ma.json",
+    "manifest_found": true,
+    "stale_modules": [],
+    "status": "fresh",
+    "transpiler_version": "0.22.0"
+  },
+  "integrations": [],
+  "modules": [
+    {
+      "components": [],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file is the map of the app: a list of its public parts and a short tour of how they fit together."
+      },
+      "layer": "PRESENTATION",
+      "name": "app_map",
+      "source_file": "src/app_map.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "music::Features",
+        "music::Mood",
+        "music::Track",
+        "music::measure_features",
+        "music::settle_mood"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "Track",
+          "Features",
+          "Mood",
+          "measure_features",
+          "settle_mood"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file holds what the app knows about music: a song, how it sounds, and the mood it settles on."
+      },
+      "layer": "DOMAIN",
+      "name": "music",
+      "source_file": "src/music/music.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "music_tests::test_measure_features_scores_a_song",
+        "music_tests::test_settle_mood_picks_one_of_four"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Track",
+            "music.Features",
+            "music.measure_features",
+            "music.settle_mood"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for scoring a song and settling on its mood."
+      },
+      "layer": "DOMAIN",
+      "name": "music_tests",
+      "source_file": "tests/music/music_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "player::read_now_playing"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "read_now_playing"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Track"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file finds out what is playing right now."
+      },
+      "layer": "INFRASTRUCTURE",
+      "name": "player",
+      "source_file": "src/player/player.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "player_tests::test_read_now_playing_is_repeatable"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "player.read_now_playing"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for finding out what is playing."
+      },
+      "layer": "INFRASTRUCTURE",
+      "name": "player_tests",
+      "source_file": "tests/player/player_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    }
+  ],
+  "nodes": [
+    "music::Features",
+    "music::Mood",
+    "music::Track",
+    "music::measure_features",
+    "music::settle_mood",
+    "music_tests::test_measure_features_scores_a_song",
+    "music_tests::test_settle_mood_picks_one_of_four",
+    "player::read_now_playing",
+    "player_tests::test_read_now_playing_is_repeatable"
+  ],
+  "schema": "s0ma-graph@2"
+}
+    </script>
+    <script id="sh0w-build-3" type="application/json">
+{
+  "components": {
+    "coach::Nudge": {
+      "canonical_id": "coach::Nudge",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The message is one short sentence."
+        },
+        "schema": {
+          "state": "value",
+          "value": "mood: str, message: str"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A small suggestion for the listener, and the mood it was chosen for."
+      },
+      "kind": "MODEL",
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 24,
+        "file": "src/coach/coach.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "coach",
+      "visibility": "PUBLIC"
+    },
+    "coach::choose_nudge": {
+      "canonical_id": "coach::choose_nudge",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A mood."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never makes up a suggestion; every message comes from the written list in this file."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back one suggestion from a short written list, one for each of the four moods."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Picks a small suggestion that fits the mood."
+      },
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 55,
+        "file": "src/coach/coach.s0ma",
+        "line": 26,
+        "start_line": 26
+      },
+      "module": "coach",
+      "visibility": "PUBLIC"
+    },
+    "coach::watch_swings": {
+      "canonical_id": "coach::watch_swings",
+      "declaration_type": "ganglion",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never changes a mood; it only counts what it sees."
+        },
+        "observes": {
+          "state": "value",
+          "value": [
+            "settle_mood"
+          ]
+        },
+        "on_anomaly": {
+          "state": "value",
+          "value": "Reports how many times the mood flipped back, so a person can look at the songs."
+        },
+        "priors": {
+          "state": "value",
+          "value": "The mood should stay put or move on, not flip back to the mood it just left."
+        },
+        "scope": "SUBSYSTEM"
+      },
+      "intent": {
+        "state": "value",
+        "value": "Watches the moods the app settles on and notices when they keep flipping back and forth."
+      },
+      "kind": null,
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 76,
+        "file": "src/coach/coach.s0ma",
+        "line": 57,
+        "start_line": 57
+      },
+      "module": "coach",
+      "visibility": "PUBLIC"
+    },
+    "coach_tests::test_choose_nudge_fits_the_mood": {
+      "canonical_id": "coach_tests::test_choose_nudge_fits_the_mood",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "coach.choose_nudge"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Each mood gets its own suggestion from the written list."
+      },
+      "kind": null,
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 23,
+        "file": "tests/coach/coach_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "coach_tests",
+      "visibility": null
+    },
+    "coach_tests::test_watch_swings_counts_flips": {
+      "canonical_id": "coach_tests::test_watch_swings_counts_flips",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "coach.watch_swings"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The watcher counts a mood that flips back to the one it just left, and stays quiet when the mood moves on."
+      },
+      "kind": null,
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 37,
+        "file": "tests/coach/coach_tests.s0ma",
+        "line": 25,
+        "start_line": 25
+      },
+      "module": "coach_tests",
+      "visibility": null
+    },
+    "music::Features": {
+      "canonical_id": "music::Features",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Each score runs from 0 to 1."
+        },
+        "schema": {
+          "state": "value",
+          "value": "pace: float, energy: float, brightness: float"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "How a song sounds, as three scores: how fast it feels, how much energy it has, and how bright it sounds."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 41,
+        "file": "src/music/music.s0ma",
+        "line": 29,
+        "start_line": 29
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::Mood": {
+      "canonical_id": "music::Mood",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The name is one of lively, tense, calm, or low."
+        },
+        "schema": {
+          "state": "value",
+          "value": "name: str, description: str"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The mood a song puts across, as one word and a short plain description."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 54,
+        "file": "src/music/music.s0ma",
+        "line": 43,
+        "start_line": 43
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::Track": {
+      "canonical_id": "music::Track",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "Loudness runs from 0, silent, to 1, as loud as the song gets."
+        },
+        "schema": {
+          "state": "value",
+          "value": "title: str, artist: str, beats_per_minute: int, loudness: float, major_key: bool"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A song that is playing: its title, who made it, how fast and how loud it is, and whether it is in a major key."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 27,
+        "file": "src/music/music.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::measure_features": {
+      "canonical_id": "music::measure_features",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A song."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never changes the song it is given; it only reads it."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back a pace, an energy, and a brightness score, each from 0 to 1."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Reads the facts about a song and scores how it sounds."
+      },
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 81,
+        "file": "src/music/music.s0ma",
+        "line": 56,
+        "start_line": 56
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music::settle_mood": {
+      "canonical_id": "music::settle_mood",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "The scores for how a song sounds."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never picks a mood outside those four."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back exactly one of four moods: lively, tense, calm, or low."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Decides which mood a song puts across, from how it sounds."
+      },
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 113,
+        "file": "src/music/music.s0ma",
+        "line": 83,
+        "start_line": 83
+      },
+      "module": "music",
+      "visibility": "PUBLIC"
+    },
+    "music_tests::test_measure_features_scores_a_song": {
+      "canonical_id": "music_tests::test_measure_features_scores_a_song",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "music.measure_features"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A fast, loud song in a major key scores high on every count."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 25,
+        "file": "tests/music/music_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "music_tests",
+      "visibility": null
+    },
+    "music_tests::test_settle_mood_picks_one_of_four": {
+      "canonical_id": "music_tests::test_settle_mood_picks_one_of_four",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "music.settle_mood"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Energy and brightness together decide which of the four moods a song gets."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 38,
+        "file": "tests/music/music_tests.s0ma",
+        "line": 27,
+        "start_line": 27
+      },
+      "module": "music_tests",
+      "visibility": null
+    },
+    "page::PAGE_HTML": {
+      "canonical_id": "page::PAGE_HTML",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "none"
+        },
+        "schema": {
+          "state": "value",
+          "value": "The text of a web page with two gaps, {mood} and {message}."
+        },
+        "value": "<!doctype html>\n<html><head><meta charset=\"utf-8\"><title>Now playing</title></head>\n<body>\n<h1>The mood is {mood}</h1>\n<p>{message}</p>\n</body></html>\n"
+      },
+      "intent": {
+        "state": "value",
+        "value": "The outline of the page, with gaps where the mood and the suggestion go."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 28,
+        "file": "src/page/page.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "page",
+      "visibility": "PUBLIC"
+    },
+    "page::show_page": {
+      "canonical_id": "page::show_page",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A suggestion and the mood it was chosen for."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never puts text on the page unescaped, so a song title or message cannot break the page."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back the full text of the page, with the mood and the suggestion in it."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Fills the page outline with the mood and the suggestion."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 55,
+        "file": "src/page/page.s0ma",
+        "line": 30,
+        "start_line": 30
+      },
+      "module": "page",
+      "visibility": "PUBLIC"
+    },
+    "page::song_to_page": {
+      "canonical_id": "page::song_to_page",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "SUBSYSTEM",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "The song that is playing."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never opens a network connection or starts a web server; it hands back the page as text."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back the full text of the page for that song."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Takes a song all the way to a finished page: measure it, settle the mood, choose a suggestion, and show it."
+      },
+      "kind": "ORCHESTRATOR",
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 84,
+        "file": "src/page/page.s0ma",
+        "line": 57,
+        "start_line": 57
+      },
+      "module": "page",
+      "visibility": "PUBLIC"
+    },
+    "page_tests::test_show_page_escapes_text": {
+      "canonical_id": "page_tests::test_show_page_escapes_text",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "page.show_page"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The page shows the mood and the suggestion, with any markup in them made harmless."
+      },
+      "kind": null,
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 23,
+        "file": "tests/page/page_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "page_tests",
+      "visibility": null
+    },
+    "page_tests::test_song_to_page_runs_the_whole_way": {
+      "canonical_id": "page_tests::test_song_to_page_runs_the_whole_way",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "page.song_to_page"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A quiet, bright song comes out as a calm page with the calm suggestion."
+      },
+      "kind": null,
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 37,
+        "file": "tests/page/page_tests.s0ma",
+        "line": 25,
+        "start_line": 25
+      },
+      "module": "page_tests",
+      "visibility": null
+    },
+    "player::read_now_playing": {
+      "canonical_id": "player::read_now_playing",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A turn number, which picks one of the built-in sample songs."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never contacts a music player or a music service; the four sample songs are built into this file."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back one of four built-in sample songs, and the same turn number always gives the same song."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tells the app which song is playing right now."
+      },
+      "kind": "ADAPTER",
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 45,
+        "file": "src/player/player.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "player",
+      "visibility": "PUBLIC"
+    },
+    "player_tests::test_read_now_playing_is_repeatable": {
+      "canonical_id": "player_tests::test_read_now_playing_is_repeatable",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "player.read_now_playing"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The same turn number always gives the same built-in song, and the songs take turns."
+      },
+      "kind": null,
+      "layer": "INFRASTRUCTURE",
+      "location": {
+        "end_line": 24,
+        "file": "tests/player/player_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "player_tests",
+      "visibility": null
+    }
+  },
+  "edges": {
+    "authored": [
+      {
+        "carries": "the mood, to pick a suggestion",
+        "coupling": "LOOSE",
+        "intent": "song_to_page CALLS coach.choose_nudge: the mood, to pick a suggestion",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "page::song_to_page",
+        "target": "coach::choose_nudge"
+      },
+      {
+        "carries": "the song, to score how it sounds",
+        "coupling": "LOOSE",
+        "intent": "song_to_page CALLS music.measure_features: the song, to score how it sounds",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "page::song_to_page",
+        "target": "music::measure_features"
+      },
+      {
+        "carries": "the scores, to settle on a mood",
+        "coupling": "LOOSE",
+        "intent": "song_to_page CALLS music.settle_mood: the scores, to settle on a mood",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "page::song_to_page",
+        "target": "music::settle_mood"
+      },
+      {
+        "carries": "the suggestion, to fill in the page",
+        "coupling": "TIGHT",
+        "intent": "song_to_page CALLS show_page: the suggestion, to fill in the page",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "page::song_to_page",
+        "target": "page::show_page"
+      }
+    ],
+    "derived": [
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "coach::choose_nudge",
+        "target": "coach::Nudge"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "coach::choose_nudge",
+        "target": "music::Mood"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "coach::watch_swings",
+        "target": "music::Mood"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::measure_features",
+        "target": "music::Features"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::measure_features",
+        "target": "music::Track"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::settle_mood",
+        "target": "music::Features"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "music::settle_mood",
+        "target": "music::Mood"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "page::show_page",
+        "target": "coach::Nudge"
+      },
+      {
+        "origin": "constant_reference",
+        "relation": "READS",
+        "source": "page::show_page",
+        "target": "page::PAGE_HTML"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "page::song_to_page",
+        "target": "coach::choose_nudge"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "page::song_to_page",
+        "target": "music::Track"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "page::song_to_page",
+        "target": "music::measure_features"
+      },
+      {
+        "origin": "constructor_call",
+        "relation": "TYPE_USES",
+        "source": "page::song_to_page",
+        "target": "music::settle_mood"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "player::read_now_playing",
+        "target": "music::Track"
+      }
+    ],
+    "verification": [
+      {
+        "origin": "tests_field",
+        "test": "coach_tests::test_choose_nudge_fits_the_mood",
+        "validates": "coach::choose_nudge"
+      },
+      {
+        "origin": "tests_field",
+        "test": "coach_tests::test_watch_swings_counts_flips",
+        "validates": "coach::watch_swings"
+      },
+      {
+        "origin": "tests_field",
+        "test": "music_tests::test_measure_features_scores_a_song",
+        "validates": "music::measure_features"
+      },
+      {
+        "origin": "tests_field",
+        "test": "music_tests::test_settle_mood_picks_one_of_four",
+        "validates": "music::settle_mood"
+      },
+      {
+        "origin": "tests_field",
+        "test": "page_tests::test_show_page_escapes_text",
+        "validates": "page::show_page"
+      },
+      {
+        "origin": "tests_field",
+        "test": "page_tests::test_song_to_page_runs_the_whole_way",
+        "validates": "page::song_to_page"
+      },
+      {
+        "origin": "tests_field",
+        "test": "player_tests::test_read_now_playing_is_repeatable",
+        "validates": "player::read_now_playing"
+      }
+    ]
+  },
+  "freshness": {
+    "basis": "build.s0ma.json",
+    "manifest_found": true,
+    "stale_modules": [],
+    "status": "fresh",
+    "transpiler_version": "0.22.0"
+  },
+  "integrations": [],
+  "modules": [
+    {
+      "components": [],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file is the map of the app: a list of its public parts and a short tour of how they fit together."
+      },
+      "layer": "PRESENTATION",
+      "name": "app_map",
+      "source_file": "src/app_map.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "coach::Nudge",
+        "coach::choose_nudge",
+        "coach::watch_swings"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "Nudge",
+          "choose_nudge",
+          "watch_swings"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Mood"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file turns a mood into a small suggestion and keeps an eye on how steady the mood is."
+      },
+      "layer": "APPLICATION",
+      "name": "coach",
+      "source_file": "src/coach/coach.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "coach_tests::test_choose_nudge_fits_the_mood",
+        "coach_tests::test_watch_swings_counts_flips"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Mood",
+            "coach.choose_nudge",
+            "coach.watch_swings"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for choosing a suggestion and for watching the mood."
+      },
+      "layer": "APPLICATION",
+      "name": "coach_tests",
+      "source_file": "tests/coach/coach_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "music::Features",
+        "music::Mood",
+        "music::Track",
+        "music::measure_features",
+        "music::settle_mood"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "Track",
+          "Features",
+          "Mood",
+          "measure_features",
+          "settle_mood"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file holds what the app knows about music: a song, how it sounds, and the mood it settles on."
+      },
+      "layer": "DOMAIN",
+      "name": "music",
+      "source_file": "src/music/music.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "music_tests::test_measure_features_scores_a_song",
+        "music_tests::test_settle_mood_picks_one_of_four"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Track",
+            "music.Features",
+            "music.measure_features",
+            "music.settle_mood"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for scoring a song and settling on its mood."
+      },
+      "layer": "DOMAIN",
+      "name": "music_tests",
+      "source_file": "tests/music/music_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "page::PAGE_HTML",
+        "page::show_page",
+        "page::song_to_page"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "PAGE_HTML",
+          "show_page",
+          "song_to_page"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "html"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Track",
+            "music.measure_features",
+            "music.settle_mood",
+            "coach.choose_nudge",
+            "coach.Nudge"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file shows the suggestion to the listener as a small web page."
+      },
+      "layer": "PRESENTATION",
+      "name": "page",
+      "source_file": "src/page/page.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "page_tests::test_show_page_escapes_text",
+        "page_tests::test_song_to_page_runs_the_whole_way"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Track",
+            "coach.Nudge",
+            "page.show_page",
+            "page.song_to_page"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for showing the page."
+      },
+      "layer": "PRESENTATION",
+      "name": "page_tests",
+      "source_file": "tests/page/page_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "player::read_now_playing"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "read_now_playing"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "music.Track"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file finds out what is playing right now."
+      },
+      "layer": "INFRASTRUCTURE",
+      "name": "player",
+      "source_file": "src/player/player.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "player_tests::test_read_now_playing_is_repeatable"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "player.read_now_playing"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for finding out what is playing."
+      },
+      "layer": "INFRASTRUCTURE",
+      "name": "player_tests",
+      "source_file": "tests/player/player_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    }
+  ],
+  "nodes": [
+    "coach::Nudge",
+    "coach::choose_nudge",
+    "coach::watch_swings",
+    "coach_tests::test_choose_nudge_fits_the_mood",
+    "coach_tests::test_watch_swings_counts_flips",
+    "music::Features",
+    "music::Mood",
+    "music::Track",
+    "music::measure_features",
+    "music::settle_mood",
+    "music_tests::test_measure_features_scores_a_song",
+    "music_tests::test_settle_mood_picks_one_of_four",
+    "page::PAGE_HTML",
+    "page::show_page",
+    "page::song_to_page",
+    "page_tests::test_show_page_escapes_text",
+    "page_tests::test_song_to_page_runs_the_whole_way",
+    "player::read_now_playing",
+    "player_tests::test_read_now_playing_is_repeatable"
+  ],
+  "schema": "s0ma-graph@2"
+}
+    </script>
+    <script id="sh0w-terms" type="application/json">
+{
+  "entries": [
+    {
+      "definition": "The adoption ladder is the order the work is done in, and every rung is a place a project can honestly sit for weeks. Rung zero is reading: the codebase is scanned as it stands and comes back with the order to convert it in. Rung one sets the perimeter, which makes the tree a s0ma project without changing a line of it. Rung two is optional and marks up the existing Python where it lies, for a codebase too large to convert quickly. Rung three is the loop that converts one module at a time, leaves first, and is repeated until there is nothing left on the list. Rung four tightens the strictness mode as more of the project arrives. A project halfway up is a normal state with a number on it, not an unfinished mess.",
+      "id": "concept:adoption-ladder",
+      "name": "adoption ladder",
+      "names": [
+        "adoption ladder"
+      ],
+      "summary": "The five-rung path a working Python codebase takes to become a s0ma application, one rung at a time."
+    },
+    {
+      "definition": "The authored-vs-generated boundary is the rule that every fact about the system has exactly one home. Facts a person states — what a part is for, what it promises, what it depends on — are authored, and are written once, in the source. Facts the build can work out for itself — which errors a piece of logic raises, which types it touches, what a finished documentation page says — are generated, and writing one of them by hand is refused rather than accepted as a shortcut. Documentation is rendered from the declarations; it is never maintained alongside them.",
+      "id": "concept:authored-vs-generated-boundary",
+      "name": "authored-vs-generated boundary",
+      "names": [
+        "authored vs derived split",
+        "authored-vs-generated boundary"
+      ],
+      "summary": "The line between what a person writes and what the build works out for itself, with no fact living on both sides of it."
+    },
+    {
+      "definition": "An axon is a declared connection from one part of a system to another. It names the two ends, says what kind of dependence it is — one part calls another, builds it, reads settings from it, configures it, produces it, or consumes it — explains why the connection exists, says what travels along it, and records whether the two are tightly or loosely bound. A person writes it because it is a decision, not something a reader of the code could reliably work out.",
+      "id": "concept:axon",
+      "name": "axon",
+      "names": [
+        "axon",
+        "inter component connection"
+      ],
+      "summary": "A written-down dependency between two parts: which one leans on which, why, and how tightly."
+    },
+    {
+      "definition": "When the build turns a source file into Python it also writes a second file: a normalised record of everything that file declared, with every name in its full form, every shorthand expanded, every pattern resolved, every automatically-derived connection filled in, and a fingerprint of the whole. It says exactly what the source says, with none of the ambiguity, which is why it is the form tools and agents read.",
+      "id": "concept:canonical-ir",
+      "name": "canonical IR",
+      "names": [
+        "canonical ir",
+        "ir"
+      ],
+      "summary": "The normalised record of one file's declarations that the build writes beside the code, for tools to read."
+    },
+    {
+      "definition": "A cell is a part of a system that holds a shape or a value rather than doing work. Data models, configuration objects, fixed constants, enumerations, type names and error types are all cells. A constant binds its name once; the object it names may still change inside, as a context variable or a lock does. Like every other part it declares why it exists and what it represents, so a system can describe its own vocabulary and not only its own actions.",
+      "id": "concept:cell",
+      "name": "cell",
+      "names": [
+        "cell",
+        "structural component"
+      ],
+      "summary": "A declared piece of structure — a data shape, a fixed value, a setting, a type, or an error kind — rather than a piece of behaviour."
+    },
+    {
+      "definition": "Working in this language is a short loop. You check the source, which validates everything and generates none of the build output — it keeps only one bookkeeping note of what it has already told you about — so it is cheap enough to run constantly. You build, which turns the source into ordinary Python together with the record of the system's own structure. You run the verifications. Then you ask the built system what it contains, which is how you confirm that the parts you meant to declare really are declared.",
+      "id": "concept:check-and-build-loop",
+      "name": "check and build loop",
+      "names": [
+        "check and build loop"
+      ],
+      "summary": "The everyday cycle: check the source, build it, run the verifications, then ask the system what it now contains."
+    },
+    {
+      "definition": "A contract is the three-part agreement a working part carries: what must be true before it is called, what it guarantees once it has finished, and what it must never do, however it is called and whatever happens while it runs. All three are fields of the declaration, sitting alongside the reason the part exists, and a working part cannot be declared without them; when there is nothing to rule out, the third says so with the word none rather than being left off. Two related fields sit beside them — which errors the part may raise, and how long it may acceptably take. A watcher carries the third part as well: what it must never do while it watches.",
+      "id": "concept:contract",
+      "name": "contract",
+      "names": [
+        "contract",
+        "contracts"
+      ],
+      "summary": "What a working part needs before it runs, what it promises afterwards, and what it must never do, declared beside the code that has to keep all three."
+    },
+    {
+      "definition": "A doc-guide is a hand-written explanation — a walkthrough, a conceptual piece, a migration note — with one rule attached: wherever it names a part of the system it must do so through a marker the build resolves, embed a registered example, or state a claim the build can evaluate against what the system says about itself. Ordinary prose stays ordinary prose; it is the factual claims that are held to the system.",
+      "id": "concept:doc-guide",
+      "name": "doc-guide",
+      "names": [
+        "doc-guide"
+      ],
+      "summary": "A written guide whose every factual claim about a named part is checked against the system rather than trusted."
+    },
+    {
+      "definition": "A doc-ref is a declaration that produces a page of reference material by selecting parts of the system and printing named fields of each. It has no body and almost no writing: you say which parts it covers, which of their declared fields to show, and which file to write. Everything a reader sees comes from the parts themselves.",
+      "id": "concept:doc-ref",
+      "name": "doc-ref",
+      "names": [
+        "doc-ref",
+        "structural projection"
+      ],
+      "summary": "A reference page assembled entirely from what the system already knows about itself, carrying no prose of its own."
+    },
+    {
+      "definition": "Drift is what happens when a description and the thing it describes stop agreeing: the written record still says one thing while the code has quietly moved on. s0ma turns that disagreement into something a machine can notice. Every generated document carries a fingerprint of everything it was built from, and recomputing that fingerprint says at once whether the two still match.",
+      "id": "concept:drift",
+      "name": "drift",
+      "names": [
+        "drift"
+      ],
+      "summary": "The gap that opens when a written description and the thing it describes stop agreeing."
+    },
+    {
+      "definition": "The drift gate is where drift stops being a fact and becomes a failure. Every generated document carries a fingerprint of everything it was built from; the gate rebuilds the documents, compares the result with what is committed, and fails when the two differ. It runs in the same pipeline as the tests, so a change that leaves the written record behind cannot be merged, and the remedy is to rebuild rather than to remember.",
+      "id": "concept:drift-gate",
+      "name": "drift-gate",
+      "names": [
+        "check drift",
+        "drift-gate"
+      ],
+      "summary": "The build step that refuses a change when the written record and the system it describes have parted."
+    },
+    {
+      "definition": "Embodiment is what happens when the physical parts of a machine are declared as ordinary parts of the system that drives them, rather than described from outside it. A sensor or a motor is embodied when it is declared like everything else: an attached device is an integration, reading it or driving it is a nerve, its readings and physical value types are cells, and its physical facts — part identity, where it is mounted, size, mass, material, sweep, supply voltage, current draw — are recorded as declared metadata under one shared vocabulary. The language gains nothing new to make this possible.",
+      "id": "concept:embodiment",
+      "name": "embodiment",
+      "names": [
+        "embodied hardware",
+        "embodiment"
+      ],
+      "summary": "Bringing the physical parts of a machine inside the boundary of what a system knows about itself, as ordinary declared parts."
+    },
+    {
+      "definition": "An example is a small piece of code written to be read, declared as a part of the system in its own right. It says what it teaches, names the parts it demonstrates, and says where it runs. The build runs it, and an example that has stopped working fails the build exactly the way a broken verification does.",
+      "id": "concept:example",
+      "name": "example",
+      "names": [
+        "example",
+        "executable demonstration"
+      ],
+      "summary": "A short runnable demonstration, registered against the parts it teaches, that has to keep working."
+    },
+    {
+      "definition": "Executable evidence is the standard the documentation machinery holds every claim to. A statement about a named part of the system may exist in exactly three forms: printed from what that part declares, written as a claim the build evaluates against the system, or demonstrated by a registered example that is actually run. There is no fourth form, and a claim in none of the three is refused.",
+      "id": "concept:executable-evidence",
+      "name": "executable evidence",
+      "names": [
+        "executable evidence"
+      ],
+      "summary": "The rule that every factual claim in a document is printed from the system, checked against it, or demonstrated by code that runs."
+    },
+    {
+      "definition": "Feedback is the path for telling the people who make s0ma what happened: a report prepared on your own machine, shown to you whole, and sent only after you have approved that exact report. Preparation is local and needs no network. The feedback data is redacted by a fixed rule and limited to an agreed list of context, so no transcripts, prompts, source, raw logs, or hardware identifiers travel by default. What you approved is what is transmitted, what is stored, and what the receipt refers back to.",
+      "id": "concept:feedback",
+      "name": "feedback",
+      "names": [
+        "feedback",
+        "feedback report"
+      ],
+      "summary": "A report to the people who make s0ma, shown to you in full and sent only after you approve that exact report."
+    },
+    {
+      "definition": "A ganglion is a part whose job is to watch other parts. It names which ones it observes — individually, or by a pattern covering a whole file or a whole layer — states what it expects normal behaviour to look like, says what should happen when what it sees does not match, and says what it must never do while it watches. It is the part of a s0ma system that forms judgements about the rest of it.",
+      "id": "concept:ganglion",
+      "name": "ganglion",
+      "names": [
+        "evaluator",
+        "ganglion"
+      ],
+      "summary": "A declared watcher: it observes named parts of the system and judges what it sees against what it expected."
+    },
+    {
+      "definition": "A helper is a function that exists to keep other declarations readable and never leaves the file it is written in. It declares why it exists and nothing else: no promises, no visibility setting, no dependency list, because the parts it serves are the ones that carry those. Other files cannot reach it and the system's list of components does not include it — though the file's own record still shows it, so nothing in a file is invisible.",
+      "id": "concept:helper",
+      "name": "helper",
+      "names": [
+        "helper",
+        "module private function"
+      ],
+      "summary": "A small private function inside one file, described but deliberately not registered as a part of the system."
+    },
+    {
+      "definition": "An integration is the declaration that describes a connection to something outside the program — a calendar service, a payment provider, a message queue. It names the part that builds the connection, the part that checks the connection is alive, and a short record of what the integration offers and what the environment has to supply, such as which settings must be present. From that declaration the build writes the routine wiring for you.",
+      "id": "concept:integration",
+      "name": "integration",
+      "names": [
+        "external system adapter",
+        "integration"
+      ],
+      "summary": "A declared adapter to an outside system, naming how to build it, how to check it is alive, and what it needs to run."
+    },
+    {
+      "definition": "Intent is the sentence that says why a part exists. Every declared part carries one; no kind of code is exempt. It is not a comment and not a docstring bolted on afterwards — it is a field of the declaration, so it cannot be left out, cannot drift away from the code it belongs to, and travels with that code wherever the description is read.",
+      "id": "concept:intent",
+      "name": "intent",
+      "names": [
+        "intent"
+      ],
+      "summary": "The declared reason a part exists, required on every part without exception."
+    },
+    {
+      "definition": "Interoception is the internal-state faculty of self-knowledge: the system's sense of how it is actually behaving compared with the behaviour it declared. A part can state what it expects of itself — how long a call should take, how often it may fail, how much memory or current it may draw — and the interoception verifier compares live measurements against those statements, so a part quietly running outside its own declared envelope becomes a reported fact instead of a surprise.",
+      "id": "concept:interoception",
+      "name": "interoception",
+      "names": [
+        "interoception",
+        "runtime state faculty"
+      ],
+      "summary": "The runtime-state faculty: a system's sense of how it is behaving against how it said it would."
+    },
+    {
+      "definition": "Every working part and every structural part declares a kind, which says which archetype it belongs to. A working part is a plain computation, a coordinator of other parts, an adapter to something outside, or a long-running service. A structural part is a data shape, a fixed value, a settings object, an enumeration, a type name, or an error type. Which kinds are available depends on what sort of declaration you are writing, and the build refuses a mismatch.",
+      "id": "concept:kind",
+      "name": "kind",
+      "names": [
+        "kind"
+      ],
+      "summary": "The functional archetype of a part: what sort of working logic it is, or what sort of structure it holds."
+    },
+    {
+      "definition": "Every s0ma file declares one layer and every part inside the file shares it. The five bands are the subject matter itself, the work that coordinates it, the two edges where a program meets people and meets other systems, and the band s0ma keeps for its own machinery. A fixed table says which band may reach which: the subject matter reaches only itself and the framework, the two edges reach inward but never each other, and nothing reaches outward.",
+      "id": "concept:layer",
+      "name": "layer",
+      "names": [
+        "layer"
+      ],
+      "summary": "The architectural band a file and everything in it belongs to, and the rule about which bands may depend on which."
+    },
+    {
+      "definition": "Metacognition is the reasoning faculty of self-knowledge: answering questions about the system by reasoning over its recorded model instead of re-reading its source. Asking what would break if this changed, asking where a new part belongs, asking a question in plain words, and noticing that the model and the code no longer agree are all metacognition. Each takes the recorded model as its subject, and each follows fixed rules rather than calling a language model, so the answers are reproducible and available offline.",
+      "id": "concept:metacognition",
+      "name": "metacognition",
+      "names": [
+        "metacognition",
+        "reasoning faculty"
+      ],
+      "summary": "The reasoning faculty: answering questions by working over the system's own model rather than over its code."
+    },
+    {
+      "definition": "A mirror is a second copy of a document, committed at another path because something genuinely needs it there — most often inside an installed package, so an agent working on a project can read the guides without a copy of the repository. A mirror is never edited in place: it is copied from the one source, and a check compares the two character for character and fails the build when they have parted. The source is the document; the mirror is a delivery of it.",
+      "id": "concept:mirror",
+      "name": "mirror",
+      "names": [
+        "mirror"
+      ],
+      "summary": "A committed copy of a document, held identical to its one source by a check that fails when they part."
+    },
+    {
+      "definition": "A module declaration is the first thing in a s0ma source file and it speaks for the whole file: it gives the file a name, places it in one architectural band, states what the file is responsible for, and lists both the outside code it draws on and the parts of itself it lets other files use. Nothing enters or leaves the file without appearing in one of those lists.",
+      "id": "concept:module",
+      "name": "module",
+      "names": [
+        "file level declaration",
+        "module"
+      ],
+      "summary": "The header every s0ma source file opens with, naming the file and declaring everything that enters and leaves it."
+    },
+    {
+      "definition": "A nerve is a piece of working logic that carries a description of itself. You write the function — or, for a long-running service, the class — as you normally would, and above it you state what it is for, what it needs from its caller, what it promises in return, and what it must never do. Those statements are part of the declaration rather than a comment beside it, so they travel with the code from then on.",
+      "id": "concept:nerve",
+      "name": "nerve",
+      "names": [
+        "nerve",
+        "observable function"
+      ],
+      "summary": "A piece of working logic that carries its own account of what it does, what it needs, and what it promises."
+    },
+    {
+      "definition": "The perimeter is four settings a project keeps in its own pyproject.toml: where its source lives, which files are the plain-Python entry points, which files are package markers that only re-export, and which strictness mode it is held to. Together they say what s0ma is answerable for here. Anything inside the perimeter that has not been converted yet is reported as unknown, which is the honest list of what is left to do; anything named as an entry point or a package marker is reported as exempt, by name, so what sits outside is something a reader can check rather than something they have to trust.",
+      "id": "concept:perimeter",
+      "name": "perimeter",
+      "names": [
+        "perimeter"
+      ],
+      "summary": "The line a project draws around the code s0ma answers for, and the files it deliberately leaves outside."
+    },
+    {
+      "definition": "Proprioception is the structural faculty of self-knowledge: the system's sense of its own composition — which parts exist, what each is for, which layer it belongs to, and what depends on what. It is carried by the index every part must enter in order to exist, the verifier that compares that index against the code, the map of dependencies, the layer rules, and the relationships recorded in the build's machine-readable output.",
+      "id": "concept:proprioception",
+      "name": "proprioception",
+      "names": [
+        "proprioception",
+        "structural faculty"
+      ],
+      "summary": "The structural faculty: a system's sense of what it is made of and how it is wired together."
+    },
+    {
+      "definition": "When a s0ma system starts, every declared part registers itself in one index under a full name that joins the file's name and the part's own. Because the name is qualified, two files may each contain a part called the same thing without either shadowing the other. The index is what the system consults when anything asks what it contains, and it is complete — it includes the parts no other file is allowed to call.",
+      "id": "concept:registry-snapshot",
+      "name": "registry snapshot",
+      "names": [
+        "registry snapshot"
+      ],
+      "summary": "The live index of every part in a running system, each held under the full name that joins its file and itself."
+    },
+    {
+      "definition": "A release channel is the label every rendered page carries saying which build it came from and how far it can be trusted. Release means the page was built from the exact state of a tagged version and describes that version and no other. Preview means it was built from the moving main line, so it may describe work that has not shipped, and every preview page says so where a reader can see it. Historical means the page describes a version that has passed, kept for the people still on it and never presented as current.",
+      "id": "concept:release-channel",
+      "name": "release channel",
+      "names": [
+        "release channel"
+      ],
+      "summary": "Which build a page came from — a released version, a preview of work in progress, or a record kept for a version that has passed."
+    },
+    {
+      "definition": "The requires list names the outside code a file needs: standard library modules, installed packages, and specific names from either. The build turns each entry into the right import line. Sibling lists cover the variations — one for packages that may not be installed, one for imports a running system supplies in a way no checker can see, and one for imports deferred until the moment they are first used.",
+      "id": "concept:requires",
+      "name": "requires:",
+      "names": [
+        "requires:"
+      ],
+      "summary": "The module header's list of code from outside the project — the ordinary Python imports, declared."
+    },
+    {
+      "definition": "s0ma is a Python platform built on one idea — that a system should carry an accurate, queryable, machine-readable model of itself, and that the model should be load-bearing rather than descriptive. Four layers deliver it: a runtime that records and verifies the parts of a running system, a language and compiler that refuse to build undeclared or undescribed code, an interface that lets a coding agent author against the same rules, and a viewer that draws what the model says. One version, one philosophy, four packages.",
+      "id": "concept:s0ma",
+      "name": "s0ma",
+      "names": [
+        "s0ma"
+      ],
+      "summary": "The platform built on one idea: software should carry an accurate, queryable model of itself."
+    },
+    {
+      "definition": "A s0ma source file has a fixed anatomy. It opens with the module header that speaks for the whole file, then carries one or more declarations, and every piece of code in it belongs to exactly one of them — the language refuses a block that belongs to none. Inside a declaration the description comes first and the code comes after, with a line of exactly three hyphens at the left margin between them.",
+      "id": "concept:s0ma-file",
+      "name": ".s0ma file",
+      "names": [
+        ".s0ma file"
+      ],
+      "summary": "One source file: a module header first, then declarations, each separated from its code by a line of three hyphens."
+    },
+    {
+      "definition": "Self-knowledge is a system's ability to maintain an accurate, queryable, machine-readable model of itself: its structure, its behaviour while it runs, and the reasoning that can be done over both. It is the umbrella term, and it spans three faculties that answer different questions — proprioception asks what the system is made of, interoception asks how it is behaving against what it declared, and metacognition reasons over the model itself.",
+      "id": "concept:self-knowledge",
+      "name": "self-knowledge",
+      "names": [
+        "self-knowledge",
+        "software self knowledge"
+      ],
+      "summary": "The umbrella faculty: a system's ability to hold an accurate, queryable model of itself."
+    },
+    {
+      "definition": "The self-model is the system's record of itself: every declared part with its purpose, its kind, its layer, what it promises and what it depends on, together with the relationships between the parts and the documentation and examples attached to each. It is load-bearing rather than descriptive — being declared is a condition of a part existing at all, so the record cannot be skipped without the system failing to start.",
+      "id": "concept:self-model",
+      "name": "self-model",
+      "names": [
+        "self-model"
+      ],
+      "summary": "The queryable record of a system's parts, their relationships, and the documentation and examples attached to them."
+    },
+    {
+      "definition": "A strictness mode decides whether a finding is a warning or a refusal. The most forgiving mode exists for bringing an existing codebase across, where nearly everything is a warning. The everyday mode is balanced. The strict mode makes nearly everything a refusal and is meant for automated checks before a merge. The release mode adds requirements of its own: every public working part verified or explicitly claimed as covered elsewhere, every file carrying a real version, and every cross-file connection explained in a person's own words.",
+      "id": "concept:strictness-mode",
+      "name": "strictness mode",
+      "names": [
+        "strictness",
+        "strictness mode"
+      ],
+      "summary": "How severely the build treats its own findings, from forgiving during adoption to unforgiving before a release."
+    },
+    {
+      "definition": "A test in s0ma is a declaration like any other. It says what behaviour it verifies and, crucially, names the parts it is verifying, so the link between a check and the thing checked is recorded rather than guessed from a file name. The build turns it into an ordinary runnable test, and the system can be asked which of its parts are covered and by what.",
+      "id": "concept:test",
+      "name": "test",
+      "names": [
+        "test",
+        "verification component"
+      ],
+      "summary": "A verification written as a declared part of the system, naming exactly which parts it checks."
+    },
+    {
+      "definition": "The uses list names every part in another s0ma file that this file refers to — whether it calls it, builds it, raises it, or merely names it in a type. Each entry has to be something the other file has published, and each has to satisfy the layer rule, so a file's reach across the project is a declared and checked list rather than a set of import lines nobody audits.",
+      "id": "concept:uses",
+      "name": "uses:",
+      "names": [
+        "uses:"
+      ],
+      "summary": "The module header's list of parts in other s0ma files that this file is allowed to reach."
+    },
+    {
+      "definition": "Every working and structural part declares a visibility. Public means other files may use it, provided the module header lists it too. Internal means only the file it lives in may call it. The third setting opens a part to verification code anywhere in the project without putting it on the public surface. Visibility governs calling and nothing else: watchers, verifications and the documentation machinery reach every part regardless, because a system that cannot see all of itself cannot describe itself.",
+      "id": "concept:visibility",
+      "name": "visibility",
+      "names": [
+        "visibility"
+      ],
+      "summary": "Who may call a part from another file: everyone, nobody, or verification code only."
+    }
+  ],
+  "source": {
+    "release_version": "0.22.0",
+    "snapshot_hash": "sha256:f9e8d60ed9aca991"
+  }
+}
+    </script>
+    <script>
+      (function () {
+        function block(id) {
+          return JSON.parse(document.getElementById(id).textContent);
+        }
+        var unbuilt = block("sh0w-unbuilt");
+        var terms = block("sh0w-terms");
+        var builds = [
+          block("sh0w-build-1"),
+          block("sh0w-build-2"),
+          block("sh0w-build-3")
+        ];
+        var lines = [
+          "Showing: nothing built yet.",
+          "Showing build 1 of 3: the player and music files.",
+          "Showing build 2 of 3: music measures the song before it settles on a mood.",
+          "Showing build 3 of 3: the coach and page files arrive."
+        ];
+        var landed = 0;
+        var asked = {};
+        window.__S0MA_STEPS_ASKED__ = asked;
+
+        function answer(recorded, body) {
+          return Promise.resolve(
+            new Response(JSON.stringify(body), {
+              status: recorded.status,
+              headers: { "Content-Type": recorded.content_type }
+            })
+          );
+        }
+
+        function pathOf(input) {
+          var url = typeof input === "string" ? input : String(input && input.url);
+          return url.split("#")[0].split("?")[0];
+        }
+
+        /* A landed build answers as studi0 does once a build is read: the
+         * state moves its sequence number on and says fresh, and the graph
+         * route carries the build's graph and the terms block. */
+        window.fetch = function (input) {
+          var path = pathOf(input);
+          asked[path] = (asked[path] || 0) + 1;
+          var state = unbuilt["/api/state"];
+          var graph = unbuilt["/api/graph"];
+          var seq = state.body.seq + landed;
+          if (path === "/api/state") {
+            if (landed === 0) {
+              return answer(state, state.body);
+            }
+            var body = JSON.parse(JSON.stringify(state.body));
+            body.seq = seq;
+            body.build_status = "fresh";
+            return answer(state, body);
+          }
+          if (path === "/api/graph") {
+            if (landed === 0) {
+              return answer(graph, graph.body);
+            }
+            return answer({ status: 200, content_type: graph.content_type }, {
+              schema: "s0ma-studi0-graph@1",
+              seq: seq,
+              graph: builds[landed - 1],
+              terms: terms
+            });
+          }
+          return answer(unbuilt["any other path"], unbuilt["any other path"].body);
+        };
+
+        var land = document.getElementById("stepper-land");
+        var line = document.getElementById("stepper-line");
+        land.addEventListener("click", function () {
+          if (landed < builds.length) {
+            landed += 1;
+          }
+          line.textContent = lines[landed];
+          land.disabled = landed === builds.length;
+        });
+        /* The page keeps what it last drew, as it does under studi0, so
+         * starting over is a fresh page load, the same as relaunching. */
+        document.getElementById("stepper-reset").addEventListener("click", function () {
+          window.location.reload();
+        });
+      })();
+    </script>
+    <script src="../../s0ma_src/assets/app.js"></script>
+  </body>
+</html>

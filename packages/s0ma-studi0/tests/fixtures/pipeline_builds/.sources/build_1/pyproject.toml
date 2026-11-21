@@ -1,0 +1,13 @@
+[project]
+name = "song"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.s0ma]
+source_roots = ["src"]
+test_roots = ["tests"]
+build_dir = "build"
+mode = "dev"
+authoring = "on"
+feedback = "suggest"
+bootstrap_files = ["bootstrap/main.py"]

@@ -1,0 +1,37 @@
+module page_tests
+    layer: PRESENTATION
+    version: 0.1.0
+    intent: "Tests for showing the page."
+    uses: [music.Track, coach.Nudge, page.show_page, page.song_to_page]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_show_page_escapes_text :: PRESENTATION
+    intent: "The page shows the mood and the suggestion, with any markup in them made harmless."
+    tests: [page.show_page]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_show_page_escapes_text() -> None:
+        text = show_page(Nudge(mood="calm", message="Rest <now>."))
+        assert "The mood is calm" in text
+        assert "Rest &lt;now&gt;." in text
+
+test test_song_to_page_runs_the_whole_way :: PRESENTATION
+    intent: "A quiet, bright song comes out as a calm page with the calm suggestion."
+    tests: [page.song_to_page]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_song_to_page_runs_the_whole_way() -> None:
+        song = Track(title="t", artist="a", beats_per_minute=70,
+                     loudness=0.2, major_key=True)
+        text = song_to_page(song)
+        assert "The mood is calm" in text
+        assert "Pick one thing and give it your full attention." in text

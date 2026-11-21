@@ -1,0 +1,47 @@
+module app_map
+    layer: PRESENTATION
+    version: 0.1.0
+    intent: "This file is the map of the app: a list of its public parts and a short tour of how they fit together."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-ref public_api_reference
+    intent: "A list of every public working part of the app, written from the app itself so it always matches."
+    format: markdown
+    output: docs/public_api_reference.md
+    covers: [nerve where visibility == PUBLIC]
+    sections: [intent, expects, guarantees, forbids]
+
+doc-guide architecture_map
+    intent: "A short tour of the app: what it is made of, how it behaves, and how it checks itself."
+    format: markdown
+    output: docs/architecture_map.md
+    covers: [nerve::settle_mood]
+    asserts: [nerve::settle_mood.visibility == PUBLIC, nerve::settle_mood.layer == DOMAIN]
+    examples: []
+    ---
+    # Architecture map
+
+    This app reads what is playing, measures the song, and settles on a mood. It keeps an accurate model of itself, and this map is read from that model.
+
+    ## Structure
+
+    The app is two files so far, one for each layer it has:
+
+    - The player file (INFRASTRUCTURE) finds out what is playing. It uses four built-in sample songs and contacts nothing outside the app.
+    - The music file (DOMAIN) scores how a song sounds and settles on one of four moods from those scores. {{nerve::settle_mood}} is where that decision is made.
+
+    Each file may only use the layers below it, and the build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the music file.
+
+    ## Runtime state
+
+    How the app behaves compared with what it said it would do. Nothing watches the app yet.
+
+    ## Reasoning over the model
+
+    The app can answer questions about its own parts: what each one is for, what it promises, and what depends on it. This map is checked on every build, so a change to a part it names that is not reflected here fails the build.

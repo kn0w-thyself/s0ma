@@ -77,4 +77,4 @@ doc-guide <name>
 
 - Topic id: `concept:doc-guide`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:b8a43b81e4ce04df`
+- Documentation snapshot: `sha256:0fe57aaac209ece9`

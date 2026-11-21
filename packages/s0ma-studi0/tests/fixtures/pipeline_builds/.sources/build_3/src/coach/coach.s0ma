@@ -1,0 +1,76 @@
+module coach
+    layer: APPLICATION
+    version: 0.1.0
+    intent: "This file turns a mood into a small suggestion and keeps an eye on how steady the mood is."
+    uses: [music.Mood]
+    requires: [dataclasses:dataclass]
+    exports: [Nudge, choose_nudge, watch_swings]
+
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+cell Nudge :: APPLICATION
+    kind: MODEL
+    visibility: PUBLIC
+    intent: "A small suggestion for the listener, and the mood it was chosen for."
+    schema: "mood: str, message: str"
+    invariants: "The message is one short sentence."
+    covered_by: none
+    ---
+    @dataclass(frozen=True)
+    class Nudge:
+        mood: str
+        message: str
+
+nerve choose_nudge :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Picks a small suggestion that fits the mood."
+    expects: "A mood."
+    guarantees: "Gives back one suggestion from a short written list, one for each of the four moods."
+    forbids: "Never makes up a suggestion; every message comes from the written list in this file."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    depends_on: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: none
+    ---
+    def choose_nudge(mood: Mood) -> Nudge:
+        """Pick the suggestion written for *mood*."""
+        messages = {
+            "lively": "Good moment to start the hardest thing on your list.",
+            "tense": "Take three slow breaths before the next thing.",
+            "calm": "Pick one thing and give it your full attention.",
+            "low": "Stand up and stretch for a minute.",
+        }
+        message = messages.get(mood.name, messages["calm"])
+        return Nudge(mood=mood.name, message=message)
+
+ganglion watch_swings :: APPLICATION
+    visibility: PUBLIC
+    intent: "Watches the moods the app settles on and notices when they keep flipping back and forth."
+    observes: [settle_mood]
+    scope: SUBSYSTEM
+    priors: "The mood should stay put or move on, not flip back to the mood it just left."
+    on_anomaly: "Reports how many times the mood flipped back, so a person can look at the songs."
+    forbids: "Never changes a mood; it only counts what it sees."
+    depends_on: none
+    covered_by: none
+    ---
+    def watch_swings(signals: list[Mood]) -> dict[str, object]:
+        """Count how often the mood flips back to the one before it."""
+        names = [mood.name for mood in signals]
+        flips = sum(
+            1
+            for before, now, after in zip(names, names[1:], names[2:])
+            if before == after and before != now
+        )
+        return {"flips": flips, "steady": flips == 0}

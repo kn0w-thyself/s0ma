@@ -67,6 +67,18 @@ Historical entries describe artifacts as they were named at the time.
   key, so the schema stays `s0ma-graph@2` and a reader of the old four keys
   is unaffected.
 
+- **`s0ma new project --template pipeline` makes a small example app.** It
+  reads what is playing, measures the song, settles on a mood, chooses a
+  nudge, and shows it as the text of a small web page. It has twelve parts in
+  four modules, one module per layer: `player` (INFRASTRUCTURE), `music`
+  (DOMAIN), `coach` (APPLICATION), and `page` (PRESENTATION), and a ganglion
+  in `coach` watches whether the mood keeps flipping back and forth. Its
+  declared text is written in plain words for a reader who does not program.
+  It contacts nothing: the songs are four built-in samples, picked by a turn
+  number, and `python bootstrap/main.py 1` prints the page for the second
+  one. Like the other three templates, it builds, passes `s0ma check --mode
+  release`, and its own tests pass straight away.
+
 ### Changed
 
 - **studi0's inspector leads with what a part is for.** Click a component
