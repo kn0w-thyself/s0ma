@@ -3915,8 +3915,18 @@ function syncTermsButton() {
   }
 }
 
+/* The toolbar's terms button. Closed, it opens the dictionary. Open,
+ * it goes back to the part the dictionary was opened from, as "back
+ * to" does, when that part still exists, and otherwise closes the
+ * panel. */
 function toggleDictionary() {
   if (state.dictionary.open) {
+    var back = state.dictionary.back;
+    if (back && selectionStillExists(back)) {
+      select(back);
+      ui.inspector.focus();
+      return;
+    }
     clearSelection();
     return;
   }

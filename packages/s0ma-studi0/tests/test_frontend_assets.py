@@ -776,6 +776,26 @@ def test_the_dictionary_is_wired() -> None:
     assert 'scrollIntoView({ block: "nearest" })' in app_js
 
 
+def test_pressing_terms_again_returns_to_the_part() -> None:
+    """Open, the terms button goes back to the part, as "back to" does."""
+    app_js = read(APP_JS)
+    toggle = _between(app_js, "function toggleDictionary(", "\n}\n")
+    order = [
+        toggle.index("if (state.dictionary.open) {"),
+        toggle.index("var back = state.dictionary.back;"),
+        toggle.index("if (back && selectionStillExists(back)) {"),
+        toggle.index("select(back);"),
+        toggle.index("ui.inspector.focus();"),
+        toggle.index("clearSelection();"),
+        toggle.index("openDictionary(null);"),
+    ]
+    assert order == sorted(order)
+    # The dictionary's own back button does the same two steps.
+    dictionary = _between(app_js, "function renderDictionary(", "\n}\n")
+    assert "if (back && selectionStillExists(back)) {" in dictionary
+    assert "select(back);\n      ui.inspector.focus();" in dictionary
+
+
 def test_with_no_terms_the_page_reads_as_before() -> None:
     """No entries: no control anywhere, no terms button, the old elements."""
     app_js = read(APP_JS)
