@@ -4716,9 +4716,9 @@ function newlyStale(previousStale, nextStale) {
 }
 
 /* Component-level diff: what the payload added, dropped, or rewrote.
- * A component counts as changed when its own entry differs — the
- * inspector shows that entry, so any difference in it is a difference a
- * reader can go and look at. */
+ * `changed` maps each rewritten component to the declared lines that
+ * differ (see declaredChanges), so the beat and the list of changes
+ * read the same answer. */
 function diffGraphs(previous, next) {
   var delta = emptyDelta();
   var nextComponents = (next && next.components) || {};
@@ -4733,11 +4733,11 @@ function diffGraphs(previous, next) {
     }
     if (!Object.prototype.hasOwnProperty.call(previousComponents, key)) {
       delta.added[key] = true;
-    } else if (
-      JSON.stringify(previousComponents[key]) !==
-      JSON.stringify(nextComponents[key])
-    ) {
-      delta.changed[key] = true;
+    } else {
+      var lines = declaredChanges(previous, next, key);
+      if (lines.length > 0) {
+        delta.changed[key] = lines;
+      }
     }
   }
   for (key in previousComponents) {
@@ -4749,6 +4749,110 @@ function diffGraphs(previous, next) {
     }
   }
   return delta;
+}
+
+/* What counts as a change to a part: something it DECLARES differs.
+ *
+ * Where it sits in its file is not a declaration. A part inserted
+ * above another moves that one's line numbers, and the one below has
+ * not changed, so `location` is never compared. Everything else on the
+ * component's entry is compared one declared line at a time, and each
+ * line that differs is named by its own DSL name: `intent` first, then
+ * every key under its fields whose value differs (in the inspector's
+ * order), then its declaration facts (`kind`, `visibility`, `layer`).
+ *
+ * Its relationships count too, from its own side only: if the set of
+ * things it leans on differs (the relationships its inspector lists
+ * under dependencies), the part changed, and that line is named by the
+ * plain word "dependencies". A change only in what leans on it is a
+ * change to the other part, not to this one. */
+var NOT_A_DECLARED_LINE = { location: true, fields: true, intent: true };
+
+function declaredChanges(previousGraph, nextGraph, canonicalId) {
+  var before = previousGraph.components[canonicalId] || {};
+  var after = nextGraph.components[canonicalId] || {};
+  var lines = [];
+  var key;
+  var i;
+  if (!sameDeclared(before.intent, after.intent)) {
+    lines.push("intent");
+  }
+  var beforeFields = before.fields || {};
+  var afterFields = after.fields || {};
+  var fieldUnion = {};
+  for (key in beforeFields) {
+    if (Object.prototype.hasOwnProperty.call(beforeFields, key)) {
+      fieldUnion[key] = true;
+    }
+  }
+  for (key in afterFields) {
+    if (Object.prototype.hasOwnProperty.call(afterFields, key)) {
+      fieldUnion[key] = true;
+    }
+  }
+  var fieldKeys = orderedFieldKeys(fieldUnion);
+  for (i = 0; i < fieldKeys.length; i += 1) {
+    if (!sameDeclared(beforeFields[fieldKeys[i]], afterFields[fieldKeys[i]])) {
+      lines.push(fieldKeys[i]);
+    }
+  }
+  var facts = {};
+  for (key in before) {
+    if (Object.prototype.hasOwnProperty.call(before, key) && !NOT_A_DECLARED_LINE[key]) {
+      facts[key] = true;
+    }
+  }
+  for (key in after) {
+    if (Object.prototype.hasOwnProperty.call(after, key) && !NOT_A_DECLARED_LINE[key]) {
+      facts[key] = true;
+    }
+  }
+  var factKeys = Object.keys(facts).sort(compareStrings);
+  for (i = 0; i < factKeys.length; i += 1) {
+    if (!sameDeclared(before[factKeys[i]], after[factKeys[i]])) {
+      lines.push(factKeys[i]);
+    }
+  }
+  if (
+    !sameStringList(
+      dependencyKeys(previousGraph, canonicalId),
+      dependencyKeys(nextGraph, canonicalId)
+    )
+  ) {
+    lines.push("dependencies");
+  }
+  return lines;
+}
+
+function sameDeclared(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+/* The relationships that leave a part, as its inspector lists them
+ * under dependencies (authored and derived, not verification), each
+ * reduced to what that row shows: the family, the relation, the part at
+ * the other end, and an authored one's `carries`. Sorted, so the order
+ * the build wrote them in is not itself a change. */
+function dependencyKeys(graph, canonicalId) {
+  var edges = (graph && graph.edges) || {};
+  var families = ["authored", "derived"];
+  var keys = [];
+  for (var i = 0; i < families.length; i += 1) {
+    var list = edges[families[i]] || [];
+    for (var j = 0; j < list.length; j += 1) {
+      if (list[j].source === canonicalId) {
+        keys.push(
+          JSON.stringify([
+            families[i],
+            list[j].relation || null,
+            list[j].target,
+            families[i] === "authored" ? list[j].carries : null,
+          ])
+        );
+      }
+    }
+  }
+  return keys.sort(compareStrings);
 }
 
 function startLive() {

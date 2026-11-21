@@ -947,3 +947,44 @@ def test_the_empty_state_adds_no_motion() -> None:
     assert "animation" not in empty
     assert "transition" not in empty
     assert "@keyframes" not in empty
+
+
+# ------------------------------------------------------------ what changed
+
+
+def test_a_moved_line_is_not_a_change() -> None:
+    """A part is changed only when something it declares differs.
+
+    Where it sits in its file is not a declaration: ``location`` is never
+    compared, so a part pushed down by an insertion above it is not
+    marked. The beat reads the same answer as the list of changes.
+    """
+    app_js = read(APP_JS)
+    rule = _between(app_js, "var NOT_A_DECLARED_LINE", ";\n")
+    assert "location: true" in rule
+    diff = _between(app_js, "function diffGraphs(", "\n}\n")
+    assert "JSON.stringify(previousComponents[key])" not in diff
+    assert "declaredChanges(previous, next, key)" in diff
+    assert "delta.changed[key] = lines;" in diff
+
+
+def test_the_declared_lines_are_named_in_order() -> None:
+    """``intent``, then each field key that differs, then declaration facts."""
+    app_js = read(APP_JS)
+    changes = _between(app_js, "function declaredChanges(", "\n}\n")
+    intent = changes.index('lines.push("intent");')
+    fields = changes.index("lines.push(fieldKeys[i]);")
+    facts = changes.index("lines.push(factKeys[i]);")
+    dependencies = changes.index('lines.push("dependencies");')
+    assert intent < fields < facts < dependencies
+    assert "orderedFieldKeys(fieldUnion)" in changes
+
+
+def test_dependencies_are_compared_from_the_part_s_own_side() -> None:
+    """What it leans on counts; what leans on it does not."""
+    app_js = read(APP_JS)
+    keys = _between(app_js, "function dependencyKeys(", "\n}\n")
+    assert 'var families = ["authored", "derived"];' in keys
+    assert "list[j].source === canonicalId" in keys
+    assert "list[j].target === canonicalId" not in keys
+    assert "return keys.sort(compareStrings);" in keys
