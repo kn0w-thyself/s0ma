@@ -4226,13 +4226,15 @@ class S0maCLI:
         np.add_argument(
             "--template",
             default=None,
-            choices=["service", "library", "cli"],
+            choices=["service", "library", "cli", "pipeline"],
             help=(
                 "('project' only) Scaffold a complete archetype mini-app "
                 "instead of the minimal starter: 'service' (multi-feature, "
                 "cross-feature depends_on edges), 'library' (export-focused, "
-                "exports + covered_by), or 'cli' (argparse.REMAINDER "
-                "bootstrap shim). Default: the minimal single-feature starter."
+                "exports + covered_by), 'cli' (argparse.REMAINDER "
+                "bootstrap shim), or 'pipeline' (one module per layer, "
+                "described in plain words). Default: the minimal "
+                "single-feature starter."
             ),
         )
         np.add_argument(
