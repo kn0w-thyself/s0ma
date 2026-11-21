@@ -4,29 +4,29 @@
       "s0ma-lang-core": 63,
       "s0ma-lang-dsl": 10,
       "s0ma-lang-mcp": 40,
-      "s0ma-lang-studi0": 48
+      "s0ma-lang-studi0": 50
     },
     "by_kind": {
       "ADAPTER": 2,
       "CONFIG": 2,
       "CONSTANT": 22,
       "FRAMEWORK": 64,
-      "FUNCTION": 65,
+      "FUNCTION": 67,
       "MODEL": 4,
       "ORCHESTRATOR": 1,
       "SERVICE": 1
     },
     "by_layer": {
-      "APPLICATION": 33,
+      "APPLICATION": 35,
       "FRAMEWORK": 74,
       "PRESENTATION": 54
     },
     "by_visibility": {
       "(not declared)": 75,
       "INTERNAL": 5,
-      "PUBLIC": 81
+      "PUBLIC": 83
     },
-    "components": 161
+    "components": 163
   },
   "entries": [
     {
@@ -1058,7 +1058,7 @@
     {
       "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.sh0w_assets.APP_JS",
-      "intent": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, and the narration pane that shows what an agent says it is doing beside it. One file, no imports, no build step.",
+      "intent": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step.",
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
       "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
@@ -1319,7 +1319,7 @@
     {
       "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_state.GRAPH_DOCUMENT_KEYS",
-      "intent": "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: three keys that say which reading this is and what it carries.",
+      "intent": "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: four keys that say which reading this is, what it carries, and the words a reader needs to read it.",
       "kind": "CONSTANT",
       "layer": "APPLICATION",
       "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
@@ -1391,7 +1391,7 @@
     {
       "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_state.graph_document",
-      "intent": "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project.",
+      "intent": "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use — with s0ma's own definitions of its words beside it, in their own key. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project.",
       "kind": "FUNCTION",
       "layer": "APPLICATION",
       "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
@@ -1428,6 +1428,24 @@
       "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_state.state_document",
       "intent": "Renders the answer to GET /api/state: which reading this is, whether the build still matches the sources it was built from, which modules have moved on since — and, in its own block, what an agent has said it is doing. The narration block is a block precisely so that no reader can mistake self-report for build truth: it is nested, named, and carries its own counts. This is the small, cheap document the page polls; the graph itself is fetched only when the sequence number says it is worth fetching.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-lang-studi0",
+      "id": "component:s0ma_studi0.studi0_state.teaching_terms",
+      "intent": "Answers the terms block every /api/graph document carries, from the teaching slice that ships inside s0ma-core. It is built once per server process and then handed out as it is, so serving the definitions costs one read of the slice for the life of the process.",
+      "kind": "FUNCTION",
+      "layer": "APPLICATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-lang-studi0",
+      "id": "component:s0ma_studi0.studi0_state.terms_document",
+      "intent": "Turns the teaching slice s0ma-core ships into the terms block of GET /api/graph: s0ma's own definition of each concept the language and the product are written in, so the page can say what a word such as nerve or forbids means in s0ma's words rather than its own. Every sentence is copied whole from the slice; studi0 contributes the selection and the order, never the text. A slice it cannot read is an answer too: no source and no entries, so the page simply shows no definitions.",
       "kind": "FUNCTION",
       "layer": "APPLICATION",
       "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
@@ -1487,8 +1505,8 @@
       "source": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json"
     },
     {
-      "components": 48,
-      "content_sha256": "aa9a6297889aa89358775ff92075a4177cf8d4d3f605907b3162ee6e158f2e87",
+      "components": 50,
+      "content_sha256": "6ecca1d6a0510e2ee9b73fc0005cbd234382f8b0edb9e197fb16f5b054265ab3",
       "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json"
     },
     {
@@ -1506,6 +1524,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:f9e8d60ed9aca991"
+    "snapshot_hash": "sha256:603bfd17188e9be8"
   }
 }

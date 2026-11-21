@@ -59,7 +59,7 @@ Id `authority:declared/studi0.wire-graph`, declared as `GRAPH_SCHEMA` in [`packa
 | Fact | Value |
 | --- | --- |
 | `carries` | `s0ma-graph@2` |
-| `keys` | `graph,schema,seq` |
+| `keys` | `graph,schema,seq,terms` |
 | `route` | `/api/graph` |
 | `schema` | `s0ma-studi0-graph@1` |
 

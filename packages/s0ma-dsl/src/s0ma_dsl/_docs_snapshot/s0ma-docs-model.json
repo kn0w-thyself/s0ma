@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "b1b7175aca94b029d7745977fb546b65eec5c88d14426d64b3b4e45d34943e5c",
+      "content_sha256": "389c6ba0d18a1f58286259a09977c99ab78d11b7a817847621a417e3a262c611",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.22.0] — 2026-11-19",
@@ -358,16 +358,16 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "b67ff2a865fe66405d1be730e014be5c7bd5540e9cc3f196f3af69be168d7203",
+      "content_sha256": "fca032a3a858446ab4090a236f509d080ac3ce4bf4623e20acecc1fcee44dd66",
       "delegates": [],
       "id": "authority:declared/studi0.wire-graph",
       "section": "GRAPH_SCHEMA",
       "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_state.py",
-      "status": "Declared; carries=s0ma-graph@2; keys=graph,schema,seq; route=/api/graph; schema=s0ma-studi0-graph@1"
+      "status": "Declared; carries=s0ma-graph@2; keys=graph,schema,seq,terms; route=/api/graph; schema=s0ma-studi0-graph@1"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "b67ff2a865fe66405d1be730e014be5c7bd5540e9cc3f196f3af69be168d7203",
+      "content_sha256": "fca032a3a858446ab4090a236f509d080ac3ce4bf4623e20acecc1fcee44dd66",
       "delegates": [],
       "id": "authority:declared/studi0.wire-state",
       "section": "STATE_SCHEMA",
@@ -5523,7 +5523,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:f9e8d60ed9aca991"
+    "snapshot_hash": "sha256:603bfd17188e9be8"
   },
   "surfaces": [
     {
