@@ -322,6 +322,19 @@ body {
   stroke-width: 2;
 }
 
+/* The module's name, as the control that opens the module panel. */
+.organ-name-hit {
+  fill: transparent;
+  stroke: none;
+  cursor: pointer;
+}
+
+.organ-name-hit:focus-visible {
+  outline: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
 .organ-header-rule {
   stroke: var(--line-soft);
   stroke-width: 1;
