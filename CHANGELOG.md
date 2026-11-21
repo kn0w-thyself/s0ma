@@ -113,6 +113,25 @@ Historical entries describe artifacts as they were named at the time.
   it. Narration sits under the list in the same column. No route or document
   changed, and no motion or color was added.
 
+- **studi0 shows a large build one module at a time.** When one build added
+  many parts across several modules, every one of them appeared and beat at
+  the same moment. Now a build that adds more than 4 parts in view, in more
+  than one module, shows them module by module: a module after the modules
+  it leans on, and otherwise the band nearer the bottom of the page first,
+  then by module name. Each module's parts arrive with the usual added-part
+  beat, two seconds after the one before. Its changed and removed parts show
+  at once. While it runs, the status line says, for example, "This build
+  added 6 parts. Showing 3 of 6, module by module." beside a "Show the rest"
+  button, and the build's entry in the list of changes reads "added 6 parts ·
+  showing 3 of 6" and names only the parts shown so far. A newer build that
+  changes something, the toolbar controls that change what is in view,
+  selecting something not yet shown, or the project becoming unbuilt shows
+  the rest at once. With reduced motion turned on there is no reveal. And a
+  module that arrives with a build is now placed after the modules already
+  drawn in its band, where before it could sort in front of them and push
+  them sideways; a reload sorts the band again. No route or document
+  changed, and no motion or color was added.
+
 - **studi0's inspector leads with what a part is for.** Click a component
   and the panel opens on its short name, its declaration type as a tag, and
   one line with its `module` and `layer`. Each label now puts the DSL term
