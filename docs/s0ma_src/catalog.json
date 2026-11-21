@@ -2085,6 +2085,26 @@
     },
     {
       "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "docs/guides/watch-an-app-being-built.md",
+      "covers": [
+        "concept:contract",
+        "concept:intent",
+        "concept:layer",
+        "concept:module",
+        "journey:watch-an-app-being-built"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/watch-an-app-being-built",
+      "kind": "guide",
+      "prose_locator": "docs/guides/watch-an-app-being-built.md",
+      "status": "living",
+      "title": "Watch an app being built"
+    },
+    {
+      "audiences": [
         "agent",
         "user"
       ],

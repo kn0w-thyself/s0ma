@@ -123,14 +123,15 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 # ---------------------------------------------------------------------------
 
 #: Every living repository-level guide, by catalog id, with the file it is a
-#: row about. All twelve carry declared coverage; six got it at G6, the trust
+#: row about. All fourteen carry declared coverage; six got it at G6, the trust
 #: note got it at G7, the documentation-subsystem guide arrived with its own
 #: at I1, the brownfield guide arrived with its own at beta-prep-1-retrofit
 #: F1, the Claude-route guide with its own at beta-prep-2-claude D1, the
 #: stability statement with its own at beta-prep-5-front-door B1, and the
 #: build-outputs guide with its own at the quick-reference correction of
-#: 2026-09-29 — which is what this table is for: a guide added to the corpus
-#: without a weighed binding is a guide this suite reports.
+#: 2026-09-29, and the guide to watching an app being built with its own,
+#: journey and all — which is what this table is for: a guide added to the
+#: corpus without a weighed binding is a guide this suite reports.
 LIVING_GUIDES: Mapping[str, str] = {
     "doc:guide/claude-integration": "docs/guides/claude-integration.md",
     "doc:guide/documentation-subsystem": "docs/documentation-subsystem.md",
@@ -144,6 +145,7 @@ LIVING_GUIDES: Mapping[str, str] = {
     "doc:guide/trust-model": "docs/trust-model.md",
     "doc:guide/uninstall": "docs/uninstall.md",
     "doc:guide/walkthrough": "docs/walkthrough.md",
+    "doc:guide/watch-an-app-being-built": "docs/guides/watch-an-app-being-built.md",
     "doc:guide/what-the-build-writes": "docs/guides/what-the-build-writes.md",
 }
 
@@ -541,6 +543,21 @@ BINDINGS: Mapping[str, tuple[str, ...]] = {
         "mcp:tool/run_example",
         "mcp:tool/scaffold_module",
         "mcp:tool/verify_host",
+    ),
+    # The guide to watching an app being built. It walks its journey
+    # whole, so it claims it: the page names both commands a reader types
+    # (`s0ma new` and `s0ma studi0`), the `build_project` call the agent
+    # makes, and the two routes the page reads (`/api/graph` and
+    # `/api/state`), in the section that says which of them are replayed.
+    # The four ideas it teaches are the ones a reader meets clicking one
+    # part: the layer band it sits in, the module it belongs to, its
+    # intent, and the three lines that make up its contract.
+    "doc:guide/watch-an-app-being-built": (
+        "concept:contract",
+        "concept:intent",
+        "concept:layer",
+        "concept:module",
+        "journey:watch-an-app-being-built",
     ),
     # The build-outputs guide. It opens the build directory of one built
     # module and says what every file is for, so its claims are the words

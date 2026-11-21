@@ -398,6 +398,7 @@ VERSION_CHECKED: frozenset[str] = frozenset(
         "docs/guides/mcp-authoring.md",
         "docs/guides/retrofit-existing-codebase.md",
         "docs/guides/studi0-feedback.md",
+        "docs/guides/watch-an-app-being-built.md",
         "docs/hosting-getting-started.md",
         "docs/operations/docs-maintenance.md",
         "docs/stability.md",

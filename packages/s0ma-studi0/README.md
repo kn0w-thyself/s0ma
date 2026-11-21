@@ -107,6 +107,7 @@ Point studi0 at itself to see the arrangement: `uv run s0ma studi0 packages/s0ma
 
 - [studi0, the viewer](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/studi0.md) — the generated reference: routes, contracts, wire documents.
 - [Look at what you built, then tell us what is wrong with it](https://github.com/kn0w-thyself/s0ma/blob/main/docs/guides/studi0-feedback.md) — the viewer and the feedback route, end to end.
+- [Watch an app being built](https://github.com/kn0w-thyself/s0ma/blob/main/docs/guides/watch-an-app-being-built.md): a finished example in studi0 first, then your own agent building one like it in three requests.
 - [What s0ma can do](https://github.com/kn0w-thyself/s0ma/blob/main/docs/reference/surfaces-index.md) — every capability s0ma serves, on every channel.
 
 In a terminal, `s0ma docs` opens the same map and `s0ma docs show <topic>` answers one question from it.

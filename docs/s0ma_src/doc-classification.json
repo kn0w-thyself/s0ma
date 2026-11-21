@@ -212,6 +212,12 @@
     {
       "audience": "user",
       "disposition": "living-authored",
+      "note": "Journey guide: a finished example in studi0, then a reader's own agent building one like it in three requests. Bound to its journey through the catalog and pinned by test_docs_guide_bindings.py; its evidence replays the steps that need no agent.",
+      "path": "docs/guides/watch-an-app-being-built.md"
+    },
+    {
+      "audience": "user",
+      "disposition": "living-authored",
       "note": "Guide to the build's outputs: what each file in the build directory is, who reads it, and why none is edited by hand; bound to its coverage in the guide-bindings suite.",
       "path": "docs/guides/what-the-build-writes.md"
     },
