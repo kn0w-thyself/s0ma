@@ -2297,15 +2297,16 @@ Because the translation is cheap in one direction and expensive in the other, th
 
 ### 25.5 Archetype starters (`--template`)
 
-`s0ma new project <dir>` without a flag scaffolds the minimal single-feature starter. `--template <service|library|cli>` scaffolds a **complete, compiling worked example** instead — each archetype builds, passes `s0ma check --mode release`, runs its tests, and (where it has one) runs its bootstrap, straight out of the command. The archetype *is* the design-pattern documentation; read the one whose shape matches what you are building, then grow it.
+`s0ma new project <dir>` without a flag scaffolds the minimal single-feature starter. `--template <service|library|cli|pipeline>` scaffolds a **complete, compiling worked example** instead — each archetype builds, passes `s0ma check --mode release`, runs its tests, and (where it has one) runs its bootstrap, straight out of the command. The archetype *is* the design-pattern documentation; read the one whose shape matches what you are building, then grow it.
 
 | `--template` | Layout | The pattern it teaches |
 |---|---|---|
 | `service` | three features, three layers — DOMAIN `catalog` → APPLICATION `ordering` → PRESENTATION `api`, plus `bootstrap/main.py` | **Cross-feature `depends_on:`** in the qualified `module.declaration` form and the **layer reachability matrix** (PRESENTATION → APPLICATION → DOMAIN, never upward). The boundary doctrine: one sanctioned bootstrap, declared in `[tool.s0ma].bootstrap_files`. |
 | `library` | one DOMAIN feature — a slug core + a thin public facade | **`exports:`** and **`covered_by:`** (external pytest-suite test credit that satisfies the release gate on a facade with no in-language test). Layer-light is fine for a small library (§25.3). |
 | `cli` | DOMAIN/APPLICATION core + a PRESENTATION router, plus `bootstrap/cli.py` | The **`argparse.REMAINDER`** thin-Python bootstrap → PRESENTATION nerve handoff (§10), including the leading-`--` strip. |
+| `pipeline` | one module per layer: INFRASTRUCTURE `player` → DOMAIN `music` → APPLICATION `coach` → PRESENTATION `page`, plus `bootstrap/main.py` | **One module per layer**, with its declared text written in plain words for a reader who does not program. The two boundary layers may not reach each other, so the bootstrap hands the song the INFRASTRUCTURE `player` reads to the PRESENTATION `page`. A `ganglion` watches the mood nerve. No network: the songs are built-in samples. |
 
-All three ship the feature-first layout, AGENTS.md + a thin CLAUDE.md, the load-bearing app map (§29), and starter `test`/`covered_by:` coverage. The `service` archetype is the most representative full application and the recommended starting point for a typical project.
+All four ship the feature-first layout, AGENTS.md + a thin CLAUDE.md, the load-bearing app map (§29), and starter `test`/`covered_by:` coverage. The `service` archetype is the most representative full application and the recommended starting point for a typical project.
 
 ## 26. Placement, not architecture
 

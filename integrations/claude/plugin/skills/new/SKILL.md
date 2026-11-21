@@ -21,7 +21,9 @@ Ask in one message, and suggest a default for each:
   path back to them before you create it.
 - **The shape.** `--template service` for a multi-feature application,
   `--template library` for something other code imports, `--template cli` for a
-  command-line tool. Leave it out for the smallest possible starter.
+  command-line tool, `--template pipeline` for a small example app with one
+  module per layer, described in plain words. Leave it out for the smallest
+  possible starter.
 - **The strictness.** `--mode dev` is the default and the right answer for new
   work. `--mode migration` is for a tree that is being converted; `strict` and
   `release` raise the bar the project's own checks hold it to.
