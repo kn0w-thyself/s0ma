@@ -271,7 +271,7 @@ def test_full_detail_components_are_verbatim_ir(golden_build: Path) -> None:
 
 
 def test_full_detail_modules(golden_build: Path) -> None:
-    """``modules`` records name, layer, intent and sorted component ids."""
+    """``modules`` records name, layer, intent, sorted component ids and the IR's module facts."""
     payload = collect_graph(golden_build, detail="full")
     modules = payload["modules"]
 
@@ -288,12 +288,84 @@ def test_full_detail_modules(golden_build: Path) -> None:
 
     covered: list[str] = []
     for module in modules:
-        assert set(module) == {"name", "layer", "intent", "components"}
+        assert set(module) == {
+            "name",
+            "layer",
+            "intent",
+            "components",
+            "version",
+            "tags",
+            "source_file",
+            "imports",
+            "exports",
+        }
         assert module["components"] == sorted(module["components"])
         assert module["intent"] is not None
         covered.extend(module["components"])
     # Modules partition the node set.
     assert sorted(covered) == payload["nodes"]
+
+
+#: Module-level facts copied from the IR's ``module`` block.
+_MODULE_BLOCK_FACTS = ("version", "tags", "source_file")
+#: Module-level facts copied from the IR document's top level.
+_TOP_LEVEL_FACTS = ("imports", "exports")
+
+
+def test_full_detail_modules_carry_ir_module_facts(
+    golden_project_root: Path,
+) -> None:
+    """The new module facts are the IR's own values, state wrappers included."""
+    payload = collect_graph(golden_project_root, detail="full")
+    assert payload["schema"] == GRAPH_SCHEMA == "s0ma-graph@2"
+    by_name = {module["name"]: module for module in payload["modules"]}
+
+    ir_files = discover_ir_files(golden_project_root / "golden_project_build")
+    assert ir_files, "expected built IR"
+    for ir_path in ir_files:
+        data = json.loads(ir_path.read_text(encoding="utf-8"))
+        exported = by_name[data["module"]["name"]]
+        for key in _MODULE_BLOCK_FACTS:
+            assert exported[key] == data["module"][key], key
+        for key in _TOP_LEVEL_FACTS:
+            # State wrappers and list order survive untouched.
+            assert exported[key] == data[key], key
+        assert exported["source_file"].startswith("src/")
+        assert exported["source_file"].endswith(".s0ma")
+
+    # The fixture only pins the pass-through if the IR carries state
+    # wrappers in the imports block.
+    imports = next(iter(by_name.values()))["imports"]
+    assert isinstance(imports, dict) and imports
+    assert all(
+        isinstance(value, list) or "state" in value for value in imports.values()
+    )
+
+
+def test_modules_omit_facts_an_older_ir_lacks(
+    golden_build: Path, tmp_path: Path
+) -> None:
+    """An IR without one of the new keys yields a record without it, never a default."""
+    bare = tmp_path / "older"
+    bare.mkdir()
+    for ir_path in discover_ir_files(golden_build):
+        data = json.loads(ir_path.read_text(encoding="utf-8"))
+        for key in _MODULE_BLOCK_FACTS:
+            data["module"].pop(key, None)
+        for key in _TOP_LEVEL_FACTS:
+            data.pop(key, None)
+        (bare / ir_path.name).write_text(json.dumps(data), encoding="utf-8")
+
+    payload = collect_graph(bare, detail="full")
+    assert payload["schema"] == GRAPH_SCHEMA == "s0ma-graph@2"
+    assert payload["modules"]
+    for module in payload["modules"]:
+        assert set(module) == {"name", "layer", "intent", "components"}
+
+
+def test_module_facts_are_full_detail_only(golden_build: Path) -> None:
+    """Summary carries no module records at all, so none of the new facts."""
+    assert "modules" not in collect_graph(golden_build)
 
 
 def test_locations_are_project_relative(golden_project_root: Path) -> None:

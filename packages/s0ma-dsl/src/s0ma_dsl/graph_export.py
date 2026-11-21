@@ -12,7 +12,9 @@ is a superset of the historical unversioned shape: ``nodes``,
 content and ordering, and ``schema``, ``edges.verification`` and
 ``integrations`` are added at both detail levels. ``detail="full"`` adds
 ``components``, ``modules`` and — when a build manifest is found —
-``freshness``.
+``freshness``. A ``modules`` record carries ``name``, ``layer``,
+``intent`` and ``components``, plus — when the IR records them —
+``version``, ``tags``, ``source_file``, ``imports`` and ``exports``.
 
 Truth discipline:
 
@@ -506,12 +508,26 @@ def collect_graph(
                 list(existing["components"]) if existing is not None else []
             )
             merged.extend(module_components)
-            modules[module_name] = {
+            record: dict[str, Any] = {
                 "name": module_name,
                 "layer": module_block.get("layer"),
                 "intent": module_block.get("intent"),
                 "components": sorted(set(merged)),
             }
+            # Module-level facts the build already records, copied as the
+            # IR holds them (state wrappers included). A key the IR lacks
+            # (an older artifact) is left out, never defaulted.
+            for key in ("version", "tags"):
+                if key in module_block:
+                    record[key] = module_block[key]
+            if "source_file" in module_block:
+                # Already project-relative for a project build; an absolute
+                # recording is relativised so no machine path leaks (INV-5).
+                record["source_file"] = source_file
+            for key in ("imports", "exports"):
+                if key in data:
+                    record[key] = data[key]
+            modules[module_name] = record
 
     graph: dict[str, Any] = {
         "schema": GRAPH_SCHEMA,
