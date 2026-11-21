@@ -64,4 +64,4 @@ Do not skip the check and go straight to a build hoping to save time. The check 
 
 - Topic id: `concept:check-and-build-loop`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:3b0ce65767d5b48e`
+- Documentation snapshot: `sha256:3c294383590767c7`

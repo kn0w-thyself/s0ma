@@ -251,6 +251,11 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Fixed
 
+- **The pipeline template's app map states the layer rule correctly.** The
+  app map that `s0ma new project --template pipeline` writes said a file may
+  only use the layers below it. It now says what the build enforces: a file
+  reaches toward the middle of the app, and the two edges never use each
+  other.
 - **The package READMEs count the umbrella.** The READMEs of `s0ma-lang-core`,
   `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, which are their
   pages on PyPI, said four distributions ship together at one version. Five

@@ -63,4 +63,4 @@ Do not use it for the conversion work inside it: a file joins the self-model by 
 
 - Topic id: `concept:perimeter`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:3b0ce65767d5b48e`
+- Documentation snapshot: `sha256:3c294383590767c7`
