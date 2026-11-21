@@ -5,7 +5,7 @@ their own coding agent build one like it in three requests. Half of that
 path is deterministic and half is not, and the line between them is what
 this suite holds in place:
 
-* **the path** — seven steps over surfaces this build really serves, in
+* **the path**: seven steps over surfaces this build really serves, in
   the order a reader walks them, composing with nothing to report;
 * **the evidence replays the half that needs no agent**, in two
   transcripts, one per project the reader makes. In the first the example
@@ -17,11 +17,11 @@ this suite holds in place:
   for the agent's ``build_project`` call, and both ledgers say so. Two
   transcripts rather than one because a transcript prepares one project
   and runs in it, and this path has the reader make two;
-* **the guide agrees with the evidence** — every command a reader is shown
+* **the guide agrees with the evidence**: every command a reader is shown
   is one the transcript runs, save the two that serve until interrupted,
   and the commands that only stand in for the agent are never shown to the
   reader as theirs;
-* **the guide quotes the page** — every fixed sentence it quotes from
+* **the guide quotes the page**: every fixed sentence it quotes from
   studi0 is a string in the page's own source, so a reworded page fails
   here rather than leaving the guide describing a page nobody has.
 
@@ -51,11 +51,11 @@ from s0ma_dsl.docs_model.evidence import (
 from s0ma_dsl.docs_model.ids import normalize_id
 from s0ma_dsl.docs_model.providers_concepts import FORBIDDEN_IN_AUTHORED_PROSE
 from s0ma_dsl.docs_model.providers_journeys import check_journey_voice
-from s0ma_dsl.docs_model.records import JourneyRecord
 from s0ma_dsl.docs_model.validate import TEACHING_PREREQUISITE
 
 if TYPE_CHECKING:
     from s0ma_dsl.docs_model.evidence import EvidenceRecord
+    from s0ma_dsl.docs_model.records import JourneyRecord
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
@@ -74,7 +74,9 @@ APP_JS = REPO_ROOT / "packages" / "s0ma-studi0" / "s0ma_src" / "assets" / "app.j
 
 #: The three builds the guide's requests describe, as studi0's own tests
 #: keep them.
-SOURCES = REPO_ROOT / "packages" / "s0ma-studi0" / "tests" / "fixtures" / "pipeline_builds" / ".sources"
+SOURCES = REPO_ROOT.joinpath(
+    "packages", "s0ma-studi0", "tests", "fixtures", "pipeline_builds", ".sources"
+)
 BUILDS = ("build_1", "build_2", "build_3")
 
 #: The path as authored. Written down rather than read off the record, so
@@ -308,7 +310,12 @@ class TestTheEvidence:
         self, fixtures: dict[str, EvidenceRecord]
     ) -> None:
         assert fixtures[EXAMPLE_ID].scaffold.argv == (
-            "s0ma", "new", "project", "example", "--template", "pipeline",
+            "s0ma",
+            "new",
+            "project",
+            "example",
+            "--template",
+            "pipeline",
         )
         assert fixtures[GROWTH_ID].scaffold.argv == ("s0ma", "new", "project", "song")
 
@@ -385,8 +392,10 @@ class TestTheGuide:
         ran: set[str] = set()
         for record in fixtures.values():
             ran.add(_rendered(record.scaffold.argv))
-            ran.update(_rendered(step.argv) for step in record.steps if isinstance(step, CommandStep))
-        assert STAND_INS <= ran
+            ran.update(
+                _rendered(step.argv) for step in record.steps if isinstance(step, CommandStep)
+            )
+        assert ran >= STAND_INS
         assert shown == (ran - STAND_INS) | UNREPLAYABLE_IN_GUIDE
 
     def test_the_guide_says_plainly_that_the_agents_work_is_not_replayed(
@@ -404,9 +413,7 @@ class TestTheGuide:
         assert quote.strip() in flowed, quote
         assert quote in APP_JS.read_text(encoding="utf-8"), quote
 
-    def test_every_intra_repo_link_resolves_to_a_file_that_is_there(
-        self, guide_text: str
-    ) -> None:
+    def test_every_intra_repo_link_resolves_to_a_file_that_is_there(self, guide_text: str) -> None:
         here = (REPO_ROOT / GUIDE).parent
         for target in re.findall(r"\]\((?!https?:)([^)#]+)(?:#[^)]*)?\)", guide_text):
             assert (here / target).resolve().is_file(), target
@@ -435,9 +442,7 @@ class TestTheVoice:
     ) -> None:
         assert [item.rendered() for item in check_evidence_voice(fixtures[identifier])] == []
 
-    def test_the_guide_prose_never_uses_a_word_this_product_does_not(
-        self, guide_text: str
-    ) -> None:
+    def test_the_guide_prose_never_uses_a_word_this_product_does_not(self, guide_text: str) -> None:
         offences = [
             (label, found.group(0))
             for label, pattern in FORBIDDEN_IN_AUTHORED_PROSE
