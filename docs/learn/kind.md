@@ -69,4 +69,4 @@ cell <Name> :: <LAYER>
 
 - Topic id: `concept:kind`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:f17b238e934b5136`
+- Documentation snapshot: `sha256:f9e8d60ed9aca991`

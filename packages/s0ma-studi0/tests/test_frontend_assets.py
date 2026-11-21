@@ -483,3 +483,149 @@ def test_inspector_rows_follow_the_keys_the_payload_carries() -> None:
         'name === "forbids" &&\n'
         '    (declarationType === "nerve" || declarationType === "ganglion")'
     ) in app_js
+
+
+# ---------------------------------------------------------------------------
+# The module panel: a module is selectable, and its panel reads its record
+# ---------------------------------------------------------------------------
+
+
+def _module_inspector(app_js: str) -> str:
+    start = app_js.index("function renderModuleInspector(")
+    return app_js[start : app_js.index("\n}\n", start)]
+
+
+def test_a_module_is_selected_through_the_click_path() -> None:
+    """The module's name is a real control that calls the same select()."""
+    app_js = read(APP_JS)
+    assert 'select({ type: "module", id: organ.module })' in app_js
+    assert '"aria-label": "inspect module " + organ.module,' in app_js
+    assert '"data-organ-name": organ.module,' in app_js
+    assert 'select({ type: "module", id: focusedName })' in app_js
+    assert 'renderModuleInspector(state.model.modules[selection.id])' in app_js
+    # The name sits after the header in the tab order, so the arrow and
+    # the rest of the header keep collapsing and expanding the module.
+    assert (
+        "ui.layerNodes.appendChild(organHeaderHit(organ));\n"
+        "    ui.layerNodes.appendChild(organNameHit(organ));"
+    ) in app_js
+
+
+def test_a_module_selection_survives_a_refresh_until_the_module_is_gone() -> None:
+    app_js = read(APP_JS)
+    assert (
+        '  if (state.selection && state.selection.type === "module") {\n'
+        "    if (!state.model.modules[state.selection.id]) {\n"
+        "      state.selection = null;"
+    ) in app_js
+
+
+def test_module_panel_labels_put_the_dsl_term_first() -> None:
+    """``uses``, ``requires``, ``exports`` are terms; "used by" is not."""
+    app_js = read(APP_JS)
+    for term, phrase in (
+        ("uses", "parts of other files it may reach"),
+        ("requires", "code from outside the project"),
+        ("exports", "what it offers to other files"),
+    ):
+        assert f'  {term}: "{phrase}",' in app_js, term
+    assert 'plainSection("used by", "files that reach into it")' in app_js
+    assert 'el("code", "decl-tag", "module")' in app_js
+    assert '"More about this module"' in app_js
+    assert '" lists not declared"' in app_js
+    assert '" list not declared"' in app_js
+    assert '"none in this project"' in app_js
+
+
+def test_module_panel_above_the_fold_order() -> None:
+    """header, intent, uses, requires, exports, used by, then the fold."""
+    body = _module_inspector(read(APP_JS))
+    order = [
+        body.index("moduleHead(module);"),
+        body.index('fieldSection("intent")'),
+        body.index("renderModuleUses("),
+        body.index("renderModuleRequires("),
+        body.index("renderModuleExports("),
+        body.index("renderModuleUsedBy("),
+        body.index("renderMoreAboutThisModule("),
+    ]
+    assert order == sorted(order)
+
+
+def test_module_panel_rows_follow_the_keys_the_record_carries() -> None:
+    """An older payload's module record shows the header and intent alone."""
+    body = _module_inspector(read(APP_JS))
+    assert 'if (carriesImports && "uses" in imports) {' in body
+    assert 'if (carriesImports && "requires" in imports) {' in body
+    assert 'if ("exports" in module) {' in body
+    assert "if (carriesImports) {\n    renderModuleUsedBy(name);" in body
+
+
+def test_module_panel_names_select_through_the_relationship_path() -> None:
+    """uses and exports go through peerControl; requires names never do."""
+    app_js = read(APP_JS)
+    assert 'parts[j].module + "::" + parts[j].part' in app_js
+    assert 'peerControl(moduleName + "::" + String(names[i]))' in app_js
+    requires = app_js[
+        app_js.index("function renderModuleRequires(") : app_js.index(
+            "function renderModuleExports("
+        )
+    ]
+    assert "peerControl(" not in requires
+    assert "button" not in requires
+
+
+def test_used_by_is_a_reverse_index_of_declared_uses() -> None:
+    """Built from every module's own ``uses`` list, never from edges."""
+    app_js = read(APP_JS)
+    reverse = app_js[
+        app_js.index("function modulesUsing(") : app_js.index(
+            "function renderModuleUsedBy("
+        )
+    ]
+    assert "declaredNames(imports.uses)" in reverse
+    assert "splitUsesEntry(entries[j]).module === moduleName" in reverse
+    assert "edges" not in reverse
+    assert '"show module " + moduleName + " in the graph"' in app_js
+
+
+def test_used_by_never_claims_completeness_it_cannot_know() -> None:
+    """A module whose ``uses`` is absent or pending makes the list partial."""
+    app_js = read(APP_JS)
+    reverse = app_js[
+        app_js.index("function modulesUsing(") : app_js.index(
+            "function moduleControl("
+        )
+    ]
+    assert 'if (!hasUses || projectValue(imports.uses).kind !== "none") {' in reverse
+    assert '"1 module has not declared its "' in reverse
+    assert '" modules have not declared their "' in reverse
+    assert '", so this list may be incomplete"' in reverse
+    # "none in this project" is said only when nothing is unknown.
+    assert reverse.index("if (reverse.unknown > 0) {") < reverse.index(
+        '"none in this project"'
+    )
+
+
+def test_module_fold_shows_a_privileged_list_with_entries() -> None:
+    app_js = read(APP_JS)
+    fold = app_js[app_js.index("function renderMoreAboutThisModule(") :]
+    fold = fold[: fold.index("\n}\n")]
+    assert "if (Array.isArray(privileged) && privileged.length > 0) {" in fold
+    assert 'fieldLabel("dt", null, "privileged", null)' in fold
+    assert 'el("code", "term", String(privileged[p]))' in fold
+
+
+def test_fixture_module_records_carry_the_module_panel_keys() -> None:
+    """The harness has a module record to draw every module panel row for."""
+    payload = json.loads(read(FIXTURE_PAYLOAD))
+    for module in payload["modules"]:
+        for key in ("imports", "exports", "version", "tags", "source_file"):
+            assert key in module, (module["name"], key)
+    uses = [
+        entry
+        for module in payload["modules"]
+        if module["imports"]["uses"]["state"] == "value"
+        for entry in module["imports"]["uses"]["value"]
+    ]
+    assert uses, "no declared uses to build used by from"

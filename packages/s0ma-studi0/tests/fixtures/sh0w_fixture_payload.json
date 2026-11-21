@@ -1516,12 +1516,44 @@
         "console::summarise_overdue",
         "console::test_agenda_lists_every_due_reminder"
       ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "render_agenda"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "scheduling.due_reminders",
+            "scheduling.SchedulingWindow",
+            "reminders.Reminder"
+          ]
+        }
+      },
       "intent": {
         "state": "value",
         "value": "The agenda screen: turns the reminders a scheduling pass reports as due into the text a person reads."
       },
       "layer": "PRESENTATION",
-      "name": "console"
+      "name": "console",
+      "source_file": "s0ma_src/console.s0ma",
+      "tags": [],
+      "version": "0.1.0"
     },
     {
       "components": [
@@ -1533,24 +1565,95 @@
         "delivery::test_push_channel_reports_gateway_refusal",
         "delivery::watch_channel_failures"
       ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "PushChannel",
+          "EmailChannel",
+          "ChannelUnavailable",
+          "PushGateway",
+          "describe_gateway"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "platform.RetryBudget",
+            "reminders.Reminder"
+          ]
+        }
+      },
       "intent": {
         "state": "value",
         "value": "The outbound channels: each one wraps a single external system and reports what that system returned."
       },
       "layer": "INFRASTRUCTURE",
-      "name": "delivery"
+      "name": "delivery",
+      "source_file": "s0ma_src/delivery.s0ma",
+      "tags": [],
+      "version": "0.1.0"
     },
     {
       "components": [
         "platform::RetryBudget",
         "platform::clock_now"
       ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "RetryBudget",
+          "clock_now"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass",
+            "datetime.datetime",
+            "datetime.timezone"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
       "intent": {
         "state": "value",
         "value": "Project-wide primitives the other modules share: the clock reading and the retry budget."
       },
       "layer": "FRAMEWORK",
-      "name": "platform"
+      "name": "platform",
+      "source_file": "s0ma_src/platform.s0ma",
+      "tags": [],
+      "version": "0.1.0"
     },
     {
       "components": [
@@ -1560,12 +1663,44 @@
         "reminders::notify_delivery_link",
         "reminders::test_urgency_rules_hold"
       ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "Reminder",
+          "classify_urgency"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass",
+            "datetime.datetime"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
       "intent": {
         "state": "value",
         "value": "What a reminder is and how urgent it is: the rules that hold regardless of how reminders are stored or sent."
       },
       "layer": "DOMAIN",
-      "name": "reminders"
+      "name": "reminders",
+      "source_file": "s0ma_src/reminders.s0ma",
+      "tags": [],
+      "version": "0.1.0"
     },
     {
       "components": [
@@ -1576,12 +1711,53 @@
         "scheduling::plan_next_run",
         "scheduling::watch_backlog_growth"
       ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "ScheduleService",
+          "SchedulingWindow",
+          "UnknownRecurrence",
+          "due_reminders"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass",
+            "datetime.datetime",
+            "datetime.timedelta"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "reminders.Reminder",
+            "reminders.classify_urgency",
+            "delivery.PushChannel",
+            "platform.clock_now"
+          ]
+        }
+      },
       "intent": {
         "state": "value",
         "value": "The scheduling pass: decides which reminders are due in a window and hands them to the delivery channels."
       },
       "layer": "APPLICATION",
-      "name": "scheduling"
+      "name": "scheduling",
+      "source_file": "s0ma_src/scheduling.s0ma",
+      "tags": [],
+      "version": "0.1.0"
     }
   ],
   "nodes": [

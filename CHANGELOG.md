@@ -11,6 +11,39 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Added
+
+- **studi0 has a module panel.** A module's name in its header is now a
+  control, reachable by keyboard, that selects the module; the arrow and the
+  rest of the header still collapse and expand it. The panel opens on the
+  module's name, a `module` tag, its `layer` and how many components it
+  holds, and the stale note when it is stale. Above the fold it shows
+  `intent` · what it is for, `uses` · parts of other files it may reach,
+  grouped under "from" and the other module's name, `requires` · code from
+  outside the project, `exports` · what it offers to other files, and used
+  by · files that reach into it. A part name in `uses` or `exports` selects
+  that part when the graph carries it and is shown as written when it does
+  not. "used by" is read from every module's declared `uses`. It says "none
+  in this project" only when every other module has declared its `uses` and
+  none names a part of this one; when a module has not declared its `uses`,
+  the panel says the list may be incomplete. `version`, `tags`, a
+  `privileged` row when that list has entries, a counted line for the import
+  lists not declared, and the file the module was written in sit under one
+  disclosure, "More about this module". A row appears only when the module
+  record carries it, so a graph from an older build shows the header and
+  `intent` alone. A module selection survives a refresh and is dropped only
+  when the module is gone. No motion and no color were added. The dev
+  harness fixture is regenerated so its module records carry the new fields.
+
+- **A module record in `s0ma graph` carries its imports and exports.** At
+  `--detail full`, each record in the payload's `modules` list now also
+  carries, when the IR has them, `version`, `tags`, `source_file`, `exports`
+  (a state object), and `imports`: `requires`, `uses`, `soft_requires`,
+  `deferred_requires`, and `runtime_only_requires`, each a state object, plus
+  `privileged`. Every one is copied from the IR as it stands and is an added
+  key, so the schema stays `s0ma-graph@2` and a reader of the old four keys
+  is unaffected.
+
 ### Changed
 
 - **studi0's inspector leads with what a part is for.** Click a component
