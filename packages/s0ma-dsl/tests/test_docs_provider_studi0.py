@@ -424,7 +424,7 @@ class TestTheDeclaredContracts:
         assert state["keys"] == "build_status,narration,schema,seq,stale_modules"
         assert state["narration_keys"] == "entries,invalid,total"
         assert graph["schema"] == "s0ma-studi0-graph@1"
-        assert graph["keys"] == "graph,schema,seq"
+        assert graph["keys"] == "graph,schema,seq,terms"
         assert graph["carries"] == "s0ma-graph@2"
 
     def test_the_watch_contract_carries_its_three_guarantees(
