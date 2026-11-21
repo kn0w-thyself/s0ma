@@ -32,9 +32,9 @@ cell APP_CSS :: PRESENTATION
 cell APP_JS :: PRESENTATION
     kind: CONSTANT
     visibility: PUBLIC
-    intent: "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, and the narration pane that shows what an agent says it is doing beside it. One file, no imports, no build step."
+    intent: "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
     schema: "str constant — one JavaScript file, embedded verbatim from assets/app.js."
     content: @file("assets/app.js")
-    placeholders: [__S0MA_FIXTURE__, __S0MA_NARRATION__]
-    invariants: "Served byte-for-byte as embedded: studi0 substitutes nothing at request time. The declared placeholders are not substitution targets but the names of the two JavaScript globals the fixture boot mode reads, the graph document and the optional narration block the dev harness supplies, declared here only so the cell's marker set matches the file's actual content."
+    placeholders: [__S0MA_FIXTURE__, __S0MA_NARRATION__, __S0MA_TERMS__]
+    invariants: "Served byte-for-byte as embedded: studi0 substitutes nothing at request time. The declared placeholders are not substitution targets but the names of the three JavaScript globals the fixture boot mode reads, the graph document and the optional narration and terms blocks the dev harness supplies, declared here only so the cell's marker set matches the file's actual content."
     covered_by: ["tests/test_integration_live.py — GET /assets/app.js serves the embedded script"]

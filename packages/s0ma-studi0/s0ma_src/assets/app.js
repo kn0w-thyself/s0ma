@@ -227,6 +227,66 @@ var PHASE_LABEL = {
  * and the pane says what it is not showing. */
 var NARRATION_SHOWN = 12;
 
+/* Where a word the page prints is explained in s0ma's own dictionary,
+ * when the word is not itself one of an entry's names. Ids only: every
+ * definition arrives with /api/graph, copied from the teaching slice
+ * s0ma-core ships, and no definition is written in this file. Keyed by
+ * the role a word plays where it is printed: a layer name (a value of
+ * `layer`, such as APPLICATION) and a relation word in a relationship
+ * row (such as READS or CALLS). */
+var TERM_POINTERS = {
+  "layer-name": "concept:layer",
+  relation: "concept:axon",
+};
+
+/* The three contract lines, pointed at the contract entry. Kept in a
+ * constant of their own so they can be removed in one edit once the
+ * dictionary carries an entry for each. */
+var CONTRACT_FIELD_POINTERS = {
+  guarantees: "concept:contract",
+  forbids: "concept:contract",
+  expects: "concept:contract",
+};
+
+/* Every word this page can print in a term position, with the role it
+ * plays there. Run through resolveTerm, the list is the dictionary's
+ * "On this page" section: what this page can show, whichever graph it
+ * happens to be showing. */
+var PAGE_TERM_WORDS = [
+  ["ganglion", null],
+  ["nerve", null],
+  ["cell", null],
+  ["axon", null],
+  ["test", null],
+  ["helper", null],
+  ["doc_ref", null],
+  ["doc_guide", null],
+  ["example", null],
+  ["module", null],
+  ["layer", null],
+  ["APPLICATION", "layer-name"],
+  ["intent", null],
+  ["guarantees", null],
+  ["forbids", null],
+  ["expects", null],
+  ["schema", null],
+  ["invariants", null],
+  ["value", null],
+  ["covered_by", null],
+  ["uses", null],
+  ["requires", null],
+  ["exports", null],
+  ["kind", null],
+  ["visibility", null],
+  ["version", null],
+  ["tags", null],
+  ["soft_requires", null],
+  ["deferred_requires", null],
+  ["runtime_only_requires", null],
+  ["privileged", null],
+  ["READS", "relation"],
+];
+
 /* The SVG namespace, read from a probe element instead of a URL
  * literal: no absolute URL of any scheme appears in this file, so the
  * page can be proven self-contained by inspection (FR-STUDI0-7). */
@@ -279,6 +339,20 @@ var state = {
    * live repaint of the same selection keeps them as the reader left
    * them. A new selection starts with both closed. */
   disclosure: { key: null, more: false, undeclared: false },
+  /* s0ma's own definitions of its words, as /api/graph serves them
+   * (the terms block), indexed for the resolver. Empty when the server
+   * sent none, and then no word on the page is a control. */
+  terms: { source: null, entries: [], byId: {}, byName: {} },
+  termsText: null,
+  /* The one term card open in the inspector: which selection it belongs
+   * to and which control opened it, so a repaint of the same selection
+   * keeps it open and a new selection closes it. */
+  termCard: { selection: null, key: null, more: false },
+  /* The dictionary, which shares the right panel with the inspector:
+   * whether it is open, which entry is open in it, the selection to go
+   * back to, and whether its "more terms" disclosure is open. */
+  dictionary: { open: false, entry: null, back: null, rest: false },
+  dictionaryCard: { more: false },
 };
 
 var ui = {};
@@ -1196,6 +1270,17 @@ function buildShell(mount) {
   toolbar.appendChild(zoomOut);
   toolbar.appendChild(zoomIn);
   toolbar.appendChild(fit);
+
+  /* Hidden until /api/graph brings s0ma's definitions: with none, there
+   * is no dictionary to open and the toolbar reads as it always has. */
+  ui.termsSep = el("span", "toolbar-sep");
+  ui.termsSep.hidden = true;
+  ui.termsButton = toolbarButton("terms", toggleDictionary);
+  ui.termsButton.setAttribute("aria-pressed", "false");
+  ui.termsButton.title = "s0ma's own definitions of the words on this page";
+  ui.termsButton.hidden = true;
+  toolbar.appendChild(ui.termsSep);
+  toolbar.appendChild(ui.termsButton);
   topbar.appendChild(toolbar);
   root.appendChild(topbar);
 
@@ -1238,6 +1323,7 @@ function buildShell(mount) {
   ui.viewport.appendChild(ui.layerNodes);
   ui.canvas.appendChild(ui.viewport);
   ui.canvasWrap.appendChild(ui.canvas);
+  ui.legendTerms = [];
   ui.canvasWrap.appendChild(buildLegend());
   ui.statusLine = el("div", "status-line");
   ui.canvasWrap.appendChild(ui.statusLine);
@@ -1304,7 +1390,9 @@ function buildLegend() {
     var swatch = svgEl("svg", { class: "legend-swatch", viewBox: "0 0 20 20" });
     swatch.appendChild(glyphShape(glyphs[i][0], 10, 10, 0.42));
     item.appendChild(swatch);
-    item.appendChild(el("span", null, glyphs[i][1]));
+    var glyphName = el("span", null, glyphs[i][1]);
+    item.appendChild(glyphName);
+    ui.legendTerms.push({ item: item, node: glyphName, word: glyphs[i][1], entryId: null });
     shapes.appendChild(item);
   }
   legend.appendChild(shapes);
@@ -2172,6 +2260,11 @@ function stripBeatMarks(layer) {
  * ------------------------------------------------------------------ */
 
 function select(selection) {
+  if (state.dictionary.open) {
+    /* A part chosen while the dictionary is open takes the panel back,
+     * and the terms button lets go. */
+    closeDictionaryState();
+  }
   state.selection = selection;
   applySelection();
   renderInspector();
@@ -2179,6 +2272,8 @@ function select(selection) {
 
 function clearSelection() {
   state.selection = null;
+  closeDictionaryState();
+  state.termCard = { selection: null, key: null, more: false };
   applySelection();
   ui.inspector.hidden = true;
   clear(ui.inspector);
@@ -2259,7 +2354,18 @@ function setClassFlag(node, className, on) {
 
 function renderInspector() {
   var selection = state.selection;
+  var scrolled = ui.inspector.scrollTop;
   clear(ui.inspector);
+  ui.termCard = null;
+  ui.termCardButton = null;
+  ui.termSeen = {};
+  if (state.dictionary.open) {
+    ui.inspector.hidden = false;
+    renderDictionary();
+    /* A repaint while the dictionary is open keeps the reader's place. */
+    ui.inspector.scrollTop = scrolled;
+    return;
+  }
   if (!selection) {
     ui.inspector.hidden = true;
     return;
@@ -2275,6 +2381,7 @@ function renderInspector() {
   } else if (selection.type === "module") {
     renderModuleInspector(state.model.modules[selection.id]);
   }
+  restoreTermCard();
 }
 
 function inspectorHead(title, subtitle) {
@@ -2377,19 +2484,23 @@ function componentHead(component) {
   inspectorHead(shortName(component.canonical_id), null);
 
   var tagLine = el("p", "inspector-tagline");
+  var declControl = component.declaration_type
+    ? inspectorTerm(component.declaration_type, null, "decl-tag")
+    : null;
   tagLine.appendChild(
-    el("code", "decl-tag", component.declaration_type || "not declared")
+    declControl ||
+      el("code", "decl-tag", component.declaration_type || "not declared")
   );
   ui.inspector.appendChild(tagLine);
 
   var where = el("p", "inspector-where");
-  where.appendChild(el("code", "term", "module"));
+  appendTermWord(where, "module");
   where.appendChild(document.createTextNode(" "));
   appendTermValue(where, component.module);
   where.appendChild(el("span", "label-sep", " · "));
-  where.appendChild(el("code", "term", "layer"));
+  appendTermWord(where, "layer");
   where.appendChild(document.createTextNode(" "));
-  appendTermValue(where, component.layer);
+  appendTermValue(where, component.layer, "layer-name");
   ui.inspector.appendChild(where);
 
   if (isStaleModule(component.module)) {
@@ -2404,20 +2515,39 @@ function componentHead(component) {
   }
 }
 
-/* A DSL word or value in monospace, or "not declared" when absent. */
-function appendTermValue(host, value) {
+/* A DSL word or value in monospace, or "not declared" when absent. With
+ * a role (a layer name, a relation word), a value s0ma's dictionary
+ * explains is the control that opens its card; without one, a value is
+ * never a control, so an enum value or a module name stays as written. */
+function appendTermValue(host, value, role) {
   if (value === undefined || value === null || value === "") {
     host.appendChild(el("span", "value-absent", "not declared"));
     return;
   }
-  host.appendChild(el("code", "term", String(value)));
+  var control = role ? inspectorTerm(String(value), role, "term") : null;
+  host.appendChild(control || el("code", "term", String(value)));
+}
+
+/* A DSL word the page prints itself (`module`, `layer`, a field name),
+ * as the control that opens its card when s0ma's dictionary explains
+ * it, and in monospace exactly as before when it does not. */
+function appendTermWord(host, word) {
+  var control = inspectorTerm(word, null, "term");
+  host.appendChild(control || el("code", "term", word));
 }
 
 /* A field's label: the DSL term in monospace, a separator, then the
- * plain phrase. A term with no phrase is labelled by the term alone. */
+ * plain phrase. A term with no phrase is labelled by the term alone.
+ * The term is the control that opens its card when s0ma's dictionary
+ * explains it; the phrase is never part of the control. */
 function fieldLabel(tag, className, term, phrase) {
   var label = el(tag, className);
-  label.appendChild(el("code", "term", term));
+  var control = inspectorTerm(term, null, "term");
+  if (control) {
+    label.appendChild(control);
+  } else {
+    label.appendChild(el("code", "term", term));
+  }
   if (phrase) {
     label.appendChild(el("span", "label-sep", " · "));
     label.appendChild(el("span", "label-phrase", phrase));
@@ -2535,7 +2665,7 @@ function appendRelationRows(section, edges, direction, emptyText) {
 function relationRow(edge, direction) {
   var item = el("li", "rel-item");
   var head = el("div", "rel-head");
-  appendTermValue(head, edge.relation);
+  appendTermValue(head, edge.relation, "relation");
   head.appendChild(document.createTextNode(" "));
   head.appendChild(peerControl(direction === "in" ? edge.source : edge.target));
   item.appendChild(head);
@@ -2628,7 +2758,7 @@ function renderMoreAboutThisPart(component, fields, rest, undeclared) {
     var names = el("ul", "inspector-undeclared-list");
     for (var j = 0; j < undeclared.length; j += 1) {
       var item = el("li");
-      item.appendChild(el("code", "term", undeclared[j]));
+      appendTermWord(item, undeclared[j]);
       names.appendChild(item);
     }
     unset.appendChild(names);
@@ -2714,7 +2844,7 @@ function appendLabelledDefinition(list, term, raw) {
  * visibility and their enum values). */
 function appendTermDefinition(list, term, value) {
   var dt = el("dt");
-  dt.appendChild(el("code", "term", term));
+  appendTermWord(dt, term);
   list.appendChild(dt);
   var dd = el("dd");
   var projected = projectValue(value);
@@ -2771,7 +2901,8 @@ function moduleHead(module) {
   inspectorHead(module.name, null);
 
   var tagLine = el("p", "inspector-tagline");
-  tagLine.appendChild(el("code", "decl-tag", "module"));
+  var moduleTag = inspectorTerm("module", null, "decl-tag");
+  tagLine.appendChild(moduleTag || el("code", "decl-tag", "module"));
   ui.inspector.appendChild(tagLine);
 
   var count = 0;
@@ -2782,9 +2913,9 @@ function moduleHead(module) {
     }
   }
   var where = el("p", "inspector-where");
-  where.appendChild(el("code", "term", "layer"));
+  appendTermWord(where, "layer");
   where.appendChild(document.createTextNode(" "));
-  appendTermValue(where, module.layer);
+  appendTermValue(where, module.layer, "layer-name");
   where.appendChild(el("span", "label-sep", " · "));
   where.appendChild(document.createTextNode(headerMetaText(count)));
   ui.inspector.appendChild(where);
@@ -3123,7 +3254,7 @@ function renderMoreAboutThisModule(module) {
     var names = el("ul", "inspector-undeclared-list");
     for (var j = 0; j < undeclared.length; j += 1) {
       var item = el("li");
-      item.appendChild(el("code", "term", undeclared[j]));
+      appendTermWord(item, undeclared[j]);
       names.appendChild(item);
     }
     unset.appendChild(names);
@@ -3401,7 +3532,12 @@ function edgeListItem(edge, direction) {
         ? "verified by"
         : "verifies"
       : edge.family;
-  head.appendChild(el("span", "rel-relation", relationText));
+  /* Only a relation word the payload carries is a term; the page's own
+   * fallbacks ("verifies", a family name) stay plain. */
+  var relationControl = edge.relation
+    ? inspectorTerm(String(edge.relation), "relation", "rel-relation")
+    : null;
+  head.appendChild(relationControl || el("span", "rel-relation", relationText));
 
   var peer;
   if (direction === "in") {
@@ -3473,6 +3609,539 @@ function appendLocation(host, location) {
     return;
   }
   host.appendChild(el("span", "location-text", text));
+}
+
+/* ------------------------------------------------------------------ *
+ * Terms: s0ma's own definitions of the words this page prints
+ * ------------------------------------------------------------------ *
+ *
+ * /api/graph carries a terms block beside the graph: s0ma's own entry
+ * for each of its concepts, copied from the teaching slice s0ma-core
+ * ships. A word the page prints in a term position becomes a control
+ * when an entry explains it, and the control opens a card with that
+ * entry's text, unchanged. Nothing here writes a definition: the page
+ * keeps only the pointers above, and those are ids. With no terms
+ * block, no word is a control and the page reads as it always has.
+ */
+
+/* Take the terms block off a /api/graph document (or the fixture's
+ * global). Anything that is not a list of entries reads as none. */
+function applyTerms(block) {
+  var text = block === undefined ? "" : JSON.stringify(block);
+  if (text === state.termsText) {
+    return;
+  }
+  state.termsText = text;
+  var raw = block && Array.isArray(block.entries) ? block.entries : [];
+  var entries = [];
+  var byId = {};
+  var byName = {};
+  for (var i = 0; i < raw.length; i += 1) {
+    var entry = raw[i];
+    if (
+      !entry ||
+      typeof entry.id !== "string" ||
+      typeof entry.name !== "string" ||
+      typeof entry.summary !== "string"
+    ) {
+      continue;
+    }
+    entries.push(entry);
+    byId[entry.id] = entry;
+    var names = Array.isArray(entry.names) ? entry.names : [];
+    for (var j = 0; j < names.length; j += 1) {
+      var key = termKey(names[j]);
+      if (key && !Object.prototype.hasOwnProperty.call(byName, key)) {
+        byName[key] = entry;
+      }
+    }
+  }
+  state.terms = {
+    source: entries.length > 0 && block.source ? block.source : null,
+    entries: entries,
+    byId: byId,
+    byName: byName,
+  };
+  if (entries.length === 0 && state.dictionary.open) {
+    closeDictionaryState();
+    state.selection = null;
+    ui.inspector.hidden = true;
+    clear(ui.inspector);
+  }
+  syncTermsButton();
+  renderLegendTerms();
+}
+
+/* How a word and a name are compared: lowercased, and without the
+ * trailing colon the dictionary writes on a line name (`uses:`). */
+function termKey(word) {
+  var text = String(word).toLowerCase();
+  if (text.length > 1 && text.charAt(text.length - 1) === ":") {
+    text = text.slice(0, -1);
+  }
+  return text;
+}
+
+/* The one resolver: the entry of s0ma's dictionary that explains
+ * `word` where it is printed, or null. A role points through
+ * TERM_POINTERS; a contract line through CONTRACT_FIELD_POINTERS;
+ * otherwise the entry whose names hold the word. No match is no
+ * control, and the word is drawn exactly as it is without one. */
+function resolveTerm(word, role) {
+  if (state.terms.entries.length === 0) {
+    return null;
+  }
+  if (word === undefined || word === null || word === "") {
+    return null;
+  }
+  var byId = state.terms.byId;
+  if (role && Object.prototype.hasOwnProperty.call(TERM_POINTERS, role)) {
+    return byId[TERM_POINTERS[role]] || null;
+  }
+  var text = String(word);
+  if (Object.prototype.hasOwnProperty.call(CONTRACT_FIELD_POINTERS, text)) {
+    return byId[CONTRACT_FIELD_POINTERS[text]] || null;
+  }
+  var key = termKey(text);
+  if (Object.prototype.hasOwnProperty.call(state.terms.byName, key)) {
+    return state.terms.byName[key];
+  }
+  return null;
+}
+
+/* Whether `word` is one of the entry's own names, so the card need not
+ * say where it is explained. */
+function isOwnName(entry, word) {
+  var key = termKey(word);
+  var names = Array.isArray(entry.names) ? entry.names : [];
+  for (var i = 0; i < names.length; i += 1) {
+    if (termKey(names[i]) === key) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/* A word in a term position of the inspector, as a real button that
+ * opens its card under the row, or null when no entry explains it. */
+function inspectorTerm(word, role, className) {
+  var entry = resolveTerm(word, role);
+  if (!entry) {
+    return null;
+  }
+  var text = String(word);
+  var button = el("button", "term-control " + className, text);
+  button.type = "button";
+  button.setAttribute("aria-expanded", "false");
+  var seen = ui.termSeen[text] || 0;
+  ui.termSeen[text] = seen + 1;
+  button.setAttribute("data-term-key", text + "#" + seen);
+  button.sh0wTerm = { word: text, entry: entry };
+  button.addEventListener("click", function () {
+    toggleTermCard(button);
+  });
+  return button;
+}
+
+/* The card: where the word is explained when it is not the entry's own
+ * name, the entry's summary, its definition behind "Read more", and the
+ * command that prints the whole entry. Every sentence is the entry's
+ * own, unchanged. */
+function termCard(tag, word, entry, memory) {
+  var card = el(tag, "term-card");
+  if (word !== null && !isOwnName(entry, word)) {
+    var under = el("p", "term-card-under");
+    under.appendChild(el("code", "term", word));
+    under.appendChild(document.createTextNode(" is explained under "));
+    under.appendChild(el("code", "term", entry.name));
+    card.appendChild(under);
+  }
+  card.appendChild(el("p", "term-card-summary", entry.summary));
+  if (typeof entry.definition === "string" && entry.definition) {
+    var more = el("details", "term-card-more");
+    more.open = Boolean(memory.more);
+    more.addEventListener("toggle", function () {
+      memory.more = more.open;
+    });
+    more.appendChild(el("summary", null, "Read more"));
+    more.appendChild(el("p", "term-card-definition", entry.definition));
+    card.appendChild(more);
+  }
+  var full = el("p", "term-card-entry");
+  full.appendChild(document.createTextNode("Full entry: "));
+  full.appendChild(el("code", "term-card-command", "s0ma docs show " + entry.id));
+  card.appendChild(full);
+  return card;
+}
+
+/* The row a control sits in, and the element its card goes under: the
+ * header subtitle for a header word, the definition for a field name
+ * in a list, and otherwise the row itself. */
+function termCardAnchor(button) {
+  var row = button.closest(
+    ".inspector-tagline, .inspector-where, .field-label, dt, .rel-head, li"
+  );
+  if (!row) {
+    return button;
+  }
+  if (/\binspector-(tagline|where)\b/.test(row.className)) {
+    return ui.inspector.querySelector(".inspector-where") || row;
+  }
+  if (row.tagName === "DT" && row.nextElementSibling && row.nextElementSibling.tagName === "DD") {
+    return row.nextElementSibling;
+  }
+  return row;
+}
+
+function cardTagFor(anchor) {
+  var parent = anchor.parentNode && anchor.parentNode.tagName;
+  if (parent === "DL") {
+    return "dd";
+  }
+  if (parent === "UL" || parent === "OL") {
+    return "li";
+  }
+  return "div";
+}
+
+function selectionKey(selection) {
+  if (!selection) {
+    return null;
+  }
+  return selection.type + " " + (selection.type === "edge" ? selection.key : selection.id);
+}
+
+function toggleTermCard(button) {
+  var wasOpen = ui.termCardButton === button;
+  closeTermCard();
+  if (wasOpen) {
+    state.termCard = { selection: null, key: null, more: false };
+    return;
+  }
+  state.termCard = {
+    selection: selectionKey(state.selection),
+    key: button.getAttribute("data-term-key"),
+    more: false,
+  };
+  openTermCard(button);
+}
+
+function openTermCard(button) {
+  var term = button.sh0wTerm;
+  var anchor = termCardAnchor(button);
+  var card = termCard(cardTagFor(anchor), term.word, term.entry, state.termCard);
+  anchor.parentNode.insertBefore(card, anchor.nextSibling);
+  button.setAttribute("aria-expanded", "true");
+  ui.termCard = card;
+  ui.termCardButton = button;
+}
+
+function closeTermCard() {
+  if (ui.termCard && ui.termCard.parentNode) {
+    ui.termCard.parentNode.removeChild(ui.termCard);
+  }
+  if (ui.termCardButton) {
+    ui.termCardButton.setAttribute("aria-expanded", "false");
+  }
+  ui.termCard = null;
+  ui.termCardButton = null;
+}
+
+/* After the inspector is drawn again: the card stays open on a repaint
+ * of the same selection, and closes when the selection has changed. */
+function restoreTermCard() {
+  var wanted = state.termCard;
+  if (!wanted.key || wanted.selection !== selectionKey(state.selection)) {
+    state.termCard = { selection: null, key: null, more: false };
+    return;
+  }
+  var buttons = ui.inspector.querySelectorAll("button[data-term-key]");
+  for (var i = 0; i < buttons.length; i += 1) {
+    if (buttons[i].getAttribute("data-term-key") === wanted.key) {
+      openTermCard(buttons[i]);
+      return;
+    }
+  }
+  state.termCard = { selection: null, key: null, more: false };
+}
+
+/* The legend's glyph names: a control that opens the dictionary on the
+ * glyph's entry, or the plain word when no entry explains it. The
+ * legend lets the canvas take the pointer everywhere but its buttons. */
+function renderLegendTerms() {
+  var records = ui.legendTerms || [];
+  for (var i = 0; i < records.length; i += 1) {
+    var record = records[i];
+    var entry = resolveTerm(record.word, null);
+    var next;
+    if (entry) {
+      next = el("button", "term-control legend-term", record.word);
+      next.type = "button";
+      next.setAttribute("aria-expanded", "false");
+      next.addEventListener(
+        "click",
+        (function (entryId) {
+          return function () {
+            openDictionary(entryId);
+          };
+        })(entry.id)
+      );
+    } else {
+      next = el("span", null, record.word);
+    }
+    record.item.replaceChild(next, record.node);
+    record.node = next;
+    record.entryId = entry ? entry.id : null;
+  }
+  syncTermsButton();
+}
+
+function syncTermsButton() {
+  if (!ui.termsButton) {
+    return;
+  }
+  var has = state.terms.entries.length > 0;
+  ui.termsButton.hidden = !has;
+  ui.termsSep.hidden = !has;
+  ui.termsButton.setAttribute("aria-pressed", String(state.dictionary.open));
+  var records = ui.legendTerms || [];
+  for (var i = 0; i < records.length; i += 1) {
+    if (records[i].entryId) {
+      records[i].node.setAttribute(
+        "aria-expanded",
+        String(state.dictionary.open && state.dictionary.entry === records[i].entryId)
+      );
+    }
+  }
+}
+
+/* The toolbar's terms button. Closed, it opens the dictionary. Open,
+ * it goes back to the part the dictionary was opened from, as "back
+ * to" does, when that part still exists, and otherwise closes the
+ * panel. */
+function toggleDictionary() {
+  if (state.dictionary.open) {
+    var back = state.dictionary.back;
+    if (back && selectionStillExists(back)) {
+      select(back);
+      ui.inspector.focus();
+      return;
+    }
+    clearSelection();
+    return;
+  }
+  openDictionary(null);
+}
+
+function closeDictionaryState() {
+  state.dictionary = { open: false, entry: null, back: null, rest: false };
+  state.dictionaryCard = { more: false };
+  syncTermsButton();
+}
+
+/* Open the dictionary in the right panel, with `entryId` open and in
+ * view when one is named. A part selected at that moment is kept as
+ * the place "back to" returns to. */
+function openDictionary(entryId) {
+  if (state.terms.entries.length === 0) {
+    return;
+  }
+  if (!state.dictionary.open) {
+    state.dictionary = {
+      open: true,
+      entry: null,
+      back: state.selection,
+      rest: false,
+    };
+  }
+  state.dictionary.entry = entryId;
+  state.dictionaryCard = { more: false };
+  if (entryId && !pageTermIds()[entryId]) {
+    state.dictionary.rest = true;
+  }
+  state.selection = null;
+  state.termCard = { selection: null, key: null, more: false };
+  applySelection();
+  syncTermsButton();
+  renderInspector();
+  ui.inspector.scrollTop = 0;
+  var row = entryId ? ui.dictionaryRows[entryId] : null;
+  if (row) {
+    row.item.scrollIntoView({ block: "nearest" });
+    row.name.focus();
+  } else {
+    ui.inspector.focus();
+  }
+}
+
+/* The entries this page's own term positions can resolve to. */
+function pageTermIds() {
+  var ids = {};
+  for (var i = 0; i < PAGE_TERM_WORDS.length; i += 1) {
+    var entry = resolveTerm(PAGE_TERM_WORDS[i][0], PAGE_TERM_WORDS[i][1]);
+    if (entry) {
+      ids[entry.id] = true;
+    }
+  }
+  return ids;
+}
+
+function compareEntryNames(a, b) {
+  return (
+    compareStrings(a.name.toLowerCase(), b.name.toLowerCase()) ||
+    compareStrings(a.id, b.id)
+  );
+}
+
+function selectionStillExists(selection) {
+  if (!selection || !state.model) {
+    return false;
+  }
+  if (selection.type === "node") {
+    return Boolean(state.model.components[selection.id]);
+  }
+  if (selection.type === "module") {
+    return Boolean(state.model.modules[selection.id]);
+  }
+  if (selection.type === "integration") {
+    return Boolean(state.model.integrationsById[selection.id]);
+  }
+  var groups = state.layout ? state.layout.edgeGroups : [];
+  for (var i = 0; i < groups.length; i += 1) {
+    if (groups[i].key === selection.key) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function selectionName(selection) {
+  if (selection.type === "node") {
+    return shortName(selection.id);
+  }
+  if (selection.type === "integration") {
+    return state.model.integrationsById[selection.id].name;
+  }
+  if (selection.type === "module") {
+    return selection.id;
+  }
+  return "the edge";
+}
+
+/* The dictionary: s0ma's entries for the words this page can show,
+ * then the rest behind one closed disclosure. A row is the entry's
+ * name and its summary; opening it puts the card in the summary's
+ * place. One row open at a time. */
+function renderDictionary() {
+  ui.dictionaryRows = {};
+  var head = el("div", "inspector-head");
+  head.appendChild(el("h2", "inspector-title", "Terms"));
+  var close = el("button", "btn inspector-close", "close");
+  close.type = "button";
+  close.setAttribute("aria-label", "close terms (Esc)");
+  close.addEventListener("click", clearSelection);
+  head.appendChild(close);
+  ui.inspector.appendChild(head);
+
+  var source = state.terms.source;
+  var version = source && source.release_version ? " " + source.release_version : "";
+  ui.inspector.appendChild(
+    el("p", "terms-source", "s0ma's own definitions, from s0ma" + version)
+  );
+
+  var back = state.dictionary.back;
+  if (back && selectionStillExists(back)) {
+    var backButton = el("button", "btn terms-back", "back to " + selectionName(back));
+    backButton.type = "button";
+    backButton.addEventListener("click", function () {
+      select(back);
+      ui.inspector.focus();
+    });
+    ui.inspector.appendChild(backButton);
+  }
+
+  var onPage = pageTermIds();
+  var shown = [];
+  var rest = [];
+  var entries = state.terms.entries;
+  for (var i = 0; i < entries.length; i += 1) {
+    (onPage[entries[i].id] ? shown : rest).push(entries[i]);
+  }
+  shown.sort(compareEntryNames);
+  rest.sort(compareEntryNames);
+
+  var section = el("section", "inspector-section terms-section");
+  section.appendChild(el("h3", "section-label", "On this page"));
+  section.appendChild(dictionaryList(shown));
+  ui.inspector.appendChild(section);
+
+  if (rest.length > 0) {
+    var more = el("details", "inspector-more terms-more");
+    more.open = state.dictionary.rest;
+    more.addEventListener("toggle", function () {
+      state.dictionary.rest = more.open;
+    });
+    more.appendChild(
+      el(
+        "summary",
+        "inspector-more-summary",
+        rest.length +
+          (rest.length === 1 ? " more term from s0ma" : " more terms from s0ma")
+      )
+    );
+    more.appendChild(dictionaryList(rest));
+    ui.inspector.appendChild(more);
+  }
+}
+
+function dictionaryList(entries) {
+  var list = el("ul", "rel-list terms-list");
+  for (var i = 0; i < entries.length; i += 1) {
+    list.appendChild(dictionaryRow(entries[i]));
+  }
+  return list;
+}
+
+function dictionaryRow(entry) {
+  var item = el("li", "rel-item terms-row");
+  var name = el("button", "term-control terms-name", entry.name);
+  name.type = "button";
+  name.addEventListener("click", function () {
+    toggleDictionaryRow(entry.id);
+  });
+  item.appendChild(name);
+  var row = { item: item, name: name, body: null, entry: entry };
+  ui.dictionaryRows[entry.id] = row;
+  setDictionaryRowOpen(row, state.dictionary.entry === entry.id);
+  return item;
+}
+
+function setDictionaryRowOpen(row, open) {
+  var body = open
+    ? termCard("div", null, row.entry, state.dictionaryCard)
+    : el("p", "terms-summary", row.entry.summary);
+  if (row.body) {
+    row.item.replaceChild(body, row.body);
+  } else {
+    row.item.appendChild(body);
+  }
+  row.body = body;
+  row.name.setAttribute("aria-expanded", String(open));
+}
+
+function toggleDictionaryRow(entryId) {
+  var current = state.dictionary.entry;
+  if (current && ui.dictionaryRows[current]) {
+    setDictionaryRowOpen(ui.dictionaryRows[current], false);
+  }
+  state.dictionaryCard = { more: false };
+  if (current === entryId) {
+    state.dictionary.entry = null;
+  } else {
+    state.dictionary.entry = entryId;
+    setDictionaryRowOpen(ui.dictionaryRows[entryId], true);
+  }
+  syncTermsButton();
 }
 
 /* ------------------------------------------------------------------ *
@@ -3849,7 +4518,7 @@ function onDocumentKeyDown(event) {
   }
 
   if (event.key === "Escape") {
-    if (state.selection) {
+    if (state.selection || state.dictionary.open) {
       clearSelection();
       event.preventDefault();
     }
@@ -4066,6 +4735,9 @@ function fetchGraph(stateDoc) {
       if (typeof document_.seq === "number") {
         state.seq = document_.seq;
       }
+      /* Before the graph, so the repaint the graph causes already knows
+       * which words s0ma's dictionary explains. */
+      applyTerms(document_.terms);
       applyGraph(document_.graph, stateDoc);
       applyNarration(stateDoc);
     });
@@ -4124,7 +4796,10 @@ function boot() {
     /* Fixture mode: one payload, no polling (plan §3.6). An optional
      * second global carries a narration block in the shape /api/state
      * serves, so the pane can be worked on and looked at without a
-     * server; absent, applyNarration leaves the pane hidden. */
+     * server; absent, applyNarration leaves the pane hidden. A third,
+     * optional, carries a terms block in the shape /api/graph serves;
+     * absent, the page has no term controls and no terms button. */
+    applyTerms(window.__S0MA_TERMS__);
     applyGraph(fixture, deriveStateFromGraph(fixture));
     applyNarration({ narration: window.__S0MA_NARRATION__ });
     return;

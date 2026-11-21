@@ -1,10 +1,10 @@
 module studi0_state
     layer: APPLICATION
     version: 0.22.0
-    intent: "What one studi0 session knows about one project: the component graph read from that project's build artifacts, how fresh that build is against the sources it was built from, whatever an agent has said it is doing, and a sequence number that advances only when something really changed. Every graph fact enters studi0 here and only here — through s0ma_dsl.graph_export, never by opening IR JSON directly — so studi0 can never drift into a second, quieter answer about what a project contains. Narration enters through studi0_narration and stays in its own fields the whole way out: it is the agent's account of its work, never evidence about the project."
-    exports: [STATE_SCHEMA, GRAPH_SCHEMA, CARRIED_GRAPH_SCHEMA, STATE_DOCUMENT_KEYS, NARRATION_BLOCK_KEYS, GRAPH_DOCUMENT_KEYS, BUILD_STATUS_MISSING, Studi0Snapshot, Studi0Session, read_graph, create_session, refresh_session, read_snapshot, state_document, graph_document]
+    intent: "What one studi0 session knows about one project: the component graph read from that project's build artifacts, how fresh that build is against the sources it was built from, whatever an agent has said it is doing, and a sequence number that advances only when something really changed. Every graph fact enters studi0 here and only here — through s0ma_dsl.graph_export, never by opening IR JSON directly — so studi0 can never drift into a second, quieter answer about what a project contains. Narration enters through studi0_narration and stays in its own fields the whole way out: it is the agent's account of its work, never evidence about the project. Beside the graph rides s0ma's own definition of each word it is written in, copied whole from the teaching slice s0ma-core ships, so a reader can ask what a word means without studi0 writing a definition of its own."
+    exports: [STATE_SCHEMA, GRAPH_SCHEMA, CARRIED_GRAPH_SCHEMA, STATE_DOCUMENT_KEYS, NARRATION_BLOCK_KEYS, GRAPH_DOCUMENT_KEYS, BUILD_STATUS_MISSING, Studi0Snapshot, Studi0Session, read_graph, create_session, refresh_session, read_snapshot, state_document, terms_document, teaching_terms, graph_document]
 
-    requires: [threading, dataclasses.dataclass, dataclasses.field, pathlib.Path, typing.Any, s0ma_dsl.graph_export:DETAIL_FULL, s0ma_dsl.graph_export:NoIRArtifactsError, s0ma_dsl.graph_export:collect_graph]
+    requires: [functools, threading, dataclasses.dataclass, dataclasses.field, pathlib.Path, typing.Any, s0ma_dsl.graph_export:DETAIL_FULL, s0ma_dsl.graph_export:NoIRArtifactsError, s0ma_dsl.graph_export:collect_graph, s0ma.api.teaching:TeachingSlice, s0ma.api.teaching:TeachingSliceError, s0ma.api.teaching:packaged_slice]
     uses: [studi0_narration.NarrationLog, studi0_narration.narration_snapshot, studi0_narration.read_narrations]
     soft_requires: none
     runtime_only_requires: none
@@ -74,8 +74,8 @@ cell NARRATION_BLOCK_KEYS :: APPLICATION
 cell GRAPH_DOCUMENT_KEYS :: APPLICATION
     kind: CONSTANT
     visibility: PUBLIC
-    intent: "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: three keys that say which reading this is and what it carries."
-    schema: "tuple[str, ...] constant, sorted. Value: ('graph', 'schema', 'seq')."
+    intent: "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: four keys that say which reading this is, what it carries, and the words a reader needs to read it."
+    schema: "tuple[str, ...] constant, sorted. Value: ('graph', 'schema', 'seq', 'terms')."
     invariants: "Sorted. The set is exact, and it describes the envelope alone: nothing here constrains the graph document the envelope carries."
     covered_by: ["tests/test_api.py — the graph document's frozen key set"]
     ---
@@ -83,6 +83,7 @@ cell GRAPH_DOCUMENT_KEYS :: APPLICATION
         "graph",
         "schema",
         "seq",
+        "terms",
     )
 
 cell BUILD_STATUS_MISSING :: APPLICATION
@@ -437,13 +438,124 @@ nerve state_document :: APPLICATION
             },
         }
 
+nerve terms_document :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Turns the teaching slice s0ma-core ships into the terms block of GET /api/graph: s0ma's own definition of each concept the language and the product are written in, so the page can say what a word such as nerve or forbids means in s0ma's words rather than its own. Every sentence is copied whole from the slice; studi0 contributes the selection and the order, never the text. A slice it cannot read is an answer too: no source and no entries, so the page simply shows no definitions."
+    expects: "found is what s0ma.api.teaching.packaged_slice returned: a (where, text) pair, or None when the installation carries no slice"
+    guarantees: "Returns a JSON-compatible block with exactly the keys source and entries. source is the slice's release_version and snapshot_hash, or None when the slice is missing or unreadable. entries holds one record per concept topic, sorted by id, each with id, name, names, summary and, when the topic has one, definition, every value copied verbatim; it is empty when source is None."
+    forbids: "Never rewords, shortens or invents a definition, and never lets an unreadable slice raise."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_api.py — the terms block is the packaged slice's concepts"]
+    depends_on: none
+    ---
+    def terms_document(found: tuple[str, str] | None) -> dict[str, Any]:
+        """The ``terms`` block for one reading of the teaching slice.
+
+        A concept topic is one whose ``group`` is ``concepts``. Its
+        ``summary`` section is the one-sentence answer and its
+        ``plain_definition`` section the longer one; both are copied
+        as the slice carries them. A topic with no summary is left out,
+        because an entry with nothing to say would be a control that
+        opens onto nothing.
+
+        Args:
+            found: ``(where, text)`` from ``packaged_slice``, or None.
+
+        Returns:
+            ``{"source": ..., "entries": [...]}``. Never raises: a
+            missing, malformed or unexpected slice gives
+            ``{"source": None, "entries": []}``.
+        """
+        empty: dict[str, Any] = {"source": None, "entries": []}
+        if found is None:
+            return empty
+        try:
+            teaching = TeachingSlice.load(*found)
+            entries: list[dict[str, Any]] = []
+            for topic_id in sorted(teaching.topics):
+                topic = teaching.topics[topic_id]
+                if topic.get("group") != "concepts":
+                    continue
+                facts = {
+                    section.get("fact"): section.get("text")
+                    for section in topic.get("sections", [])
+                    if isinstance(section, dict)
+                }
+                summary = facts.get("summary")
+                if not isinstance(summary, str) or not summary:
+                    continue
+                entry: dict[str, Any] = {
+                    "id": topic_id,
+                    "name": str(topic.get("title", topic_id)),
+                    "names": [str(name) for name in topic.get("search_terms", [])],
+                    "summary": summary,
+                }
+                definition = facts.get("plain_definition")
+                if isinstance(definition, str) and definition:
+                    entry["definition"] = definition
+                entries.append(entry)
+            return {
+                "source": {
+                    "release_version": teaching.release_version,
+                    "snapshot_hash": teaching.snapshot_hash,
+                },
+                "entries": entries,
+            }
+        except (TeachingSliceError, AttributeError, TypeError, ValueError, KeyError):
+            return empty
+
+helper _teaching_terms_once :: APPLICATION
+    intent: "Reads the packaged teaching slice and builds the terms block once per process. The slice is package data that cannot change under a running studi0, so building it on the first /api/graph answer and never again is honest rather than merely fast, and a request never waits on it twice. Anything the read raises is caught here, so the request path never meets it."
+    ---
+    @functools.lru_cache(maxsize=1)
+    def _teaching_terms_once() -> dict[str, Any]:
+        """The terms block, built from the packaged slice the first time only."""
+        try:
+            return terms_document(packaged_slice())
+        except Exception:  # a slice problem of any kind must never fail a request
+            return {"source": None, "entries": []}
+
+nerve teaching_terms :: APPLICATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Answers the terms block every /api/graph document carries, from the teaching slice that ships inside s0ma-core. It is built once per server process and then handed out as it is, so serving the definitions costs one read of the slice for the life of the process."
+    expects: "nothing; the slice is read from the installed s0ma-core package"
+    guarantees: "Returns the block terms_document builds from the packaged slice, the same object on every call within one process. Never raises: a missing or unreadable slice gives source None and no entries."
+    forbids: "Never reads the slice again once it has been read, and never lets a slice problem raise into the request path."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_api.py — the terms block is built once per process"]
+    depends_on: none
+    ---
+    def teaching_terms() -> dict[str, Any]:
+        """The ``terms`` block, read from the packaged slice once per process."""
+        return _teaching_terms_once()
+
 nerve graph_document :: APPLICATION
     kind: FUNCTION
     visibility: PUBLIC
-    intent: "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project."
+    intent: "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use — with s0ma's own definitions of its words beside it, in their own key. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project."
     expects: "snapshot is a reading taken from a session"
-    guarantees: "Returns a JSON-compatible document carrying exactly the frozen key set schema, seq, graph — with graph identical to the graph document the snapshot holds — or None when the snapshot carries no graph"
-    forbids: "Never trims, summarises or drops a field of the graph it wraps, and never offers an empty graph when nothing is built."
+    guarantees: "Returns a JSON-compatible document carrying exactly the frozen key set graph, schema, seq, terms — with graph identical to the graph document the snapshot holds and terms the block teaching_terms answers, present even when it holds no entries — or None when the snapshot carries no graph"
+    forbids: "Never trims, summarises or drops a field of the graph it wraps, never mixes a definition into the graph, and never offers an empty graph when nothing is built."
     evaluates_at: FUNCTION_BOUNDARY
     provides: none
     returns: none
@@ -457,6 +569,7 @@ nerve graph_document :: APPLICATION
     covered_by: ["tests/test_api.py — /api/graph equals collect_graph's own output"]
     depends_on:
         GRAPH_SCHEMA: {relation: READS, carries: "the envelope's schema stamp", coupling: TIGHT}
+        teaching_terms: {relation: CALLS, carries: "nothing; it answers the terms block", coupling: TIGHT}
     ---
     def graph_document(snapshot: Studi0Snapshot) -> dict[str, Any] | None:
         """The ``/api/graph`` document for one reading, or None (plan §3.5).
@@ -468,6 +581,10 @@ nerve graph_document :: APPLICATION
         — are passed on untouched, because projecting them is the
         renderer's decision to make in front of a reader, not the
         server's to make behind one.
+
+        ``terms`` sits beside the graph, never inside it: the graph is
+        the project's account of itself and the terms are s0ma's
+        account of its own words, and the two have different authors.
         """
         if snapshot.graph is None:
             return None
@@ -475,4 +592,5 @@ nerve graph_document :: APPLICATION
             "schema": GRAPH_SCHEMA,
             "seq": snapshot.seq,
             "graph": snapshot.graph,
+            "terms": teaching_terms(),
         }
