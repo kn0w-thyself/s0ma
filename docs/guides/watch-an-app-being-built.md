@@ -48,13 +48,15 @@ your browser. It keeps running until you stop it with Ctrl+C, so leave this
 terminal alone and use another one for the next command.
 
 **What you are looking at.** Each box is a part of the app. The parts sit in
-bands, one per *layer*: a layer is the band a file and its parts belong to, from
-finding out what is playing at one end to showing the page at the other, and a
-file may use the layers below its own but never the ones above. The parts are
-grouped by *module*, which is one `.s0ma` file and everything declared in it. This app has four: `player`,
-`music`, `coach` and `page`, one per layer. The status line reads
-"12 of 19 components shown". The other seven are the app's tests and its
-generated docs, which stay hidden until you press `tests and docs`.
+bands, one per *layer*. The two middle bands hold the app's own subject and the
+work on it. The top and bottom bands are its two edges: one faces the person
+using the app, and one faces the world outside it. A file may reach toward the
+middle but never outward, and the two edges never reach each other. The parts
+are grouped by *module*, which is one `.s0ma` file and everything declared in
+it. This app has four: `player`, `music`, `coach` and `page`, one per layer. The
+status line reads "12 of 19 components shown". The other seven are the app's
+tests and its generated docs, which stay hidden until you press
+`tests and docs`.
 
 **Click `settle_mood`.** It is in the `music` module. A panel opens with the
 part's own account of itself. Each line starts with the s0ma word for it, and a
@@ -223,8 +225,9 @@ all, and this guide makes no promise about what they contain.
 
 ## What this path taught
 
-- **Layer**: the band a file and its parts belong to. A file may use the
-  layers below its own, never the ones above.
+- **Layer**: the band a file and its parts belong to. A file may reach toward
+  the middle of the app, never outward, and the two edges never reach each
+  other.
 - **Module**: one `.s0ma` file and the parts declared in it.
 - **Intent**: the one sentence that says what a part is for.
 - **Contract**: what a part needs before it runs, what it promises, and what
