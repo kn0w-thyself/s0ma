@@ -44,9 +44,10 @@ the ones the toolchain worked out from what you wrote, and the ones your tests
 claim to cover. The whole picture is assembled from the project's own self-model
 rather than guessed at by reading the code.
 
-**If the page is empty**, the viewer is running and there is nothing built for
-it to draw — that is the `NOT_BUILT` answer. Build the project once and reload
-the page. The viewer repaints as builds land, so nothing needs restarting.
+**If the page says nothing is built yet**, the viewer is running and there is
+nothing built for it to draw: that is the `NOT_BUILT` answer. Build the project
+once. The first build's parts appear on the page as it lands, and the viewer
+repaints as later builds land, so nothing needs reloading or restarting.
 
 ## 2. The picture is the build's own graph
 

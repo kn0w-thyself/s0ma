@@ -81,6 +81,57 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Changed
 
+- **studi0 says plainly when nothing is built yet.** Opened on a project with
+  no build, the page used to show a card and, next to it, a "viewer
+  disconnected" banner, although the viewer was connected and the server had
+  answered. Now, once the server says nothing is built (`build_status` is
+  `missing`, or `GET /api/graph` answers `NOT_BUILT`), there is no offline
+  banner. The canvas draws the usual layer bands, empty, with one sentence in
+  the middle, "Nothing is built yet. Parts appear here when the first build
+  lands.", and the command to run under it, and the status line says nothing
+  is built yet. Until the server has answered, the canvas stays blank. When
+  the first build lands, its parts arrive with the same mark and ring an
+  added part gets on any later build, where before they appeared with no
+  mark. No route, document, or status code changed, and no motion or color
+  was added.
+
+- **studi0 keeps track of what each build changed.** When a build landed
+  while the page was open, the parts it added or changed were marked for
+  about four seconds and then every trace was gone. Now the parts the newest
+  build added keep a steady outline, two thin rules just outside the part,
+  until the next build that adds, changes, or removes something, and the
+  status line says "Outlined parts arrived in the newest build." A new pane
+  in the left column, "What changed since you opened this page", lists every
+  such build, newest first: how many parts it added, changed, and removed,
+  the added parts as buttons that select them, each changed part with the
+  declared lines that differ (such as `intent` or `expects`, or its
+  dependencies), and the parts it removed. A part now counts as changed only
+  when something it declares differs, so a part that only moved down its
+  file, because another was written above it, is no longer marked. The list
+  lives only in the page: nothing is stored, a reload clears it, and it keeps
+  the newest 30 builds. A `changes` button in the toolbar hides and shows
+  it. Narration sits under the list in the same column. No route or document
+  changed, and no motion or color was added.
+
+- **studi0 shows a large build one module at a time.** When one build added
+  many parts across several modules, every one of them appeared and beat at
+  the same moment. Now a build that adds more than 4 parts in view, in more
+  than one module, shows them module by module: a module after the modules
+  it leans on, and otherwise the band nearer the bottom of the page first,
+  then by module name. Each module's parts arrive with the usual added-part
+  beat, two seconds after the one before. Its changed and removed parts show
+  at once. While it runs, the status line says, for example, "This build
+  added 6 parts. Showing 3 of 6, module by module." beside a "Show the rest"
+  button, and the build's entry in the list of changes reads "added 6 parts ·
+  showing 3 of 6" and names only the parts shown so far. A newer build that
+  changes something, the toolbar controls that change what is in view,
+  selecting something not yet shown, or the project becoming unbuilt shows
+  the rest at once. With reduced motion turned on there is no reveal. And a
+  module that arrives with a build is now placed after the modules already
+  drawn in its band, where before it could sort in front of them and push
+  them sideways; a reload sorts the band again. No route or document
+  changed, and no motion or color was added.
+
 - **studi0's inspector leads with what a part is for.** Click a component
   and the panel opens on its short name, its declaration type as a tag, and
   one line with its `module` and `layer`. Each label now puts the DSL term
