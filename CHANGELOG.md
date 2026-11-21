@@ -79,6 +79,19 @@ Historical entries describe artifacts as they were named at the time.
   one. Like the other three templates, it builds, passes `s0ma check --mode
   release`, and its own tests pass straight away.
 
+- **A guide to watching an app being built.**
+  `docs/guides/watch-an-app-being-built.md` opens the pipeline example in
+  studi0 for a short tour, then has a reader start a project of their own and
+  give their coding agent three requests that grow an app like it, saying
+  after each what the page shows: new parts marked and outlined, an entry in
+  the list of changes, the lines a changed part names, and a large build
+  arriving module by module. It is written for a reader who does not program.
+  Its journey, `journey:watch-an-app-being-built`, has evidence that replays
+  the steps that need no agent: making the example and reading its graph,
+  then making a second project and landing the example's three builds in it
+  from the sources studi0's tests keep. The agent's own work is not replayed,
+  and the guide says so.
+
 ### Changed
 
 - **studi0 says plainly when nothing is built yet.** Opened on a project with
