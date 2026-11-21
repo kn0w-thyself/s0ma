@@ -30,7 +30,8 @@ Pinned here:
   canvas only through the selection path a click already uses;
 * the term controls, their card and the dictionary are still wired to
   the terms block /api/graph serves, keep only ids in the page, and
-  leave the page as it was when there is no terms block.
+  leave the page as it was when there is no terms block; the harness's
+  terms data is what the server builds from the packaged slice.
 
 Whether the graph *looks* right is not decidable here; that is the
 browser pass over ``tests/fixtures/dev_harness.html``.
@@ -54,6 +55,7 @@ APP_JS = ASSET_DIR / "app.js"
 DEV_HARNESS = FIXTURE_DIR / "dev_harness.html"
 FIXTURE_PAYLOAD = FIXTURE_DIR / "sh0w_fixture_payload.json"
 NARRATION_FIXTURE = FIXTURE_DIR / "sh0w_narration_fixture.json"
+TERMS_FIXTURE = FIXTURE_DIR / "sh0w_terms_fixture.json"
 
 ASSET_FILES = (INDEX_HTML, APP_CSS, APP_JS)
 SELF_CONTAINED_FILES = (INDEX_HTML, APP_CSS, APP_JS, DEV_HARNESS)
@@ -154,7 +156,7 @@ def test_every_stylesheet_colour_is_a_token() -> None:
 
 
 @pytest.mark.parametrize(
-    "path", (*SELF_CONTAINED_FILES, NARRATION_FIXTURE), ids=lambda p: p.name
+    "path", (*SELF_CONTAINED_FILES, NARRATION_FIXTURE, TERMS_FIXTURE), ids=lambda p: p.name
 )
 def test_no_asset_reaches_off_this_machine(path: Path) -> None:
     """FR-STUDI0-7: the page is fully self-contained.
@@ -665,6 +667,13 @@ def test_the_page_keeps_pointers_and_never_a_definition() -> None:
     for field in ("guarantees", "forbids", "expects"):
         assert f'  {field}: "concept:contract",' in contract, field
     assert contract.count("concept:") == 3
+    # No summary or definition text from the slice is written in any asset.
+    terms = json.loads(read(TERMS_FIXTURE))
+    for path in ASSET_FILES:
+        text = read(path)
+        for entry in terms["entries"]:
+            assert entry["summary"] not in text, (path.name, entry["id"])
+            assert entry.get("definition", "\0") not in text, (path.name, entry["id"])
 
 
 def test_one_resolver_and_its_order() -> None:
@@ -810,3 +819,30 @@ def test_terms_styles_add_no_motion() -> None:
     assert "transition" not in terms
     assert "@keyframes" not in terms
 
+
+def test_the_terms_fixture_is_what_the_server_builds() -> None:
+    """The harness's terms come from the packaged slice, never from a hand.
+
+    The fixture's entries must equal what studi0 builds from the slice
+    s0ma-core ships. The source stamp is checked for shape only, because
+    every documentation build moves its snapshot hash. When this fails
+    after a change to s0ma's concepts, regenerate the fixture (and the
+    harness block that embeds it) from packages/s0ma-studi0 with:
+
+        uv run python -c "import json, s0ma_studi0; print(json.dumps(
+            s0ma_studi0.studi0_state.teaching_terms(), indent=2,
+            sort_keys=True, ensure_ascii=False))"
+    """
+    import s0ma_studi0
+
+    built = s0ma_studi0.studi0_state.teaching_terms()
+    fixture = json.loads(read(TERMS_FIXTURE))
+    assert built["entries"], "the packaged slice gave no entries"
+    assert fixture["entries"] == built["entries"]
+    assert set(fixture["source"]) == {"release_version", "snapshot_hash"}
+
+
+def test_dev_harness_terms_match_the_checked_in_fixture() -> None:
+    harness = read(DEV_HARNESS)
+    assert "__S0MA_TERMS__" in harness
+    assert _embedded(harness, "sh0w-terms") == json.loads(read(TERMS_FIXTURE))
