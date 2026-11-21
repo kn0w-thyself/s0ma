@@ -622,6 +622,21 @@ body {
   stroke: var(--amber-mark);
 }
 
+/* The outline that stays: the parts the newest build added, after the
+ * beat is over. Static, never animated, and never dashed. Two thin
+ * rules OUTSIDE the cell in the soft ink, where selection is one
+ * heavier accent rule inside it, so the two read apart by position and
+ * by the number of lines, not by colour alone. */
+.arrival-outline {
+  pointer-events: none;
+}
+
+.arrival-rule {
+  fill: none;
+  stroke: var(--ink-soft);
+  stroke-width: 1;
+}
+
 /* --------------------------------------------------------------- legend */
 
 .legend {
@@ -664,6 +679,11 @@ body {
  * buttons take the pointer. */
 .legend .term-control {
   pointer-events: auto;
+}
+
+.status-note {
+  display: block;
+  color: var(--ink-soft);
 }
 
 .status-line {

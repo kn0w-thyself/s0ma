@@ -344,6 +344,9 @@ var state = {
   delta: emptyDelta(),
   /* True between "a delta arrived" and "the paint that showed it". */
   beatPending: false,
+  /* The parts the newest build added, kept outlined after the beat is
+   * over (see "The outline that stays"). */
+  outlined: {},
   /* Sticky layout memory, one entry per module (see organSlotting).
    * Wiped whenever `slotKey` changes, which is the only thing that
    * licenses a full relayout. */
@@ -1994,6 +1997,9 @@ function nodeElement(node, organ) {
   if (organ.stale) {
     classes += " is-stale";
   }
+  if (state.outlined[node.id]) {
+    classes += " is-outlined";
+  }
 
   var group = svgEl("g", {
     class: classes,
@@ -2011,6 +2017,9 @@ function nodeElement(node, organ) {
   if (mark) {
     group.setAttribute("data-delta", mark);
     group.appendChild(beatRing(node.x, node.y, node.w, node.h, 12));
+  }
+  if (state.outlined[node.id]) {
+    group.appendChild(arrivalOutline(node.x, node.y, node.w, node.h));
   }
 
   group.appendChild(
@@ -2180,7 +2189,29 @@ function renderStatusLine(layout) {
     parts.push("built by s0ma " + freshness.transpiler_version);
   }
   ui.statusLine.textContent = parts.join(" · ");
+  /* The outline is explained in words wherever it is drawn, so the mark
+   * never has to be decoded from its look alone. */
+  if (outlinedInView(layout) > 0) {
+    ui.statusLine.appendChild(
+      el("span", "status-note", "Outlined parts arrived in the newest build.")
+    );
+  }
   ui.statusLine.hidden = false;
+}
+
+/* How many outlined parts this layout really draws: a part hidden by a
+ * toggle or folded into a collapsed organ wears no outline. */
+function outlinedInView(layout) {
+  var count = 0;
+  for (var i = 0; i < layout.organs.length; i += 1) {
+    var nodes = layout.organs[i].nodes;
+    for (var j = 0; j < nodes.length; j += 1) {
+      if (state.outlined[nodes[j].id]) {
+        count += 1;
+      }
+    }
+  }
+  return count;
 }
 
 /* ------------------------------------------------------------------ *
@@ -2234,6 +2265,55 @@ function beatRing(x, y, w, h, radius) {
     height: r2(h + BEAT_RING_INSET * 2),
     rx: radius,
   });
+}
+
+/* The outline that stays.
+ *
+ * The beat is over in a few seconds, and a reader who looked away
+ * missed it. So the parts the newest build ADDED keep a steady outline
+ * after it: two thin rules just outside the part's cell. It is a static
+ * style, never animated, and it stays until the next build that adds,
+ * changes, or removes something lands, when that build's own additions
+ * take it over, or until the page reloads. A build that changes nothing
+ * a part declares leaves it where it is. A changed part gets only its
+ * beat. A page opened on a project that is already built outlines
+ * nothing, because nothing arrived while it was watching.
+ *
+ * It is told apart without colour alone: selection is ONE heavier rule
+ * INSIDE the cell plus a tinted glyph and a bold label; stale is an
+ * amber glyph outline, the word "stale", and a corner triangle. This is
+ * a DOUBLE thin rule OUTSIDE the cell in the soft ink, and it never
+ * touches the glyph or the label. It is never dashed. The status line
+ * says in words what it means. */
+function arrivalOutline(x, y, w, h) {
+  var group = svgEl("g", { class: "arrival-outline", "aria-hidden": "true" });
+  group.appendChild(
+    svgEl("rect", {
+      class: "arrival-rule",
+      x: r2(x - 3),
+      y: r2(y - 3),
+      width: r2(w + 6),
+      height: r2(h + 6),
+      rx: 11,
+    })
+  );
+  group.appendChild(
+    svgEl("rect", {
+      class: "arrival-rule",
+      x: r2(x - 6),
+      y: r2(y - 6),
+      width: r2(w + 12),
+      height: r2(h + 12),
+      rx: 13,
+    })
+  );
+  return group;
+}
+
+/* Whether a delta touched anything a part declares: staleness alone is
+ * not a build that adds, changes, or removes. */
+function deltaChangesParts(delta) {
+  return hasKeys(delta.added) || hasKeys(delta.changed) || hasKeys(delta.removed);
 }
 
 /* Move the nodes this delta removed out of the live layer and into the
@@ -4673,6 +4753,16 @@ function applyGraph(graph, stateDoc) {
   delta.stale = newlyStale(state.staleModules, nextStale);
 
   state.delta = delta;
+  if (deltaChangesParts(delta)) {
+    /* The newest build's additions take the outline over; one that
+     * added nothing clears it. */
+    state.outlined = {};
+    for (var addedId in delta.added) {
+      if (Object.prototype.hasOwnProperty.call(delta.added, addedId)) {
+        state.outlined[addedId] = true;
+      }
+    }
+  }
   state.graph = graph;
   state.model = buildModel(graph);
   state.buildStatus = derived.build_status || "missing";

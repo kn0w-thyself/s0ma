@@ -988,3 +988,51 @@ def test_dependencies_are_compared_from_the_part_s_own_side() -> None:
     assert "list[j].source === canonicalId" in keys
     assert "list[j].target === canonicalId" not in keys
     assert "return keys.sort(compareStrings);" in keys
+
+
+OUTLINE_SENTENCE = "Outlined parts arrived in the newest build."
+
+
+def test_the_newest_build_s_additions_stay_outlined() -> None:
+    """Added parts keep an outline after the beat, until the next build.
+
+    The outline is taken over only by a build that adds, changes, or
+    removes something; the beat's own end never touches it; a page
+    opened on a built project starts with nothing outlined.
+    """
+    app_js = read(APP_JS)
+    assert "  outlined: {},\n" in app_js
+    apply = _between(app_js, "function applyGraph(", "\n}\n")
+    assert "if (deltaChangesParts(delta)) {" in apply
+    assert "state.outlined = {};" in apply
+    assert "state.outlined[addedId] = true;" in apply
+    assert "delta.changed" not in apply
+    takes = _between(app_js, "function deltaChangesParts(", "\n}\n")
+    assert "delta.stale" not in takes
+    end = _between(app_js, "function endBeat(", "\n}\n")
+    assert "outlined" not in end
+    strip = _between(app_js, "function stripBeatMarks(", "\n}\n")
+    assert '"beat-ring"' in strip and "arrival" not in strip
+    node = _between(app_js, "function nodeElement(", "\n}\n")
+    assert "if (state.outlined[node.id]) {" in node
+    assert "arrivalOutline(node.x, node.y, node.w, node.h)" in node
+
+
+def test_the_outline_is_static_and_not_dashed() -> None:
+    app_css = read(APP_CSS)
+    outline = _between(app_css, ".arrival-outline {", "/* ----")
+    assert "animation" not in outline
+    assert "transition" not in outline
+    assert "dasharray" not in outline
+    assert "stroke: var(--ink-soft);" in outline
+    # Selection is the accent rule inside the cell; this is not it.
+    assert "--accent" not in outline
+    assert "--amber" not in outline
+
+
+def test_the_status_line_says_what_the_outline_means() -> None:
+    app_js = read(APP_JS)
+    status = _between(app_js, "function renderStatusLine(", "\n}\n")
+    assert status.index("if (outlinedInView(layout) > 0) {") < status.index(OUTLINE_SENTENCE)
+    line = next(text for text in app_js.splitlines() if OUTLINE_SENTENCE in text)
+    assert '"code"' not in line
