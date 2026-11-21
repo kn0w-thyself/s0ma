@@ -741,8 +741,8 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 551,
-        "start_line": 529
+        "end_line": 550,
+        "start_line": 528
       },
       "visibility": "PUBLIC"
     },
@@ -806,8 +806,8 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 597,
-        "start_line": 553
+        "end_line": 596,
+        "start_line": 552
       },
       "visibility": "PUBLIC"
     }
@@ -974,7 +974,7 @@
     {
       "body": {
         "state": "value",
-        "value": "@functools.lru_cache(maxsize=1)\ndef _teaching_terms_once() -> dict[str, Any]:\n    \"\"\"The terms block, built from the packaged slice the first time only.\"\"\"\n    try:\n        found = packaged_slice()\n    except Exception:  # a missing slice must never fail a request\n        found = None\n    return terms_document(found)"
+        "value": "@functools.lru_cache(maxsize=1)\ndef _teaching_terms_once() -> dict[str, Any]:\n    \"\"\"The terms block, built from the packaged slice the first time only.\"\"\"\n    try:\n        return terms_document(packaged_slice())\n    except Exception:  # a slice problem of any kind must never fail a request\n        return {\"source\": None, \"entries\": []}"
       },
       "body_kind": "function",
       "canonical_id": "studi0_state::_teaching_terms_once",
@@ -985,7 +985,7 @@
       },
       "layer": "APPLICATION",
       "location": {
-        "end_line": 527,
+        "end_line": 526,
         "start_line": 517
       },
       "module": "studi0_state",
@@ -1032,7 +1032,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:30523f10281dcf02da6e6c5b9ff4c5dac12d97e8e270132fe409ae3dbd6f9f31",
+    "content_hash": "sha256:aeafe4db6eadc9a0de83ec5d6c220a74e18da0683142cc78f526e0cb270b8158",
     "exports_helpers": {
       "state": "none"
     },
@@ -1048,6 +1048,6 @@
     "version": "0.22.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:30523f10281dcf02",
+  "source_hash": "sha256:aeafe4db6eadc9a0",
   "transpiler_version": "1.0.0"
 }

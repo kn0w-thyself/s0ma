@@ -305,6 +305,19 @@ def test_a_missing_slice_never_reaches_the_request_path(
     assert document["terms"] == {"source": None, "entries": []}
 
 
+def test_a_failed_terms_build_never_reaches_the_request_path(
+    fresh_terms: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """An error nobody expected while building the block gives the empty block."""
+
+    def _raises(found: tuple[str, str] | None) -> dict[str, Any]:
+        raise RuntimeError("an error the slice reader did not plan for")
+
+    monkeypatch.setattr(fresh_terms, "terms_document", _raises)
+
+    assert fresh_terms.teaching_terms() == {"source": None, "entries": []}
+
+
 def test_the_terms_block_is_built_once_per_process(
     fresh_terms: Any, monkeypatch: pytest.MonkeyPatch
 ) -> None:

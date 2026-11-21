@@ -504,15 +504,15 @@ nerve terms_document :: APPLICATION
                 if isinstance(definition, str) and definition:
                     entry["definition"] = definition
                 entries.append(entry)
+            return {
+                "source": {
+                    "release_version": teaching.release_version,
+                    "snapshot_hash": teaching.snapshot_hash,
+                },
+                "entries": entries,
+            }
         except (TeachingSliceError, AttributeError, TypeError, ValueError, KeyError):
             return empty
-        return {
-            "source": {
-                "release_version": teaching.release_version,
-                "snapshot_hash": teaching.snapshot_hash,
-            },
-            "entries": entries,
-        }
 
 helper _teaching_terms_once :: APPLICATION
     intent: "Reads the packaged teaching slice and builds the terms block once per process. The slice is package data that cannot change under a running studi0, so building it on the first /api/graph answer and never again is honest rather than merely fast, and a request never waits on it twice. Anything the read raises is caught here, so the request path never meets it."
@@ -521,10 +521,9 @@ helper _teaching_terms_once :: APPLICATION
     def _teaching_terms_once() -> dict[str, Any]:
         """The terms block, built from the packaged slice the first time only."""
         try:
-            found = packaged_slice()
-        except Exception:  # a missing slice must never fail a request
-            found = None
-        return terms_document(found)
+            return terms_document(packaged_slice())
+        except Exception:  # a slice problem of any kind must never fail a request
+            return {"source": None, "entries": []}
 
 nerve teaching_terms :: APPLICATION
     kind: FUNCTION

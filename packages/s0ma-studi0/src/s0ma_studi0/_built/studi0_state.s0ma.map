@@ -355,69 +355,69 @@
       },
       {
         "body_output": {
-          "end_line": 503,
+          "end_line": 502,
           "start_line": 496
         },
         "body_source": {
-          "end_line": 527,
+          "end_line": 526,
           "start_line": 520
         },
         "name": "_teaching_terms_once",
         "output": {
-          "end_line": 503,
+          "end_line": 502,
           "start_line": 494
         },
         "source": {
-          "end_line": 527,
+          "end_line": 526,
           "start_line": 517
         },
         "type": "helper"
       },
       {
         "body_output": {
-          "end_line": 520,
-          "start_line": 518
+          "end_line": 519,
+          "start_line": 517
         },
         "body_source": {
-          "end_line": 551,
-          "start_line": 549
+          "end_line": 550,
+          "start_line": 548
         },
         "decorator_output": {
-          "end_line": 516,
-          "start_line": 505
+          "end_line": 515,
+          "start_line": 504
         },
         "name": "teaching_terms",
         "output": {
-          "end_line": 520,
-          "start_line": 505
+          "end_line": 519,
+          "start_line": 504
         },
         "source": {
-          "end_line": 551,
-          "start_line": 529
+          "end_line": 550,
+          "start_line": 528
         },
         "type": "nerve"
       },
       {
         "body_output": {
-          "end_line": 557,
-          "start_line": 536
+          "end_line": 556,
+          "start_line": 535
         },
         "body_source": {
-          "end_line": 597,
-          "start_line": 575
+          "end_line": 596,
+          "start_line": 574
         },
         "decorator_output": {
-          "end_line": 534,
-          "start_line": 522
+          "end_line": 533,
+          "start_line": 521
         },
         "name": "graph_document",
         "output": {
-          "end_line": 557,
-          "start_line": 522
+          "end_line": 556,
+          "start_line": 521
         },
         "source": {
-          "end_line": 597,
-          "start_line": 553
+          "end_line": 596,
+          "start_line": 552
         },
         "type": "nerve"
       }
