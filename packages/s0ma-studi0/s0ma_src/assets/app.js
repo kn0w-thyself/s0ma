@@ -158,6 +158,43 @@ var FAMILY_LABEL = {
 /* Fields the inspector lifts to the top of the field list when present. */
 var FIELD_PRIORITY = ["guarantees", "expects", "forbids"];
 
+/* The plain phrase shown after a field's DSL term in the inspector:
+ * the term first, in monospace, then a separator, then this phrase.
+ * A field with no entry here is labelled by its term alone. These are
+ * labels, not definitions: what each term means is not written here. */
+var FIELD_PHRASE = {
+  intent: "what it is for",
+  guarantees: "what it promises",
+  forbids: "what it must never do",
+  expects: "what it needs before it runs",
+  schema: "its shape",
+  invariants: "what must always be true of it",
+  covered_by: "checked by",
+  value: "its value",
+};
+
+/* The fields the component inspector shows above the fold, in order,
+ * by declaration type. This sets the order only: a field after `intent`
+ * is shown when the part's payload carries its key, so a declaration
+ * type that has no such line shows no row for it. A key that is present
+ * is never folded away; with nothing declared it says so. After these
+ * come the two relationship sections, then one disclosure for the rest. */
+var ABOVE_THE_FOLD = {
+  nerve: ["intent", "guarantees", "forbids", "expects"],
+  ganglion: ["intent", "guarantees", "forbids", "expects"],
+  cell: ["intent", "schema", "invariants", "value"],
+};
+var ABOVE_THE_FOLD_DEFAULT = ["intent"];
+
+/* Fields the inspector shows somewhere other than the field list under
+ * the fold: kind and visibility head that list, covered_by sits with
+ * the verification relationships, and depends_on is what the
+ * dependencies section draws from the authored edges. */
+var FIELDS_SHOWN_ELSEWHERE = {
+  covered_by: true,
+  depends_on: true,
+};
+
 /* The four movement phases the narration schema froze. A phase outside
  * this map is never rendered — the server refuses the line first, and
  * this is the second wall. */
@@ -221,6 +258,10 @@ var state = {
   /* The ordinal of the newest narration focus sync has already acted
    * on, so an unchanged window never re-steers the canvas. */
   narrationFocused: 0,
+  /* Whether the component inspector's two disclosures are open, so a
+   * live repaint of the same selection keeps them as the reader left
+   * them. A new selection starts with both closed. */
+  disclosure: { key: null, more: false, undeclared: false },
 };
 
 var ui = {};
@@ -2205,11 +2246,99 @@ function inspectorSection(label) {
   return section;
 }
 
+/* The component inspector. Read top to bottom: the header (short name,
+ * declaration type, module and layer, the stale note), then the fields
+ * that say what the part is for and what it promises, then what it
+ * leans on and what leans on it, and then one disclosure for the rest.
+ * Every value is the author's text exactly as written. */
 function renderComponentInspector(component) {
   if (!component) {
     return;
   }
-  inspectorHead(shortName(component.canonical_id), component.canonical_id);
+  var canonicalId = component.canonical_id;
+  if (state.disclosure.key !== canonicalId) {
+    state.disclosure = { key: canonicalId, more: false, undeclared: false };
+  }
+  componentHead(component);
+
+  var fields = component.fields || {};
+  var declarationType = component.declaration_type;
+  var aboveTheFold = ABOVE_THE_FOLD[declarationType] || ABOVE_THE_FOLD_DEFAULT;
+  var shownAbove = {};
+  for (var i = 0; i < aboveTheFold.length; i += 1) {
+    var name = aboveTheFold[i];
+    if (!fieldIsCarried(name, declarationType, fields)) {
+      continue;
+    }
+    shownAbove[name] = true;
+    var raw = name === "intent" ? component.intent : fields[name];
+    var section = fieldSection(name);
+    var holder = el(name === "intent" ? "p" : "div", "intent-text");
+    appendFieldValue(holder, name, raw, name !== "intent" && !(name in fields));
+    section.appendChild(holder);
+  }
+
+  renderDependencies(canonicalId, fields.depends_on);
+  renderDependents(canonicalId);
+
+  /* Pending is authoring debt, so it is never folded away: a pending
+   * field that would sit under the fold is shown here instead. */
+  var keys = orderedFieldKeys(fields);
+  var rest = [];
+  var undeclared = [];
+  for (var j = 0; j < keys.length; j += 1) {
+    var key = keys[j];
+    if (shownAbove[key] || FIELDS_SHOWN_ELSEWHERE[key]) {
+      continue;
+    }
+    var projected = projectValue(fields[key]);
+    if (projected.kind === "pending") {
+      var pendingSection = fieldSection(key);
+      var pendingHolder = el("div", "intent-text");
+      appendProjectedValue(pendingHolder, fields[key]);
+      pendingSection.appendChild(pendingHolder);
+    } else if (projected.kind === "none" || isEmptyValue(projected.value)) {
+      undeclared.push(key);
+    } else {
+      rest.push(key);
+    }
+  }
+
+  renderMoreAboutThisPart(component, fields, rest, undeclared);
+}
+
+/* Whether an above-the-fold row is drawn: `intent` always, any other
+ * field only when the payload carries its key. The one exception is
+ * `forbids` on a nerve or a ganglion, which every current build writes:
+ * a payload without it is from an older build, and says "not declared". */
+function fieldIsCarried(name, declarationType, fields) {
+  if (name === "intent" || name in fields) {
+    return true;
+  }
+  return (
+    name === "forbids" &&
+    (declarationType === "nerve" || declarationType === "ganglion")
+  );
+}
+
+function componentHead(component) {
+  inspectorHead(shortName(component.canonical_id), null);
+
+  var tagLine = el("p", "inspector-tagline");
+  tagLine.appendChild(
+    el("code", "decl-tag", component.declaration_type || "not declared")
+  );
+  ui.inspector.appendChild(tagLine);
+
+  var where = el("p", "inspector-where");
+  where.appendChild(el("code", "term", "module"));
+  where.appendChild(document.createTextNode(" "));
+  appendTermValue(where, component.module);
+  where.appendChild(el("span", "label-sep", " · "));
+  where.appendChild(el("code", "term", "layer"));
+  where.appendChild(document.createTextNode(" "));
+  appendTermValue(where, component.layer);
+  ui.inspector.appendChild(where);
 
   if (isStaleModule(component.module)) {
     var note = el(
@@ -2221,51 +2350,328 @@ function renderComponentInspector(component) {
     );
     ui.inspector.appendChild(note);
   }
+}
 
-  /* 1. intent */
-  var intent = inspectorSection("intent");
-  var intentValue = projectValue(component.intent);
-  if (intentValue.kind === "value") {
-    intent.appendChild(el("p", "intent-text", valueToLine(intentValue.value)));
-  } else {
-    var holder = el("p", "intent-text");
-    appendProjectedValue(holder, component.intent);
-    intent.appendChild(holder);
+/* A DSL word or value in monospace, or "not declared" when absent. */
+function appendTermValue(host, value) {
+  if (value === undefined || value === null || value === "") {
+    host.appendChild(el("span", "value-absent", "not declared"));
+    return;
   }
+  host.appendChild(el("code", "term", String(value)));
+}
 
-  /* 2. kind / layer / visibility / declaration type */
-  var declaration = inspectorSection("declaration");
-  var declarationList = el("dl", "dl");
-  appendDefinition(declarationList, "kind", component.kind);
-  appendDefinition(declarationList, "layer", component.layer);
-  appendDefinition(declarationList, "visibility", component.visibility);
-  appendDefinition(
-    declarationList,
-    "declaration type",
-    component.declaration_type
-  );
-  appendDefinition(declarationList, "module", component.module);
-  declaration.appendChild(declarationList);
+/* A field's label: the DSL term in monospace, a separator, then the
+ * plain phrase. A term with no phrase is labelled by the term alone. */
+function fieldLabel(tag, className, term, phrase) {
+  var label = el(tag, className);
+  label.appendChild(el("code", "term", term));
+  if (phrase) {
+    label.appendChild(el("span", "label-sep", " · "));
+    label.appendChild(el("span", "label-phrase", phrase));
+  }
+  return label;
+}
 
-  /* 3. fields */
-  var fieldsSection = inspectorSection("fields");
-  var fields = component.fields || {};
-  var keys = orderedFieldKeys(fields);
-  if (keys.length === 0) {
-    fieldsSection.appendChild(el("p", "value-absent", "not declared"));
-  } else {
-    var fieldList = el("dl", "dl");
-    for (var i = 0; i < keys.length; i += 1) {
-      appendDefinition(fieldList, keys[i], fields[keys[i]]);
+function fieldSection(term) {
+  var section = el("section", "inspector-section");
+  section.appendChild(fieldLabel("h3", "field-label", term, FIELD_PHRASE[term]));
+  ui.inspector.appendChild(section);
+  return section;
+}
+
+/* A section whose label is plain words, not a DSL term: "dependencies"
+ * and "dependents" are this page's words, not the language's. */
+function plainSection(word, phrase) {
+  var section = el("section", "inspector-section");
+  var label = el("h3", "field-label");
+  label.appendChild(el("span", "label-word", word));
+  label.appendChild(el("span", "label-sep", " · "));
+  label.appendChild(el("span", "label-phrase", phrase));
+  section.appendChild(label);
+  ui.inspector.appendChild(section);
+  return section;
+}
+
+/* One field above the fold. `forbids` is the one field whose `none`
+ * state is shown as `none` rather than "not declared": the line is
+ * required on a nerve and a ganglion, and a build refuses a part that
+ * leaves it out in every mode, so a `none` state in the payload is the
+ * author's written answer. A payload from a build that predates the
+ * line carries no `forbids` key at all, and that says "not declared". */
+function appendFieldValue(host, name, raw, absent) {
+  if (
+    name === "forbids" &&
+    !absent &&
+    raw &&
+    typeof raw === "object" &&
+    raw.state === "none"
+  ) {
+    host.appendChild(el("code", "term", "none"));
+    return;
+  }
+  appendProjectedValue(host, raw);
+}
+
+function isEmptyValue(value) {
+  if (value === undefined || value === null) {
+    return true;
+  }
+  if (Array.isArray(value)) {
+    return value.length === 0;
+  }
+  if (typeof value === "object") {
+    return Object.keys(value).length === 0;
+  }
+  return false;
+}
+
+/* The relationships of one family pair that touch `canonicalId` from
+ * one side. Verification edges are listed under the fold, with
+ * `covered_by`. */
+function relationshipsOf(canonicalId, direction) {
+  var out = [];
+  var edges = state.model.edges;
+  for (var i = 0; i < edges.length; i += 1) {
+    var edge = edges[i];
+    if (edge.family !== "authored" && edge.family !== "derived") {
+      continue;
     }
-    fieldsSection.appendChild(fieldList);
+    if (direction === "out" ? edge.source === canonicalId : edge.target === canonicalId) {
+      out.push(edge);
+    }
+  }
+  return out;
+}
+
+function renderDependencies(canonicalId, dependsOn) {
+  var section = plainSection("dependencies", "what it leans on");
+  var edges = relationshipsOf(canonicalId, "out");
+  if (projectValue(dependsOn).kind === "pending") {
+    var holder = el("div", "intent-text");
+    appendProjectedValue(holder, dependsOn);
+    section.appendChild(holder);
+  }
+  appendRelationRows(section, edges, "out", "none declared");
+}
+
+function renderDependents(canonicalId) {
+  var section = plainSection("dependents", "what leans on it");
+  appendRelationRows(
+    section,
+    relationshipsOf(canonicalId, "in"),
+    "in",
+    "none in this graph"
+  );
+}
+
+function appendRelationRows(section, edges, direction, emptyText) {
+  if (edges.length === 0) {
+    section.appendChild(el("p", "value-absent", emptyText));
+    return;
+  }
+  var list = el("ul", "rel-list");
+  for (var i = 0; i < edges.length; i += 1) {
+    list.appendChild(relationRow(edges[i], direction));
+  }
+  section.appendChild(list);
+}
+
+/* One relationship: the relation word, the part at the other end as
+ * the control that selects it, then where the relationship comes from
+ * and, for an authored one, what it carries. */
+function relationRow(edge, direction) {
+  var item = el("li", "rel-item");
+  var head = el("div", "rel-head");
+  appendTermValue(head, edge.relation);
+  head.appendChild(document.createTextNode(" "));
+  head.appendChild(peerControl(direction === "in" ? edge.source : edge.target));
+  item.appendChild(head);
+
+  var meta = el("div", "rel-meta");
+  meta.appendChild(document.createTextNode(FAMILY_LABEL[edge.family]));
+  if (edge.family === "authored") {
+    meta.appendChild(el("span", "label-sep", " · "));
+    meta.appendChild(el("code", "term", "carries"));
+    meta.appendChild(
+      document.createTextNode(" " + projectToLine(edge.carries, "not declared"))
+    );
+  }
+  item.appendChild(meta);
+  return item;
+}
+
+/* The other end of a relationship. A part the graph carries is a button
+ * that selects it through the same path a click on its node takes; a
+ * name the graph does not carry is shown as text and says so. */
+function peerControl(peerId) {
+  var kind = null;
+  if (state.model.components[peerId]) {
+    kind = "node";
+  } else if (state.model.integrationsById[peerId]) {
+    kind = "integration";
+  }
+  if (!kind) {
+    var unknown = el("span", "rel-peer");
+    unknown.appendChild(el("code", "term", shortName(peerId)));
+    unknown.appendChild(el("span", "narration-unknown-note", " not in this graph"));
+    unknown.title = peerId;
+    return unknown;
+  }
+  var button = el("button", "rel-peer rel-peer-button", shortName(peerId));
+  button.type = "button";
+  button.title = peerId;
+  button.setAttribute("aria-label", "show " + peerId + " in the graph");
+  button.addEventListener("click", function () {
+    if (kind === "node") {
+      select({ type: "node", id: peerId });
+    } else {
+      select({ type: "integration", id: peerId });
+    }
+    ui.inspector.focus();
+  });
+  return button;
+}
+
+/* Everything else about the part, behind one disclosure. A native
+ * <details>: reachable by keyboard, its open state exposed to assistive
+ * technology, and it opens with no motion. */
+function renderMoreAboutThisPart(component, fields, rest, undeclared) {
+  var more = el("details", "inspector-more");
+  more.open = state.disclosure.more;
+  more.addEventListener("toggle", function () {
+    state.disclosure.more = more.open;
+  });
+  more.appendChild(el("summary", "inspector-more-summary", "More about this part"));
+
+  var basics = el("dl", "dl");
+  appendTermDefinition(basics, "kind", component.kind);
+  appendTermDefinition(basics, "visibility", component.visibility);
+  more.appendChild(basics);
+
+  renderVerification(more, component.canonical_id, fields);
+
+  if (rest.length > 0) {
+    var list = el("dl", "dl inspector-more-block");
+    for (var i = 0; i < rest.length; i += 1) {
+      appendLabelledDefinition(list, rest[i], fields[rest[i]]);
+    }
+    more.appendChild(list);
   }
 
-  /* 4. relationships */
-  renderRelationships(component.canonical_id);
+  if (undeclared.length > 0) {
+    var unset = el("details", "inspector-undeclared inspector-more-block");
+    unset.open = state.disclosure.undeclared;
+    unset.addEventListener("toggle", function () {
+      state.disclosure.undeclared = unset.open;
+    });
+    unset.appendChild(
+      el(
+        "summary",
+        "inspector-undeclared-summary",
+        undeclared.length +
+          (undeclared.length === 1 ? " field not declared" : " fields not declared")
+      )
+    );
+    var names = el("ul", "inspector-undeclared-list");
+    for (var j = 0; j < undeclared.length; j += 1) {
+      var item = el("li");
+      item.appendChild(el("code", "term", undeclared[j]));
+      names.appendChild(item);
+    }
+    unset.appendChild(names);
+    more.appendChild(unset);
+  }
 
-  /* 5. location */
-  renderLocation(component.location);
+  var origin = el("dl", "dl inspector-more-block");
+  origin.appendChild(el("dt", null, "Written in"));
+  var written = el("dd");
+  appendLocation(written, component.location);
+  origin.appendChild(written);
+  origin.appendChild(el("dt", null, "canonical id"));
+  var idHolder = el("dd");
+  idHolder.appendChild(el("code", "term", component.canonical_id));
+  origin.appendChild(idHolder);
+  more.appendChild(origin);
+
+  ui.inspector.appendChild(more);
+}
+
+/* `covered_by` and the verification relationships, side by side: what
+ * the author says checks this part, and what the build found doing so. */
+function renderVerification(host, canonicalId, fields) {
+  var outgoing = [];
+  var incoming = [];
+  var edges = state.model.edges;
+  for (var i = 0; i < edges.length; i += 1) {
+    var edge = edges[i];
+    if (edge.family !== "verification") {
+      continue;
+    }
+    if (edge.source === canonicalId) {
+      outgoing.push(edge);
+    } else if (edge.target === canonicalId) {
+      incoming.push(edge);
+    }
+  }
+  var hasField = "covered_by" in fields;
+  if (!hasField && outgoing.length === 0 && incoming.length === 0) {
+    return;
+  }
+
+  var block = el("div", "inspector-more-block");
+  if (hasField) {
+    var list = el("dl", "dl");
+    appendLabelledDefinition(list, "covered_by", fields.covered_by);
+    block.appendChild(list);
+  }
+  if (outgoing.length + incoming.length > 0) {
+    var rels = el("ul", "rel-list");
+    var j;
+    for (j = 0; j < outgoing.length; j += 1) {
+      rels.appendChild(edgeListItem(outgoing[j], "out"));
+    }
+    for (j = 0; j < incoming.length; j += 1) {
+      rels.appendChild(edgeListItem(incoming[j], "in"));
+    }
+    block.appendChild(rels);
+    if (!state.toggles.tests) {
+      block.appendChild(
+        el(
+          "p",
+          "rel-meta",
+          "verification edges are always listed here; turn on " +
+            "“tests and docs” to draw them on the graph."
+        )
+      );
+    }
+  }
+  host.appendChild(block);
+}
+
+/* A definition whose term is a DSL field name, with its plain phrase
+ * when it has one. */
+function appendLabelledDefinition(list, term, raw) {
+  list.appendChild(fieldLabel("dt", null, term, FIELD_PHRASE[term]));
+  var dd = el("dd");
+  appendProjectedValue(dd, raw);
+  list.appendChild(dd);
+}
+
+/* A definition whose term and value are both DSL words (kind,
+ * visibility and their enum values). */
+function appendTermDefinition(list, term, value) {
+  var dt = el("dt");
+  dt.appendChild(el("code", "term", term));
+  list.appendChild(dt);
+  var dd = el("dd");
+  var projected = projectValue(value);
+  if (projected.kind === "pending") {
+    appendProjectedValue(dd, value);
+  } else {
+    appendTermValue(dd, projected.kind === "value" ? projected.value : null);
+  }
+  list.appendChild(dd);
 }
 
 function renderIntegrationInspector(integration) {
@@ -2274,7 +2680,7 @@ function renderIntegrationInspector(integration) {
   }
   inspectorHead(integration.name, integration.canonical_id);
 
-  var intent = inspectorSection("intent");
+  var intent = fieldSection("intent");
   var holder = el("p", "intent-text");
   appendProjectedValue(holder, integration.intent);
   intent.appendChild(holder);
@@ -2352,7 +2758,7 @@ function renderEdgeInspector(key) {
   inspectorHead(title, subtitle);
 
   if (group.edges.length === 1 && group.family === "authored") {
-    var intent = inspectorSection("intent");
+    var intent = fieldSection("intent");
     var holder = el("p", "intent-text");
     appendProjectedValue(holder, group.edges[0].intent);
     intent.appendChild(holder);
@@ -2567,9 +2973,16 @@ function edgeListItem(edge, direction) {
 
 function renderLocation(location) {
   var section = inspectorSection("location");
+  var holder = el("p");
+  appendLocation(holder, location);
+  section.appendChild(holder);
+}
+
+/* The file and lines a declaration was written in, or "not declared". */
+function appendLocation(host, location) {
   var projected = projectValue(location);
   if (projected.kind !== "value" || !projected.value) {
-    section.appendChild(el("p", "value-absent", "not declared"));
+    host.appendChild(el("span", "value-absent", "not declared"));
     return;
   }
   var value = projected.value;
@@ -2583,7 +2996,11 @@ function renderLocation(location) {
       text += "–" + end;
     }
   }
-  section.appendChild(el("p", "location-text", text || "not declared"));
+  if (!text) {
+    host.appendChild(el("span", "value-absent", "not declared"));
+    return;
+  }
+  host.appendChild(el("span", "location-text", text));
 }
 
 /* ------------------------------------------------------------------ *

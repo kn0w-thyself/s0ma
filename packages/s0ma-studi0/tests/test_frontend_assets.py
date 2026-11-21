@@ -370,3 +370,116 @@ def test_dev_harness_narration_matches_the_checked_in_fixture() -> None:
     harness = read(DEV_HARNESS)
     assert "__S0MA_NARRATION__" in harness
     assert _embedded(harness, "sh0w-narration") == json.loads(read(NARRATION_FIXTURE))
+
+
+# ---------------------------------------------------------------------------
+# The component inspector: DSL term first, the long tail folded away
+# ---------------------------------------------------------------------------
+
+
+def _component_inspector(app_js: str) -> str:
+    start = app_js.index("function renderComponentInspector(")
+    return app_js[start : app_js.index("\n}\n", start)]
+
+
+def test_inspector_labels_put_the_dsl_term_first() -> None:
+    """Each label is the term in monospace, a separator, then the phrase."""
+    app_js = read(APP_JS)
+    for term, phrase in (
+        ("intent", "what it is for"),
+        ("guarantees", "what it promises"),
+        ("forbids", "what it must never do"),
+        ("expects", "what it needs before it runs"),
+        ("schema", "its shape"),
+        ("invariants", "what must always be true of it"),
+        ("covered_by", "checked by"),
+        ("value", "its value"),
+    ):
+        assert f'  {term}: "{phrase}",' in app_js, term
+    assert 'label.appendChild(el("code", "term", term));' in app_js
+    assert 'el("span", "label-sep", " · ")' in app_js
+    assert 'plainSection("dependencies", "what it leans on")' in app_js
+    assert 'plainSection("dependents", "what leans on it")' in app_js
+
+
+def test_inspector_above_the_fold_order() -> None:
+    """intent, guarantees, forbids, expects, then the two relationship lists."""
+    app_js = read(APP_JS)
+    assert 'nerve: ["intent", "guarantees", "forbids", "expects"],' in app_js
+    assert 'ganglion: ["intent", "guarantees", "forbids", "expects"],' in app_js
+    assert 'cell: ["intent", "schema", "invariants", "value"],' in app_js
+    body = _component_inspector(app_js)
+    order = [
+        body.index("componentHead(component);"),
+        body.index("for (var i = 0; i < aboveTheFold.length; i += 1)"),
+        body.index("renderDependencies("),
+        body.index("renderDependents("),
+        body.index("renderMoreAboutThisPart("),
+    ]
+    assert order == sorted(order)
+
+
+def test_inspector_folds_the_rest_into_one_disclosure() -> None:
+    """One native disclosure, a counted not-declared line, pending never folded."""
+    app_js = read(APP_JS)
+    assert 'el("details", "inspector-more")' in app_js
+    assert '"More about this part"' in app_js
+    assert '" fields not declared"' in app_js
+    assert '" field not declared"' in app_js
+    body = _component_inspector(app_js)
+    # A pending field is drawn above the disclosure, before it is built.
+    assert body.index('projected.kind === "pending"') < body.index(
+        "renderMoreAboutThisPart("
+    )
+    assert "undeclared.push(key);" in body
+
+
+def test_inspector_relationships_select_through_the_click_path() -> None:
+    """The part at the other end is a button that calls the same select()."""
+    app_js = read(APP_JS)
+    assert 'el("button", "rel-peer rel-peer-button", shortName(peerId))' in app_js
+    assert 'select({ type: "node", id: peerId })' in app_js
+    assert '"show " + peerId + " in the graph"' in app_js
+
+
+def test_inspector_shows_a_written_forbids_none_as_none() -> None:
+    """``forbids: none`` is an answer; a payload without the key says so."""
+    app_js = read(APP_JS)
+    assert 'name === "forbids" &&' in app_js
+    assert 'host.appendChild(el("code", "term", "none"));' in app_js
+
+
+def test_the_inspector_never_animates() -> None:
+    """The disclosure opens at once: the inspector's rules carry no motion."""
+    app_css = read(APP_CSS)
+    inspector = app_css[app_css.index(".inspector {") : app_css.index(".empty-state {")]
+    assert "animation" not in inspector
+    assert "transition" not in inspector
+
+
+def test_fixture_payload_carries_forbids_in_every_state() -> None:
+    """The harness has a written sentence, a written none and a pending one."""
+    payload = json.loads(read(FIXTURE_PAYLOAD))
+    states = {
+        component["fields"]["forbids"]["state"]
+        for component in payload["components"].values()
+        if "forbids" in component["fields"]
+    }
+    assert states == {"value", "none", "pending"}
+
+
+def test_inspector_rows_follow_the_keys_the_payload_carries() -> None:
+    """A field after intent is drawn only when the part carries its key.
+
+    A row saying "not declared" for a line the declaration type does not
+    have would be false. The one exception is forbids on a nerve or a
+    ganglion, which an older build's payload lacks.
+    """
+    app_js = read(APP_JS)
+    body = _component_inspector(app_js)
+    assert "if (!fieldIsCarried(name, declarationType, fields)) {" in body
+    assert 'if (name === "intent" || name in fields) {' in app_js
+    assert (
+        'name === "forbids" &&\n'
+        '    (declarationType === "nerve" || declarationType === "ganglion")'
+    ) in app_js

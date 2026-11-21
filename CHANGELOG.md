@@ -13,6 +13,24 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Changed
 
+- **studi0's inspector leads with what a part is for.** Click a component
+  and the panel opens on its short name, its declaration type as a tag, and
+  one line with its `module` and `layer`. Each label now puts the DSL term
+  first and a plain phrase after it, as in `intent` · what it is for. Above
+  the fold a nerve or a ganglion shows `intent`, `guarantees`, `forbids`, and
+  `expects`, a cell shows `intent`, `schema`, and `invariants`, and every part
+  then shows its dependencies (the relationships that leave it) and its
+  dependents (the relationships that arrive at it). Each relationship names
+  the part at the other end as a button that selects it, says whether it is
+  authored or derived, and gives an authored one's `carries` text. Everything
+  else moved under one keyboard-reachable disclosure, "More about this part",
+  with the fields not declared folded into one counted line. A pending field
+  is never folded away, and a written `forbids: none` now shows `none` instead
+  of "not declared". The edge and integration panels give `intent` the same
+  label. No motion and no color were added. The dev harness fixture is
+  regenerated from a current build, so its nerves and ganglia carry
+  `forbids`.
+
 - **`s0ma migrate grammar` refuses a root it cannot read.** When the
   directory being migrated could not be listed, or none of a project's
   configured `source_roots` and `test_roots` could be listed, the command
