@@ -95,6 +95,24 @@ Historical entries describe artifacts as they were named at the time.
   mark. No route, document, or status code changed, and no motion or color
   was added.
 
+- **studi0 keeps track of what each build changed.** When a build landed
+  while the page was open, the parts it added or changed were marked for
+  about four seconds and then every trace was gone. Now the parts the newest
+  build added keep a steady outline, two thin rules just outside the part,
+  until the next build that adds, changes, or removes something, and the
+  status line says "Outlined parts arrived in the newest build." A new pane
+  in the left column, "What changed since you opened this page", lists every
+  such build, newest first: how many parts it added, changed, and removed,
+  the added parts as buttons that select them, each changed part with the
+  declared lines that differ (such as `intent` or `expects`, or its
+  dependencies), and the parts it removed. A part now counts as changed only
+  when something it declares differs, so a part that only moved down its
+  file, because another was written above it, is no longer marked. The list
+  lives only in the page: nothing is stored, a reload clears it, and it keeps
+  the newest 30 builds. A `changes` button in the toolbar hides and shows
+  it. Narration sits under the list in the same column. No route or document
+  changed, and no motion or color was added.
+
 - **studi0's inspector leads with what a part is for.** Click a component
   and the panel opens on its short name, its declaration type as a tag, and
   one line with its `module` and `layer`. Each label now puts the DSL term
