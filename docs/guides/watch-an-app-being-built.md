@@ -48,10 +48,10 @@ your browser. It keeps running until you stop it with Ctrl+C, so leave this
 terminal alone and use another one for the next command.
 
 **What you are looking at.** Each box is a part of the app. The parts sit in
-bands, one per *layer*: a layer is the level a part works at, from finding out
-what is playing at one end to showing the page at the other, and a part may only
-use the layers below its own. The parts are grouped by *module*, which is one
-`.s0ma` file and everything declared in it. This app has four: `player`,
+bands, one per *layer*: a layer is the band a file and its parts belong to, from
+finding out what is playing at one end to showing the page at the other, and a
+file may use the layers below its own but never the ones above. The parts are
+grouped by *module*, which is one `.s0ma` file and everything declared in it. This app has four: `player`,
 `music`, `coach` and `page`, one per layer. The status line reads
 "12 of 19 components shown". The other seven are the app's tests and its
 generated docs, which stay hidden until you press `tests and docs`.
@@ -133,7 +133,8 @@ and the status line adds "Outlined parts arrived in the newest build." The list
 of changes gains its first entry. For the example's version of this build it
 reads "Build 1 · added 4 parts", then names them: `Mood`, `Track`,
 `settle_mood`, `read_now_playing`. A line such as "2 more parts are hidden by
-the toolbar toggles." counts the new tests. Click any new part to read its
+the toolbar toggles." counts the parts the toolbar keeps out of view, here the
+new tests. Click any new part to read its
 `intent` and its contract.
 
 ### Request 2: measure how the song sounds
@@ -148,7 +149,7 @@ new entry sits at the top of the list. For the example it reads
 "Build 2 · added 2 parts, changed 1", with the changed part named and then the
 lines that changed: "changed settle_mood: intent, expects, dependencies". Those
 are the very lines you read in its panel. Click the changed part and read them
-again: the part now says it needs scores, not a song. The `changes` button in
+again. In the example, the part now says it needs scores, not a song. The `changes` button in
 the toolbar hides the list and shows it again.
 
 ### Request 3: choose a suggestion, and show it on a page
@@ -222,8 +223,8 @@ all, and this guide makes no promise about what they contain.
 
 ## What this path taught
 
-- **Layer**: the level a part works at. A part may only use the layers below
-  its own.
+- **Layer**: the band a file and its parts belong to. A file may use the
+  layers below its own, never the ones above.
 - **Module**: one `.s0ma` file and the parts declared in it.
 - **Intent**: the one sentence that says what a part is for.
 - **Contract**: what a part needs before it runs, what it promises, and what
