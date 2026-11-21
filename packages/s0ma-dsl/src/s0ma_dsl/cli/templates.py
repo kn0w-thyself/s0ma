@@ -885,7 +885,7 @@ cell Mood :: DOMAIN
 nerve measure_features :: DOMAIN
     kind: FUNCTION
     visibility: PUBLIC
-    intent: "Listens to the facts about a song and scores how it sounds."
+    intent: "Reads the facts about a song and scores how it sounds."
     expects: "A song."
     guarantees: "Gives back a pace, an energy, and a brightness score, each from 0 to 1."
     forbids: "Never changes the song it is given; it only reads it."
@@ -988,7 +988,7 @@ module page
     intent: "This file shows the suggestion to the listener as a small web page."
     uses: [music.Track, music.measure_features, music.settle_mood, coach.choose_nudge, coach.Nudge]
     requires: [html]
-    exports: [PAGE_HTML, show_page, serve_page]
+    exports: [PAGE_HTML, show_page, song_to_page]
 
 cell PAGE_HTML :: PRESENTATION
     kind: CONSTANT
@@ -1021,7 +1021,7 @@ nerve show_page :: PRESENTATION
             message=html.escape(nudge.message),
         )
 
-nerve serve_page :: PRESENTATION
+nerve song_to_page :: PRESENTATION
     kind: ORCHESTRATOR
     visibility: PUBLIC
     intent: "Takes a song all the way to a finished page: measure it, settle the mood, choose a suggestion, and show it."
@@ -1035,7 +1035,7 @@ nerve serve_page :: PRESENTATION
         coach.choose_nudge: {relation: CALLS, carries: "the mood, to pick a suggestion", coupling: LOOSE}
         show_page: {relation: CALLS, carries: "the suggestion, to fill in the page", coupling: TIGHT}
     ---
-    def serve_page(track: Track) -> str:
+    def song_to_page(track: Track) -> str:
         \"\"\"Return the finished page for *track*.\"\"\"
         mood = settle_mood(measure_features(track))
         return show_page(choose_nudge(mood))
@@ -1124,7 +1124,7 @@ module page_tests
     layer: PRESENTATION
     version: 0.1.0
     intent: "Tests for showing the page."
-    uses: [music.Track, coach.Nudge, page.show_page, page.serve_page]
+    uses: [music.Track, coach.Nudge, page.show_page, page.song_to_page]
     exports: []
 
 test test_show_page_escapes_text :: PRESENTATION
@@ -1136,14 +1136,14 @@ test test_show_page_escapes_text :: PRESENTATION
         assert "The mood is calm" in text
         assert "Rest &lt;now&gt;." in text
 
-test test_serve_page_runs_the_whole_way :: PRESENTATION
+test test_song_to_page_runs_the_whole_way :: PRESENTATION
     intent: "A quiet, bright song comes out as a calm page with the calm suggestion."
-    tests: [page.serve_page]
+    tests: [page.song_to_page]
     ---
-    def test_serve_page_runs_the_whole_way() -> None:
+    def test_song_to_page_runs_the_whole_way() -> None:
         song = Track(title="t", artist="a", beats_per_minute=70,
                      loudness=0.2, major_key=True)
-        text = serve_page(song)
+        text = song_to_page(song)
         assert "The mood is calm" in text
         assert "Pick one thing and give it your full attention." in text
 """
@@ -1166,8 +1166,8 @@ doc-guide architecture_map
     intent: "A short tour of the app: what it is made of, how it behaves, and how it checks itself."
     format: markdown
     output: docs/architecture_map.md
-    covers: [nerve::serve_page]
-    asserts: [nerve::serve_page.visibility == PUBLIC, nerve::serve_page.layer == PRESENTATION]
+    covers: [nerve::song_to_page]
+    asserts: [nerve::song_to_page.visibility == PUBLIC, nerve::song_to_page.layer == PRESENTATION]
     examples: []
     ---
     # Architecture map
@@ -1181,7 +1181,7 @@ doc-guide architecture_map
     - The player file (INFRASTRUCTURE) finds out what is playing. It uses four built-in sample songs and contacts nothing outside the app.
     - The music file (DOMAIN) scores how a song sounds and settles on one of four moods.
     - The coach file (APPLICATION) picks a small suggestion for the mood and watches whether the mood keeps flipping back and forth.
-    - The page file (PRESENTATION) fills a small web page with the mood and the suggestion. {{nerve::serve_page}} runs the whole way from a song to the finished page.
+    - The page file (PRESENTATION) fills a small web page with the mood and the suggestion. {{nerve::song_to_page}} runs the whole way from a song to the finished page.
 
     Each file may only use the layers below it, and the build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the page.
 
@@ -1222,7 +1222,7 @@ def main(turn: int = 0) -> str:
     modules = bootstrap_imports(build_dir.as_posix())
 
     track = modules["player"].read_now_playing(turn)
-    text: str = modules["page"].serve_page(track)
+    text: str = modules["page"].song_to_page(track)
     print(f"now playing: {track.title} by {track.artist}")
     print(text, end="")
     return text
