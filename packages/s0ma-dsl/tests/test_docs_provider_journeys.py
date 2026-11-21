@@ -73,6 +73,7 @@ EXPECTED_JOURNEYS: tuple[tuple[str, int, int], ...] = (
     ("journey:retrofit-existing-codebase", 9, 1),
     ("journey:studi0-feedback", 5, 1),
     ("journey:studi0-viewing", 3, 1),
+    ("journey:watch-an-app-being-built", 7, 1),
 )
 
 
@@ -493,12 +494,15 @@ class TestTheGatesOnTheCorpus:
         this is what says the gate would fire the moment somebody does.
         """
         index = ReferenceIndex.of(live.bundle)
+        # One finding per cited fixture: a journey citing two is untested twice.
+        cited = sum(len(record.evidence) for record in live.bundle.journeys)
+        assert cited >= len(EXPECTED_JOURNEYS)
         assert [
             item.code
             for item in check_journeys(
                 live.bundle, index, evidence_resolver=lambda _: ()
             )
-        ] == [DOC_JOURNEY_UNTESTED] * len(EXPECTED_JOURNEYS)
+        ] == [DOC_JOURNEY_UNTESTED] * cited
 
     def test_the_approval_boundary_is_crossed_only_where_declared(self, live: Any) -> None:
         """The positive form the "yet" test retired into at the E wave.
