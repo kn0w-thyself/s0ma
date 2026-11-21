@@ -77,4 +77,4 @@ cell <Name> :: <LAYER>
 
 - Topic id: `concept:cell`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:f9e8d60ed9aca991`
+- Documentation snapshot: `sha256:b8a43b81e4ce04df`

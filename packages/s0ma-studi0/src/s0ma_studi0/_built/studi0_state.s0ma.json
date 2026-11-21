@@ -179,21 +179,22 @@
         },
         "schema": {
           "state": "value",
-          "value": "tuple[str, ...] constant, sorted. Value: ('graph', 'schema', 'seq')."
+          "value": "tuple[str, ...] constant, sorted. Value: ('graph', 'schema', 'seq', 'terms')."
         },
         "value": [
           "graph",
           "schema",
-          "seq"
+          "seq",
+          "terms"
         ]
       },
       "intent": {
         "state": "value",
-        "value": "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: three keys that say which reading this is and what it carries."
+        "value": "Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: four keys that say which reading this is, what it carries, and the words a reader needs to read it."
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 86,
+        "end_line": 87,
         "start_line": 74
       },
       "visibility": "PUBLIC"
@@ -223,8 +224,8 @@
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 96,
-        "start_line": 88
+        "end_line": 97,
+        "start_line": 89
       },
       "visibility": "PUBLIC"
     },
@@ -253,8 +254,8 @@
       },
       "kind": "MODEL",
       "location": {
-        "end_line": 137,
-        "start_line": 98
+        "end_line": 138,
+        "start_line": 99
       },
       "visibility": "PUBLIC"
     },
@@ -283,8 +284,8 @@
       },
       "kind": "MODEL",
       "location": {
-        "end_line": 174,
-        "start_line": 139
+        "end_line": 175,
+        "start_line": 140
       },
       "visibility": "PUBLIC"
     },
@@ -351,8 +352,8 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 235,
-        "start_line": 194
+        "end_line": 236,
+        "start_line": 195
       },
       "visibility": "PUBLIC"
     },
@@ -416,8 +417,8 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 281,
-        "start_line": 237
+        "end_line": 282,
+        "start_line": 238
       },
       "visibility": "PUBLIC"
     },
@@ -481,8 +482,8 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 365,
-        "start_line": 283
+        "end_line": 366,
+        "start_line": 284
       },
       "visibility": "PUBLIC"
     },
@@ -545,8 +546,8 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 394,
-        "start_line": 367
+        "end_line": 395,
+        "start_line": 368
       },
       "visibility": "PUBLIC"
     },
@@ -610,8 +611,138 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 438,
-        "start_line": 396
+        "end_line": 439,
+        "start_line": 397
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::terms_document",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the terms block is the packaged slice's concepts"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "found is what s0ma.api.teaching.packaged_slice returned: a (where, text) pair, or None when the installation carries no slice"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never rewords, shortens or invents a definition, and never lets an unreadable slice raise."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns a JSON-compatible block with exactly the keys source and entries. source is the slice's release_version and snapshot_hash, or None when the slice is missing or unreadable. entries holds one record per concept topic, sorted by id, each with id, name, names, summary and, when the topic has one, definition, every value copied verbatim; it is empty when source is None."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Turns the teaching slice s0ma-core ships into the terms block of GET /api/graph: s0ma's own definition of each concept the language and the product are written in, so the page can say what a word such as nerve or forbids means in s0ma's words rather than its own. Every sentence is copied whole from the slice; studi0 contributes the selection and the order, never the text. A slice it cannot read is an answer too: no source and no entries, so the page simply shows no definitions."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 515,
+        "start_line": 441
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_state::teaching_terms",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_api.py — the terms block is built once per process"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "nothing; the slice is read from the installed s0ma-core package"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never reads the slice again once it has been read, and never lets a slice problem raise into the request path."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the block terms_document builds from the packaged slice, the same object on every call within one process. Never raises: a missing or unreadable slice gives source None and no entries."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Answers the terms block every /api/graph document carries, from the teaching slice that ships inside s0ma-core. It is built once per server process and then handed out as it is, so serving the definitions costs one read of the slice for the life of the process."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 550,
+        "start_line": 528
       },
       "visibility": "PUBLIC"
     },
@@ -644,11 +775,11 @@
         },
         "forbids": {
           "state": "value",
-          "value": "Never trims, summarises or drops a field of the graph it wraps, and never offers an empty graph when nothing is built."
+          "value": "Never trims, summarises or drops a field of the graph it wraps, never mixes a definition into the graph, and never offers an empty graph when nothing is built."
         },
         "guarantees": {
           "state": "value",
-          "value": "Returns a JSON-compatible document carrying exactly the frozen key set schema, seq, graph — with graph identical to the graph document the snapshot holds — or None when the snapshot carries no graph"
+          "value": "Returns a JSON-compatible document carrying exactly the frozen key set graph, schema, seq, terms — with graph identical to the graph document the snapshot holds and terms the block teaching_terms answers, present even when it holds no entries — or None when the snapshot carries no graph"
         },
         "interface": {
           "state": "none"
@@ -671,12 +802,12 @@
       },
       "intent": {
         "state": "value",
-        "value": "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project."
+        "value": "Renders the answer to GET /api/graph: the sequence number this graph belongs to, wrapped around the graph document exactly as graph_export produced it — no projection, no summarising, no dropping of fields studi0 does not itself use — with s0ma's own definitions of its words beside it, in their own key. A reading with no graph produces no document at all, so the caller must say 'nothing is built' out loud rather than serving an empty graph a viewer would read as an empty project."
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 478,
-        "start_line": 440
+        "end_line": 596,
+        "start_line": 552
       },
       "visibility": "PUBLIC"
     }
@@ -702,6 +833,15 @@
         "relation": "READS",
         "source": "studi0_state::graph_document",
         "target": "studi0_state::GRAPH_SCHEMA"
+      },
+      {
+        "carries": "nothing; it answers the terms block",
+        "coupling": "TIGHT",
+        "intent": "graph_document CALLS teaching_terms: nothing; it answers the terms block",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "studi0_state::graph_document",
+        "target": "studi0_state::teaching_terms"
       },
       {
         "carries": "the project root to read",
@@ -804,6 +944,8 @@
       "refresh_session",
       "read_snapshot",
       "state_document",
+      "terms_document",
+      "teaching_terms",
       "graph_document"
     ]
   },
@@ -822,11 +964,32 @@
       },
       "layer": "APPLICATION",
       "location": {
-        "end_line": 192,
-        "start_line": 176
+        "end_line": 193,
+        "start_line": 177
       },
       "module": "studi0_state",
       "name": "_freshness_facts",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "@functools.lru_cache(maxsize=1)\ndef _teaching_terms_once() -> dict[str, Any]:\n    \"\"\"The terms block, built from the packaged slice the first time only.\"\"\"\n    try:\n        return terms_document(packaged_slice())\n    except Exception:  # a slice problem of any kind must never fail a request\n        return {\"source\": None, \"entries\": []}"
+      },
+      "body_kind": "function",
+      "canonical_id": "studi0_state::_teaching_terms_once",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Reads the packaged teaching slice and builds the terms block once per process. The slice is package data that cannot change under a running studi0, so building it on the first /api/graph answer and never again is honest rather than merely fast, and a request never waits on it twice. Anything the read raises is caught here, so the request path never meets it."
+      },
+      "layer": "APPLICATION",
+      "location": {
+        "end_line": 526,
+        "start_line": 517
+      },
+      "module": "studi0_state",
+      "name": "_teaching_terms_once",
       "tags": []
     }
   ],
@@ -838,6 +1001,7 @@
     "requires": {
       "state": "value",
       "value": [
+        "functools",
         "threading",
         "dataclasses.dataclass",
         "dataclasses.field",
@@ -845,7 +1009,10 @@
         "typing.Any",
         "s0ma_dsl.graph_export.DETAIL_FULL",
         "s0ma_dsl.graph_export.NoIRArtifactsError",
-        "s0ma_dsl.graph_export.collect_graph"
+        "s0ma_dsl.graph_export.collect_graph",
+        "s0ma.api.teaching.TeachingSlice",
+        "s0ma.api.teaching.TeachingSliceError",
+        "s0ma.api.teaching.packaged_slice"
       ]
     },
     "runtime_only_requires": {
@@ -865,13 +1032,13 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:d48acbd3814c4930e209e21e7dcf32cdedea3c57b14c737fa41f7cbdc72a7702",
+    "content_hash": "sha256:aeafe4db6eadc9a0de83ec5d6c220a74e18da0683142cc78f526e0cb270b8158",
     "exports_helpers": {
       "state": "none"
     },
     "intent": {
       "state": "value",
-      "value": "What one studi0 session knows about one project: the component graph read from that project's build artifacts, how fresh that build is against the sources it was built from, whatever an agent has said it is doing, and a sequence number that advances only when something really changed. Every graph fact enters studi0 here and only here — through s0ma_dsl.graph_export, never by opening IR JSON directly — so studi0 can never drift into a second, quieter answer about what a project contains. Narration enters through studi0_narration and stays in its own fields the whole way out: it is the agent's account of its work, never evidence about the project."
+      "value": "What one studi0 session knows about one project: the component graph read from that project's build artifacts, how fresh that build is against the sources it was built from, whatever an agent has said it is doing, and a sequence number that advances only when something really changed. Every graph fact enters studi0 here and only here — through s0ma_dsl.graph_export, never by opening IR JSON directly — so studi0 can never drift into a second, quieter answer about what a project contains. Narration enters through studi0_narration and stays in its own fields the whole way out: it is the agent's account of its work, never evidence about the project. Beside the graph rides s0ma's own definition of each word it is written in, copied whole from the teaching slice s0ma-core ships, so a reader can ask what a word means without studi0 writing a definition of its own."
     },
     "layer": "APPLICATION",
     "name": "studi0_state",
@@ -881,6 +1048,6 @@
     "version": "0.22.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:d48acbd3814c4930",
+  "source_hash": "sha256:aeafe4db6eadc9a0",
   "transpiler_version": "1.0.0"
 }

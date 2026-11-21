@@ -63,4 +63,4 @@ Do not hand-edit it. The build writes it and rewrites it on every build, so an e
 
 - Topic id: `concept:canonical-ir`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:f9e8d60ed9aca991`
+- Documentation snapshot: `sha256:b8a43b81e4ce04df`

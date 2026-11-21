@@ -13,6 +13,29 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Added
 
+- **studi0 explains s0ma's own words, in s0ma's words.** `GET /api/graph`
+  now answers with four keys: `schema`, `seq`, `graph`, and a new `terms`.
+  The envelope's schema string stays `s0ma-studi0-graph@1`, and the graph it
+  carries is unchanged. `terms` holds `source`, the teaching slice's
+  `release_version` and `snapshot_hash` (or `null` when the slice cannot be
+  read), and `entries`, one per concept in the slice `s0ma-lang-core` ships,
+  sorted by id, each with its `id`, `name`, `names`, `summary` and, when it
+  has one, `definition`, all copied verbatim. studi0 reads the slice once
+  per server process, and a missing or unreadable slice gives no entries
+  rather than an error. On the page, a s0ma word it prints is now a button
+  when the slice has an entry for it: the declaration type in a panel's
+  header, `module` and `layer` and the layer's name under it, the term of
+  each field label, a field name under a fold, the relation word in a
+  relationship row, and a glyph's name in the legend. The button opens a
+  card under its row with the entry's summary, its definition behind "Read
+  more", and the command that prints the whole entry, such as
+  `s0ma docs show concept:contract`; a word explained under another entry
+  says where first (`forbids` is explained under `contract`). A `terms`
+  button in the toolbar opens the entries as a dictionary in the right
+  panel, the words this page can show first and the rest behind one
+  disclosure. The page writes no definition of its own. With no terms, it
+  reads as it did before. No motion and no color were added.
+
 - **studi0 has a module panel.** A module's name in its header is now a
   control, reachable by keyboard, that selects the module; the arrow and the
   rest of the header still collapse and expand it. The panel opens on the
