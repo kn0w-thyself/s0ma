@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "8c115b558b6de45e19f85dfda9dd913d58ee4c9232f2aca295540e793da870e2",
+      "content_sha256": "d05b1c69d0b43f6eb415cdd622ea07b7d9eb7531d26c368629b1d72b9de1c017",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.22.0] — 2026-11-19",
@@ -4435,6 +4435,21 @@
     },
     {
       "authority": "",
+      "canonical_source": "docs/guides/watch-an-app-being-built.md",
+      "covers": [
+        "concept:contract",
+        "concept:intent",
+        "concept:layer",
+        "concept:module",
+        "journey:watch-an-app-being-built"
+      ],
+      "governed_by": [],
+      "id": "doc:guide/watch-an-app-being-built",
+      "prose_locator": "docs/guides/watch-an-app-being-built.md",
+      "title": "Watch an app being built"
+    },
+    {
+      "authority": "",
       "canonical_source": "docs/guides/what-the-build-writes.md",
       "covers": [
         "cli:s0ma/build",
@@ -5516,6 +5531,80 @@
           "surface": "cli:s0ma/inspect"
         }
       ]
+    },
+    {
+      "concepts_required": [
+        "concept:s0ma"
+      ],
+      "concepts_taught": [
+        "concept:layer",
+        "concept:intent",
+        "concept:module",
+        "concept:contract"
+      ],
+      "evidence": [
+        {
+          "id": "example:transcript/watch-an-app-being-built-example",
+          "source": "docs/s0ma_src/evidence/watch-an-app-being-built-example.json"
+        },
+        {
+          "id": "example:transcript/watch-an-app-being-built-growth",
+          "source": "docs/s0ma_src/evidence/watch-an-app-being-built-growth.json"
+        }
+      ],
+      "id": "journey:watch-an-app-being-built",
+      "intent": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in three requests, reading on the page what each build really added and changed.",
+      "recovery_paths": [
+        {
+          "action": "The viewer is running and the project has no build for it to draw. Ask your agent to build the project, or run the build yourself from the project folder. The page repaints when the build lands, so nothing needs restarting.",
+          "next_surface": "cli:s0ma/build",
+          "when": "NOT_BUILT"
+        }
+      ],
+      "steps": [
+        {
+          "approval_boundary": "",
+          "expected_outcome": "A finished example app in its own folder, already built: twelve parts in four modules, one module per layer. It contacts nothing, because its songs are built-in samples.",
+          "purpose": "Have a finished app to look at and to compare with later, before any agent is involved.",
+          "surface": "cli:s0ma/new"
+        },
+        {
+          "approval_boundary": "",
+          "expected_outcome": "A local address on your own machine, printed and opened in a browser. The viewer reads what the last build produced and never runs the app.",
+          "purpose": "Put the finished example on screen.",
+          "surface": "cli:s0ma/studi0"
+        },
+        {
+          "approval_boundary": "",
+          "expected_outcome": "Every part of the example in its layer band. Clicking a part shows what it is for, what it promises, what it must never do, what it needs, and what it leans on, each line under its own s0ma word with a plain phrase beside it.",
+          "purpose": "Let the page ask for the whole graph of the build, which is what it draws and what a click reads from.",
+          "surface": "studi0:action/api/graph"
+        },
+        {
+          "approval_boundary": "",
+          "expected_outcome": "A second, separate project, built once already, holding only the small starter part every new project begins with.",
+          "purpose": "Start the project your agent will build in, so its work lands somewhere you are watching.",
+          "surface": "cli:s0ma/new"
+        },
+        {
+          "approval_boundary": "",
+          "expected_outcome": "The viewer on your own project, showing the starter part and an empty list of changes.",
+          "purpose": "Open the page on your project before the agent starts, so every build it makes arrives while you watch.",
+          "surface": "cli:s0ma/studi0"
+        },
+        {
+          "approval_boundary": "",
+          "expected_outcome": "A fresh build of whatever the agent wrote for one request. What it contains is the agent's own work and differs from the example's.",
+          "purpose": "Your agent checks and builds the project at the end of each request, through the authoring server it is connected to.",
+          "surface": "mcp:tool/build_project"
+        },
+        {
+          "approval_boundary": "",
+          "expected_outcome": "The page notices the new build within about a second. New parts arrive with a mark and stay outlined, and one entry joins the list of changes saying what the build added and changed.",
+          "purpose": "Let the page ask, about once a second, whether a new build has landed.",
+          "surface": "studi0:action/api/state"
+        }
+      ]
     }
   ],
   "sequences": [],
@@ -5523,7 +5612,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:85f9d1f3a1636626"
+    "snapshot_hash": "sha256:3b0ce65767d5b48e"
   },
   "surfaces": [
     {

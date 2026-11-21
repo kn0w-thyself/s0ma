@@ -2,11 +2,11 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-This is the page s0ma writes about the thing that writes its pages. Everything below is read out of the build that rendered it: the 11 readings it composed the model from, the 21 gates it ran over the result, the 8 declarations its own s0ma module registers, and the 67 files it writes — one of which is this one.
+This is the page s0ma writes about the thing that writes its pages. Everything below is read out of the build that rendered it: the 11 readings it composed the model from, the 21 gates it ran over the result, the 8 declarations its own s0ma module registers, and the 68 files it writes — one of which is this one.
 
 That last sentence is the point of the page. A documentation build that could not describe its own readings would be asking a reader to take on faith exactly the property the product exists to make checkable, so the account is generated from the build rather than written beside it, and it is byte-compared like every other output here.
 
-This page describes the build stamped `sha256:85f9d1f3a1636626` at version `0.22.0 (preview)`. What each of those 67 files came out as, with the digest of its exact bytes, is in [`docs/_generated/docs-manifest.json`](../_generated/docs-manifest.json).
+This page describes the build stamped `sha256:3b0ce65767d5b48e` at version `0.22.0 (preview)`. What each of those 68 files came out as, with the digest of its exact bytes, is in [`docs/_generated/docs-manifest.json`](../_generated/docs-manifest.json).
 
 ## Contents
 
@@ -18,20 +18,20 @@ This page describes the build stamped `sha256:85f9d1f3a1636626` at version `0.22
 
 ## The readings
 
-11 readings, 51 sources between them, 675 records composed. A reading is one adapter over one kind of source: it is handed a checkout, it produces records that each carry the source they came from and the digest of what was read, and it never sees another reading's answer. The merge is the only place they meet, and it sorts every group before the model is built — so the order the readings run in cannot change what the build says.
+11 readings, 52 sources between them, 677 records composed. A reading is one adapter over one kind of source: it is handed a checkout, it produces records that each carry the source they came from and the digest of what was read, and it never sees another reading's answer. The merge is the only place they meet, and it sorts every group before the model is built — so the order the readings run in cannot change what the build says.
 
 **Sources** is how many distinct files or in-process readings the adapter drew on, and **Records** is how many records it contributed. **Groups it fills** names which parts of the model those records landed in, with the count in each; an adapter that fills one group is not a lesser reading than one that fills four, it is a narrower question asked completely.
 
 | Reading | Sources | Records | Groups it fills |
 | --- | --- | --- | --- |
-| `catalog` | 1 | 180 | documents 180 |
+| `catalog` | 1 | 181 | documents 181 |
 | `cli` | 1 | 44 | surfaces 44 |
 | `concepts-language` | 1 | 55 | authorities 30, concepts 25 |
 | `concepts-product` | 1 | 17 | authorities 3, concepts 14 |
 | `config` | 1 | 19 | surfaces 19 |
 | `core` | 3 | 43 | surfaces 43 |
 | `diagnostics` | 1 | 117 | surfaces 117 |
-| `journeys` | 7 | 7 | journeys 7 |
+| `journeys` | 8 | 8 | journeys 8 |
 | `mcp` | 1 | 36 | surfaces 36 |
 | `repo` | 30 | 146 | authorities 146 |
 | `studi0` | 4 | 11 | authorities 6, surfaces 5 |
@@ -68,7 +68,7 @@ This page describes the build stamped `sha256:85f9d1f3a1636626` at version `0.22
 
 ## What it covers
 
-342 of the 514 things this build is required to cover are covered, 206 carry a written exception, and 0 are neither. That last number is the one to read: a gate says nothing when it finds nothing, so a silent build and a build whose gates were never armed look identical from outside. This is the standing positive answer.
+344 of the 516 things this build is required to cover are covered, 206 carry a written exception, and 0 are neither. That last number is the one to read: a gate says nothing when it finds nothing, so a silent build and a build whose gates were never armed look identical from outside. This is the standing positive answer.
 
 **By written exception** counts the members somebody has excused in a reviewable ledger, with a reason, one at a time. Every one of them is named — with the file its permission is written in — in [`docs/_generated/coverage-report.json`](../_generated/coverage-report.json); they are counted here and listed there because a page carrying 206 ids is a page nobody reads. **Not covered** is what no ledger excuses and nothing covers, and it is the number the gates are armed to keep at zero.
 
@@ -76,9 +76,9 @@ This page describes the build stamped `sha256:85f9d1f3a1636626` at version `0.22
 | --- | --- | --- | --- | --- |
 | concepts | 39 | 39 | 0 | 0 |
 | surfaces | 264 | 92 | 172 | 0 |
-| journeys | 17 | 17 | 30 | 0 |
+| journeys | 18 | 18 | 30 | 0 |
 | discovery | 14 | 14 | 0 | 0 |
-| catalog | 180 | 180 | 4 | 0 |
+| catalog | 181 | 181 | 4 | 0 |
 
 Two of those ledgers are bounded, and the bound is a review moment rather than a limit anybody expects to reach: an ordinary addition lands inside the headroom, and a whole new family of exceptions turns the build red before it arrives — which is when the conversation about whether it should have been an exception at all is still worth having.
 
@@ -110,7 +110,7 @@ What that module says it is for, in its own words:
 
 ## What it writes
 
-67 files, and the build writes exactly these: the writer writes this set and the checker compares this set, so neither can grow an output the other has not heard of. 20 of them are decisions — somebody decided this repository should commit that file — and the remaining 47 are computed from what the build composed, because a page per concept and a package per journey are not choices anybody takes one file at a time.
+68 files, and the build writes exactly these: the writer writes this set and the checker compares this set, so neither can grow an output the other has not heard of. 20 of them are decisions — somebody decided this repository should commit that file — and the remaining 48 are computed from what the build composed, because a page per concept and a package per journey are not choices anybody takes one file at a time.
 
 **The document it is** joins the output onto the catalog row whose canonical source is that path. An output with no row is not an uncataloged page: reader-facing pages never live under `_generated/`, so a file that does live there is a machine artifact and its stated absence of a row is the honest answer.
 
@@ -190,3 +190,4 @@ What that module says it is for, in its own words:
 | `_generated/media/mcp-authoring-loop.json` | `media_manifest` | no catalog row — a machine artifact, not a page |
 | `_generated/media/retrofit-existing-codebase.json` | `media_manifest` | no catalog row — a machine artifact, not a page |
 | `_generated/media/studi0-feedback.json` | `media_manifest` | no catalog row — a machine artifact, not a page |
+| `_generated/media/watch-an-app-being-built.json` | `media_manifest` | no catalog row — a machine artifact, not a page |
