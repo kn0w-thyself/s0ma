@@ -1,0 +1,49 @@
+module app_map
+    layer: PRESENTATION
+    version: 0.1.0
+    intent: "This file is the map of the app: a list of its public parts and a short tour of how they fit together."
+    exports: []
+
+    requires: none
+    uses: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+doc-ref public_api_reference
+    intent: "A list of every public working part of the app, written from the app itself so it always matches."
+    format: markdown
+    output: docs/public_api_reference.md
+    covers: [nerve where visibility == PUBLIC]
+    sections: [intent, expects, guarantees, forbids]
+
+doc-guide architecture_map
+    intent: "A short tour of the app: what it is made of, how it behaves, and how it checks itself."
+    format: markdown
+    output: docs/architecture_map.md
+    covers: [nerve::song_to_page]
+    asserts: [nerve::song_to_page.visibility == PUBLIC, nerve::song_to_page.layer == PRESENTATION]
+    examples: []
+    ---
+    # Architecture map
+
+    This app reads what is playing, measures the song, settles on a mood, chooses a nudge, and shows it. It keeps an accurate model of itself, and this map is read from that model.
+
+    ## Structure
+
+    The app is four files, one for each layer:
+
+    - The player file (INFRASTRUCTURE) finds out what is playing. It uses four built-in sample songs and contacts nothing outside the app.
+    - The music file (DOMAIN) scores how a song sounds and settles on one of four moods.
+    - The coach file (APPLICATION) picks a small suggestion for the mood and watches whether the mood keeps flipping back and forth.
+    - The page file (PRESENTATION) fills a small web page with the mood and the suggestion. {{nerve::song_to_page}} runs the whole way from a song to the finished page.
+
+    Each file may only use the layers below it, and the build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the page.
+
+    ## Runtime state
+
+    How the app behaves compared with what it said it would do. The coach file's watcher counts how often the mood flips back to the mood it just left.
+
+    ## Reasoning over the model
+
+    The app can answer questions about its own parts: what each one is for, what it promises, and what depends on it. This map is checked on every build, so a change to a part it names that is not reflected here fails the build.

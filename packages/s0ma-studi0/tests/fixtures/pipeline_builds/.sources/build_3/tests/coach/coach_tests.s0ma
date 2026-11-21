@@ -1,0 +1,37 @@
+module coach_tests
+    layer: APPLICATION
+    version: 0.1.0
+    intent: "Tests for choosing a suggestion and for watching the mood."
+    uses: [music.Mood, coach.choose_nudge, coach.watch_swings]
+    exports: []
+
+    requires: none
+    soft_requires: none
+    runtime_only_requires: none
+    deferred_requires: none
+    exports_helpers: none
+test test_choose_nudge_fits_the_mood :: APPLICATION
+    intent: "Each mood gets its own suggestion from the written list."
+    tests: [coach.choose_nudge]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_choose_nudge_fits_the_mood() -> None:
+        nudge = choose_nudge(Mood(name="low", description="quiet and dark"))
+        assert nudge.mood == "low"
+        assert nudge.message == "Stand up and stretch for a minute."
+
+test test_watch_swings_counts_flips :: APPLICATION
+    intent: "The watcher counts a mood that flips back to the one it just left, and stays quiet when the mood moves on."
+    tests: [coach.watch_swings]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_watch_swings_counts_flips() -> None:
+        calm = Mood(name="calm", description="quiet and bright")
+        tense = Mood(name="tense", description="full of energy and dark")
+        low = Mood(name="low", description="quiet and dark")
+        assert watch_swings([calm, tense, calm, tense]) == {"flips": 2, "steady": False}
+        assert watch_swings([calm, calm, tense, low]) == {"flips": 0, "steady": True}
