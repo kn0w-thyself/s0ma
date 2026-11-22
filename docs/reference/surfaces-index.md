@@ -2,13 +2,13 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-s0ma serves 264 capabilities across 9 channels. Each row names one of them: what it is called, the id the model addresses it by, what it does, what calling it touches, and whether the model can point at the code behind it. 92 of the 264 reach a registered component; the rest carry a written reason instead, and both are listed with their reasons in `docs/_generated/inventory-surfaces.json`.
+s0ma serves 266 capabilities across 9 channels. Each row names one of them: what it is called, the id the model addresses it by, what it does, what calling it touches, and whether the model can point at the code behind it. 92 of the 266 reach a registered component; the rest carry a written reason instead, and both are listed with their reasons in `docs/_generated/inventory-surfaces.json`.
 
 Effects are read from the thing itself wherever the thing declares them: `none`, `read`, `write`, `network`, `subprocess`, `credential`, `approval`. Where a capability declares nothing, the row says so rather than guessing.
 
 ## Command line
 
-44 of the 264. Channel: `cli`.
+44 of the 266. Channel: `cli`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -59,7 +59,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Tools an agent can call
 
-27 of the 264. Channel: `mcp_tool`.
+27 of the 266. Channel: `mcp_tool`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -93,7 +93,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Resources an agent can read
 
-24 of the 264. Channel: `mcp_resource`.
+24 of the 266. Channel: `mcp_resource`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -124,7 +124,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Prompts an agent can start from
 
-5 of the 264. Channel: `mcp_prompt`.
+5 of the 266. Channel: `mcp_prompt`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -136,7 +136,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The studi0 viewer
 
-5 of the 264. Channel: `studi0`.
+5 of the 266. Channel: `studi0`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -148,7 +148,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The self-description interface
 
-14 of the 264. Channel: `rest`.
+14 of the 266. Channel: `rest`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -169,7 +169,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Project settings
 
-19 of the 264. Channel: `config`.
+19 of the 266. Channel: `config`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -195,7 +195,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## Reports s0ma can make
 
-117 of the 264. Channel: `diagnostic`.
+119 of the 266. Channel: `diagnostic`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |
@@ -307,6 +307,8 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 | TEMPLATE_SYNTAX_ERROR | `diagnostic:TEMPLATE_SYNTAX_ERROR` | A template expression `{{...}}` or `covers:` filter fails the narrow doc-subsystem grammar. | none | exception |
 | TEST_NOT_COLLECTED | `diagnostic:TEST_NOT_COLLECTED` | A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`; when the block holds fixtures or several definitions, declare each one as a `helper` instead of renaming it. | none | exception |
 | TEST_VISIBILITY_VIOLATION | `diagnostic:TEST_VISIBILITY_VIOLATION` | A production module attempts to `uses:` a `visibility: TEST` component cross-module. | none | exception |
+| UNBOUND_NAME_AT_LOAD | `diagnostic:UNBOUND_NAME_AT_LOAD` | The emitted module reads a name when it loads (a signature annotation, a default, a decorator, an annotated constant, a class field) and nothing binds it, so importing the module raises `NameError` on Python 3.11 to 3.13. Declare the name in `requires:` or `uses:`, or correct it. | none | exception |
+| UNBOUND_NAME_IN_BODY | `diagnostic:UNBOUND_NAME_IN_BODY` | The emitted module reads a name only when a body runs and nothing binds it, so the call raises `NameError`. A `uses:` entry removed while a body still calls it and a public `tests:` target with no `uses:` entry both land here. Declare the name in `requires:` or `uses:`, or correct it. | none | exception |
 | UNDECLARED_PLACEHOLDER | `diagnostic:UNDECLARED_PLACEHOLDER` | A CONSTANT cell's `content: @file(...)` embedded content contains a placeholder-shaped string matching `__[A-Z][A-Z0-9_]*__` that is not listed in the cell's `placeholders:` field. | none | exception |
 | UNKNOWN_FIELD | `diagnostic:UNKNOWN_FIELD` | A declaration carries a field that kind of declaration does not have — usually a misspelt name, or a field that belongs to another kind. s0ma does not read the line, so whatever it was meant to say is not said; correct the name or remove the line. | none | exception |
 | UNRECOGNIZED_LINE | `diagnostic:UNRECOGNIZED_LINE` | A line inside a declaration's description is not a field, not part of a block, and not a comment — usually a field indented by the wrong number of spaces. s0ma does not read the line; start a field with exactly four spaces, or remove the line. | none | exception |
@@ -319,7 +321,7 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 
 ## The Python interface
 
-9 of the 264. Channel: `python`.
+9 of the 266. Channel: `python`.
 
 | Name | Id | What it does | Effects | Binding |
 | --- | --- | --- | --- | --- |

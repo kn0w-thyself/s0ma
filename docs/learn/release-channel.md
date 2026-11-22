@@ -64,4 +64,4 @@ Do not call a page a release build when it came from an untagged state, however 
 
 - Topic id: `concept:release-channel`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:a9c8582ce2fec54a`
+- Documentation snapshot: `sha256:2d08875ea7f6f08e`

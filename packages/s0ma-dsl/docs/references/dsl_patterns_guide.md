@@ -110,7 +110,7 @@ requires: [datetime.datetime, datetime as dt_mod]
 
 **NAMESPACE_COLLISION with sibling submodules:** `requires: [urllib.error, urllib.request]` is a `NAMESPACE_COLLISION`, because each plain dotted entry binds the package name `urllib`. Import the names instead (`urllib.error:URLError, urllib.request:Request`), or alias one entry (`urllib.request as urlreq`).
 
-**`typing` module is usually unnecessary:** Python 3.11+ supports `X | None` instead of `Optional[X]`, and built-in generics (`list[str]`, `dict[str, int]`) instead of `typing.List`, `typing.Dict`. Only include `typing.Any` or `typing.Optional` if your body code explicitly uses the `Any` annotation or `Optional[X]` form. The transpiler's VESTIGIAL_IMPORT check will flag unused typing imports.
+**`typing` module is usually unnecessary:** Python 3.11+ supports `X | None` instead of `Optional[X]`, and built-in generics (`list[str]`, `dict[str, int]`) instead of `typing.List`, `typing.Dict`. Only include `typing.Any` or `typing.Optional` if your body code explicitly uses the `Any` annotation or `Optional[X]` form. The transpiler's VESTIGIAL_IMPORT check will flag unused typing imports. A `def` line counts as body code, so a signature that names `Any` needs `typing.Any` in `requires:`.
 
 **Lowercase stdlib from-imports:** Entries like `dataclasses.dataclass` have a lowercase final segment but need a from-import. If they're not in the known-exceptions list, use the colon override: `dataclasses:dataclass`.
 

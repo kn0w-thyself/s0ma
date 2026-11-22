@@ -88,7 +88,7 @@ The deep answer is that **compliance is structural, not behavioral**: the DSL re
 - This is a s0ma project. Author components as .s0ma declarations via the s0ma-authoring MCP server — never as bare Python files.
 - Before first authoring in a session: read s0ma://guide/system-prompt; keep s0ma://guide/survival-card (under 4 KB) in context; look declarations and their lines up in s0ma://guide/quick-reference per topic (do not read it whole). Orient with project_status; if is_project is false, call init_project first.
 - The loop is scaffold_module → edit → check → build_project. Run check after EVERY edit; fix by the diagnostic's `remediation` text, highest severity first (or run the fix_check_failures prompt).
-- Authoring discipline: single-line `intent:` on every declaration (it is product copy); parameterize every generic (`dict[str, Any]`, never bare `dict`); `X | None`, never `= None` defaults on typed params; body docstrings are served/registered copy — write them deliberately; imports go in module-header `requires:` (use `deferred_requires:` for fail-per-call resilience); never hand-edit anything under the build directory.
+- Authoring discipline: single-line `intent:` on every declaration (it is product copy); parameterize every generic (`dict[str, Any]` with `typing.Any` in `requires:`, never bare `dict`); `X | None`, never `= None` defaults on typed params; body docstrings are served/registered copy — write them deliberately; imports go in module-header `requires:` (use `deferred_requires:` for fail-per-call resilience); never hand-edit anything under the build directory.
 - Pass explicit absolute project_root to every tool call. Do not change `[tool.s0ma].mode` without being asked.
 ```
 

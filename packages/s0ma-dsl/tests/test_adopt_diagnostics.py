@@ -505,10 +505,11 @@ class TestAFinishedModuleIsLeftAlone:
     ) -> None:
         """The way out named in the message, walked.
 
-        ``notifications`` finished *and* with its carrier removed — the
-        author having placed those imports or decided they were not
-        needed — checks clean. Nothing else about the draft stands in
-        the way.
+        ``notifications`` finished *and* with its carrier removed checks
+        clean once the author has placed those imports in ``requires:``.
+        Its annotations name them and are evaluated when the module loads,
+        so deleting the carrier without placing them would not load.
+        Nothing else about the draft stands in the way.
         """
         filled = write_the_meaning(golden("layered_app/notifications"))
         text = drop_declaration(filled, UNPLACED_CELL_PREFIX)
@@ -516,7 +517,13 @@ class TestAFinishedModuleIsLeftAlone:
         assert text != filled, "the carrier moved; this test is about deleting it"
         assert UNPLACED_CELL_PREFIX not in text
         assert DRAFT_UNPLACED_MARKER not in text
-        assert check_project(tmp_path, "notifications", text, capsys) == []
+        placed = text.replace(
+            "    requires: [bookshelf.config:LIBRARY_NAME,",
+            "    requires: [datetime:date, bookshelf.models.Loan, "
+            "bookshelf.models.Member, bookshelf.config:LIBRARY_NAME,",
+        )
+        assert placed != text, "the requires line moved; this test edits it"
+        assert check_project(tmp_path, "notifications", placed, capsys) == []
 
 
 # ---------------------------------------------------------------------------

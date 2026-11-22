@@ -2,7 +2,7 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-Every report s0ma can make about a project, with what it means and how seriously it is taken. This build registers 117 of them: 103 get more serious as a project tightens its strictness, and 14 are the same whatever mode the project is in.
+Every report s0ma can make about a project, with what it means and how seriously it is taken. This build registers 119 of them: 105 get more serious as a project tightens its strictness, and 14 are the same whatever mode the project is in.
 
 Each report has an entry of its own further down, so a build that stopped on one can send you straight to it.
 
@@ -130,6 +130,8 @@ Read from `packages/s0ma-dsl/src/s0ma_dsl/config.py` when the documentation was 
 | [`TEMPLATE_SYNTAX_ERROR`](#template_syntax_error) | `error` | `error` | `error` | `error` |
 | [`TEST_NOT_COLLECTED`](#test_not_collected) | `warning` | `warning` | `error` | `error` |
 | [`TEST_VISIBILITY_VIOLATION`](#test_visibility_violation) | `error` | `error` | `error` | `error` |
+| [`UNBOUND_NAME_AT_LOAD`](#unbound_name_at_load) | `error` | `error` | `error` | `error` |
+| [`UNBOUND_NAME_IN_BODY`](#unbound_name_in_body) | `warning` | `warning` | `error` | `error` |
 | [`UNDECLARED_PLACEHOLDER`](#undeclared_placeholder) | `warning` | `warning` | `error` | `error` |
 | [`UNKNOWN_FIELD`](#unknown_field) | `warning` | `warning` | `error` | `error` |
 | [`UNRECOGNIZED_LINE`](#unrecognized_line) | `warning` | `warning` | `error` | `error` |
@@ -897,6 +899,20 @@ A production module attempts to `uses:` a `visibility: TEST` component cross-mod
 
 - **Severity by mode** — migration `error`, dev `error`, strict `error`, release `error`
 - **Addressed as** — `diagnostic:TEST_VISIBILITY_VIOLATION`
+
+### UNBOUND_NAME_AT_LOAD
+
+The emitted module reads a name when it loads (a signature annotation, a default, a decorator, an annotated constant, a class field) and nothing binds it, so importing the module raises `NameError` on Python 3.11 to 3.13. Declare the name in `requires:` or `uses:`, or correct it.
+
+- **Severity by mode** — migration `error`, dev `error`, strict `error`, release `error`
+- **Addressed as** — `diagnostic:UNBOUND_NAME_AT_LOAD`
+
+### UNBOUND_NAME_IN_BODY
+
+The emitted module reads a name only when a body runs and nothing binds it, so the call raises `NameError`. A `uses:` entry removed while a body still calls it and a public `tests:` target with no `uses:` entry both land here. Declare the name in `requires:` or `uses:`, or correct it.
+
+- **Severity by mode** — migration `warning`, dev `warning`, strict `error`, release `error`
+- **Addressed as** — `diagnostic:UNBOUND_NAME_IN_BODY`
 
 ### UNDECLARED_PLACEHOLDER
 

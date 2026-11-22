@@ -2,12 +2,12 @@
   "counts": {
     "by_binding": {
       "bound": 92,
-      "exception": 172
+      "exception": 174
     },
     "by_channel": {
       "cli": 44,
       "config": 19,
-      "diagnostic": 117,
+      "diagnostic": 119,
       "mcp_prompt": 5,
       "mcp_resource": 24,
       "mcp_tool": 27,
@@ -19,12 +19,12 @@
       "approval": 5,
       "credential": 1,
       "network": 7,
-      "none": 144,
+      "none": 146,
       "read": 82,
       "subprocess": 6,
       "write": 29
     },
-    "surfaces": 264,
+    "surfaces": 266,
     "undeclared_side_effects": 29
   },
   "entries": [
@@ -3033,6 +3033,44 @@
       "channel": "diagnostic",
       "component_refs": [],
       "errors": [
+        "dev=error",
+        "migration=error",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNBOUND_NAME_AT_LOAD",
+      "intent": "The emitted module reads a name when it loads (a signature annotation, a default, a decorator, an annotated constant, a class field) and nothing binds it, so importing the module raises `NameError` on Python 3.11 to 3.13. Declare the name in `requires:` or `uses:`, or correct it.",
+      "public_name": "UNBOUND_NAME_AT_LOAD",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
+        "dev=warning",
+        "migration=warning",
+        "registry=severity_matrix",
+        "release=error",
+        "strict=error"
+      ],
+      "governed_by": [],
+      "id": "diagnostic:UNBOUND_NAME_IN_BODY",
+      "intent": "The emitted module reads a name only when a body runs and nothing binds it, so the call raises `NameError`. A `uses:` entry removed while a body still calls it and a public `tests:` target with no `uses:` entry both land here. Declare the name in `requires:` or `uses:`, or correct it.",
+      "public_name": "UNBOUND_NAME_IN_BODY",
+      "side_effects": [
+        "none"
+      ]
+    },
+    {
+      "binding": "exception",
+      "channel": "diagnostic",
+      "component_refs": [],
+      "errors": [
         "dev=warning",
         "migration=warning",
         "registry=severity_matrix",
@@ -4370,6 +4408,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:a9c8582ce2fec54a"
+    "snapshot_hash": "sha256:2d08875ea7f6f08e"
   }
 }
