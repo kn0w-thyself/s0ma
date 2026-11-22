@@ -898,3 +898,272 @@ def test_a_broad_handler_around_a_def_does_not_hide_its_body(handler: str) -> No
         f"{handler}\n    f = None\n"
     )
     assert _reads(source) == [("missing", False)]
+
+
+# ---------------------------------------------------------------------------
+# A read in a branch that never runs, and a read that may not run
+# ---------------------------------------------------------------------------
+
+_TC = "from typing import TYPE_CHECKING\n"
+
+
+def _load_flags(source: str) -> list[tuple[str, bool, bool]]:
+    return [
+        (r.name, r.at_load, r.may_not_run) for r in find_unbound_names(source)
+    ]
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        pytest.param(_TC + "if TYPE_CHECKING:\n    x = Missing\n", id="module"),
+        pytest.param(
+            "import typing\nif typing.TYPE_CHECKING:\n    x = Missing\n",
+            id="typing-attribute",
+        ),
+        pytest.param(
+            "from typing_extensions import TYPE_CHECKING\n"
+            "if TYPE_CHECKING:\n    x = Missing\n",
+            id="typing-extensions",
+        ),
+        pytest.param(
+            _TC + "def f():\n    if TYPE_CHECKING:\n        return Missing\n",
+            id="in-a-function",
+        ),
+        pytest.param(
+            _TC + "class C:\n    if TYPE_CHECKING:\n        x = Missing\n",
+            id="in-a-class",
+        ),
+        pytest.param(
+            _TC + "class C:\n    def m(self):\n        if TYPE_CHECKING:\n"
+            "            return Missing\n",
+            id="in-a-method",
+        ),
+        pytest.param(
+            _TC + "if TYPE_CHECKING:\n    def f(v: Missing = Other):\n"
+            "        return Third\n",
+            id="a-def-in-the-branch",
+        ),
+        pytest.param(
+            _TC + "if TYPE_CHECKING:\n    class C(Missing):\n        x = Other\n",
+            id="a-class-in-the-branch",
+        ),
+        pytest.param(
+            _TC + "if TYPE_CHECKING:\n    if Missing:\n        x = Other\n",
+            id="nested-if",
+        ),
+        pytest.param(
+            _TC + "if TYPE_CHECKING:\n    x = Missing\nelse:\n    x = 1\n",
+            id="else-binds-nothing-unbound",
+        ),
+    ],
+)
+def test_a_read_in_the_true_branch_of_type_checking_is_silent(source: str) -> None:
+    assert _reads(source) == []
+
+
+@pytest.mark.parametrize(
+    ("source", "expected"),
+    [
+        pytest.param(
+            _TC + "if TYPE_CHECKING:\n    pass\nelse:\n    x = Missing\n",
+            [("Missing", True)],
+            id="else",
+        ),
+        pytest.param(
+            _TC + "if TYPE_CHECKING:\n    pass\nelif Missing:\n    pass\n",
+            [("Missing", True)],
+            id="elif",
+        ),
+        pytest.param(
+            _TC + "if not TYPE_CHECKING:\n    x = Missing\n",
+            [("Missing", True)],
+            id="not-type-checking",
+        ),
+        pytest.param(
+            "TYPE_CHECKING = True\nif TYPE_CHECKING:\n    x = Missing\n",
+            [("Missing", True)],
+            id="own-constant",
+        ),
+        pytest.param(
+            "import typing\ntyping.TYPE_CHECKING = True\n"
+            "if typing.TYPE_CHECKING:\n    x = Missing\n",
+            [("Missing", True)],
+            id="rebound-attribute",
+        ),
+        pytest.param(
+            "from mine import TYPE_CHECKING\nif TYPE_CHECKING:\n    x = Missing\n",
+            [("Missing", True)],
+            id="imported-from-elsewhere",
+        ),
+        pytest.param(
+            _TC + "def f(TYPE_CHECKING=True):\n    if TYPE_CHECKING:\n"
+            "        return Missing\n",
+            [("Missing", False)],
+            id="a-parameter-of-that-name",
+        ),
+        pytest.param(
+            "import typing\ndef f(typing):\n    if typing.TYPE_CHECKING:\n"
+            "        return Missing\n",
+            [("Missing", False)],
+            id="a-parameter-named-typing",
+        ),
+        pytest.param(
+            _TC + "if TYPE_CHECKING and flag:\n    x = Missing\nflag = 1\n",
+            [("Missing", True)],
+            id="a-compound-test",
+        ),
+    ],
+)
+def test_a_read_outside_that_branch_is_still_reported(
+    source: str, expected: list[tuple[str, bool]],
+) -> None:
+    assert _reads(source) == expected
+
+
+def test_a_namespace_call_in_the_branch_still_stops_the_analysis() -> None:
+    source = _TC + "if TYPE_CHECKING:\n    exec('made = 1')\nvalue = made\n"
+
+    assert _reads(source) == []
+
+
+@pytest.mark.parametrize(
+    ("source", "may_not_run"),
+    [
+        pytest.param("x = Missing\n", False, id="plain"),
+        pytest.param("class C:\n    x = Missing\n", False, id="class-body"),
+        pytest.param("def f(v=Missing):\n    return v\n", False, id="default"),
+        pytest.param("def f(v: Missing):\n    return v\n", False, id="annotation"),
+        pytest.param("if Missing:\n    pass\n", False, id="if-test"),
+        pytest.param("x = [v for v in Missing]\n", False, id="first-iterable"),
+        pytest.param(
+            "class M(type):\n    pass\nclass B(metaclass=M):\n    pass\n"
+            "class C(B):\n    x = Missing\n",
+            False,
+            id="inherited-metaclass",
+        ),
+        pytest.param(
+            "import sys\nif sys.argv:\n    x = Missing\ny = Missing\n",
+            False,
+            id="also-read-on-the-always-run-path",
+        ),
+        pytest.param("import sys\nif sys.argv:\n    x = Missing\n", True, id="if"),
+        pytest.param(
+            "import sys\nif sys.argv:\n    pass\nelse:\n    x = Missing\n",
+            True,
+            id="else",
+        ),
+        pytest.param("x = 1 if len('') else Missing\n", True, id="ternary"),
+        pytest.param("x = len('') and Missing\n", True, id="and"),
+        pytest.param("for v in []:\n    x = Missing\n", True, id="loop-body"),
+        pytest.param("x = [Missing for v in []]\n", True, id="comprehension"),
+        pytest.param(
+            "try:\n    x = Missing\nexcept ValueError:\n    x = 1\n",
+            True,
+            id="narrow-try",
+        ),
+        pytest.param(
+            "import sys\nclass C:\n    if sys.argv:\n        x = Missing\n",
+            True,
+            id="branch-in-a-class",
+        ),
+        pytest.param(
+            "import sys\nclass C:\n    Missing = 1\n    y = Missing\n"
+            "if sys.argv:\n    z = Missing\n",
+            True,
+            id="always-run-only-where-a-class-binds-it",
+        ),
+    ],
+)
+def test_what_counts_as_a_read_that_may_not_run(
+    source: str, may_not_run: bool,
+) -> None:
+    assert _load_flags(source) == [("Missing", True, may_not_run)]
+
+
+_NEVER_RUNS = """\
+cell LEVEL :: DOMAIN
+    kind: CONSTANT
+    visibility: INTERNAL
+    intent: "A constant with a branch after it."
+    schema: "int"
+    invariants: none
+    covered_by: none
+    ---
+    LEVEL = 3
+    {branch}
+        LEVEL = MissingValue
+
+"""
+
+
+def _may_not_run(branch: str = "if LEVEL > 5:") -> str:
+    return _NEVER_RUNS.format(branch=branch) + _NERVE.format(body=_PLAIN_BODY)
+
+
+class TestAReadThatMayNotRun:
+    @pytest.mark.parametrize("mode", [m.value for m in StrictnessMode])
+    def test_it_stays_an_error_and_writes_nothing(
+        self, project: Path, capsys: pytest.CaptureFixture[str], mode: str,
+    ) -> None:
+        _write_probe(project, _may_not_run())
+
+        rc, report = _check(project, capsys, mode)
+        assert rc == 1
+        (finding,) = _name_findings(report)
+        assert (finding["code"], finding["severity"]) == (LOAD, "error")
+
+        rc, report = _build(project, capsys, mode, "--no-cache")
+        assert rc == 1
+        assert LOAD in {f["code"] for f in _name_findings(report)}
+        assert not (project / "build" / "probe_domain.py").exists()
+
+    def test_its_message_says_if_and_names_three_ways_out(
+        self, project: Path, capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        _write_probe(project, _may_not_run())
+
+        _, report = _check(project, capsys)
+
+        (finding,) = _name_findings(report)
+        assert "in code that may not run" in finding["message"]
+        assert "nothing binds that name" in finding["message"]
+        assert "If that line runs, importing the module raises" in finding["message"]
+        assert "To bind 'MissingValue'" in finding["remediation"]
+        assert "delete the branch" in finding["remediation"]
+        assert "`except NameError`" in finding["remediation"]
+
+    def test_an_always_run_read_keeps_its_wording(
+        self, project: Path, capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        declarations, _, _ = SHAPES["parameter default"]
+        _write_probe(project, declarations)
+
+        _, report = _check(project, capsys)
+
+        (finding,) = _name_findings(report)
+        assert finding["message"] == (
+            "Module 'probe_domain' reads 'missing_value' in 'probe' when it "
+            "loads, and nothing binds that name. Importing the module raises "
+            "NameError on Python 3.11 to 3.13."
+        )
+        assert finding["remediation"].endswith(
+            "A `def` line counts as body code. The build writes nothing for "
+            "this module until the name is bound."
+        )
+
+    def test_a_type_checking_branch_checks_clean_and_builds(
+        self, project: Path, capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        _write_probe(
+            project,
+            _may_not_run("if TYPE_CHECKING:"),
+            requires="[typing.TYPE_CHECKING]",
+        )
+
+        rc, report = _check(project, capsys)
+        assert (rc, _name_findings(report)) == (0, [])
+
+        rc, report = _build(project, capsys, "strict", "--no-cache")
+        assert (rc, _name_findings(report)) == (0, [])
+        assert (project / "build" / "probe_domain.py").is_file()

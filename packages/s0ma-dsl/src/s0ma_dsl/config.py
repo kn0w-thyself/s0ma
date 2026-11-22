@@ -1373,7 +1373,9 @@ ERROR_CODE_DESCRIPTIONS: dict[str, str] = {
         "class, constant, or class field) and nothing has bound it when it is read: no "
         "binding, a later one, or one only under `if TYPE_CHECKING:`. Import raises "
         "`NameError` on Python 3.11 to 3.13, and on every Python unless the read is an "
-        "annotation. Declare the name, move its declaration up, or quote the annotation."
+        "annotation. A read of an unbound name in code that may not run is refused too, "
+        "and raises only if that line runs. Declare the name, move its declaration up, or "
+        "quote the annotation."
     ),
     "UNBOUND_NAME_IN_BODY": (
         "The emitted module reads a name only when a body runs and nothing binds it, so the "
