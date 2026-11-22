@@ -14,7 +14,7 @@
         },
         "invariants": {
           "state": "value",
-          "value": "host is the loopback address 127.0.0.1 — studi0 never offers itself to another machine. name is a .localhost name, which a browser keeps on this machine; studi0 prints it and opens it but never looks it up, and binds host alone. default_port is 5710, the letters of studi0 that have a digit (s, t, i, 0). answers_to is exactly name, localhost and host."
+          "value": "host is the loopback address 127.0.0.1 — studi0 never offers itself to another machine. name is a .localhost name, which a browser treats as this machine; studi0 prints it and opens it but never looks it up, and binds host alone. default_port is 5710, the letters of studi0 that have a digit (s, t, i, 0). answers_to is exactly name, localhost and host."
         },
         "schema": {
           "state": "value",
@@ -655,7 +655,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not keep .localhost names on this machine, and, when the default port was taken, a plain line saying which port this one has instead."
+        "value": "Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not treat .localhost names as this machine, and, when the default port was taken, a plain line saying which port this one has instead."
       },
       "kind": "FUNCTION",
       "location": {
@@ -1247,7 +1247,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:64ca96c27af2aca48abfb6522487c7cc24cfe736eff69c262f50c55852a0634c",
+    "content_hash": "sha256:67eef9d0de40d0ac3657d45dd55555a1559737de81639afafa3e28df080ee49b",
     "exports_helpers": {
       "state": "none"
     },
@@ -1263,6 +1263,6 @@
     "version": "0.22.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:64ca96c27af2aca4",
+  "source_hash": "sha256:67eef9d0de40d0ac",
   "transpiler_version": "1.0.0"
 }

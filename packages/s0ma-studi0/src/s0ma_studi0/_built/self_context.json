@@ -1387,7 +1387,7 @@
       "id": "studi0_server::serving_lines",
       "intent": {
         "state": "value",
-        "value": "Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not keep .localhost names on this machine, and, when the default port was taken, a plain line saying which port this one has instead."
+        "value": "Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not treat .localhost names as this machine, and, when the default port was taken, a plain line saying which port this one has instead."
       },
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
@@ -1444,7 +1444,7 @@
     },
     {
       "path": "studi0_server.s0ma.json",
-      "sha256": "sha256:903173880e01995061e5e1bcbb7b3120b1498ad4c6ddc2ea04a78134a2d771ef"
+      "sha256": "sha256:203cc3c3eaef8f8c7eb1feddfd240c7952e483a78c4daa6af964ba9c1cd49fe7"
     },
     {
       "path": "studi0_state.s0ma.json",

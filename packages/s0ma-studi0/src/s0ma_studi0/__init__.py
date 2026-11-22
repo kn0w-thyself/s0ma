@@ -41,8 +41,8 @@ emitted:
   for direct execution. They compose the built nerves: open a viewing
   session, start the watch that keeps it current, bind a server on it,
   report the address it really bound under studi0's own name, mark the
-  project as watched, open a browser at it, serve until interrupted, and take the mark and the
-  watch back down on the way out.
+  project as watched, open a browser at it, serve until interrupted,
+  and take the mark and the watch back down on the way out.
 
 The flat name is the ONLY runtime identity. Never import a built module
 through its on-disk dotted path (``s0ma_studi0._built.<module>``) at
@@ -141,7 +141,7 @@ def launch(
     watch is stopped on every exit path, including a failure to bind.
 
     The name is written into the address, never looked up: a browser
-    keeps ``.localhost`` names on this machine, and the second line is
+    treats ``.localhost`` names as this machine, and the second line is
     there for one that does not.
 
     Once the socket is really bound, the project is marked as watched:

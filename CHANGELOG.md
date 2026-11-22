@@ -103,7 +103,7 @@ Historical entries describe artifacts as they were named at the time.
   port the system assigns. The first line it prints keeps its shape with the
   name in it, `studi0 serving <project> at http://studi0.localhost:<port>/`,
   and a second line gives the same address on `127.0.0.1`, for a browser
-  that does not keep `.localhost` names on this machine:
+  that does not treat `.localhost` names as this machine:
 
   ```text
   studi0 serving my-project at http://studi0.localhost:5710/

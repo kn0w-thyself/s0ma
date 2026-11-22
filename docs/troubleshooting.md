@@ -563,9 +563,9 @@ you.
 the flag studi0 tries 5710, and when that is taken it uses a port the machine
 picks and says so. Drop the flag, or pass `--port 0` for a free port.
 
-**The page does not open at `studi0.localhost`.** A browser that does not keep
-`.localhost` names on your machine cannot reach that address. Use the second
-address studi0 printed, `http://127.0.0.1:<port>/`.
+**The page does not open at `studi0.localhost`.** A browser that does not treat
+`.localhost` names as your own machine cannot reach that address. Use the
+second address studi0 printed, `http://127.0.0.1:<port>/`.
 
 **The page says studi0 answers only under its own names.** The request was
 addressed to a name other than `studi0.localhost`, `localhost` or `127.0.0.1`,
