@@ -557,6 +557,20 @@ SEVERITY_MATRIX: dict[str, dict[StrictnessMode, str | None]] = {
     # ``cli/main.py::_compile_emitted_module``.
     "GENERATED_FILE_COMPILE_ERROR": dict.fromkeys(StrictnessMode, "error"),
 
+    # A name the emitted module reads and nothing binds. Read at load, the
+    # module cannot be imported on Python 3.11 to 3.13, so it is an error in
+    # every mode and the build writes nothing for it. Read only when a body
+    # runs, the module loads and the call fails, so it ladders like
+    # ``VESTIGIAL_IMPORT``: a dev build warns and writes the module. Emit
+    # site: ``codegen/unbound_names.py::unbound_name_findings``.
+    "UNBOUND_NAME_AT_LOAD": dict.fromkeys(StrictnessMode, "error"),
+    "UNBOUND_NAME_IN_BODY": {
+        StrictnessMode.MIGRATION: "warning",
+        StrictnessMode.DEV: "warning",
+        StrictnessMode.STRICT: "error",
+        StrictnessMode.RELEASE: "error",
+    },
+
     # 0.14 M2: build/transpile can prove only that emitted Python will
     # import the s0ma runtimes, not that the host has installed them.
     # Keep this static guidance a warning in every mode; ``verify-host``
@@ -1353,6 +1367,18 @@ ERROR_CODE_DESCRIPTIONS: dict[str, str] = {
         "`nonlocal` or `global` declared after the name is used, a `return` with a value "
         "in an async generator), so the module would fail on import. Fix the body at "
         "the reported line; the message carries Python's own reason."
+    ),
+    "UNBOUND_NAME_AT_LOAD": (
+        "The emitted module reads a name when it loads (a signature annotation, a default, "
+        "a decorator, an annotated constant, a class field) and nothing binds it, so "
+        "importing the module raises `NameError` on Python 3.11 to 3.13. Declare the name "
+        "in `requires:` or `uses:`, or correct it."
+    ),
+    "UNBOUND_NAME_IN_BODY": (
+        "The emitted module reads a name only when a body runs and nothing binds it, so the "
+        "call raises `NameError`. A `uses:` entry removed while a body still calls it and a "
+        "public `tests:` target with no `uses:` entry both land here. Declare the name in "
+        "`requires:` or `uses:`, or correct it."
     ),
     "PROHIBITED_CONSTRUCT": (
         "A body uses `exec()`, `eval()`, `__import__()`, or another prohibited dynamic-execution "
