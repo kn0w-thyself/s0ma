@@ -179,6 +179,7 @@ POINTERS: tuple[str, ...] = (
     "packages/s0ma-studi0/tests/test_api.py"
     "::test_every_route_table_entry_has_the_declared_shape",
     "packages/s0ma-studi0/tests/test_launch.py",
+    "packages/s0ma-studi0/tests/test_launch.py::test_a_foreign_name_is_refused",
     "packages/s0ma-studi0/tests/test_launch.py::test_binds_loopback_only",
     "scripts/check_docs_application.py",
     # A shell script, and the only one the page cites. ``cited`` recognises

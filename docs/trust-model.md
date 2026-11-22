@@ -178,7 +178,10 @@ what your build produced; it does not run your application.
 
 *Held by:* `packages/s0ma-studi0/tests/test_launch.py::test_binds_loopback_only`,
 which asserts both the running session's address and the server's own
-configured default.
+configured default, and
+`packages/s0ma-studi0/tests/test_launch.py::test_a_foreign_name_is_refused`,
+which sends a request under another name to the page, an asset, and both API
+routes and asserts each one is refused.
 
 **The authoring server** — the one a coding agent talks to — does not listen on
 a network at all. It speaks over the standard input and output of a program your
