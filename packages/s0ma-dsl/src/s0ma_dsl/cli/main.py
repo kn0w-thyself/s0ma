@@ -1564,6 +1564,8 @@ def _compile_check_modules(
     module_filenames: dict[str, str],
     diagnostics: list[S0maError],
     mode: StrictnessMode,
+    *,
+    in_real_project: bool,
 ) -> list[S0maError]:
     """The check side of :func:`_compile_emitted_module`.
 
@@ -1609,6 +1611,7 @@ def _compile_check_modules(
             continue
         findings.extend(unbound_name_findings(
             module, python_output, Path(filename), mode,
+            knows_every_target=in_real_project,
         ))
     return findings
 
@@ -1837,7 +1840,11 @@ def _transpile_single_file(
 
     name_findings = unbound_name_findings(
         module, python_output, source_path, mode,
-        has_project_context=project_context is not None,
+        knows_every_target=(
+            project_context is not None
+            and s0ma_project is not None
+            and not s0ma_project.synthetic
+        ),
     )
     all_errors.extend(name_findings)
     if any(finding.severity == "error" for finding in name_findings):
@@ -5735,6 +5742,9 @@ class S0maCLI:
         all_diagnostics.extend(_compile_check_modules(
             modules, target_names, module_filenames,
             per_module_diagnostics, mode,
+            in_real_project=(
+                s0ma_project is not None and not s0ma_project.synthetic
+            ),
         ))
 
         # Doc-subsystem validation (plan M5 — wire DocValidator into pipeline)

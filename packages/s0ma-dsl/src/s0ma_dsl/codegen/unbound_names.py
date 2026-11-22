@@ -486,15 +486,17 @@ def unbound_name_findings(
     source_path: Path,
     mode: StrictnessMode,
     *,
-    has_project_context: bool = True,
+    knows_every_target: bool = True,
 ) -> list[S0maError]:
     """Report each unbound name in one emitted module at its ``.s0ma`` line.
 
-    Without a project context the emitter cannot add the privileged imports
-    that ``tests:`` and ``observes:`` targets rely on, so a module with
-    tests or ganglia cannot be judged and is left alone.
+    The emitter adds the privileged imports that ``tests:`` and ``observes:``
+    targets rely on only for the modules it can see. Outside a real project
+    (a single-file transpile, a file checked with no ``[tool.s0ma]``) a
+    target may live in a file it was not given, so a module with tests or
+    ganglia cannot be judged and is left alone.
     """
-    if not has_project_context and (module.tests or module.ganglia):
+    if not knows_every_target and (module.tests or module.ganglia):
         return []
     reads = find_unbound_names(python_output)
     if not reads:

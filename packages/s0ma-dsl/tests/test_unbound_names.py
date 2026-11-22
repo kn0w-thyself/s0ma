@@ -603,6 +603,28 @@ class TestBuild:
         assert rc == 0
 
 
+def test_a_test_module_checked_outside_a_project_is_not_judged(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Its target may be in a sibling file this check was not given."""
+    path = tmp_path / "probe_domain_tests.s0ma"
+    path.write_text(
+        _TEST_MODULE.format(uses="[]", target="secret").replace(
+            "tests: [probe_domain.secret]", "tests: [secret]",
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    monkeypatch.chdir(tmp_path)
+    capsys.readouterr()
+
+    S0maCLI().run(["check", str(path), "--format", "json"])
+
+    assert _name_findings(json.loads(capsys.readouterr().out)) == []
+
+
 def test_the_scaffolded_agents_file_names_the_import(seed: Path) -> None:
     text = (seed / "AGENTS.md").read_text(encoding="utf-8")
 
