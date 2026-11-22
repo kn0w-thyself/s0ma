@@ -319,18 +319,40 @@ Historical entries describe artifacts as they were named at the time.
   method annotated with its own class (`def from_record(cls, r) -> Book:`),
   and a name bound only under `if TYPE_CHECKING:`. `s0ma adopt` reaches the
   first case, because a draft drops `from __future__ import annotations`.
-  Quote such an annotation in the `.py` before `s0ma adopt baseline`, because
-  `adopt verify-parity` compares signatures as written. Python 3.14 evaluates
-  annotations lazily, so an annotation read is reported only when the
-  project's `requires-python` admits 3.11, 3.12, or 3.13. A default, value,
+  Quote such an annotation in the `.s0ma`: when the original file had the
+  future import, `adopt verify-parity` does not count that quote as a
+  difference. Python 3.14 evaluates annotations lazily, so an annotation read
+  is reported only when the project's `requires-python` admits 3.11, 3.12, or
+  3.13. A default, value,
   base class, or decorator fails on every Python and is always reported. The
   check stays silent where it cannot know, such as after a star import or in
   a module that reaches its own namespace through `sys.modules` or
-  `importlib.import_module`. It still leaves alone reads inside function
-  bodies and load reads that may not run, such as one in a branch, a `try`,
-  a loop body, or the right of `and` or `or`. The `AGENTS.md` that
-  `s0ma new project` writes and the patterns guide now say that `Any` in a
-  signature needs `typing.Any` in `requires:`.
+  `importlib.import_module`. For a name bound too late, it still leaves alone
+  reads inside function bodies and load reads that may not run, such as one
+  in a branch, a `try`, a loop body, or the right of `and` or `or`. The
+  `AGENTS.md` that `s0ma new project` writes and the patterns guide now say
+  that `Any` in a signature needs `typing.Any` in `requires:`.
+- **`s0ma adopt verify-parity` accepts the quote a draft needs.** A draft drops
+  `from __future__ import annotations`, so the guide and `s0ma check` tell the
+  author to quote `-> Book` inside `class Book`, and parity then reported
+  `signature changed`. Under that import the two forms hold the same annotation
+  string. The baseline now records `future_annotations: true` for a file that
+  has the import, and `adopt verify-parity` and `adopt status` read a built
+  annotation that is one whole quoted string as its unquoted text. Defaults,
+  strings inside an annotation, and an original that was itself quoted are
+  still compared as written, and a finding shows both sides as written. The
+  schema stays `s0ma-adopt-baseline@1`. A baseline taken earlier has no field
+  and keeps reporting the quote until `s0ma adopt baseline` runs again, which
+  needs the original `.py`. An older s0ma that rewrites the baseline file drops
+  the new field, so a team should upgrade together.
+- **`s0ma check` stops overstating a read that may not run.** A read in the true
+  branch of `if TYPE_CHECKING:` never runs and is no longer reported, at any
+  scope. A read of a name nothing binds in other code that may not run, such as
+  a branch, a `try`, or a loop body, stays `UNBOUND_NAME_AT_LOAD`, an error in
+  every mode, because a read that looks conditional often does run and the
+  module would then fail on import. Its message now says the import raises
+  `NameError` if that line runs, and names three ways out: bind the name, delete
+  the branch, or guard the read with `except NameError`.
 - **The pipeline template's app map states the layer rule correctly.** The
   app map that `s0ma new project --template pipeline` writes said a file may
   only use the layers below it. It now says what the build enforces: a file
