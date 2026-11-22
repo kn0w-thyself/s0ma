@@ -1566,6 +1566,7 @@ def _compile_check_modules(
     mode: StrictnessMode,
     *,
     in_real_project: bool,
+    requires_python: tuple[str, ...] | None = None,
 ) -> list[S0maError]:
     """The check side of :func:`_compile_emitted_module`.
 
@@ -1612,6 +1613,7 @@ def _compile_check_modules(
         findings.extend(unbound_name_findings(
             module, python_output, Path(filename), mode,
             knows_every_target=in_real_project,
+            requires_python=requires_python,
         ))
     return findings
 
@@ -1688,6 +1690,12 @@ def _transpile_single_file(
     # for any malformed directive.
     embed_paths = scan_embed_paths(source_path)
     embed_hashes = compute_embed_hashes(source_path, embed_paths)
+    # A hit runs no check, and whether an annotation read before its binding
+    # is an error depends on the declared Python range, so a range that
+    # changes that answer has to miss.
+    from s0ma_dsl.codegen.unbound_names import load_order_cache_key
+
+    cache_dependencies = (*embed_hashes, load_order_cache_key(requires_python))
     # B2 (0.11.0): --force bypasses the cache so a hand-edited generated
     # .py is actually re-emitted (a cache hit returns the on-disk file
     # untouched, which on --force would leave the discarded-then-kept
@@ -1703,7 +1711,7 @@ def _transpile_single_file(
         result = cache.lookup(
             source_path,
             doc_key=doc_cache_key,
-            extra_dependency_hashes=embed_hashes,
+            extra_dependency_hashes=cache_dependencies,
             published_dir=publish_dir,
         )
         if result.hit:
@@ -1845,6 +1853,7 @@ def _transpile_single_file(
             and s0ma_project is not None
             and not s0ma_project.synthetic
         ),
+        requires_python=requires_python,
     )
     all_errors.extend(name_findings)
     if any(finding.severity == "error" for finding in name_findings):
@@ -2031,7 +2040,7 @@ def _transpile_single_file(
             # M12 (feedback 5–6): pass exactly the same extra-dep hashes
             # we used at lookup time so the next build's lookup compares
             # against an identical key.
-            extra_dependency_hashes=embed_hashes,
+            extra_dependency_hashes=cache_dependencies,
         )
 
     return all_errors, output_files
@@ -5750,6 +5759,7 @@ class S0maCLI:
             in_real_project=(
                 s0ma_project is not None and not s0ma_project.synthetic
             ),
+            requires_python=check_requires_python,
         ))
 
         # Doc-subsystem validation (plan M5 — wire DocValidator into pipeline)

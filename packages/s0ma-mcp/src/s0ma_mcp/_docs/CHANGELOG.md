@@ -314,9 +314,21 @@ Historical entries describe artifacts as they were named at the time.
   `tests:` target with no `uses:` entry. It is a warning in migration and
   dev, where the build still writes the module and leaves it out of the build
   cache so the next build reports it again, and an error in strict and
-  release. The check stays silent where it cannot know, such as after a star
-  import, and it does not catch a name read before its module-level binding
-  or one imported only under `TYPE_CHECKING`. The `AGENTS.md` that
+  release. `UNBOUND_NAME_AT_LOAD` also reports a name bound too late: a read
+  that always runs at load before the statement that binds it, including a
+  method annotated with its own class (`def from_record(cls, r) -> Book:`),
+  and a name bound only under `if TYPE_CHECKING:`. `s0ma adopt` reaches the
+  first case, because a draft drops `from __future__ import annotations`.
+  Quote such an annotation in the `.py` before `s0ma adopt baseline`, because
+  `adopt verify-parity` compares signatures as written. Python 3.14 evaluates
+  annotations lazily, so an annotation read is reported only when the
+  project's `requires-python` admits 3.11, 3.12, or 3.13. A default, value,
+  base class, or decorator fails on every Python and is always reported. The
+  check stays silent where it cannot know, such as after a star import or in
+  a module that reaches its own namespace through `sys.modules` or
+  `importlib.import_module`. It still leaves alone reads inside function
+  bodies and load reads that may not run, such as one in a branch, a `try`,
+  a loop body, or the right of `and` or `or`. The `AGENTS.md` that
   `s0ma new project` writes and the patterns guide now say that `Any` in a
   signature needs `typing.Any` in `requires:`.
 - **The pipeline template's app map states the layer rule correctly.** The

@@ -1,4 +1,4 @@
-"""Find the names an emitted module reads and nothing binds.
+"""Find the names an emitted module reads before anything has bound them.
 
 ``compile()`` does not resolve global names, so a module whose signature
 says ``-> dict[str, Any]`` with no ``typing.Any`` in ``requires:`` used to
@@ -6,7 +6,7 @@ check clean, build, and raise ``NameError`` on import. This walks the
 emitted text, which already holds everything that can bind a name (declared
 imports, framework imports, soft-require fallbacks, deferred imports,
 privileged imports), and reports each global read that no module-level
-binding or builtin covers.
+binding or builtin covers, and each load read that runs before its binding.
 
 A read is one of two kinds, and the answer is the same on every Python:
 
@@ -31,15 +31,40 @@ handler naming ``Exception`` or ``BaseException``, because the module still
 imports. In a function body the same broad handler is no guard, because that
 is how a removed ``uses:`` entry gets swallowed, so the read stays reported.
 A class with an explicit ``metaclass=`` may supply names through
-``__prepare__``. A name bound anywhere at module level counts as bound,
-whatever the order and whatever condition guards it. The bounds and values
-of PEP 695 type parameters and aliases are evaluated lazily and are not read.
+``__prepare__``. The bounds and values of PEP 695 type parameters and aliases
+are evaluated lazily and are not read.
+
+A module that reaches its own namespace can also write names no walk sees,
+so the analysis stops for one that looks itself up in ``sys.modules``, loads
+itself with ``import_module`` or ``__import__``, imports itself, or writes to
+a live globals dictionary. The lookup must name the module: ``__name__`` or
+its own name as a constant. A route to another module, or a read of a globals
+dictionary, does not stop it. A key computed at run time is not seen, so a
+module reaching itself that way can get a false error.
+
+**Load order.** A name with a module-level binding is reported when a read
+that always runs comes before every statement that binds it, or when its
+only bindings are in the true branch of ``if TYPE_CHECKING:``. A class or
+function binds its name when its statement ends, so a method annotation that
+names its own class is a read before binding. "Always runs" is strict: a
+read in a branch, a loop body, any part of ``try``, a ``with`` body, a
+``match`` case, the right of ``and`` or ``or``, a ternary's arms, a later
+comparison operand, a comprehension past its first iterable, or an
+``assert`` is left alone, because the module may load without running it.
+Reads inside function bodies are not judged for order.
+
+Annotations are lazy from Python 3.14, so an annotation read is reported
+under this rule only when the project's ``requires-python`` admits 3.11,
+3.12, or 3.13. With no declared range, or a clause that cannot be read, it
+stays silent. A default, value, base class, or decorator fails on every
+Python and is reported whatever the range.
 """
 
 from __future__ import annotations
 
 import ast
 import builtins
+import re
 import typing
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Literal
@@ -49,13 +74,17 @@ from s0ma_dsl.config import get_severity
 from s0ma_dsl.errors import S0maError
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable, Iterator
     from pathlib import Path
 
     from s0ma_dsl.ast_nodes.nodes import S0maModule
     from s0ma_dsl.config import StrictnessMode
 
 _ScopeKind = Literal["module", "class", "function", "comprehension", "type_params"]
+
+#: Why a load read found nothing: no binding at all, one further down the
+#: file, the class still being defined, or one under ``if TYPE_CHECKING:``.
+_ReadCause = Literal["unbound", "later", "own_name", "type_checking"]
 
 _FUNCTIONS = (ast.FunctionDef, ast.AsyncFunctionDef)
 _COMPREHENSIONS = (ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)
@@ -92,15 +121,46 @@ _ALWAYS_BOUND = frozenset(dir(builtins)) | _MODULE_NAMES | _OTHER_BUILTINS
 #: Calling one of these builtins can create a global no walk can see.
 _NAMESPACE_WRITERS = frozenset({"eval", "exec", "globals"})
 
+#: Calling one of these can hand a module its own module object.
+_MODULE_LOADERS = frozenset({"__import__", "import_module"})
+
+#: Calling one of these on ``sys.modules`` hands over the entry for its key.
+_MODULES_LOOKUPS = frozenset({"get", "pop", "setdefault"})
+
+#: Calling one of these on a live globals dictionary writes to it.
+_DICT_WRITERS = frozenset({"clear", "pop", "setdefault", "update"})
+
+#: The two names a ``TYPE_CHECKING`` guard is spelled with.
+_GUARD_NAMES = frozenset({"TYPE_CHECKING", "typing"})
+
+#: Calling one of these on a module object can write to its namespace.
+_ATTRIBUTE_WRITERS = frozenset({"delattr", "setattr", "vars"})
+
+#: Attributes that hand over a live globals dictionary.
+_GLOBALS_ATTRIBUTES = frozenset({"__globals__", "f_globals", "f_locals"})
+
+#: One ``requires-python`` clause, whole. A pre-release, a local version, or
+#: anything else this does not match is a clause that cannot be read.
+_VERSION_CLAUSE = re.compile(
+    r"\s*(==|!=|<=|>=|<|>|~=)\s*(\d+(?:\.\d+){0,2})(\.\*)?\s*"
+)
+
+#: The minor versions of Python 3 that evaluate annotations as they load.
+_EAGER_ANNOTATION_MINORS = (11, 12, 13)
+
 
 @dataclass(frozen=True)
 class UnboundRead:
-    """One name nothing binds, at the first place the module reads it."""
+    """One name nothing has bound, at the first place the module reads it."""
 
     name: str
     line: int
     at_load: bool
     read_count: int = 1
+    cause: _ReadCause = "unbound"
+    #: Every reported read of the name is an annotation, so it fails only
+    #: on the Pythons that evaluate annotations at load.
+    annotation_only: bool = False
 
 
 @dataclass(eq=False)
@@ -157,12 +217,28 @@ def _walrus_targets(comprehension: ast.expr) -> set[str]:
     return names
 
 
-def _bind(scope: _Scope, roots: Iterable[ast.AST]) -> None:
-    """Add what *roots* bind in *scope*, without entering nested scopes."""
+def _bind(
+    scope: _Scope,
+    roots: Iterable[ast.AST],
+    *,
+    never_runs: Callable[[ast.expr], bool] | None = None,
+) -> None:
+    """Add what *roots* bind in *scope*, without entering nested scopes.
+
+    An ``if`` whose test satisfies *never_runs* contributes only its
+    ``else``, because its true branch does not run when the module loads.
+    """
     stack = list(roots)
     while stack:
         node = stack.pop()
-        if isinstance(node, ast.Name):
+        if (
+            never_runs is not None
+            and isinstance(node, ast.If)
+            and never_runs(node.test)
+        ):
+            stack.append(node.test)
+            stack.extend(node.orelse)
+        elif isinstance(node, ast.Name):
             if not isinstance(node.ctx, ast.Load):
                 scope.bound.add(node.id)
         elif isinstance(node, _FUNCTIONS):
@@ -279,19 +355,186 @@ def _opens_the_namespace(node: ast.AST, scope: _Scope) -> bool:
             and not node.keywords
             and scope.kind in {"module", "class"}
         )
-    if isinstance(node, ast.Subscript):
-        target = node.value
-        return (
-            isinstance(target, ast.Attribute)
-            and target.attr == "modules"
-            and isinstance(target.value, ast.Name)
-            and target.value.id == "sys"
-            and isinstance(node.slice, ast.Name)
-            and node.slice.id == "__name__"
-        )
     if isinstance(node, ast.Attribute) and isinstance(node.ctx, ast.Store):
         return isinstance(node.value, ast.Name) and node.value.id == "builtins"
     return False
+
+
+def _writes_through(nodes: list[ast.AST], name: str) -> bool:
+    """Whether *nodes* write to the object *name* holds, as far as they show."""
+    for node in nodes:
+        if isinstance(node, ast.Attribute):
+            if not isinstance(node.value, ast.Name) or node.value.id != name:
+                continue
+            if not isinstance(node.ctx, ast.Load) or node.attr == "__dict__":
+                return True
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id in _ATTRIBUTE_WRITERS
+            and node.args
+            and isinstance(node.args[0], ast.Name)
+            and node.args[0].id == name
+        ):
+            return True
+    return False
+
+
+def _imports_itself(nodes: list[ast.AST], module_name: str) -> bool:
+    """Whether the module imports itself by its own name.
+
+    The bare name and a relative import of it are the module. A dotted path
+    ending in the same word may be the module under its package, or may be
+    another module entirely (``from django.db import models`` in a module
+    called ``models``), so that form counts only when the module writes to
+    what it imported.
+    """
+    leaf = module_name.rsplit(".", 1)[-1]
+    for node in nodes:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name == module_name:
+                    return True
+                if alias.name.rsplit(".", 1)[-1] == leaf and (
+                    alias.asname is None or _writes_through(nodes, alias.asname)
+                ):
+                    return True
+        elif isinstance(node, ast.ImportFrom):
+            if node.module == module_name and not node.level:
+                return True
+            if node.level and node.module == leaf:
+                return True
+            for alias in node.names:
+                if alias.name != leaf:
+                    continue
+                if node.level and node.module is None:
+                    return True
+                if _writes_through(nodes, alias.asname or alias.name):
+                    return True
+    return False
+
+
+def _is_live_globals(node: ast.expr | None) -> bool:
+    """Whether *node* reads a live globals dictionary straight off its source."""
+    if isinstance(node, ast.Attribute):
+        return node.attr in _GLOBALS_ATTRIBUTES
+    return isinstance(node, ast.Name) and node.id == "__builtins__"
+
+
+def _writes_live_globals(nodes: list[ast.AST]) -> bool:
+    """Whether *nodes* write to a live globals dictionary or a plain alias of it."""
+    aliases: set[str] = set()
+    for node in nodes:
+        if isinstance(node, ast.Assign) and _is_live_globals(node.value):
+            aliases.update(t.id for t in node.targets if isinstance(t, ast.Name))
+        elif (
+            isinstance(node, (ast.AnnAssign, ast.NamedExpr))
+            and _is_live_globals(node.value)
+            and isinstance(node.target, ast.Name)
+        ):
+            aliases.add(node.target.id)
+
+    def is_live(node: ast.expr) -> bool:
+        return _is_live_globals(node) or (
+            isinstance(node, ast.Name) and node.id in aliases
+        )
+
+    for node in nodes:
+        if (
+            isinstance(node, ast.Subscript)
+            and not isinstance(node.ctx, ast.Load)
+            and is_live(node.value)
+        ):
+            return True
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr in _DICT_WRITERS
+            and is_live(node.func.value)
+        ):
+            return True
+    return False
+
+
+def _names_the_module(key: ast.expr | None, module_name: str | None) -> bool:
+    """Whether *key* is ``__name__`` or the module's own name as a constant."""
+    if isinstance(key, ast.Name):
+        return key.id == "__name__"
+    return (
+        module_name is not None
+        and isinstance(key, ast.Constant)
+        and key.value == module_name
+    )
+
+
+def _first_argument(call: ast.Call) -> ast.expr | None:
+    """The first positional argument of *call*, or its ``name=`` keyword."""
+    if call.args:
+        return call.args[0]
+    return next((kw.value for kw in call.keywords if kw.arg == "name"), None)
+
+
+def _reaches_its_own_module(tree: ast.Module, module_name: str | None) -> bool:
+    """Whether the module can reach its own namespace by a route no walk sees.
+
+    That is a ``sys.modules`` lookup or a loader call naming this module, an
+    import of itself, a write to a live globals dictionary, or a write to
+    ``builtins``. A route to another module and a plain read do not count.
+    """
+    nodes = list(ast.walk(tree))
+    sys_names = {"sys"}
+    builtins_names = {"builtins"}
+    modules_names: set[str] = set()
+    loader_names = set(_MODULE_LOADERS)
+    for node in nodes:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.asname and alias.name == "sys":
+                    sys_names.add(alias.asname)
+                elif alias.asname and alias.name == "builtins":
+                    builtins_names.add(alias.asname)
+        elif isinstance(node, ast.ImportFrom) and not node.level:
+            for alias in node.names:
+                if node.module == "sys" and alias.name == "modules":
+                    modules_names.add(alias.asname or alias.name)
+                elif node.module == "importlib" and alias.name == "import_module":
+                    loader_names.add(alias.asname or alias.name)
+    if any(_writes_through(nodes, name) for name in builtins_names):
+        return True
+    if _writes_live_globals(nodes):
+        return True
+
+    def is_sys_modules(node: ast.expr) -> bool:
+        if isinstance(node, ast.Name):
+            return node.id in modules_names
+        return (
+            isinstance(node, ast.Attribute)
+            and node.attr == "modules"
+            and isinstance(node.value, ast.Name)
+            and node.value.id in sys_names
+        )
+
+    for node in nodes:
+        if isinstance(node, ast.Subscript):
+            if is_sys_modules(node.value) and _names_the_module(
+                node.slice, module_name,
+            ):
+                return True
+        elif isinstance(node, ast.Call):
+            func = node.func
+            takes_a_module_key = (
+                func.id in loader_names
+                if isinstance(func, ast.Name)
+                else isinstance(func, ast.Attribute) and (
+                    func.attr == "import_module"
+                    or (func.attr in _MODULES_LOOKUPS and is_sys_modules(func.value))
+                )
+            )
+            if takes_a_module_key and _names_the_module(
+                _first_argument(node), module_name,
+            ):
+                return True
+    return module_name is not None and _imports_itself(nodes, module_name)
 
 
 class _Reader:
@@ -442,12 +685,464 @@ def _type_param_scope(
     )
 
 
-def find_unbound_names(python_source: str) -> list[UnboundRead]:
-    """Every name *python_source* reads and nothing binds, first read first.
+def _parse_range_clause(
+    clause: str,
+) -> tuple[str, tuple[int, int, int], int, bool] | None:
+    """Read one clause as (operator, release, segments written, wildcard)."""
+    match = _VERSION_CLAUSE.fullmatch(clause)
+    if match is None:
+        return None
+    operator, written, wildcard = match.groups()
+    parts = [int(part) for part in written.split(".")]
+    if wildcard and operator not in {"==", "!="}:
+        return None
+    if operator == "~=" and len(parts) < 2:
+        return None
+    padded = (parts + [0, 0])[:3]
+    return operator, (padded[0], padded[1], padded[2]), len(parts), bool(wildcard)
+
+
+def _clause_admits(
+    clause: tuple[str, tuple[int, int, int], int, bool],
+    candidate: tuple[int, int, int],
+) -> bool:
+    operator, release, segments, wildcard = clause
+    if operator == ">=":
+        return candidate >= release
+    if operator == ">":
+        return candidate > release
+    if operator == "<=":
+        return candidate <= release
+    if operator == "<":
+        return candidate < release
+    if operator == "~=":
+        return candidate >= release and (
+            candidate[:segments - 1] == release[:segments - 1]
+        )
+    same = (
+        candidate[:segments] == release[:segments]
+        if wildcard
+        else candidate == release
+    )
+    return same if operator == "==" else not same
+
+
+def _annotations_run_at_load(requires_python: tuple[str, ...] | None) -> bool:
+    """Whether the declared range admits a Python that evaluates annotations.
+
+    The answer is yes when some release of 3.11, 3.12, or 3.13 satisfies
+    every clause. No range, or any clause that cannot be read, is no: the
+    finding is an error, and an error needs a floor the project declared.
+    """
+    if not requires_python:
+        return False
+    clauses = []
+    for text in requires_python:
+        clause = _parse_range_clause(text)
+        if clause is None:
+            return False
+        clauses.append(clause)
+    for minor in _EAGER_ANNOTATION_MINORS:
+        # The releases a range admits start at .0, at a clause's own patch,
+        # or just past it, so these are the only ones that need testing.
+        patches = {0}
+        for _, release, _, _ in clauses:
+            if release[:2] == (3, minor):
+                patches.update((release[2], release[2] + 1))
+        if any(
+            all(_clause_admits(clause, (3, minor, patch)) for clause in clauses)
+            for patch in patches
+        ):
+            return True
+    return False
+
+
+def load_order_cache_key(requires_python: tuple[str, ...] | None) -> str:
+    """The part of a build's cache key the load-order answer depends on.
+
+    A build that hits the cache runs no check, so a range that changes
+    whether annotation reads are errors has to miss.
+    """
+    return f"annotations-run-at-load:{_annotations_run_at_load(requires_python)}"
+
+
+def _type_checking_names(tree: ast.Module) -> frozenset[str]:
+    """Which ``TYPE_CHECKING`` spellings are certainly false at load.
+
+    ``TYPE_CHECKING`` counts when it comes from ``typing`` or
+    ``typing_extensions`` and ``typing`` when it is that module, and neither
+    is bound to anything else anywhere in the file. A project that sets its
+    own ``TYPE_CHECKING = True`` runs that branch, so its names are real.
+    """
+    imported: set[str] = set()
+    rebound: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                bound = alias.asname or alias.name
+                if (
+                    bound == "TYPE_CHECKING"
+                    and alias.name == "TYPE_CHECKING"
+                    and not node.level
+                    and node.module in {"typing", "typing_extensions"}
+                ):
+                    imported.add(bound)
+                elif bound in _GUARD_NAMES:
+                    rebound.add(bound)
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                bound = alias.asname or alias.name.split(".")[0]
+                if alias.name == "typing" and bound == "typing":
+                    imported.add(bound)
+                elif bound in _GUARD_NAMES:
+                    rebound.add(bound)
+        elif isinstance(node, ast.Attribute):
+            if node.attr == "TYPE_CHECKING" and not isinstance(node.ctx, ast.Load):
+                rebound.update(_GUARD_NAMES)
+        elif isinstance(node, ast.Name):
+            if not isinstance(node.ctx, ast.Load) and node.id in _GUARD_NAMES:
+                rebound.add(node.id)
+        elif isinstance(
+            node,
+            (*_FUNCTIONS, ast.ClassDef, ast.ExceptHandler, ast.MatchAs, ast.MatchStar),
+        ):
+            if node.name in _GUARD_NAMES:
+                rebound.add(node.name)
+        elif isinstance(node, ast.MatchMapping) and node.rest in _GUARD_NAMES:
+            rebound.add(node.rest)
+    return frozenset(imported - rebound)
+
+
+def _always_read_names(root: ast.AST) -> Iterator[ast.Name]:
+    """The names *root* reads on every evaluation of it.
+
+    Past a short circuit, a ternary's test, a comparison's first operand,
+    or a comprehension's first iterable, a read may never run. A lambda runs
+    only its defaults when it is created.
+    """
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, ast.Name):
+            if isinstance(node.ctx, ast.Load):
+                yield node
+        elif isinstance(node, ast.Lambda):
+            stack.extend(_default_nodes(node.args))
+        elif isinstance(node, _COMPREHENSIONS):
+            stack.append(node.generators[0].iter)
+        elif isinstance(node, ast.IfExp):
+            stack.append(node.test)
+        elif isinstance(node, ast.BoolOp):
+            stack.append(node.values[0])
+        elif isinstance(node, ast.Compare):
+            stack.append(node.left)
+        elif isinstance(node, ast.NamedExpr):
+            stack.append(node.value)
+        else:
+            stack.extend(ast.iter_child_nodes(node))
+
+
+@dataclass(frozen=True)
+class _ClassFrame:
+    """The class body a read is in."""
+
+    name: str
+    binds: frozenset[str]
+    open_namespace: bool
+
+
+@dataclass(frozen=True)
+class _ReadSite:
+    """Where a load read happens."""
+
+    frame: _ClassFrame | None = None
+    #: The enclosing classes, which are unbound until their statements end.
+    classes: frozenset[str] = frozenset()
+    #: PEP 695 parameters in scope.
+    parameters: frozenset[str] = frozenset()
+    annotation: bool = False
+
+
+@dataclass(frozen=True)
+class _OrderedRead:
+    line: int
+    cause: _ReadCause
+    annotation: bool
+
+
+class _LoadOrder:
+    """Walks the statements that always run, in the order they run."""
+
+    def __init__(
+        self,
+        tree: ast.Module,
+        module_bound: set[str],
+        declared_global: set[str],
+        *,
+        future_annotations: bool,
+        annotations_run: bool,
+    ) -> None:
+        guards = _type_checking_names(tree)
+        self._never_runs = lambda test: _is_type_checking_test(test, guards)
+        runtime = _Scope("module", None)
+        _bind(runtime, tree.body, never_runs=self._never_runs)
+        self._runtime_bound = runtime.bound | declared_global
+        self._module_bound = module_bound
+        self._future_annotations = future_annotations
+        self._annotations_run = annotations_run
+        self._bound_now = set(declared_global)
+        self._assigned = self._names_assigned_at_top(tree)
+        self._open_classes: set[str] = set()
+        self.reads: dict[str, list[_OrderedRead]] = {}
+
+    @staticmethod
+    def _names_assigned_at_top(tree: ast.Module) -> set[str]:
+        """Module names bound by something other than a class or an import."""
+        assigned = _Scope("module", None)
+        _bind(assigned, (
+            statement for statement in tree.body
+            if not isinstance(statement, (ast.ClassDef, ast.Import, ast.ImportFrom))
+        ))
+        return assigned.bound
+
+    def run(self, body: list[ast.stmt], site: _ReadSite) -> None:
+        for statement in body:
+            self._statement(statement, site)
+
+    def _read(self, roots: Iterable[ast.AST], site: _ReadSite) -> None:
+        for root in roots:
+            for node in _always_read_names(root):
+                self._read_name(node.id, node.lineno, site)
+
+    def _read_name(self, name: str, line: int, site: _ReadSite) -> None:
+        if name in _ALWAYS_BOUND or name in site.parameters:
+            return
+        frame = site.frame
+        if frame is not None and (
+            frame.open_namespace
+            or name in frame.binds
+            or name in _CLASS_BODY_NAMES
+        ):
+            return
+        if name in self._bound_now or name not in self._module_bound:
+            return
+        if site.annotation and not self._annotations_run:
+            return
+        cause: _ReadCause
+        if name not in self._runtime_bound:
+            cause = "type_checking"
+        elif name in site.classes:
+            cause = "own_name"
+        else:
+            cause = "later"
+        self.reads.setdefault(name, []).append(
+            _OrderedRead(line, cause, site.annotation),
+        )
+
+    def _bind_now(self, roots: Iterable[ast.AST], site: _ReadSite) -> None:
+        """Record what *roots* bind. A class body's names live in its frame."""
+        if site.frame is not None:
+            return
+        scope = _Scope("module", None)
+        _bind(scope, roots, never_runs=self._never_runs)
+        self._bound_now |= scope.bound
+
+    def _statement(self, node: ast.stmt, site: _ReadSite) -> None:
+        if isinstance(node, _FUNCTIONS):
+            self._function(node, site)
+        elif isinstance(node, ast.ClassDef):
+            self._class(node, site)
+        elif isinstance(node, ast.Assign):
+            self._assign(node.value, node.targets, site)
+        elif isinstance(node, ast.AugAssign):
+            self._bind_now([node.value], site)
+            if isinstance(node.target, ast.Name):
+                self._read_name(node.target.id, node.lineno, site)
+            else:
+                self._read([node.target], site)
+            self._read([node.value], site)
+            self._bind_now([node.target], site)
+        elif isinstance(node, ast.AnnAssign):
+            self._annotated(node, site)
+        elif isinstance(node, (ast.If, ast.While)):
+            self._header_then_branches(node.test, node, site)
+        elif isinstance(node, ast.For):
+            self._header_then_branches(node.iter, node, site)
+        elif isinstance(node, ast.With):
+            # A later item runs inside the earlier ones, which can swallow it.
+            self._header_then_branches(node.items[0].context_expr, node, site)
+        elif isinstance(node, ast.Match):
+            self._header_then_branches(node.subject, node, site)
+        elif isinstance(node, ast.Expr):
+            self._bind_now([node.value], site)
+            self._read([node.value], site)
+        elif isinstance(node, ast.Raise):
+            parts = [part for part in (node.exc, node.cause) if part is not None]
+            self._bind_now(parts, site)
+            self._read(parts, site)
+        elif isinstance(node, ast.Delete):
+            self._read(
+                (t for t in node.targets if not isinstance(t, ast.Name)), site,
+            )
+        else:
+            # ``try`` and ``assert`` may not run what they hold, and the
+            # rest (imports, ``type`` aliases) only bind.
+            self._bind_now([node], site)
+
+    def _assign(
+        self, value: ast.expr, targets: list[ast.expr], site: _ReadSite,
+    ) -> None:
+        self._bind_now([value], site)
+        self._read([value], site)
+        # A target can read a name an earlier target just bound
+        # (``i, items[i] = 0, 1``), so the names land first.
+        self._bind_now(targets, site)
+        self._read(targets, site)
+
+    def _annotated(self, node: ast.AnnAssign, site: _ReadSite) -> None:
+        annotation = _ReadSite(
+            site.frame, site.classes, site.parameters, annotation=True,
+        )
+        if node.value is not None:
+            self._assign(node.value, [node.target], site)
+        if not self._future_annotations:
+            self._read([node.annotation], annotation)
+
+    def _header_then_branches(
+        self, header: ast.expr, node: ast.stmt, site: _ReadSite,
+    ) -> None:
+        """Read the part that always runs, then bind what the rest may."""
+        self._bind_now([header], site)
+        self._read([header], site)
+        self._bind_now([node], site)
+
+    def _function(
+        self, node: ast.FunctionDef | ast.AsyncFunctionDef, site: _ReadSite,
+    ) -> None:
+        defaults = _default_nodes(node.args)
+        annotations = _annotation_nodes(node)
+        self._bind_now([*node.decorator_list, *defaults, *annotations], site)
+        self._read(node.decorator_list, site)
+        self._read(defaults, site)
+        if not self._future_annotations:
+            signature = _ReadSite(
+                site.frame,
+                site.classes,
+                site.parameters | _type_parameters(node),
+                annotation=True,
+            )
+            self._read(annotations, signature)
+        self._bind_now_name(node.name, site)
+
+    def _class(self, node: ast.ClassDef, site: _ReadSite) -> None:
+        # The value of ``metaclass=`` is left alone with the namespace it opens.
+        keywords = [k.value for k in node.keywords if k.arg != "metaclass"]
+        header = [*node.decorator_list, *node.bases, *keywords]
+        self._bind_now(header, site)
+        parameters = site.parameters | _type_parameters(node)
+        self._read(node.decorator_list, site)
+        self._read([*node.bases, *keywords], _ReadSite(
+            site.frame, site.classes, parameters,
+        ))
+        scope = _Scope("class", None)
+        _bind(scope, node.body)
+        opened = self._opens_its_namespace(node)
+        if opened:
+            self._open_classes.add(node.name)
+        frame = _ClassFrame(node.name, frozenset(scope.bound), opened)
+        self.run(node.body, _ReadSite(
+            frame, site.classes | {node.name}, parameters,
+        ))
+        self._bind_now_name(node.name, site)
+
+    def _opens_its_namespace(self, node: ast.ClassDef) -> bool:
+        """Whether the class's metaclass could answer for names it reads.
+
+        An explicit ``metaclass=`` can, and it is inherited, so a class built
+        on an open class in this module is open too. So is a base this walk
+        cannot name (a call, a starred list, a module-level variable holding
+        anything) and a ``**`` that may carry ``metaclass``.
+        """
+        if any(keyword.arg in {"metaclass", None} for keyword in node.keywords):
+            return True
+        return any(self._base_may_open(base) for base in node.bases)
+
+    def _base_may_open(self, base: ast.expr) -> bool:
+        if isinstance(base, ast.Subscript):
+            return self._base_may_open(base.value)
+        if isinstance(base, ast.Attribute):
+            return False
+        if isinstance(base, ast.Name):
+            return base.id in self._open_classes or base.id in self._assigned
+        return True
+
+    def _bind_now_name(self, name: str, site: _ReadSite) -> None:
+        if site.frame is None:
+            self._bound_now.add(name)
+
+
+def _is_type_checking_test(test: ast.expr, guards: frozenset[str]) -> bool:
+    if isinstance(test, ast.Name):
+        return test.id == "TYPE_CHECKING" and test.id in guards
+    return (
+        isinstance(test, ast.Attribute)
+        and test.attr == "TYPE_CHECKING"
+        and isinstance(test.value, ast.Name)
+        and test.value.id == "typing"
+        and "typing" in guards
+    )
+
+
+def _type_parameters(
+    node: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef,
+) -> frozenset[str]:
+    return frozenset(param.name for param in getattr(node, "type_params", ()))
+
+
+def _load_order_reads(
+    tree: ast.Module,
+    module_bound: set[str],
+    declared_global: set[str],
+    *,
+    future_annotations: bool,
+    requires_python: tuple[str, ...] | None,
+) -> list[UnboundRead]:
+    """Each bound name a load read reaches before its binding."""
+    walk = _LoadOrder(
+        tree,
+        module_bound,
+        declared_global,
+        future_annotations=future_annotations,
+        annotations_run=_annotations_run_at_load(requires_python),
+    )
+    walk.run(tree.body, _ReadSite())
+    found = []
+    for name, reads in walk.reads.items():
+        first = min(reads, key=lambda read: read.line)
+        found.append(UnboundRead(
+            name,
+            first.line,
+            True,
+            len(reads),
+            first.cause,
+            annotation_only=all(read.annotation for read in reads),
+        ))
+    return found
+
+
+def find_unbound_names(
+    python_source: str,
+    *,
+    module_name: str | None = None,
+    requires_python: tuple[str, ...] | None = None,
+) -> list[UnboundRead]:
+    """Every name *python_source* reads with nothing bound, first read first.
 
     A name read both at load and in a body is reported once, as a load read:
     that is the failure the module hits first. Text that does not parse
-    returns nothing, because the build reports it elsewhere.
+    returns nothing, because the build reports it elsewhere. *module_name*
+    lets the walk see a module importing itself. *requires_python* decides
+    whether an annotation read before its binding is reported.
     """
     try:
         tree = ast.parse(python_source)
@@ -455,17 +1150,21 @@ def find_unbound_names(python_source: str) -> list[UnboundRead]:
         return []
 
     module_scope = _Scope("module", None)
+    declared_global: set[str] = set()
     future_annotations = False
     for node in ast.walk(tree):
         if isinstance(node, ast.Global):
             # A declared global is the author saying the module holds it.
-            module_scope.bound.update(node.names)
+            declared_global.update(node.names)
         elif isinstance(node, ast.ImportFrom):
             names = {alias.name for alias in node.names}
             if "*" in names:
                 return []
             if node.module == "__future__" and "annotations" in names:
                 future_annotations = True
+    if _reaches_its_own_module(tree, module_name):
+        return []
+    module_scope.bound.update(declared_global)
     _bind(module_scope, tree.body)
 
     reader = _Reader(future_annotations)
@@ -482,6 +1181,13 @@ def find_unbound_names(python_source: str) -> list[UnboundRead]:
         for name, lines in reader.body_reads.items()
         if name not in reader.load_reads
     )
+    found.extend(_load_order_reads(
+        tree,
+        module_scope.bound,
+        declared_global,
+        future_annotations=future_annotations,
+        requires_python=requires_python,
+    ))
     return sorted(found, key=lambda read: (read.line, read.name))
 
 
@@ -497,6 +1203,41 @@ def _fix_for(name: str) -> str:
     )
 
 
+def _load_order_text(read: UnboundRead) -> tuple[str, str]:
+    """Why this read has nothing bound yet, and how to fix it."""
+    name = read.name
+    if read.cause == "type_checking":
+        why = (
+            "its only binding is under `if TYPE_CHECKING:`, which does not "
+            "run when the module loads"
+        )
+        fix = (
+            f"quote the annotation (`\"{name}\"`), or put the import in "
+            f"`requires:` so it exists at load"
+            if read.annotation_only
+            else "put the import in `requires:` so it exists at load"
+        )
+    elif read.cause == "own_name":
+        why = (
+            f"'{name}' is the class being defined, and its name is bound "
+            f"only when the class statement ends"
+        )
+        fix = (
+            f"quote the annotation (`\"{name}\"`)"
+            if read.annotation_only
+            else f"read '{name}' after the class, because moving it cannot help"
+        )
+    else:
+        why = "the statement that binds it comes later in the file"
+        fix = (
+            f"move the declaration of '{name}' above this line, or quote the "
+            f"annotation (`\"{name}\"`) if the two declarations name each other"
+            if read.annotation_only
+            else f"move the declaration of '{name}' above this line"
+        )
+    return why, fix
+
+
 def unbound_name_findings(
     module: S0maModule,
     python_output: str,
@@ -504,8 +1245,13 @@ def unbound_name_findings(
     mode: StrictnessMode,
     *,
     knows_every_target: bool = True,
+    requires_python: tuple[str, ...] | None = None,
 ) -> list[S0maError]:
     """Report each unbound name in one emitted module at its ``.s0ma`` line.
+
+    *requires_python* is the project's declared range. It decides whether
+    an annotation read before its binding fails on a Python the project
+    supports.
 
     The emitter adds the privileged imports that ``tests:`` and ``observes:``
     targets rely on only for the modules it can see. Outside a real project
@@ -515,7 +1261,11 @@ def unbound_name_findings(
     """
     if not knows_every_target and (module.tests or module.ganglia):
         return []
-    reads = find_unbound_names(python_output)
+    reads = find_unbound_names(
+        python_output,
+        module_name=module.module.name,
+        requires_python=requires_python,
+    )
     if not reads:
         return []
 
@@ -535,6 +1285,29 @@ def unbound_name_findings(
             "emitted_line": read.line,
             "read_count": read.read_count,
         }
+        if read.cause != "unbound":
+            why, order_fix = _load_order_text(read)
+            pythons = (
+                "Python 3.11 to 3.13" if read.annotation_only else "every Python"
+            )
+            findings.append(S0maError(
+                code="UNBOUND_NAME_AT_LOAD",
+                message=(
+                    f"Module '{module.module.name}' reads '{read.name}'{where} "
+                    f"when it loads, before anything has bound it: {why}. "
+                    f"Importing the module raises NameError on {pythons}."
+                ),
+                severity=get_severity("UNBOUND_NAME_AT_LOAD", mode) or "error",
+                remediation=(
+                    f"To fix it, {order_fix}. The build writes nothing for "
+                    f"this module until the read is fixed."
+                ),
+                file=location.source_file,
+                line=line,
+                column=0,
+                context={**context, "cause": read.cause},
+            ))
+            continue
         fix = _fix_for(read.name)
         if read.at_load:
             findings.append(S0maError(
