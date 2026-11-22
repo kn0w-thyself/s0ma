@@ -1429,7 +1429,7 @@ def test_a_build_makes_room_then_lands_whole() -> None:
     hold = apply.index("if (holdBuildForTheView(graph, stateDoc)) {")
     assert hold < apply.index("diffGraphs(previous, graph)")
     assert hold < apply.index("recordChange(delta, previous, graph, firstBuild);")
-    assert apply.index("render();") < apply.index("frameTheLandedBuild(drawn, arrived);")
+    assert apply.index("render();") < apply.index("frameTheLandedBuild(hold, arrived);")
     land = _between(app_js, "function landHeldBuild(", "\n}\n")
     assert "applyGraph(held.graph, held.stateDoc);" in land
     # What arrives during an ease ends it first.
@@ -1455,4 +1455,35 @@ def test_the_marker_says_how_many_and_which_way() -> None:
     # Counted in the list of changes' sense, against what the canvas shows.
     count = _between(app_js, "function renderViewMarker(", "\n}\n")
     assert "changePartInView(changePart(markerIds[i], component))" in count
-    assert "getBoundingClientRect" in _between(app_js, "function shownBox(", "\n}\n")
+    assert "var rect = canvasRect();" in _between(app_js, "function shownBox(", "\n}\n")
+    assert "getBoundingClientRect" in _between(app_js, "function canvasRect(", "\n}\n")
+
+
+def test_a_reading_holds_what_is_on_screen_still_in_pixels() -> None:
+    """The banner a reading brings or takes resizes the canvas in that paint."""
+    app_js = read(APP_JS)
+    # Noted before the reading changes anything, framed after the paint.
+    apply = _between(app_js, "function applyGraph(", "\n}\n")
+    noted = apply.index("var hold = captureScreenHold();")
+    assert noted < apply.index("diffGraphs(previous, graph)")
+    assert apply.index("render();") < apply.index("frameTheLandedBuild(hold, arrived);")
+    state_only = _between(app_js, "function applyStateOnly(", "\n}\n")
+    noted = state_only.index("var hold = captureScreenHold();")
+    assert noted < state_only.index("state.buildStatus = nextStatus;")
+    assert state_only.index("render();") < state_only.index("frameAfterReading(hold);")
+    # The canvas is measured again after the paint, and the held box has
+    # the canvas's own aspect ratio at the scale it was showing.
+    still = _between(app_js, "function holdStillOnScreen(", "\n}\n")
+    assert "var rect = canvasRect();" in still
+    assert "w: rect.width / scale," in still
+    assert "h: rect.height / scale," in still
+    # Then a following view goes to the fit: at once within half a pixel.
+    after = _between(app_js, "function frameAfterReading(", "\n}\n")
+    assert after.index("holdStillOnScreen(hold)") < after.index("easeViewTo(fit, null);")
+    assert "* scale < 0.5" in _between(app_js, "function showsTheSame(", "\n}\n")
+    # Controls are not readings: they keep easing to the fit as before.
+    for fn in ("function toggleOrgan(", "function setAllCollapsed("):
+        body = _between(app_js, fn, "\n}\n")
+        assert "followTheLayout();" in body, fn
+        assert "captureScreenHold" not in body, fn
+
