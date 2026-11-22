@@ -1582,6 +1582,7 @@ def _compile_check_modules(
     from s0ma_dsl.codegen.observes_resolver import ProjectContext
     from s0ma_dsl.codegen.python_emitter import PythonEmitter
     from s0ma_dsl.codegen.source_map import annotate_source_pointers
+    from s0ma_dsl.codegen.unbound_names import unbound_name_findings
 
     blocked = {d.file for d in diagnostics if d.severity == "error"}
     context = ProjectContext(modules=list(modules.values()))
@@ -1605,6 +1606,10 @@ def _compile_check_modules(
         )
         if finding is not None:
             findings.append(finding)
+            continue
+        findings.extend(unbound_name_findings(
+            module, python_output, Path(filename), mode,
+        ))
     return findings
 
 
@@ -1823,6 +1828,21 @@ def _transpile_single_file(
         all_errors.append(compile_error)
         return all_errors, output_files
 
+    # A name nothing binds. An error writes nothing for this module; a
+    # warning (a body-only name in a dev build) is reported and the module
+    # is written. Either way the result stays out of the cache, whose key
+    # ignores the mode: a stored entry would hide the finding from the next
+    # build and let a strict build pass on a dev build's output.
+    from s0ma_dsl.codegen.unbound_names import unbound_name_findings
+
+    name_findings = unbound_name_findings(
+        module, python_output, source_path, mode,
+        has_project_context=project_context is not None,
+    )
+    all_errors.extend(name_findings)
+    if any(finding.severity == "error" for finding in name_findings):
+        return all_errors, output_files
+
     # B2 (0.11.0, batch-01a): refuse to silently overwrite a hand-edited
     # generated .py. If the target exists and its embedded output-hash
     # disagrees with its content, someone edited the generated file by
@@ -1972,7 +1992,7 @@ def _transpile_single_file(
             rendered_outputs.append(str(out.output_path))
 
     # --- Cache store ---
-    if cache is not None:
+    if cache is not None and not name_findings:
         # Build doc-cache entries from whatever the renderer produced
         # this run. Storing them lets the next build replay rendered
         # outputs without invoking the renderer.
