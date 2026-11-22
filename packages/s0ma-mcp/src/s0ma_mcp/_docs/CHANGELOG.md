@@ -272,6 +272,24 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Fixed
 
+- **`s0ma check` reports a name nothing binds.** A signature that said
+  `-> dict[str, Any]` with no `typing.Any` in `requires:` used to check clean,
+  build, and raise `NameError` when the build loaded. `check` and `build` now
+  walk each emitted module and report, at its `.s0ma` line, a global read
+  that no binding or builtin covers. `UNBOUND_NAME_AT_LOAD` is a name read
+  when the module loads on Python 3.11 to 3.13: a signature annotation, a
+  default, a decorator, a base class, an annotated constant, or a class
+  field. It is an error in every mode, and the build writes nothing for that
+  module. `UNBOUND_NAME_IN_BODY` is a name read only when a body runs,
+  including a `uses:` entry removed while a body still calls it and a public
+  `tests:` target with no `uses:` entry. It is a warning in migration and
+  dev, where the build still writes the module and leaves it out of the build
+  cache so the next build reports it again, and an error in strict and
+  release. The check stays silent where it cannot know, such as after a star
+  import, and it does not catch a name read before its module-level binding
+  or one imported only under `TYPE_CHECKING`. The `AGENTS.md` that
+  `s0ma new project` writes and the patterns guide now say that `Any` in a
+  signature needs `typing.Any` in `requires:`.
 - **The pipeline template's app map states the layer rule correctly.** The
   app map that `s0ma new project --template pipeline` writes said a file may
   only use the layers below it. It now says what the build enforces: a file

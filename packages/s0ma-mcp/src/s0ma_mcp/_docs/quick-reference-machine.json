@@ -555,7 +555,7 @@
     "release": "0.22.0 (preview)",
     "release_version": "0.22.0",
     "revised": "2026-10-05",
-    "snapshot_hash": "sha256:a9c8582ce2fec54a",
+    "snapshot_hash": "sha256:2d08875ea7f6f08e",
     "specification": {
       "id": "doc:normative/s0ma-dsl-spec-v0-17-0",
       "path": "packages/s0ma-dsl/docs/s0ma-dsl-spec-v0.17.0.md",
@@ -1935,30 +1935,30 @@
     }
   ],
   "modes": {
-    "refused_in_every_mode": 74,
-    "reports": 103,
+    "refused_in_every_mode": 75,
+    "reports": 105,
     "unchanging": 14,
     "values": [
       {
         "meant_for": "bringing existing code across",
         "mode": "migration",
-        "refuses": 74,
+        "refuses": 75,
         "skips": 3,
         "treats": "As `dev`, with a little more room.",
-        "warns": 26
+        "warns": 27
       },
       {
         "meant_for": "day to day",
         "mode": "dev",
-        "refuses": 75,
+        "refuses": 76,
         "skips": 3,
         "treats": "A mistake the build can carry on past is a warning.",
-        "warns": 25
+        "warns": 26
       },
       {
         "meant_for": "the automated checks before a merge",
         "mode": "strict",
-        "refuses": 95,
+        "refuses": 97,
         "skips": 3,
         "treats": "What the first two warn about is refused.",
         "warns": 5
@@ -1971,7 +1971,7 @@
           "diagnostic:MISSING_PUBLIC_DOC_REF",
           "diagnostic:MISSING_TEST_COVERAGE"
         ],
-        "refuses": 99,
+        "refuses": 101,
         "skips": 0,
         "treats": "As `strict`, and it makes checks the others do not: they are named under the table.",
         "warns": 4

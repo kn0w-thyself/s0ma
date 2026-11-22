@@ -5,7 +5,7 @@ module: "common_errors"
 format: "markdown"
 intent: "Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
 schema_version: "3.0.0"
-content_hash: "1:e6280c0066156291364626919588458ced2ff2c019c1e79b6420f02699d2dbc3"
+content_hash: "1:fd197161af2f1bf01d4f08ee4a5c19cfb7d2f1e6fabf14634d1cf21bd0960c63"
 ---
 
 # CommonErrorsTable
@@ -122,6 +122,8 @@ Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sen
 | `TEMPLATE_SYNTAX_ERROR` | error | error | error | error | A template expression `{{...}}` or `covers:` filter fails the narrow doc-subsystem grammar. |
 | `TEST_NOT_COLLECTED` | warning | warning | error | error | A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`; when the block holds fixtures or several definitions, declare each one as a `helper` instead of renaming it. |
 | `TEST_VISIBILITY_VIOLATION` | error | error | error | error | A production module attempts to `uses:` a `visibility: TEST` component cross-module. |
+| `UNBOUND_NAME_AT_LOAD` | error | error | error | error | The emitted module reads a name when it loads (a signature annotation, a default, a decorator, an annotated constant, a class field) and nothing binds it, so importing the module raises `NameError` on Python 3.11 to 3.13. Declare the name in `requires:` or `uses:`, or correct it. |
+| `UNBOUND_NAME_IN_BODY` | warning | warning | error | error | The emitted module reads a name only when a body runs and nothing binds it, so the call raises `NameError`. A `uses:` entry removed while a body still calls it and a public `tests:` target with no `uses:` entry both land here. Declare the name in `requires:` or `uses:`, or correct it. |
 | `UNDECLARED_PLACEHOLDER` | warning | warning | error | error | A CONSTANT cell's `content: @file(...)` embedded content contains a placeholder-shaped string matching `__[A-Z][A-Z0-9_]*__` that is not listed in the cell's `placeholders:` field. |
 | `UNKNOWN_FIELD` | warning | warning | error | error | A declaration carries a field that kind of declaration does not have — usually a misspelt name, or a field that belongs to another kind. s0ma does not read the line, so whatever it was meant to say is not said; correct the name or remove the line. |
 | `UNRECOGNIZED_LINE` | warning | warning | error | error | A line inside a declaration's description is not a field, not part of a block, and not a comment — usually a field indented by the wrong number of spaces. s0ma does not read the line; start a field with exactly four spaces, or remove the line. |
