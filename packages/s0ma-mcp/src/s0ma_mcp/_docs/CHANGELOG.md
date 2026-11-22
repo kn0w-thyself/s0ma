@@ -94,6 +94,35 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Changed
 
+- **studi0 has an address of its own.** `s0ma studi0` with no `--port` now
+  serves at `http://studi0.localhost:5710/` and opens the browser there,
+  where before it took a different port the system assigned on every launch.
+  When port 5710 is in use, for example by a second studi0 started beside the
+  first, it takes a port the system assigns and says so in one more line.
+  `--port N` still means that port or an error, and `--port 0` still means a
+  port the system assigns. The first line it prints keeps its shape with the
+  name in it, `studi0 serving <project> at http://studi0.localhost:<port>/`,
+  and a second line gives the same address on `127.0.0.1`, for a browser
+  that does not treat `.localhost` names as this machine:
+
+  ```text
+  studi0 serving my-project at http://studi0.localhost:5710/
+    also at http://127.0.0.1:5710/
+  ```
+
+  studi0 now answers only requests addressed to `studi0.localhost`,
+  `localhost`, or `127.0.0.1`, with any port. A request under any other
+  name, on the page, its assets, or either API route, gets `403` and a
+  `FOREIGN_HOST` error naming the addresses that work, so a page elsewhere
+  cannot point a name of its own at this machine and read a project's graph.
+  This is a change you can notice: a forwarded address under another domain,
+  such as a hosted editor's port-forwarding name, is now refused. Forwarding
+  a port on this machine still works. A request with no `Host` header is
+  answered. The server still binds `127.0.0.1` and nothing else, the name is
+  never looked up, and no route was added. studi0's serving contract in the
+  generated reference now carries `name`, `default_port`, `answers_to`, and
+  `foreign_host`.
+
 - **studi0 says plainly when nothing is built yet.** Opened on a project with
   no build, the page used to show a card and, next to it, a "viewer
   disconnected" banner, although the viewer was connected and the server had

@@ -4,14 +4,14 @@
       "s0ma-lang-core": 63,
       "s0ma-lang-dsl": 10,
       "s0ma-lang-mcp": 40,
-      "s0ma-lang-studi0": 50
+      "s0ma-lang-studi0": 55
     },
     "by_kind": {
       "ADAPTER": 2,
       "CONFIG": 2,
-      "CONSTANT": 22,
+      "CONSTANT": 23,
       "FRAMEWORK": 64,
-      "FUNCTION": 67,
+      "FUNCTION": 71,
       "MODEL": 4,
       "ORCHESTRATOR": 1,
       "SERVICE": 1
@@ -19,14 +19,14 @@
     "by_layer": {
       "APPLICATION": 35,
       "FRAMEWORK": 74,
-      "PRESENTATION": 54
+      "PRESENTATION": 59
     },
     "by_visibility": {
       "(not declared)": 75,
       "INTERNAL": 5,
-      "PUBLIC": 83
+      "PUBLIC": 88
     },
-    "components": 163
+    "components": 168
   },
   "entries": [
     {
@@ -1183,6 +1183,15 @@
     },
     {
       "distribution": "s0ma-lang-studi0",
+      "id": "component:s0ma_studi0.studi0_server.FOREIGN_HOST_ERROR",
+      "intent": "The answer for a request addressed to a name studi0 does not go by, on every path. studi0 answers only under its own names, so a page elsewhere that points a name of its own at this machine cannot read the project through it, and the answer names the addresses that do work so a person who typed another one knows where to go.",
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_server.NOT_BUILT_ERROR",
       "intent": "The answer GET /api/graph gives for a project that has no build artifacts at all. There is no graph to serve and an empty one would be a lie a viewer could not detect — an empty graph and an unbuilt project look identical on screen — so studi0 names the situation and names the remedy instead.",
       "kind": "CONSTANT",
@@ -1211,7 +1220,7 @@
     {
       "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_server.Studi0ServerConfig",
-      "intent": "The studi0 host's settings: the loopback interface the server is allowed to bind, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number.",
+      "intent": "The studi0 host's settings: the loopback interface the server is allowed to bind, the name and port of the address studi0 offers when it is not asked for a port, the names a request may address it by, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number.",
       "kind": "CONFIG",
       "layer": "PRESENTATION",
       "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
@@ -1255,6 +1264,15 @@
     },
     {
       "distribution": "s0ma-lang-studi0",
+      "id": "component:s0ma_studi0.studi0_server.bind_server",
+      "intent": "Binds studi0 where its launcher asked. Asked for no port, studi0 tries its default port and, when another program holds it, takes a port the system assigns, so a second studi0 beside a first still starts. Asked for a port, it binds that one or fails as the bind failed; asked for 0, it takes a port the system assigns.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_server.bound_address",
       "intent": "Reports the address a running studi0 server actually bound, asked of the socket itself rather than of the requested settings — the only answer that survives an OS-assigned port, and the one a caller prints or asserts on.",
       "kind": "FUNCTION",
@@ -1273,6 +1291,24 @@
     },
     {
       "distribution": "s0ma-lang-studi0",
+      "id": "component:s0ma_studi0.studi0_server.host_is_answered",
+      "intent": "Decides whether a request is addressed to studi0 by one of its own names, read from the request's Host header. A name is compared without its port and without regard to case, so a port forwarded on this machine still reaches studi0; a request that carries no Host at all is answered, since no browser sends one.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-lang-studi0",
+      "id": "component:s0ma_studi0.studi0_server.named_url",
+      "intent": "Writes the address studi0 offers for a port under its own name, the one it prints first and opens in a browser. The name is written, never looked up.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_server.project_display_name",
       "intent": "Names the project studi0 is showing the way a person would name it — its own directory name — for the one line studi0 prints when it starts serving. The served page is never told: it carries no project name at all, because everything it shows it learns from the graph API.",
       "kind": "FUNCTION",
@@ -1283,7 +1319,7 @@
     {
       "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_server.route_request",
-      "intent": "Decides what studi0 answers for one requested path: the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve.",
+      "intent": "Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve.",
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
       "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
@@ -1293,6 +1329,15 @@
       "distribution": "s0ma-lang-studi0",
       "id": "component:s0ma_studi0.studi0_server.run_server",
       "intent": "Runs a studi0 server until the person watching it stops it, and closes the socket on the way out — an interrupted studi0 leaves nothing bound behind it.",
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
+      "visibility": "PUBLIC"
+    },
+    {
+      "distribution": "s0ma-lang-studi0",
+      "id": "component:s0ma_studi0.studi0_server.serving_lines",
+      "intent": "Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not treat .localhost names as this machine, and, when the default port was taken, a plain line saying which port this one has instead.",
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
       "read_from": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json",
@@ -1505,8 +1550,8 @@
       "source": "packages/s0ma-mcp/src/s0ma_mcp/_built/*.s0ma.json"
     },
     {
-      "components": 50,
-      "content_sha256": "6ecca1d6a0510e2ee9b73fc0005cbd234382f8b0edb9e197fb16f5b054265ab3",
+      "components": 55,
+      "content_sha256": "c4f84f398bd07efb7e5bc6191dffe4108c9dd2493052b0c3de9cb6f8f2bc384b",
       "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/*.s0ma.json"
     },
     {
@@ -1524,6 +1569,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:2d08875ea7f6f08e"
+    "snapshot_hash": "sha256:23110c6009d21d70"
   }
 }

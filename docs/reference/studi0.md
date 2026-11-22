@@ -43,9 +43,13 @@ Id `authority:declared/studi0.serving-contract`, declared as `Studi0ServerConfig
 
 | Fact | Value |
 | --- | --- |
+| `answers_to` | `studi0.localhost,localhost,127.0.0.1` |
 | `client_poll_ms` | `1000` |
+| `default_port` | `5710` |
+| `foreign_host` | `FOREIGN_HOST` |
 | `host` | `127.0.0.1` |
 | `methods` | `GET` |
+| `name` | `studi0.localhost` |
 | `routes` | `5` |
 | `shutdown_poll_seconds` | `0.2` |
 | `unserved` | `NOT_FOUND` |
