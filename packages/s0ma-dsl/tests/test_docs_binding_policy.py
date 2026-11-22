@@ -354,7 +354,7 @@ class TestCoresUnboundSurfaces:
 
 
 class TestTheCountedCeiling:
-    """One hundred and seventy-two unbound today, and a stated ceiling of 175."""
+    """One hundred and seventy-four unbound today, and a stated ceiling of 175."""
 
     @requires_checkout
     def test_the_ledger_is_within_its_ceiling(
@@ -373,7 +373,7 @@ class TestTheCountedCeiling:
         """The shape, which is what the ceiling is a backstop for.
 
         Thirty-six of these are decisions about particular surfaces and
-        are enumerated by id above. The other hundred and thirty-six are
+        are enumerated by id above. The other hundred and thirty-eight are
         one ruling each about a whole source: a diagnostic code is a label
         on a report and a configuration key is a value in a table, and
         neither has an implementing component by its nature. A fifth
@@ -384,8 +384,11 @@ class TestTheCountedCeiling:
         ``GRAMMAR_MIGRATION_ROOT_INVALID``, with its registration beside
         the other grammar migration codes, and the hundred and
         seventeenth, ``GENERATED_FILE_COMPILE_ERROR``, with the compile
-        pass over each emitted module. All three are counted here like the
-        other hundred and fourteen.
+        pass over each emitted module. The hundred and eighteenth,
+        ``UNBOUND_NAME_AT_LOAD``, and the hundred and nineteenth,
+        ``UNBOUND_NAME_IN_BODY``, arrived with the name check over each
+        emitted module. All five are counted here like the other hundred
+        and fourteen.
         """
         counted = collections.Counter(
             surface.provenance.adapter_id for surface in _unbound(surfaces)
@@ -394,9 +397,9 @@ class TestTheCountedCeiling:
             "cli": 7,
             "config": 19,
             "core": 29,
-            "diagnostics": 117,
+            "diagnostics": 119,
         }
-        assert sum(counted.values()) == 172
+        assert sum(counted.values()) == 174
 
     @requires_checkout
     def test_no_surface_is_unbound_and_silent(
@@ -404,7 +407,7 @@ class TestTheCountedCeiling:
     ) -> None:
         """§6.3's actual requirement, which the ceiling exists to bound.
 
-        Zero silent unbounds. Every one of the hundred and seventy-two
+        Zero silent unbounds. Every one of the hundred and seventy-four
         says, in writing, why it reaches nothing — that is what makes it
         an entry in a ledger rather than a gap.
         """
@@ -570,11 +573,11 @@ class TestTheSideEffectConvention:
         """The convention, stated over the whole composition.
 
         ``()`` is the unanswered question and ``('none',)`` is the answer
-        "nothing". Two hundred and sixty-four surfaces, twenty-nine of them
+        "nothing". Two hundred and sixty-six surfaces, twenty-nine of them
         allowed to be silent, and no third case.
         """
         silent = [surface for surface in surfaces if not surface.side_effects]
-        assert len(surfaces) == 264
+        assert len(surfaces) == 266
         assert len(silent) == 29
         for surface in silent:
             key = (surface.provenance.adapter_id, surface.channel)
@@ -652,7 +655,7 @@ class TestTheLedgerDescribesTheRealComposition:
     def test_the_surface_count_is_what_the_d_phase_added(
         self, surfaces: tuple[SurfaceRecord, ...]
     ) -> None:
-        """Forty-three before D5b, two hundred and sixty-four today.
+        """Forty-three before D5b, two hundred and sixty-six today.
 
         The C phase composed forty-three surfaces, all of them core's.
         Wiring the five D-phase readings added a hundred and ninety-nine:
@@ -663,13 +666,16 @@ class TestTheLedgerDescribesTheRealComposition:
         which arrived with the build's role attribution, the two hundred
         and sixty-second, the diagnostic
         ``GRAMMAR_MIGRATION_ROOT_INVALID``, registered beside the other
-        grammar migration codes, the two hundred and sixty-third, and the
+        grammar migration codes, the two hundred and sixty-third, the
         diagnostic ``GENERATED_FILE_COMPILE_ERROR``, which arrived with the
         compile pass over each emitted module, the two hundred and
-        sixty-fourth. A number that moves without a change behind it is a
-        reading that changed shape.
+        sixty-fourth, and the diagnostics ``UNBOUND_NAME_AT_LOAD`` and
+        ``UNBOUND_NAME_IN_BODY``, which arrived with the name check over
+        each emitted module, the two hundred and sixty-fifth and two
+        hundred and sixty-sixth. A number that moves without a change
+        behind it is a reading that changed shape.
         """
-        assert len(surfaces) == 264
+        assert len(surfaces) == 266
         by_adapter = collections.Counter(
             surface.provenance.adapter_id for surface in surfaces
         )
@@ -677,7 +683,7 @@ class TestTheLedgerDescribesTheRealComposition:
             "cli": 44,
             "config": 19,
             "core": 43,
-            "diagnostics": 117,
+            "diagnostics": 119,
             "mcp": 36,
             "studi0": 5,
         }
