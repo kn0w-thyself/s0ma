@@ -7,25 +7,27 @@
         "covered_by": {
           "state": "value",
           "value": [
-            "tests/test_launch.py — loopback-only binding"
+            "tests/test_launch.py — loopback-only binding",
+            "tests/test_launch.py — the default address and its fallback",
+            "tests/test_launch.py — studi0 answers only to its own names"
           ]
         },
         "invariants": {
           "state": "value",
-          "value": "host is the loopback address 127.0.0.1 — studi0 never offers itself to another machine."
+          "value": "host is the loopback address 127.0.0.1 — studi0 never offers itself to another machine. name is a .localhost name, which a browser keeps on this machine; studi0 prints it and opens it but never looks it up, and binds host alone. default_port is 5710, the letters of studi0 that have a digit (s, t, i, 0). answers_to is exactly name, localhost and host."
         },
         "schema": {
           "state": "value",
-          "value": "Class-level constants — host: str (always the loopback address), shutdown_poll_seconds: float, client_poll_interval_ms: int."
+          "value": "Class-level constants — host: str (always the loopback address), name: str (the name in the address studi0 prints and opens), default_port: int (the port tried when none is asked for), answers_to: tuple[str, ...] (the host names a request may carry, lowercase), shutdown_poll_seconds: float, client_poll_interval_ms: int."
         }
       },
       "intent": {
         "state": "value",
-        "value": "The studi0 host's settings: the loopback interface the server is allowed to bind, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number."
+        "value": "The studi0 host's settings: the loopback interface the server is allowed to bind, the name and port of the address studi0 offers when it is not asked for a port, the names a request may address it by, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number."
       },
       "kind": "CONFIG",
       "location": {
-        "end_line": 25,
+        "end_line": 28,
         "start_line": 14
       },
       "visibility": "PUBLIC"
@@ -42,11 +44,11 @@
         },
         "invariants": {
           "state": "value",
-          "value": "Every path here is a path route_request answers, and every path route_request answers is here — apart from the empty-string spelling of the root, which no HTTP request line can carry. Every path this table does NOT name answers NOT_FOUND: the fallback is what happens off the table, so it is not an entry on it. answered_by names registered declarations of this package and nothing else."
+          "value": "Every path here is a path route_request answers, and every path route_request answers is here — apart from the empty-string spelling of the root, which no HTTP request line can carry. Every path this table does NOT name answers NOT_FOUND: the fallback is what happens off the table, so it is not an entry on it. Every path, on the table or off it, answers FOREIGN_HOST to a request whose Host header names anything but a name in Studi0ServerConfig.answers_to: that refusal is decided before the path is read, alike for every path, so it is stated here once and is not in any entry's errors. answered_by names registered declarations of this package and nothing else."
         },
         "schema": {
           "state": "value",
-          "value": "tuple[dict[str, str], ...] constant, ordered as route_request decides. Each entry carries seven keys — path: the path as served, leading slash kept; method: the HTTP method, always GET; purpose: one sentence naming what the caller gets; effects: none (embedded bytes, nothing read) or read (the session's current reading); answered_by: the declarations that produce the answer as canonical module::name ids, comma separated; media_type: the Content-Type of a successful answer; errors: the structured error codes this path can answer with, comma separated, empty where it has none."
+          "value": "tuple[dict[str, str], ...] constant, ordered as route_request decides. Each entry carries seven keys — path: the path as served, leading slash kept; method: the HTTP method, always GET; purpose: one sentence naming what the caller gets; effects: none (embedded bytes, nothing read) or read (the session's current reading); answered_by: the declarations that produce the answer as canonical module::name ids, comma separated; media_type: the Content-Type of a successful answer; errors: the structured error codes this path can answer with to a request studi0 accepts, comma separated, empty where it has none."
         }
       },
       "intent": {
@@ -55,8 +57,8 @@
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 81,
-        "start_line": 27
+        "end_line": 84,
+        "start_line": 30
       },
       "visibility": "PUBLIC"
     },
@@ -84,8 +86,8 @@
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 100,
-        "start_line": 83
+        "end_line": 103,
+        "start_line": 86
       },
       "visibility": "PUBLIC"
     },
@@ -113,8 +115,38 @@
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 115,
-        "start_line": 102
+        "end_line": 118,
+        "start_line": 105
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::FOREIGN_HOST_ERROR",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — studi0 answers only to its own names"
+          ]
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The message names every name in Studi0ServerConfig.answers_to."
+        },
+        "schema": {
+          "state": "value",
+          "value": "dict[str, dict[str, str]] — the frozen error envelope {'error': {'code', 'message'}}, answered with status 403."
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "The answer for a request addressed to a name studi0 does not go by, on every path. studi0 answers only under its own names, so a page elsewhere that points a name of its own at this machine cannot read the project through it, and the answer names the addresses that do work so a person who typed another one knows where to go."
+      },
+      "kind": "CONSTANT",
+      "location": {
+        "end_line": 138,
+        "start_line": 120
       },
       "visibility": "PUBLIC"
     },
@@ -140,8 +172,8 @@
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 125,
-        "start_line": 117
+        "end_line": 148,
+        "start_line": 140
       },
       "visibility": "INTERNAL"
     },
@@ -167,8 +199,8 @@
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 135,
-        "start_line": 127
+        "end_line": 158,
+        "start_line": 150
       },
       "visibility": "INTERNAL"
     },
@@ -197,8 +229,8 @@
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 145,
-        "start_line": 137
+        "end_line": 168,
+        "start_line": 160
       },
       "visibility": "INTERNAL"
     },
@@ -227,8 +259,8 @@
       },
       "kind": "CONSTANT",
       "location": {
-        "end_line": 155,
-        "start_line": 147
+        "end_line": 178,
+        "start_line": 170
       },
       "visibility": "INTERNAL"
     },
@@ -291,8 +323,73 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 214,
-        "start_line": 186
+        "end_line": 237,
+        "start_line": 209
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::host_is_answered",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — studi0 answers only to its own names"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "host is the Host header exactly as the request carried it, or None when there was none"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never resolves a name, so the answer depends on the header alone."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns True when host is None or blank, or when the name it carries, with any port removed and lowercased, is one of Studi0ServerConfig.answers_to; returns False for every other name. Looks nothing up."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Decides whether a request is addressed to studi0 by one of its own names, read from the request's Host header. A name is compared without its port and without regard to case, so a port forwarded on this machine still reaches studi0; a request that carries no Host at all is answered, since no browser sends one."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 277,
+        "start_line": 239
       },
       "visibility": "PUBLIC"
     },
@@ -307,6 +404,7 @@
           "state": "value",
           "value": [
             "tests/test_launch.py — routing table",
+            "tests/test_launch.py — studi0 answers only to its own names",
             "tests/test_api.py — the API's frozen key sets",
             "tests/test_api.py — the declared route table is the served routing table",
             "tests/test_integration_live.py — the asset routes serve the embedded bytes"
@@ -324,7 +422,7 @@
         },
         "expects": {
           "state": "value",
-          "value": "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from"
+          "value": "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from; host is the request's Host header as it arrived, or None when it carried none"
         },
         "forbids": {
           "state": "value",
@@ -332,7 +430,7 @@
         },
         "guarantees": {
           "state": "value",
-          "value": "Returns a status, a content type, and an encoded body for every possible path — never raises, and never puts a traceback in a body. The three asset routes answer with the embedded bytes unchanged. Both API routes answer from a single reading, so their sequence numbers agree within one request."
+          "value": "Returns a status, a content type, and an encoded body for every possible path and host — never raises, and never puts a traceback in a body. A host host_is_answered refuses gets 403 FOREIGN_HOST whatever the path, and no reading is taken for it. The three asset routes answer with the embedded bytes unchanged. Both API routes answer from a single reading, so their sequence numbers agree within one request."
         },
         "interface": {
           "state": "none"
@@ -360,12 +458,12 @@
       },
       "intent": {
         "state": "value",
-        "value": "Decides what studi0 answers for one requested path: the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
+        "value": "Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 278,
-        "start_line": 216
+        "end_line": 354,
+        "start_line": 279
       },
       "visibility": "PUBLIC"
     },
@@ -432,8 +530,137 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 303,
-        "start_line": 280
+        "end_line": 379,
+        "start_line": 356
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::named_url",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — the serving lines"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "port is the port the server really bound"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never resolves the name it writes."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns http://studi0.localhost:<port>/ with Studi0ServerConfig.name as the name"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Writes the address studi0 offers for a port under its own name, the one it prints first and opens in a browser. The name is written, never looked up."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 404,
+        "start_line": 381
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::serving_lines",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — the serving lines"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is the project being shown; port is the port the server really bound; fell_back is True only when the default port was in use and another was taken"
+        },
+        "forbids": {
+          "state": "none"
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns two lines, or three when fell_back: 'studi0 serving <project> at <named_url>', then '  also at http://127.0.0.1:<port>/', then '  port 5710 is in use, so this one has port <port>' with the configured default port"
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not keep .localhost names on this machine, and, when the default port was taken, a plain line saying which port this one has instead."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 440,
+        "start_line": 406
       },
       "visibility": "PUBLIC"
     },
@@ -447,7 +674,8 @@
         "covered_by": {
           "state": "value",
           "value": [
-            "tests/test_launch.py — loopback-only binding, ephemeral port, no name lookup on bind"
+            "tests/test_launch.py — loopback-only binding, ephemeral port, no name lookup on bind",
+            "tests/test_launch.py — a port in use is not shared"
           ]
         },
         "declares_attributes": {
@@ -470,7 +698,7 @@
         },
         "guarantees": {
           "state": "value",
-          "value": "Returns a server bound to the loopback address only, serving nothing until it is run; requests are answered by the routing table and never logged to stderr"
+          "value": "Returns a server bound to the loopback address only, serving nothing until it is run; requests are answered by the routing table, with their Host header, and never logged to stderr. A port another socket is listening on fails to bind on every platform, Windows included, rather than being shared."
         },
         "interface": {
           "state": "none"
@@ -497,8 +725,78 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 389,
-        "start_line": 305
+        "end_line": 543,
+        "start_line": 442
+      },
+      "visibility": "PUBLIC"
+    },
+    {
+      "canonical_id": "studi0_server::bind_server",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "value",
+          "value": [
+            "tests/test_launch.py — the default address and its fallback",
+            "tests/test_launch.py — a port in use is not shared"
+          ]
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "project_root is the root of the project being viewed; port is None for the default port, 0 for a port the system assigns, or a port number; session is the viewing session to answer the API from"
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never looks a name up and never binds anything but the loopback address."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Returns the bound server and fell_back, which is True only when port was None and the default port was in use. With port None, the default port is tried first and only a port-in-use failure moves on; any other failure is raised. With a port given, its bind error is raised unchanged. Every failure it does not recover from is raised as the OSError the bind raised."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "value",
+          "value": [
+            "server",
+            "fell_back"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Binds studi0 where its launcher asked. Asked for no port, studi0 tries its default port and, when another program holds it, takes a port the system assigns, so a second studi0 beside a first still starts. Asked for a port, it binds that one or fails as the bind failed; asked for 0, it takes a port the system assigns."
+      },
+      "kind": "FUNCTION",
+      "location": {
+        "end_line": 601,
+        "start_line": 555
       },
       "visibility": "PUBLIC"
     },
@@ -564,8 +862,8 @@
       },
       "kind": "FUNCTION",
       "location": {
-        "end_line": 428,
-        "start_line": 391
+        "end_line": 640,
+        "start_line": 603
       },
       "visibility": "PUBLIC"
     }
@@ -574,6 +872,24 @@
   "doc_refs": [],
   "edges": {
     "authored": [
+      {
+        "carries": "the default port",
+        "coupling": "TIGHT",
+        "intent": "bind_server READS Studi0ServerConfig: the default port",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::bind_server",
+        "target": "studi0_server::Studi0ServerConfig"
+      },
+      {
+        "carries": "the port to bind",
+        "coupling": "TIGHT",
+        "intent": "bind_server CALLS create_server: the port to bind",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "studi0_server::bind_server",
+        "target": "studi0_server::create_server"
+      },
       {
         "carries": "the loopback host to bind",
         "coupling": "TIGHT",
@@ -593,6 +909,24 @@
         "target": "studi0_server::route_request"
       },
       {
+        "carries": "the names studi0 answers to",
+        "coupling": "TIGHT",
+        "intent": "host_is_answered READS Studi0ServerConfig: the names studi0 answers to",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::host_is_answered",
+        "target": "studi0_server::Studi0ServerConfig"
+      },
+      {
+        "carries": "the name in the address",
+        "coupling": "TIGHT",
+        "intent": "named_url READS Studi0ServerConfig: the name in the address",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::named_url",
+        "target": "studi0_server::Studi0ServerConfig"
+      },
+      {
         "carries": "the sh0w stylesheet",
         "coupling": "TIGHT",
         "intent": "route_request READS APP_CSS: the sh0w stylesheet",
@@ -609,6 +943,15 @@
         "relation": "READS",
         "source": "studi0_server::route_request",
         "target": "studi0_server::APP_JS"
+      },
+      {
+        "carries": "the answer to a request addressed to another name",
+        "coupling": "TIGHT",
+        "intent": "route_request READS FOREIGN_HOST_ERROR: the answer to a request addressed to another name",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::FOREIGN_HOST_ERROR"
       },
       {
         "carries": "the sh0w page served at the root",
@@ -665,6 +1008,15 @@
         "target": "studi0_server::_JS_CONTENT_TYPE"
       },
       {
+        "carries": "the request's Host header",
+        "coupling": "TIGHT",
+        "intent": "route_request CALLS host_is_answered: the request's Host header",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "studi0_server::route_request",
+        "target": "studi0_server::host_is_answered"
+      },
+      {
         "carries": "how often the loop checks for a shutdown request",
         "coupling": "TIGHT",
         "intent": "run_server READS Studi0ServerConfig: how often the loop checks for a shutdown request",
@@ -672,9 +1024,42 @@
         "relation": "READS",
         "source": "studi0_server::run_server",
         "target": "studi0_server::Studi0ServerConfig"
+      },
+      {
+        "carries": "the loopback host and the default port",
+        "coupling": "TIGHT",
+        "intent": "serving_lines READS Studi0ServerConfig: the loopback host and the default port",
+        "origin": "inline_depends_on",
+        "relation": "READS",
+        "source": "studi0_server::serving_lines",
+        "target": "studi0_server::Studi0ServerConfig"
+      },
+      {
+        "carries": "the bound port",
+        "coupling": "TIGHT",
+        "intent": "serving_lines CALLS named_url: the bound port",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "studi0_server::serving_lines",
+        "target": "studi0_server::named_url"
+      },
+      {
+        "carries": "the project root",
+        "coupling": "TIGHT",
+        "intent": "serving_lines CALLS project_display_name: the project root",
+        "origin": "inline_depends_on",
+        "relation": "CALLS",
+        "source": "studi0_server::serving_lines",
+        "target": "studi0_server::project_display_name"
       }
     ],
     "derived": [
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "studi0_server::bind_server",
+        "target": "studi0_state::Studi0Session"
+      },
       {
         "origin": "function_signature",
         "relation": "TYPE_USES",
@@ -722,10 +1107,15 @@
       "ROUTE_TABLE",
       "NOT_BUILT_ERROR",
       "NOT_FOUND_ERROR",
+      "FOREIGN_HOST_ERROR",
       "project_display_name",
+      "host_is_answered",
       "route_request",
       "bound_address",
+      "named_url",
+      "serving_lines",
       "create_server",
+      "bind_server",
       "run_server"
     ]
   },
@@ -744,8 +1134,8 @@
       },
       "layer": "PRESENTATION",
       "location": {
-        "end_line": 162,
-        "start_line": 157
+        "end_line": 185,
+        "start_line": 180
       },
       "module": "studi0_server",
       "name": "_json_bytes",
@@ -765,8 +1155,8 @@
       },
       "layer": "PRESENTATION",
       "location": {
-        "end_line": 173,
-        "start_line": 164
+        "end_line": 196,
+        "start_line": 187
       },
       "module": "studi0_server",
       "name": "_text_response",
@@ -786,11 +1176,32 @@
       },
       "layer": "PRESENTATION",
       "location": {
-        "end_line": 184,
-        "start_line": 175
+        "end_line": 207,
+        "start_line": 198
       },
       "module": "studi0_server",
       "name": "_json_response",
+      "tags": []
+    },
+    {
+      "body": {
+        "state": "value",
+        "value": "def _port_in_use(error: OSError) -> bool:\n    \"\"\"Whether a failed bind failed because the port is taken.\"\"\"\n    codes = {errno.EADDRINUSE, getattr(errno, \"WSAEADDRINUSE\", errno.EADDRINUSE)}\n    if sys.platform == \"win32\":\n        codes |= {errno.EACCES, getattr(errno, \"WSAEACCES\", errno.EACCES)}\n    return error.errno in codes or getattr(error, \"winerror\", None) in codes"
+      },
+      "body_kind": "function",
+      "canonical_id": "studi0_server::_port_in_use",
+      "inline": false,
+      "intent": {
+        "state": "value",
+        "value": "Tells a bind that failed because another socket holds the port from every other failure. Windows says so in two ways: in use, or access denied when the holder asked for the port exclusively."
+      },
+      "layer": "PRESENTATION",
+      "location": {
+        "end_line": 553,
+        "start_line": 545
+      },
+      "module": "studi0_server",
+      "name": "_port_in_use",
       "tags": []
     }
   ],
@@ -802,7 +1213,10 @@
     "requires": {
       "state": "value",
       "value": [
+        "errno",
         "json",
+        "socket",
+        "sys",
         "pathlib.Path",
         "typing.Any",
         "urllib.parse.urlsplit",
@@ -833,13 +1247,13 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:23334254a705454d9d075663a24b8cf8cf144e6a7c0649cfc9b394f88f4ab665",
+    "content_hash": "sha256:64ca96c27af2aca48abfb6522487c7cc24cfe736eff69c262f50c55852a0634c",
     "exports_helpers": {
       "state": "none"
     },
     "intent": {
       "state": "value",
-      "value": "The studi0 local host: a loopback-only HTTP server that serves one page per s0ma project — the sh0w view of the project's own component graph — plus the read-only graph API the page polls. It binds 127.0.0.1 only, answers GET only, and writes nothing at all: the one file studi0 ever puts in the project it is showing is the presence marker its launcher writes (studi0_narration.write_presence), and no request path touches disk."
+      "value": "The studi0 local host: a loopback-only HTTP server that serves one page per s0ma project — the sh0w view of the project's own component graph — plus the read-only graph API the page polls. It binds 127.0.0.1 only, offers itself at http://studi0.localhost:5710/ by default, answers only requests addressed to its own names, answers GET only, and writes nothing at all: the one file studi0 ever puts in the project it is showing is the presence marker its launcher writes (studi0_narration.write_presence), and no request path touches disk."
     },
     "layer": "PRESENTATION",
     "name": "studi0_server",
@@ -849,6 +1263,6 @@
     "version": "0.22.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:23334254a705454d",
+  "source_hash": "sha256:64ca96c27af2aca4",
   "transpiler_version": "1.0.0"
 }

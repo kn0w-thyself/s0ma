@@ -1,10 +1,10 @@
 module studi0_server
     layer: PRESENTATION
     version: 0.22.0
-    intent: "The studi0 local host: a loopback-only HTTP server that serves one page per s0ma project — the sh0w view of the project's own component graph — plus the read-only graph API the page polls. It binds 127.0.0.1 only, answers GET only, and writes nothing at all: the one file studi0 ever puts in the project it is showing is the presence marker its launcher writes (studi0_narration.write_presence), and no request path touches disk."
-    exports: [Studi0ServerConfig, ROUTE_TABLE, NOT_BUILT_ERROR, NOT_FOUND_ERROR, project_display_name, route_request, bound_address, create_server, run_server]
+    intent: "The studi0 local host: a loopback-only HTTP server that serves one page per s0ma project — the sh0w view of the project's own component graph — plus the read-only graph API the page polls. It binds 127.0.0.1 only, offers itself at http://studi0.localhost:5710/ by default, answers only requests addressed to its own names, answers GET only, and writes nothing at all: the one file studi0 ever puts in the project it is showing is the presence marker its launcher writes (studi0_narration.write_presence), and no request path touches disk."
+    exports: [Studi0ServerConfig, ROUTE_TABLE, NOT_BUILT_ERROR, NOT_FOUND_ERROR, FOREIGN_HOST_ERROR, project_display_name, host_is_answered, route_request, bound_address, named_url, serving_lines, create_server, bind_server, run_server]
 
-    requires: [json, pathlib.Path, typing.Any, urllib.parse:urlsplit, http.server:BaseHTTPRequestHandler, http.server:ThreadingHTTPServer, socketserver:TCPServer]
+    requires: [errno, json, socket, sys, pathlib.Path, typing.Any, urllib.parse:urlsplit, http.server:BaseHTTPRequestHandler, http.server:ThreadingHTTPServer, socketserver:TCPServer]
     uses: [studi0_state.Studi0Session, studi0_state.create_session, studi0_state.read_snapshot, studi0_state.state_document, studi0_state.graph_document, sh0w_assets.INDEX_HTML, sh0w_assets.APP_CSS, sh0w_assets.APP_JS]
     soft_requires: none
     runtime_only_requires: none
@@ -14,13 +14,16 @@ module studi0_server
 cell Studi0ServerConfig :: PRESENTATION
     kind: CONFIG
     visibility: PUBLIC
-    intent: "The studi0 host's settings: the loopback interface the server is allowed to bind, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number."
-    schema: "Class-level constants — host: str (always the loopback address), shutdown_poll_seconds: float, client_poll_interval_ms: int."
-    invariants: "host is the loopback address 127.0.0.1 — studi0 never offers itself to another machine."
-    covered_by: ["tests/test_launch.py — loopback-only binding"]
+    intent: "The studi0 host's settings: the loopback interface the server is allowed to bind, the name and port of the address studi0 offers when it is not asked for a port, the names a request may address it by, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number."
+    schema: "Class-level constants — host: str (always the loopback address), name: str (the name in the address studi0 prints and opens), default_port: int (the port tried when none is asked for), answers_to: tuple[str, ...] (the host names a request may carry, lowercase), shutdown_poll_seconds: float, client_poll_interval_ms: int."
+    invariants: "host is the loopback address 127.0.0.1 — studi0 never offers itself to another machine. name is a .localhost name, which a browser keeps on this machine; studi0 prints it and opens it but never looks it up, and binds host alone. default_port is 5710, the letters of studi0 that have a digit (s, t, i, 0). answers_to is exactly name, localhost and host."
+    covered_by: ["tests/test_launch.py — loopback-only binding", "tests/test_launch.py — the default address and its fallback", "tests/test_launch.py — studi0 answers only to its own names"]
     ---
     class Studi0ServerConfig:
         host: str = "127.0.0.1"
+        name: str = "studi0.localhost"
+        default_port: int = 5710
+        answers_to: tuple[str, ...] = ("studi0.localhost", "localhost", "127.0.0.1")
         shutdown_poll_seconds: float = 0.2
         client_poll_interval_ms: int = 1000
 
@@ -28,8 +31,8 @@ cell ROUTE_TABLE :: PRESENTATION
     kind: CONSTANT
     visibility: PUBLIC
     intent: "Every path studi0 serves, declared as data: what a caller asks for, what comes back, which declarations produce it, and what answering costs. The routing decision is still taken in route_request one path at a time — this is that same table said out loud, so a person, a test and a documentation build can all read what studi0 serves without reading a function body and guessing. The two are held in step by tests/test_api.py: a path named here that route_request does not answer, or a path route_request answers that is not named here, fails there."
-    schema: "tuple[dict[str, str], ...] constant, ordered as route_request decides. Each entry carries seven keys — path: the path as served, leading slash kept; method: the HTTP method, always GET; purpose: one sentence naming what the caller gets; effects: none (embedded bytes, nothing read) or read (the session's current reading); answered_by: the declarations that produce the answer as canonical module::name ids, comma separated; media_type: the Content-Type of a successful answer; errors: the structured error codes this path can answer with, comma separated, empty where it has none."
-    invariants: "Every path here is a path route_request answers, and every path route_request answers is here — apart from the empty-string spelling of the root, which no HTTP request line can carry. Every path this table does NOT name answers NOT_FOUND: the fallback is what happens off the table, so it is not an entry on it. answered_by names registered declarations of this package and nothing else."
+    schema: "tuple[dict[str, str], ...] constant, ordered as route_request decides. Each entry carries seven keys — path: the path as served, leading slash kept; method: the HTTP method, always GET; purpose: one sentence naming what the caller gets; effects: none (embedded bytes, nothing read) or read (the session's current reading); answered_by: the declarations that produce the answer as canonical module::name ids, comma separated; media_type: the Content-Type of a successful answer; errors: the structured error codes this path can answer with to a request studi0 accepts, comma separated, empty where it has none."
+    invariants: "Every path here is a path route_request answers, and every path route_request answers is here — apart from the empty-string spelling of the root, which no HTTP request line can carry. Every path this table does NOT name answers NOT_FOUND: the fallback is what happens off the table, so it is not an entry on it. Every path, on the table or off it, answers FOREIGN_HOST to a request whose Host header names anything but a name in Studi0ServerConfig.answers_to: that refusal is decided before the path is read, alike for every path, so it is stated here once and is not in any entry's errors. answered_by names registered declarations of this package and nothing else."
     covered_by: ["tests/test_api.py — the declared route table is the served routing table"]
     ---
     ROUTE_TABLE: tuple[dict[str, str], ...] = (
@@ -111,6 +114,26 @@ cell NOT_FOUND_ERROR :: PRESENTATION
         "error": {
             "code": "NOT_FOUND",
             "message": "studi0 does not serve this path",
+        }
+    }
+
+cell FOREIGN_HOST_ERROR :: PRESENTATION
+    kind: CONSTANT
+    visibility: PUBLIC
+    intent: "The answer for a request addressed to a name studi0 does not go by, on every path. studi0 answers only under its own names, so a page elsewhere that points a name of its own at this machine cannot read the project through it, and the answer names the addresses that do work so a person who typed another one knows where to go."
+    schema: "dict[str, dict[str, str]] — the frozen error envelope {'error': {'code', 'message'}}, answered with status 403."
+    invariants: "The message names every name in Studi0ServerConfig.answers_to."
+    covered_by: ["tests/test_launch.py — studi0 answers only to its own names"]
+    ---
+    FOREIGN_HOST_ERROR: dict[str, dict[str, str]] = {
+        "error": {
+            "code": "FOREIGN_HOST",
+            "message": (
+                "studi0 answers only under its own names: studi0.localhost, "
+                "localhost and 127.0.0.1, on the port it printed when it "
+                "started, for example http://studi0.localhost:5710/ or "
+                "http://127.0.0.1:5710/"
+            ),
         }
     }
 
@@ -213,12 +236,52 @@ nerve project_display_name :: PRESENTATION
         """
         return project_root.name or project_root.resolve().name or str(project_root)
 
+nerve host_is_answered :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Decides whether a request is addressed to studi0 by one of its own names, read from the request's Host header. A name is compared without its port and without regard to case, so a port forwarded on this machine still reaches studi0; a request that carries no Host at all is answered, since no browser sends one."
+    expects: "host is the Host header exactly as the request carried it, or None when there was none"
+    guarantees: "Returns True when host is None or blank, or when the name it carries, with any port removed and lowercased, is one of Studi0ServerConfig.answers_to; returns False for every other name. Looks nothing up."
+    forbids: "Never resolves a name, so the answer depends on the header alone."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_launch.py — studi0 answers only to its own names"]
+    depends_on:
+        Studi0ServerConfig: {relation: READS, carries: "the names studi0 answers to", coupling: TIGHT}
+    ---
+    def host_is_answered(host: str | None) -> bool:
+        """Whether a request's Host header names studi0 by one of its names.
+
+        ``studi0.localhost:5710``, ``LOCALHOST`` and ``127.0.0.1:61234``
+        are all answered; ``example.test`` is not, under any port. A
+        bracketed address (``[::1]:5710``) is read up to its closing
+        bracket, so its colons are not taken for a port.
+        """
+        if host is None:
+            return True
+        written = host.strip()
+        if not written:
+            return True
+        if written.startswith("["):
+            name = written[1:].partition("]")[0]
+        else:
+            name = written.partition(":")[0]
+        return name.lower() in Studi0ServerConfig.answers_to
+
 nerve route_request :: PRESENTATION
     kind: FUNCTION
     visibility: PUBLIC
-    intent: "Decides what studi0 answers for one requested path: the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
-    expects: "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from"
-    guarantees: "Returns a status, a content type, and an encoded body for every possible path — never raises, and never puts a traceback in a body. The three asset routes answer with the embedded bytes unchanged. Both API routes answer from a single reading, so their sequence numbers agree within one request."
+    intent: "Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
+    expects: "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from; host is the request's Host header as it arrived, or None when it carried none"
+    guarantees: "Returns a status, a content type, and an encoded body for every possible path and host — never raises, and never puts a traceback in a body. A host host_is_answered refuses gets 403 FOREIGN_HOST whatever the path, and no reading is taken for it. The three asset routes answer with the embedded bytes unchanged. Both API routes answer from a single reading, so their sequence numbers agree within one request."
     forbids: "Never puts a traceback in a response body, and never changes a byte of the embedded page, stylesheet or script it serves."
     evaluates_at: FUNCTION_BOUNDARY
     returns: [status, content_type, body]
@@ -230,19 +293,30 @@ nerve route_request :: PRESENTATION
     expected_exceptions: none
     consumes_via_dict: none
     declares_attributes: none
-    covered_by: ["tests/test_launch.py — routing table", "tests/test_api.py — the API's frozen key sets", "tests/test_api.py — the declared route table is the served routing table", "tests/test_integration_live.py — the asset routes serve the embedded bytes"]
+    covered_by: ["tests/test_launch.py — routing table", "tests/test_launch.py — studi0 answers only to its own names", "tests/test_api.py — the API's frozen key sets", "tests/test_api.py — the declared route table is the served routing table", "tests/test_integration_live.py — the asset routes serve the embedded bytes"]
     depends_on:
         INDEX_HTML: {relation: READS, carries: "the sh0w page served at the root", coupling: TIGHT}
         APP_CSS: {relation: READS, carries: "the sh0w stylesheet", coupling: TIGHT}
         APP_JS: {relation: READS, carries: "the sh0w script", coupling: TIGHT}
         NOT_BUILT_ERROR: {relation: READS, carries: "the unbuilt-project answer", coupling: TIGHT}
         NOT_FOUND_ERROR: {relation: READS, carries: "the unserved-path answer", coupling: TIGHT}
+        FOREIGN_HOST_ERROR: {relation: READS, carries: "the answer to a request addressed to another name", coupling: TIGHT}
+        host_is_answered: {relation: CALLS, carries: "the request's Host header", coupling: TIGHT}
         _HTML_CONTENT_TYPE: {relation: READS, carries: "the HTML content type header", coupling: TIGHT}
         _CSS_CONTENT_TYPE: {relation: READS, carries: "the stylesheet content type header", coupling: TIGHT}
         _JS_CONTENT_TYPE: {relation: READS, carries: "the script content type header", coupling: TIGHT}
     ---
-    def route_request(path: str, session: Studi0Session) -> dict[str, Any]:
+    def route_request(
+        path: str, session: Studi0Session, host: str | None = None
+    ) -> dict[str, Any]:
         """Answer one requested path with a status, content type, and body.
+
+        A request addressed to a name studi0 does not go by is refused
+        before its path is read, the same way on every path: studi0 is
+        reachable at its own names and nowhere else, so a page elsewhere
+        that points another name at this machine reads nothing. Left
+        out, ``host`` is a request that carried no Host header, which is
+        answered.
 
         The whole routing table of this build lives here: the root and
         the two ``/assets`` paths serve the sh0w page's own embedded
@@ -262,6 +336,8 @@ nerve route_request :: PRESENTATION
         graph stamped with a sequence number ``/api/state`` never
         reported.
         """
+        if not host_is_answered(host):
+            return _json_response(403, FOREIGN_HOST_ERROR)
         if path in ("", "/"):
             return _text_response(_HTML_CONTENT_TYPE, INDEX_HTML)
         if path == "/assets/app.css":
@@ -302,12 +378,73 @@ nerve bound_address :: PRESENTATION
         address = server.socket.getsockname()
         return {"host": str(address[0]), "port": int(address[1])}
 
+nerve named_url :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Writes the address studi0 offers for a port under its own name, the one it prints first and opens in a browser. The name is written, never looked up."
+    expects: "port is the port the server really bound"
+    guarantees: "Returns http://studi0.localhost:<port>/ with Studi0ServerConfig.name as the name"
+    forbids: "Never resolves the name it writes."
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_launch.py — the serving lines"]
+    depends_on:
+        Studi0ServerConfig: {relation: READS, carries: "the name in the address", coupling: TIGHT}
+    ---
+    def named_url(port: int) -> str:
+        """The address studi0 prints first and opens, for one bound port."""
+        return f"http://{Studi0ServerConfig.name}:{port}/"
+
+nerve serving_lines :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not keep .localhost names on this machine, and, when the default port was taken, a plain line saying which port this one has instead."
+    expects: "project_root is the project being shown; port is the port the server really bound; fell_back is True only when the default port was in use and another was taken"
+    guarantees: "Returns two lines, or three when fell_back: 'studi0 serving <project> at <named_url>', then '  also at http://127.0.0.1:<port>/', then '  port 5710 is in use, so this one has port <port>' with the configured default port"
+    forbids: none
+    evaluates_at: FUNCTION_BOUNDARY
+    provides: none
+    returns: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_launch.py — the serving lines"]
+    depends_on:
+        project_display_name: {relation: CALLS, carries: "the project root", coupling: TIGHT}
+        named_url: {relation: CALLS, carries: "the bound port", coupling: TIGHT}
+        Studi0ServerConfig: {relation: READS, carries: "the loopback host and the default port", coupling: TIGHT}
+    ---
+    def serving_lines(project_root: Path, port: int, fell_back: bool) -> list[str]:
+        """The lines studi0 prints once it is serving, first line first."""
+        lines = [
+            f"studi0 serving {project_display_name(project_root)} at {named_url(port)}",
+            f"  also at http://{Studi0ServerConfig.host}:{port}/",
+        ]
+        if fell_back:
+            lines.append(
+                f"  port {Studi0ServerConfig.default_port} is in use, "
+                f"so this one has port {port}"
+            )
+        return lines
+
 nerve create_server :: PRESENTATION
     kind: FUNCTION
     visibility: PUBLIC
     intent: "Builds the studi0 host for one project: a threading HTTP server bound to the loopback interface whose only behavior is to answer GET requests from the routing table, quietly, so the console stays the caller's."
     expects: "project_root is the root of the project being viewed; port is a free port, or 0 to let the OS assign one; session is the viewing session to answer the API from, or None to open a fresh one"
-    guarantees: "Returns a server bound to the loopback address only, serving nothing until it is run; requests are answered by the routing table and never logged to stderr"
+    guarantees: "Returns a server bound to the loopback address only, serving nothing until it is run; requests are answered by the routing table, with their Host header, and never logged to stderr. A port another socket is listening on fails to bind on every platform, Windows included, rather than being shared."
     forbids: "Never binds to any address but loopback, so nothing beyond this machine can reach the server it builds."
     evaluates_at: FUNCTION_BOUNDARY
     provides: none
@@ -319,7 +456,7 @@ nerve create_server :: PRESENTATION
     expected_exceptions: none
     consumes_via_dict: none
     declares_attributes: none
-    covered_by: ["tests/test_launch.py — loopback-only binding, ephemeral port, no name lookup on bind"]
+    covered_by: ["tests/test_launch.py — loopback-only binding, ephemeral port, no name lookup on bind", "tests/test_launch.py — a port in use is not shared"]
     depends_on:
         Studi0ServerConfig: {relation: READS, carries: "the loopback host to bind", coupling: TIGHT}
         route_request: {relation: CALLS, carries: "the requested path", coupling: TIGHT}
@@ -359,7 +496,11 @@ nerve create_server :: PRESENTATION
 
             def do_GET(self) -> None:
                 """Write the routing table's answer for this request."""
-                response = route_request(urlsplit(self.path).path, active_session)
+                response = route_request(
+                    urlsplit(self.path).path,
+                    active_session,
+                    self.headers.get("Host"),
+                )
                 body: bytes = response["body"]
                 self.send_response(response["status"])
                 self.send_header("Content-Type", response["content_type"])
@@ -372,10 +513,23 @@ nerve create_server :: PRESENTATION
                 """Keep the console the caller's — studi0 logs no requests."""
 
         class _LoopbackServer(ThreadingHTTPServer):
-            """Binds the loopback literal without looking its name up."""
+            """Binds the loopback literal without looking its name up.
+
+            On Windows, SO_REUSEADDR lets a second socket bind a port
+            another one is already listening on, so a clash would never
+            be seen. There the server asks for the port exclusively
+            instead; elsewhere SO_REUSEADDR only lets a restart reuse a
+            port whose last connections are still closing.
+            """
+
+            allow_reuse_address = sys.platform != "win32"
 
             def server_bind(self) -> None:
                 """Bind the socket and record the address as bound, by value."""
+                if sys.platform == "win32":
+                    self.socket.setsockopt(
+                        socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1
+                    )
                 # HTTPServer.server_bind resolves the host with socket.getfqdn,
                 # a reverse-DNS lookup that stalls for tens of seconds on a
                 # machine whose resolver answers slowly (GitHub's hosted macOS
@@ -387,6 +541,64 @@ nerve create_server :: PRESENTATION
                 self.server_port = bound_port
 
         return _LoopbackServer((Studi0ServerConfig.host, port), _Studi0RequestHandler)
+
+helper _port_in_use :: PRESENTATION
+    intent: "Tells a bind that failed because another socket holds the port from every other failure. Windows says so in two ways: in use, or access denied when the holder asked for the port exclusively."
+    ---
+    def _port_in_use(error: OSError) -> bool:
+        """Whether a failed bind failed because the port is taken."""
+        codes = {errno.EADDRINUSE, getattr(errno, "WSAEADDRINUSE", errno.EADDRINUSE)}
+        if sys.platform == "win32":
+            codes |= {errno.EACCES, getattr(errno, "WSAEACCES", errno.EACCES)}
+        return error.errno in codes or getattr(error, "winerror", None) in codes
+
+nerve bind_server :: PRESENTATION
+    kind: FUNCTION
+    visibility: PUBLIC
+    intent: "Binds studi0 where its launcher asked. Asked for no port, studi0 tries its default port and, when another program holds it, takes a port the system assigns, so a second studi0 beside a first still starts. Asked for a port, it binds that one or fails as the bind failed; asked for 0, it takes a port the system assigns."
+    expects: "project_root is the root of the project being viewed; port is None for the default port, 0 for a port the system assigns, or a port number; session is the viewing session to answer the API from"
+    guarantees: "Returns the bound server and fell_back, which is True only when port was None and the default port was in use. With port None, the default port is tried first and only a port-in-use failure moves on; any other failure is raised. With a port given, its bind error is raised unchanged. Every failure it does not recover from is raised as the OSError the bind raised."
+    forbids: "Never looks a name up and never binds anything but the loopback address."
+    evaluates_at: FUNCTION_BOUNDARY
+    returns: [server, fell_back]
+    provides: none
+    raises: none
+    interface: none
+    latency_ms: none
+    internal: none
+    expected_exceptions: none
+    consumes_via_dict: none
+    declares_attributes: none
+    covered_by: ["tests/test_launch.py — the default address and its fallback", "tests/test_launch.py — a port in use is not shared"]
+    depends_on:
+        create_server: {relation: CALLS, carries: "the port to bind", coupling: TIGHT}
+        Studi0ServerConfig: {relation: READS, carries: "the default port", coupling: TIGHT}
+    ---
+    def bind_server(
+        project_root: Path,
+        port: int | None,
+        session: Studi0Session,
+    ) -> dict[str, Any]:
+        """Bind a studi0 server on the port asked for, or on the default.
+
+        Returns ``{"server": ..., "fell_back": bool}``. Only the default
+        falls back: a port somebody named is a port they meant, so a
+        clash there is theirs to see.
+        """
+        if port is not None:
+            return {
+                "server": create_server(project_root, port, session),
+                "fell_back": False,
+            }
+        try:
+            server = create_server(
+                project_root, Studi0ServerConfig.default_port, session
+            )
+        except OSError as error:
+            if not _port_in_use(error):
+                raise
+            return {"server": create_server(project_root, 0, session), "fell_back": True}
+        return {"server": server, "fell_back": False}
 
 nerve run_server :: PRESENTATION
     kind: FUNCTION

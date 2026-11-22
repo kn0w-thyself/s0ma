@@ -30,14 +30,14 @@ import webbrowser
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeVar
 from urllib.error import HTTPError
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 import pytest
 
 from s0ma_studi0 import launch, studi0_server
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterator
+    from collections.abc import Callable, Iterator, Mapping
     from http.server import ThreadingHTTPServer
 
 #: Generous, because Windows CI is slow — these bound a hang, they are
@@ -214,13 +214,19 @@ class ServedStudi0:
         self.url = f"http://{self.host}:{self.port}/"
         self._stopped = False
 
-    def get(self, path: str) -> tuple[int, str, bytes]:
+    def get(
+        self, path: str, *, headers: Mapping[str, str] | None = None
+    ) -> tuple[int, str, bytes]:
         """GET one path; return (status, content type, body bytes).
 
         A 404/500 is an answer, not a failure — studi0 states what it
         cannot serve — so the error responses are read like any other.
+        ``headers`` are sent as given; a ``Host`` among them replaces the
+        one the address would give.
         """
-        target = f"http://{self.host}:{self.port}{path}"
+        target = Request(
+            f"http://{self.host}:{self.port}{path}", headers=dict(headers or {})
+        )
         try:
             with urlopen(target, timeout=REQUEST_TIMEOUT) as response:
                 return (
@@ -323,7 +329,7 @@ def launch_studi0(
     def _launch(
         project_root: Path | None = None,
         *,
-        port: int = 0,
+        port: int | None = 0,
         open_browser: bool = False,
     ) -> ServedStudi0:
         root = tmp_path / "demo-project" if project_root is None else project_root
