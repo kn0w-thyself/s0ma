@@ -2,11 +2,11 @@
   "build_dir": "src/s0ma_studi0/_built",
   "external_content_files": {
     "sh0w_assets::APP_CSS": {
-      "hash": "sha256:9431dfd7a5065447bdc92e2b7d04d6e6a1188215417c6a4f74170ee54e4146cc",
+      "hash": "sha256:96f690eb3ad5581171261ddee27daac5b58e911acb8f2e013592936ed51e0fa0",
       "path": "assets/app.css"
     },
     "sh0w_assets::APP_JS": {
-      "hash": "sha256:c2cf2a510cdc8c76e1abb4aa97e829c9d1f9a0e4afca2a74069745fcb2df34d8",
+      "hash": "sha256:ab23baaae7166c21d4b2b60b3e4a47834e1a89003131c0b3f145f179fa12549e",
       "path": "assets/app.js"
     },
     "sh0w_assets::INDEX_HTML": {
@@ -20,7 +20,7 @@
       "logical_path": "sh0w_assets.s0ma",
       "name": "sh0w_assets",
       "output": "sh0w_assets.py",
-      "output_hash": "sha256:a2019e41554024c47060615cb1dfce3095d027dc18286016b3c838178411888e",
+      "output_hash": "sha256:8f70c9653ebd93ac55458cb8ee848f8d38eed04e1303cfa9f35c9476a5451d4e",
       "role": "source",
       "source": "s0ma_src/sh0w_assets.s0ma",
       "source_hash": "sha256:3465075cd3d3cffb387cd70dd1c441a39bc883c78358606d35549a57085997c1",

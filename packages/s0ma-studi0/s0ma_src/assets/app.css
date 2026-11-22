@@ -717,6 +717,41 @@ body {
   pointer-events: auto;
 }
 
+/* The marker: when the view is not following and parts the newest build
+ * added are out of view, the page's ordinary button sits at the edge of
+ * the canvas they are past. It does not move of its own accord. */
+.view-marker {
+  position: absolute;
+}
+
+.view-marker[hidden] {
+  display: none;
+}
+
+.view-marker[data-edge="above"] {
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.view-marker[data-edge="below"] {
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.view-marker[data-edge="to the left"] {
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.view-marker[data-edge="to the right"] {
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
 /* Read by a screen reader, not drawn: the reveal's announcement. */
 .visually-hidden {
   position: absolute;
