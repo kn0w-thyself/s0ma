@@ -24,17 +24,17 @@
       },
       {
         "body_output": {
-          "end_line": 1607,
+          "end_line": 1642,
           "start_line": 56
         },
         "body_source_file": "s0ma_src/assets/app.css",
         "body_source_lines": {
-          "end_line": 1552,
+          "end_line": 1587,
           "start_line": 1
         },
         "name": "APP_CSS",
         "output": {
-          "end_line": 1614,
+          "end_line": 1649,
           "start_line": 56
         },
         "source": {
@@ -45,18 +45,18 @@
       },
       {
         "body_output": {
-          "end_line": 7566,
-          "start_line": 1616
+          "end_line": 8261,
+          "start_line": 1651
         },
         "body_source_file": "s0ma_src/assets/app.js",
         "body_source_lines": {
-          "end_line": 5951,
+          "end_line": 6611,
           "start_line": 1
         },
         "name": "APP_JS",
         "output": {
-          "end_line": 7573,
-          "start_line": 1616
+          "end_line": 8268,
+          "start_line": 1651
         },
         "source": {
           "end_line": 40,

@@ -46,7 +46,12 @@ Pinned here:
   that puts a module after the ones it leans on, with the counts said in
   words, a "Show the rest" button, the usual beat and nothing new, an
   early end for each thing that changes the question, and no reveal at
-  all under reduced motion.
+  all under reduced motion;
+* the view follows the build: it starts out following, a move by hand
+  stops it and `fit` starts it again, a build makes room before it lands,
+  the ease is one named length done in script and asks about reduced
+  motion first, and the marker says in fixed words how many of the newest
+  build's parts are out of view and which way.
 
 Whether the graph *looks* right is not decidable here; that is the
 browser pass over ``tests/fixtures/dev_harness.html``.
@@ -1367,3 +1372,117 @@ def test_under_reduced_motion_there_is_no_reveal() -> None:
     assert groups.index("if (prefersReducedMotion()) {\n    return null;") < groups.index(
         "Object.keys(delta.added)"
     )
+
+
+def test_the_view_starts_out_following_and_stores_nothing() -> None:
+    app_js = read(APP_JS)
+    assert "  following: true,\n" in app_js
+    assert "state.fitted" not in app_js
+    # A move by hand stops following; fit starts it again.
+    for fn in ("function zoomBy(", "function panBy("):
+        assert "stopFollowing();" in _between(app_js, fn, "\n}\n"), fn
+    stop = _between(app_js, "function stopFollowing(", "\n}\n")
+    assert stop.index("settleView();") < stop.index("state.following = false;")
+    fit = _between(app_js, "function fitAndFollow(", "\n}\n")
+    assert "state.following = true;" in fit
+    assert "easeViewTo(fitBox(state.layout), null);" in fit
+    shell = _between(app_js, "function buildShell(", "\n}\n")
+    assert 'var fit = toolbarButton("fit", function () {\n    fitAndFollow();' in shell
+    keys = _between(app_js, "function onDocumentKeyDown(", "\n}\n")
+    assert 'case "F":\n      fitAndFollow();' in keys
+    # A drag that pans stops following; a click below the threshold does not.
+    move = _between(app_js, "function onPointerMove(", "\n  }\n")
+    assert move.index("Math.abs(dx) <= 2 && Math.abs(dy) <= 2") < move.index("stopFollowing();")
+
+
+def test_the_fit_tooltip_says_the_view_keeps_it() -> None:
+    shell = _between(read(APP_JS), "function buildShell(", "\n}\n")
+    assert 'fit.title = "fit the whole graph in view and keep it there (f)";' in shell
+
+
+def test_the_ease_is_one_named_length_done_in_script() -> None:
+    app_js = read(APP_JS)
+    assert app_js.count("var VIEW_EASE_MS = ") == 1
+    assert "var VIEW_EASE_MS = 450;" in app_js
+    step = _between(app_js, "function stepViewEase(", "\n}\n")
+    assert "(now - ease.start) / VIEW_EASE_MS" in step
+    assert "window.requestAnimationFrame(stepViewEase)" in step
+    # No keyframe and no CSS transition for it: the keyframe set is pinned
+    # above, and the view's own rules carry neither.
+    marker_css = _between(read(APP_CSS), ".view-marker {", ".visually-hidden {")
+    assert "animation" not in marker_css
+    assert "transition" not in marker_css
+
+
+def test_the_ease_asks_about_reduced_motion_first() -> None:
+    app_js = read(APP_JS)
+    ease = _between(app_js, "function easeViewTo(", "\n}\n")
+    assert ease.index("prefersReducedMotion()") < ease.index("window.requestAnimationFrame")
+    hold = _between(app_js, "function holdBuildForTheView(", "\n}\n")
+    assert hold.index("prefersReducedMotion()") < hold.index("heldBuild = {")
+
+
+def test_a_build_makes_room_then_lands_whole() -> None:
+    app_js = read(APP_JS)
+    apply = _between(app_js, "function applyGraph(", "\n}\n")
+    # The hold comes before anything the build changes on the page.
+    hold = apply.index("if (holdBuildForTheView(graph, stateDoc)) {")
+    assert hold < apply.index("diffGraphs(previous, graph)")
+    assert hold < apply.index("recordChange(delta, previous, graph, firstBuild);")
+    assert apply.index("render();") < apply.index("frameTheLandedBuild(hold, arrived);")
+    land = _between(app_js, "function landHeldBuild(", "\n}\n")
+    assert "applyGraph(held.graph, held.stateDoc);" in land
+    # What arrives during an ease ends it first.
+    for fn in ("function applyNotBuilt(", "function setAllCollapsed(", "function toggleOrgan("):
+        assert "settleView();" in _between(app_js, fn, "\n}\n"), fn
+
+
+def test_the_marker_says_how_many_and_which_way() -> None:
+    app_js = read(APP_JS)
+    text = _between(app_js, "function markerText(", "\n}\n")
+    assert '"1 new part " + where + " · show it"' in text
+    assert 'count + " new parts " + where + " · show them"' in text
+    way = _between(app_js, "function markerDirection(", "\n}\n")
+    for where in ('"above"', '"below"', '"to the left"', '"to the right"'):
+        assert where in way, where
+    # A real button that does what fit does, and not a live region.
+    shell = _between(app_js, "function buildShell(", "\n}\n")
+    assert 'ui.viewMarker = toolbarButton("", fitAndFollow);' in shell
+    marker = shell[
+        shell.index("ui.viewMarker = ") : shell.index("ui.canvasWrap.appendChild(ui.viewMarker);")
+    ]
+    assert "aria-live" not in marker
+    # Counted in the list of changes' sense, against what the canvas shows.
+    count = _between(app_js, "function renderViewMarker(", "\n}\n")
+    assert "changePartInView(changePart(markerIds[i], component))" in count
+    assert "var rect = canvasRect();" in _between(app_js, "function shownBox(", "\n}\n")
+    assert "getBoundingClientRect" in _between(app_js, "function canvasRect(", "\n}\n")
+
+
+def test_a_reading_holds_what_is_on_screen_still_in_pixels() -> None:
+    """The banner a reading brings or takes resizes the canvas in that paint."""
+    app_js = read(APP_JS)
+    # Noted before the reading changes anything, framed after the paint.
+    apply = _between(app_js, "function applyGraph(", "\n}\n")
+    noted = apply.index("var hold = captureScreenHold();")
+    assert noted < apply.index("diffGraphs(previous, graph)")
+    assert apply.index("render();") < apply.index("frameTheLandedBuild(hold, arrived);")
+    state_only = _between(app_js, "function applyStateOnly(", "\n}\n")
+    noted = state_only.index("var hold = captureScreenHold();")
+    assert noted < state_only.index("state.buildStatus = nextStatus;")
+    assert state_only.index("render();") < state_only.index("frameAfterReading(hold);")
+    # The canvas is measured again after the paint, and the held box has
+    # the canvas's own aspect ratio at the scale it was showing.
+    still = _between(app_js, "function holdStillOnScreen(", "\n}\n")
+    assert "var rect = canvasRect();" in still
+    assert "w: rect.width / scale," in still
+    assert "h: rect.height / scale," in still
+    # Then a following view goes to the fit: at once within half a pixel.
+    after = _between(app_js, "function frameAfterReading(", "\n}\n")
+    assert after.index("holdStillOnScreen(hold)") < after.index("easeViewTo(fit, null);")
+    assert "* scale < 0.5" in _between(app_js, "function showsTheSame(", "\n}\n")
+    # Controls are not readings: they keep easing to the fit as before.
+    for fn in ("function toggleOrgan(", "function setAllCollapsed("):
+        body = _between(app_js, fn, "\n}\n")
+        assert "followTheLayout();" in body, fn
+        assert "captureScreenHold" not in body, fn
