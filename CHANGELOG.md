@@ -145,6 +145,27 @@ Historical entries describe artifacts as they were named at the time.
   them sideways; a reload sorts the band again. No route or document
   changed, and no motion or color was added.
 
+- **studi0's view follows what a build adds.** The view was fitted once and
+  never again, so parts a build added could land off screen, and a new band
+  above pushed everything already drawn below the window until you pressed
+  `fit`. Now the page starts out keeping the whole graph in frame. When a
+  build needs a different frame, the view eases to it first, in about half a
+  second, while the page still shows what it had, and then the build lands
+  as before: its parts with their beat, the reveal, its entry in the list of
+  changes, and the status line, in one paint. The part nearest the middle of
+  the view keeps its place on screen as it lands. `tests and docs`,
+  `framework layer`, `expand all`, `collapse all`, and a module's own
+  collapse control act at once and then ease to the new fit. A drag, the
+  wheel, `+` and `-`, and the arrow keys stop the following, and `fit` (or
+  `f`) eases to the whole graph and starts it again; its tooltip now says
+  "fit the whole graph in view and keep it there (f)". While the view is not
+  following, a build keeps the part nearest the middle where it was, and if
+  parts it added are out of view a button at that edge of the canvas says,
+  for example, "3 new parts below · show them" and does what `fit` does when
+  pressed. With reduced motion turned on, the view jumps instead of easing.
+  Nothing is stored, so a reload starts out following. No route or document
+  changed, and no keyframe or color was added.
+
 - **studi0's inspector leads with what a part is for.** Click a component
   and the panel opens on its short name, its declaration type as a tag, and
   one line with its `module` and `layer`. Each label now puts the DSL term
