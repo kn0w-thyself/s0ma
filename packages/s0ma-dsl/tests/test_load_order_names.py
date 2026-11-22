@@ -995,6 +995,155 @@ class TestShapesThatFail:
         )
 
 
+#: Modules that mention a namespace route but never reach their own module.
+#: Each holds (source, the name reported, whether it is a load read).
+ROUTES_TO_ANOTHER_MODULE: dict[str, tuple[str, str, bool]] = {
+    "import_module_of_another": (
+        "import importlib\n"
+        "def mood() -> dict[str, Any]:\n"
+        '    return {"m": importlib.import_module("json")}\n',
+        "Any",
+        True,
+    ),
+    "membership_in_sys_modules": (
+        "import sys\n"
+        "def mood() -> dict[str, Any]:\n"
+        '    return {"m": "json" in sys.modules}\n',
+        "Any",
+        True,
+    ),
+    "store_under_another_key": (
+        "import sys\n"
+        "def hold(value: Missing) -> None:\n"
+        '    sys.modules["_holder"] = object()\n',
+        "Missing",
+        True,
+    ),
+    "own_class_beside_a_sys_modules_read": (
+        "import sys\n"
+        "class Book:\n"
+        "    def clone(self) -> Book:\n"
+        '        return sys.modules["json"]\n',
+        "Book",
+        True,
+    ),
+    "body_read_beside_import_module": (
+        "import importlib\n"
+        "def mood():\n"
+        '    importlib.import_module("json")\n'
+        "    return missing\n",
+        "missing",
+        False,
+    ),
+    "signature_beside_a_globals_read": (
+        "import sys\n"
+        "def mood() -> Missing:\n"
+        '    return sys._getframe().f_globals.get("__name__")\n',
+        "Missing",
+        True,
+    ),
+    "dunder_import_of_another": (
+        'json = __import__("json")\ndef mood() -> Missing:\n    return json\n',
+        "Missing",
+        True,
+    ),
+    "aliased_sys_modules_pop_of_another": (
+        "import sys as s\n"
+        "def mood() -> Missing:\n"
+        '    return s.modules.pop("json", None)\n',
+        "Missing",
+        True,
+    ),
+    "from_sys_modules_get_of_another": (
+        "from sys import modules\n"
+        "def mood() -> Missing:\n"
+        '    return modules.get("json")\n',
+        "Missing",
+        True,
+    ),
+}
+
+#: Each reaches its own namespace and binds ``X`` there: (setup, the reach).
+ROUTES_TO_ITSELF: dict[str, tuple[str, str]] = {
+    "sys_modules_store": ("import sys\n", "sys.modules[__name__].X = 1\n"),
+    "sys_modules_get": ("import sys\n", "sys.modules.get(__name__).X = 1\n"),
+    "sys_modules_setdefault": (
+        "import sys\n",
+        "sys.modules.setdefault(__name__, None).X = 1\n",
+    ),
+    "sys_modules_own_constant": ("import sys\n", 'sys.modules["probe"].X = 1\n'),
+    "aliased_sys_modules": ("import sys as s\n", "s.modules[__name__].X = 1\n"),
+    "from_sys_modules": ("from sys import modules\n", "modules[__name__].X = 1\n"),
+    "import_module": (
+        "import importlib\n",
+        "importlib.import_module(__name__).X = 1\n",
+    ),
+    "import_module_own_constant": (
+        "import importlib\n",
+        'importlib.import_module("probe").X = 1\n',
+    ),
+    "bare_import_module": (
+        "from importlib import import_module\n",
+        "import_module(__name__).X = 1\n",
+    ),
+    "dunder_import": ("", "__import__(__name__).X = 1\n"),
+    "self_import": ("", "import probe as me\nme.X = 1\n"),
+    "frame_globals_store": ("import sys\n", 'sys._getframe().f_globals["X"] = 1\n'),
+    "function_globals_update": (
+        "def f():\n    pass\n",
+        "f.__globals__.update(X=1)\n",
+    ),
+    "function_globals_setdefault": (
+        "def f():\n    pass\n",
+        'f.__globals__.setdefault("X", 1)\n',
+    ),
+    "globals_through_an_alias": (
+        "import sys\n",
+        'g = sys._getframe().f_globals\ng["X"] = 1\n',
+    ),
+    "globals_update_through_an_alias": (
+        "import sys\n",
+        "g = sys._getframe().f_globals\ng.update(X=1)\n",
+    ),
+    "builtins_store": ("import builtins\n", "builtins.X = 1\n"),
+}
+
+
+class TestOwnNamespaceGuard:
+    @pytest.mark.parametrize("shape", sorted(ROUTES_TO_ANOTHER_MODULE))
+    def test_a_route_to_another_module_keeps_the_check_on(self, shape: str) -> None:
+        source, name, at_load = ROUTES_TO_ANOTHER_MODULE[shape]
+
+        found = find_unbound_names(
+            source, module_name="probe", requires_python=(">=3.11",),
+        )
+
+        assert [(read.name, read.at_load) for read in found] == [(name, at_load)]
+
+    @pytest.mark.parametrize("shape", sorted(ROUTES_TO_ITSELF))
+    def test_a_route_to_itself_stops_the_check(self, shape: str) -> None:
+        setup, reach = ROUTES_TO_ITSELF[shape]
+        read = "y = X\n"
+
+        assert _order_reads(setup + read) == ["X"]
+        assert _order_reads(setup + reach + read) == []
+
+    @pytest.mark.parametrize("shape", sorted(set(ROUTES_TO_ITSELF) - {"builtins_store"}))
+    def test_a_route_to_itself_really_binds_the_name(self, shape: str) -> None:
+        setup, reach = ROUTES_TO_ITSELF[shape]
+
+        _run_as_module(setup + reach + "y = X\n")
+
+    def test_a_read_through_a_globals_alias_keeps_the_check_on(self) -> None:
+        source = (
+            "import sys\n"
+            "g = sys._getframe().f_globals\n"
+            'name = g["__name__"]\n'
+            "y = X\n"
+        )
+        assert _order_reads(source) == ["X"]
+
+
 @pytest.mark.skipif(
     sys.version_info < (3, 12), reason="PEP 695 syntax needs Python 3.12",
 )

@@ -34,9 +34,13 @@ A class with an explicit ``metaclass=`` may supply names through
 ``__prepare__``. The bounds and values of PEP 695 type parameters and aliases
 are evaluated lazily and are not read.
 
-A module that reaches its own module object can also write names no walk
-sees, so any use of ``sys.modules``, ``importlib.import_module``, or an import
-of the module by its own name stops the analysis too.
+A module that reaches its own namespace can also write names no walk sees,
+so the analysis stops for one that looks itself up in ``sys.modules``, loads
+itself with ``import_module`` or ``__import__``, imports itself, or writes to
+a live globals dictionary. The lookup must name the module: ``__name__`` or
+its own name as a constant. A route to another module, or a read of a globals
+dictionary, does not stop it. A key computed at run time is not seen, so a
+module reaching itself that way can get a false error.
 
 **Load order.** A name with a module-level binding is reported when a read
 that always runs comes before every statement that binds it, or when its
@@ -120,10 +124,11 @@ _NAMESPACE_WRITERS = frozenset({"eval", "exec", "globals"})
 #: Calling one of these can hand a module its own module object.
 _MODULE_LOADERS = frozenset({"__import__", "import_module"})
 
-#: The loader the emitter writes for a ``uses:`` entry that shadows a stdlib
-#: module. It touches ``sys.modules`` under a mangled key of its own, so it
-#: says nothing about this module's namespace.
-_SHADOWED_LOADER = "_s0ma_import_shadowed"
+#: Calling one of these on ``sys.modules`` hands over the entry for its key.
+_MODULES_LOOKUPS = frozenset({"get", "pop", "setdefault"})
+
+#: Calling one of these on a live globals dictionary writes to it.
+_DICT_WRITERS = frozenset({"clear", "pop", "setdefault", "update"})
 
 #: The two names a ``TYPE_CHECKING`` guard is spelled with.
 _GUARD_NAMES = frozenset({"TYPE_CHECKING", "typing"})
@@ -409,22 +414,78 @@ def _imports_itself(nodes: list[ast.AST], module_name: str) -> bool:
     return False
 
 
+def _is_live_globals(node: ast.expr | None) -> bool:
+    """Whether *node* reads a live globals dictionary straight off its source."""
+    if isinstance(node, ast.Attribute):
+        return node.attr in _GLOBALS_ATTRIBUTES
+    return isinstance(node, ast.Name) and node.id == "__builtins__"
+
+
+def _writes_live_globals(nodes: list[ast.AST]) -> bool:
+    """Whether *nodes* write to a live globals dictionary or a plain alias of it."""
+    aliases: set[str] = set()
+    for node in nodes:
+        if isinstance(node, ast.Assign) and _is_live_globals(node.value):
+            aliases.update(t.id for t in node.targets if isinstance(t, ast.Name))
+        elif (
+            isinstance(node, (ast.AnnAssign, ast.NamedExpr))
+            and _is_live_globals(node.value)
+            and isinstance(node.target, ast.Name)
+        ):
+            aliases.add(node.target.id)
+
+    def is_live(node: ast.expr) -> bool:
+        return _is_live_globals(node) or (
+            isinstance(node, ast.Name) and node.id in aliases
+        )
+
+    for node in nodes:
+        if (
+            isinstance(node, ast.Subscript)
+            and not isinstance(node.ctx, ast.Load)
+            and is_live(node.value)
+        ):
+            return True
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr in _DICT_WRITERS
+            and is_live(node.func.value)
+        ):
+            return True
+    return False
+
+
+def _names_the_module(key: ast.expr | None, module_name: str | None) -> bool:
+    """Whether *key* is ``__name__`` or the module's own name as a constant."""
+    if isinstance(key, ast.Name):
+        return key.id == "__name__"
+    return (
+        module_name is not None
+        and isinstance(key, ast.Constant)
+        and key.value == module_name
+    )
+
+
+def _first_argument(call: ast.Call) -> ast.expr | None:
+    """The first positional argument of *call*, or its ``name=`` keyword."""
+    if call.args:
+        return call.args[0]
+    return next((kw.value for kw in call.keywords if kw.arg == "name"), None)
+
+
 def _reaches_its_own_module(tree: ast.Module, module_name: str | None) -> bool:
     """Whether the module can reach its own namespace by a route no walk sees.
 
-    That is its module object (``sys.modules``, ``import_module``, importing
-    itself), a live globals dictionary, or a write to ``builtins``.
+    That is a ``sys.modules`` lookup or a loader call naming this module, an
+    import of itself, a write to a live globals dictionary, or a write to
+    ``builtins``. A route to another module and a plain read do not count.
     """
-    nodes = [
-        node
-        for statement in tree.body
-        if not (
-            isinstance(statement, _FUNCTIONS) and statement.name == _SHADOWED_LOADER
-        )
-        for node in ast.walk(statement)
-    ]
+    nodes = list(ast.walk(tree))
     sys_names = {"sys"}
     builtins_names = {"builtins"}
+    modules_names: set[str] = set()
+    loader_names = set(_MODULE_LOADERS)
     for node in nodes:
         if isinstance(node, ast.Import):
             for alias in node.names:
@@ -432,25 +493,45 @@ def _reaches_its_own_module(tree: ast.Module, module_name: str | None) -> bool:
                     sys_names.add(alias.asname)
                 elif alias.asname and alias.name == "builtins":
                     builtins_names.add(alias.asname)
+        elif isinstance(node, ast.ImportFrom) and not node.level:
+            for alias in node.names:
+                if node.module == "sys" and alias.name == "modules":
+                    modules_names.add(alias.asname or alias.name)
+                elif node.module == "importlib" and alias.name == "import_module":
+                    loader_names.add(alias.asname or alias.name)
     if any(_writes_through(nodes, name) for name in builtins_names):
         return True
+    if _writes_live_globals(nodes):
+        return True
+
+    def is_sys_modules(node: ast.expr) -> bool:
+        if isinstance(node, ast.Name):
+            return node.id in modules_names
+        return (
+            isinstance(node, ast.Attribute)
+            and node.attr == "modules"
+            and isinstance(node.value, ast.Name)
+            and node.value.id in sys_names
+        )
+
     for node in nodes:
-        if isinstance(node, ast.Attribute):
-            if node.attr == "import_module" or node.attr in _GLOBALS_ATTRIBUTES:
-                return True
-            if (
-                node.attr == "modules"
-                and isinstance(node.value, ast.Name)
-                and node.value.id in sys_names
+        if isinstance(node, ast.Subscript):
+            if is_sys_modules(node.value) and _names_the_module(
+                node.slice, module_name,
             ):
                 return True
-        elif isinstance(node, ast.Name):
-            if node.id in _MODULE_LOADERS or node.id == "__builtins__":
-                return True
-        elif isinstance(node, ast.ImportFrom) and not node.level:
-            imported = {alias.name for alias in node.names}
-            if (node.module == "sys" and "modules" in imported) or (
-                node.module == "importlib" and "import_module" in imported
+        elif isinstance(node, ast.Call):
+            func = node.func
+            takes_a_module_key = (
+                func.id in loader_names
+                if isinstance(func, ast.Name)
+                else isinstance(func, ast.Attribute) and (
+                    func.attr == "import_module"
+                    or (func.attr in _MODULES_LOOKUPS and is_sys_modules(func.value))
+                )
+            )
+            if takes_a_module_key and _names_the_module(
+                _first_argument(node), module_name,
             ):
                 return True
     return module_name is not None and _imports_itself(nodes, module_name)
