@@ -6,8 +6,8 @@ committed file of this repository:
 
 ``_built/studi0_server.py``
     ``ROUTE_TABLE`` — the route table D4a promoted into package data —
-    and ``Studi0ServerConfig``. Every HTTP surface studi0 serves comes
-    from here.
+    ``Studi0ServerConfig``, and the refusal a request addressed to
+    another name gets. Every HTTP surface studi0 serves comes from here.
 ``_built/studi0_state.py``
     The wire identities: the two schema strings studi0 stamps, the
     schema string it expects to find inside the graph envelope, and the
@@ -350,6 +350,33 @@ def _number(constants: Mapping[str, object], name: str, where: str) -> str:
             f"nobody can check."
         )
     return str(value)
+
+
+def _error_code(constants: Mapping[str, object], name: str, where: str) -> str:
+    """The code of one declared error envelope, ``{'error': {'code': ...}}``."""
+    envelope = constants.get(name)
+    error = envelope.get("error") if isinstance(envelope, dict) else None
+    code = error.get("code") if isinstance(error, dict) else None
+    if not isinstance(code, str) or not code:
+        raise Studi0ProviderError(
+            f"{where} declares no {name} error envelope with a code, so the "
+            f"answer it stands for cannot be named."
+        )
+    return code
+
+
+def _member_words(
+    constants: Mapping[str, object], holder: str, name: str, where: str
+) -> str:
+    """One class-level tuple of strings, comma separated as declared."""
+    members = constants.get(holder)
+    value = members.get(name) if isinstance(members, dict) else None
+    if not isinstance(value, tuple) or not value or not all(isinstance(x, str) for x in value):
+        raise Studi0ProviderError(
+            f"{where} declares no {holder}.{name} as a non-empty tuple of "
+            f"strings, so the setting it names cannot be reported."
+        )
+    return ",".join(str(item) for item in value)
 
 
 def _member(constants: Mapping[str, object], holder: str, name: str, where: str) -> str:
@@ -700,13 +727,28 @@ class Studi0Provider:
     def _serving_record(
         self, source: _Source, constants: Mapping[str, object], routes: int
     ) -> SourcedRecord:
-        """How studi0 serves: where it binds, what it answers, what it refuses."""
+        """How studi0 serves: where it binds, what it answers, what it refuses.
+
+        ``host`` is what the server binds; ``name`` and ``default_port``
+        make up the address it prints and opens when no port is asked
+        for; ``answers_to`` is every name a request may address it by,
+        and ``foreign_host`` the code a request under any other name
+        gets, on every path.
+        """
         return self._authority(
             name="serving-contract",
             source=source,
             section="Studi0ServerConfig",
             facts={
                 "host": _member(constants, "Studi0ServerConfig", "host", source.path),
+                "name": _member(constants, "Studi0ServerConfig", "name", source.path),
+                "default_port": _member(
+                    constants, "Studi0ServerConfig", "default_port", source.path
+                ),
+                "answers_to": _member_words(
+                    constants, "Studi0ServerConfig", "answers_to", source.path
+                ),
+                "foreign_host": _error_code(constants, "FOREIGN_HOST_ERROR", source.path),
                 "methods": "GET",
                 "routes": str(routes),
                 "unserved": "NOT_FOUND",
