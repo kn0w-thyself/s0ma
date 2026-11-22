@@ -431,7 +431,7 @@ var revealTimer = null;
  * progress, so a build that lands under it shifts it too. */
 var viewEase = null;
 var heldBuild = null;
-var landingHeldBuild = false;
+var landingHeldBuild = false; /* the held build while it lands */
 var markerIds = [];
 var viewDrag = null;
 
@@ -5557,7 +5557,13 @@ function holdBuildForTheView(graph, stateDoc) {
   if (sameBox(target, state.viewBox)) {
     return false;
   }
-  heldBuild = { graph: graph, stateDoc: stateDoc, narration: null };
+  heldBuild = {
+    graph: graph,
+    stateDoc: stateDoc,
+    narration: null,
+    /* The view the anchor was chosen in, so the landing holds the same one. */
+    pick: copyBox(state.viewBox),
+  };
   easeViewTo(target, landHeldBuild);
   return true;
 }
@@ -5568,7 +5574,7 @@ function landHeldBuild() {
     return;
   }
   heldBuild = null;
-  landingHeldBuild = true;
+  landingHeldBuild = held;
   try {
     applyGraph(held.graph, held.stateDoc);
   } finally {
@@ -5603,10 +5609,10 @@ function layoutOfBuild(graph, stateDoc) {
   }
 }
 
-/* How far the part nearest the middle of `box` moves between two
- * layouts, among the parts in both; failing that, the module nearest it
- * among the modules in both; null when the two share nothing. */
-function steadyShift(before, after, box) {
+/* The part nearest the middle of `box` among the parts in both layouts,
+ * failing that the module nearest it among the modules in both, as its
+ * top-left corner in each; null when the two share nothing. */
+function steadyAnchor(before, after, box) {
   var cx = box.x + box.w / 2;
   var cy = box.y + box.h / 2;
   var best = null;
@@ -5625,7 +5631,7 @@ function steadyShift(before, after, box) {
       Math.pow(was.x + was.w / 2 - cx, 2) + Math.pow(was.y + was.h / 2 - cy, 2);
     if (distance < bestDistance) {
       bestDistance = distance;
-      best = { dx: now.x - was.x, dy: now.y - was.y };
+      best = { was: { x: was.x, y: was.y }, now: { x: now.x, y: now.y } };
     }
   }
   if (best) {
@@ -5642,54 +5648,168 @@ function steadyShift(before, after, box) {
       Math.pow(organ.y + organ.height / 2 - cy, 2);
     if (distance < bestDistance) {
       bestDistance = distance;
-      best = { dx: moved.x - organ.x, dy: moved.y - organ.y };
+      best = { was: { x: organ.x, y: organ.y }, now: { x: moved.x, y: moved.y } };
     }
   }
   return best;
 }
 
-/* Called by applyGraph right after the paint that lands a build, with
- * the layout that was on screen before it and the parts it added. */
-function frameTheLandedBuild(drawn, arrived) {
-  markerIds = [];
-  if (state.following || !state.viewBox) {
-    fitToView();
-    renderViewMarker();
-    return;
+/* How far that anchor moves between the two layouts, in user units. */
+function steadyShift(before, after, box) {
+  var anchor = steadyAnchor(before, after, box);
+  if (!anchor) {
+    return null;
   }
-  var shift = drawn && state.layout ? steadyShift(drawn, state.layout, state.viewBox) : null;
-  if (shift) {
-    state.viewBox = {
-      x: state.viewBox.x + shift.dx,
-      y: state.viewBox.y + shift.dy,
-      w: state.viewBox.w,
-      h: state.viewBox.h,
-    };
-    /* A drag under way carries on from the shifted view. */
-    if (viewDrag && viewDrag.box) {
-      viewDrag.box.x += shift.dx;
-      viewDrag.box.y += shift.dy;
-    }
-  }
-  markerIds = arrived.slice();
-  applyViewBox();
+  return { dx: anchor.now.x - anchor.was.x, dy: anchor.now.y - anchor.was.y };
 }
 
-/* What the canvas really shows, in user units: a viewBox is letterboxed
- * inside the element (xMidYMid meet), so the shown area is at least the
- * viewBox and wider or taller on one axis. */
-function shownBox() {
-  var box = state.viewBox;
+/* Holding still on screen, in pixels.
+ *
+ * A paint the page makes from a server reading can change the canvas's
+ * own size: the stale banner above it comes or goes in that same paint.
+ * With `meet`, a canvas of another size rescales and re-centers the
+ * picture, so holding the anchor still in user units is not enough. So
+ * before such a paint the page notes the layout, the view, and the
+ * canvas's rect; after it, in the same task, once the banners, the
+ * layout, and the size are final, it sets a viewBox that puts the same
+ * anchor at the same screen pixel at the same pixels per user unit. The
+ * box has the canvas's own aspect ratio, so no letterboxing enters it. */
+function canvasRect() {
   var rect = ui.canvas.getBoundingClientRect
     ? ui.canvas.getBoundingClientRect()
     : null;
   if (!rect || !(rect.width > 0) || !(rect.height > 0)) {
-    return copyBox(box);
+    return null;
   }
+  return { left: rect.left || 0, top: rect.top || 0, width: rect.width, height: rect.height };
+}
+
+function captureScreenHold() {
+  if (!state.layout || !state.viewBox) {
+    return null;
+  }
+  var box = copyBox(state.viewBox);
+  return {
+    layout: state.layout,
+    box: box,
+    rect: canvasRect(),
+    /* A held build keeps the anchor chosen when it was held. */
+    pick: landingHeldBuild ? landingHeldBuild.pick : box,
+  };
+}
+
+/* Put the anchor of `hold` back where it was on screen. True when there
+ * was an anchor and the view was set. */
+function holdStillOnScreen(hold) {
+  if (!hold || !state.layout || !state.viewBox) {
+    return false;
+  }
+  var anchor = steadyAnchor(hold.layout, state.layout, hold.pick);
+  if (!anchor) {
+    return false;
+  }
+  var rect = canvasRect();
+  var box;
+  if (hold.rect && rect) {
+    var scale = Math.min(hold.rect.width / hold.box.w, hold.rect.height / hold.box.h);
+    var was = shownIn(hold.box, hold.rect);
+    var sx = hold.rect.left + (anchor.was.x - was.x) * scale;
+    var sy = hold.rect.top + (anchor.was.y - was.y) * scale;
+    box = {
+      x: anchor.now.x - (sx - rect.left) / scale,
+      y: anchor.now.y - (sy - rect.top) / scale,
+      w: rect.width / scale,
+      h: rect.height / scale,
+    };
+  } else {
+    /* No size to read: hold it still in user units. */
+    box = {
+      x: hold.box.x + anchor.now.x - anchor.was.x,
+      y: hold.box.y + anchor.now.y - anchor.was.y,
+      w: hold.box.w,
+      h: hold.box.h,
+    };
+  }
+  /* A drag under way carries on from the held view. */
+  if (viewDrag && viewDrag.box) {
+    viewDrag.box = {
+      x: box.x + (viewDrag.box.x - state.viewBox.x),
+      y: box.y + (viewDrag.box.y - state.viewBox.y),
+      w: box.w,
+      h: box.h,
+    };
+  }
+  state.viewBox = box;
+  applyViewBox();
+  return true;
+}
+
+/* Whether two boxes show the same thing on this canvas, to within half
+ * a pixel. */
+function showsTheSame(a, b) {
+  var rect = canvasRect();
+  if (!rect) {
+    return sameBox(a, b);
+  }
+  var shownA = shownIn(a, rect);
+  var shownB = shownIn(b, rect);
+  var scale = rect.width / shownA.w;
+  return (
+    Math.abs(shownA.x - shownB.x) * scale < 0.5 &&
+    Math.abs(shownA.y - shownB.y) * scale < 0.5 &&
+    Math.abs(shownA.w - shownB.w) * scale < 0.5 &&
+    Math.abs(shownA.h - shownB.h) * scale < 0.5
+  );
+}
+
+/* After a paint made from a server reading: hold the anchor still on
+ * screen, then a following view goes on to the fit, at once when it
+ * already shows the same, eased when it does not. With no anchor, a
+ * following view goes to the fit and a moved view is left alone. */
+function frameAfterReading(hold) {
+  var held = holdStillOnScreen(hold);
+  if (!state.following || !state.layout) {
+    return;
+  }
+  var fit = fitBox(state.layout);
+  if (!held || !state.viewBox || showsTheSame(fit, state.viewBox)) {
+    state.viewBox = fit;
+    applyViewBox();
+    return;
+  }
+  easeViewTo(fit, null);
+}
+
+/* Called by applyGraph right after the paint that lands a build, with
+ * what was on screen before it and the parts it added. */
+function frameTheLandedBuild(hold, arrived) {
+  markerIds = [];
+  if (!state.viewBox) {
+    fitToView();
+    renderViewMarker();
+    return;
+  }
+  frameAfterReading(hold);
+  if (!state.following) {
+    markerIds = arrived.slice();
+  }
+  renderViewMarker();
+}
+
+/* What a box really shows on a canvas of `rect`'s size, in user units: a
+ * viewBox is letterboxed inside the element (xMidYMid meet), so the
+ * shown area is at least the box and wider or taller on one axis. */
+function shownIn(box, rect) {
   var scale = Math.min(rect.width / box.w, rect.height / box.h);
   var w = rect.width / scale;
   var h = rect.height / scale;
   return { x: box.x + (box.w - w) / 2, y: box.y + (box.h - h) / 2, w: w, h: h };
+}
+
+/* What the canvas shows now, measured from its real size. */
+function shownBox() {
+  var rect = canvasRect();
+  return rect ? shownIn(state.viewBox, rect) : copyBox(state.viewBox);
 }
 
 /* Where a part has its place in the current layout: its own cell, or
@@ -6071,7 +6191,8 @@ function applyGraph(graph, stateDoc) {
   if (holdBuildForTheView(graph, stateDoc)) {
     return;
   }
-  var drawn = state.layout;
+  /* What is on screen, noted before this build changes any of it. */
+  var hold = captureScreenHold();
   /* After the server has said nothing is built, the page has shown that
    * nothing is there, so the first build is a change from an empty graph
    * and each of its parts gets the beat any added part gets. */
@@ -6126,7 +6247,7 @@ function applyGraph(graph, stateDoc) {
   /* A large build is shown module by module (see "The reveal"). */
   startReveal(delta);
   render();
-  frameTheLandedBuild(drawn, arrived);
+  frameTheLandedBuild(hold, arrived);
   renderInspector();
 }
 
@@ -6385,6 +6506,9 @@ function applyStateOnly(stateDoc) {
   ) {
     return;
   }
+  /* The banner this reading brings or takes away resizes the canvas:
+   * what is on screen is noted first, to be held still after the paint. */
+  var hold = captureScreenHold();
   /* The graph itself did not move, so this is a staleness beat and
    * nothing more: chips appear, ring appears, no motion. */
   state.delta = emptyDelta();
@@ -6393,7 +6517,7 @@ function applyStateOnly(stateDoc) {
   state.staleModules = nextStale;
   state.beatPending = deltaHasAny(state.delta);
   render();
-  followTheLayout();
+  frameAfterReading(hold);
 }
 
 function sameReading(a, b) {
