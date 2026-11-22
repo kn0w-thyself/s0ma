@@ -1387,7 +1387,7 @@ def test_the_view_starts_out_following_and_stores_nothing() -> None:
     assert "state.following = true;" in fit
     assert "easeViewTo(fitBox(state.layout), null);" in fit
     shell = _between(app_js, "function buildShell(", "\n}\n")
-    assert 'var fit = toolbarButton("fit", fitAndFollow);' in shell
+    assert 'var fit = toolbarButton("fit", function () {\n    fitAndFollow();' in shell
     keys = _between(app_js, "function onDocumentKeyDown(", "\n}\n")
     assert 'case "F":\n      fitAndFollow();' in keys
     # A drag that pans stops following; a click below the threshold does not.
@@ -1448,10 +1448,11 @@ def test_the_marker_says_how_many_and_which_way() -> None:
     # A real button that does what fit does, and not a live region.
     shell = _between(app_js, "function buildShell(", "\n}\n")
     assert 'ui.viewMarker = toolbarButton("", fitAndFollow);' in shell
-    marker = shell[shell.index("ui.viewMarker = ") : shell.index("ui.canvasWrap.appendChild(ui.viewMarker);")]
+    marker = shell[
+        shell.index("ui.viewMarker = ") : shell.index("ui.canvasWrap.appendChild(ui.viewMarker);")
+    ]
     assert "aria-live" not in marker
     # Counted in the list of changes' sense, against what the canvas shows.
     count = _between(app_js, "function renderViewMarker(", "\n}\n")
     assert "changePartInView(changePart(markerIds[i], component))" in count
     assert "getBoundingClientRect" in _between(app_js, "function shownBox(", "\n}\n")
-

@@ -1409,7 +1409,9 @@ function buildShell(mount) {
   zoomIn.className = "btn btn--icon";
   zoomIn.setAttribute("aria-label", "zoom in");
   zoomIn.title = "zoom in (+)";
-  var fit = toolbarButton("fit", fitAndFollow);
+  var fit = toolbarButton("fit", function () {
+    fitAndFollow();
+  });
   fit.title = "fit the whole graph in view and keep it there (f)";
 
   toolbar.appendChild(zoomOut);
