@@ -1486,4 +1486,3 @@ def test_a_reading_holds_what_is_on_screen_still_in_pixels() -> None:
         body = _between(app_js, fn, "\n}\n")
         assert "followTheLayout();" in body, fn
         assert "captureScreenHold" not in body, fn
-
