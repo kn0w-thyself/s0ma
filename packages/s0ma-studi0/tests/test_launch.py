@@ -322,15 +322,20 @@ def test_port_zero_is_still_assigned_by_the_system(
     assert len(capsys.readouterr().out.splitlines()) == 2
 
 
-def test_launch_names_no_name_lookup(
+def test_launch_makes_no_name_lookup(
     launch_studi0: Callable[..., ServedStudi0],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Launching writes studi0.localhost into its address, never resolves it."""
+    """Launching writes studi0.localhost into its address, never resolves it.
+
+    The default is pointed at a free port, so the launch takes the same
+    path as one with no port asked for without touching 5710 itself.
+    """
 
     def _refuse(*_args: object, **_kwargs: object) -> object:
         raise AssertionError("launch looked a name up")
 
+    monkeypatch.setattr(studi0_server.Studi0ServerConfig, "default_port", _free_port())
     for name in ("getaddrinfo", "gethostbyname", "gethostbyname_ex", "getfqdn"):
         monkeypatch.setattr(socket, name, _refuse)
     session = launch_studi0(port=None)
