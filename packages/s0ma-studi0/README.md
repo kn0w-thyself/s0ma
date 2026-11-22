@@ -29,17 +29,31 @@ studi0 ships no console script of its own on purpose: the door is the `s0ma` CLI
 ```bash
 s0ma studi0                     # view the project in the current directory
 s0ma studi0 path/to/project     # view a project elsewhere
-s0ma studi0 --port 8731         # pin the port (default: an OS-assigned ephemeral one)
-s0ma studi0 --no-open           # serve and print the URL without opening a browser
+s0ma studi0 --port 8731         # that port, or an error if it is taken
+s0ma studi0 --port 0            # a port the system assigns
+s0ma studi0 --no-open           # serve and print the address without opening a browser
 ```
 
-The server binds the loopback interface only, prints exactly one line naming the project and the URL it really bound, opens your browser there, and serves until you interrupt it:
+With no `--port`, studi0 serves at `http://studi0.localhost:5710/`. When port 5710 is in use, for example by another studi0, it takes a port the system assigns and says so. The server binds the loopback interface only. It prints the project and the address under studi0's own name first, then the same address on `127.0.0.1` for a browser that does not keep `.localhost` names on this machine, opens your browser at the first, and serves until you interrupt it:
 
 ```text
-studi0 serving my-project at http://127.0.0.1:52544/
+studi0 serving my-project at http://studi0.localhost:5710/
+  also at http://127.0.0.1:5710/
 ```
 
-Programmatic use is the same call the subcommand makes: `launch(Path("path/to/project"), port=0, open_browser=False)` from `s0ma_studi0`.
+When 5710 was taken, one more line says so:
+
+```text
+studi0 serving my-project at http://studi0.localhost:52544/
+  also at http://127.0.0.1:52544/
+  port 5710 is in use, so this one has port 52544
+```
+
+The first line keeps its shape, so a script can read the port from it. The name is written into the address and never looked up.
+
+studi0 answers only requests addressed to `studi0.localhost`, `localhost`, or `127.0.0.1`, with any port, so a port forwarded on this machine still works. A request under any other name gets `403` and a `FOREIGN_HOST` error that names the addresses that work: a page elsewhere cannot point a name of its own at this machine and read your project through it. That includes a forwarded address under another domain.
+
+Programmatic use is the same call the subcommand makes: `launch(Path("path/to/project"), open_browser=False)` from `s0ma_studi0`. Pass `port=0` for a port the system assigns, or a port number for that port.
 
 ## What the page shows
 
