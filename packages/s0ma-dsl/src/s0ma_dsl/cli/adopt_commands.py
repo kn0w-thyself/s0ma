@@ -1063,7 +1063,12 @@ def cmd_adopt_verify_parity(args: argparse.Namespace) -> int:
                 f"compared. {unreadable}"
             )
         results.append(
-            compare_surfaces(entry.surface, surface, built_path=emitted.shown)
+            compare_surfaces(
+                entry.surface,
+                surface,
+                built_path=emitted.shown,
+                future_annotations=entry.future_annotations,
+            )
         )
 
     # The last step of the ladder, for the modules that have reached it:

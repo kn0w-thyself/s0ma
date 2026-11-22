@@ -459,7 +459,9 @@ in almost every modern Python file:
 - **`from __future__ import annotations` is dropped.** s0ma writes the generated
   file's import block itself, and a future import has to be a file's first
   statement. Annotations are therefore evaluated as written — quote any
-  annotation that names something defined further down the file.
+  annotation that names something defined further down the file. When the
+  original file had the future import, `s0ma adopt verify-parity` does not count
+  that quote as a difference.
 - **An `if TYPE_CHECKING:` block that reaches your own code becomes an unplaced
   block**, which fails `s0ma check` as `ADOPT_UNPLACED_CODE` until you deal with
   it — step 4 below says what that refusal asks for. Deliberately: moving
