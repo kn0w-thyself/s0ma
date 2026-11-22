@@ -139,6 +139,15 @@ def mixed(tmp_path_factory: pytest.TempPathFactory) -> Iterator[Path]:
         root,
         ignore=shutil.ignore_patterns("__pycache__"),
     )
+    # A draft drops the file's future import, so an annotation naming its own
+    # class has to be quoted. Quoted before the baseline is taken, because
+    # parity compares signatures as written and the conversion must not move one.
+    models = root / "src" / "bookshelf" / "models.py"
+    models.write_text(
+        models.read_text(encoding="utf-8").replace("-> Book:", '-> "Book":'),
+        encoding="utf-8",
+        newline="\n",
+    )
     assert _run(root, "adopt", "init") == EXIT_SUCCESS
 
     for module in CONVERTED:
