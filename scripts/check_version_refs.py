@@ -181,6 +181,7 @@ LIVING_DOCS: tuple[str, ...] = (
     "docs/guides/mcp-authoring.md",
     "docs/guides/retrofit-existing-codebase.md",
     "docs/guides/studi0-feedback.md",
+    "docs/guides/watch-an-app-being-built.md",
     # The community files. SECURITY.md tells a reporter which versions get
     # fixes, which is a claim about the current release by definition.
     "SECURITY.md",

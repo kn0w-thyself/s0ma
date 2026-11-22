@@ -1020,7 +1020,7 @@
         }
       },
       "complete": true,
-      "covered": 17,
+      "covered": 18,
       "enforced_by": [
         "validate.check_journeys",
         "resolve.check_journey_coverage"
@@ -1185,7 +1185,7 @@
         "DOC_JOURNEY_UNRESOLVED",
         "DOC_JOURNEY_UNTESTED"
       ],
-      "required": 17,
+      "required": 18,
       "set": "journeys",
       "uncovered": []
     },
@@ -1209,7 +1209,7 @@
     {
       "ceilings": {},
       "complete": true,
-      "covered": 180,
+      "covered": 181,
       "enforced_by": [
         "providers_catalog.check_completeness"
       ],
@@ -1241,7 +1241,7 @@
       "reports": [
         "DOC_DOCUMENT_UNCATALOGED"
       ],
-      "required": 180,
+      "required": 181,
       "set": "catalog",
       "uncovered": []
     }
@@ -1250,12 +1250,12 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:85f9d1f3a1636626"
+    "snapshot_hash": "sha256:3c294383590767c7"
   },
   "totals": {
-    "covered": 342,
+    "covered": 344,
     "exceptions": 206,
-    "required": 514,
+    "required": 516,
     "sets": 5,
     "uncovered": 0
   }

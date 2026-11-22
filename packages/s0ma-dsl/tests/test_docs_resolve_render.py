@@ -1547,6 +1547,7 @@ class TestWhatTheCorpusDoesNotHaveYet:
             "journey:retrofit-existing-codebase",
             "journey:studi0-feedback",
             "journey:studi0-viewing",
+            "journey:watch-an-app-being-built",
         ]
         assert live_bundle().sequences == ()
         assert fixture_bundle().journeys[0].approval_boundaries()

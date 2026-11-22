@@ -154,7 +154,8 @@
       "id": "view-the-project",
       "journeys": [
         "journey:studi0-feedback",
-        "journey:studi0-viewing"
+        "journey:studi0-viewing",
+        "journey:watch-an-app-being-built"
       ],
       "surfaces": [
         "cli:s0ma/studi0",

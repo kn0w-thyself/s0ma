@@ -62,6 +62,7 @@ module <name>
 - [Authoring through the agent's own tool channel](../guides/mcp-authoring.md)
 - [Building an app with s0ma over MCP — walkthrough](../walkthrough.md)
 - [Retrofitting an existing codebase](../guides/retrofit-existing-codebase.md)
+- [Watch an app being built](../guides/watch-an-app-being-built.md)
 - [Your first module: the anatomy of a .s0ma file](../guides/first-module.md)
 - [Your first project, from install to graph](../getting-started/first-project.md)
 
@@ -71,4 +72,4 @@ module <name>
 
 - Topic id: `concept:layer`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:85f9d1f3a1636626`
+- Documentation snapshot: `sha256:3c294383590767c7`

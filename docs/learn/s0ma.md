@@ -58,6 +58,7 @@ Do not use s0ma for a single package: the runtime is s0ma-lang-core, the languag
 - [Retrofitting an existing codebase](../guides/retrofit-existing-codebase.md)
 - [s0ma in Claude](../guides/claude-integration.md)
 - [The documentation subsystem](../documentation-subsystem.md)
+- [Watch an app being built](../guides/watch-an-app-being-built.md)
 - [What can change, and how you will know](../stability.md)
 - [Your first project, from install to graph](../getting-started/first-project.md)
 
@@ -67,4 +68,4 @@ Do not use s0ma for a single package: the runtime is s0ma-lang-core, the languag
 
 - Topic id: `concept:s0ma`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:85f9d1f3a1636626`
+- Documentation snapshot: `sha256:3c294383590767c7`

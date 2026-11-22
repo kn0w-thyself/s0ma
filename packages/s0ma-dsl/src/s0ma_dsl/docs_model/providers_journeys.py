@@ -105,8 +105,9 @@ JOURNEYS_DIR = "docs/s0ma_src/journeys"
 #: one, so the number only ever goes up, and a floor at three catches the
 #: failure that matters — the directory moved, or the loader has stopped
 #: seeing it. Seven since beta-prep-1-retrofit F2a wrote
-#: ``journey:retrofit-existing-codebase``.
-JOURNEY_FLOORS: Mapping[tuple[str, str], int] = {("journeys", "journeys"): 7}
+#: ``journey:retrofit-existing-codebase``, and eight since
+#: ``journey:watch-an-app-being-built`` joined it.
+JOURNEY_FLOORS: Mapping[tuple[str, str], int] = {("journeys", "journeys"): 8}
 
 #: Id forms a journey step may not name, each with where it belongs
 #: instead. B7 finding 4 is why this exists: a step naming ``concept:nerve``

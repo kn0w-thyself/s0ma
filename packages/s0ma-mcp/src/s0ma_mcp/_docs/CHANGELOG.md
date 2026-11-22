@@ -79,6 +79,19 @@ Historical entries describe artifacts as they were named at the time.
   one. Like the other three templates, it builds, passes `s0ma check --mode
   release`, and its own tests pass straight away.
 
+- **A guide to watching an app being built.**
+  `docs/guides/watch-an-app-being-built.md` opens the pipeline example in
+  studi0 for a short tour, then has a reader start a project of their own and
+  give their coding agent three requests that grow an app like it, saying
+  after each what the page shows: new parts marked and outlined, an entry in
+  the list of changes, the lines a changed part names, and a large build
+  arriving module by module. It is written for a reader who does not program.
+  Its journey, `journey:watch-an-app-being-built`, has evidence that replays
+  the steps that need no agent: making the example and reading its graph,
+  then making a second project and landing the example's three builds in it
+  from the sources studi0's tests keep. The agent's own work is not replayed,
+  and the guide says so.
+
 ### Changed
 
 - **studi0 says plainly when nothing is built yet.** Opened on a project with
@@ -238,6 +251,11 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Fixed
 
+- **The pipeline template's app map states the layer rule correctly.** The
+  app map that `s0ma new project --template pipeline` writes said a file may
+  only use the layers below it. It now says what the build enforces: a file
+  reaches toward the middle of the app, and the two edges never use each
+  other.
 - **The package READMEs count the umbrella.** The READMEs of `s0ma-lang-core`,
   `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, which are their
   pages on PyPI, said four distributions ship together at one version. Five

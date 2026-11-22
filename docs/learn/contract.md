@@ -62,6 +62,7 @@ nerve <name> :: <LAYER>
 - [Every report s0ma can make](../reference/diagnostics.md)
 - [What s0ma answers an agent with](../reference/mcp.md)
 - [What the viewer shows you](../reference/studi0.md)
+- [Watch an app being built](../guides/watch-an-app-being-built.md)
 - [Your first module: the anatomy of a .s0ma file](../guides/first-module.md)
 
 ---
@@ -70,4 +71,4 @@ nerve <name> :: <LAYER>
 
 - Topic id: `concept:contract`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:85f9d1f3a1636626`
+- Documentation snapshot: `sha256:3c294383590767c7`

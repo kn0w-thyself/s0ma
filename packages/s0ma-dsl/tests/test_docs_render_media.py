@@ -74,8 +74,9 @@ if TYPE_CHECKING:
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 #: The published journeys, by the milestone that authored each: the five
-#: canonical E-phase paths, and the retrofit path beta-prep-1-retrofit
-#: F2a added beside them. Written here as the *expectation* the
+#: canonical E-phase paths, the retrofit path beta-prep-1-retrofit F2a
+#: added beside them, and the path its guide walks from a finished example
+#: in studi0 to watching an agent build one. Written here as the *expectation* the
 #: derivation is checked against — the renderer keeps journeys by the
 #: catalog rule and never by this list, so a disagreement between the two
 #: is a real finding rather than a stale constant.
@@ -86,9 +87,10 @@ CANONICAL = {
     "journey:drift-recovery": "E6",
     "journey:studi0-feedback": "E7",
     "journey:retrofit-existing-codebase": "beta-prep-1-retrofit F2a",
+    "journey:watch-an-app-being-built": "the watch-an-app guide",
 }
 
-#: The B7 prototype. Seven journeys exist and six are published; this is
+#: The B7 prototype. Eight journeys exist and seven are published; this is
 #: the one that is not, and the plan's own §10 gate note calls it exactly
 #: that.
 PROTOTYPE = "journey:studi0-viewing"
@@ -778,7 +780,7 @@ class TestTheyAreDeclaredOutputs:
         self, composed: Build
     ) -> None:
         outputs = generated_outputs(composed.bundle)
-        assert len(outputs) == len(composed.artifacts) == 67
+        assert len(outputs) == len(composed.artifacts) == 68
         assert len(
             [item for item in outputs if item.startswith(f"{MEDIA_DIR}/")]
         ) == len(CANONICAL)

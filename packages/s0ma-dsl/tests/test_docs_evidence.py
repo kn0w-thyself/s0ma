@@ -95,12 +95,25 @@ EXPECTED_FIXTURES: tuple[tuple[str, str, str], ...] = (
     ),
     ("example:transcript/studi0-feedback", CHANNEL_CLI, "journey:studi0-feedback"),
     ("example:transcript/studi0-viewing", CHANNEL_CLI, "journey:studi0-viewing"),
+    (
+        "example:transcript/watch-an-app-being-built-example",
+        CHANNEL_CLI,
+        "journey:watch-an-app-being-built",
+    ),
+    (
+        "example:transcript/watch-an-app-being-built-growth",
+        CHANNEL_CLI,
+        "journey:watch-an-app-being-built",
+    ),
 )
 
 #: The journey count is a claim about the journeys directory, not about the
 #: fixture table — the E wave proved the two can drift apart mid-flight, so
-#: the armed-gate proof counts this constant rather than EXPECTED_FIXTURES.
-EXPECTED_JOURNEY_COUNT = 7
+#: the armed-gate proof counts the journeys it names against this constant
+#: rather than against EXPECTED_FIXTURES. The two differ by one since
+#: ``journey:watch-an-app-being-built`` cites two fixtures, one for each
+#: project its reader makes.
+EXPECTED_JOURNEY_COUNT = 8
 
 has_server = importlib.util.find_spec("s0ma_mcp") is not None
 
@@ -798,7 +811,8 @@ class TestTheSplit:
         untested = [
             item for item in stranded.findings if item.code == DOC_JOURNEY_UNTESTED
         ]
-        assert len(untested) == EXPECTED_JOURNEY_COUNT
+        assert len(untested) == len(EXPECTED_FIXTURES)
+        assert len({item.message.split()[0] for item in untested}) == EXPECTED_JOURNEY_COUNT
         assert all("has no passing run of it" in item.message for item in untested)
 
     def test_the_build_runs_no_subprocess_for_evidence(self) -> None:

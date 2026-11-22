@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 180 documents. 140 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 181 documents. 141 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -127,6 +127,7 @@ The parts you work through day to day: your editor, the server a coding agent ta
 | [s0ma in Claude](guides/claude-integration.md) | `docs/guides/claude-integration.md` | users | maintained | links checked, version checked |
 | [Seeing your system, and telling the s0ma team what you found](guides/studi0-feedback.md) | `docs/guides/studi0-feedback.md` | users | maintained | links checked, version checked |
 | [The documentation subsystem](documentation-subsystem.md) | `docs/documentation-subsystem.md` | agents, contributors | maintained | links checked, version checked |
+| [Watch an app being built](guides/watch-an-app-being-built.md) | `docs/guides/watch-an-app-being-built.md` | users | maintained | links checked, version checked |
 | [What can change, and how you will know](stability.md) | `docs/stability.md` | contributors, users | maintained | links checked, version checked |
 | [What the build writes, and what each file is for](guides/what-the-build-writes.md) | `docs/guides/what-the-build-writes.md` | agents, users | maintained | links checked |
 

@@ -26,10 +26,10 @@
     "aliases": 21,
     "concepts": 39,
     "indexes": 4,
-    "journeys": 7,
+    "journeys": 8,
     "keywords": 48,
     "surfaces": 43,
-    "topics": 89
+    "topics": 90
   },
   "indexes": [
     {
@@ -135,7 +135,8 @@
             "journey:mcp-authoring-loop",
             "journey:retrofit-existing-codebase",
             "journey:studi0-feedback",
-            "journey:studi0-viewing"
+            "journey:studi0-viewing",
+            "journey:watch-an-app-being-built"
           ]
         }
       ],
@@ -278,7 +279,8 @@
             "journey:mcp-authoring-loop",
             "journey:retrofit-existing-codebase",
             "journey:studi0-feedback",
-            "journey:studi0-viewing"
+            "journey:studi0-viewing",
+            "journey:watch-an-app-being-built"
           ]
         }
       ],
@@ -348,7 +350,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:85f9d1f3a1636626"
+    "snapshot_hash": "sha256:3c294383590767c7"
   },
   "topics": [
     {
@@ -932,6 +934,11 @@
           "canonical_source": "docs/s0ma_src/concepts/language.json",
           "id": "doc:guide/language-concepts",
           "title": "Language concepts"
+        },
+        {
+          "canonical_source": "docs/guides/watch-an-app-being-built.md",
+          "id": "doc:guide/watch-an-app-being-built",
+          "title": "Watch an app being built"
         }
       ],
       "group": "concepts",
@@ -2126,6 +2133,11 @@
           "canonical_source": "docs/walkthrough.md",
           "id": "doc:guide/walkthrough",
           "title": "Building an app with s0ma over MCP — walkthrough"
+        },
+        {
+          "canonical_source": "docs/guides/watch-an-app-being-built.md",
+          "id": "doc:guide/watch-an-app-being-built",
+          "title": "Watch an app being built"
         }
       ],
       "group": "concepts",
@@ -2394,6 +2406,11 @@
           "canonical_source": "docs/walkthrough.md",
           "id": "doc:guide/walkthrough",
           "title": "Building an app with s0ma over MCP — walkthrough"
+        },
+        {
+          "canonical_source": "docs/guides/watch-an-app-being-built.md",
+          "id": "doc:guide/watch-an-app-being-built",
+          "title": "Watch an app being built"
         }
       ],
       "group": "concepts",
@@ -2683,6 +2700,11 @@
           "canonical_source": "docs/walkthrough.md",
           "id": "doc:guide/walkthrough",
           "title": "Building an app with s0ma over MCP — walkthrough"
+        },
+        {
+          "canonical_source": "docs/guides/watch-an-app-being-built.md",
+          "id": "doc:guide/watch-an-app-being-built",
+          "title": "Watch an app being built"
         }
       ],
       "group": "concepts",
@@ -4752,6 +4774,101 @@
       ],
       "summary": "See the system you have built rather than read about it: start the local viewer, let it fetch the graph, and follow one component from the picture into a precise answer about it.",
       "title": "journey:studi0-viewing"
+    },
+    {
+      "availability": "Every step of this path is taken with the full s0ma toolchain, which this package does not include on its own. The ideas it teaches are all here — ask for any of them by name — and the steps themselves are waiting once the toolchain is installed.",
+      "documents": [
+        {
+          "canonical_source": "docs/guides/watch-an-app-being-built.md",
+          "id": "doc:guide/watch-an-app-being-built",
+          "title": "Watch an app being built"
+        }
+      ],
+      "group": "journeys",
+      "id": "journey:watch-an-app-being-built",
+      "search_terms": [
+        "journey:watch-an-app-being-built"
+      ],
+      "sections": [
+        {
+          "fact": "intent",
+          "heading": "What this path is for",
+          "text": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in three requests, reading on the page what each build really added and changed."
+        },
+        {
+          "fact": "concepts_required",
+          "heading": "What to know before you start",
+          "items": [
+            "concept:s0ma"
+          ]
+        },
+        {
+          "fact": "step_surfaces",
+          "heading": "The steps, in order",
+          "items": [
+            "cli:s0ma/new",
+            "cli:s0ma/studi0",
+            "studi0:action/api/graph",
+            "cli:s0ma/new",
+            "cli:s0ma/studi0",
+            "mcp:tool/build_project",
+            "studi0:action/api/state"
+          ]
+        },
+        {
+          "fact": "step_purposes",
+          "heading": "Why each step",
+          "items": [
+            "Have a finished app to look at and to compare with later, before any agent is involved.",
+            "Put the finished example on screen.",
+            "Let the page ask for the whole graph of the build, which is what it draws and what a click reads from.",
+            "Start the project your agent will build in, so its work lands somewhere you are watching.",
+            "Open the page on your project before the agent starts, so every build it makes arrives while you watch.",
+            "Your agent checks and builds the project at the end of each request, through the authoring server it is connected to.",
+            "Let the page ask, about once a second, whether a new build has landed."
+          ]
+        },
+        {
+          "fact": "step_outcomes",
+          "heading": "What you should see",
+          "items": [
+            "A finished example app in its own folder, already built: twelve parts in four modules, one module per layer. It contacts nothing, because its songs are built-in samples.",
+            "A local address on your own machine, printed and opened in a browser. The viewer reads what the last build produced and never runs the app.",
+            "Every part of the example in its layer band. Clicking a part shows what it is for, what it promises, what it must never do, what it needs, and what it leans on, each line under its own s0ma word with a plain phrase beside it.",
+            "A second, separate project, built once already, holding only the small starter part every new project begins with.",
+            "The viewer on your own project, showing the starter part and an empty list of changes.",
+            "A fresh build of whatever the agent wrote for one request. What it contains is the agent's own work and differs from the example's.",
+            "The page notices the new build within about a second. New parts arrive with a mark and stay outlined, and one entry joins the list of changes saying what the build added and changed."
+          ]
+        },
+        {
+          "fact": "recovery_paths",
+          "heading": "If something goes wrong",
+          "items": [
+            "NOT_BUILT -> cli:s0ma/build: The viewer is running and the project has no build for it to draw. Ask your agent to build the project, or run the build yourself from the project folder. The page repaints when the build lands, so nothing needs restarting."
+          ]
+        },
+        {
+          "fact": "concepts_taught",
+          "heading": "What you learn on the way",
+          "items": [
+            "concept:layer",
+            "concept:intent",
+            "concept:module",
+            "concept:contract"
+          ]
+        },
+        {
+          "fact": "example_ids",
+          "heading": "Worked examples",
+          "items": [
+            "example:transcript/watch-an-app-being-built-example",
+            "example:transcript/watch-an-app-being-built-growth"
+          ]
+        }
+      ],
+      "summary": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in three requests, reading on the page what each build really added and changed.",
+      "title": "journey:watch-an-app-being-built"
     },
     {
       "channel": "mcp_resource",

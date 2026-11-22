@@ -1,0 +1,233 @@
+{
+  "identity": {
+    "channel": "preview",
+    "journey": "journey:watch-an-app-being-built",
+    "published_by": "doc:guide/watch-an-app-being-built",
+    "release": "0.22.0 (preview)",
+    "snapshot": "sha256:3c294383590767c7"
+  },
+  "package": {
+    "audience": [
+      "user"
+    ],
+    "cautions": [
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "1",
+        "surface": "cli:s0ma/new",
+        "surface_name": "s0ma new"
+      },
+      {
+        "effects": [
+          "network",
+          "subprocess"
+        ],
+        "step": "2",
+        "surface": "cli:s0ma/studi0",
+        "surface_name": "s0ma studi0"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "4",
+        "surface": "cli:s0ma/new",
+        "surface_name": "s0ma new"
+      },
+      {
+        "effects": [
+          "network",
+          "subprocess"
+        ],
+        "step": "5",
+        "surface": "cli:s0ma/studi0",
+        "surface_name": "s0ma studi0"
+      },
+      {
+        "effects": [
+          "write"
+        ],
+        "step": "6",
+        "surface": "mcp:tool/build_project",
+        "surface_name": "build_project"
+      }
+    ],
+    "chapters": [
+      {
+        "caption": "Have a finished app to look at and to compare with later, before any agent is involved.",
+        "ordinal": "1",
+        "step": "1",
+        "title": "s0ma new"
+      },
+      {
+        "caption": "Put the finished example on screen.",
+        "ordinal": "2",
+        "step": "2",
+        "title": "s0ma studi0"
+      },
+      {
+        "caption": "Let the page ask for the whole graph of the build, which is what it draws and what a click reads from.",
+        "ordinal": "3",
+        "step": "3",
+        "title": "/api/graph"
+      },
+      {
+        "caption": "Start the project your agent will build in, so its work lands somewhere you are watching.",
+        "ordinal": "4",
+        "step": "4",
+        "title": "s0ma new"
+      },
+      {
+        "caption": "Open the page on your project before the agent starts, so every build it makes arrives while you watch.",
+        "ordinal": "5",
+        "step": "5",
+        "title": "s0ma studi0"
+      },
+      {
+        "caption": "Your agent checks and builds the project at the end of each request, through the authoring server it is connected to.",
+        "ordinal": "6",
+        "step": "6",
+        "title": "build_project"
+      },
+      {
+        "caption": "Let the page ask, about once a second, whether a new build has landed.",
+        "ordinal": "7",
+        "step": "7",
+        "title": "/api/state"
+      }
+    ],
+    "consent": [],
+    "evidence": [
+      {
+        "id": "example:transcript/watch-an-app-being-built-example",
+        "source": "docs/s0ma_src/evidence/watch-an-app-being-built-example.json"
+      },
+      {
+        "id": "example:transcript/watch-an-app-being-built-growth",
+        "source": "docs/s0ma_src/evidence/watch-an-app-being-built-growth.json"
+      }
+    ],
+    "outcome": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in three requests, reading on the page what each build really added and changed.",
+    "prerequisites": [
+      {
+        "concept": "concept:s0ma",
+        "term": "s0ma"
+      }
+    ],
+    "recovery": [
+      {
+        "action": "The viewer is running and the project has no build for it to draw. Ask your agent to build the project, or run the build yourself from the project folder. The page repaints when the build lands, so nothing needs restarting.",
+        "next_surface": "cli:s0ma/build",
+        "next_surface_name": "s0ma build",
+        "when": "NOT_BUILT"
+      }
+    ],
+    "steps": [
+      {
+        "channel": "cli",
+        "expected_visible_state": "A finished example app in its own folder, already built: twelve parts in four modules, one module per layer. It contacts nothing, because its songs are built-in samples.",
+        "ordinal": "1",
+        "purpose": "Have a finished app to look at and to compare with later, before any agent is involved.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/new",
+        "surface_name": "s0ma new"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "A local address on your own machine, printed and opened in a browser. The viewer reads what the last build produced and never runs the app.",
+        "ordinal": "2",
+        "purpose": "Put the finished example on screen.",
+        "side_effects": [
+          "network",
+          "read",
+          "subprocess"
+        ],
+        "surface": "cli:s0ma/studi0",
+        "surface_name": "s0ma studi0"
+      },
+      {
+        "channel": "studi0",
+        "expected_visible_state": "Every part of the example in its layer band. Clicking a part shows what it is for, what it promises, what it must never do, what it needs, and what it leans on, each line under its own s0ma word with a plain phrase beside it.",
+        "ordinal": "3",
+        "purpose": "Let the page ask for the whole graph of the build, which is what it draws and what a click reads from.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "studi0:action/api/graph",
+        "surface_name": "/api/graph"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "A second, separate project, built once already, holding only the small starter part every new project begins with.",
+        "ordinal": "4",
+        "purpose": "Start the project your agent will build in, so its work lands somewhere you are watching.",
+        "side_effects": [
+          "read",
+          "write"
+        ],
+        "surface": "cli:s0ma/new",
+        "surface_name": "s0ma new"
+      },
+      {
+        "channel": "cli",
+        "expected_visible_state": "The viewer on your own project, showing the starter part and an empty list of changes.",
+        "ordinal": "5",
+        "purpose": "Open the page on your project before the agent starts, so every build it makes arrives while you watch.",
+        "side_effects": [
+          "network",
+          "read",
+          "subprocess"
+        ],
+        "surface": "cli:s0ma/studi0",
+        "surface_name": "s0ma studi0"
+      },
+      {
+        "channel": "mcp_tool",
+        "expected_visible_state": "A fresh build of whatever the agent wrote for one request. What it contains is the agent's own work and differs from the example's.",
+        "ordinal": "6",
+        "purpose": "Your agent checks and builds the project at the end of each request, through the authoring server it is connected to.",
+        "side_effects": [
+          "write"
+        ],
+        "surface": "mcp:tool/build_project",
+        "surface_name": "build_project"
+      },
+      {
+        "channel": "studi0",
+        "expected_visible_state": "The page notices the new build within about a second. New parts arrive with a mark and stay outlined, and one entry joins the list of changes saying what the build added and changed.",
+        "ordinal": "7",
+        "purpose": "Let the page ask, about once a second, whether a new build has landed.",
+        "side_effects": [
+          "read"
+        ],
+        "surface": "studi0:action/api/state",
+        "surface_name": "/api/state"
+      }
+    ],
+    "teaches": [
+      {
+        "concept": "concept:layer",
+        "term": "layer"
+      },
+      {
+        "concept": "concept:intent",
+        "term": "intent"
+      },
+      {
+        "concept": "concept:module",
+        "term": "module"
+      },
+      {
+        "concept": "concept:contract",
+        "term": "contract"
+      }
+    ],
+    "title": "Watch an app being built"
+  },
+  "schema": "s0ma-docs-model@1"
+}

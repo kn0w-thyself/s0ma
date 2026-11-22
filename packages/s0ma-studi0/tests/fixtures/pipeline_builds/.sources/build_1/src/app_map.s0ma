@@ -36,7 +36,7 @@ doc-guide architecture_map
     - The player file (INFRASTRUCTURE) finds out what is playing. It uses four built-in sample songs and contacts nothing outside the app.
     - The music file (DOMAIN) settles on one of four moods from how fast and loud a song is and its key. {{nerve::settle_mood}} is where that decision is made.
 
-    Each file may only use the layers below it, and the build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the music file.
+    A file may only reach toward the middle of the app. The music file is the middle and uses no other file. The player file is at an edge and uses the music file. The build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the music file.
 
     ## Runtime state
 
