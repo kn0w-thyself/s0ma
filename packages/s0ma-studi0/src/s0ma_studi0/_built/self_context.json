@@ -878,6 +878,17 @@
     },
     {
       "dependencies": [],
+      "id": "studi0_server::FOREIGN_HOST_ERROR",
+      "intent": {
+        "state": "value",
+        "value": "The answer for a request addressed to a name studi0 does not go by, on every path. studi0 answers only under its own names, so a page elsewhere that points a name of its own at this machine cannot read the project through it, and the answer names the addresses that do work so a person who typed another one knows where to go."
+      },
+      "kind": "CONSTANT",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [],
       "id": "studi0_server::NOT_BUILT_ERROR",
       "intent": {
         "state": "value",
@@ -914,7 +925,7 @@
       "id": "studi0_server::Studi0ServerConfig",
       "intent": {
         "state": "value",
-        "value": "The studi0 host's settings: the loopback interface the server is allowed to bind, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number."
+        "value": "The studi0 host's settings: the loopback interface the server is allowed to bind, the name and port of the address studi0 offers when it is not asked for a port, the names a request may address it by, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number."
       },
       "kind": "CONFIG",
       "layer": "PRESENTATION",
@@ -967,6 +978,54 @@
       "layer": "PRESENTATION",
       "module": "studi0_server",
       "value": "text/javascript; charset=utf-8"
+    },
+    {
+      "dependencies": [
+        "studi0_server::Studi0ServerConfig",
+        "studi0_server::create_server"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the default port",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::Studi0ServerConfig"
+        },
+        {
+          "authored": true,
+          "carries": "the port to bind",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_server::create_server"
+        },
+        {
+          "authored": false,
+          "origin": "function_signature",
+          "relation": "TYPE_USES",
+          "target": "studi0_state::Studi0Session"
+        }
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is the root of the project being viewed; port is None for the default port, 0 for a port the system assigns, or a port number; session is the viewing session to answer the API from"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never looks a name up and never binds anything but the loopback address."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns the bound server and fell_back, which is True only when port was None and the default port was in use. With port None, the default port is tried first and only a port-in-use failure moves on; any other failure is raised. With a port given, its bind error is raised unchanged. Every failure it does not recover from is raised as the OSError the bind raised."
+      },
+      "id": "studi0_server::bind_server",
+      "intent": {
+        "state": "value",
+        "value": "Binds studi0 where its launcher asked. Asked for no port, studi0 tries its default port and, when another program holds it, takes a port the system assigns, so a second studi0 beside a first still starts. Asked for a port, it binds that one or fails as the bind failed; asked for 0, it takes a port the system assigns."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
     },
     {
       "dependencies": [],
@@ -1030,12 +1089,80 @@
       },
       "guarantees": {
         "state": "value",
-        "value": "Returns a server bound to the loopback address only, serving nothing until it is run; requests are answered by the routing table and never logged to stderr"
+        "value": "Returns a server bound to the loopback address only, serving nothing until it is run; requests are answered by the routing table, with their Host header, and never logged to stderr. A port another socket is listening on fails to bind on every platform, Windows included, rather than being shared."
       },
       "id": "studi0_server::create_server",
       "intent": {
         "state": "value",
         "value": "Builds the studi0 host for one project: a threading HTTP server bound to the loopback interface whose only behavior is to answer GET requests from the routing table, quietly, so the console stays the caller's."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [
+        "studi0_server::Studi0ServerConfig"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the names studi0 answers to",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::Studi0ServerConfig"
+        }
+      ],
+      "expects": {
+        "state": "value",
+        "value": "host is the Host header exactly as the request carried it, or None when there was none"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never resolves a name, so the answer depends on the header alone."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns True when host is None or blank, or when the name it carries, with any port removed and lowercased, is one of Studi0ServerConfig.answers_to; returns False for every other name. Looks nothing up."
+      },
+      "id": "studi0_server::host_is_answered",
+      "intent": {
+        "state": "value",
+        "value": "Decides whether a request is addressed to studi0 by one of its own names, read from the request's Host header. A name is compared without its port and without regard to case, so a port forwarded on this machine still reaches studi0; a request that carries no Host at all is answered, since no browser sends one."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [
+        "studi0_server::Studi0ServerConfig"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the name in the address",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::Studi0ServerConfig"
+        }
+      ],
+      "expects": {
+        "state": "value",
+        "value": "port is the port the server really bound"
+      },
+      "forbids": {
+        "state": "value",
+        "value": "Never resolves the name it writes."
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns http://studi0.localhost:<port>/ with Studi0ServerConfig.name as the name"
+      },
+      "id": "studi0_server::named_url",
+      "intent": {
+        "state": "value",
+        "value": "Writes the address studi0 offers for a port under its own name, the one it prints first and opens in a browser. The name is written, never looked up."
       },
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
@@ -1064,12 +1191,14 @@
       "dependencies": [
         "studi0_server::APP_CSS",
         "studi0_server::APP_JS",
+        "studi0_server::FOREIGN_HOST_ERROR",
         "studi0_server::INDEX_HTML",
         "studi0_server::NOT_BUILT_ERROR",
         "studi0_server::NOT_FOUND_ERROR",
         "studi0_server::_CSS_CONTENT_TYPE",
         "studi0_server::_HTML_CONTENT_TYPE",
-        "studi0_server::_JS_CONTENT_TYPE"
+        "studi0_server::_JS_CONTENT_TYPE",
+        "studi0_server::host_is_answered"
       ],
       "edges": [
         {
@@ -1085,6 +1214,13 @@
           "origin": "inline_depends_on",
           "relation": "READS",
           "target": "studi0_server::APP_JS"
+        },
+        {
+          "authored": true,
+          "carries": "the answer to a request addressed to another name",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::FOREIGN_HOST_ERROR"
         },
         {
           "authored": true,
@@ -1129,6 +1265,13 @@
           "target": "studi0_server::_JS_CONTENT_TYPE"
         },
         {
+          "authored": true,
+          "carries": "the request's Host header",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_server::host_is_answered"
+        },
+        {
           "authored": false,
           "origin": "function_signature",
           "relation": "TYPE_USES",
@@ -1155,7 +1298,7 @@
       ],
       "expects": {
         "state": "value",
-        "value": "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from"
+        "value": "path is the path component of a GET request, with any query string already stripped; session is the viewing session to answer the API routes from; host is the request's Host header as it arrived, or None when it carried none"
       },
       "forbids": {
         "state": "value",
@@ -1163,12 +1306,12 @@
       },
       "guarantees": {
         "state": "value",
-        "value": "Returns a status, a content type, and an encoded body for every possible path — never raises, and never puts a traceback in a body. The three asset routes answer with the embedded bytes unchanged. Both API routes answer from a single reading, so their sequence numbers agree within one request."
+        "value": "Returns a status, a content type, and an encoded body for every possible path and host — never raises, and never puts a traceback in a body. A host host_is_answered refuses gets 403 FOREIGN_HOST whatever the path, and no reading is taken for it. The three asset routes answer with the embedded bytes unchanged. Both API routes answer from a single reading, so their sequence numbers agree within one request."
       },
       "id": "studi0_server::route_request",
       "intent": {
         "state": "value",
-        "value": "Decides what studi0 answers for one requested path: the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
+        "value": "Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
       },
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
@@ -1199,6 +1342,52 @@
       "intent": {
         "state": "value",
         "value": "Runs a studi0 server until the person watching it stops it, and closes the socket on the way out — an interrupted studi0 leaves nothing bound behind it."
+      },
+      "kind": "FUNCTION",
+      "layer": "PRESENTATION",
+      "module": "studi0_server"
+    },
+    {
+      "dependencies": [
+        "studi0_server::Studi0ServerConfig",
+        "studi0_server::named_url",
+        "studi0_server::project_display_name"
+      ],
+      "edges": [
+        {
+          "authored": true,
+          "carries": "the loopback host and the default port",
+          "origin": "inline_depends_on",
+          "relation": "READS",
+          "target": "studi0_server::Studi0ServerConfig"
+        },
+        {
+          "authored": true,
+          "carries": "the bound port",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_server::named_url"
+        },
+        {
+          "authored": true,
+          "carries": "the project root",
+          "origin": "inline_depends_on",
+          "relation": "CALLS",
+          "target": "studi0_server::project_display_name"
+        }
+      ],
+      "expects": {
+        "state": "value",
+        "value": "project_root is the project being shown; port is the port the server really bound; fell_back is True only when the default port was in use and another was taken"
+      },
+      "guarantees": {
+        "state": "value",
+        "value": "Returns two lines, or three when fell_back: 'studi0 serving <project> at <named_url>', then '  also at http://127.0.0.1:<port>/', then '  port 5710 is in use, so this one has port <port>' with the configured default port"
+      },
+      "id": "studi0_server::serving_lines",
+      "intent": {
+        "state": "value",
+        "value": "Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not treat .localhost names as this machine, and, when the default port was taken, a plain line saying which port this one has instead."
       },
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
@@ -1255,7 +1444,7 @@
     },
     {
       "path": "studi0_server.s0ma.json",
-      "sha256": "sha256:8de80955f2ad4acef47f1046bea7073877a8d29ff44b8033f7da2b484586491e"
+      "sha256": "sha256:203cc3c3eaef8f8c7eb1feddfd240c7952e483a78c4daa6af964ba9c1cd49fe7"
     },
     {
       "path": "studi0_state.s0ma.json",

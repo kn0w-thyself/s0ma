@@ -40,9 +40,9 @@ emitted:
   ``s0ma studi0`` subcommand makes, and :func:`main`, the same journey
   for direct execution. They compose the built nerves: open a viewing
   session, start the watch that keeps it current, bind a server on it,
-  report the address it really bound, mark the project as watched, open
-  a browser at it, serve until interrupted, and take the mark and the
-  watch back down on the way out.
+  report the address it really bound under studi0's own name, mark the
+  project as watched, open a browser at it, serve until interrupted,
+  and take the mark and the watch back down on the way out.
 
 The flat name is the ONLY runtime identity. Never import a built module
 through its on-disk dotted path (``s0ma_studi0._built.<module>``) at
@@ -122,7 +122,7 @@ if not TYPE_CHECKING:
 def launch(
     project_root: Path,
     *,
-    port: int = 0,
+    port: int | None = None,
     open_browser: bool = True,
 ) -> int:
     """Serve studi0 for one project until interrupted; return the exit code.
@@ -131,11 +131,18 @@ def launch(
     viewing session on the project and starts the watch that keeps it
     current, so the graph API is already truthful before the first
     request arrives. Binds the loopback interface only — studi0 is
-    never offered to another machine — prints exactly one line naming
-    the project and the URL it is really serving, opens a browser there
-    unless asked not to, then serves until Ctrl-C (or until another
-    thread calls ``shutdown()`` on the server). The watch is stopped on
-    every exit path, including a failure to bind.
+    never offered to another machine — and prints, first, one line
+    naming the project and the address it is really serving under its
+    own name, ``http://studi0.localhost:<port>/``; then the same
+    address on ``127.0.0.1``, and, when the default port was taken, a
+    line saying which port it has instead. It opens a browser at the
+    first address unless asked not to, then serves until Ctrl-C (or
+    until another thread calls ``shutdown()`` on the server). The
+    watch is stopped on every exit path, including a failure to bind.
+
+    The name is written into the address, never looked up: a browser
+    treats ``.localhost`` names as this machine, and the second line is
+    there for one that does not.
 
     Once the socket is really bound, the project is marked as watched:
     ``.s0ma/studi0/active.json`` carries this process's id and the port
@@ -150,8 +157,13 @@ def launch(
         project_root: The project to show. Opened read-only apart from
             that one presence marker; studi0 writes nothing else into
             the target tree.
-        port: The port to bind, or 0 (the default) to let the OS assign
-            a free one. The printed URL always carries the real port.
+        port: ``None`` (the default) for studi0's own port, 5710,
+            falling back to one the system assigns when 5710 is in use;
+            0 to let the system assign a free one; or a port to bind,
+            which fails as the bind fails when it is taken. The printed
+            addresses always carry the real port. A caller that predates
+            the default and always passes 0 keeps a port the system
+            assigns.
         open_browser: Open the URL in the user's browser once the server
             is bound. ``False`` is the ``--no-open`` behavior, and the
             only form tests should use.
@@ -168,23 +180,24 @@ def launch(
 
     marked = False
     try:
-        server = studi0_server.create_server(project_root, port, session)
+        bound = studi0_server.bind_server(project_root, port, session)
+        server = bound["server"]
         address = studi0_server.bound_address(server)
-        url = f"http://{address['host']}:{address['port']}/"
+        url = studi0_server.named_url(address["port"])
         studi0_narration.write_presence(project_root, address["port"])
         # A closure per launch, so unregistering this one cannot cancel
         # another launch's hook in the same process.
         atexit.register(_unmark)
         marked = True
-        # Flushed explicitly: this line is the only way a caller learns
-        # the URL, and stdout is block-buffered whenever it is not a
-        # terminal (a pipe, a CI log, an agent capturing the
-        # subprocess) — without the flush the line would not appear
+        # Flushed explicitly: the first line is the only way a caller
+        # learns the URL, and stdout is block-buffered whenever it is
+        # not a terminal (a pipe, a CI log, an agent capturing the
+        # subprocess) — without the flush the lines would not appear
         # until the server exits.
-        print(
-            f"studi0 serving {studi0_server.project_display_name(project_root)} at {url}",
-            flush=True,
-        )
+        for line in studi0_server.serving_lines(
+            project_root, address["port"], bool(bound["fell_back"])
+        ):
+            print(line, flush=True)
         if open_browser:
             webbrowser.open(url)
         return studi0_server.run_server(server)

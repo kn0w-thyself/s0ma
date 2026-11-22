@@ -30,8 +30,9 @@ s0ma studi0
 ```
 
 studi0 serves a small viewer on `127.0.0.1` — your own machine, nothing else —
-and opens it in a browser. It prints the address it chose; pass `--no-open` if
-you would rather open that address yourself.
+and opens it in a browser, at `http://studi0.localhost:5710/` unless that port
+is taken. It prints the address it chose; pass `--no-open` if you would rather
+open that address yourself.
 
 The viewer is read-only in the strongest sense: it reads the artifacts your last
 build produced, it writes nothing back into the project, and it never runs your

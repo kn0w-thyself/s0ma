@@ -3,7 +3,10 @@
 The transpiler must not depend on the viewer. ``s0ma studi0`` imports
 ``s0ma_studi0`` lazily, inside the handler, and hands it the parsed
 arguments through the frozen ``launch(project_root, *, port,
-open_browser) -> int`` signature (studi0 plan §3.3/§3.4).
+open_browser) -> int`` signature (studi0 plan §3.3/§3.4). With no
+``--port`` the CLI leaves ``port`` out of the call, so the viewer's own
+default applies: studi0's address on a new viewer, and a port the
+system assigns on one that predates it.
 
 ``s0ma_studi0`` is a workspace member, so it is importable while these
 tests run. Absence is therefore simulated the way the interpreter itself
@@ -60,12 +63,18 @@ def _block_import(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_parser_defaults() -> None:
-    """``project_root`` is optional; the port defaults to OS-assigned."""
+    """``project_root`` is optional; no ``--port`` is "no port given"."""
     args = S0maCLI().build_parser().parse_args(["studi0"])
     assert args.command == "studi0"
     assert args.project_root is None
-    assert args.port == 0
+    assert args.port is None
     assert args.no_open is False
+
+
+def test_parser_keeps_port_zero_distinct_from_no_port() -> None:
+    """``--port 0`` still asks for a port the system assigns."""
+    args = S0maCLI().build_parser().parse_args(["studi0", "--port", "0"])
+    assert args.port == 0
 
 
 def test_parser_accepts_port_and_no_open() -> None:
@@ -153,7 +162,12 @@ def test_launch_receives_parsed_args(
 def test_launch_defaults_to_cwd_and_opens_a_browser(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    """No positional: the current working directory, ephemeral port, browser on."""
+    """No positional and no ``--port``: the cwd, the viewer's default, browser on.
+
+    ``port`` is left out rather than passed as ``None``, so a viewer
+    whose ``launch`` predates the default address still accepts the
+    call and keeps its own default.
+    """
     recorder = _install_stub(monkeypatch)
     monkeypatch.chdir(tmp_path)
 
@@ -161,7 +175,44 @@ def test_launch_defaults_to_cwd_and_opens_a_browser(
 
     args, kwargs = recorder.calls[0]
     assert args == (Path.cwd(),)
+    assert kwargs == {"open_browser": True}
+
+
+def test_port_zero_reaches_launch_as_zero(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """``--port 0`` is passed through: a port the system assigns."""
+    recorder = _install_stub(monkeypatch)
+
+    assert S0maCLI().run(["studi0", str(tmp_path), "--port", "0"]) == EXIT_SUCCESS
+
+    _, kwargs = recorder.calls[0]
     assert kwargs == {"port": 0, "open_browser": True}
+
+
+def test_a_launch_that_predates_the_default_still_starts(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A viewer whose ``launch`` requires ``port`` to be an int still runs.
+
+    Stands in for an older viewer package: its ``port`` defaults to 0,
+    and the call the CLI makes with no ``--port`` lands on that default.
+    """
+    seen: list[int] = []
+
+    def _older_launch(
+        project_root: Path, *, port: int = 0, open_browser: bool = True
+    ) -> int:
+        assert isinstance(port, int)
+        seen.append(port)
+        return EXIT_SUCCESS
+
+    module = types.ModuleType(STUDI0_MODULE)
+    module.launch = _older_launch  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, STUDI0_MODULE, module)
+
+    assert S0maCLI().run(["studi0", str(tmp_path), "--no-open"]) == EXIT_SUCCESS
+    assert seen == [0]
 
 
 def test_launch_exit_code_is_the_command_exit_code(

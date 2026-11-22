@@ -27,7 +27,7 @@ The sentence quoted under each name below is the distribution's own, taken from 
 | `s0ma-lang-core` | `0.22.0` | `Apache-2.0` | nothing | 63 |
 | `s0ma-lang-dsl` | `0.22.0` | `Apache-2.0` | `s0ma-lang-core` | 10 |
 | `s0ma-lang-mcp` | `0.22.0` | `Apache-2.0` | `s0ma-lang-core`, `s0ma-lang-dsl` | 40 |
-| `s0ma-lang-studi0` | `0.22.0` | `Apache-2.0` | `s0ma-lang-core`, `s0ma-lang-dsl` | 50 |
+| `s0ma-lang-studi0` | `0.22.0` | `Apache-2.0` | `s0ma-lang-core`, `s0ma-lang-dsl` | 55 |
 
 ## s0ma-lang
 
@@ -75,6 +75,6 @@ Declared in [`packages/s0ma-mcp/pyproject.toml`](../../packages/s0ma-mcp/pyproje
 
 Version `0.22.0`, licensed `Apache-2.0` — an open license: you may use, change and redistribute it, including commercially, on the terms in the license file. The license text ships as `LICENSE` inside the wheel.
 
-It depends on `s0ma-lang-core`, `s0ma-lang-dsl`, and on nothing else in this workspace. It registers 50 components, listed with what each is for in the [component index](../architecture/component-index.md).
+It depends on `s0ma-lang-core`, `s0ma-lang-dsl`, and on nothing else in this workspace. It registers 55 components, listed with what each is for in the [component index](../architecture/component-index.md).
 
 Declared in [`packages/s0ma-studi0/pyproject.toml`](../../packages/s0ma-studi0/pyproject.toml); its front door is [`packages/s0ma-studi0/README.md`](../../packages/s0ma-studi0/README.md).

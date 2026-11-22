@@ -170,12 +170,18 @@ and the differences are the point.
 
 **The viewer** (`s0ma studi0`) binds the loopback address `127.0.0.1` and
 nothing else, answers `GET` and nothing else, and writes nothing at all in
-response to any request. It is never offered to another machine. It shows you
+response to any request. It is never offered to another machine. It answers
+only requests addressed to its own names, `studi0.localhost`, `localhost` and
+`127.0.0.1`, so a web page elsewhere cannot point a name of its own at your
+machine and read your project through it. It shows you
 what your build produced; it does not run your application.
 
 *Held by:* `packages/s0ma-studi0/tests/test_launch.py::test_binds_loopback_only`,
 which asserts both the running session's address and the server's own
-configured default.
+configured default, and
+`packages/s0ma-studi0/tests/test_launch.py::test_a_foreign_name_is_refused`,
+which sends a request under another name to the page, an asset, and both API
+routes and asserts each one is refused.
 
 **The authoring server** — the one a coding agent talks to — does not listen on
 a network at all. It speaks over the standard input and output of a program your
@@ -248,7 +254,7 @@ read it and approve it first.
 | Sending one feedback report you have approved (`POST /api/feedback`) | outbound request | the control plane | The report you read, and nothing else — at most 32 KB of it. In the headers: this machine's feedback access in `Authorization`, **never your license key**; `Content-Type: application/json`; `Accept: application/json`; `User-Agent: s0ma-feedback/<version>`; and the draft's own key, so sending twice cannot file a second report | Only after you have read the report and said yes | Once per approval. It is never retried on its own | You | Say anything that is not yes | `packages/s0ma-dsl/tests/test_feedback_client.py::test_the_license_key_never_travels_with_a_report` |
 | `s0ma feedback list` asking what you have sent (`GET /api/feedback`) | outbound request | the control plane | This machine's feedback access in `Authorization`, `Accept: application/json`, `User-Agent: s0ma-feedback/<version>`. No body | Only when you run it | Once per run | You | Do not run it | `packages/s0ma-dsl/tests/test_feedback_client.py::test_listing_returns_typed_rows_newest_first` |
 | `s0ma feedback delete` removing a report you sent (`DELETE /api/feedback/<id>`) | outbound request | the control plane | The same three headers, with the report's id in the address. No body | Only when you run it | Once per report; deleting all of them asks you first | You | Do not run it | `packages/s0ma-dsl/tests/test_feedback_client.py::test_a_deleted_report_is_absent_from_the_listing` |
-| The viewer, `s0ma studi0` | **local listener** | `127.0.0.1` and nothing else, on a port the machine picks unless you name one with `--port` | Nothing leaves the machine. It answers `GET` and nothing else, on a fixed list of paths, and writes nothing at all in response to any request | While you have it running | — | You | Ctrl-C in the terminal it is running in | `packages/s0ma-studi0/tests/test_api.py::test_every_route_table_entry_has_the_declared_shape` |
+| The viewer, `s0ma studi0` | **local listener** | `127.0.0.1` and nothing else, on port 5710 unless you name one with `--port` or 5710 is taken, when the machine picks one. It answers only requests addressed to `studi0.localhost`, `localhost` or `127.0.0.1` | Nothing leaves the machine. It answers `GET` and nothing else, on a fixed list of paths, and writes nothing at all in response to any request | While you have it running | — | You | Ctrl-C in the terminal it is running in | `packages/s0ma-studi0/tests/test_api.py::test_every_route_table_entry_has_the_declared_shape` |
 | The authoring server, `s0ma-lang-mcp` — the one a coding agent talks to | **no socket at all** | none: there is no port and no address | It speaks over the standard input and output of a program your agent starts, so there is nothing for anyone to connect to, on this machine or any other. The stand-in server the launcher answers with when s0ma is not installed yet works the same way | Whenever your agent is running it | — | Your coding agent | Quit the agent, or take the registration out of it | `packages/s0ma-mcp/tests/test_stdio_smoke.py::TestStdioTransport` |
 | The optional HTTP view of a project's self-model, from the `api` extra | **a listener only if you make one** | whatever you bind it to. s0ma binds nothing: it builds the application object and hands it to you | Your project's whole self-model, over 14 read-only routes with no authentication of any kind. Thirteen answer `GET`; one, `/self/query`, takes a question as a `POST` and changes nothing | Only if you installed the extra *and* handed the object to a server yourself | — | You | Do not run one. If you do, bind `127.0.0.1` — see [what listens, and to whom](#what-listens-and-to-whom) | `packages/s0ma-core/src/s0ma/api/rest.py` |
 | The Claude plugin: the line a session may begin with, and the six commands you can ask for by name | **neither — no request, no listener** | none | Nothing. The line is computed from two local files and writes nothing, not even the tidying-up the launcher's ordinary reader does. The six commands are instructions; what they run is `s0ma-launch` and `s0ma`, which is the rest of this table | At the start of a session, when there is something to say | — | Claude | Remove the plugin | `integrations/launcher/tests/test_session_hint.py::test_no_socket_is_opened` |

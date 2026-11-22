@@ -461,6 +461,10 @@ class TestTheDeclaredContracts:
             _authorities(provider)["authority:declared/studi0.serving-contract"].status
         )
         assert facts["host"] == "127.0.0.1"
+        assert facts["name"] == "studi0.localhost"
+        assert facts["default_port"] == "5710"
+        assert facts["answers_to"] == "studi0.localhost,localhost,127.0.0.1"
+        assert facts["foreign_host"] == "FOREIGN_HOST"
         assert facts["methods"] == "GET"
         assert facts["unserved"] == "NOT_FOUND"
         assert facts["routes"] == str(len(_served_paths()))

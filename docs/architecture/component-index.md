@@ -2,11 +2,11 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-Every component s0ma registers about itself: 163 of them, across 4 distributions and 8 kinds. This is the inventory the framework holds about its own code — the same self-model an application built with s0ma keeps about its code — read out of a registry booted for this build and out of the committed build artifacts of the packages that are written in s0ma itself.
+Every component s0ma registers about itself: 168 of them, across 4 distributions and 8 kinds. This is the inventory the framework holds about its own code — the same self-model an application built with s0ma keeps about its code — read out of a registry booted for this build and out of the committed build artifacts of the packages that are written in s0ma itself.
 
-By layer: 74 framework, 54 presentation, 35 application. 83 of the 163 declare themselves public and 75 declare no visibility at all, which is the honest answer for a component registered from hand-written Python: visibility is a field of the s0ma language, and a Python registration has nowhere to put one.
+By layer: 74 framework, 59 presentation, 35 application. 88 of the 168 declare themselves public and 75 declare no visibility at all, which is the honest answer for a component registered from hand-written Python: visibility is a field of the s0ma language, and a Python registration has nowhere to put one.
 
-This page describes the build stamped `sha256:2d08875ea7f6f08e` at version `0.22.0`. The same rows in a form a program can read, with the reading each fact came from, are in [`docs/_generated/inventory-components.json`](../_generated/inventory-components.json).
+This page describes the build stamped `sha256:23110c6009d21d70` at version `0.22.0`. The same rows in a form a program can read, with the reading each fact came from, are in [`docs/_generated/inventory-components.json`](../_generated/inventory-components.json).
 
 ## Contents
 
@@ -23,7 +23,7 @@ This page describes the build stamped `sha256:2d08875ea7f6f08e` at version `0.22
 
 ## s0ma-lang-core
 
-63 of the 163 components: all of them framework. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
+63 of the 168 components: all of them framework. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |
@@ -93,7 +93,7 @@ This page describes the build stamped `sha256:2d08875ea7f6f08e` at version `0.22
 
 ## s0ma-lang-dsl
 
-10 of the 163 components: 9 function, 1 service. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
+10 of the 168 components: 9 function, 1 service. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |
@@ -110,7 +110,7 @@ This page describes the build stamped `sha256:2d08875ea7f6f08e` at version `0.22
 
 ## s0ma-lang-mcp
 
-40 of the 163 components: 36 function, 2 adapter, 1 framework, 1 orchestrator. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
+40 of the 168 components: 36 function, 2 adapter, 1 framework, 1 orchestrator. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |
@@ -157,7 +157,7 @@ This page describes the build stamped `sha256:2d08875ea7f6f08e` at version `0.22
 
 ## s0ma-lang-studi0
 
-50 of the 163 components: 22 constant, 22 function, 4 model, 2 configuration. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
+55 of the 168 components: 26 function, 23 constant, 4 model, 2 configuration. What the distribution itself is, and what it depends on, is on the [distributions page](../reference/packages.md).
 
 | Component | Kind | Layer | Visible | What it is for |
 | --- | --- | --- | --- | --- |
@@ -176,19 +176,24 @@ This page describes the build stamped `sha256:2d08875ea7f6f08e` at version `0.22
 | `component:s0ma_studi0.studi0_narration.read_narrations` | function | application | public | Reads whatever the agent has appended to the session log since the last look, and nothing else. A line still being written is not read at all — the tail stops at the last newline and comes back for the rest next tick — so a narration is never shown half-written or half-parsed. A missing log is the ordinary case, not a failure: most sessions never narrate, and studi0 has nothing to say about that. |
 | `component:s0ma_studi0.studi0_narration.session_log_path` | function | application | public | Names the narration log for one project root — the file the agent appends to and the watch tails, resolved from one constant so the reading side can never drift from the path the rule tells the writing side. |
 | `component:s0ma_studi0.studi0_narration.write_presence` | function | application | public | Says, in the project itself, that a studi0 is watching it right now — the one file studi0 ever writes into the tree it is showing. It carries the port it is serving on and the process id serving it, and nothing else: the port so a reader can find the viewer, the pid so a reader can tell a running studi0 from a marker an unclean shutdown left behind. |
+| `component:s0ma_studi0.studi0_server.FOREIGN_HOST_ERROR` | constant | presentation | public | The answer for a request addressed to a name studi0 does not go by, on every path. studi0 answers only under its own names, so a page elsewhere that points a name of its own at this machine cannot read the project through it, and the answer names the addresses that do work so a person who typed another one knows where to go. |
 | `component:s0ma_studi0.studi0_server.NOT_BUILT_ERROR` | constant | presentation | public | The answer GET /api/graph gives for a project that has no build artifacts at all. There is no graph to serve and an empty one would be a lie a viewer could not detect — an empty graph and an unbuilt project look identical on screen — so studi0 names the situation and names the remedy instead. |
 | `component:s0ma_studi0.studi0_server.NOT_FOUND_ERROR` | constant | presentation | public | The answer for any path studi0 does not serve — an /assets file this build does not carry, a mistyped /api route, anything else: the same structured error envelope, never a traceback and never a stack of guesses. |
 | `component:s0ma_studi0.studi0_server.ROUTE_TABLE` | constant | presentation | public | Every path studi0 serves, declared as data: what a caller asks for, what comes back, which declarations produce it, and what answering costs. The routing decision is still taken in route_request one path at a time — this is that same table said out loud, so a person, a test and a documentation build can all read what studi0 serves without reading a function body and guessing. The two are held in step by tests/test_api.py: a path named here that route_request does not answer, or a path route_request answers that is not named here, fails there. |
-| `component:s0ma_studi0.studi0_server.Studi0ServerConfig` | configuration | presentation | public | The studi0 host's settings: the loopback interface the server is allowed to bind, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number. |
+| `component:s0ma_studi0.studi0_server.Studi0ServerConfig` | configuration | presentation | public | The studi0 host's settings: the loopback interface the server is allowed to bind, the name and port of the address studi0 offers when it is not asked for a port, the names a request may address it by, how often the serving loop checks for a shutdown request, and how often the served page should poll the graph API for a new sequence number. |
 | `component:s0ma_studi0.studi0_server._CSS_CONTENT_TYPE` | constant | presentation | internal | The Content-Type header value studi0 sends with the sh0w stylesheet, named here rather than at the route so the charset is declared once and cannot drift between assets. |
 | `component:s0ma_studi0.studi0_server._HTML_CONTENT_TYPE` | constant | presentation | internal | The Content-Type header value studi0 sends with every HTML document it serves, stated once so the served page cannot drift into a charset guess. |
 | `component:s0ma_studi0.studi0_server._JSON_CONTENT_TYPE` | constant | presentation | internal | The Content-Type header value studi0 sends with every JSON document it serves, stated once so API answers and API errors are labelled identically. |
 | `component:s0ma_studi0.studi0_server._JS_CONTENT_TYPE` | constant | presentation | internal | The Content-Type header value studi0 sends with the sh0w script. It must be a JavaScript type a browser will accept for a module script, or the page loads its stylesheet and then draws nothing. |
+| `component:s0ma_studi0.studi0_server.bind_server` | function | presentation | public | Binds studi0 where its launcher asked. Asked for no port, studi0 tries its default port and, when another program holds it, takes a port the system assigns, so a second studi0 beside a first still starts. Asked for a port, it binds that one or fails as the bind failed; asked for 0, it takes a port the system assigns. |
 | `component:s0ma_studi0.studi0_server.bound_address` | function | presentation | public | Reports the address a running studi0 server actually bound, asked of the socket itself rather than of the requested settings — the only answer that survives an OS-assigned port, and the one a caller prints or asserts on. |
 | `component:s0ma_studi0.studi0_server.create_server` | function | presentation | public | Builds the studi0 host for one project: a threading HTTP server bound to the loopback interface whose only behavior is to answer GET requests from the routing table, quietly, so the console stays the caller's. |
+| `component:s0ma_studi0.studi0_server.host_is_answered` | function | presentation | public | Decides whether a request is addressed to studi0 by one of its own names, read from the request's Host header. A name is compared without its port and without regard to case, so a port forwarded on this machine still reaches studi0; a request that carries no Host at all is answered, since no browser sends one. |
+| `component:s0ma_studi0.studi0_server.named_url` | function | presentation | public | Writes the address studi0 offers for a port under its own name, the one it prints first and opens in a browser. The name is written, never looked up. |
 | `component:s0ma_studi0.studi0_server.project_display_name` | function | presentation | public | Names the project studi0 is showing the way a person would name it — its own directory name — for the one line studi0 prints when it starts serving. The served page is never told: it carries no project name at all, because everything it shows it learns from the graph API. |
-| `component:s0ma_studi0.studi0_server.route_request` | function | presentation | public | Decides what studi0 answers for one requested path: the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve. |
+| `component:s0ma_studi0.studi0_server.route_request` | function | presentation | public | Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve. |
 | `component:s0ma_studi0.studi0_server.run_server` | function | presentation | public | Runs a studi0 server until the person watching it stops it, and closes the socket on the way out — an interrupted studi0 leaves nothing bound behind it. |
+| `component:s0ma_studi0.studi0_server.serving_lines` | function | presentation | public | Writes what studi0 prints when it starts serving: the project and its address under studi0's own name first, since a caller reads that line to learn where studi0 is, then the same address on the loopback number for a browser that does not treat .localhost names as this machine, and, when the default port was taken, a plain line saying which port this one has instead. |
 | `component:s0ma_studi0.studi0_state.BUILD_STATUS_MISSING` | constant | application | public | The build status studi0 reports when it cannot find a build to judge: nothing is built, or the build manifest is unreadable, so freshness is a question studi0 has no evidence to answer. The other two statuses — fresh and stale — are never decided here; they arrive verbatim from the graph document's own freshness block, which is the only place source hashes are compared. |
 | `component:s0ma_studi0.studi0_state.CARRIED_GRAPH_SCHEMA` | constant | application | public | The versioned name of the graph document that rides INSIDE the /api/graph envelope — the one s0ma_dsl.graph_export stamps on its own output. studi0 neither produces it nor rewrites it; naming it here is how this package states which graph contract this build was written against, so a page, a test and a documentation build read one answer instead of three copies of a string that can drift apart. |
 | `component:s0ma_studi0.studi0_state.GRAPH_DOCUMENT_KEYS` | constant | application | public | Every key GET /api/graph answers with, and no others — the envelope, not its contents. The graph inside it keeps its own frozen shape, stamped by whoever produced it, which is why the envelope stays this small: four keys that say which reading this is, what it carries, and the words a reader needs to read it. |

@@ -7,10 +7,14 @@ are the ones a viewer must never get wrong:
 
 * it binds ``127.0.0.1`` and nothing else — studi0 is never offered to
   another machine;
-* port 0 really means "ask the OS", and the printed URL carries the
-  port that was actually bound;
-* exactly one line is printed, in the frozen form the CLI asserts;
-* the browser opens only when the caller asked for it;
+* with no port asked for it tries its own, 5710, and takes another when
+  that one is in use; port 0 really means "ask the OS"; a named port is
+  that port or an error; and the printed URLs carry the port that was
+  actually bound;
+* the first printed line is the frozen form the CLI asserts, under
+  studi0's own name, and the lines after it are the ones declared;
+* the browser opens only when the caller asked for it, at the name;
+* it answers to its own names, and to no other;
 * every route answers — the page at ``/``, the graph API from the
   session's current reading, a structured ``NOT_FOUND`` everywhere else
   — and no answer is ever a traceback.
@@ -30,17 +34,56 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from s0ma_studi0 import sh0w_assets, studi0_server, studi0_state
+from s0ma_studi0 import launch, sh0w_assets, studi0_server, studi0_state
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from conftest import BrowserSpy, ServedStudi0
 
-#: The frozen console contract (plan §3.4): one line, loopback only.
+#: The frozen console contract: the first line names the project and the
+#: address under studi0's own name. Callers read it to learn the port.
 SERVING_LINE = re.compile(
-    r"^studi0 serving (?P<project>.+) at http://127\.0\.0\.1:(?P<port>\d+)/$"
+    r"^studi0 serving (?P<project>.+) at http://studi0\.localhost:(?P<port>\d+)/$"
 )
+
+#: The names a request may address studi0 by, written out here, because
+#: a set asserted against itself asserts nothing.
+OWN_NAMES = ("studi0.localhost", "localhost", "127.0.0.1")
+
+#: The API and asset paths every name rule is checked on.
+EVERY_KIND_OF_PATH = ("/", "/assets/app.js", "/api/state", "/api/graph")
+
+
+def _free_port() -> int:
+    """A port nothing was listening on a moment ago.
+
+    Only used where a test needs studi0's default to point somewhere
+    free without depending on 5710 itself being free on this machine.
+    """
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.bind(("127.0.0.1", 0))
+        return int(probe.getsockname()[1])
+
+
+def _get_without_host(port: int, path: str) -> tuple[int, bytes]:
+    """GET *path* over a raw socket with no Host header at all.
+
+    ``urllib`` and ``http.client`` always add one, so the request line
+    is written by hand. HTTP/1.0, so the server closes when it is done.
+    """
+    with socket.create_connection(("127.0.0.1", port), timeout=30) as client:
+        client.sendall(f"GET {path} HTTP/1.0\r\n\r\n".encode("ascii"))
+        chunks: list[bytes] = []
+        while True:
+            chunk = client.recv(65536)
+            if not chunk:
+                break
+            chunks.append(chunk)
+    response = b"".join(chunks)
+    head, _, body = response.partition(b"\r\n\r\n")
+    status = int(head.split(b" ", 2)[1])
+    return status, body
 
 
 def test_binds_loopback_only(launch_studi0: Callable[..., ServedStudi0]) -> None:
@@ -85,35 +128,299 @@ def test_ephemeral_port_is_a_real_bound_port(
     assert session.port == session.server.socket.getsockname()[1]
 
 
-def test_serving_line_is_printed_exactly_once(
+def test_serving_lines_name_the_address_first_then_loopback(
     launch_studi0: Callable[..., ServedStudi0],
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """One line, naming the project and the URL actually served."""
+    """Two lines: the project at studi0's name, then the loopback number."""
     session = launch_studi0()
     assert session.stop() == 0
 
     lines = capsys.readouterr().out.splitlines()
-    assert len(lines) == 1, f"expected one serving line, got {lines!r}"
+    assert len(lines) == 2, f"expected two serving lines, got {lines!r}"
     match = SERVING_LINE.match(lines[0])
     assert match is not None, f"serving line off contract: {lines[0]!r}"
     assert match.group("project") == session.project_root.name
     assert int(match.group("port")) == session.port
-    assert lines[0] == (
+    assert lines == [
         f"studi0 serving {session.project_root.name} "
-        f"at http://127.0.0.1:{session.port}/"
-    )
+        f"at http://studi0.localhost:{session.port}/",
+        f"  also at http://127.0.0.1:{session.port}/",
+    ]
+
+
+def test_serving_lines_say_when_the_default_port_was_taken(tmp_path: Path) -> None:
+    """The third line appears only on a fallback, and names both ports."""
+    project = tmp_path / "shop"
+    assert studi0_server.serving_lines(project, 61234, False) == [
+        "studi0 serving shop at http://studi0.localhost:61234/",
+        "  also at http://127.0.0.1:61234/",
+    ]
+    assert studi0_server.serving_lines(project, 61234, True) == [
+        "studi0 serving shop at http://studi0.localhost:61234/",
+        "  also at http://127.0.0.1:61234/",
+        "  port 5710 is in use, so this one has port 61234",
+    ]
+    assert studi0_server.named_url(61234) == "http://studi0.localhost:61234/"
+
+
+def test_the_default_address_is_declared_once() -> None:
+    """The name, the port, and the names studi0 answers to, as data."""
+    config = studi0_server.Studi0ServerConfig
+    assert config.name == "studi0.localhost"
+    assert config.default_port == 5710
+    assert config.answers_to == OWN_NAMES
+    assert config.host in config.answers_to
+    assert config.name in config.answers_to
 
 
 def test_browser_opens_at_the_served_url_when_asked(
     launch_studi0: Callable[..., ServedStudi0],
     browser: BrowserSpy,
 ) -> None:
-    """open_browser=True opens exactly the URL that was printed."""
+    """open_browser=True opens exactly the URL printed first, at the name."""
     session = launch_studi0(open_browser=True)
     assert browser.wait(), "webbrowser.open was never called"
-    assert browser.urls == [session.url]
-    assert session.url == f"http://127.0.0.1:{session.port}/"
+    assert browser.urls == [f"http://studi0.localhost:{session.port}/"]
+
+
+# ---------------------------------------------------------------------------
+# The default address and its fallback
+# ---------------------------------------------------------------------------
+
+
+def test_no_port_asked_for_binds_the_default_port(
+    launch_studi0: Callable[..., ServedStudi0],
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """With no port given, studi0 binds its default and says nothing more.
+
+    The default is pointed at a port that was free a moment ago, so the
+    test holds whether or not 5710 is free on the machine running it.
+    """
+    default = _free_port()
+    monkeypatch.setattr(studi0_server.Studi0ServerConfig, "default_port", default)
+    session = launch_studi0(port=None)
+    assert session.port == default
+    assert session.stop() == 0
+    lines = capsys.readouterr().out.splitlines()
+    assert lines == [
+        f"studi0 serving {session.project_root.name} "
+        f"at http://studi0.localhost:{default}/",
+        f"  also at http://127.0.0.1:{default}/",
+    ]
+
+
+def test_a_taken_default_port_falls_back_and_says_so(
+    launch_studi0: Callable[..., ServedStudi0],
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+) -> None:
+    """A second studi0 beside a first still starts, on another port.
+
+    The first is a real running studi0, so the clash is the one two
+    viewers really have, on every platform CI runs, Windows included.
+    """
+    first = launch_studi0(tmp_path / "first", port=0)
+    monkeypatch.setattr(studi0_server.Studi0ServerConfig, "default_port", first.port)
+    tried: list[int] = []
+    harness_create = studi0_server.create_server
+
+    def _recording_create(
+        project_root: Path, port: int = 0, session: object = None
+    ) -> object:
+        tried.append(port)
+        return harness_create(project_root, port, session)
+
+    # Wraps the harness's own wrapper, so the server launch() ends up
+    # with still reaches the harness and is shut down by it.
+    monkeypatch.setattr(studi0_server, "create_server", _recording_create)
+    second = launch_studi0(tmp_path / "second", port=None)
+    assert tried == [first.port, 0], "the default port was not tried first"
+    assert second.port != first.port
+    assert second.port > 0
+    assert second.stop() == 0
+    assert first.stop() == 0
+
+    lines = capsys.readouterr().out.splitlines()
+    assert lines[-3:] == [
+        f"studi0 serving second at http://studi0.localhost:{second.port}/",
+        f"  also at http://127.0.0.1:{second.port}/",
+        f"  port {first.port} is in use, so this one has port {second.port}",
+    ]
+
+
+def test_a_taken_port_that_was_asked_for_is_an_error(tmp_path: Path) -> None:
+    """A named port is that port or a failure to bind, never another port.
+
+    Binding a port a studi0 is already listening on must fail on every
+    platform. On Windows that is only true because studi0 does not ask
+    for address reuse there and asks for the port exclusively instead.
+    """
+    first = studi0_server.create_server(tmp_path / "first")
+    try:
+        taken = studi0_server.bound_address(first)["port"]
+        with pytest.raises(OSError):
+            launch(tmp_path / "second", port=taken, open_browser=False)
+        # Nothing was marked, and the first server still holds its port.
+        assert not (tmp_path / "second" / ".s0ma" / "studi0" / "active.json").exists()
+        assert studi0_server.bound_address(first)["port"] == taken
+    finally:
+        first.server_close()
+
+
+def test_a_port_in_use_is_not_shared(tmp_path: Path) -> None:
+    """Two studi0 servers can never both bind one port.
+
+    The clash the fallback relies on. ``http.server`` turns address
+    reuse on, and on Windows that would let the second bind succeed
+    and share the port silently; this is the test that sees it there.
+    """
+    first = studi0_server.create_server(tmp_path / "first")
+    try:
+        taken = studi0_server.bound_address(first)["port"]
+        with pytest.raises(OSError):
+            second = studi0_server.create_server(tmp_path / "second", taken)
+            second.server_close()
+    finally:
+        first.server_close()
+
+
+def test_a_bind_failure_that_is_not_a_clash_is_not_hidden(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Only a port in use moves studi0 off its default."""
+
+    def _refuse(project_root: Path, port: int = 0, session: object = None) -> object:
+        raise OSError(99, "cannot assign requested address")
+
+    monkeypatch.setattr(studi0_server, "create_server", _refuse)
+    session = studi0_state.create_session(tmp_path)
+    with pytest.raises(OSError, match="cannot assign"):
+        studi0_server.bind_server(tmp_path, None, session)
+
+
+def test_port_zero_is_still_assigned_by_the_system(
+    launch_studi0: Callable[..., ServedStudi0],
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """port=0 never tries the default, and never says it fell back."""
+    tried: list[int] = []
+    real_create = studi0_server.create_server
+
+    def _recording_create(project_root: Path, port: int = 0, session: object = None) -> object:
+        tried.append(port)
+        return real_create(project_root, port, session)
+
+    monkeypatch.setattr(studi0_server, "create_server", _recording_create)
+    session = launch_studi0(port=0)
+    assert tried == [0]
+    assert session.stop() == 0
+    assert len(capsys.readouterr().out.splitlines()) == 2
+
+
+def test_launch_makes_no_name_lookup(
+    launch_studi0: Callable[..., ServedStudi0],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Launching writes studi0.localhost into its address, never resolves it.
+
+    The default is pointed at a free port, so the launch takes the same
+    path as one with no port asked for without touching 5710 itself.
+    """
+
+    def _refuse(*_args: object, **_kwargs: object) -> object:
+        raise AssertionError("launch looked a name up")
+
+    monkeypatch.setattr(studi0_server.Studi0ServerConfig, "default_port", _free_port())
+    for name in ("getaddrinfo", "gethostbyname", "gethostbyname_ex", "getfqdn"):
+        monkeypatch.setattr(socket, name, _refuse)
+    session = launch_studi0(port=None)
+    assert session.host == "127.0.0.1"
+    assert session.stop() == 0
+
+
+# ---------------------------------------------------------------------------
+# It answers to its own names, and to no other
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("name", [*OWN_NAMES, "STUDI0.LocalHost"])
+@pytest.mark.parametrize("path", EVERY_KIND_OF_PATH)
+def test_each_own_name_is_answered(
+    launch_studi0: Callable[..., ServedStudi0], name: str, path: str
+) -> None:
+    """Under any of its names, with or without a port, studi0 answers."""
+    session = launch_studi0()
+    for host in (name, f"{name}:{session.port}", f"{name}:1"):
+        status, _, body = session.get(path, headers={"Host": host})
+        assert status != 403, (host, path)
+        assert b"FOREIGN_HOST" not in body, (host, path)
+
+
+@pytest.mark.parametrize(
+    "host",
+    ["example.test", "example.test:5710", "studi0.localhost.example.test", "10.0.0.2"],
+)
+@pytest.mark.parametrize("path", EVERY_KIND_OF_PATH)
+def test_a_foreign_name_is_refused(
+    launch_studi0: Callable[..., ServedStudi0], host: str, path: str
+) -> None:
+    """Any other name gets one declared refusal, on the page, an asset, and the API."""
+    session = launch_studi0()
+    status, content_type, body = session.get(path, headers={"Host": host})
+    assert status == 403
+    assert content_type == "application/json; charset=utf-8"
+    document = json.loads(body.decode("utf-8"))
+    assert document == studi0_server.FOREIGN_HOST_ERROR
+    assert document["error"]["code"] == "FOREIGN_HOST"
+
+
+def test_the_refusal_names_the_addresses_that_work() -> None:
+    """A person who typed another name is told where studi0 is."""
+    message = studi0_server.FOREIGN_HOST_ERROR["error"]["message"]
+    for name in OWN_NAMES:
+        assert name in message
+    assert "http://studi0.localhost:" in message
+
+
+@pytest.mark.parametrize("path", EVERY_KIND_OF_PATH)
+def test_a_request_with_no_host_is_answered(
+    launch_studi0: Callable[..., ServedStudi0], path: str
+) -> None:
+    """No Host header is answered; no browser sends such a request."""
+    session = launch_studi0()
+    status, body = _get_without_host(session.port, path)
+    assert status != 403, path
+    assert b"FOREIGN_HOST" not in body
+
+
+def test_the_host_rule_reads_the_name_only() -> None:
+    """The name is compared without its port and without regard to case."""
+    answered = studi0_server.host_is_answered
+    assert answered(None)
+    assert answered("")
+    assert answered("studi0.localhost")
+    assert answered("Studi0.Localhost:5710")
+    assert answered("localhost:61234")
+    assert answered("127.0.0.1:1")
+    assert not answered("example.test")
+    assert not answered("example.test:5710")
+    assert not answered("localhost.example.test")
+    assert not answered("[::1]:5710")
+    assert not answered("127.0.0.2")
+
+
+def test_the_host_rule_comes_before_the_path(tmp_path: Path) -> None:
+    """A foreign name is refused even on a path that would be not found."""
+    session = studi0_state.create_session(tmp_path)
+    refused = studi0_server.route_request("/nope", session, "example.test")
+    assert refused["status"] == 403
+    answered = studi0_server.route_request("/nope", session, "localhost:5710")
+    assert answered["status"] == 404
 
 
 def test_browser_stays_closed_when_not_asked(

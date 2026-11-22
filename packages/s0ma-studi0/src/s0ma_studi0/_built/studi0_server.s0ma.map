@@ -3,365 +3,501 @@
     "declarations": [
       {
         "body_output": {
-          "end_line": 53,
-          "start_line": 50
+          "end_line": 59,
+          "start_line": 53
         },
         "body_source": {
-          "end_line": 25,
+          "end_line": 28,
           "start_line": 22
         },
         "decorator_output": {
-          "end_line": 48,
-          "start_line": 42
+          "end_line": 51,
+          "start_line": 45
         },
         "name": "Studi0ServerConfig",
         "output": {
-          "end_line": 53,
-          "start_line": 42
+          "end_line": 59,
+          "start_line": 45
         },
         "source": {
-          "end_line": 25,
+          "end_line": 28,
           "start_line": 14
         },
         "type": "cell"
       },
       {
         "body_output": {
-          "end_line": 101,
-          "start_line": 55
+          "end_line": 107,
+          "start_line": 61
         },
         "body_source": {
-          "end_line": 81,
-          "start_line": 35
+          "end_line": 84,
+          "start_line": 38
         },
         "name": "ROUTE_TABLE",
         "output": {
-          "end_line": 108,
-          "start_line": 55
+          "end_line": 114,
+          "start_line": 61
         },
         "source": {
-          "end_line": 81,
-          "start_line": 27
+          "end_line": 84,
+          "start_line": 30
         },
         "type": "cell"
       },
       {
         "body_output": {
-          "end_line": 119,
-          "start_line": 110
+          "end_line": 125,
+          "start_line": 116
         },
         "body_source": {
-          "end_line": 100,
-          "start_line": 91
+          "end_line": 103,
+          "start_line": 94
         },
         "name": "NOT_BUILT_ERROR",
         "output": {
-          "end_line": 126,
-          "start_line": 110
+          "end_line": 132,
+          "start_line": 116
         },
         "source": {
-          "end_line": 100,
-          "start_line": 83
+          "end_line": 103,
+          "start_line": 86
         },
         "type": "cell"
       },
       {
         "body_output": {
-          "end_line": 133,
-          "start_line": 128
+          "end_line": 139,
+          "start_line": 134
         },
         "body_source": {
-          "end_line": 115,
-          "start_line": 110
+          "end_line": 118,
+          "start_line": 113
         },
         "name": "NOT_FOUND_ERROR",
         "output": {
-          "end_line": 140,
-          "start_line": 128
+          "end_line": 146,
+          "start_line": 134
         },
         "source": {
-          "end_line": 115,
-          "start_line": 102
+          "end_line": 118,
+          "start_line": 105
         },
         "type": "cell"
       },
       {
         "body_output": {
-          "end_line": 142,
-          "start_line": 142
+          "end_line": 158,
+          "start_line": 148
         },
         "body_source": {
-          "end_line": 125,
-          "start_line": 125
+          "end_line": 138,
+          "start_line": 128
+        },
+        "name": "FOREIGN_HOST_ERROR",
+        "output": {
+          "end_line": 165,
+          "start_line": 148
+        },
+        "source": {
+          "end_line": 138,
+          "start_line": 120
+        },
+        "type": "cell"
+      },
+      {
+        "body_output": {
+          "end_line": 167,
+          "start_line": 167
+        },
+        "body_source": {
+          "end_line": 148,
+          "start_line": 148
         },
         "name": "_HTML_CONTENT_TYPE",
         "output": {
-          "end_line": 150,
-          "start_line": 142
+          "end_line": 175,
+          "start_line": 167
         },
         "source": {
-          "end_line": 125,
-          "start_line": 117
+          "end_line": 148,
+          "start_line": 140
         },
         "type": "cell"
       },
       {
         "body_output": {
-          "end_line": 152,
-          "start_line": 152
+          "end_line": 177,
+          "start_line": 177
         },
         "body_source": {
-          "end_line": 135,
-          "start_line": 135
+          "end_line": 158,
+          "start_line": 158
         },
         "name": "_JSON_CONTENT_TYPE",
         "output": {
-          "end_line": 160,
-          "start_line": 152
+          "end_line": 185,
+          "start_line": 177
         },
         "source": {
-          "end_line": 135,
-          "start_line": 127
+          "end_line": 158,
+          "start_line": 150
         },
         "type": "cell"
       },
       {
         "body_output": {
-          "end_line": 162,
-          "start_line": 162
+          "end_line": 187,
+          "start_line": 187
         },
         "body_source": {
-          "end_line": 145,
-          "start_line": 145
+          "end_line": 168,
+          "start_line": 168
         },
         "name": "_CSS_CONTENT_TYPE",
         "output": {
-          "end_line": 170,
-          "start_line": 162
+          "end_line": 195,
+          "start_line": 187
         },
         "source": {
-          "end_line": 145,
-          "start_line": 137
+          "end_line": 168,
+          "start_line": 160
         },
         "type": "cell"
       },
       {
         "body_output": {
-          "end_line": 172,
-          "start_line": 172
+          "end_line": 197,
+          "start_line": 197
         },
         "body_source": {
-          "end_line": 155,
-          "start_line": 155
+          "end_line": 178,
+          "start_line": 178
         },
         "name": "_JS_CONTENT_TYPE",
         "output": {
-          "end_line": 180,
-          "start_line": 172
+          "end_line": 205,
+          "start_line": 197
         },
         "source": {
-          "end_line": 155,
-          "start_line": 147
+          "end_line": 178,
+          "start_line": 170
         },
         "type": "cell"
       },
       {
         "body_output": {
-          "end_line": 186,
-          "start_line": 184
+          "end_line": 211,
+          "start_line": 209
         },
         "body_source": {
-          "end_line": 162,
-          "start_line": 160
+          "end_line": 185,
+          "start_line": 183
         },
         "name": "_json_bytes",
         "output": {
-          "end_line": 186,
-          "start_line": 182
+          "end_line": 211,
+          "start_line": 207
         },
         "source": {
-          "end_line": 162,
-          "start_line": 157
+          "end_line": 185,
+          "start_line": 180
         },
         "type": "helper"
       },
       {
         "body_output": {
+          "end_line": 221,
+          "start_line": 215
+        },
+        "body_source": {
           "end_line": 196,
           "start_line": 190
         },
-        "body_source": {
-          "end_line": 173,
-          "start_line": 167
-        },
         "name": "_text_response",
         "output": {
-          "end_line": 196,
-          "start_line": 188
+          "end_line": 221,
+          "start_line": 213
         },
         "source": {
-          "end_line": 173,
-          "start_line": 164
+          "end_line": 196,
+          "start_line": 187
         },
         "type": "helper"
       },
       {
         "body_output": {
-          "end_line": 206,
-          "start_line": 200
+          "end_line": 231,
+          "start_line": 225
         },
         "body_source": {
-          "end_line": 184,
-          "start_line": 178
+          "end_line": 207,
+          "start_line": 201
         },
         "name": "_json_response",
         "output": {
-          "end_line": 206,
-          "start_line": 198
+          "end_line": 231,
+          "start_line": 223
         },
         "source": {
-          "end_line": 184,
-          "start_line": 175
+          "end_line": 207,
+          "start_line": 198
         },
         "type": "helper"
       },
       {
         "body_output": {
-          "end_line": 227,
-          "start_line": 220
+          "end_line": 252,
+          "start_line": 245
         },
         "body_source": {
-          "end_line": 214,
-          "start_line": 206
+          "end_line": 237,
+          "start_line": 229
         },
         "decorator_output": {
-          "end_line": 218,
-          "start_line": 208
+          "end_line": 243,
+          "start_line": 233
         },
         "name": "project_display_name",
         "output": {
-          "end_line": 227,
-          "start_line": 208
+          "end_line": 252,
+          "start_line": 233
         },
         "source": {
-          "end_line": 214,
-          "start_line": 186
+          "end_line": 237,
+          "start_line": 209
         },
         "type": "nerve"
       },
       {
         "body_output": {
-          "end_line": 276,
-          "start_line": 243
+          "end_line": 284,
+          "start_line": 268
         },
         "body_source": {
-          "end_line": 278,
-          "start_line": 244
+          "end_line": 277,
+          "start_line": 260
         },
         "decorator_output": {
-          "end_line": 241,
-          "start_line": 229
+          "end_line": 266,
+          "start_line": 254
+        },
+        "name": "host_is_answered",
+        "output": {
+          "end_line": 284,
+          "start_line": 254
+        },
+        "source": {
+          "end_line": 277,
+          "start_line": 239
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 344,
+          "start_line": 300
+        },
+        "body_source": {
+          "end_line": 354,
+          "start_line": 309
+        },
+        "decorator_output": {
+          "end_line": 298,
+          "start_line": 286
         },
         "name": "route_request",
         "output": {
-          "end_line": 276,
-          "start_line": 229
+          "end_line": 344,
+          "start_line": 286
         },
         "source": {
-          "end_line": 278,
-          "start_line": 216
+          "end_line": 354,
+          "start_line": 279
         },
         "type": "nerve"
       },
       {
         "body_output": {
-          "end_line": 293,
-          "start_line": 290
+          "end_line": 361,
+          "start_line": 358
         },
         "body_source": {
-          "end_line": 303,
-          "start_line": 300
+          "end_line": 379,
+          "start_line": 376
         },
         "decorator_output": {
-          "end_line": 288,
-          "start_line": 278
+          "end_line": 356,
+          "start_line": 346
         },
         "name": "bound_address",
         "output": {
-          "end_line": 293,
-          "start_line": 278
+          "end_line": 361,
+          "start_line": 346
         },
         "source": {
-          "end_line": 303,
-          "start_line": 280
+          "end_line": 379,
+          "start_line": 356
         },
         "type": "nerve"
       },
       {
         "body_output": {
-          "end_line": 370,
-          "start_line": 309
+          "end_line": 379,
+          "start_line": 377
         },
         "body_source": {
-          "end_line": 389,
-          "start_line": 327
+          "end_line": 404,
+          "start_line": 402
         },
         "decorator_output": {
-          "end_line": 307,
-          "start_line": 295
+          "end_line": 375,
+          "start_line": 363
+        },
+        "name": "named_url",
+        "output": {
+          "end_line": 379,
+          "start_line": 363
+        },
+        "source": {
+          "end_line": 404,
+          "start_line": 381
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 405,
+          "start_line": 394
+        },
+        "body_source": {
+          "end_line": 440,
+          "start_line": 429
+        },
+        "decorator_output": {
+          "end_line": 392,
+          "start_line": 381
+        },
+        "name": "serving_lines",
+        "output": {
+          "end_line": 405,
+          "start_line": 381
+        },
+        "source": {
+          "end_line": 440,
+          "start_line": 406
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 498,
+          "start_line": 421
+        },
+        "body_source": {
+          "end_line": 543,
+          "start_line": 464
+        },
+        "decorator_output": {
+          "end_line": 419,
+          "start_line": 407
         },
         "name": "create_server",
         "output": {
-          "end_line": 370,
-          "start_line": 295
+          "end_line": 498,
+          "start_line": 407
         },
         "source": {
-          "end_line": 389,
-          "start_line": 305
+          "end_line": 543,
+          "start_line": 442
         },
         "type": "nerve"
       },
       {
         "body_output": {
-          "end_line": 400,
-          "start_line": 385
+          "end_line": 507,
+          "start_line": 502
         },
         "body_source": {
-          "end_line": 428,
-          "start_line": 412
+          "end_line": 553,
+          "start_line": 548
+        },
+        "name": "_port_in_use",
+        "output": {
+          "end_line": 507,
+          "start_line": 500
+        },
+        "source": {
+          "end_line": 553,
+          "start_line": 545
+        },
+        "type": "helper"
+      },
+      {
+        "body_output": {
+          "end_line": 546,
+          "start_line": 523
+        },
+        "body_source": {
+          "end_line": 601,
+          "start_line": 577
         },
         "decorator_output": {
-          "end_line": 383,
-          "start_line": 372
+          "end_line": 521,
+          "start_line": 509
+        },
+        "name": "bind_server",
+        "output": {
+          "end_line": 546,
+          "start_line": 509
+        },
+        "source": {
+          "end_line": 601,
+          "start_line": 555
+        },
+        "type": "nerve"
+      },
+      {
+        "body_output": {
+          "end_line": 576,
+          "start_line": 561
+        },
+        "body_source": {
+          "end_line": 640,
+          "start_line": 624
+        },
+        "decorator_output": {
+          "end_line": 559,
+          "start_line": 548
         },
         "name": "run_server",
         "output": {
-          "end_line": 400,
-          "start_line": 372
+          "end_line": 576,
+          "start_line": 548
         },
         "source": {
-          "end_line": 428,
-          "start_line": 391
+          "end_line": 640,
+          "start_line": 603
         },
         "type": "nerve"
       }
     ],
     "module_header": {
       "output_all": {
-        "end_line": 32,
-        "start_line": 32
+        "end_line": 35,
+        "start_line": 35
       },
       "output_header": {
         "end_line": 5,
         "start_line": 1
       },
       "output_imports": {
-        "end_line": 30,
+        "end_line": 33,
         "start_line": 6
       },
       "output_registration": {
-        "end_line": 40,
-        "start_line": 34
+        "end_line": 43,
+        "start_line": 37
       },
       "source": {
         "end_line": 12,

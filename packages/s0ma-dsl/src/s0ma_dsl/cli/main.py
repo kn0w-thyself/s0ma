@@ -3622,7 +3622,11 @@ class S0maCLI:
             description=(
                 "Serve studi0 — the local, read-only viewer for this "
                 "project's component graph — on 127.0.0.1 and open it "
-                "in a browser. studi0 renders the same graph "
+                "in a browser at http://studi0.localhost:5710/. When "
+                "port 5710 is in use, studi0 takes a port the system "
+                "assigns and says so. It answers only under its own "
+                "names: studi0.localhost, localhost and 127.0.0.1. "
+                "studi0 renders the same graph "
                 "`s0ma graph --format json --detail full` emits, "
                 "repainting as builds land. It reads build artifacts "
                 "only: nothing is written to the project, and the "
@@ -3642,10 +3646,11 @@ class S0maCLI:
         sp.add_argument(
             "--port",
             type=int,
-            default=0,
+            default=None,
             help=(
-                "Loopback port to bind (default: 0 — let the OS assign "
-                "an ephemeral port; the chosen URL is printed)"
+                "Loopback port to bind, or 0 for a port the system "
+                "assigns (default: 5710, or a port the system assigns "
+                "when 5710 is in use; the address is printed)"
             ),
         )
         sp.add_argument(
@@ -9041,11 +9046,15 @@ class S0maCLI:
             )
             return EXIT_USAGE_ERROR
 
-        exit_code: int = studi0.launch(
-            project_root,
-            port=args.port,
-            open_browser=not args.no_open,
-        )
+        # No --port leaves the port out, so the viewer's own default
+        # applies: studi0's address, with a fallback when it is taken. A
+        # viewer that predates that default treats the call as it always
+        # did, so an older viewer still starts on a port the system
+        # assigns.
+        launch_options: dict[str, Any] = {"open_browser": not args.no_open}
+        if args.port is not None:
+            launch_options["port"] = args.port
+        exit_code: int = studi0.launch(project_root, **launch_options)
         return exit_code
 
     # -------------------------------------------------------------------

@@ -753,7 +753,7 @@ The handler this command reaches was transcribed from the dispatch — argparse 
 | Option | Takes | Default | Accepted values |
 | --- | --- | --- | --- |
 | `--no-open` | no value | `false` | — |
-| `--port` | a value | `0` | — |
+| `--port` | a value | — | — |
 
 ### s0ma test
 
