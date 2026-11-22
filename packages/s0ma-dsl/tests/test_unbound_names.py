@@ -840,3 +840,61 @@ def test_the_walk_reports(
 )
 def test_type_parameters(source: str, expected: list[tuple[str, bool]]) -> None:
     assert _reads(source) == expected
+
+
+_BROAD_HANDLERS = [
+    pytest.param("except Exception:", id="exception"),
+    pytest.param("except BaseException:", id="base-exception"),
+    pytest.param("except:", id="bare"),
+    pytest.param("except (ValueError, Exception):", id="tuple"),
+]
+
+
+@pytest.mark.parametrize("handler", _BROAD_HANDLERS)
+def test_a_broad_handler_guards_a_module_level_read(handler: str) -> None:
+    source = f"try:\n    value = missing\n{handler}\n    value = None\n"
+    assert _reads(source) == []
+
+
+@pytest.mark.parametrize("handler", _BROAD_HANDLERS)
+def test_a_broad_handler_guards_a_class_body_read(handler: str) -> None:
+    source = (
+        "class C:\n    try:\n        value = missing\n"
+        f"    {handler}\n        value = None\n"
+    )
+    assert _reads(source) == []
+
+
+def test_a_narrow_handler_leaves_a_class_body_read_reported() -> None:
+    source = (
+        "class C:\n    try:\n        value = missing\n"
+        "    except ValueError:\n        value = None\n"
+    )
+    assert _reads(source) == [("missing", True)]
+
+
+@pytest.mark.parametrize("handler", _BROAD_HANDLERS)
+def test_a_broad_handler_in_a_function_stays_a_body_read(handler: str) -> None:
+    source = (
+        "def f():\n    try:\n        return missing\n"
+        f"    {handler}\n        return None\n"
+    )
+    assert _reads(source) == [("missing", False)]
+
+
+@pytest.mark.parametrize("handler", _BROAD_HANDLERS)
+def test_a_broad_handler_in_a_method_stays_a_body_read(handler: str) -> None:
+    source = (
+        "class C:\n    def m(self):\n        try:\n            return missing\n"
+        f"        {handler}\n            return None\n"
+    )
+    assert _reads(source) == [("missing", False)]
+
+
+@pytest.mark.parametrize("handler", _BROAD_HANDLERS)
+def test_a_broad_handler_around_a_def_does_not_hide_its_body(handler: str) -> None:
+    source = (
+        "try:\n    def f():\n        return missing\n"
+        f"{handler}\n    f = None\n"
+    )
+    assert _reads(source) == [("missing", False)]

@@ -26,11 +26,14 @@ A false error on a working module is worse than a miss, so the analysis
 stays silent when it cannot know. A star import, ``globals()``, ``exec``,
 ``eval``, ``sys.modules[__name__]``, and a write to ``builtins`` make the
 module's unresolved names unknowable. A read inside a ``try`` that catches
-``NameError`` is deliberate. A class with an explicit ``metaclass=`` may
-supply names through ``__prepare__``. A name bound anywhere at module level
-counts as bound, whatever the order and whatever condition guards it. The
-bounds and values of PEP 695 type parameters and aliases are evaluated
-lazily and are not read.
+``NameError`` is deliberate. At load, so is one under a bare ``except:`` or a
+handler naming ``Exception`` or ``BaseException``, because the module still
+imports. In a function body the same broad handler is no guard, because that
+is how a removed ``uses:`` entry gets swallowed, so the read stays reported.
+A class with an explicit ``metaclass=`` may supply names through
+``__prepare__``. A name bound anywhere at module level counts as bound,
+whatever the order and whatever condition guards it. The bounds and values
+of PEP 695 type parameters and aliases are evaluated lazily and are not read.
 """
 
 from __future__ import annotations
@@ -250,6 +253,18 @@ def _catches_name_error(handler: ast.ExceptHandler) -> bool:
     )
 
 
+def _is_broad_handler(handler: ast.ExceptHandler) -> bool:
+    """Whether *handler* is bare or names ``Exception`` or ``BaseException``."""
+    caught = handler.type
+    if caught is None:
+        return True
+    candidates = caught.elts if isinstance(caught, ast.Tuple) else [caught]
+    return any(
+        isinstance(item, ast.Name) and item.id in {"Exception", "BaseException"}
+        for item in candidates
+    )
+
+
 def _opens_the_namespace(node: ast.AST, scope: _Scope) -> bool:
     """Whether *node* can create module globals that no walk can see."""
     if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
@@ -334,7 +349,9 @@ class _Reader:
                 self._push([node.annotation], scope, at_load, guarded)
         elif isinstance(node, _TRIES):
             body_guarded = guarded or any(
-                _catches_name_error(handler) for handler in node.handlers
+                _catches_name_error(handler)
+                or (at_load and _is_broad_handler(handler))
+                for handler in node.handlers
             )
             self._push(node.body, scope, at_load, body_guarded)
             self._push(node.handlers, scope, at_load, guarded)
