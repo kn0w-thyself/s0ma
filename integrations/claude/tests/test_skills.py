@@ -1,4 +1,4 @@
-"""The nine skills the s0ma plugin ships, held to what a skill has to be.
+"""The twelve skills the s0ma plugin ships, held to what a skill has to be.
 
 A skill is a file a model reads in full every time it is invoked, so the
 things that can go wrong with one are not the things that go wrong with
@@ -50,9 +50,10 @@ INTEGRATIONS = Path(__file__).resolve().parents[2]
 SKILLS_DIR = INTEGRATIONS / "claude" / "plugin" / "skills"
 LAUNCHER_PATH = INTEGRATIONS / "launcher" / "s0ma_launch.py"
 
-#: The nine skills the plugin ships, and the whole set: a tenth directory
-#: that nobody added to this tuple is a skill no gate has ever read.
+#: The twelve skills the plugin ships, and the whole set: a thirteenth
+#: directory that nobody added to this tuple is a skill no gate has ever read.
 SKILL_NAMES: tuple[str, ...] = (
+    "build",
     "doctor",
     "feedback",
     "new",
@@ -61,6 +62,8 @@ SKILL_NAMES: tuple[str, ...] = (
     "preferences",
     "retrofit",
     "setup",
+    "start",
+    "studi0",
     "update",
 )
 
@@ -374,7 +377,7 @@ def sentences_asking_for_a_secret(text: str) -> list[str]:
 class TestEverySkillLoads:
     """What Claude Code needs before a skill is a skill at all."""
 
-    def test_the_nine_are_there_and_no_others(self) -> None:
+    def test_the_twelve_are_there_and_no_others(self) -> None:
         on_disk = sorted(
             entry.name for entry in SKILLS_DIR.iterdir() if entry.is_dir()
         )
@@ -486,6 +489,9 @@ class TestEveryCommandNamedExists:
             "off",
             "on",
             "preferences",
+            "start",
+            "build",
+            "studi0",
         ):
             assert found[name], f"{name} names no command at all"
 
@@ -715,6 +721,9 @@ TRIGGER_PHRASES: dict[str, tuple[str, ...]] = {
     "off": ("turn s0ma off here", "/s0ma:off"),
     "on": ("turn s0ma back on", "/s0ma:on"),
     "preferences": ("always use s0ma", "only show studi0 when I ask", "settings"),
+    "start": ("start with s0ma", "/s0ma:start"),
+    "build": ("add to or change a s0ma project", "build something with s0ma"),
+    "studi0": ("show me studi0",),
 }
 
 
@@ -834,3 +843,202 @@ class TestThePreferenceSkills:
         assert (
             "Nothing is written to the project's file for this answer." in text
         )
+
+
+# ---------------------------------------------------------------------------
+# The front door, the build skill and studi0
+# ---------------------------------------------------------------------------
+
+#: The sentences the owner decided for the three skills, each in its skill word
+#: for word. Where one names the machine it says "this Mac", and the skill says
+#: to call it "this PC" on Windows and "this computer" on Linux.
+FRONT_DOOR_SENTENCES: tuple[tuple[str, str], ...] = (
+    (
+        "start",
+        "Two things are missing on this Mac: uv, a small tool s0ma uses to manage "
+        "its own Python, and s0ma itself. Both go in your home folder, and nothing "
+        "in your projects changes. Install them?",
+    ),
+    (
+        "start",
+        "One thing is missing on this Mac: s0ma itself. It goes in your home "
+        "folder, and nothing in your projects changes. Install it?",
+    ),
+    ("start", "Installed uv \u00b7 Installing s0ma\u2026 done"),
+    (
+        "start",
+        "s0ma is ready. What do you want to build? One sentence is enough. Or say "
+        '"show me" and I\'ll build a small sample so you can watch how it works.',
+    ),
+    (
+        "start",
+        "Created tip-calculator in this folder \u00b7 Built 3 modules, 7 parts "
+        "\u00b7 All checks pass",
+    ),
+    (
+        "start",
+        "It's built, and studi0 is open beside the chat. That's your app as a live "
+        "map: every part and how they connect. It updates as I build.",
+    ),
+    ("start", "It's built, and studi0 is running at <address>."),
+    (
+        "start",
+        "Tell me what to change, or ask how any part works. Two things you can say "
+        'any time: "always use s0ma" and "always show studi0".',
+    ),
+    (
+        "build",
+        "Want to watch changes like this land in studi0? It opens beside the chat.",
+    ),
+    (
+        "build",
+        "Want to watch changes like this land in studi0? I'll start it and give "
+        "you the link.",
+    ),
+    ("build", '"Yes, always"'),
+    ("build", '"Just this once"'),
+    ("build", '"No thanks"'),
+    (
+        "build",
+        "I'll start it with each session from now on. Say \"only show studi0 when I "
+        'ask" to change that.',
+    ),
+    ("build", "studi0 is running: <address>"),
+)
+
+#: The MCP surface the authoring server serves, which names every tool it has.
+MCP_SURFACE = INTEGRATIONS.parent / "packages" / "s0ma-mcp" / "tests" / "snapshots" / "mcp_surface.json"
+
+
+@pytest.fixture(scope="session")
+def cli_parsers() -> dict[str, argparse.ArgumentParser]:
+    """Every top-level ``s0ma`` command's own parser, by name."""
+    main = importlib.import_module("s0ma_dsl.cli.main")
+    return _subcommands(main.S0maCLI().build_parser())
+
+
+def _options_of(parser: argparse.ArgumentParser) -> dict[str, argparse.Action]:
+    """Every option string one parser takes, with the action behind it."""
+    return {
+        option: action for action in parser._actions for option in action.option_strings
+    }
+
+
+def _s0ma_command_lines(text: str) -> list[list[str]]:
+    """The words of every ``s0ma`` command a skill names, in code or a fence."""
+    lines: list[list[str]] = []
+    in_fence = False
+    for line in text.splitlines():
+        if line.startswith("```"):
+            in_fence = not in_fence
+            continue
+        for candidate in [line] if in_fence else INLINE_CODE.findall(line):
+            words = candidate.split()
+            if len(words) > 1 and words[0] == "s0ma":
+                lines.append(words)
+    return lines
+
+
+class TestTheFrontDoor:
+    """``start``, ``build`` and ``studi0``: the decided words and what they lean on."""
+
+    @pytest.mark.parametrize(("name", "sentence"), FRONT_DOOR_SENTENCES)
+    def test_every_decided_sentence_is_there_word_for_word(
+        self, name: str, sentence: str, skills: dict[str, str]
+    ) -> None:
+        assert sentence in _one_line(skills[name]), (
+            f"{name}: the decided sentence is not there as written: {sentence!r}"
+        )
+
+    def test_the_start_skill_names_the_machine_for_each_platform(
+        self, skills: dict[str, str]
+    ) -> None:
+        text = _one_line(skills["start"])
+        assert '"this Mac" on macOS, "this PC" on Windows and "this computer" on Linux' in text
+
+    def test_start_points_at_the_skills_that_hold_the_detail(
+        self, skills: dict[str, str]
+    ) -> None:
+        for other in ("setup", "new", "build", "studi0"):
+            assert f"/s0ma:{other}" in skills["start"], f"start never names /s0ma:{other}"
+
+    def test_build_records_the_offer_as_the_preferences_skill_says(
+        self, skills: dict[str, str]
+    ) -> None:
+        text = _one_line(skills["build"])
+        assert "/s0ma:preferences" in text
+        assert 'section "The studi0 offer"' in text
+        assert "## The studi0 offer" in skills["preferences"]
+        assert "/s0ma:studi0" in text
+
+    def test_setup_and_new_name_the_quick_way_in(self, skills: dict[str, str]) -> None:
+        for name in ("setup", "new"):
+            assert "`/s0ma:start` is the quick way in" in _one_line(skills[name])
+
+    @pytest.mark.parametrize("name", ["start", "build", "studi0"])
+    def test_every_option_named_is_one_the_command_takes(
+        self, name: str, skills: dict[str, str], cli_parsers: dict[str, argparse.ArgumentParser]
+    ) -> None:
+        """``s0ma studi0 --no-open``, ``s0ma new project --template pipeline``.
+
+        Read from each command's own parser, so a flag or a template name the
+        CLI does not have fails here rather than in a person's first session.
+        """
+        checked = 0
+        for words in _s0ma_command_lines(skills[name]):
+            parser = cli_parsers.get(words[1])
+            assert parser is not None, f"{name}: `s0ma {words[1]}` is not a command"
+            options = _options_of(parser)
+            for index, word in enumerate(words[2:], start=2):
+                if not word.startswith("-"):
+                    continue
+                assert word in options, (
+                    f"{name}: `s0ma {words[1]}` takes no {word}; it takes {sorted(options)}"
+                )
+                checked += 1
+                choices = options[word].choices
+                if choices is not None and index + 1 < len(words):
+                    assert words[index + 1] in choices, (
+                        f"{name}: `{' '.join(words)}`: {word} takes {sorted(choices)}"
+                    )
+        assert name == "build" or checked, f"{name}: no option was checked at all"
+
+    def test_every_template_any_skill_names_is_one_new_project_offers(
+        self, skills: dict[str, str], cli_parsers: dict[str, argparse.ArgumentParser]
+    ) -> None:
+        offered = _options_of(cli_parsers["new"])["--template"].choices
+        assert offered is not None
+        named = {
+            found
+            for text in skills.values()
+            for found in re.findall(r"--template ([a-z]+)", text)
+        }
+        assert {"pipeline", "service", "library", "cli"} <= named
+        assert named <= set(offered), sorted(named - set(offered))
+
+    def test_the_tools_build_names_are_tools_the_server_serves(
+        self, skills: dict[str, str]
+    ) -> None:
+        import json
+
+        served = {tool["name"] for tool in json.loads(MCP_SURFACE.read_text(encoding="utf-8"))["tools"]}
+        for tool in ("project_status", "check", "build_project"):
+            assert f"`{tool}`" in skills["build"], f"build never names `{tool}`"
+            assert tool in served, f"the server serves no tool called {tool}"
+
+    def test_studi0_shows_its_own_address_and_names_no_tool(
+        self, skills: dict[str, str]
+    ) -> None:
+        text = _one_line(skills["studi0"])
+        assert "http://studi0.localhost:5710/" in text
+        assert ".s0ma/studi0/active.json" in text
+        assert "a tool that opens a web page in a pane or preview beside the chat" in text
+        assert "Never open anything but studi0's own local address this way" in text
+        assert "give the address as a link" in text
+
+    def test_start_reports_only_what_was_printed(self, skills: dict[str, str]) -> None:
+        """Every fresh build warns HOST_RUNTIME_UNDECLARED, so "All checks pass"
+        has to be held to what the commands said, and a warning said aloud."""
+        text = _one_line(skills["start"])
+        assert 'Say "All checks pass" only when' in text
+        assert "A warning is not a failure, but it was printed, so say it" in text
