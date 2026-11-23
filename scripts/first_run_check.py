@@ -13,7 +13,9 @@ with the runner's own Python and nothing else.
     command with a small MCP client, against the plugin folder and against the
     tree ``scripts/export_claude_marketplace.py`` writes. Then shows the
     checks bite: a copy with the message removed and a copy with a broken
-    stand-in must each fail them.
+    stand-in must each fail them. Both edit hooks' commands are run too, as
+    ``hooks/hooks.json`` writes them, for an edit in a s0ma project: with no uv
+    they say nothing and exit 0.
 
 ``uv-present``
     With uv, a fresh ``S0MA_HOME`` and no license key: the hook and the server
@@ -22,8 +24,10 @@ with the runner's own Python and nothing else.
     the plugin's server command. Once s0ma is installed the hook shows the
     person nothing and gives Claude the standing note, and in a project whose
     ``.s0ma/preferences.json`` turns s0ma off it says the one off line and
-    nothing else. Imports the end-to-end test's helpers, so run it with
-    ``uv run python``.
+    nothing else. In a project the installed s0ma makes with ``s0ma new
+    project``, the edit hooks refuse an edit under its build folder and hand
+    on what ``s0ma check`` finds in a broken ``.s0ma`` file. Imports the
+    end-to-end test's helpers, so run it with ``uv run python``.
 
 ``e2e``
     Runs ``integrations/launcher/tests/test_e2e_real_wheels.py`` with
@@ -460,6 +464,118 @@ def check_hook_off(ran: Ran, launcher: ModuleType) -> str:
     }
     expect(hint == expected, f"the hook did not say only the off line: {hint!r}")
     return "exit 0, stderr empty, no systemMessage, additionalContext is the off line"
+
+
+# ---------------------------------------------------------------------------
+# The edit hooks.
+# ---------------------------------------------------------------------------
+
+#: Which hooks.json event runs which edit hook.
+EDIT_HOOK_EVENTS = {"before-edit": "PreToolUse", "after-edit": "PostToolUse"}
+
+
+def edit_hook_command(plugin_dir: Path, hook: str) -> str:
+    """The one command an edit hook runs, with the plugin root filled in."""
+    hooks = json.loads(
+        (plugin_dir / "hooks" / "hooks.json").read_text(encoding="utf-8")
+    )
+    event = EDIT_HOOK_EVENTS[hook]
+    commands = {
+        str(h["command"])
+        for entry in hooks["hooks"].get(event, [])
+        for h in entry["hooks"]
+        if h.get("type") == "command"
+    }
+    expect(len(commands) == 1, f"expected one {event} command, found {commands}")
+    return commands.pop().replace("${CLAUDE_PLUGIN_ROOT}", plugin_root_text(plugin_dir))
+
+
+def run_edit_hook(
+    plugin_dir: Path, hook: str, env: dict[str, str], project: Path, target: Path
+) -> Ran:
+    """Run one edit hook the way Claude Code runs it, for a Write to *target*."""
+    command = edit_hook_command(plugin_dir, hook)
+    shell = [str(git_bash()), "-c"] if WINDOWS else ["/bin/sh", "-c"]
+    hook_env = dict(env)
+    hook_env["CLAUDE_PLUGIN_ROOT"] = plugin_root_text(plugin_dir)
+    hook_env["CLAUDE_PROJECT_DIR"] = str(project)
+    payload: dict[str, Any] = {
+        "session_id": "first-run-check",
+        "transcript_path": str(project / "transcript.jsonl"),
+        "cwd": str(project),
+        "permission_mode": "default",
+        "hook_event_name": EDIT_HOOK_EVENTS[hook],
+        "tool_name": "Write",
+        "tool_input": {"file_path": str(target), "content": "x = 1\n"},
+        "tool_use_id": "toolu_first_run_check",
+    }
+    if hook == "after-edit":
+        payload["tool_response"] = {"filePath": str(target), "success": True}
+    return run([*shell, command], hook_env, project, stdin=json.dumps(payload), timeout=60)
+
+
+def edit_hook_answer(ran: Ran, hook: str) -> dict[str, Any]:
+    """An edit hook's one line of JSON, after exit 0 and an empty stderr."""
+    answer = hook_line(ran)
+    extra = answer.get("hookSpecificOutput")
+    expect(isinstance(extra, dict), f"the {hook} hook answered {answer!r}")
+    assert isinstance(extra, dict)
+    expect(
+        extra.get("hookEventName") == EDIT_HOOK_EVENTS[hook],
+        f"the {hook} answer names the event {extra.get('hookEventName')!r}",
+    )
+    return dict(extra)
+
+
+def check_edit_hook_silent(ran: Ran, hook: str) -> str:
+    """Exit 0, nothing on stderr, nothing on stdout."""
+    expect(ran.code == 0, f"the {hook} hook exited {ran.code}, not 0")
+    expect(ran.stderr == "", f"the {hook} hook wrote to stderr: {ran.stderr!r}")
+    expect(ran.stdout == "", f"the {hook} hook said something: {ran.stdout!r}")
+    return "exit 0, stderr empty, stdout empty"
+
+
+def check_edit_refused(ran: Ran, launcher: ModuleType, build_dir: str) -> str:
+    """The refusal, with the project's build folder named in it."""
+    extra = edit_hook_answer(ran, "before-edit")
+    expect(
+        extra.get("permissionDecision") == "deny",
+        f"the edit was not refused: {extra!r}",
+    )
+    reason = extra.get("permissionDecisionReason")
+    expected = launcher.BUILD_DIR_REFUSAL.format(build_dir=build_dir)
+    expect(reason == expected, f"the refusal said {reason!r}")
+    return f"exit 0, stderr empty, deny naming {build_dir}/"
+
+
+def check_edit_finding(ran: Ran, launcher: ModuleType, shown: str, code: str) -> str:
+    """What the check found, between the lead-in and the closing line."""
+    extra = edit_hook_answer(ran, "after-edit")
+    context = str(extra.get("additionalContext", ""))
+    lead = launcher.EDIT_CHECK_LEAD.format(path=shown)
+    expect(context.startswith(lead + "\n"), f"the context does not lead in: {context!r}")
+    expect(
+        context.endswith("\n" + launcher.EDIT_CHECK_CLOSE),
+        f"the context does not close: {context!r}",
+    )
+    expect(f"[{code}]" in context, f"the context does not name {code}: {context!r}")
+    expect(
+        len(context) <= launcher.EDIT_CHECK_MAX_CHARS,
+        f"the context is {len(context)} characters",
+    )
+    return f"exit 0, stderr empty, additionalContext names {code} ({len(context)} characters)"
+
+
+def s0ma_shaped_project(where: Path) -> Path:
+    """A folder that is a s0ma project by its pyproject.toml, with one source."""
+    (where / "src").mkdir(parents=True)
+    (where / "build").mkdir()
+    (where / "pyproject.toml").write_text(
+        '[project]\nname = "edits"\n[tool.s0ma]\nsource_roots = ["src"]\nbuild_dir = "build"\n',
+        encoding="utf-8",
+    )
+    (where / "src" / "edits.s0ma").write_text("module edits\n", encoding="utf-8")
+    return where
 
 
 # ---------------------------------------------------------------------------
@@ -976,6 +1092,17 @@ def leg_uv_absent(opts: argparse.Namespace, work: Path, results: Results) -> Non
             f"server direct, {label}",
             check_stand_in(plugin_dir, message, launcher, env, project),
         )
+        edits = s0ma_shaped_project(work / f"edits-{label.replace(' ', '-')}")
+        for hook, target in (
+            ("before-edit", edits / "build" / "edits.py"),
+            ("after-edit", edits / "src" / "edits.s0ma"),
+        ):
+            results.add(
+                f"{hook} hook, {label}",
+                check_edit_hook_silent(
+                    run_edit_hook(plugin_dir, hook, env, edits, target), hook
+                ),
+            )
 
     no_message, broken = broken_copies(work)
     must_fail(
@@ -1175,6 +1302,40 @@ def leg_uv_present(opts: argparse.Namespace, work: Path, results: Results) -> No
         results.add(
             "hook, installed, s0ma off in the project",
             check_hook_off(run_hook(PLUGIN_DIR, env, project_off), launcher),
+        )
+
+        banner("uv present, the edit hooks in a project the installed s0ma made")
+        bin_dir = launcher.bin_dir_of(toolchain)
+        cli = launcher.find_program(bin_dir, "s0ma") if bin_dir is not None else None
+        expect(cli is not None, f"no s0ma program in {toolchain}")
+        assert cli is not None
+        fresh_parent = work / "fresh"
+        fresh_parent.mkdir()
+        ran = run([str(cli), "new", "project", "demo", "--name", "demo"], env, fresh_parent)
+        expect(ran.code == 0, f"s0ma new project exited {ran.code}")
+        fresh = fresh_parent / "demo"
+        generated = fresh / "build" / "core_domain.py"
+        expect(generated.is_file(), f"the new project has no {generated.name} under build/")
+        results.add(
+            "before-edit hook, installed, a file under build/",
+            check_edit_refused(
+                run_edit_hook(PLUGIN_DIR, "before-edit", env, fresh, generated),
+                launcher,
+                "build",
+            ),
+        )
+        source = fresh / "src" / "core" / "core_domain.s0ma"
+        text = source.read_text(encoding="utf-8")
+        expect("kind: FUNCTION" in text, f"{source.name} has no `kind: FUNCTION` line")
+        source.write_text(text.replace("kind: FUNCTION", "kind: FUNKTION", 1), encoding="utf-8")
+        results.add(
+            "after-edit hook, installed, a broken .s0ma file",
+            check_edit_finding(
+                run_edit_hook(PLUGIN_DIR, "after-edit", env, fresh, source),
+                launcher,
+                "src/core/core_domain.s0ma",
+                "PARSE_ERROR",
+            ),
         )
 
         if claude is not None:
