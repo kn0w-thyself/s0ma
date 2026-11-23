@@ -27,6 +27,7 @@ from typing import Any
 import pytest
 import fake_control_plane
 from fake_control_plane import FakeControlPlane
+from hint_reading import parts, quiet_for_the_person
 
 control_plane = fake_control_plane.control_plane
 
@@ -773,7 +774,9 @@ def test_the_hint_names_what_the_plugin_brings_under_auto_and_notify(
     assert (code, err) == (0, "")
     message = json.loads(out)["systemMessage"]
     assert message == HINT_PLUGIN_BRINGS.format(latest=launcher.LAUNCHER_VERSION)
-    assert len(out.strip()) < launcher.HINT_MAX_CHARS
+    _, context, note = parts(out)
+    assert context is None
+    assert note is not None
     assert sorted(str(path) for path in isolated_home.rglob("*")) == before, "nothing written"
 
 
@@ -785,7 +788,7 @@ def test_the_hint_never_names_a_control_planes_old_offer_with_no_key(
     write_state(launcher, launcher.s0ma_home(), entitlement="ok", latest_seen="99.0.0")
     monkeypatch.setenv("S0MA_UPDATE", "notify")
 
-    assert run_cli("session-hint") == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 @pytest.mark.parametrize(
@@ -816,4 +819,4 @@ def test_the_hint_is_silent_otherwise(
         (project / ".s0ma-version").write_text(version + "\n", encoding="utf-8")
     monkeypatch.setenv("S0MA_UPDATE", mode)
 
-    assert run_cli("session-hint") == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))

@@ -5,7 +5,9 @@ Claude's first answer waits for that hook, so this command lives under three
 promises, and most of the file below is about the second and third rather than
 about the words:
 
-* it says one thing, or nothing;
+* it says one thing to the person, or nothing - and, whenever s0ma can be
+  used here, it gives the model a standing note the person does not see
+  (``test_preferences.py`` holds what the note says);
 * it reads local files and does nothing else - no socket, no subprocess, and no
   write, not even the tidying-up the everyday readers do when they meet a
   spoiled file;
@@ -30,6 +32,7 @@ from types import ModuleType
 from typing import Any
 
 import pytest
+from hint_reading import parsed, parts, quiet_for_the_person
 
 # ---------------------------------------------------------------------------
 # The exact words. Written out in full, not built from the launcher's own
@@ -121,30 +124,30 @@ def write_config(launcher: ModuleType, home: Path, **fields: Any) -> Path:
 
 
 def spoken(out: str) -> dict[str, Any]:
-    """The one line of JSON the hook printed, parsed, with its shape checked."""
-    assert out, "the hook said nothing"
-    assert out.endswith("\n"), "the hook's line must end in a newline"
-    body = out[:-1]
-    assert "\n" not in body, f"the hook printed more than one line:\n{out}"
-    assert body.isascii(), "everything the hook prints is plain ASCII"
-    assert len(body) < 600, f"the hook printed {len(body)} characters"
-    parsed = json.loads(body)
-    assert isinstance(parsed, dict)
-    return parsed
+    """The one line of JSON the hook printed, parsed, with its shape checked.
+
+    The person's part stays under 600 characters and the standing note within
+    its own limit; ``hint_reading.parts`` checks both.
+    """
+    parts(out)
+    return parsed(out)
 
 
 def message_of(out: str) -> str:
     """The line shown to the person."""
-    return str(spoken(out)["systemMessage"])
+    message, _, _ = parts(out)
+    assert message is not None, "the person was shown nothing"
+    return message
 
 
 def context_of(out: str) -> str | None:
-    """The context given to the model, when there is any."""
-    extra = spoken(out).get("hookSpecificOutput")
-    if extra is None:
-        return None
-    assert extra["hookEventName"] == "SessionStart"
-    return str(extra["additionalContext"])
+    """What the model is told about this machine, besides the standing note."""
+    return parts(out)[1]
+
+
+def note_of(out: str) -> str | None:
+    """The standing note, when the model was given one."""
+    return parts(out)[2]
 
 
 def snapshot(*roots: Path) -> dict[str, bytes]:
@@ -206,8 +209,7 @@ def test_a_pin_that_is_installed_says_nothing(
 ) -> None:
     make_toolchain("0.19.0")
     (project / ".s0ma-version").write_text("0.19.0\n", encoding="utf-8")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 # ---------------------------------------------------------------------------
@@ -286,8 +288,7 @@ def test_an_untroubled_entitlement_says_nothing(
 ) -> None:
     make_toolchain("0.18.0")
     write_state(launcher, isolated_home, entitlement=entitlement)
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 # ---------------------------------------------------------------------------
@@ -335,8 +336,7 @@ def test_notify_says_nothing_when_the_newest_seen_is_what_runs(
     make_toolchain("0.19.0")
     write_state(launcher, isolated_home, entitlement="ok", latest_seen="0.19.0")
     monkeypatch.setenv("S0MA_UPDATE", "notify")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 def test_notify_compares_versions_as_numbers(
@@ -351,8 +351,7 @@ def test_notify_compares_versions_as_numbers(
     make_toolchain("0.10.0")
     write_state(launcher, isolated_home, entitlement="ok", latest_seen="0.9.0")
     monkeypatch.setenv("S0MA_UPDATE", "notify")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 def test_auto_does_not_announce_a_version_it_will_fetch_by_itself(
@@ -367,8 +366,7 @@ def test_auto_does_not_announce_a_version_it_will_fetch_by_itself(
     make_toolchain("0.18.0")
     write_state(launcher, isolated_home, entitlement="ok", latest_seen="0.19.0")
     monkeypatch.setenv("S0MA_UPDATE", "auto")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 # ---------------------------------------------------------------------------
@@ -416,8 +414,7 @@ def test_a_stale_pending_record_is_not_news(
     make_toolchain("0.19.0")
     write_state(launcher, isolated_home, entitlement="ok", pending="0.18.0")
     monkeypatch.setenv("S0MA_UPDATE", "auto")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 def test_nonsense_in_the_pending_field_is_ignored(
@@ -431,8 +428,7 @@ def test_nonsense_in_the_pending_field_is_ignored(
     make_toolchain("0.18.0")
     write_state(launcher, isolated_home, entitlement="ok", pending={"not": "a version"})
     monkeypatch.setenv("S0MA_UPDATE", "auto")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 # ---------------------------------------------------------------------------
@@ -453,8 +449,7 @@ def test_updates_off_silences_both_update_lines(
     make_toolchain("0.19.0")
     write_state(launcher, isolated_home, entitlement="ok", **{field: "0.19.0"})
     monkeypatch.setenv("S0MA_UPDATE", "off")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 def test_a_project_with_its_own_s0ma_hears_nothing_about_updates(
@@ -478,8 +473,7 @@ def test_a_project_with_its_own_s0ma_hears_nothing_about_updates(
         pending="0.19.0",
     )
     monkeypatch.setenv("S0MA_UPDATE", "notify")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 def test_a_pinned_project_hears_nothing_about_updates(
@@ -501,8 +495,7 @@ def test_a_pinned_project_hears_nothing_about_updates(
         pending="0.19.0",
     )
     monkeypatch.setenv("S0MA_UPDATE", "notify")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 def test_a_contributors_own_checkout_hears_nothing_about_updates(
@@ -526,8 +519,7 @@ def test_a_contributors_own_checkout_hears_nothing_about_updates(
         pending="0.19.0",
     )
     monkeypatch.setenv("S0MA_UPDATE", "notify")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 # ---------------------------------------------------------------------------
@@ -621,22 +613,30 @@ def test_being_told_outranks_something_already_waiting(
 # ---------------------------------------------------------------------------
 
 
-def test_the_person_gets_a_system_message_and_the_model_gets_nothing_extra(
+def test_the_person_gets_a_system_message_and_the_model_only_the_note(
     run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any
 ) -> None:
     """Plain stdout from a SessionStart hook becomes context the model reads
     (https://code.claude.com/docs/en/hooks), so a line meant for the person is
-    printed as JSON with ``systemMessage`` and nothing else in it."""
+    printed as JSON with ``systemMessage``, and the model is given the standing
+    note beside it and nothing else."""
     make_toolchain("0.18.0")
     write_state(launcher, isolated_home, entitlement="not_entitled")
     _, out, _ = run_cli("session-hint")
-    assert list(spoken(out)) == ["systemMessage"]
+    assert sorted(spoken(out)) == ["hookSpecificOutput", "systemMessage"]
+    message, context, note = parts(out)
+    assert message == ACCESS_ENDED
+    assert context is None
+    assert note is not None
+    assert ACCESS_ENDED not in note
 
 
 def test_the_model_is_only_ever_told_that_the_tools_are_missing(
     run_cli: Any,
 ) -> None:
-    printed = spoken(run_cli("session-hint")[1])
+    out = run_cli("session-hint")[1]
+    printed = spoken(out)
+    assert note_of(out) is None, "no note when s0ma cannot be used"
     assert sorted(printed) == ["hookSpecificOutput", "systemMessage"]
     assert sorted(printed["hookSpecificOutput"]) == [
         "additionalContext",
@@ -665,6 +665,7 @@ def test_a_line_that_still_will_not_fit_points_at_the_doctor_skill(
     assert code == 0
     assert message_of(out) == TOO_LONG
     assert context_of(out) is None
+    assert note_of(out) is not None, "the note has a limit of its own and stays"
 
 
 def test_a_path_that_is_not_ascii_still_prints_as_ascii(
@@ -790,8 +791,7 @@ def test_a_spoiled_state_file_is_neither_repaired_nor_complained_about(
     path = launcher.state_path(isolated_home)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("{ this is not json", encoding="utf-8")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
     assert path.read_text(encoding="utf-8") == "{ this is not json"
     assert not path.with_name(path.name + ".corrupt").exists()
 
@@ -803,8 +803,7 @@ def test_a_spoiled_settings_file_is_left_alone_too(
     path = launcher.config_path(isolated_home)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("[]", encoding="utf-8")
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
     assert path.read_text(encoding="utf-8") == "[]"
     assert not path.with_name(path.name + ".corrupt").exists()
 
@@ -819,8 +818,7 @@ def test_a_state_file_holding_the_wrong_kinds_of_value_says_nothing(
         json.dumps({"entitlement": 7, "latest_seen": [], "pending": True}),
         encoding="utf-8",
     )
-    code, out, err = run_cli("session-hint")
-    assert (code, out, err) == (0, "", "")
+    quiet_for_the_person(run_cli("session-hint"))
 
 
 @pytest.mark.skipif(os.name != "posix", reason="POSIX permissions only")
