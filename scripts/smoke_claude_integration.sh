@@ -9,6 +9,11 @@
 #      control plane on a loopback port, installs them with the launcher, starts
 #      the real s0ma-lang-mcp through `serve`, completes a real MCP handshake, lets a
 #      newer version arrive on its own, and proves a pinned project stays put.
+#      Then, with no license key, it builds all five wheels (the umbrella
+#      s0ma-lang too) at a version no package index can hold, hands them to uv
+#      through uv's own find-links setting, installs them with the launcher
+#      without the fake control plane hearing a single request, and serves the
+#      real s0ma-lang-mcp from that copy.
 #
 #   2. If a `claude` binary is on this machine, `claude --plugin-dir ... mcp list`
 #      asks Claude Code itself to start the plugin's server and report whether it
