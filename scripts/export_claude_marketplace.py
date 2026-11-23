@@ -52,6 +52,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 import shutil
 import stat
 import subprocess
@@ -105,6 +106,12 @@ SKIPPED_SUFFIXES = (".pyc", ".pyo")
 EXIT_OK = 0
 EXIT_REFUSED = 1
 EXIT_INVALID = 3
+
+#: The oldest `claude` whose strict validation knows every field the plugin
+#: manifest uses: ``network`` arrived in Claude Code 2.1.328, and an older CLI
+#: calls it an unknown field, which ``--strict`` fails even though the runtime
+#: tolerates it.
+CLAUDE_FLOOR = (2, 1, 328)
 
 #: Passed to every `claude` subprocess, so validating an export never turns
 #: into a background update check nobody asked for.
@@ -441,6 +448,29 @@ def find_claude() -> str | None:
     return shutil.which("claude")
 
 
+def claude_version(binary: str) -> tuple[int, int, int] | None:
+    """The version `claude --version` reports, or ``None`` if it cannot be read."""
+    try:
+        result = subprocess.run(  # noqa: S603 - a fixed, local command
+            [binary, "--version"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+            env={**os.environ, **OFFLINE_ENV},
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    found = re.search(r"\b(\d+)\.(\d+)\.(\d+)\b", result.stdout)
+    if result.returncode != 0 or found is None:
+        return None
+    major, minor, patch = (int(part) for part in found.groups())
+    return (major, minor, patch)
+
+
+def dotted(version: tuple[int, int, int]) -> str:
+    return ".".join(str(part) for part in version)
+
+
 def validate_supports_strict(binary: str) -> bool:
     """Whether this build of `claude plugin validate` understands ``--strict``."""
     result = subprocess.run(  # noqa: S603 - a fixed, local command
@@ -475,6 +505,16 @@ def validate(out: Path) -> bool | None:
     if binary is None:
         print("  Not checked: there is no `claude` on this PATH. On a machine that")
         print("  has one, these two commands are the check, and they install nothing:")
+        print(f"    claude plugin validate {fwd(out)}")
+        print(f"    claude plugin validate {fwd(out / EXPORT_PLUGIN_DIR)}")
+        return None
+    version = claude_version(binary)
+    if version is None or version < CLAUDE_FLOOR:
+        found = "a version it could not read" if version is None else dotted(version)
+        print(f"  Not checked: the `claude` on this PATH reports {found}, and strict")
+        print(f"  validation of this plugin needs {dotted(CLAUDE_FLOOR)} or newer. On a")
+        print("  machine that has one, these two commands are the check, and they")
+        print("  install nothing:")
         print(f"    claude plugin validate {fwd(out)}")
         print(f"    claude plugin validate {fwd(out / EXPORT_PLUGIN_DIR)}")
         return None

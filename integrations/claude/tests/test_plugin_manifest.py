@@ -77,13 +77,21 @@ CANONICAL_LICENSE = REPO_ROOT / "packages" / "s0ma-core" / "LICENSE"
 #: Manifest features the `claude` CLI on this machine's PATH (2.1.153) either
 #: rejects outright or reports as an unknown field, which `--strict` turns into
 #: a failure. Newer builds accept all three. Until the oldest supported CLI is
-#: raised, the manifest may not use any of them (plan section 4.5).
+#: raised, the manifest may not use any of them (plan section 4.5). `network`
+#: is the one key above that floor: it is kept because the runtime tolerates a
+#: field it does not know, and only strict validation needs the newer CLI
+#: (CLAUDE_FLOOR below).
 FORBIDDEN_MANIFEST_KEYS = ("metadata", "defaultEnabled", "options")
 
 WINDOWS = sys.platform.startswith("win")
 
 #: Passed to every `claude` subprocess so a test run never reaches the network
 #: for an update check it did not ask for.
+#: The oldest `claude` whose strict validation knows every manifest field the
+#: plugin uses: ``network`` arrived in Claude Code 2.1.328. Below it the
+#: verdict tests skip, since the runtime tolerates a field it does not know.
+CLAUDE_FLOOR = (2, 1, 328)
+
 OFFLINE_ENV = {
     "DISABLE_AUTOUPDATER": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
@@ -134,9 +142,49 @@ def lockstep_version() -> str:
     return version
 
 
-def claude_cli() -> str | None:
-    """The `claude` executable, if this machine has one on its PATH."""
-    return shutil.which("claude")
+def claude_version(binary: str) -> tuple[int, int, int] | None:
+    """The version `claude --version` reports, or ``None`` if it cannot be read."""
+    try:
+        result = subprocess.run(  # noqa: S603 - a fixed, local command
+            [binary, "--version"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+            env={**os.environ, **OFFLINE_ENV},
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    found = re.search(r"\b(\d+)\.(\d+)\.(\d+)\b", result.stdout)
+    if result.returncode != 0 or found is None:
+        return None
+    major, minor, patch = (int(part) for part in found.groups())
+    return (major, minor, patch)
+
+
+def too_old_to_validate(binary: str) -> str | None:
+    """Why this `claude` cannot give a strict verdict on the plugin, or ``None``."""
+    version = claude_version(binary)
+    needed = ".".join(str(part) for part in CLAUDE_FLOOR)
+    if version is None:
+        return (
+            f"`claude --version` printed nothing this suite can read, so it is taken "
+            f"as older than {needed}, which strict validation of `network` needs"
+        )
+    if version < CLAUDE_FLOOR:
+        found = ".".join(str(part) for part in version)
+        return f"`claude` is {found}; strict validation of `network` needs {needed} or newer"
+    return None
+
+
+def claude_for_validation() -> str:
+    """The `claude` to take a strict verdict from, or a skip that says why not."""
+    binary = shutil.which("claude")
+    if binary is None:
+        pytest.skip("no `claude` on PATH, so the CLI's own verdict cannot be taken")
+    reason = too_old_to_validate(binary)
+    if reason is not None:
+        pytest.skip(reason)
+    return binary
 
 
 def validate_supports_strict(binary: str) -> bool:
@@ -272,12 +320,18 @@ def test_the_control_plane_host_is_the_launchers_own() -> None:
 
 
 def test_the_readme_names_every_declared_host() -> None:
-    """Whatever the manifest says the plugin can reach, its README says too."""
+    """Whatever the manifest says the plugin can reach, its README says too.
+
+    A wildcard entry such as ``*.example.com`` is named by the domain it
+    covers, ``example.com``: a README speaks of a host family by its domain.
+    """
     readme = PLUGIN_README.read_text(encoding="utf-8")
     fetches = readme.split("## What it fetches, and when", 1)
     assert len(fetches) == 2, "the README has no 'What it fetches, and when' section"
     section = fetches[1].split("\n## ", 1)[0]
-    missing = [host for host in declared_hosts() if host not in section]
+    missing = [
+        host for host in declared_hosts() if host.removeprefix("*.") not in section
+    ]
     assert missing == [], f"the README's fetch section does not name {missing}"
 
 
@@ -483,9 +537,7 @@ def test_marketplace_entry_does_not_restate_the_version() -> None:
 
 def test_plugin_manifest_validates() -> None:
     """`claude plugin validate` accepts the plugin, strictly where it can."""
-    binary = claude_cli()
-    if binary is None:
-        pytest.skip("no `claude` on PATH, so the CLI's own verdict cannot be taken")
+    binary = claude_for_validation()
     result = run_validate(binary, PLUGIN_DIR)
     assert result.returncode == 0, (
         f"claude plugin validate rejected the plugin:\n{result.stdout}{result.stderr}"
@@ -494,11 +546,57 @@ def test_plugin_manifest_validates() -> None:
 
 def test_marketplace_manifest_validates() -> None:
     """`claude plugin validate` accepts the marketplace, strictly where it can."""
-    binary = claude_cli()
-    if binary is None:
-        pytest.skip("no `claude` on PATH, so the CLI's own verdict cannot be taken")
+    binary = claude_for_validation()
     result = run_validate(binary, MARKETPLACE_DIR)
     assert result.returncode == 0, (
         f"claude plugin validate rejected the marketplace:\n"
         f"{result.stdout}{result.stderr}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Which `claude` a verdict is taken from. No real Claude runs here.
+# ---------------------------------------------------------------------------
+
+STAND_IN_CLI = """\
+#!/bin/sh
+# Prints what a `claude --version` of some build would.
+case "$1" in
+    --version) printf '%s\\n' "{printed}" ;;
+    *) echo "this stand-in only knows --version" >&2; exit 2 ;;
+esac
+"""
+
+
+def stand_in_cli(where: Path, printed: str) -> str:
+    fake = where / "stand-in-cli"
+    fake.write_text(STAND_IN_CLI.replace("{printed}", printed), encoding="utf-8")
+    fake.chmod(0o755)
+    return str(fake)
+
+
+@pytest.mark.skipif(WINDOWS, reason="the stand-in CLI is a sh script")
+@pytest.mark.parametrize(
+    ("printed", "skipped", "named"),
+    [
+        ("2.1.311 (Claude Code)", True, ("2.1.311", "2.1.328")),
+        ("2.1.330 (Claude Code)", False, ()),
+        ("Claude Code, some build", True, ("nothing this suite can read", "2.1.328")),
+    ],
+)
+def test_a_claude_below_the_floor_is_skipped_and_says_why(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    printed: str,
+    skipped: bool,
+    named: tuple[str, ...],
+) -> None:
+    fake = stand_in_cli(tmp_path, printed)
+    monkeypatch.setattr(shutil, "which", lambda name, *a, **k: fake if name == "claude" else None)
+    if skipped:
+        with pytest.raises(pytest.skip.Exception) as raised:
+            claude_for_validation()
+        for words in named:
+            assert words in str(raised.value), str(raised.value)
+    else:
+        assert claude_for_validation() == fake
