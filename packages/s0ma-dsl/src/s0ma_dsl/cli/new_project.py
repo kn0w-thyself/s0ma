@@ -29,6 +29,16 @@ What it lays down (STD-M6, feature-first standard — patterns guide §25/§29)
   same prepare → review → approve → submit feedback mechanics. Written only
   when absent, listed in the summary (that listing is the installation
   disclosure), and deliberately NOT part of the atomic-refusal set.
+- The Claude desktop app's **launch entry for studi0**
+  (``.claude/launch.json``) — one configuration with studi0's default
+  address and no command, so the app opens a studi0 that is already
+  running beside the chat and starts nothing itself. Written only when
+  absent, listed in the summary, and outside the atomic-refusal set, the
+  same as the feedback skill.
+- A ``[project]`` table, when the directory has no ``pyproject.toml``, that
+  names the s0ma runtime the generated Python imports
+  (``dependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]``), so the first
+  build has nothing to warn about.
 - A ``[tool.s0ma]`` table — ``source_roots = ["src"]``,
   ``test_roots = ["tests"]``, ``build_dir = "build"``, ``mode`` (default
   ``"dev"``), ``authoring`` (default ``"on"``, ``"off"`` with
@@ -155,6 +165,25 @@ FEEDBACK_POSTURE = "suggest"
 #: stands and the scaffold still succeeds.
 FEEDBACK_SKILL_RELPATH = ".claude/skills/s0ma-feedback/SKILL.md"
 
+#: The distributions every built module imports at runtime. A created
+#: ``[project]`` table names them, bare and unpinned (the form the
+#: packaging guide shows), so the build's ``HOST_RUNTIME_UNDECLARED``
+#: check has nothing to report on a new project.
+RUNTIME_DEPENDENCIES: tuple[str, ...] = ("s0ma-lang-core", "s0ma-lang-dsl")
+
+#: The Claude desktop app's launch configuration this command lays down:
+#: one entry that opens studi0 beside the chat. It carries a ``url`` and no
+#: command, so the app attaches to a studi0 that is already running and
+#: starts nothing. Created when absent; never part of the atomic-refusal
+#: set, the same as the feedback skill.
+LAUNCH_CONFIG_RELPATH = ".claude/launch.json"
+
+#: studi0's own default address: the ``.localhost`` name and the port its
+#: server takes first. A repository test holds these equal to the studi0
+#: package's defaults.
+STUDI0_LAUNCH_HOST = "studi0.localhost"
+STUDI0_LAUNCH_PORT = 5710
+
 
 def _module_names(project_name: str) -> tuple[str, str] | None:
     """Derive ``(snake_module_name, PascalExportName)`` from *project_name*.
@@ -225,20 +254,32 @@ def _tool_s0ma_table(
     return f'{table}feedback = "{feedback}"\n'
 
 
-def _minimal_pyproject(
-    project_name: str, mode: str, authoring: str, feedback: str | None = None
-) -> str:
-    """A minimal pyproject for a directory that has none.
+def _project_table(project_name: str) -> str:
+    """The ``[project]`` table a created pyproject starts with (always LF).
 
     ``requires-python`` matches the toolchain's own support floor; the
     project model reads it back for the 3.11-compat grammar check.
+    ``dependencies`` names the s0ma runtime the generated Python imports,
+    so the build does not warn that the project leaves it undeclared.
     """
+    rendered = ", ".join(f'"{name}"' for name in RUNTIME_DEPENDENCIES)
     return (
         "[project]\n"
         f'name = "{project_name}"\n'
         'version = "0.1.0"\n'
         'requires-python = ">=3.11"\n'
-        "\n" + _tool_s0ma_table(mode, authoring, feedback)
+        f"dependencies = [{rendered}]\n"
+    )
+
+
+def _minimal_pyproject(
+    project_name: str, mode: str, authoring: str, feedback: str | None = None
+) -> str:
+    """A minimal pyproject for a directory that has none."""
+    return (
+        _project_table(project_name)
+        + "\n"
+        + _tool_s0ma_table(mode, authoring, feedback)
     )
 
 
@@ -575,10 +616,40 @@ def _feedback_skill_md() -> str:
         "saved draft id and the one command that finishes it from a "
         "terminal: `s0ma feedback`.\n"
         "\n"
+        "If the tool says this machine has no license key, or is not set up "
+        "to send feedback, the feedback channel cannot take this report: "
+        "tell the user so in one sentence, and point them to the public "
+        "issue tracker, https://github.com/kn0w-thyself/s0ma/issues. Say "
+        "that an issue there is public, never paste the drafted report into "
+        "an issue yourself, and if they ask for help wording one, leave out "
+        "anything private. Go by what the tool reports: do not look for a "
+        "key file, and never read a key.\n"
+        "\n"
         "If the s0ma MCP server is not connected, run `s0ma feedback` in a "
         "terminal instead. It is the same journey, and it works in any "
         "client.\n"
     )
+
+
+def _launch_config_json() -> str:
+    """The ``.claude/launch.json`` the Claude desktop app reads (always LF).
+
+    One configuration, named ``studi0``, whose ``url`` is studi0's default
+    origin and whose ``port`` is that origin's port. There is no command:
+    the app attaches to a studi0 that is already running and starts
+    nothing.
+    """
+    document = {
+        "version": "0.0.1",
+        "configurations": [
+            {
+                "name": "studi0",
+                "url": f"http://{STUDI0_LAUNCH_HOST}:{STUDI0_LAUNCH_PORT}",
+                "port": STUDI0_LAUNCH_PORT,
+            }
+        ],
+    }
+    return json.dumps(document, indent=2) + "\n"
 
 
 def _claude_md() -> str:
@@ -698,6 +769,23 @@ def scaffold_feedback_skill(target: Path) -> tuple[Path, bool]:
     skill_path.parent.mkdir(parents=True, exist_ok=True)
     skill_path.write_text(_feedback_skill_md(), encoding="utf-8", newline="\n")
     return skill_path, True
+
+
+def scaffold_launch_config(target: Path) -> tuple[Path, bool]:
+    """Write ``.claude/launch.json`` when absent; return ``(path, created)``.
+
+    Created-if-absent, like :func:`scaffold_feedback_skill`: a project that
+    already has a launch configuration keeps it byte for byte, and the
+    scaffold still succeeds. The summary lists the file either way.
+    """
+    launch_path = target.joinpath(*LAUNCH_CONFIG_RELPATH.split("/"))
+    if launch_path.exists():
+        return launch_path, False
+    launch_path.parent.mkdir(parents=True, exist_ok=True)
+    launch_path.write_text(
+        _launch_config_json(), encoding="utf-8", newline="\n"
+    )
+    return launch_path, True
 
 
 def _refusal_reasons(
@@ -873,11 +961,7 @@ def _scaffold_archetype(
         pyproject_action = "appended"
     else:
         pyproject.write_text(
-            "[project]\n"
-            f'name = "{project_name}"\n'
-            'version = "0.1.0"\n'
-            'requires-python = ">=3.11"\n'
-            "\n" + table,
+            _project_table(project_name) + "\n" + table,
             encoding="utf-8",
             newline="\n",
         )
@@ -897,6 +981,7 @@ def _scaffold_archetype(
         target, project_name, anchor_feature, anchor_feature, authoring
     )
     skill_path, skill_created = scaffold_feedback_skill(target)
+    launch_path, launch_created = scaffold_launch_config(target)
 
     # ---- Post-write validation of the first .s0ma source (same gate as
     # the minimal path): catch a template/validator drift before the build.
@@ -958,6 +1043,8 @@ def _scaffold_archetype(
         claude_path=claude_path,
         skill_path=skill_path,
         skill_created=skill_created,
+        launch_path=launch_path,
+        launch_created=launch_created,
         planned=planned,
         build_dir=build_dir,
         built_modules=built_modules,
@@ -1026,6 +1113,8 @@ def _print_archetype_summary(
     claude_path: Path,
     skill_path: Path,
     skill_created: bool,
+    launch_path: Path,
+    launch_created: bool,
     planned: list[tuple[Path, str]],
     build_dir: Path,
     built_modules: list[str],
@@ -1065,6 +1154,10 @@ def _print_archetype_summary(
                     "feedback_skill": {
                         "path": str(skill_path),
                         "created": skill_created,
+                    },
+                    "launch_config": {
+                        "path": str(launch_path),
+                        "created": launch_created,
                     },
                     "build": {
                         "build_dir": str(build_dir),
@@ -1115,6 +1208,12 @@ def _print_archetype_summary(
         + ("  /s0ma-feedback skill (Claude Code)"
            if skill_created
            else "  already present — kept as it was")
+    )
+    print(
+        f"  {LAUNCH_CONFIG_RELPATH}"
+        + ("     opens studi0 beside the chat (Claude desktop app)"
+           if launch_created
+           else "     already present — kept as it was")
     )
     print(
         "  build/                  first build complete "
@@ -1299,6 +1398,7 @@ def run_new_project(args: argparse.Namespace) -> int:
     scaffold_app_map(target, nerve, layer)
     scaffold_agent_files(target, project_name, feature, module_name, authoring)
     skill_path, skill_created = scaffold_feedback_skill(target)
+    launch_path, launch_created = scaffold_launch_config(target)
 
     # ---- Post-write validation of the starter module (same gate as
     # `s0ma new module`): catch a template/validator drift before the
@@ -1390,6 +1490,10 @@ def run_new_project(args: argparse.Namespace) -> int:
                         "path": str(skill_path),
                         "created": skill_created,
                     },
+                    "launch_config": {
+                        "path": str(launch_path),
+                        "created": launch_created,
+                    },
                     "build": {
                         "build_dir": str(build_dir),
                         "modules": built_modules,
@@ -1442,6 +1546,12 @@ def run_new_project(args: argparse.Namespace) -> int:
         + ("  /s0ma-feedback skill (Claude Code)"
            if skill_created
            else "  already present — kept as it was")
+    )
+    print(
+        f"  {LAUNCH_CONFIG_RELPATH}"
+        + ("     opens studi0 beside the chat (Claude desktop app)"
+           if launch_created
+           else "     already present — kept as it was")
     )
     print(
         "  build/                  first build complete "

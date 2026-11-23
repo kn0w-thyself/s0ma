@@ -174,6 +174,24 @@ def test_the_default_address_is_declared_once() -> None:
     assert config.name in config.answers_to
 
 
+def test_a_new_projects_launch_entry_is_the_default_address() -> None:
+    """``s0ma new project`` writes a launch entry for the Claude desktop app
+    that opens studi0 at its default address. The entry starts nothing, so
+    it reaches studi0 only if it holds the address studi0 really takes when
+    no port is asked for: the name and port here, and the origin of
+    ``named_url`` for that port. The comparison sits on this side because
+    studi0 may read the language package and the language package may not
+    read studi0."""
+    from s0ma_dsl.cli import new_project
+
+    config = studi0_server.Studi0ServerConfig
+    assert config.name == new_project.STUDI0_LAUNCH_HOST
+    assert config.default_port == new_project.STUDI0_LAUNCH_PORT
+    (entry,) = json.loads(new_project._launch_config_json())["configurations"]
+    assert entry["port"] == config.default_port
+    assert entry["url"] + "/" == studi0_server.named_url(config.default_port)
+
+
 def test_browser_opens_at_the_served_url_when_asked(
     launch_studi0: Callable[..., ServedStudi0],
     browser: BrowserSpy,

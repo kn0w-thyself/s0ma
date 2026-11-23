@@ -19,6 +19,7 @@ that teaches recognition without teaching consent.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from typing import TYPE_CHECKING
@@ -31,6 +32,7 @@ from s0ma_dsl.cli.main import (
     EXIT_VALIDATION_ERROR,
     S0maCLI,
 )
+from s0ma_dsl.cli.templates import TEMPLATE_CHOICES
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -1312,3 +1314,202 @@ class TestArchetypeTemplates:
         text = (target / "pyproject.toml").read_text(encoding="utf-8")
         assert text.startswith(original)
         assert 'bootstrap_files = ["bootstrap/cli.py"]' in text
+
+
+# ---------------------------------------------------------------------------
+# A new project is clean, and carries a launch entry for studi0
+# ---------------------------------------------------------------------------
+
+#: Every way ``s0ma new project`` makes a project: no template, then each
+#: template it offers.
+_EVERY_SCAFFOLD: tuple[str | None, ...] = (None, *TEMPLATE_CHOICES)
+
+#: A diagnostic line, at any severity: ``<file>:<line>: <SEVERITY> [<CODE>]``.
+_DIAGNOSTIC_LINE = re.compile(r":\d+: [A-Z]+ \[[A-Z0-9_]+\]")
+
+#: The exact bytes of ``.claude/launch.json``.
+_LAUNCH_JSON = (
+    "{\n"
+    '  "version": "0.0.1",\n'
+    '  "configurations": [\n'
+    "    {\n"
+    '      "name": "studi0",\n'
+    '      "url": "http://studi0.localhost:5710",\n'
+    '      "port": 5710\n'
+    "    }\n"
+    "  ]\n"
+    "}\n"
+)
+
+_LAUNCH_PARTS = (".claude", "launch.json")
+
+
+def _new_project_argv(target: Path, template: str | None) -> list[str]:
+    argv = ["new", "project", str(target), "--quiet"]
+    if template is not None:
+        argv += ["--template", template]
+    return argv
+
+
+class TestFreshProjectIsClean:
+    """A new project's first commands print no diagnostic at all.
+
+    The created ``[project]`` table names the runtime the generated Python
+    imports, so the build has no ``HOST_RUNTIME_UNDECLARED`` to report; the
+    sources were already clean. Checked for every scaffold, in both check
+    modes, then through a build and a test run.
+    """
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_check_build_and_test_print_no_diagnostic(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        template: str | None,
+    ) -> None:
+        target = tmp_path / f"{template or 'plain'}-clean"
+        assert cli.run(_new_project_argv(target, template)) == EXIT_SUCCESS
+        capsys.readouterr()
+
+        root = ["--project-root", str(target)]
+        for argv in (
+            [*root, "check"],
+            [*root, "check", "--mode", "release"],
+            [*root, "build", str(target)],
+            [*root, "test"],
+        ):
+            assert cli.run(argv) == EXIT_SUCCESS, argv
+            captured = capsys.readouterr()
+            printed = captured.out + captured.err
+            assert _DIAGNOSTIC_LINE.findall(printed) == [], (argv, printed)
+            assert "HOST_RUNTIME_UNDECLARED" not in printed, argv
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_the_created_pyproject_names_the_runtime(
+        self, cli: S0maCLI, tmp_path: Path, template: str | None
+    ) -> None:
+        import tomllib
+
+        target = tmp_path / f"{template or 'plain'}-deps"
+        assert cli.run(_new_project_argv(target, template)) == EXIT_SUCCESS
+
+        text = (target / "pyproject.toml").read_text(encoding="utf-8")
+        # Bare names, no version floor, inside [project] and before the
+        # s0ma table.
+        line = 'dependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]\n'
+        assert line in text
+        assert text.index(line) < text.index("[tool.s0ma]")
+        data = tomllib.loads(text)
+        assert data["project"]["dependencies"] == ["s0ma-lang-core", "s0ma-lang-dsl"]
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_an_existing_pyproject_keeps_its_bytes(
+        self, cli: S0maCLI, tmp_path: Path, template: str | None
+    ) -> None:
+        """The append path adds the s0ma table and nothing else: a
+        ``[project]`` table the person already has is not edited, so it
+        gains no dependency line."""
+        target = tmp_path / f"{template or 'plain'}-keep"
+        target.mkdir()
+        original = b'[project]\r\nname = "keeper"\r\nversion = "1.0.0"\r\n'
+        (target / "pyproject.toml").write_bytes(original)
+
+        assert cli.run(_new_project_argv(target, template)) == EXIT_SUCCESS
+
+        written = (target / "pyproject.toml").read_bytes()
+        assert written.startswith(original)
+        assert b"dependencies" not in written
+        assert written[len(original):].startswith(b"\n[tool.s0ma]\n")
+
+
+class TestLaunchConfig:
+    """``.claude/launch.json``: the Claude desktop app's entry for studi0.
+
+    One configuration with a ``url`` and no command, so the app attaches to
+    a studi0 already running and starts nothing. Like the feedback skill it
+    is a file in the user's client configuration: created only when absent,
+    never part of the atomic refusal, and listed in the summary either way.
+    """
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_the_bytes_are_exact(
+        self, cli: S0maCLI, tmp_path: Path, template: str | None
+    ) -> None:
+        target = tmp_path / f"{template or 'plain'}-launch"
+        assert cli.run(_new_project_argv(target, template)) == EXIT_SUCCESS
+
+        assert target.joinpath(*_LAUNCH_PARTS).read_bytes() == (
+            _LAUNCH_JSON.encode("ascii")
+        )
+
+    def test_the_entry_starts_nothing_and_its_port_is_the_urls(self) -> None:
+        from urllib.parse import urlsplit
+
+        from s0ma_dsl.cli import new_project
+
+        (entry,) = json.loads(new_project._launch_config_json())["configurations"]
+        assert set(entry) == {"name", "url", "port"}
+        parts = urlsplit(entry["url"])
+        assert parts.path == ""
+        assert parts.port == entry["port"]
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_an_existing_file_is_kept_and_never_causes_a_refusal(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        template: str | None,
+    ) -> None:
+        target = tmp_path / f"{template or 'plain'}-mine"
+        launch_path = target.joinpath(*_LAUNCH_PARTS)
+        launch_path.parent.mkdir(parents=True)
+        mine = b'{"version": "0.0.1", "configurations": []}\r\n'
+        launch_path.write_bytes(mine)
+
+        argv = ["new", "project", str(target), "--format", "json"]
+        if template is not None:
+            argv += ["--template", template]
+        assert cli.run(argv) == EXIT_SUCCESS
+
+        report = json.loads(capsys.readouterr().out)
+        assert report["launch_config"] == {
+            "path": str(launch_path),
+            "created": False,
+        }
+        assert launch_path.read_bytes() == mine
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_the_summary_lists_it(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        template: str | None,
+    ) -> None:
+        target = tmp_path / f"{template or 'plain'}-listed"
+        argv = ["new", "project", str(target)]
+        if template is not None:
+            argv += ["--template", template]
+        assert cli.run(argv) == EXIT_SUCCESS
+
+        out = capsys.readouterr().out
+        assert (
+            "  .claude/launch.json     opens studi0 beside the chat "
+            "(Claude desktop app)\n"
+        ) in out
+
+
+class TestFeedbackSkillWithNoKey:
+    """What the skill says when the tool reports no license key."""
+
+    def test_it_points_to_the_public_issue_tracker(self) -> None:
+        from s0ma_dsl.cli import new_project
+
+        skill = " ".join(new_project._feedback_skill_md().split())
+        assert "https://github.com/kn0w-thyself/s0ma/issues" in skill
+        assert "If the tool says this machine has no license key" in skill
+        assert "an issue there is public" in skill
+        assert "never paste the drafted report into an issue yourself" in skill
+        assert "do not look for a key file, and never read a key" in skill

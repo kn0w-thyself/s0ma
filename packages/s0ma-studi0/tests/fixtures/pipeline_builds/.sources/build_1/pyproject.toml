@@ -2,6 +2,7 @@
 name = "song"
 version = "0.1.0"
 requires-python = ">=3.11"
+dependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]
 
 [tool.s0ma]
 source_roots = ["src"]

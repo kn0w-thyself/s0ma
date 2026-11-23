@@ -218,15 +218,10 @@ project = scratch / "my-app"
 run(str(S0MA), "new", "project", str(project), "--quiet", cwd=scratch)
 
 # Host verification requires the application to declare the always-emitted
-# runtime packages. The wheels are installed in this exact host interpreter.
-pyproject = project / "pyproject.toml"
-project_text = pyproject.read_text(encoding="utf-8")
-project_text = project_text.replace(
-    'version = "0.1.0"\n',
-    'version = "0.1.0"\ndependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]\n',
-    1,
-)
-pyproject.write_text(project_text, encoding="utf-8", newline="\n")
+# runtime packages, and a new project declares them itself. The wheels are
+# installed in this exact host interpreter.
+project_text = (project / "pyproject.toml").read_text(encoding="utf-8")
+assert 'dependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]\n' in project_text, project_text
 
 run(str(S0MA), "--project-root", str(project), "check", "--mode", "release", cwd=scratch)
 run(str(S0MA), "--project-root", str(project), "score", "--gate-mode", "release", "--gate", cwd=scratch)
