@@ -6,7 +6,9 @@ they run there. What is tested here is what lets those checks fail: the driver
 refuses to start without being told whether to run Claude, it reads ``claude
 mcp list`` lines in both sets of marks and calls a failed server failed, its
 MCP client fails on a server that says nothing or writes something that is not
-JSON, and it takes Git's shell off a Windows ``PATH`` while keeping ``Git\\cmd``.
+JSON, it takes Git's shell off a Windows ``PATH`` while keeping ``Git\\cmd``,
+and it reads the hook's line once s0ma is installed: the standing note for
+Claude and nothing for the person, or the one off line and nothing else.
 
 Nothing here runs Claude: no test passes ``--claude``.
 """
@@ -14,6 +16,7 @@ Nothing here runs Claude: no test passes ``--claude``.
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -147,3 +150,105 @@ def test_a_server_that_answers_with_the_wrong_id_fails(
             session.initialize()
     finally:
         session.kill()
+
+
+@pytest.fixture(scope="module")
+def launcher(driver: ModuleType) -> ModuleType:
+    return driver.load_launcher()
+
+
+def hook_ran(driver: ModuleType, printed: object, *, code: int = 0, stderr: str = "") -> object:
+    out = printed if isinstance(printed, str) else json.dumps(printed, sort_keys=True) + "\n"
+    return driver.Ran(code, out, stderr)
+
+
+def note_of(launcher: ModuleType) -> str:
+    prefs = launcher.read_preferences({}, Path("/nonexistent-for-the-test"))
+    return str(launcher.standing_note(prefs))
+
+
+def test_the_installed_hook_is_the_note_for_claude_only(
+    driver: ModuleType, launcher: ModuleType
+) -> None:
+    printed = {
+        "hookSpecificOutput": {
+            "additionalContext": note_of(launcher),
+            "hookEventName": "SessionStart",
+        }
+    }
+    verdict = driver.check_hook_installed(hook_ran(driver, printed), launcher)
+    assert "no systemMessage" in verdict
+
+
+@pytest.mark.parametrize(
+    "printed",
+    [
+        "",
+        "not json\n",
+        {"systemMessage": "hello"},
+        {"hookSpecificOutput": {"additionalContext": "something else", "hookEventName": "SessionStart"}},
+        "two\nlines\n",
+    ],
+    ids=["silent", "not json", "a line for the person", "not the note", "two lines"],
+)
+def test_the_installed_hook_check_fails_on_anything_else(
+    driver: ModuleType, launcher: ModuleType, printed: object
+) -> None:
+    with pytest.raises(driver.CheckFailed):
+        driver.check_hook_installed(hook_ran(driver, printed), launcher)
+
+
+def test_the_installed_hook_check_fails_when_the_person_sees_a_line_too(
+    driver: ModuleType, launcher: ModuleType
+) -> None:
+    printed = {
+        "systemMessage": "hello",
+        "hookSpecificOutput": {
+            "additionalContext": note_of(launcher),
+            "hookEventName": "SessionStart",
+        },
+    }
+    with pytest.raises(driver.CheckFailed, match="showed the person"):
+        driver.check_hook_installed(hook_ran(driver, printed), launcher)
+
+
+def test_the_installed_hook_check_fails_on_stderr_or_an_exit_code(
+    driver: ModuleType, launcher: ModuleType
+) -> None:
+    printed = {
+        "hookSpecificOutput": {
+            "additionalContext": note_of(launcher),
+            "hookEventName": "SessionStart",
+        }
+    }
+    with pytest.raises(driver.CheckFailed):
+        driver.check_hook_installed(hook_ran(driver, printed, code=1), launcher)
+    with pytest.raises(driver.CheckFailed):
+        driver.check_hook_installed(hook_ran(driver, printed, stderr="x"), launcher)
+
+
+def test_the_off_hook_is_the_one_line(driver: ModuleType, launcher: ModuleType) -> None:
+    printed = {
+        "hookSpecificOutput": {
+            "additionalContext": launcher.HINT_OFF_HERE,
+            "hookEventName": "SessionStart",
+        }
+    }
+    assert "off line" in driver.check_hook_off(hook_ran(driver, printed), launcher)
+
+
+@pytest.mark.parametrize("extra", ["note", "message"])
+def test_the_off_hook_check_fails_on_anything_more(
+    driver: ModuleType, launcher: ModuleType, extra: str
+) -> None:
+    printed: dict[str, object] = {
+        "hookSpecificOutput": {
+            "additionalContext": launcher.HINT_OFF_HERE
+            + ("\n\n" + note_of(launcher) if extra == "note" else ""),
+            "hookEventName": "SessionStart",
+        }
+    }
+    if extra == "message":
+        printed["systemMessage"] = "s0ma's tools are not available in this session."
+    with pytest.raises(driver.CheckFailed):
+        driver.check_hook_off(hook_ran(driver, printed), launcher)

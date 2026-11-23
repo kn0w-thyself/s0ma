@@ -434,6 +434,7 @@ def test_every_frozen_sub_command_exists(launcher: ModuleType) -> None:
         "session-hint",
         "run",
         "set",
+        "prefs",
     }
 
 

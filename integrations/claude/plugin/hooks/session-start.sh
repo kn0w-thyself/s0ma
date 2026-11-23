@@ -17,6 +17,9 @@
 #   to do something else.
 # * It never installs anything, never downloads anything, and opens no
 #   connection: uv is run offline, with Python downloads switched off.
+# * When the project's own .s0ma/preferences.json says s0ma is off here, it
+#   says nothing at all on its own account. With uv, the launcher says the one
+#   off line for Claude; without uv there is nothing to say.
 # * What it says when s0ma is not set up is written once, in
 #   scripts/not-set-up.txt, which the stand-in server reads too. That is the
 #   one place this side names the setup skill; the launcher names it once as
@@ -42,7 +45,24 @@ if [ -r "$hooks_dir/../scripts/not-set-up.txt" ]; then
     IFS= read -r not_set_up < "$hooks_dir/../scripts/not-set-up.txt"
 fi
 
+# The project folder is the one the launcher reads: CLAUDE_PROJECT_DIR when
+# Claude set it, otherwise the working directory. The project's own file says
+# s0ma is off with "s0ma": "off"; anything else, or no file, means on.
+project=${CLAUDE_PROJECT_DIR:-}
+if [ -z "$project" ]; then
+    project=$(pwd)
+fi
+preferences=$project/.s0ma/preferences.json
+
+s0ma_is_off_here() {
+    [ -r "$preferences" ] &&
+        grep -q '"s0ma"[[:space:]]*:[[:space:]]*"off"' "$preferences"
+}
+
 say_not_set_up() {
+    if s0ma_is_off_here; then
+        exit 0
+    fi
     if [ -n "$not_set_up" ]; then
         printf '%s\n' "$not_set_up"
     fi

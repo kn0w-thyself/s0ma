@@ -19,8 +19,11 @@ with the runner's own Python and nothing else.
     With uv, a fresh ``S0MA_HOME`` and no license key: the hook and the server
     with nothing installed, then a keyless install from wheels built here at a
     version no package index can hold, and the real server's 15 tools through
-    the plugin's server command. Imports the end-to-end test's helpers, so run
-    it with ``uv run python``.
+    the plugin's server command. Once s0ma is installed the hook shows the
+    person nothing and gives Claude the standing note, and in a project whose
+    ``.s0ma/preferences.json`` turns s0ma off it says the one off line and
+    nothing else. Imports the end-to-end test's helpers, so run it with
+    ``uv run python``.
 
 ``e2e``
     Runs ``integrations/launcher/tests/test_e2e_real_wheels.py`` with
@@ -398,6 +401,65 @@ def check_hook_not_set_up(
         f"the hook printed {ran.stdout!r}, not the message",
     )
     return f"exit 0, stderr empty, stdout is the not-set-up message ({len(ran.stdout)} bytes)"
+
+
+def hook_line(ran: Ran) -> dict[str, Any]:
+    """The hook's one line of JSON, after exit 0 and an empty stderr."""
+    expect(ran.code == 0, f"the hook exited {ran.code}, not 0")
+    expect(ran.stderr == "", f"the hook wrote to stderr: {ran.stderr!r}")
+    lines = ran.stdout.splitlines()
+    expect(
+        len(lines) == 1, f"the hook printed {len(lines)} lines, not one: {ran.stdout!r}"
+    )
+    expect(lines[0].isascii(), f"the hook's line is not plain ASCII: {lines[0]!r}")
+    try:
+        hint = json.loads(lines[0])
+    except ValueError as exc:
+        raise CheckFailed(f"the hook's line is not JSON: {lines[0]!r}") from exc
+    expect(isinstance(hint, dict), f"the hook's line is not an object: {lines[0]!r}")
+    return dict(hint)
+
+
+def check_hook_installed(ran: Ran, launcher: ModuleType) -> str:
+    """With s0ma installed: nothing for the person, the standing note for Claude."""
+    hint = hook_line(ran)
+    expect(
+        "systemMessage" not in hint,
+        f"the hook showed the person something: {hint.get('systemMessage')!r}",
+    )
+    extra = hint.get("hookSpecificOutput")
+    expect(isinstance(extra, dict), f"no context for Claude: {hint!r}")
+    assert isinstance(extra, dict)
+    expect(
+        extra.get("hookEventName") == "SessionStart",
+        f"the context names the event {extra.get('hookEventName')!r}",
+    )
+    context = str(extra.get("additionalContext", ""))
+    expect(
+        context.startswith(launcher.NOTE_PURPOSE),
+        f"the context is not the standing note: {context!r}",
+    )
+    expect(
+        len(context) <= launcher.NOTE_MAX_CHARS,
+        f"the standing note is {len(context)} characters, over {launcher.NOTE_MAX_CHARS}",
+    )
+    return (
+        "exit 0, stderr empty, no systemMessage, the standing note in "
+        f"additionalContext ({len(context)} characters)"
+    )
+
+
+def check_hook_off(ran: Ran, launcher: ModuleType) -> str:
+    """With s0ma off in the project: the one off line for Claude, nothing else."""
+    hint = hook_line(ran)
+    expected = {
+        "hookSpecificOutput": {
+            "additionalContext": launcher.HINT_OFF_HERE,
+            "hookEventName": "SessionStart",
+        }
+    }
+    expect(hint == expected, f"the hook did not say only the off line: {hint!r}")
+    return "exit 0, stderr empty, no systemMessage, additionalContext is the off line"
 
 
 # ---------------------------------------------------------------------------
@@ -1101,12 +1163,19 @@ def leg_uv_present(opts: argparse.Namespace, work: Path, results: Results) -> No
                 f"server direct, installed, {label}",
                 check_real_server(plugin_dir, version_k, names, env, project),
             )
-        ran = run_hook(PLUGIN_DIR, env, project)
-        expect(
-            ran.code == 0 and ran.stderr == "" and ran.stdout == "",
-            "the hook after install was not silent",
+        results.add(
+            "hook, installed",
+            check_hook_installed(run_hook(PLUGIN_DIR, env, project), launcher),
         )
-        results.add("hook, installed", "exit 0, stderr empty, stdout empty")
+        project_off = work / "project-off"
+        (project_off / ".s0ma").mkdir(parents=True)
+        (project_off / ".s0ma" / "preferences.json").write_text(
+            '{"s0ma": "off"}\n', encoding="utf-8"
+        )
+        results.add(
+            "hook, installed, s0ma off in the project",
+            check_hook_off(run_hook(PLUGIN_DIR, env, project_off), launcher),
+        )
 
         if claude is not None:
             for label, plugin_dir in (

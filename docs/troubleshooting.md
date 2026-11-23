@@ -203,10 +203,22 @@ One more line exists for the rare case where the real sentence would be too long
 to read at a glance — *s0ma has something to say about this machine, and it did
 not fit in one line* — and `/s0ma:doctor` prints the whole story.
 
-**Nothing you see here can be caused by the notice itself.** It reads two local
-files, opens no connection, and is written so that anything at all going wrong
-ends as silence rather than as a hook error in front of somebody who opened
-Claude to do something else.
+Beside any of these, and in every session where s0ma can be used, Claude is
+also given a short note you do not see: what s0ma is for, whether this folder
+is a s0ma project, and how you asked for s0ma and studi0 to be used. If Claude
+uses s0ma more or less than you want, say so: "always use s0ma", "only use
+s0ma when I ask", or "turn s0ma off here" for one project.
+[Telling s0ma how you want it](guides/claude-integration.md#telling-s0ma-how-you-want-it)
+has the whole list, and "what are my s0ma settings?" reads them back.
+
+In a project where you turned s0ma off, a session says nothing about s0ma at
+all, even when one of the lines above would otherwise have appeared. Say "turn
+s0ma back on", or type `/s0ma:on`, to hear from it there again.
+
+**Nothing you see here can be caused by the notice itself.** It reads local
+files only, opens no connection, writes nothing, and is written so that
+anything at all going wrong ends as silence rather than as a hook error in
+front of somebody who opened Claude to do something else.
 
 ### `/s0ma:update` says there is nothing newer, and I know there is
 

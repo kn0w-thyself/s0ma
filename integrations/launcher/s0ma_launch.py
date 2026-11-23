@@ -38,6 +38,12 @@ control plane and looks after installed copies: install, update, pin and
 activate. A machine with a license key installs from the control plane; a
 machine without one installs the launcher's own version through uv, from the
 package index, and the launcher itself contacts nobody.
+
+Beside the project section sit two readers that never write: a project's own
+preferences file (``.s0ma/preferences.json``, which Claude writes on a skill's
+instruction) and whether a folder is a s0ma project. ``set`` stores the
+machine's preferences, ``prefs`` reports both, and ``session-hint`` tells
+Claude what they add up to.
 """
 
 from __future__ import annotations
@@ -56,6 +62,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import tomllib
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -120,6 +127,19 @@ COMPLETE_MARKER = ".complete"
 #: The file a project uses to pin itself to one version of s0ma.
 PIN_FILENAME = ".s0ma-version"
 
+#: A person's own preferences for one project: ``<project>/.s0ma/preferences.json``.
+#: ``.s0ma/`` is s0ma's folder for a person's own working state in a project,
+#: and it is not committed. The launcher only ever reads this file; Claude
+#: writes it, with its own file tool, when a skill says to.
+PROJECT_STATE_DIRNAME = ".s0ma"
+PREFERENCES_FILENAME = "preferences.json"
+
+#: The one value of the ``"s0ma"`` key that means anything: off here.
+PROJECT_OFF = "off"
+
+#: The shape ``prefs --json`` prints.
+PREFS_SCHEMA = "s0ma-launch-prefs@1"
+
 #: The programs a toolchain is expected to provide.
 MCP_PROGRAM = "s0ma-mcp"
 CLI_PROGRAM = "s0ma"
@@ -142,6 +162,20 @@ FILE_MODE = 0o600
 #: How the update setting may be spelled.
 UPDATE_MODES = ("auto", "notify", "off")
 DEFAULT_UPDATE_MODE = "auto"
+
+#: How a person wants s0ma used, set for the machine with ``set use``:
+#: ``always`` builds new work with s0ma without being asked, ``asked`` uses it
+#: only when the person asks or the folder is already a s0ma project.
+USE_MODES = ("always", "asked")
+DEFAULT_USE_MODE = "asked"
+
+#: When studi0 is shown, set for the machine with ``set studi0``: ``always``
+#: at the first build of each session, ``offer`` once in each project,
+#: ``asked`` only when the person asks. A project's own file takes only the
+#: two settled answers, because "offer" is the question it records.
+STUDI0_MODES = ("always", "offer", "asked")
+DEFAULT_STUDI0_MODE = "offer"
+PROJECT_STUDI0_MODES = ("always", "asked")
 
 #: The control plane: the one host this launcher ever talks to, and only for
 #: the manifest, the wheels it names, and a key check - and only when there is
@@ -866,6 +900,112 @@ def read_pin(project: Path) -> Pin:
     if not looks_like_version(first):
         return Pin(present=True, version=None, problem="does not name a version")
     return Pin(present=True, version=first, problem=None)
+
+
+# ---------------------------------------------------------------------------
+# What a person asked for in this project, and whether it is a s0ma project.
+#
+# Both are read, never written. A project's preferences file is the person's
+# own: Claude writes it with its own file tool when one of the plugin's skills
+# says to, and the launcher only reads it. A file that is missing, unreadable
+# or not a JSON object counts as no file at all - it is never repaired, never
+# moved aside, and never complained about.
+# ---------------------------------------------------------------------------
+
+
+def project_preferences_path(project: Path) -> Path:
+    """Where a project's own preferences live: ``<project>/.s0ma/preferences.json``.
+
+    *project* is exactly what :func:`project_dir` returns. There is no search
+    upwards, the same rule as the pin.
+    """
+    return project / PROJECT_STATE_DIRNAME / PREFERENCES_FILENAME
+
+
+@dataclass(frozen=True)
+class ProjectPreferences:
+    """What a project's preferences file says.
+
+    *exists* is whether there is anything at that path at all; *readable* is
+    whether it held a JSON object. *off* is whether ``"s0ma"`` is ``"off"``.
+    *use* and *studi0* are ``None`` when the file does not set them, or sets
+    them to something that is not one of their values.
+    """
+
+    path: Path
+    exists: bool
+    readable: bool
+    off: bool
+    use: str | None
+    studi0: str | None
+
+
+def read_project_preferences(project: Path) -> ProjectPreferences:
+    """Read a project's preferences file. Reads only; says nothing; never raises."""
+    path = project_preferences_path(project)
+    nothing = ProjectPreferences(
+        path=path, exists=False, readable=False, off=False, use=None, studi0=None
+    )
+    try:
+        text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return nothing
+    except (OSError, ValueError):
+        return ProjectPreferences(
+            path=path, exists=True, readable=False, off=False, use=None, studi0=None
+        )
+    try:
+        parsed = json.loads(text)
+    except ValueError:
+        parsed = None
+    if not isinstance(parsed, dict):
+        return ProjectPreferences(
+            path=path, exists=True, readable=False, off=False, use=None, studi0=None
+        )
+    use = parsed.get("use")
+    studi0 = parsed.get("studi0")
+    return ProjectPreferences(
+        path=path,
+        exists=True,
+        readable=True,
+        off=parsed.get("s0ma") == PROJECT_OFF,
+        use=use if isinstance(use, str) and use in USE_MODES else None,
+        studi0=(
+            studi0
+            if isinstance(studi0, str) and studi0 in PROJECT_STUDI0_MODES
+            else None
+        ),
+    )
+
+
+def s0ma_project_root(path: Path) -> Path | None:
+    """The root of the s0ma project *path* is in, or ``None`` when it is in none.
+
+    *path* may be a folder or a file, and need not exist yet. The nearest
+    ``pyproject.toml`` at or above it decides: a ``[tool.s0ma]`` table in it
+    makes its folder a s0ma project. A nearest ``pyproject.toml`` without one,
+    or one that cannot be read or parsed, means not a s0ma project, whatever
+    is further up. Reads only, and never raises.
+    """
+    try:
+        start = Path(os.path.abspath(path))
+        if not start.is_dir():
+            start = start.parent
+        for folder in (start, *start.parents):
+            candidate = folder / "pyproject.toml"
+            if not candidate.is_file():
+                continue
+            try:
+                data = tomllib.loads(candidate.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                return None
+            tool = data.get("tool")
+            if isinstance(tool, dict) and isinstance(tool.get("s0ma"), dict):
+                return folder
+            return None
+    except (OSError, ValueError):
+        return None
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -3705,16 +3845,38 @@ def cmd_unpin(args: argparse.Namespace) -> int:
 #
 # The Claude Code plugin asks nothing at install, so a preference lives in the
 # launcher's own config file and is changed with ``set <name> <value>``. Each
-# name is a row in SETTABLE with the values it takes; ``update`` is the only one
-# today, and a later name is one more row. Nothing here opens a connection.
+# name is a row in SETTABLE with the values it takes: ``update``, and the two a
+# person sets by saying so in Claude, ``use`` and ``studi0``. A later name is
+# one more row. Nothing here opens a connection, and nothing here writes
+# anywhere but the launcher's own config file.
 # ---------------------------------------------------------------------------
 
 #: What ``set`` may change, and the values each name takes.
-SETTABLE: dict[str, tuple[str, ...]] = {"update": UPDATE_MODES}
+SETTABLE: dict[str, tuple[str, ...]] = {
+    "update": UPDATE_MODES,
+    "use": USE_MODES,
+    "studi0": STUDI0_MODES,
+}
+
+#: What each value of ``use`` and ``studi0`` means, in the words ``set`` and
+#: ``prefs`` say it in.
+PREFERENCE_WORDS: dict[str, dict[str, str]] = {
+    "use": {
+        "always": "s0ma on new work without being asked",
+        "asked": "s0ma only when asked",
+    },
+    "studi0": {
+        "always": "studi0 opened at the first build of each session",
+        "offer": "studi0 offered once per project",
+        "asked": "studi0 only when asked",
+    },
+}
 
 #: Said for each name once its new value is saved.
 SET_CONFIRMATIONS: dict[str, str] = {
     "update": "Saved. s0ma's update setting on this machine is now {value}.",
+    "use": "Saved. s0ma's use setting on this machine is now {value}: {meaning}.",
+    "studi0": "Saved. s0ma's studi0 setting on this machine is now {value}: {meaning}.",
 }
 
 
@@ -3739,7 +3901,8 @@ def cmd_set(args: argparse.Namespace) -> int:
     config = load_config(home)
     config[name] = value
     save_config(home, config)
-    say(SET_CONFIRMATIONS[name].format(value=value))
+    meaning = PREFERENCE_WORDS.get(name, {}).get(value, "")
+    say(SET_CONFIRMATIONS[name].format(value=value, meaning=meaning))
     if name == "update":
         chosen = values.get(ENV_UPDATE, "").strip().lower()
         if chosen in UPDATE_MODES and chosen != value:
@@ -3747,6 +3910,180 @@ def cmd_set(args: argparse.Namespace) -> int:
                 f"{ENV_UPDATE} is set to {chosen} where this ran, and while it is "
                 "set it wins over this setting."
             )
+    return EXIT_OK
+
+
+# ---------------------------------------------------------------------------
+# prefs: how this person wants s0ma used, here and on this machine.
+#
+# Two places hold a preference. The machine's are in the launcher's config
+# file, set with ``set use`` and ``set studi0``. A project's are in its own
+# ``.s0ma/preferences.json``, which Claude writes on a skill's instruction and
+# this file only reads. What is in effect for a project is the project's value
+# where it has one, and the machine's otherwise. ``prefs`` reads both and says
+# so; it reads local files only, writes nothing, and repairs nothing.
+# ---------------------------------------------------------------------------
+
+
+def machine_use(config: Mapping[str, Any]) -> str:
+    """The machine's ``use`` setting, or the default for anything else."""
+    stored = config.get("use")
+    return stored if isinstance(stored, str) and stored in USE_MODES else DEFAULT_USE_MODE
+
+
+def machine_studi0(config: Mapping[str, Any]) -> str:
+    """The machine's ``studi0`` setting, or the default for anything else."""
+    stored = config.get("studi0")
+    if isinstance(stored, str) and stored in STUDI0_MODES:
+        return stored
+    return DEFAULT_STUDI0_MODE
+
+
+@dataclass(frozen=True)
+class Preferences:
+    """Everything a session needs to know about how s0ma is wanted here.
+
+    *use_from* and *studi0_from* say where the value in effect came from:
+    ``"project"`` or ``"machine"``. *s0ma_root* is the root of the s0ma
+    project the project folder is in, or ``None``.
+    """
+
+    machine_use: str
+    machine_studi0: str
+    project: ProjectPreferences
+    use: str
+    use_from: str
+    studi0: str
+    studi0_from: str
+    s0ma_root: Path | None
+
+
+def read_preferences(config: Mapping[str, Any], project: Path) -> Preferences:
+    """Put the machine's settings and the project's file together. Reads only."""
+    own = read_project_preferences(project)
+    use = machine_use(config)
+    studi0 = machine_studi0(config)
+    return Preferences(
+        machine_use=use,
+        machine_studi0=studi0,
+        project=own,
+        use=own.use or use,
+        use_from="project" if own.use else "machine",
+        studi0=own.studi0 or studi0,
+        studi0_from="project" if own.studi0 else "machine",
+        s0ma_root=s0ma_project_root(project),
+    )
+
+
+def machine_word(platform: str | None = None) -> str:
+    """What a person calls this machine: a Mac, a PC, or a computer."""
+    chosen = sys.platform if platform is None else platform
+    if chosen.startswith("win"):
+        return "PC"
+    if chosen == "darwin":
+        return "Mac"
+    return "computer"
+
+
+def prefs_report(
+    env: Mapping[str, str] | None = None,
+    home: Path | None = None,
+    project: Path | None = None,
+) -> dict[str, Any]:
+    """Gather what ``prefs`` knows. Local files only; nothing is written."""
+    values = environ(env)
+    base = s0ma_home(values) if home is None else home
+    where = project_dir(values) if project is None else project
+    prefs = read_preferences(read_json_quietly(config_path(base)), where)
+    own = prefs.project
+    return {
+        "schema": PREFS_SCHEMA,
+        "machine": {
+            "config_file": fwd(config_path(base)),
+            "use": prefs.machine_use,
+            "studi0": prefs.machine_studi0,
+        },
+        "project": {
+            "dir": fwd(where),
+            "file": fwd(own.path),
+            "file_exists": own.exists,
+            "file_read": own.readable,
+            "s0ma": PROJECT_OFF if own.off else "on",
+            "use": own.use,
+            "studi0": own.studi0,
+        },
+        "in_effect": {
+            "use": prefs.use,
+            "use_from": prefs.use_from,
+            "studi0": prefs.studi0,
+            "studi0_from": prefs.studi0_from,
+        },
+        "off_here": own.off,
+        "s0ma_project": {
+            "is": prefs.s0ma_root is not None,
+            "root": fwd(prefs.s0ma_root) if prefs.s0ma_root is not None else None,
+        },
+    }
+
+
+def prefs_summary(report: Mapping[str, Any], platform: str | None = None) -> str:
+    """The two sentences a person is answered with when they ask for their settings."""
+    machine = report["machine"]
+    project = report["project"]
+    head = (
+        f"On this {machine_word(platform)}: {PREFERENCE_WORDS['use'][machine['use']]}, "
+        f"{PREFERENCE_WORDS['studi0'][machine['studi0']]}."
+    )
+    if report["off_here"]:
+        return f"{head} In this project: s0ma is off."
+    own = [
+        PREFERENCE_WORDS[name][project[name]]
+        for name in ("use", "studi0")
+        if project[name] is not None
+    ]
+    if not own:
+        return f"{head} In this project: s0ma is on."
+    return f"{head} In this project: s0ma is on, with {' and '.join(own)}."
+
+
+def prefs_lines(report: Mapping[str, Any], platform: str | None = None) -> list[str]:
+    """Render *report* for a person: the summary, then where each answer came from."""
+    machine = report["machine"]
+    project = report["project"]
+    effect = report["in_effect"]
+    if not project["file_exists"]:
+        file_words = "not there, so nothing is set for this project"
+    elif not project["file_read"]:
+        file_words = "there, but it could not be read as settings, so it is not used"
+    else:
+        file_words = "read"
+    own = ", ".join(
+        f"{name} {project[name]}" for name in ("use", "studi0") if project[name] is not None
+    )
+    root = report["s0ma_project"]["root"]
+    return [
+        prefs_summary(report, platform),
+        "",
+        f"This {machine_word(platform)}:  use {machine['use']}, studi0 {machine['studi0']}"
+        f" (saved in {machine['config_file']})",
+        f"Project:       {project['dir']}",
+        f"Its file:      {project['file']} - {file_words}",
+        f"s0ma here:     {'off' if report['off_here'] else 'on'}",
+        f"Set here:      {own or 'nothing'}",
+        f"In effect:     use {effect['use']} (from this {effect['use_from']}), "
+        f"studi0 {effect['studi0']} (from this {effect['studi0_from']})",
+        f"s0ma project:  {'yes, at ' + root if root else 'no'}",
+    ]
+
+
+def cmd_prefs(args: argparse.Namespace) -> int:
+    """Say how s0ma is wanted on this machine and in this project. Reads only."""
+    report = prefs_report()
+    if args.json:
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return EXIT_OK
+    for line in prefs_lines(report):
+        print(line)
     return EXIT_OK
 
 
@@ -3893,19 +4230,27 @@ def cmd_activate(args: argparse.Namespace) -> int:
 #   write - not even the tidying-up the everyday reader does when it meets a
 #   spoiled file. A glance that repaired the state directory behind the user's
 #   back would be doing real work in a place meant for a glance.
-# * **It says nothing when there is nothing to say.** One line, or none. A line
-#   that appears every session is a line nobody reads.
+# * **The person hears nothing when there is nothing to say.** One line for
+#   them, or none. A line that appears every session is a line nobody reads.
 #
 # What is printed is one line of JSON, in the shape Claude Code documents for a
 # SessionStart hook (https://code.claude.com/docs/en/hooks): plain stdout from a
 # SessionStart hook is added as context the model reads, while `systemMessage`
 # in a JSON object is the notification shown to the person. Almost everything
-# this command has to say is for the person alone, so it goes in
+# this command has to say to the person is for the person alone, so it goes in
 # `systemMessage` and nowhere else. The two cases where s0ma's tools are simply
 # not there are the exception - the model has to know that too, or it will offer
 # to use tools that cannot answer - so those also fill in
 # `hookSpecificOutput.additionalContext`, which is the same page's field for
 # what the model should be told.
+#
+# The model is also given a standing note, in `additionalContext` only and never
+# in `systemMessage`: whenever s0ma can be used in this session and is not off
+# in this project, the note says what s0ma is for, whether this folder is a s0ma
+# project, and how this person wants s0ma and studi0 used. It is read from the
+# launcher's config file and the project's own `.s0ma/preferences.json`, and the
+# person does not see it. When that file says s0ma is off in this project, one
+# line telling the model so is the whole of what is printed.
 # ---------------------------------------------------------------------------
 
 #: The event this line is written for. It goes in the JSON so Claude Code can
@@ -3971,18 +4316,79 @@ HINT_TOO_LONG_MESSAGE = (
 )
 HINT_TOO_LONG_CONTEXT = HINT_TOOLS_MISSING + " " + HINT_SETUP_SKILL
 
+#: The standing note stays within this many characters. It is its own limit,
+#: separate from :data:`HINT_MAX_CHARS`, because the note is for the model, not
+#: for a person's patience: it is added to every session where s0ma can be
+#: used, so it is kept to a short paragraph.
+NOTE_MAX_CHARS = 1200
+
+#: The skills a person changes any of this through.
+OFF_SKILL = "/s0ma:off"
+ON_SKILL = "/s0ma:on"
+PREFERENCES_SKILL = "/s0ma:preferences"
+
+#: The whole of what a session is told when s0ma is off in this project.
+HINT_OFF_HERE = (
+    "s0ma is turned off for this project. Do not use s0ma or its tools here, "
+    "do not offer studi0, and do not bring s0ma up unless the person does; "
+    f"{ON_SKILL} turns it back on."
+)
+
+#: The standing note, sentence by sentence. The first takes its voice from the
+#: plugin's own description.
+NOTE_PURPOSE = (
+    "s0ma is available in this session: it gives a project a living model of "
+    "what it is made of - what each part is for, what it depends on, and why - "
+    "so answers about the software come from the software itself."
+)
+NOTE_IS_PROJECT = "This folder is a s0ma project."
+NOTE_NOT_PROJECT = "This folder is not a s0ma project."
+NOTE_USE_ASKED = (
+    "s0ma is wanted only when asked: use it when the person asks for it, or "
+    "when the folder is already a s0ma project; do not bring it into other work "
+    "unasked."
+)
+NOTE_USE_ALWAYS = (
+    "The person asked for s0ma on new work {where}, so build new work as a s0ma "
+    "project without asking first; code that already exists is moved to s0ma "
+    "only when they ask."
+)
+NOTE_STUDI0 = "studi0, s0ma's local visual environment, "
+NOTE_STUDI0_ALWAYS = (
+    NOTE_STUDI0 + "is wanted in every session: start it at the first build of "
+    "each session, and say so."
+)
+NOTE_STUDI0_OFFER = (
+    NOTE_STUDI0 + "is offered once per project: after a build, if studi0 is not "
+    "showing, offer it once in this project and remember the answer as the "
+    f"{PREFERENCES_SKILL} skill says."
+)
+NOTE_STUDI0_ASKED = NOTE_STUDI0 + "is started only when the person asks."
+NOTE_IN_PROJECT = (
+    "Edit the .s0ma sources and never the files in the build folder, and run "
+    "`s0ma check` after an edit."
+)
+NOTE_CHANGES = (
+    "Any of this changes when the person says so: the "
+    f"{PREFERENCES_SKILL} skill sets these preferences, {OFF_SKILL} turns s0ma "
+    f"off in this project, and {ON_SKILL} turns it back on."
+)
+
 
 @dataclass(frozen=True)
 class Hint:
     """The one thing a new session is told, and who it is for.
 
-    *message* is for the person: Claude Code shows it as a system notification.
-    *context* is for the model, and is filled in only when s0ma's tools are
-    missing - knowing that saves the model from offering work it cannot do.
+    *message* is for the person: Claude Code shows it as a system notification,
+    and it is ``None`` when the person has nothing to hear. *context* is for the
+    model, and is filled in when s0ma's tools are missing - knowing that saves
+    the model from offering work it cannot do - or when s0ma is off here.
+    *note* is the standing note for the model, added beside the rest.
     """
 
-    message: str
+    message: str | None
     context: str | None = None
+    note: str | None = None
 
 
 def read_json_quietly(path: Path) -> dict[str, Any]:
@@ -4013,18 +4419,52 @@ def hint_version(value: Any) -> str | None:
 
 def hint_output(hint: Hint) -> dict[str, Any]:
     """*hint* in the shape a SessionStart hook's JSON output takes."""
-    output: dict[str, Any] = {"systemMessage": hint.message}
-    if hint.context is not None:
+    output: dict[str, Any] = {}
+    if hint.message is not None:
+        output["systemMessage"] = hint.message
+    context = "\n\n".join(part for part in (hint.context, hint.note) if part)
+    if context:
         output["hookSpecificOutput"] = {
-            "additionalContext": hint.context,
+            "additionalContext": context,
             "hookEventName": HINT_EVENT_NAME,
         }
     return output
 
 
 def hint_fits(hint: Hint) -> bool:
-    """Whether *hint* would print inside :data:`HINT_MAX_CHARS`."""
-    return len(json.dumps(hint_output(hint), sort_keys=True)) < HINT_MAX_CHARS
+    """Whether *hint*, less its standing note, prints inside :data:`HINT_MAX_CHARS`."""
+    visible = Hint(message=hint.message, context=hint.context)
+    return len(json.dumps(hint_output(visible), sort_keys=True)) < HINT_MAX_CHARS
+
+
+def standing_note(prefs: Preferences) -> str:
+    """The paragraph the model is given in every session where s0ma can be used.
+
+    Plain ASCII sentences, within :data:`NOTE_MAX_CHARS`: what s0ma is for,
+    whether this folder is a s0ma project, how the person wants s0ma and studi0
+    used, how to work in a s0ma project, and how any of it changes.
+    """
+    in_project = prefs.s0ma_root is not None
+    if prefs.use == "always":
+        where = "in this project" if prefs.use_from == "project" else "on this machine"
+        use = NOTE_USE_ALWAYS.format(where=where)
+    else:
+        use = NOTE_USE_ASKED
+    studi0 = {
+        "always": NOTE_STUDI0_ALWAYS,
+        "offer": NOTE_STUDI0_OFFER,
+        "asked": NOTE_STUDI0_ASKED,
+    }[prefs.studi0]
+    parts = [
+        NOTE_PURPOSE,
+        NOTE_IS_PROJECT if in_project else NOTE_NOT_PROJECT,
+        use,
+        studi0,
+    ]
+    if in_project:
+        parts.append(NOTE_IN_PROJECT)
+    parts.append(NOTE_CHANGES)
+    return " ".join(parts)
 
 
 def tools_missing_hint(reason: str) -> Hint:
@@ -4053,7 +4493,12 @@ def session_hint(
     home: Path | None = None,
     project: Path | None = None,
 ) -> Hint | None:
-    """The one thing this session should hear, or ``None`` when all is well.
+    """What this session is told: one thing for the person, and a note for the model.
+
+    When the project's preferences file says s0ma is off here, the one off line
+    for the model is all there is. Otherwise, whenever a copy of s0ma is found,
+    the model is given the standing note, and the person hears nothing unless
+    one of the things below is true.
 
     The six things worth saying are in priority order, and the first one that is
     true is the only one said:
@@ -4081,9 +4526,35 @@ def session_hint(
     where = project_dir(values) if project is None else project
 
     config = read_json_quietly(config_path(base))
+    prefs = read_preferences(config, where)
+
+    # Off here outranks everything: one line for the model, and nothing for
+    # the person, whatever else would have been said.
+    if prefs.project.off:
+        return Hint(message=None, context=HINT_OFF_HERE)
+
     state = read_json_quietly(state_path(base))
     resolution = resolve_toolchain(values, base, where)
+    said = situation_hint(values, base, config, state, resolution)
+    if not resolution.found:
+        return said
+    note = standing_note(prefs)
+    if said is None:
+        return Hint(message=None, note=note)
+    return Hint(message=said.message, context=said.context, note=note)
 
+
+def situation_hint(
+    values: Mapping[str, str],
+    base: Path,
+    config: Mapping[str, Any],
+    state: Mapping[str, Any],
+    resolution: Resolution,
+) -> Hint | None:
+    """The one thing about this machine the person should hear, or ``None``.
+
+    The six cases :func:`session_hint` lists, in that order.
+    """
     # 1 and 2. Nothing runs here. The resolution's own sentence is the cause,
     # and it names the version when the project asked for one.
     if not resolution.found:
@@ -4148,13 +4619,21 @@ def hint_line(hint: Hint) -> str:
     the last word: rather than truncate a sentence in the middle, an oversized
     hint is replaced by a short one that points at the skill which can print the
     whole thing.
+
+    The guard measures the hint without its standing note, which has a limit
+    of its own, :data:`NOTE_MAX_CHARS`; a note past that limit is left out
+    rather than cut.
     """
-    line = json.dumps(hint_output(hint), sort_keys=True)
-    if len(line) < HINT_MAX_CHARS:
-        return line
+    note = hint.note if hint.note and len(hint.note) <= NOTE_MAX_CHARS else None
+    if hint_fits(hint):
+        return json.dumps(
+            hint_output(Hint(message=hint.message, context=hint.context, note=note)),
+            sort_keys=True,
+        )
     short = Hint(
         message=HINT_TOO_LONG_MESSAGE,
         context=None if hint.context is None else HINT_TOO_LONG_CONTEXT,
+        note=note,
     )
     return json.dumps(hint_output(short), sort_keys=True)
 
@@ -4254,6 +4733,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     preference.add_argument("value", nargs="?", default=None, help="its new value")
     preference.set_defaults(handler=cmd_set)
+
+    prefs = subcommands.add_parser(
+        "prefs", help="how s0ma is wanted on this machine and in this project"
+    )
+    prefs.add_argument(
+        "--json", action="store_true", help="print the same facts as JSON"
+    )
+    prefs.set_defaults(handler=cmd_prefs)
 
     activate = subcommands.add_parser(
         "activate", help="save your license key on this machine (hidden prompt)"

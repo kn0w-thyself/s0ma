@@ -180,7 +180,7 @@ That half is this checklist. Run it after a release is cut and before the plugin
 
 1. **Install the plugin from inside Claude**, with `/plugin`. No settings dialog opens and nothing asks for a key.
 2. **Start a first session.** No hook error and no failed server anywhere on screen. Asked what it knows about s0ma, Claude says s0ma is not set up here yet and names `/s0ma:setup`. `/mcp` shows the s0ma server connected.
-3. **Run `/s0ma:setup`.** It finds no uv, offers the one install command for the system and asks before running it, then says to restart Claude. Run it again after the restart: it asks before installing s0ma, installs it with no key, and ends on `s0ma doctor` reporting `ok`. A new session afterwards begins with no line about s0ma at all.
+3. **Run `/s0ma:setup`.** It finds no uv, offers the one install command for the system and asks before running it, then says to restart Claude. Run it again after the restart: it asks before installing s0ma, installs it with no key, and ends on `s0ma doctor` reporting `ok`. A new session afterwards shows you no line about s0ma at all, though Claude is told, out of your sight, that s0ma is there and how you want it used.
 4. **Build a new project with `/s0ma:new`.** The project is written where you agreed, and its checks pass.
 5. **Open studi0** on that project (ask Claude to, or run `s0ma studi0`). The page loads and draws the project's graph.
 6. **Change the update setting by asking**, for example "tell me about s0ma updates instead of installing them". Claude saves it with `s0ma-launch set update notify`, and `s0ma-launch status` then reports `notify`.

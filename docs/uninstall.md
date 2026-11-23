@@ -251,7 +251,7 @@ made. All four are **regenerated from your authored sources** by the next
 | Name | What it holds | Safe to delete? |
 |---|---|---|
 | `build/` | The Python that s0ma generated from your `.s0ma` sources | Yes — it is output, never source |
-| `.s0ma/` | Local scratch state: a record of the problems your last check already knew about (so it can tell you which ones are new), a small local database, and the studi0 marker | Yes |
+| `.s0ma/` | Local scratch state: a record of the problems your last check already knew about (so it can tell you which ones are new), a small local database, the studi0 marker, and `preferences.json` if you told Claude something about this project, such as turning s0ma off here | Yes. The one thing it costs is that file's answers: this project goes back to your machine's settings |
 | `.s0ma.cache/` | The cache that lets a rebuild skip unchanged files | Yes |
 | `__s0ma_cache__/` | The same cache under an older name; only in projects that predate the rename | Yes |
 
@@ -314,7 +314,7 @@ access.
 | What is in it | What it is | What deleting it costs you |
 |---|---|---|
 | `license` | The key `s0ma-launch activate` saved here, readable by you and nobody else where the platform allows that | The next install or update fetches s0ma from the package index, with no key, instead of from the s0ma service. If your key lives in the Claude Desktop extension's settings instead, this file was never written |
-| `launcher/config.json` | Two settings: how s0ma keeps itself current (what `s0ma-launch set update` writes), and which host it asks | Both go back to their defaults |
+| `launcher/config.json` | Your settings: how s0ma keeps itself current (what `s0ma-launch set update` writes), when Claude uses s0ma and when it shows studi0 (what `s0ma-launch set use` and `s0ma-launch set studi0` write when you tell Claude), and which host it asks | All of them go back to their defaults: s0ma only when you ask, and studi0 offered once per project |
 | `launcher/state.json` | What is installed, which version runs here, when it last looked for a newer one, and the last thing that went wrong | Nothing you can lose. s0ma looks for a newer version on the next start instead of waiting out the day |
 | `launcher/update.log` | Everything the quiet update printed, in its own words, with the previous log kept beside it as `update.log.1` | Only the record of what past updates did. Nothing reads it back: the newest failure is kept in `state.json` instead |
 | `launcher/update.lock` | The file two updates use so that only one of them runs | Nothing, unless an update is running as you read this |
