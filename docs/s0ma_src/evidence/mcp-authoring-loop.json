@@ -230,6 +230,10 @@
             "path": "diagnostics.summary.errors"
           },
           {
+            "equals": 0,
+            "path": "diagnostics.summary.warnings"
+          },
+          {
             "equals": "demo",
             "path": "manifest.project"
           },
@@ -251,10 +255,6 @@
           }
         ],
         "text": [
-          {
-            "match": "contains",
-            "text": "\"code\": \"HOST_RUNTIME_UNDECLARED\""
-          },
           {
             "match": "contains",
             "text": "\"manifest\": {"

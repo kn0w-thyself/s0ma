@@ -160,8 +160,8 @@ Only once the check is clean.
 
 The build writes the generated code and a manifest naming every module and the
 order they import in. It also says what it still wants, which in a fresh
-project includes the reminder that the generated code now imports the s0ma
-runtime and the project has not declared it:
+project is nothing: the generated code imports the s0ma runtime, and a project
+made with `s0ma new project` already declares it:
 
 ```text
 {
@@ -169,15 +169,7 @@ runtime and the project has not declared it:
   "exit_code": 0,
   "diagnostics": {
     ...
-    "warnings": [
-      {
-        "code": "HOST_RUNTIME_UNDECLARED",
-        ...
-        "message": "Generated Python imports the s0ma runtime, but the host project does not declare s0ma-lang-core, s0ma-lang-dsl in [project].dependencies.",
-        "remediation": "Name s0ma-lang-core and s0ma-lang-dsl in [project].dependencies — that alone clears this warning. Separately, the environment that runs the application has to have both installed; `s0ma verify-host` is how you prove it does.",
-        "severity": "warning"
-      }
-    ]
+    "warnings": []
   },
   ...
   "manifest": {

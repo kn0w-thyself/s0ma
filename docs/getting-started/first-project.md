@@ -222,20 +222,11 @@ again, and carry on.
 s0ma build src
 ```
 
-Three things come back.
-
-A **warning** about the host runtime, which is expected here and is not a
-failure: it is telling you that the Python this project generates will import
-the s0ma runtime, and that the project has not yet declared it as a dependency
-of its own. That matters when you ship the project to a machine that is not
-yours. For a project you have just made, on the machine you made it on, it is a
-note rather than a problem.
-
-A **summary line** — `Results: 0 error(s), 1 warning(s) [mode: dev]` — the same
-shape as the one in section 5, and the same mode.
-
-A **build**: the modules written, where they went, and the name of the file
-that lists them. Every file the build made is under `build/`.
+What comes back is the **build**: the modules written, where they went, and
+the name of the file that lists them. Every file the build made is under
+`build/`. There is no warning: the Python this project generates imports the
+s0ma runtime, and `s0ma new project` already named it as one of the project's
+own dependencies.
 
 What the build produces is more than Python. When a s0ma program runs, every
 declared part registers itself in a single index under a full name that joins
