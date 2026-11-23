@@ -120,7 +120,8 @@ from s0ma's own launcher instead, you see it too, and the server is s0ma's own
 setup helper, which reports what it can see.
 
 **On Windows**, the line a session begins with needs Git for Windows, because
-Claude Code runs it through Git Bash; so do the `s0ma` and `s0ma-launch`
+Claude Code runs it through Git Bash; so do the two checks around Claude's
+edits, described [below](#around-claudes-edits), and the `s0ma` and `s0ma-launch`
 commands inside Claude, which are shell scripts, though each has a `.cmd` twin
 for a Windows shell without Git Bash. The server starts either way.
 
@@ -352,6 +353,31 @@ you would change any other dependency.
 
 This is deliberate. Nothing that arrived through Claude reaches into a project
 that already answered the question for itself.
+
+## Around Claude's edits
+
+Besides the line a session begins with, the plugin has two hooks, one on each
+side of an edit. Both run on this machine, and neither contacts anything.
+
+- **Before an edit, the build folder is refused.** Every file under a s0ma
+  project's build folder (`build/` in a new project, or whatever
+  `[tool.s0ma].build_dir` names) is generated from the `.s0ma` sources, and a
+  build stops at one that was edited by hand. So when Claude's Write or Edit
+  tool would change one, the edit does not happen, and Claude is told to make
+  the change in the `.s0ma` source instead, then build, and to tell you so in
+  one sentence. This check runs before every Write and Edit while the plugin
+  is on, in any project. Outside a s0ma project it reads a file or two, finds
+  no s0ma project, and lets the edit through without starting uv or Python.
+- **After an edit to a `.s0ma` file, s0ma checks it.** The copy of s0ma that
+  runs in the project runs `s0ma check` on that one file. If the check reports
+  errors or warnings, Claude is handed what it said, so it fixes them before it
+  goes on; a clean check says nothing. With no s0ma installed, nothing runs:
+  this never installs or updates anything.
+
+Neither does anything outside a s0ma project, or in a project where you turned
+s0ma off. Neither writes anything. If anything goes wrong in either, the edit
+goes through and nothing is said. Neither stops an edit made some other way:
+by you, or by a command Claude runs in the terminal.
 
 ## Telling s0ma how you want it
 
