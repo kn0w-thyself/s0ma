@@ -5,7 +5,7 @@
 | **Product** | s0ma — software self-knowledge platform |
 | **Document** | `references/s0ma-prd.md` |
 | **Status** | Living document — canonical alignment reference for developers and coding agents |
-| **Version** | 1.18 (2026-11-18) |
+| **Version** | 1.19 (2026-11-22) |
 | **Owner** | Rob (kn0wthyself) |
 | **Applies to** | The consolidated `s0ma` monorepo: `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp`, `s0ma-lang-studi0` |
 | **Related** | `plans/complete/s0ma-new-consolidation-1.md` (how we get here) · package docs under `packages/*/docs/` |
@@ -421,8 +421,13 @@ managed subscription opens after that release (NFR-8, amended v1.15).
 Every distribution is open source and every one of them runs free of charge and unconditionally:
 nothing in the product checks an entitlement in order to run, and no subscription state can switch
 installed software off (INV-9). What the subscription sells is the channel and the service around
-it — one-step installation into a coding agent, updates through that channel with pinning and
-rollback (FR-COM-4), the agent integration, and support. Once the channel is offered, two ways in stand side by side: accounts
+it: the keyed installer's one-step installation, updates through that channel with pinning and
+rollback (FR-COM-4), and support. The agent integration is not among them (amended v1.19, owner
+ruling 2026-11-22): the Claude plugin needs no key and no account, puts s0ma into Claude in one
+step from the public package index, and is offered to everyone from the release NFR-8 names. What a
+subscription should buy beyond the channel, now that the plugin is free, is an open owner decision,
+and no requirement below answers it.
+Once the channel is offered, two ways in stand side by side: accounts
 the owner provisions by hand for invited testers, who never enter payment details, and a
 self-serve paid tier anyone may buy. Prices, billing periods, programme dates and durations are
 commercial settings rather than requirements, and this document does not state them.
@@ -439,8 +444,10 @@ commercial settings rather than requirements, and this document does not state t
   today:** individual keys, hashed at rest and revealed once; statuses covering an invited tester
   and a paying subscriber, with a failed payment keeping access until the provider gives up; an
   optional end date on an invited tester's access; and key delivery to the toolchain through the
-  agent host's own secure setting or the `S0MA_LICENSE_KEY` environment variable, with an
-  `activate` command that takes a key at a hidden prompt and stores it user-scoped on the machine.
+  `S0MA_LICENSE_KEY` environment variable or an `activate` command that takes a key at a hidden
+  prompt and stores it user-scoped on the machine. The Desktop extension also takes a key in the
+  agent host's own secure setting. The Claude plugin has no key setting (amended v1.19), so
+  installing it asks nothing.
   **Not built, and named rather than left implied:** the browser device-code `login` flow, and
   organization accounts with seats. Both stay requirements; neither blocks the beta.
 - **FR-COM-2** *(restated v1.12; the offline-grace design is withdrawn)* The entitlement decision
@@ -639,13 +646,20 @@ commercial settings rather than requirements, and this document does not state t
   and the studi0 decision of 2026-08-15). Two historical facts the superseded text carried stand:
   `s0ma-mcp` v0.5.0 as distributed to the initial testers shipped MIT, and `s0ma-studi0` shipped
   proprietary from its first release; releases up to and including 0.18.1 remain under the license
-  they shipped with. Distribution (amended v1.9 to record the operating reality; amended v1.12, v1.14 and v1.15):
+  they shipped with. Distribution (amended v1.9 to record the operating reality; amended v1.12, v1.14, v1.15 and v1.19):
   **the codebase is released first, through GitHub alone** (owner ruling 2026-10-14). The public
   repository's first release is the source tree under its licences: the way in is to clone the
   repository and build the four packages from it, which is the one route the front door
   describes, and nothing that depends on an account — the entitlement-gated control plane, the
   keyed installer, the Claude plugin and extension, the feedback function's enrolment — is
-  offered or described as a route by that release. The paid convenience channel of §7.5 is built
+  offered or described as a route by that release. One of those has since changed (amended v1.19,
+  owner ruling 2026-11-22): the Claude plugin no longer depends on an account. From the release its
+  public catalog is first cut from, the plugin and that catalog are offered to everyone and
+  described as a route beside the clone. The plugin asks for no license key. With none, it installs
+  the toolchain from the public package index at its own version and never contacts the control
+  plane. The Desktop extension carries the same launcher and likewise needs no key. The control
+  plane, the keyed installer, and the feedback function's enrolment still depend on an account.
+  The paid convenience channel of §7.5 is built
   and stays built, and it comes **after** the codebase release: the control plane and keyed
   installer (`plans/s0ma-hosting-entitlement-1.md`) serve wheels of all four packages from the
   owner's R2 bucket, and that channel — not the software — is what a subscription buys, once it
@@ -782,3 +796,4 @@ commercial settings rather than requirements, and this document does not state t
 | 1.16 | 2026-10-14 | Owner rulings of 2026-10-14, second set, from the same documentation review. **MCP is one channel, not the way in:** §1's end state no longer says a coding agent "connects to a s0ma project over MCP" — it opens the project from the checkout, with the `.s0ma` sources, the committed artifacts and the `s0ma` command line, or over MCP where its host offers that — and persona P1 says the same; `s0ma-mcp` and its requirements (§7.3) are unchanged. **Two ways an agent meets s0ma, kept distinct:** a new §1 subsection separates the coding agent building or maintaining a s0ma application (efficiency, captured intent, enforcement; P1) from an LLM or agent using or operating one, which the running system hands its own model to through the self-context and the runtime query surfaces (autonomy and safety; P4 now names that agent beside the human stakeholder). No principle and no invariant changes. |
 | 1.17 | 2026-11-18 | Owner ruling: the four packages are published as `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0`, and the umbrella name to hold is `s0ma-lang`. The Python package index refuses a new project whose name matches an existing one once separators are dropped and a zero is read as the letter o (and a one as the letters l or i). Checked on 2026-11-18, the bare name `s0ma`, `s0ma-core` and `s0ma-mcp` were each blocked by an unrelated project holding the letter-o spelling, which the exact-name check recorded in v1.14 could not see, while all five `s0ma-lang` names were free in every such spelling. **Only distribution names change:** the import packages (`s0ma`, `s0ma_dsl`, `s0ma_mcp`, `s0ma_studi0`), the `s0ma` and `s0ma-mcp` commands, the `.s0ma` extension, the repository's `packages/s0ma-*` directories and the product's name are unchanged. The current text of this document uses the new names throughout; the rows above this one, like released changelog sections, accepted ADRs and earlier specs, keep the names their decisions were made under. NFR-8's distribution paragraph and non-goal 3 are amended to match. The umbrella distribution is still to be built. No principle and no invariant changes. |
 | 1.18 | 2026-11-18 | The umbrella distribution is built. v1.14 left two things to be decided when it was, where it lives and how it is versioned, and the change that built it decides them. It is the distribution `s0ma-lang`, built from `packages/s0ma-lang`, and it carries no code. **It is versioned in lockstep:** it is a fifth package of the monorepo under INV-4, and it requires each of `s0ma-lang-core`, `s0ma-lang-dsl`, `s0ma-lang-mcp` and `s0ma-lang-studi0` at exactly its own version, so that installing one version of it can only install the four as they were released together. The alternative was an umbrella versioned on its own with a floor on each of the four. It was not taken because INV-4 gives every package in the monorepo one version, and because a floor lets an installer pair an umbrella with parts from a later release, which is the mixed set an umbrella exists to rule out. It is published with the four from the first release cut of the public repository, and the paid convenience channel of §7.5 does not serve it: the keyed installer puts the four in place by file, so a fifth wheel that only names them would add nothing there. NFR-8's distribution paragraph is amended to say what was built. The name is still open until that first publication. No principle and no invariant changes. |
+| 1.19 | 2026-11-22 | Owner rulings of 2026-11-22, made with the approval of the Claude integration project. **The Claude plugin is offered with no account:** NFR-8's distribution paragraph keeps its sentence about the first release and adds that the plugin no longer depends on an account. From the release its public catalog is first cut from, the plugin and the catalog are offered to everyone and described as a route, and with no key the plugin installs from the public package index and never contacts the control plane. **The agent integration is no longer sold:** the sentence in §7.5 on what the subscription sells drops the agent integration, names the keyed installer for the one-step installation, and records that what a subscription buys beyond the channel is an open owner decision. **FR-COM-1's built list follows:** the plugin has no key setting, and a key reaches the toolchain through `S0MA_LICENSE_KEY`, `activate`, or the Desktop extension's setting. FR-COM-4 is unchanged and read as written: a keyless install makes no check of its own, and a newer version arrives with a newer plugin. The control plane, the keyed installer, and the feedback function's enrolment are unchanged. No principle and no invariant changes. |
