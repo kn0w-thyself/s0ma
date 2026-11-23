@@ -421,7 +421,12 @@ Historical entries describe artifacts as they were named at the time.
   only appended to, so the warning stays true there. The getting-started,
   first-project, first-module, drift-recovery and MCP authoring guides, and
   their replayed transcripts, show the clean build; the drift-recovery journey
-  no longer teaches a recovery from a warning its run never meets. T- **The feedback skill says what to do when this machine cannot send
+  no longer teaches a recovery from a warning its run never meets. The
+  plugin's `/s0ma:start` skill now says "All checks pass" by what a clean build
+  prints: a build prints a `Results:` line only when it has an error or a
+  warning, so the skill no longer waits for one.
+
+- **The feedback skill says what to do when this machine cannot send
   feedback.** When the tool says the machine is not set up to send feedback,
   the `/s0ma-feedback` skill (and the plugin's `/s0ma:feedback`, its copy)
   tells Claude to name both cases briefly, since it cannot tell which applies:
@@ -430,9 +435,7 @@ Historical entries describe artifacts as they were named at the time.
   the report, and Claude points to the public issue tracker,
   `https://github.com/kn0w-thyself/s0ma/issues`. Claude says an issue there is
   public, never pastes the drafted report into one, leaves anything private
-  out if asked to help word one, and never looks for, reads or asks for a key.t into one, leaves anything private
-  out if asked to help word one, and goes by what the tool reports rather than
-  looking for a key.
+  out if asked to help word one, and never looks for, reads or asks for a key.
 
 ### Fixed
 

@@ -78,4 +78,4 @@ module <name>
 
 - Topic id: `concept:module`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:475529bb6b348e64`
+- Documentation snapshot: `sha256:7c7e5ec9b99dadae`
