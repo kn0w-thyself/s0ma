@@ -194,6 +194,24 @@ Historical entries describe artifacts as they were named at the time.
   (`launch_config` in `--format json`). A studi0 test holds the entry to
   studi0's own default address.
 
+- **A new project names the s0ma plugin's catalog.** `s0ma new project`, with
+  or without a template, writes `.claude/settings.json` holding two things:
+  `extraKnownMarketplaces` names the `kn0wthyself` catalog on GitHub,
+  `kn0w-thyself/claude-plugins`, with `autoUpdate` on, and `enabledPlugins`
+  turns `s0ma@kn0wthyself` on. Claude Code honors them once the person trusts
+  the folder, and they install nothing. Like the launch entry, the file is
+  written only when absent, an existing one is kept byte for byte, never merged
+  into and never a cause of refusal, and the summary lists it
+  (`project_settings` in `--format json`). A test holds the two names to the
+  repository's marketplace and plugin manifests. The generated `AGENTS.md` now
+  says the plugin brings the s0ma server in Claude Code, so nothing else is
+  registered; when the plugin is not installed the agent offers
+  `/plugin install s0ma@kn0wthyself` and does not run it; `claude mcp add` stays
+  as the way for someone who does not use the plugin. The Claude guide drops
+  its wording about a catalog not yet open, the root README says s0ma also
+  installs as a plugin in Claude Code, and the uninstall guide covers the new
+  file.
+
 - **The Claude plugin checks a `.s0ma` edit, and refuses edits under the build
   folder.** Two hooks join the one a session starts with. Before Claude's Write
   or Edit tool changes a file under a s0ma project's build folder, read from

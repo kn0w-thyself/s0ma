@@ -4,7 +4,7 @@
     "journey": "journey:drift-recovery",
     "published_by": "doc:guide/drift-recovery",
     "release": "0.22.0 (preview)",
-    "snapshot": "sha256:36fed21225a49c28"
+    "snapshot": "sha256:a392c3f364e39105"
   },
   "package": {
     "audience": [
