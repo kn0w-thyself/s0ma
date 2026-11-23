@@ -227,10 +227,15 @@ Historical entries describe artifacts as they were named at the time.
   marketplace export carries that file as the plugin's README, byte for byte.
   `plugin.json` gains `network.hosts`, listing every host the plugin's parts
   or the tools they start can reach: account.kn0wthyself.ai, pypi.org,
-  files.pythonhosted.org, astral.sh, and localhost and studi0.localhost on the
-  machine itself. The field allows and blocks nothing; it is disclosure, and a
-  test holds every entry to the README and the control plane's entry to the
-  launcher's own constant. The first-run check now runs
+  files.pythonhosted.org, astral.sh, releases.astral.sh, github.com and
+  `*.githubusercontent.com` (where uv's installer and uv's Python downloads
+  come from), and localhost and studi0.localhost on the machine itself. The
+  field allows and blocks nothing; it is disclosure, and a test holds every
+  entry to the README and the control plane's entry to the launcher's own
+  constant. With a `claude` older than 2.1.328, which calls
+  `network` an unknown field, the tests that take the CLI's strict verdict
+  skip and say why, and the export says its validation was not checked
+  rather than rejected. The first-run check now runs
   `claude plugin validate --strict` and `claude plugin validate --profile
   directory` on the plugin folder and on the exported tree, prints each report
   whole, and requires both to pass; a Claude Code that does not take
