@@ -308,9 +308,52 @@ you would change any other dependency.
 This is deliberate. Nothing that arrived through Claude reaches into a project
 that already answered the question for itself.
 
-## The six things you can ask for by name
+## Telling s0ma how you want it
 
-The plugin adds six commands. Type the name, or just say what you want.
+You set how s0ma is used by saying so. There is nothing to configure and no
+command to learn: say "always use s0ma", or "only show studi0 when I ask", and
+Claude saves it and tells you, in one sentence, what changed.
+
+Two preferences are kept for your machine:
+
+| Preference | Answers | What it means |
+|---|---|---|
+| use | `asked` (the default), `always` | With `asked`, Claude uses s0ma when you ask for it, or when the folder is already a s0ma project, and leaves other work alone. With `always`, new work is built as a s0ma project without asking first. Code you already have is moved to s0ma only when you ask, either way. |
+| studi0 | `offer` (the default), `always`, `asked` | With `offer`, Claude offers studi0 once in each project, after a build, and remembers your answer. With `always`, studi0 opens at the first build of each session. With `asked`, it opens only when you ask. |
+
+Claude saves them with `s0ma-launch set use <answer>` and
+`s0ma-launch set studi0 <answer>`, in the same settings file as the update
+setting. Ask "what are my s0ma settings?" and Claude reads them back, from
+`s0ma-launch prefs`.
+
+At the start of each session, Claude is given a short note: what s0ma is for,
+whether this folder is a s0ma project, and what your two preferences say. You
+do not see it. It is worked out from local files, opens no connection, and
+writes nothing; a session where all is well still shows you nothing at all.
+
+One project can answer differently from the rest. Say "always use s0ma in
+this project" and Claude writes the answer into a small file in that project,
+`.s0ma/preferences.json`. Where that file says something, it holds in that
+project; everywhere else your machine's answer holds. The file is yours. Claude
+writes it with its own file tools when you ask, s0ma itself only ever reads
+it, and it is not meant to be committed: `.s0ma/` is the folder for your own
+working state in a project.
+
+There are three ways to have less s0ma:
+
+- **Off for one project.** Say "turn s0ma off here", or type `/s0ma:off`.
+  Claude adds `"s0ma": "off"` to that project's file, and from then on it does
+  not use s0ma there, does not check your edits, and does not offer studi0.
+  Nothing of yours is changed or removed. Say "turn s0ma back on", or type
+  `/s0ma:on`, to undo it.
+- **Off everywhere, for now.** Disable the s0ma plugin in Claude's plugin
+  manager. Enable it again whenever you like.
+- **Gone.** Remove it, as [Taking it off again](#taking-it-off-again) below
+  describes.
+
+## The nine things you can ask for by name
+
+The plugin adds nine commands. Type the name, or just say what you want.
 
 | Command | What it does |
 |---|---|
@@ -320,6 +363,9 @@ The plugin adds six commands. Type the name, or just say what you want.
 | `/s0ma:feedback` | Sends feedback about s0ma to the team. You read the exact report and approve it before anything leaves the machine. |
 | `/s0ma:update` | Checks for a newer s0ma, moves to it, or explains pinning. |
 | `/s0ma:doctor` | Works out why s0ma is not doing what it should, and says what each finding means. |
+| `/s0ma:preferences` | Sets or reads how s0ma and studi0 are used, on this machine or in one project. |
+| `/s0ma:off` | Turns s0ma off in this project only. |
+| `/s0ma:on` | Turns it back on in this project. |
 
 Every one of them works through the terminal, so they all still work when the
 s0ma server itself could not start.

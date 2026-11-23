@@ -258,7 +258,7 @@ read it and approve it first.
 | The viewer, `s0ma studi0` | **local listener** | `127.0.0.1` and nothing else, on port 5710 unless you name one with `--port` or 5710 is taken, when the machine picks one. It answers only requests addressed to `studi0.localhost`, `localhost` or `127.0.0.1` | Nothing leaves the machine. It answers `GET` and nothing else, on a fixed list of paths, and writes nothing at all in response to any request | While you have it running | — | You | Ctrl-C in the terminal it is running in | `packages/s0ma-studi0/tests/test_api.py::test_every_route_table_entry_has_the_declared_shape` |
 | The authoring server, `s0ma-lang-mcp` — the one a coding agent talks to | **no socket at all** | none: there is no port and no address | It speaks over the standard input and output of a program your agent starts, so there is nothing for anyone to connect to, on this machine or any other. The stand-in server the launcher answers with when s0ma is not installed yet works the same way | Whenever your agent is running it | — | Your coding agent | Quit the agent, or take the registration out of it | `packages/s0ma-mcp/tests/test_stdio_smoke.py::TestStdioTransport` |
 | The optional HTTP view of a project's self-model, from the `api` extra | **a listener only if you make one** | whatever you bind it to. s0ma binds nothing: it builds the application object and hands it to you | Your project's whole self-model, over 14 read-only routes with no authentication of any kind. Thirteen answer `GET`; one, `/self/query`, takes a question as a `POST` and changes nothing | Only if you installed the extra *and* handed the object to a server yourself | — | You | Do not run one. If you do, bind `127.0.0.1` — see [what listens, and to whom](#what-listens-and-to-whom) | `packages/s0ma-core/src/s0ma/api/rest.py` |
-| The Claude plugin: the line a session may begin with, and the six commands you can ask for by name | **neither — no request, no listener** | none | Nothing. The line is computed from two local files and writes nothing, not even the tidying-up the launcher's ordinary reader does; on a machine where uv cannot run the launcher, it is one fixed sentence read from the plugin's own folder, and the server is a stand-in that reads the same sentence and speaks only over standard input and output. The six commands are instructions; what they run is `s0ma-launch` and `s0ma`, which is the rest of this table | At the start of a session, when there is something to say | — | Claude | Remove the plugin | `integrations/launcher/tests/test_session_hint.py::test_no_socket_is_opened` |
+| The Claude plugin: what a session is told at its start, and the nine commands you can ask for by name | **neither — no request, no listener** | none | Nothing. What a session is told is computed from files on this machine: the launcher's own, in its folder, and in the project its version pin, its own preferences file and the nearest `pyproject.toml`. It writes nothing, not even the tidying-up the launcher's ordinary reader does; on a machine where uv cannot run the launcher, it is one fixed sentence read from the plugin's own folder, or nothing at all when the project's preferences file turns s0ma off, and the server is a stand-in that reads the same sentence and speaks only over standard input and output. The nine commands are instructions; what they run is `s0ma-launch` and `s0ma`, which is the rest of this table, and three of them have Claude write that one preferences file in the project when you ask | At the start of a session: a line for you when there is something to say, and a note for Claude whenever s0ma can be used there | — | Claude | Remove the plugin | `integrations/launcher/tests/test_session_hint.py::test_no_socket_is_opened` |
 | Every other `s0ma` command — `check`, `build`, `doctor`, `docs`, `graph`, `new`, `score`, `adopt` and the rest | **neither** | none | Nothing. They read and write your own files. `doctor`'s `license` and `update check` lines are deliberate placeholders that contact nobody and say so on screen | — | — | You | Nothing to stop | `packages/s0ma-dsl/src/s0ma_dsl/cli/doctor.py` |
 
 Three commands are the exception to that last row, and they are exceptions you
@@ -345,15 +345,19 @@ report to pass on. With no key there is no automatic check at all, and nothing
 is fetched until you ask: the line a session may begin with says when the plugin
 brings a newer s0ma, and `/s0ma:update` installs it.
 
-**The line a session may begin with opens no socket.** It is computed from two
-local files and nothing else — no request, no subprocess, and no writing, not
-even the tidying-up the launcher's ordinary reader does when it meets a spoiled
-file.
+**What a session is told at its start opens no socket.** It is computed from
+local files and nothing else: the launcher's own, and in the project its
+version pin, its own preferences file and the nearest `pyproject.toml` — no
+request, no subprocess, and no writing, not even the tidying-up the launcher's
+ordinary reader does when it meets a spoiled file.
 
-**The plugin itself sends nothing.** It is configuration, six skill files, a
-start-up hook and a copy of the launcher. Fetching the plugin, and looking for a
-newer one, is Claude's own traffic to wherever the marketplace lives, on
-Claude's schedule and under Claude's settings — not s0ma's.
+**The plugin itself sends nothing.** It is configuration, nine skill files, a
+start-up hook and a copy of the launcher. Three of the skills have Claude write
+one small file in a project when you ask, `.s0ma/preferences.json`, which holds
+your answers for that project; s0ma itself only ever reads it. Fetching the
+plugin, and looking for a newer one, is Claude's own traffic to wherever the
+marketplace lives, on Claude's schedule and under Claude's settings — not
+s0ma's.
 
 *Held by:* `integrations/launcher/s0ma_launch.py`, whose control-plane section
 carries these rules as comments beside the code that keeps them, and six tests

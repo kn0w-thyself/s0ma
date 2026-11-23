@@ -1219,7 +1219,7 @@
     {
       "ceilings": {},
       "complete": true,
-      "covered": 181,
+      "covered": 184,
       "enforced_by": [
         "providers_catalog.check_completeness"
       ],
@@ -1251,7 +1251,7 @@
       "reports": [
         "DOC_DOCUMENT_UNCATALOGED"
       ],
-      "required": 181,
+      "required": 184,
       "set": "catalog",
       "uncovered": []
     }
@@ -1260,12 +1260,12 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:58f8b884fb0751b9"
+    "snapshot_hash": "sha256:7ac4061626e89bcf"
   },
   "totals": {
-    "covered": 344,
+    "covered": 347,
     "exceptions": 208,
-    "required": 518,
+    "required": 521,
     "sets": 5,
     "uncovered": 0
   }

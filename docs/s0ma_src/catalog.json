@@ -1153,6 +1153,48 @@
         "agent"
       ],
       "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/off/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-off",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/off/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:off skill - turn s0ma off in one project"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/on/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-on",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/on/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:on skill - turn s0ma back on in a project"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/preferences/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-preferences",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/preferences/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:preferences skill - how s0ma and studi0 are used"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
       "canonical_source": "integrations/claude/plugin/skills/retrofit/SKILL.md",
       "covers": [],
       "governed_by": [],

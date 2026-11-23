@@ -13,6 +13,26 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Added
 
+- **Tell s0ma how you want it, by saying so, and turn it off for one
+  project.** Two preferences are kept for the machine beside the update
+  setting: `use` (`asked`, the default, or `always`) and `studi0` (`offer`,
+  the default, `always` or `asked`), saved with `s0ma-launch set use` and
+  `s0ma-launch set studi0`. A project can answer for itself in
+  `.s0ma/preferences.json`, which Claude writes with its own file tools when
+  asked and the launcher only ever reads; `"s0ma": "off"` there turns s0ma off
+  in that project. The new `s0ma-launch prefs` (and `prefs --json`, schema
+  `s0ma-launch-prefs@1`) reports the machine's values, the project's, what is
+  in effect, and whether the folder is a s0ma project, which is now read from
+  the nearest `pyproject.toml` having a `[tool.s0ma]` table. Whenever s0ma
+  can be used, the session-start hook gives Claude a standing note, in its
+  context only, saying what s0ma is for, whether this is a s0ma project, and
+  what the two preferences ask; a person still sees nothing in a session where
+  all is well. In a project where s0ma is off, the one thing said is a line
+  telling Claude not to use or mention s0ma there. The plugin gains three
+  skills, `/s0ma:preferences`, `/s0ma:off` and `/s0ma:on`, each with the
+  sentence Claude answers with. Nothing here opens a connection, and no
+  launcher command writes anything in a project.
+
 - **CI runs the Claude Code plugin's first run under the real Claude Code.**
   A new `first-run` workflow runs on Linux, macOS and Windows, each with uv
   absent and with uv present. With no uv, it proves uv is nowhere the plugin

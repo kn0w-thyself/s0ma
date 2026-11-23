@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 181 documents. 141 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 184 documents. 144 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -106,6 +106,9 @@ Getting a project running and writing your first declarations, then checking, bu
 | [The /s0ma:doctor skill — diagnose s0ma](../integrations/claude/plugin/skills/doctor/SKILL.md) | `integrations/claude/plugin/skills/doctor/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:feedback skill — send feedback about s0ma](../integrations/claude/plugin/skills/feedback/SKILL.md) | `integrations/claude/plugin/skills/feedback/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:new skill — start a new s0ma project](../integrations/claude/plugin/skills/new/SKILL.md) | `integrations/claude/plugin/skills/new/SKILL.md` | agents | maintained | version checked |
+| [The /s0ma:off skill - turn s0ma off in one project](../integrations/claude/plugin/skills/off/SKILL.md) | `integrations/claude/plugin/skills/off/SKILL.md` | agents | maintained | listed only |
+| [The /s0ma:on skill - turn s0ma back on in a project](../integrations/claude/plugin/skills/on/SKILL.md) | `integrations/claude/plugin/skills/on/SKILL.md` | agents | maintained | listed only |
+| [The /s0ma:preferences skill - how s0ma and studi0 are used](../integrations/claude/plugin/skills/preferences/SKILL.md) | `integrations/claude/plugin/skills/preferences/SKILL.md` | agents | maintained | listed only |
 | [The /s0ma:retrofit skill — the adoption ladder](../integrations/claude/plugin/skills/retrofit/SKILL.md) | `integrations/claude/plugin/skills/retrofit/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:setup skill — set s0ma up in Claude](../integrations/claude/plugin/skills/setup/SKILL.md) | `integrations/claude/plugin/skills/setup/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:update skill — update or pin s0ma](../integrations/claude/plugin/skills/update/SKILL.md) | `integrations/claude/plugin/skills/update/SKILL.md` | agents | maintained | version checked |

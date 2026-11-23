@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "68bf114627c19a7844459b9a3e42bbb601b0861e5e45a5fafe6b6722ab296e87",
+      "content_sha256": "b286b459038178ff73e44cf8b874c797c509b3884316b02b8dc60c374358ba9c",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.22.0] — 2026-11-19",
@@ -3735,6 +3735,33 @@
     },
     {
       "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/off/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-off",
+      "prose_locator": "integrations/claude/plugin/skills/off/SKILL.md",
+      "title": "The /s0ma:off skill - turn s0ma off in one project"
+    },
+    {
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/on/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-on",
+      "prose_locator": "integrations/claude/plugin/skills/on/SKILL.md",
+      "title": "The /s0ma:on skill - turn s0ma back on in a project"
+    },
+    {
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/preferences/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-preferences",
+      "prose_locator": "integrations/claude/plugin/skills/preferences/SKILL.md",
+      "title": "The /s0ma:preferences skill - how s0ma and studi0 are used"
+    },
+    {
+      "authority": "",
       "canonical_source": "integrations/claude/plugin/skills/retrofit/SKILL.md",
       "covers": [],
       "governed_by": [],
@@ -5612,7 +5639,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:58f8b884fb0751b9"
+    "snapshot_hash": "sha256:7ac4061626e89bcf"
   },
   "surfaces": [
     {
