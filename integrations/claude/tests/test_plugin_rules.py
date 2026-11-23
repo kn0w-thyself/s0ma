@@ -16,7 +16,8 @@ Then the lists that several files carry and that must stay one list:
 
 * where uv is looked for: the launcher's ``uv_candidates``, and the copy in
   every script that finds uv on its own;
-* the setup skill's name, in the launcher and in the plugin's one message;
+* the front door's name, ``/s0ma:start``, in the launcher's "tools missing"
+  lines, its stub server, its ``status`` and in the plugin's one message;
 * the lock file beside the launcher, which ``--frozen`` reads, still matching
   the launcher's header.
 
@@ -293,13 +294,53 @@ def plugin_message() -> str:
     return raw.decode("ascii").rstrip("\n")
 
 
-def test_the_message_names_the_launchers_setup_skill(launcher: ModuleType) -> None:
+def test_the_message_names_the_launchers_front_door(launcher: ModuleType) -> None:
     """The message and the launcher's own "tools missing" words name one skill."""
     message = plugin_message()
     named = set(re.findall(r"/s0ma:[a-z-]+", message))
-    assert named == {launcher.SETUP_SKILL}
-    assert launcher.SETUP_SKILL in launcher.HINT_SETUP_SKILL
-    assert launcher.SETUP_SKILL in launcher.HINT_SETUP_ACTION
+    assert named == {launcher.START_SKILL}
+    assert launcher.START_SKILL == "/s0ma:start"
+    assert launcher.START_SKILL in launcher.HINT_START_SKILL
+    assert launcher.START_SKILL in launcher.HINT_START_ACTION
+
+
+def test_everything_that_says_not_set_up_names_the_same_door(
+    launcher: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """One name across every text a machine with no s0ma produces.
+
+    The plugin's message, the session hint for the person and for the model,
+    the stub server's instructions, its status tool and its answer to a tool it
+    does not have, and ``status``'s next step all name ``/s0ma:start`` and no
+    other skill. ``/s0ma:setup`` is for repairing an install, and none of these
+    is about one.
+    """
+    monkeypatch.setenv("S0MA_HOME", str(tmp_path / "home"))
+    monkeypatch.delenv("S0MA_TOOLCHAIN", raising=False)
+    monkeypatch.delenv("CLAUDE_PROJECT_DIR", raising=False)
+    project = tmp_path / "project"
+    project.mkdir()
+    resolution = launcher.resolve_toolchain(project=project)
+    assert resolution.kind == launcher.KIND_NONE
+    hint = launcher.tools_missing_hint(resolution.reason)
+    report = launcher.status_report(project=project)
+    context = launcher.StubContext(resolution=resolution, project=project)
+    missing_tool = launcher.stub_call_tool(1, {"name": "s0ma_anything"}, context)
+    texts = {
+        "not-set-up.txt": plugin_message(),
+        "hint for the person": hint.message,
+        "hint for the model": hint.context,
+        "hint when too long": launcher.HINT_TOO_LONG_CONTEXT,
+        "stub instructions": launcher.stub_instructions(resolution),
+        "stub status": launcher.stub_status_text(report),
+        "stub unknown tool": missing_tool["result"]["content"][0]["text"],
+        "status next step": launcher.next_step(resolution, project=project),
+    }
+    for where, text in texts.items():
+        assert text is not None, where
+        assert set(re.findall(r"/s0ma:[a-z-]+", text)) == {"/s0ma:start"}, (
+            f"{where} names {sorted(set(re.findall(r'/s0ma:[a-z-]+', text)))}: {text!r}"
+        )
 
 
 def test_the_message_says_what_it_must(launcher: ModuleType) -> None:

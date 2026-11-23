@@ -596,6 +596,12 @@
       "audience": "agent",
       "disposition": "living-authored",
       "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
+      "path": "integrations/claude/plugin/skills/build/SKILL.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
       "path": "integrations/claude/plugin/skills/doctor/SKILL.md"
     },
     {
@@ -639,6 +645,18 @@
       "disposition": "living-authored",
       "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
       "path": "integrations/claude/plugin/skills/setup/SKILL.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
+      "path": "integrations/claude/plugin/skills/start/SKILL.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "living-authored",
+      "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",
+      "path": "integrations/claude/plugin/skills/studi0/SKILL.md"
     },
     {
       "audience": "agent",

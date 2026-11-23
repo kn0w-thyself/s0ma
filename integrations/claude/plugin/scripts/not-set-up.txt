@@ -1,1 +1,1 @@
-s0ma's plugin is installed, but s0ma itself is not set up on this machine yet, so s0ma's own tools are not available in this session. That is expected and is not a fault to report. When the person wants s0ma, the /s0ma:setup skill sets it up.
+s0ma's plugin is installed, but s0ma itself is not set up on this machine yet, so s0ma's own tools are not available in this session. That is expected and is not a fault to report. When the person wants s0ma, the /s0ma:start skill sets it up.

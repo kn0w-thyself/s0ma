@@ -43,24 +43,24 @@ from hint_reading import parsed, parts, quiet_for_the_person
 NOTHING_INSTALLED = (
     "s0ma's tools are not available in this session. "
     "s0ma is not installed on this machine yet. "
-    "Run /s0ma:setup in Claude to fix that."
+    "Run /s0ma:start in Claude to fix that."
 )
 NOTHING_INSTALLED_CONTEXT = (
     "s0ma's tools are not available in this session. "
     "s0ma is not installed on this machine yet. "
-    "The /s0ma:setup skill fixes that."
+    "The /s0ma:start skill fixes that."
 )
 PIN_NOT_INSTALLED = (
     "s0ma's tools are not available in this session. "
     "This project asks for s0ma 0.19.0 in its .s0ma-version file, and that "
     "version is not installed on this machine. "
-    "Run /s0ma:setup in Claude to fix that."
+    "Run /s0ma:start in Claude to fix that."
 )
 PIN_NOT_INSTALLED_CONTEXT = (
     "s0ma's tools are not available in this session. "
     "This project asks for s0ma 0.19.0 in its .s0ma-version file, and that "
     "version is not installed on this machine. "
-    "The /s0ma:setup skill fixes that."
+    "The /s0ma:start skill fixes that."
 )
 KEY_REFUSED = (
     "The last time s0ma used your license key, it was refused. "
@@ -186,7 +186,7 @@ def test_a_broken_toolchain_override_is_named_rather_than_ignored(
     message = message_of(out)
     assert message.startswith("s0ma's tools are not available in this session.")
     assert "S0MA_TOOLCHAIN points at nowhere/at/all" in message
-    assert message.endswith("Run /s0ma:setup in Claude to fix that.")
+    assert message.endswith("Run /s0ma:start in Claude to fix that.")
 
 
 # ---------------------------------------------------------------------------
@@ -686,18 +686,18 @@ def test_a_cause_too_long_to_read_is_dropped_but_the_fix_is_not(
     """Somebody's very long directory must not turn a glance into a paragraph.
 
     The symptom and the one thing to do survive; only the why goes, and
-    ``/s0ma:setup`` prints the why in full.
+    ``s0ma-launch status`` prints the why in full.
     """
     monkeypatch.setenv("S0MA_TOOLCHAIN", "/" + "/".join(["a-long-directory"] * 25))
     code, out, _ = run_cli("session-hint")
     assert code == 0
     assert message_of(out) == (
         "s0ma's tools are not available in this session. "
-        "Run /s0ma:setup in Claude to fix that."
+        "Run /s0ma:start in Claude to fix that."
     )
     assert context_of(out) == (
         "s0ma's tools are not available in this session. "
-        "The /s0ma:setup skill fixes that."
+        "The /s0ma:start skill fixes that."
     )
 
 

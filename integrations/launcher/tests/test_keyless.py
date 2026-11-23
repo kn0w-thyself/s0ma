@@ -744,7 +744,7 @@ def test_the_stub_says_no_key_is_needed(launcher: ModuleType) -> None:
 
     instructions = launcher.stub_instructions(resolution)
 
-    assert "/s0ma:setup" in instructions
+    assert "/s0ma:start" in instructions
     assert "no license key is needed" in instructions
     assert "where their license key goes" not in instructions
 

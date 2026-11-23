@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "b286b459038178ff73e44cf8b874c797c509b3884316b02b8dc60c374358ba9c",
+      "content_sha256": "d124145c90029113425a01c378fc876aeca3307d03006b8ac073b59a76724fef",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.22.0] — 2026-11-19",
@@ -3708,6 +3708,15 @@
     },
     {
       "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/build/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-build",
+      "prose_locator": "integrations/claude/plugin/skills/build/SKILL.md",
+      "title": "The /s0ma:build skill - work on a s0ma project"
+    },
+    {
+      "authority": "",
       "canonical_source": "integrations/claude/plugin/skills/doctor/SKILL.md",
       "covers": [],
       "governed_by": [],
@@ -3777,6 +3786,24 @@
       "id": "doc:guide/claude-skill-setup",
       "prose_locator": "integrations/claude/plugin/skills/setup/SKILL.md",
       "title": "The /s0ma:setup skill — set s0ma up in Claude"
+    },
+    {
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/start/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-start",
+      "prose_locator": "integrations/claude/plugin/skills/start/SKILL.md",
+      "title": "The /s0ma:start skill - the quick way in"
+    },
+    {
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/studi0/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-studi0",
+      "prose_locator": "integrations/claude/plugin/skills/studi0/SKILL.md",
+      "title": "The /s0ma:studi0 skill - start studi0 and show it"
     },
     {
       "authority": "",
@@ -5639,7 +5666,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:7ac4061626e89bcf"
+    "snapshot_hash": "sha256:a01eabc8973a206a"
   },
   "surfaces": [
     {

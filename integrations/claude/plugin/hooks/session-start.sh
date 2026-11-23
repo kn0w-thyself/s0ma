@@ -22,8 +22,8 @@
 #   off line for Claude; without uv there is nothing to say.
 # * What it says when s0ma is not set up is written once, in
 #   scripts/not-set-up.txt, which the stand-in server reads too. That is the
-#   one place this side names the setup skill; the launcher names it once as
-#   SETUP_SKILL, and a test holds the two to the same name.
+#   one place this side names the front-door skill; the launcher names it once
+#   as START_SKILL, and a test holds the two to the same name.
 #
 # POSIX sh only - no bashisms, nothing that assumes a particular shell.
 

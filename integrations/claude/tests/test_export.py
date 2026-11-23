@@ -190,7 +190,7 @@ def test_the_expected_files_are_there(export: Export, script: ModuleType) -> Non
     ):
         assert expected in present, f"{expected} is missing from the export"
     skills = [path for path in present if "/skills/" in path]
-    assert len(skills) == 9, f"nine skills are expected, found {skills}"
+    assert len(skills) == 12, f"twelve skills are expected, found {skills}"
 
 
 def test_the_marketplace_points_at_the_plugin_in_the_export(

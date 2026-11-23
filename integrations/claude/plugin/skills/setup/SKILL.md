@@ -5,6 +5,10 @@ description: Get s0ma working here — check uv, install the toolchain, say wher
 
 # Set s0ma up
 
+`/s0ma:start` is the quick way in: one question, then s0ma installed and a
+project built. This skill is the detailed one, for checking each step and for
+repairing an install.
+
 Work the steps in order. Stop at the first one that fails and fix that one; the
 later steps depend on it. Everything here runs in the terminal, so it still
 works when the s0ma server is dead — which is the usual reason someone is

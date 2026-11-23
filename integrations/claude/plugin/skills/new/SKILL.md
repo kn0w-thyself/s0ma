@@ -5,6 +5,9 @@ description: Start a new s0ma project and prove it works, using `s0ma new projec
 
 # Start a new s0ma project
 
+`/s0ma:start` is the quick way in: it picks the name and the template from one
+sentence and builds straight away. This skill agrees every choice first.
+
 This writes a directory of files. Agree what it will be before you write
 anything.
 

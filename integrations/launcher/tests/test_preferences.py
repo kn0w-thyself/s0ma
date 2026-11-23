@@ -70,6 +70,10 @@ IN_PROJECT = (
     "Edit the .s0ma sources and never the files in the build folder, and run "
     "`s0ma check` after an edit."
 )
+DOORS = (
+    "/s0ma:start begins something new with s0ma, and the /s0ma:build skill is "
+    "how to work in a s0ma project."
+)
 CHANGES = (
     "Any of this changes when the person says so: the /s0ma:preferences skill "
     "sets these preferences, /s0ma:off turns s0ma off in this project, and "
@@ -78,7 +82,7 @@ CHANGES = (
 
 #: The note on a machine nobody has changed, in a folder that is not a s0ma
 #: project. The pull request quotes this one.
-DEFAULT_NOTE = " ".join([PURPOSE, NOT_PROJECT, USE_ASKED, STUDI0["offer"], CHANGES])
+DEFAULT_NOTE = " ".join([PURPOSE, NOT_PROJECT, USE_ASKED, STUDI0["offer"], DOORS, CHANGES])
 
 
 def expected_note(use: str, studi0: str, *, in_project: bool, use_here: bool = False) -> str:
@@ -89,6 +93,7 @@ def expected_note(use: str, studi0: str, *, in_project: bool, use_here: bool = F
     sentences = [PURPOSE, IS_PROJECT if in_project else NOT_PROJECT, use_sentence, STUDI0[studi0]]
     if in_project:
         sentences.append(IN_PROJECT)
+    sentences.append(DOORS)
     sentences.append(CHANGES)
     return " ".join(sentences)
 
