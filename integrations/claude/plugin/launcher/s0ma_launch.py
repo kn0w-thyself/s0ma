@@ -43,7 +43,9 @@ Beside the project section sit two readers that never write: a project's own
 preferences file (``.s0ma/preferences.json``, which Claude writes on a skill's
 instruction) and whether a folder is a s0ma project. ``set`` stores the
 machine's preferences, ``prefs`` reports both, and ``session-hint`` tells
-Claude what they add up to.
+Claude what they add up to. ``before-edit`` and ``after-edit`` answer the
+plugin's two edit hooks: no edits under a s0ma project's build folder, and
+what ``s0ma check`` finds in a ``.s0ma`` file Claude has just edited.
 """
 
 from __future__ import annotations
@@ -68,7 +70,7 @@ import urllib.parse
 import urllib.request
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from typing import Any
 
 # ---------------------------------------------------------------------------
@@ -4674,6 +4676,380 @@ def cmd_session_hint(args: argparse.Namespace) -> int:
 
 
 # ---------------------------------------------------------------------------
+# before-edit and after-edit: what the plugin's two edit hooks are told.
+#
+# The plugin's ``hooks/edit-guard.sh`` runs around Claude's Write and Edit
+# tools, does the cheap part itself, and hands the rest to one of these two
+# commands with the hook's own JSON on stdin:
+#
+# * ``before-edit``, from PreToolUse: an edit to a file under a s0ma project's
+#   build folder is refused, with a reason that sends Claude to the ``.s0ma``
+#   source instead.
+# * ``after-edit``, from PostToolUse on a ``.s0ma`` file: the project's own s0ma
+#   checks that file, and Claude is handed what the check reports.
+#
+# Both say nothing outside a s0ma project and nothing where the project's
+# preferences say s0ma is off. Both fail open: a parse problem, an exception, a
+# check that does not finish, anything unexpected, and the answer is nothing at
+# all, so the edit goes through and the session is not interrupted. Neither
+# writes anything, installs anything or opens a connection; ``after-edit``
+# starts one process, the s0ma that is already installed for the project.
+# ---------------------------------------------------------------------------
+
+#: The events the two answers are written for, named in the JSON as Claude
+#: Code asks.
+BEFORE_EDIT_EVENT = "PreToolUse"
+AFTER_EDIT_EVENT = "PostToolUse"
+
+#: A hook's input is read up to this many bytes. A Write carries the whole new
+#: file, so the ceiling is generous; past it the input is not read at all, and
+#: the answer is nothing.
+HOOK_INPUT_MAX_BYTES = 8 * 1024 * 1024
+
+#: What ``s0ma check`` may take after an edit before it is given up on. The
+#: hook itself is allowed a little more, in ``hooks/hooks.json``.
+EDIT_CHECK_TIMEOUT_SECONDS = 20.0
+
+#: Everything handed to Claude after an edit stays under this many characters.
+EDIT_CHECK_MAX_CHARS = 3000
+
+#: The suffix of the files ``after-edit`` checks.
+S0MA_SOURCE_SUFFIX = ".s0ma"
+
+#: The suffix s0ma-lang-dsl puts on a project's name for its default build
+#: folder, when ``[tool.s0ma].build_dir`` names none. A test in
+#: ``packages/s0ma-dsl/tests`` holds :func:`default_build_dir` to the
+#: compiler's own rule.
+DEFAULT_BUILD_DIR_SUFFIX = "_build"
+
+#: Why an edit under the build folder is refused. ``{build_dir}`` is the
+#: project's build folder, relative to the project.
+BUILD_DIR_REFUSAL = (
+    "s0ma generates every file under {build_dir}/ in this project from its "
+    ".s0ma sources, and a build stops at any of them that was edited by hand "
+    "until that edit is thrown away, so an edit here would not last. Make the "
+    "change in the .s0ma source instead, then run `s0ma build`. Tell the "
+    "person in one sentence that you are doing that."
+)
+
+#: The first and last lines Claude is handed after an edit with findings.
+EDIT_CHECK_LEAD = "s0ma check ran on {path} after this edit and reports:"
+EDIT_CHECK_CLOSE = "Fix these in the .s0ma file before you go on."
+#: Said in place of what was cut when the findings did not fit.
+EDIT_CHECK_MORE = "There is more than this. Run `s0ma check {path}` to see all of it."
+
+#: The summary line ``s0ma check`` ends its text report with.
+_CHECK_RESULTS_RE = re.compile(r"^Results: (\d+) error\(s\), (\d+) warning\(s\)")
+
+
+def read_hook_input(stream: Any = None) -> dict[str, Any] | None:
+    """The hook's JSON object from *stream* (stdin), or ``None``. Never raises."""
+    try:
+        source = sys.stdin if stream is None else stream
+        raw = source.buffer.read(HOOK_INPUT_MAX_BYTES + 1)
+        if not isinstance(raw, bytes) or len(raw) > HOOK_INPUT_MAX_BYTES:
+            return None
+        parsed = json.loads(raw.decode("utf-8"))
+    except Exception:  # noqa: BLE001 - nothing here is worth a hook error
+        return None
+    return parsed if isinstance(parsed, dict) else None
+
+
+def edit_target(
+    given: Mapping[str, Any],
+    fallback: Path | None = None,
+    *,
+    windows: bool | None = None,
+) -> PurePath | None:
+    """The file an edit is for, as an absolute path, or ``None``.
+
+    The path is ``tool_input.file_path``. A relative one is read against the
+    hook's ``cwd``, or *fallback* (the project folder) when that is missing
+    too. *windows* picks the path rules, so a Windows-form path is understood
+    the way Windows reads it whatever machine reads it here.
+    """
+    on_windows = is_windows() if windows is None else windows
+    flavour: type[PurePath] = PureWindowsPath if on_windows else PurePosixPath
+    tool_input = given.get("tool_input")
+    if not isinstance(tool_input, dict):
+        return None
+    raw = tool_input.get("file_path")
+    if not isinstance(raw, str) or not raw.strip() or "\x00" in raw:
+        return None
+    target = flavour(raw)
+    if target.is_absolute():
+        return target
+    cwd = given.get("cwd")
+    if isinstance(cwd, str) and cwd and "\x00" not in cwd and flavour(cwd).is_absolute():
+        return flavour(cwd) / target
+    if fallback is not None and flavour(str(fallback)).is_absolute():
+        return flavour(str(fallback)) / target
+    return None
+
+
+def folds_case(platform: str | None = None) -> bool:
+    """Whether this platform's file names ignore case: Windows and macOS do."""
+    name = sys.platform if platform is None else platform
+    return name.startswith(("win", "cygwin", "darwin"))
+
+
+def is_inside(child: PurePath, parent: PurePath, *, fold: bool) -> bool:
+    """Whether *child* lies somewhere under *parent*, the folder itself excluded.
+
+    Both are taken as already absolute and resolved. With *fold*, names that
+    differ only in case are the same name.
+    """
+    def key(part: str) -> str:
+        return part.casefold() if fold else part
+
+    inner = [key(part) for part in child.parts]
+    outer = [key(part) for part in parent.parts]
+    return len(inner) > len(outer) and inner[: len(outer)] == outer
+
+
+def default_build_dir(project_name: str) -> str | None:
+    """s0ma's own build folder name for a project named *project_name*.
+
+    Every character that is not a word character becomes ``_``, and
+    :data:`DEFAULT_BUILD_DIR_SUFFIX` goes on the end. A name that cannot be
+    made into a Python identifier that way has no default, and the answer is
+    ``None``. This is s0ma-lang-dsl's rule, copied so the launcher imports
+    nothing from s0ma.
+    """
+    sanitized = re.sub(r"\W", "_", project_name)
+    if not sanitized.isidentifier():
+        return None
+    return sanitized + DEFAULT_BUILD_DIR_SUFFIX
+
+
+def build_dir_of(root: Path) -> Path | None:
+    """The resolved build folder of the s0ma project at *root*, or ``None``.
+
+    Read from ``[tool.s0ma].build_dir`` in the project's ``pyproject.toml``,
+    or s0ma's default for the project's name. A build folder that resolves to
+    the project folder itself, or outside it, is no answer: refusing edits
+    there would refuse edits to the project. Reads only, and never raises.
+    """
+    try:
+        data = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
+        tool = data.get("tool")
+        table = tool.get("s0ma") if isinstance(tool, dict) else None
+        if not isinstance(table, dict):
+            return None
+        if "build_dir" in table:
+            value = table["build_dir"]
+            if not isinstance(value, str) or not value.strip():
+                return None
+        else:
+            project = data.get("project")
+            name = project.get("name") if isinstance(project, dict) else None
+            if not isinstance(name, str) or not name:
+                name = root.name
+            default = default_build_dir(name)
+            if default is None:
+                return None
+            value = default
+        top = root.resolve()
+        build = (top / value).resolve()
+    except (OSError, ValueError, RuntimeError):
+        return None
+    if not is_inside(build, top, fold=folds_case()):
+        return None
+    return build
+
+
+def s0ma_off_for(root: Path, env: Mapping[str, str] | None = None) -> bool:
+    """Whether s0ma is off for the project at *root*.
+
+    Its own ``.s0ma/preferences.json`` is read, and so is the one in the folder
+    the session was started in, which is where ``/s0ma:off`` writes; either
+    one saying off is enough.
+    """
+    if read_project_preferences(root).off:
+        return True
+    return read_project_preferences(project_dir(env)).off
+
+
+def before_edit_answer(
+    given: Mapping[str, Any], env: Mapping[str, str] | None = None
+) -> dict[str, Any] | None:
+    """The PreToolUse answer for one edit: a refusal, or ``None`` for nothing."""
+    target = edit_target(given, project_dir(env))
+    if target is None:
+        return None
+    path = Path(str(target))
+    root = s0ma_project_root(path)
+    if root is None or s0ma_off_for(root, env):
+        return None
+    build = build_dir_of(root)
+    if build is None:
+        return None
+    try:
+        absolute = Path(os.path.abspath(path))
+        resolved = absolute.parent.resolve() / absolute.name
+    except (OSError, ValueError, RuntimeError):
+        return None
+    if not is_inside(resolved, build, fold=folds_case()):
+        return None
+    try:
+        shown = build.relative_to(root.resolve()).as_posix()
+    except (OSError, ValueError):
+        shown = build.name
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": BEFORE_EDIT_EVENT,
+            "permissionDecision": "deny",
+            "permissionDecisionReason": BUILD_DIR_REFUSAL.format(build_dir=shown),
+        }
+    }
+
+
+def check_findings(code: int, output: str) -> str | None:
+    """What ``s0ma check`` found, from its exit code and its text, or ``None``.
+
+    Exit 1 means errors. Exit 0 means none, and warnings are read from the
+    summary line the report ends with. Any other exit is not a check that
+    finished, and says nothing.
+    """
+    if code not in (0, 1):
+        return None
+    findings = code == 1
+    for line in output.splitlines():
+        match = _CHECK_RESULTS_RE.match(line.strip())
+        if match and (int(match.group(1)) or int(match.group(2))):
+            findings = True
+    if not findings:
+        return None
+    text = output.strip("\n")
+    return text if text.strip() else None
+
+
+def edit_check_context(shown: str, findings: str) -> str:
+    """The lines Claude is handed, inside :data:`EDIT_CHECK_MAX_CHARS`.
+
+    The findings are cut at a line boundary when they do not fit, and a line
+    saying there is more takes the place of what was cut.
+    """
+    lead = EDIT_CHECK_LEAD.format(path=shown)
+    whole = "\n".join([lead, findings, EDIT_CHECK_CLOSE])
+    if len(whole) <= EDIT_CHECK_MAX_CHARS:
+        return whole
+    more = EDIT_CHECK_MORE.format(path=shown)
+    budget = EDIT_CHECK_MAX_CHARS - len(lead) - len(more) - len(EDIT_CHECK_CLOSE) - 3
+    kept: list[str] = []
+    used = 0
+    for line in findings.splitlines():
+        if used + len(line) + 1 > budget:
+            break
+        kept.append(line)
+        used += len(line) + 1
+    return "\n".join([lead, *kept, more, EDIT_CHECK_CLOSE])
+
+
+def after_edit_answer(
+    given: Mapping[str, Any],
+    env: Mapping[str, str] | None = None,
+    home: Path | None = None,
+    *,
+    runner: Callable[..., Any] | None = None,
+) -> dict[str, Any] | None:
+    """The PostToolUse answer for one edit: what the check found, or ``None``.
+
+    The project's own s0ma is found the way ``run`` finds it - the project's
+    copy, a pin honored, the newest the launcher installed - and nothing is
+    installed, updated or fetched when there is none: the answer is nothing.
+    """
+    values = environ(env)
+    target = edit_target(given, project_dir(values))
+    if target is None or not target.name.endswith(S0MA_SOURCE_SUFFIX):
+        return None
+    if target.name == S0MA_SOURCE_SUFFIX:
+        return None
+    path = Path(str(target))
+    root = s0ma_project_root(path)
+    if root is None or s0ma_off_for(root, values):
+        return None
+    base = s0ma_home(values) if home is None else home
+    resolution = resolve_toolchain(values, base, root)
+    program = toolchain_program(resolution, CLI_PROGRAM)
+    if program is None:
+        return None
+    try:
+        relative = os.path.relpath(os.path.abspath(path), os.path.abspath(root))
+    except ValueError:
+        return None
+    shown = relative.replace("\\", "/")
+    child = child_environment(values)
+    # The check's report holds characters a Windows console code page has no
+    # room for; it is read here as UTF-8 whatever the console would have been.
+    child["PYTHONIOENCODING"] = "utf-8"
+    child["PYTHONUTF8"] = "1"
+    run = subprocess.run if runner is None else runner
+    try:
+        finished = run(
+            [str(program), "check", relative],
+            cwd=str(root),
+            env=child,
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            timeout=EDIT_CHECK_TIMEOUT_SECONDS,
+            check=False,
+        )
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return None
+    raw = getattr(finished, "stdout", b"") or b""
+    output = raw.decode("utf-8", errors="replace") if isinstance(raw, bytes) else str(raw)
+    findings = check_findings(int(getattr(finished, "returncode", -1)), output)
+    if findings is None:
+        return None
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": AFTER_EDIT_EVENT,
+            "additionalContext": edit_check_context(shown, findings),
+        }
+    }
+
+
+def _answer_hook(answer: Callable[[dict[str, Any]], dict[str, Any] | None]) -> int:
+    """Read the hook's input, print *answer*'s JSON if there is one, return 0."""
+    try:
+        given = read_hook_input()
+        if given is None:
+            return EXIT_OK
+        said = answer(given)
+        if said is None:
+            return EXIT_OK
+        line = json.dumps(said, sort_keys=True)
+    except Exception:  # noqa: BLE001 - an edit is never interrupted by this
+        return EXIT_OK
+    try:
+        print(line)
+    except Exception:  # noqa: BLE001 - a closed pipe is not worth a hook error
+        pass
+    return EXIT_OK
+
+
+def cmd_before_edit(args: argparse.Namespace) -> int:
+    """Refuse an edit under a s0ma project's build folder, or say nothing.
+
+    This always returns 0 and never raises, for the reason ``session-hint``
+    gives.
+    """
+    del args
+    return _answer_hook(before_edit_answer)
+
+
+def cmd_after_edit(args: argparse.Namespace) -> int:
+    """Check a ``.s0ma`` file after an edit and hand Claude any finding.
+
+    This always returns 0 and never raises, for the reason ``session-hint``
+    gives.
+    """
+    del args
+    return _answer_hook(after_edit_answer)
+
+
+# ---------------------------------------------------------------------------
 # The command line.
 # ---------------------------------------------------------------------------
 
@@ -4762,6 +5138,18 @@ def build_parser() -> argparse.ArgumentParser:
         "session-hint", help="the one line a new Claude session may start with"
     )
     hint.set_defaults(handler=cmd_session_hint)
+
+    before_edit = subcommands.add_parser(
+        "before-edit",
+        help="what Claude is told before an edit: no edits under a build folder",
+    )
+    before_edit.set_defaults(handler=cmd_before_edit)
+
+    after_edit = subcommands.add_parser(
+        "after-edit",
+        help="what Claude is told after an edit to a .s0ma file: what s0ma check found",
+    )
+    after_edit.set_defaults(handler=cmd_after_edit)
 
     run = subcommands.add_parser(
         "run",
