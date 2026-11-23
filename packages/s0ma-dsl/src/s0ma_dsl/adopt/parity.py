@@ -56,7 +56,8 @@ of a record that cannot be recaptured. ``annotation``, the declared type
 of a constant or attribute, is the first field to arrive this way.
 ``future_annotations`` is the second: a record without it reads as a file
 that did not have the import, so its comparison stays exactly as strict
-as it was.
+as it was. Capturing such a file again adds that one line, once, and every
+capture after that rewrites the same bytes.
 """
 
 from __future__ import annotations
@@ -157,7 +158,7 @@ class BaselineEntry:
       measured?" has an answer.
     * ``surface`` — what the module promised: the captured
       :class:`~s0ma_dsl.adopt.model.ModuleSurface`, ready to compare.
-    * ``future_annotations`` — whether the original file had ``from
+    * ``future_annotations``: whether the original file had ``from
       __future__ import annotations`` in force. A conversion drops that
       import, so this is what lets the comparer tell a quote the
       conversion needed from a real change. On disk only when true.

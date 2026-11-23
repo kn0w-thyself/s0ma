@@ -37,11 +37,11 @@ never runs, so nothing it reads is reported, at any scope. Its ``else`` runs,
 and a project's own ``TYPE_CHECKING = True`` or a parameter of that name is no
 guard.
 
-**A load read that may not run.** A read of a name nothing binds is an error
-in every mode wherever it sits at load. Whether it can run is often not
+**A load read that may not run.** Outside those cases, a load read of a name
+nothing binds is an error in every mode. Whether it can run is often not
 decidable from its shape: ``if True:``, a ``with`` body, and a loop over items
 all run. So a read off the always-run path below stays refused, and only its
-message changes, to say the import fails if that line runs.
+message differs, to say the import fails if that line runs.
 
 A module that reaches its own namespace can also write names no walk sees,
 so the analysis stops for one that looks itself up in ``sys.modules``, loads
