@@ -27,7 +27,8 @@ with the runner's own Python and nothing else.
     person nothing and gives Claude the standing note, and in a project whose
     ``.s0ma/preferences.json`` turns s0ma off it says the one off line and
     nothing else. In a project the installed s0ma makes with ``s0ma new
-    project``, the edit hooks refuse an edit under its build folder and hand
+    project``, the installed ``s0ma test`` exits 0 with the starter tests
+    passed, and the edit hooks refuse an edit under its build folder and hand
     on what ``s0ma check`` finds in a broken ``.s0ma`` file. Imports the
     end-to-end test's helpers, so run it with ``uv run python``.
 
@@ -1490,6 +1491,22 @@ def leg_uv_present(opts: argparse.Namespace, work: Path, results: Results) -> No
         fresh = fresh_parent / "demo"
         generated = fresh / "build" / "core_domain.py"
         expect(generated.is_file(), f"the new project has no {generated.name} under build/")
+        # `s0ma test` runs pytest from the toolchain's own environment, which
+        # only the launcher's install puts there. Run before the edit hooks
+        # below break a source file on purpose.
+        ran = run([str(cli), "test"], env, fresh)
+        expect(ran.code == 0, f"s0ma test exited {ran.code}")
+        passed = [
+            line.strip("= ")
+            for line in ran.stdout.splitlines()
+            if line.startswith("=") and " passed" in line
+        ]
+        expect(len(passed) == 1, "s0ma test printed no pytest pass line")
+        expect(
+            "failed" not in passed[0] and "error" not in passed[0],
+            f"s0ma test reported {passed[0]}",
+        )
+        results.add("s0ma test, installed, a fresh project", f"exit 0, {passed[0]}")
         results.add(
             "before-edit hook, installed, a file under build/",
             check_edit_refused(
