@@ -188,8 +188,8 @@ class TestEndToEnd:
             "This project names the s0ma plugin's catalog in "
             "`.claude/settings.json`; in Claude Code the plugin brings this "
             "server, so register nothing else. If the plugin is not "
-            "installed, offer the person its install line, "
-            "`/plugin install s0ma@kn0wthyself`, and do not run it for them. "
+            "installed, offer the person `/plugin install s0ma@kn0wthyself` "
+            "and do not run it for them. "
             f"Without the plugin, register the server with `{MCP_HINT}` "
             "instead."
         ) in agents
@@ -1576,7 +1576,7 @@ class TestProjectSettings:
         assert set(settings) == {"extraKnownMarketplaces", "enabledPlugins"}
         (name,) = settings["extraKnownMarketplaces"]
         assert settings["enabledPlugins"] == {f"s0ma@{name}": True}
-        assert new_project.PLUGIN_INSTALL_HINT == f"/plugin install s0ma@{name}"
+        assert f"/plugin install s0ma@{name}" == new_project.PLUGIN_INSTALL_HINT
 
     @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
     def test_an_existing_file_is_kept_and_never_causes_a_refusal(
