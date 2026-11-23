@@ -4,7 +4,7 @@
     "journey": "journey:drift-recovery",
     "published_by": "doc:guide/drift-recovery",
     "release": "0.22.0 (preview)",
-    "snapshot": "sha256:d7e05949ae81d6c0"
+    "snapshot": "sha256:eb4712e1e402bca2"
   },
   "package": {
     "audience": [
@@ -122,12 +122,6 @@
         "next_surface": "cli:s0ma/build",
         "next_surface_name": "s0ma build",
         "when": "GENERATED_FILE_DRIFT"
-      },
-      {
-        "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-lang-core and s0ma-lang-dsl in the project's own list of dependencies.",
-        "next_surface": "cli:s0ma/doctor",
-        "next_surface_name": "s0ma doctor",
-        "when": "HOST_RUNTIME_UNDECLARED"
       },
       {
         "action": "Write the value the field is waiting for and ask again, or leave the note where it is and stop asking for the release reading until you are ready. A written-down debt is allowed; it earns nothing, and it will not let a release through.",

@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "4b86ef133433b73c8717b76ff51853fb2c4def4a3f632f68e4334a92cc0f9af6",
+      "content_sha256": "f8068d833caf4ea789a79727a7ee596b1baabbaba1a2d54aa3a76732e8a01055",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.22.0] — 2026-11-19",
@@ -5136,11 +5136,6 @@
           "when": "GENERATED_FILE_DRIFT"
         },
         {
-          "action": "Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-lang-core and s0ma-lang-dsl in the project's own list of dependencies.",
-          "next_surface": "cli:s0ma/doctor",
-          "when": "HOST_RUNTIME_UNDECLARED"
-        },
-        {
           "action": "Write the value the field is waiting for and ask again, or leave the note where it is and stop asking for the release reading until you are ready. A written-down debt is allowed; it earns nothing, and it will not let a release through.",
           "next_surface": "cli:s0ma/check",
           "when": "SEMANTIC_PENDING_DEBT"
@@ -5666,7 +5661,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:d7e05949ae81d6c0"
+    "snapshot_hash": "sha256:eb4712e1e402bca2"
   },
   "surfaces": [
     {

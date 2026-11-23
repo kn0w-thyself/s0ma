@@ -350,7 +350,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.22.0",
-    "snapshot_hash": "sha256:d7e05949ae81d6c0"
+    "snapshot_hash": "sha256:eb4712e1e402bca2"
   },
   "topics": [
     {
@@ -4186,7 +4186,6 @@
           "heading": "If something goes wrong",
           "items": [
             "GENERATED_FILE_DRIFT -> cli:s0ma/build: Two honest answers and no third: move the hand-written change into the source it belongs in and build again, or accept losing it and build with --force. The build stops until you pick one, because the two copies cannot both be right.",
-            "HOST_RUNTIME_UNDECLARED -> cli:s0ma/doctor: Ask for the health report first: it says which s0ma packages this machine actually has and what this project is set to, which is what the warning is about. Then name s0ma-lang-core and s0ma-lang-dsl in the project's own list of dependencies.",
             "SEMANTIC_PENDING_DEBT -> cli:s0ma/check: Write the value the field is waiting for and ask again, or leave the note where it is and stop asking for the release reading until you are ready. A written-down debt is allowed; it earns nothing, and it will not let a release through."
           ]
         },
