@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 """Build the public marketplace repository's tree, in a directory you name.
 
-The monorepo is private. A private Claude Code marketplace is fragile - the
-background refresh that keeps a plugin current runs without git credential
-helpers, so a private catalog goes stale for exactly the users who most want it
-current (research section 2.4). So the catalog and the plugin are published
-from a small PUBLIC repository, ``kn0w-thyself/claude-plugins``, and this
-script is what builds that repository's contents out of ``integrations/claude/``.
+The catalog and the plugin are published from a small public repository of
+their own, ``kn0w-thyself/claude-plugins``, and this script is what builds that
+repository's contents out of ``integrations/claude/``.
 
     uv run python scripts/export_claude_marketplace.py --out ../claude-plugins
 
@@ -18,7 +15,8 @@ What lands in that directory::
                                       the monorepo) to "./plugins/s0ma"
     plugins/s0ma/**                   the plugin, byte for byte, with the two
                                       shell shims and the server script still
-                                      executable
+                                      executable; its README.md is the plugin
+                                      folder's own, not a second text
     LICENSE                           the same Apache-2.0 text the plugin carries
     README.md                         for somebody who has never heard of s0ma
     PRIVACY.md                        what the launcher does on the network
@@ -574,20 +572,19 @@ In Claude Code, two lines:
 /plugin install s0ma@kn0wthyself
 ```
 
-Claude asks for a few settings when the plugin is switched on. You can leave
-every one of them empty and come back to them. Then run `/s0ma:setup`, which
-checks what this computer already has and installs what it does not.
+The plugin asks nothing when it is switched on. Then run `/s0ma:start`, which
+installs what this computer does not have yet, after one question, and builds
+a first project with you.
 
 ## Where your key goes
 
-Put the key from your account at account.kn0wthyself.ai into the plugin's
-**s0ma license key** field. Claude masks it as you type, keeps it in this
-computer's own secure storage, and never writes it into a settings file.
+You need no key to install or use s0ma, and the plugin has no key setting. If
+you have a key from your account at account.kn0wthyself.ai, save it with
+`s0ma-launch activate` in a terminal of your own: it asks for the key without
+showing it and saves it for you.
 
 Never type a key into a conversation, and never ask Claude to read one back to
-you. If a key has been in a chat, treat it as spent and get a new one. If you
-would rather use a terminal, `s0ma-launch activate` asks for the key without
-showing it and saves it for you.
+you. If a key has been in a chat, treat it as spent and get a new one.
 
 The key is only used to download s0ma from the subscriber channel. If you run
 s0ma from a source checkout you need no key at all, and everything in this
@@ -597,10 +594,12 @@ plugin still works.
 
 Two different things update here, and only one of them is ours.
 
-**The s0ma toolchain** looks after itself. It starts the version you have,
+**The s0ma toolchain** starts the version you have. With a license key it
 fetches a newer one quietly in the background, and uses it the next time a
-session starts - never in the middle of your work. `/s0ma:update` checks by
-hand, and a project can hold itself on one version when a change would be
+session starts - never in the middle of your work. With no key nothing is
+fetched until you ask: a newer plugin brings a newer s0ma, the line a session
+begins with says so, and `/s0ma:update` installs it. `/s0ma:update` also checks
+by hand, and a project can hold itself on one version when a change would be
 unwelcome.
 
 **The plugin** is Claude's business, and Claude only updates marketplaces
@@ -611,15 +610,20 @@ leave it off.
 
 ## What this sends over the network
 
-When it looks for a newer s0ma - by itself at most once a day, and only while
-its update setting is `auto` or `notify` - the plugin's launcher asks
+With no license key, the plugin's launcher contacts nobody. When you install
+or update s0ma, uv fetches it, and the open-source Python packages it depends
+on, from the Python package index your machine uses.
+
+With a key, when the launcher looks for a newer s0ma - by itself at most once a
+day, and only while its update setting is `auto` or `notify` - it asks
 account.kn0wthyself.ai which release exists and where its files are, with your
 key in the request's authorization header rather than in the web address, and
-downloads the files that answer names. It sends nothing else: no analytics, no
-usage counts, and nothing about your project, your files or your conversation.
-While a version is being installed, uv also fetches the open-source Python
-packages s0ma depends on from the Python package index your machine uses; your
-key is never given to it.
+downloads the files that answer names. While a version is being installed, uv
+also fetches the open-source Python packages s0ma depends on from the Python
+package index your machine uses; your key is never given to it.
+
+Either way nothing else is sent: no analytics, no usage counts, and nothing
+about your project, your files or your conversation.
 
 `PRIVACY.md` in this repository sets that out in full, including how to switch
 it off. The policy it all sits under is at kn0wthyself.ai/legal/privacy.
@@ -655,8 +659,10 @@ computer should run, starts it, and fetches newer ones.
 
 ## The only conversation the launcher has
 
-The launcher itself talks to one place, account.kn0wthyself.ai, and only to find
-out which release of s0ma exists and to fetch it. Two requests, no more:
+With no license key, the launcher itself talks to nobody, and uv fetches s0ma
+from the Python package index, as the next section says. With a key, the
+launcher talks to one place, account.kn0wthyself.ai, and only to find out which
+release of s0ma exists and to fetch it. Two requests, no more:
 
 1. It asks which release is current and what files it is made of. Your license
    key travels in that request's authorization header - never in the web
@@ -671,22 +677,26 @@ out which release of s0ma exists and to fetch it. Two requests, no more:
 s0ma is built on a handful of open-source Python packages. While a version is
 being installed, uv - the program that builds s0ma's environment - fetches
 those from the Python package index (pypi.org, or whichever index your machine
-is set up to use), exactly as it would for any other Python program. That
-request is uv's own: it carries nothing about you or your project, and the
-launcher removes your license key from uv's environment before it starts it.
+is set up to use), exactly as it would for any other Python program. With no
+license key, uv fetches s0ma itself from there too, at the version the plugin
+brings. That request is uv's own: it carries nothing about you or your project,
+and the launcher removes your license key from uv's environment before it
+starts it.
 It happens once per installed version, and never when nothing is being
 installed.
 
 ## When
 
-- By itself: at most once a day, and only while the update setting is `auto` or
-  `notify`. Set it to `off` in the plugin's settings, or set the environment
-  variable `S0MA_UPDATE=off`, and the launcher never opens a connection on its
-  own.
+- By itself: only with a license key, at most once a day, and only while the
+  update setting is `auto` or `notify`. Set it to `off` with
+  `s0ma-launch set update off`, or set the environment variable
+  `S0MA_UPDATE=off`, and the launcher never opens a connection on its own. With
+  no key it never does anyway.
 - Never in the middle of a session's work. A newer version is fetched in the
   background and is used the next time a session starts.
-- When you ask: `s0ma-launch install`, `s0ma-launch update` and
-  `s0ma-launch activate` talk to the same place at the moment you run them.
+- When you ask: with a key, `s0ma-launch install`, `s0ma-launch update` and
+  `s0ma-launch activate` talk to the same place at the moment you run them;
+  with none, `install` and `update` have uv fetch s0ma from the package index.
   `activate` makes one extra request, to tell you straight away whether the key
   you just typed is good. `s0ma-launch pin` asks once whether the version you
   named exists, so a typing mistake is caught before it is written down; add
@@ -708,12 +718,11 @@ leaves the machine.
 
 ## Where your key is kept
 
-In this computer's own secure storage, put there by Claude when you type it
-into the plugin's masked field. If you used `s0ma-launch activate` instead, it
-is in a file in your s0ma home directory. On macOS and Linux the launcher makes
+In a file in your s0ma home directory, put there by `s0ma-launch activate`;
+the plugin has no key setting of its own. On macOS and Linux the launcher makes
 that file readable by your account and nobody else; on Windows it cannot, says
-so, and asks you to check who can read the folder. Either way it is never
-written into a settings file, never printed, and never shown in a conversation.
+so, and asks you to check who can read the folder. It is never written into a
+settings file, never printed, and never shown in a conversation.
 
 ## Questions
 
