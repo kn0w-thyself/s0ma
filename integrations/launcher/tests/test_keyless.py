@@ -38,7 +38,7 @@ KEY_SHAPED = r"s0ma_(?:live|test)_[A-Za-z0-9_-]{4,}"
 @pytest.fixture(autouse=True)
 def _no_stray_offline_flag(monkeypatch: pytest.MonkeyPatch) -> None:
     """The test-only install flag, and uv's own index settings, start unset."""
-    for name in ("S0MA_LAUNCH_OFFLINE_INSTALL", "UV_FIND_LINKS", "UV_NO_INDEX"):
+    for name in ("S0MA_LAUNCH_OFFLINE_INSTALL", "UV_FIND_LINKS", "UV_NO_INDEX", "UV_CONFIG_FILE"):
         monkeypatch.delenv(name, raising=False)
 
 
@@ -57,12 +57,19 @@ def write_state(launcher: ModuleType, home: Path, **fields: Any) -> None:
 # ---------------------------------------------------------------------------
 
 
+def umbrella_of(arguments: list[str]) -> str:
+    """The one ``s0ma-lang==<version>`` requirement in a ``uv pip install``."""
+    found = [argument for argument in arguments if argument.startswith("s0ma-lang==")]
+    assert len(found) == 1, f"not one umbrella requirement in {arguments}"
+    return found[0]
+
+
 class FakeUv:
     """Stands in for ``subprocess.run`` when the launcher runs uv.
 
     ``uv venv <dir>`` leaves a Python behind in *dir*; ``uv pip install
-    --python <python> s0ma-lang==<v>`` leaves the s0ma programs and a
-    ``s0ma_lang_mcp-<v>.dist-info`` beside it. ``windows=True`` uses the
+    --python <python> s0ma-lang==<v> pytest>=7.0`` leaves the s0ma programs
+    and a ``s0ma_lang_mcp-<v>.dist-info`` beside it. ``windows=True`` uses the
     ``Scripts`` and ``Lib/site-packages`` layout, so both platforms' shapes
     are exercised on whichever machine the tests run on. ``fail=True`` makes
     the install step refuse, the way uv does when a version cannot be found.
@@ -98,7 +105,7 @@ class FakeUv:
                 )
             python = Path(arguments[arguments.index("--python") + 1])
             root = python.parent.parent
-            version = arguments[-1].split("==", 1)[1]
+            version = umbrella_of(arguments).split("==", 1)[1]
             suffix = ".exe" if self.windows else ""
             for name in ("s0ma-mcp", "s0ma"):
                 (python.parent / (name + suffix)).write_text("fake\n", encoding="utf-8")
@@ -274,7 +281,9 @@ def test_uv_is_asked_for_the_umbrella_at_the_launchers_own_version(
         "--python",
         str(partial / python),
         f"s0ma-lang=={launcher.LAUNCHER_VERSION}",
+        "pytest>=7.0",
     ]
+    assert launcher.PYTEST_REQUIREMENT == "pytest>=7.0"
 
 
 def test_an_explicit_version_is_the_one_asked_for(
@@ -285,7 +294,7 @@ def test_an_explicit_version_is_the_one_asked_for(
     )
 
     assert installed == "0.21.0"
-    assert fake_uv.installs()[0][-1] == "s0ma-lang==0.21.0"
+    assert fake_uv.installs()[0][-2:] == ["s0ma-lang==0.21.0", launcher.PYTEST_REQUIREMENT]
     assert (isolated_home / "toolchains" / "0.21.0" / ".complete").is_file()
 
 
@@ -296,7 +305,7 @@ def test_install_on_the_command_line_routes_by_key(
 
     assert code == 0, err
     assert out == ""
-    assert fake_uv.installs()[-1][-1] == "s0ma-lang==0.21.0"
+    assert fake_uv.installs()[-1][-2:] == ["s0ma-lang==0.21.0", launcher.PYTEST_REQUIREMENT]
     assert "s0ma 0.21.0 is installed." in err
     assert "no license key on this machine" in err
     assert launcher.installed_versions(isolated_home) == ["0.21.0"]
@@ -304,7 +313,10 @@ def test_install_on_the_command_line_routes_by_key(
     code, _, err = run_cli("install")
 
     assert code == 0, err
-    assert fake_uv.installs()[-1][-1] == f"s0ma-lang=={launcher.LAUNCHER_VERSION}"
+    assert fake_uv.installs()[-1][-2:] == [
+        f"s0ma-lang=={launcher.LAUNCHER_VERSION}",
+        launcher.PYTEST_REQUIREMENT,
+    ]
 
 
 def test_uv_is_never_handed_a_key_on_this_route(
@@ -356,6 +368,9 @@ def test_a_failed_uv_run_leaves_nothing_installed_and_nothing_false(
     assert "s0ma could not install s0ma 9.9.9 from the package index" in err
     assert "This is what uv said:" in err
     assert "No solution found" in err
+    assert stand_in.installs()[-1][-2:] == ["s0ma-lang==9.9.9", launcher.PYTEST_REQUIREMENT], (
+        "s0ma and pytest are asked for in the one call that failed"
+    )
     toolchains = isolated_home / "toolchains"
     assert list(toolchains.iterdir()) == [], "nothing half-built is left behind"
     state = state_of(isolated_home)
@@ -452,6 +467,7 @@ def test_a_real_uv_install_from_a_local_index(
     fake_control_plane.build_fake_index(links, "0.21.0")
     monkeypatch.setenv("UV_FIND_LINKS", str(links))
     monkeypatch.setenv("UV_NO_INDEX", "1")
+    monkeypatch.setenv("UV_CONFIG_FILE", str(fake_control_plane.only_from(links)))
     monkeypatch.setenv("S0MA_LAUNCH_OFFLINE_INSTALL", "1")
 
     code, _, err = run_cli("install", "--version", "0.21.0")
@@ -463,6 +479,10 @@ def test_a_real_uv_install_from_a_local_index(
     finished = subprocess.run([str(program)], capture_output=True, text=True, check=False)
     assert finished.stdout.strip() == "s0ma_lang_mcp 0.21.0", "the stand-in from the local index"
     assert launcher.installed_version_of(toolchain) == "0.21.0"
+    assert (
+        launcher.installed_version_of(toolchain, "pytest")
+        == fake_control_plane.FAKE_PYTEST_VERSION
+    ), "pytest came in the same install, from the same local index"
 
 
 # ---------------------------------------------------------------------------
@@ -484,7 +504,10 @@ def test_update_moves_an_older_copy_to_the_launchers_version(
 
     assert code == 0, err
     assert out == ""
-    assert fake_uv.installs()[-1][-1] == f"s0ma-lang=={launcher.LAUNCHER_VERSION}"
+    assert fake_uv.installs()[-1][-2:] == [
+        f"s0ma-lang=={launcher.LAUNCHER_VERSION}",
+        launcher.PYTEST_REQUIREMENT,
+    ]
     assert launcher.installed_versions(isolated_home) == ["0.18.0", launcher.LAUNCHER_VERSION]
     assert "will be used from the next session" in err
     assert "pin 0.18.0" in err

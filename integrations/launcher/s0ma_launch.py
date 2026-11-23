@@ -91,6 +91,11 @@ LAUNCHER_VERSION = "0.22.0"
 #: each of the four parts of s0ma at exactly its own version.
 INDEX_DISTRIBUTION = "s0ma-lang"
 
+#: Installed beside s0ma on both routes, in the same uv call: `s0ma test` runs
+#: a project's tests with pytest from s0ma's own environment, and no package of
+#: s0ma requires it. The floor is the one the packages' development extras state.
+PYTEST_REQUIREMENT = "pytest>=7.0"
+
 #: Exit codes, frozen by the plan (section 4.3).
 EXIT_OK = 0
 EXIT_USAGE = 2
@@ -2642,8 +2647,9 @@ def download_wheel(
 # The wheels are installed by path, with the package index left ON, because the
 # real s0ma wheels depend on packages that come from PyPI. The launcher's own
 # tests set `S0MA_LAUNCH_OFFLINE_INSTALL=1`, which adds `--offline`, and use
-# stand-in wheels with no dependencies at all - so the tests perform a real
-# install without ever touching a network.
+# stand-in wheels with no dependencies at all, and a stand-in pytest from a
+# local directory - so the tests perform a real install without ever touching
+# a network.
 #
 # With no license key there is no manifest and nothing to download: the same
 # environment is built the same way, and uv is asked for `s0ma-lang==<version>`
@@ -2653,6 +2659,11 @@ def download_wheel(
 # keyed route, so this route trusts that index the way any `pip install`
 # does. The keyed route checks each file's sha256 against the manifest; this
 # one has no manifest to check against.
+#
+# On both routes the same uv call also asks for `PYTEST_REQUIREMENT`, from the
+# package index like any other open-source dependency, because `s0ma test`
+# needs pytest in this environment and none of s0ma's packages requires it.
+# One call for both keeps the install whole: if uv refuses, nothing is in place.
 # ---------------------------------------------------------------------------
 
 PARTIAL_SUFFIX = ".partial"
@@ -2910,6 +2921,7 @@ def install_version(
             str(interpreter),
             *offline,
             *[str(path) for path in paths],
+            PYTEST_REQUIREMENT,
         ],
         env=values,
         what=f"install the s0ma packages for {resolved}",
@@ -3032,6 +3044,7 @@ def install_from_index(
                 str(interpreter),
                 *offline,
                 index_requirement(resolved),
+                PYTEST_REQUIREMENT,
             ],
             env=values,
             what=f"install s0ma {resolved} from the package index",
