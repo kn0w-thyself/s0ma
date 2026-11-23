@@ -161,9 +161,19 @@ The control-plane site (installer, distribution endpoints) deploys **manually** 
 S0MA_SMOKE_KEY=<key> scripts/verify_served.sh --version X.Y.Z
 ```
 
+## ☐ OWNER: the first install from the package index, started by hand
+
+Once `publish-pypi` is green and the five PyPI project pages show this version, start the `first-run` workflow by hand on the release's tag, with the release's version. On the repository's **Actions** tab, choose **first-run** in the list of workflows, then **Run workflow** on the right: pick the tag `vX.Y.Z` under "Use workflow from", type `X.Y.Z` as the version, and run it. From a terminal it is one line:
+
+```bash
+gh workflow run first-run.yml --ref vX.Y.Z -f version=X.Y.Z
+```
+
+Wait for its three `real-index` jobs, on Linux, macOS and Windows, to pass before you start the hand run below. It proves that the plugin at this tag, with uv and no license key, installs `s0ma-lang==X.Y.Z` from the public package index, and that the installed s0ma reports that version, serves its tools, and makes, checks, builds and tests a new project; it does not prove anything a person sees in Claude, which is what the hand run is for.
+
 ## ☐ OWNER — the first run of the Claude plugin, by hand
 
-The `first-run` workflow ([`.github/workflows/first-run.yml`](../.github/workflows/first-run.yml)) covers half of the plugin's first run on every pull request. On Linux, macOS and Windows, with uv absent and with uv present, it runs the session-start hook's command as Claude Code runs it, speaks MCP to the plugin's server command, and has a pinned Claude Code validate the plugin and report its server Connected in `claude --plugin-dir <plugin> mcp list`, both from `integrations/claude/plugin` and from the tree `scripts/export_claude_marketplace.py` writes. With uv it also installs s0ma with no license key from wheels built in the job and lists the real server's tools. It cannot prove the rest: no model runs, so no skill is ever followed; no hook fires inside a real session; Claude Code is never signed in; the Claude Desktop app is never opened; and nobody looks at what a person sees.
+The `first-run` workflow ([`.github/workflows/first-run.yml`](../.github/workflows/first-run.yml)) covers half of the plugin's first run on every pull request. On Linux, macOS and Windows, with uv absent and with uv present, it runs the session-start hook's command as Claude Code runs it, speaks MCP to the plugin's server command, and has a pinned Claude Code validate the plugin and report its server Connected in `claude --plugin-dir <plugin> mcp list`, both from `integrations/claude/plugin` and from the tree `scripts/export_claude_marketplace.py` writes. With uv it also installs s0ma with no license key from wheels built in the job and lists the real server's tools. It can also be started by hand after a release, as the section above says, and then installs that release from the public package index instead. It cannot prove the rest: no model runs, so no skill is ever followed; no hook fires inside a real session; Claude Code is never signed in; the Claude Desktop app is never opened; and nobody looks at what a person sees.
 
 That half is this checklist. Run it after a release is cut and before the plugin is published anywhere, once per host: the Desktop app's Code tab and the terminal, each on macOS and on Windows.
 
@@ -176,16 +186,31 @@ That half is this checklist. Run it after a release is cut and before the plugin
 - Claude Code or the Claude Desktop app at its current version, and signed in;
 - the network on.
 
+**How the plugin reaches the clean account.** No catalog lists the plugin yet, so it comes from a folder. On your own account, in a checkout at the release's tag (`git worktree add ../s0ma-vX.Y.Z vX.Y.Z`, then `cd ../s0ma-vX.Y.Z` and `uv sync --all-packages --all-extras`), export it into a new folder the clean account can read, such as `/Users/Shared/s0ma-X.Y.Z` on macOS or `C:\Users\Public\s0ma-X.Y.Z` on Windows:
+
+```bash
+uv run python scripts/export_claude_marketplace.py --out /Users/Shared/s0ma-X.Y.Z
+```
+
+It exits 0 when it has exported; 1 when it refused and wrote nothing (uncommitted changes under `integrations/`, copies out of step, or an `--out` folder that is not empty or sits inside the repository); 2 on a usage mistake; and 3 when it exported but `claude plugin validate` rejected the result, in which case do not use that folder. When your `claude` is missing from the `PATH`, or older than 2.1.328, it says "Not checked" and prints the two `claude plugin validate` commands that are the check; run them yourself before going on. The publishing commands it prints at the end are not part of this checklist: it publishes nothing, and neither do you here. Then, in Claude on the clean account, add that folder as a marketplace and install the plugin from it, with the commands [the Claude guide](guides/claude-integration.md#what-the-next-release-holds) gives for installing from a folder:
+
+```text
+/plugin marketplace add <path to that folder>
+/plugin install s0ma@kn0wthyself
+```
+
 **The steps**, and what to look for at each:
 
-1. **Install the plugin from inside Claude**, with `/plugin`. No settings dialog opens and nothing asks for a key.
-2. **Start a first session.** No hook error and no failed server anywhere on screen. Asked what it knows about s0ma, Claude says s0ma is not set up here yet and names `/s0ma:start`. `/mcp` shows the s0ma server connected.
+1. **Install the plugin** from that folder, as just described. No settings dialog opens and nothing asks for a key.
+2. **Start a first session.** No hook error and no failed server anywhere on screen. Asked what it knows about s0ma, Claude says s0ma is not set up here yet and names `/s0ma:start`. `/mcp` shows the s0ma server connected. Ask Claude to write a small text file here, in a folder that is not a s0ma project: no hook error appears beside the edit.
 3. **Run `/s0ma:start`.** It finds neither uv nor s0ma and asks one question for both, in the words [the Claude guide](guides/claude-integration.md#your-first-conversation) quotes. One yes installs uv and then s0ma with no key, with no restart and no second question, and one short line says what was installed.
-4. **Say what to build.** It asks what you want to build; answer in one sentence, or say "show me". With no other question it names a folder, creates the project inside the session's folder, builds it and checks it, and reports one line whose module count, part count and checks match what `s0ma build .` and `s0ma inspect --all` print in that folder.
+4. **Say what to build.** It asks what you want to build; answer in one sentence, or say "show me". With no other question it names a folder, creates the project inside the session's folder, builds it and checks it, and reports one line whose module count, part count and checks match what `s0ma build .` and `s0ma inspect --all` print in that folder. No hook error appears beside any edit it makes in the s0ma project. Then ask Claude to change a file under the project's build folder directly: no file under that folder changes, and Claude says the change belongs in the `.s0ma` source.
 5. **studi0 is shown without asking.** In the Desktop app's Code tab it opens beside the chat; in the terminal Claude gives its address as a link, and the page loads the project's graph. Claude ends by saying what you can ask next.
 6. **Set a preference by saying so**: "always show studi0". Claude answers in one sentence, and `s0ma-launch prefs` then reports studi0 `always`. A new session afterwards shows you no line about s0ma at all, though Claude is told, out of your sight, that s0ma is there and how you want it used.
 7. **Turn s0ma off for the project**: "turn s0ma off here". Claude answers that s0ma is off in this project and names the one file it added, `.s0ma/preferences.json`. A new session in that folder says nothing about s0ma.
 8. **Remove s0ma** by following [Removing s0ma](uninstall.md). Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
+
+**On Windows without Git for Windows**, the session line and the edit checks say nothing, and no hook error appears.
 
 Write down the host, the system, the Claude version and the s0ma version for each pass, and stop the publication at the first step that does not look as described.
 
