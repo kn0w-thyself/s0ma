@@ -696,9 +696,9 @@ installed.
 
 No analytics. No usage counts. No error reports. Nothing about your project,
 your files, your prompts or your conversation - not to us, not to anyone. The
-launcher's other commands (`status`, `session-hint`, `unpin`, `run`) read local
-files and open no connection at all, which is why they still work with the
-network unplugged.
+launcher's other commands (`status`, `prefs`, `session-hint`, `unpin`, `run`)
+read local files and open no connection at all, which is why they still work
+with the network unplugged.
 
 ## The one thing you can send on purpose
 

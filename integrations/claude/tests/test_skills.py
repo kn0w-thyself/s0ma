@@ -1,4 +1,4 @@
-"""The six skills the s0ma plugin ships, held to what a skill has to be.
+"""The nine skills the s0ma plugin ships, held to what a skill has to be.
 
 A skill is a file a model reads in full every time it is invoked, so the
 things that can go wrong with one are not the things that go wrong with
@@ -50,12 +50,15 @@ INTEGRATIONS = Path(__file__).resolve().parents[2]
 SKILLS_DIR = INTEGRATIONS / "claude" / "plugin" / "skills"
 LAUNCHER_PATH = INTEGRATIONS / "launcher" / "s0ma_launch.py"
 
-#: The six skills the plugin ships, and the whole set: a seventh directory
+#: The nine skills the plugin ships, and the whole set: a tenth directory
 #: that nobody added to this tuple is a skill no gate has ever read.
 SKILL_NAMES: tuple[str, ...] = (
     "doctor",
     "feedback",
     "new",
+    "off",
+    "on",
+    "preferences",
     "retrofit",
     "setup",
     "update",
@@ -371,7 +374,7 @@ def sentences_asking_for_a_secret(text: str) -> list[str]:
 class TestEverySkillLoads:
     """What Claude Code needs before a skill is a skill at all."""
 
-    def test_the_six_are_there_and_no_others(self) -> None:
+    def test_the_nine_are_there_and_no_others(self) -> None:
         on_disk = sorted(
             entry.name for entry in SKILLS_DIR.iterdir() if entry.is_dir()
         )
@@ -474,7 +477,16 @@ class TestEveryCommandNamedExists:
             for name, text in skills.items()
         }
         assert sum(len(commands) for commands in found.values()) >= 20, found
-        for name in ("setup", "update", "doctor", "new", "retrofit"):
+        for name in (
+            "setup",
+            "update",
+            "doctor",
+            "new",
+            "retrofit",
+            "off",
+            "on",
+            "preferences",
+        ):
             assert found[name], f"{name} names no command at all"
 
     @pytest.mark.parametrize("name", SKILL_NAMES)
@@ -633,3 +645,182 @@ class TestTheHouseRules:
         """A living document that names a version rots at the next release."""
         stamped = re.findall(r"\b\d+\.\d+\.\d+\b", skills[name])
         assert stamped == [], f"{name}: names version(s) {stamped}"
+
+
+# ---------------------------------------------------------------------------
+# The preferences a person sets by saying so
+# ---------------------------------------------------------------------------
+
+#: What a person says, and the sentence Claude answers with, as the owner
+#: decided them. Each must be in its skill word for word. Where an answer
+#: names the machine, it is written as "this Mac", and the skill says to call
+#: it "this PC" on Windows and "this computer" on Linux.
+DECIDED_ANSWERS: tuple[tuple[str, str, str], ...] = (
+    (
+        "preferences",
+        "always use s0ma",
+        "Done. From now on I'll build new work with s0ma on this Mac without "
+        'being asked. Say "only use s0ma when I ask" to change it.',
+    ),
+    (
+        "preferences",
+        "only use s0ma when I ask",
+        "Done. I'll use s0ma only when you ask. Projects that are already s0ma "
+        "keep working as they do now.",
+    ),
+    (
+        "preferences",
+        "always show studi0",
+        "Done. I'll open studi0 at the first build of each session.",
+    ),
+    (
+        "preferences",
+        "only show studi0 when I ask",
+        'Done. studi0 stays closed until you say "show me studi0".',
+    ),
+    (
+        "preferences",
+        "always use s0ma in this project",
+        "Done, for this project only. Everywhere else stays as it was.",
+    ),
+    (
+        "off",
+        "turn s0ma off here",
+        "s0ma is off in this project. I won't use it here, I won't check your "
+        "edits, and studi0 stays closed. Nothing of yours was changed or "
+        "removed; I added one small file, `.s0ma/preferences.json`, that says "
+        's0ma is off here. Say "turn s0ma back on" or `/s0ma:on` any time. To '
+        "switch it off everywhere, disable the s0ma plugin in Claude's plugin "
+        "manager.",
+    ),
+    ("on", "turn s0ma back on", "s0ma is back on in this project."),
+    (
+        "preferences",
+        "what are my s0ma settings?",
+        "On this Mac: s0ma only when asked, studi0 offered once per project. In "
+        "this project: s0ma is on.",
+    ),
+)
+
+#: The command each phrase in the machine's half of the table runs.
+DECIDED_COMMANDS: tuple[tuple[str, str], ...] = (
+    ("always use s0ma", "s0ma-launch set use always"),
+    ("only use s0ma when I ask", "s0ma-launch set use asked"),
+    ("always show studi0", "s0ma-launch set studi0 always"),
+    ("only show studi0 when I ask", "s0ma-launch set studi0 asked"),
+)
+
+#: The words that make Claude load each new skill.
+TRIGGER_PHRASES: dict[str, tuple[str, ...]] = {
+    "off": ("turn s0ma off here", "/s0ma:off"),
+    "on": ("turn s0ma back on", "/s0ma:on"),
+    "preferences": ("always use s0ma", "only show studi0 when I ask", "settings"),
+}
+
+
+def _one_line(text: str) -> str:
+    """*text* with its line breaks and runs of spaces folded to single spaces."""
+    return " ".join(text.split())
+
+
+class TestThePreferenceSkills:
+    """The decided words, and the commands and values they lean on."""
+
+    @pytest.mark.parametrize(("name", "said", "answer"), DECIDED_ANSWERS)
+    def test_every_decided_answer_is_in_its_skill_word_for_word(
+        self, name: str, said: str, answer: str, skills: dict[str, str]
+    ) -> None:
+        text = _one_line(skills[name])
+        assert answer in text, f"{name}: the answer to {said!r} is not there as written"
+        assert said.rstrip("?").lower() in text.lower(), f"{name}: never names {said!r}"
+
+    @pytest.mark.parametrize(("said", "command"), DECIDED_COMMANDS)
+    def test_each_phrase_runs_its_command_on_the_same_row(
+        self, said: str, command: str, skills: dict[str, str]
+    ) -> None:
+        rows = [
+            line
+            for line in skills["preferences"].splitlines()
+            if line.startswith(f'| "{said}" |')
+        ]
+        assert len(rows) == 1, f"no single table row for {said!r}"
+        assert f"`{command}`" in rows[0]
+
+    def test_the_machine_is_named_for_each_platform(self, skills: dict[str, str]) -> None:
+        text = _one_line(skills["preferences"])
+        assert '"this Mac" on macOS, "this PC" on Windows and "this computer" on Linux' in text
+
+    @pytest.mark.parametrize("name", sorted(TRIGGER_PHRASES))
+    def test_the_description_names_what_people_say(
+        self, name: str, skills: dict[str, str]
+    ) -> None:
+        description = parse_front_matter(skills[name])["description"]
+        assert len(description) <= 1536
+        for phrase in TRIGGER_PHRASES[name]:
+            assert phrase in description, f"{name}: the description never says {phrase!r}"
+
+    def test_every_set_command_a_skill_names_takes_that_value(
+        self, skills: dict[str, str], launcher: ModuleType
+    ) -> None:
+        """``set`` is in the parser; its names and values are the launcher's own."""
+        found = 0
+        for name, text in skills.items():
+            for candidate in INLINE_CODE.findall(text) + text.splitlines():
+                words = candidate.split()
+                if words[:2] != ["s0ma-launch", "set"]:
+                    continue
+                found += 1
+                assert len(words) == 4, f"{name}: {candidate!r} names no value"
+                setting, value = words[2], words[3]
+                assert setting in launcher.SETTABLE, f"{name}: no setting {setting!r}"
+                # ``<auto|notify|off>`` names every value at once.
+                values = value.strip("<>").split("|")
+                for each in values:
+                    assert each in launcher.SETTABLE[setting], (
+                        f"{name}: `{candidate}` - {setting} takes "
+                        f"{launcher.SETTABLE[setting]}"
+                    )
+        assert found >= 5, "the skills name fewer set commands than the table holds"
+
+    def test_the_prefs_command_is_in_the_parser_with_its_json_form(
+        self, launcher: ModuleType, launcher_commands: frozenset[str]
+    ) -> None:
+        assert "prefs" in launcher_commands
+        prefs = _subcommands(launcher.build_parser())["prefs"]
+        assert any("--json" in action.option_strings for action in prefs._actions)
+
+    def test_the_settings_answer_is_what_prefs_prints_first(
+        self, launcher: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """The decided example is the launcher's own first line on a clean Mac."""
+        monkeypatch.setenv("S0MA_HOME", str(tmp_path / "home"))
+        monkeypatch.delenv("CLAUDE_PROJECT_DIR", raising=False)
+        project = tmp_path / "project"
+        project.mkdir()
+        report = launcher.prefs_report(project=project)
+        answer = next(a for _, said, a in DECIDED_ANSWERS if said.startswith("what are"))
+        assert launcher.prefs_summary(report, "darwin") == answer
+        assert launcher.prefs_summary(report, "win32") == answer.replace("Mac", "PC")
+        assert launcher.prefs_summary(report, "linux") == answer.replace("Mac", "computer")
+
+    def test_the_skills_name_the_project_file_and_say_it_is_not_committed(
+        self, skills: dict[str, str]
+    ) -> None:
+        for name in ("off", "on", "preferences"):
+            text = _one_line(skills[name])
+            assert ".s0ma/preferences.json" in text
+            assert "never touch any other file" in text.lower()
+        for name in ("off", "preferences"):
+            text = _one_line(skills[name])
+            assert "If there is no `.s0ma/` folder there, create it." in text
+            assert "keep every key already in it" in text
+            assert "not meant to be committed" in text
+
+    def test_a_declined_studi0_offer_is_remembered_as_asked(
+        self, skills: dict[str, str]
+    ) -> None:
+        text = _one_line(skills["preferences"])
+        assert (
+            'If they answer anything else (no, not now, later, or nothing at all), '
+            'write `"studi0": "asked"` into the project\'s file.'
+        ) in text
