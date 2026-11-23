@@ -353,8 +353,8 @@ ordinary reader does when it meets a spoiled file.
 
 **The plugin itself sends nothing.** It is configuration, nine skill files, a
 start-up hook and a copy of the launcher. Three of the skills have Claude write
-one small file in a project when you ask, `.s0ma/preferences.json`, which holds
-your answers for that project; s0ma itself only ever reads it. Fetching the
+one small preferences file in a project's own `.s0ma` folder when you ask,
+which holds your answers for that project; s0ma itself only ever reads it. Fetching the
 plugin, and looking for a newer one, is Claude's own traffic to wherever the
 marketplace lives, on Claude's schedule and under Claude's settings — not
 s0ma's.
