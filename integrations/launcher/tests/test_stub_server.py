@@ -4,7 +4,7 @@ The stub is the launcher's answer to the thirty-second rule (plan section 4.4).
 It never installs, never waits for a network, and never leaves the host looking
 at a server that would not start: it completes the handshake at once and says,
 in words a model can pass on to a person, that s0ma is not installed yet and
-that ``/s0ma:setup`` fixes it.
+that ``/s0ma:start`` fixes it.
 
 The tests come at it from two directions, because both can break on their own:
 
@@ -214,7 +214,7 @@ def test_the_instructions_say_what_is_missing_and_what_fixes_it(
     instructions = replies[0]["result"]["instructions"]
 
     assert "not installed on this machine yet" in instructions
-    assert "/s0ma:setup" in instructions
+    assert "/s0ma:start" in instructions
     assert "restart" in instructions
     assert instructions.count(". ") == 1, "two sentences, no more"
     assert instructions.endswith(".")
@@ -232,7 +232,7 @@ def test_a_pin_that_is_not_installed_is_named_in_the_instructions(
 
     assert "0.19.0" in instructions
     assert launcher.PIN_FILENAME in instructions
-    assert "/s0ma:setup" in instructions
+    assert "/s0ma:start" in instructions
     assert instructions.count(". ") == 1
 
 
@@ -249,7 +249,7 @@ def test_the_instructions_are_built_from_the_launchers_own_reason(
     instructions = launcher.stub_instructions(resolution)
 
     assert instructions.startswith("S0MA_TOOLCHAIN points at /somewhere")
-    assert "/s0ma:setup" in instructions
+    assert "/s0ma:start" in instructions
     # The reason's own full stop is not left sitting in the middle of a sentence.
     assert "there., so" not in instructions
 
@@ -309,7 +309,7 @@ def test_calling_the_tool_reports_the_same_facts_as_status(
     text = result["content"][0]["text"]
     for expected in ("Runs here:", "Why:", "Installed:", "License key:", "Next step:"):
         assert expected in text
-    assert "/s0ma:setup" in text
+    assert "/s0ma:start" in text
 
 
 def test_the_tool_works_without_an_arguments_field_at_all(launcher: ModuleType) -> None:
@@ -322,7 +322,7 @@ def test_the_tool_works_without_an_arguments_field_at_all(launcher: ModuleType) 
 def test_the_tool_notices_when_s0ma_has_arrived_mid_session(
     launcher: ModuleType, isolated_home: Path, project: Path, make_toolchain: Any
 ) -> None:
-    """Someone runs /s0ma:setup in a terminal while the session is open. Asking
+    """Someone runs /s0ma:start in a terminal while the session is open. Asking
     again should say so, not repeat that nothing is installed."""
     make_toolchain("0.18.0")
 
@@ -349,7 +349,7 @@ def test_a_tool_this_server_does_not_have_is_an_error_result_not_a_crash(
     result = replies[0]["result"]
     assert result["isError"] is True
     assert "s0ma_build_everything" in result["content"][0]["text"]
-    assert "/s0ma:setup" in result["content"][0]["text"]
+    assert "/s0ma:start" in result["content"][0]["text"]
 
 
 def test_a_tool_call_with_no_name_is_a_protocol_error(launcher: ModuleType) -> None:
@@ -646,7 +646,7 @@ def test_serve_hands_the_session_to_the_stub(
     assert sink is sys.stdout
     assert resolution.kind == launcher.KIND_NONE
     assert "not installed on this machine yet" in err
-    assert "/s0ma:setup" in err
+    assert "/s0ma:start" in err
 
 
 def test_a_real_run_answers_the_handshake_over_pipes(
@@ -689,7 +689,7 @@ def test_a_real_run_puts_nothing_but_protocol_messages_on_stdout(
             continue
         assert json.loads(line)["jsonrpc"] == "2.0"
     assert "not installed on this machine yet" in completed.stderr
-    assert "/s0ma:setup" in completed.stderr
+    assert "/s0ma:start" in completed.stderr
 
 
 def test_a_real_run_ends_with_a_zero_when_the_input_closes(

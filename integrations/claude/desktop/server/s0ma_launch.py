@@ -1223,7 +1223,7 @@ def next_step(
             f"Run `{PROG} install --version {pin.version}` to get the version this "
             "project asks for."
         )
-    return f"Run /s0ma:setup in Claude, or `{PROG} install` in a terminal."
+    return f"Run {START_SKILL} in Claude, or `{PROG} install` in a terminal."
 
 
 # ---------------------------------------------------------------------------
@@ -1521,7 +1521,7 @@ def _serve_without_toolchain(resolution: Resolution) -> int:
     the host's server log sees plainly what happened. Then the built-in stub
     server (:func:`serve_stub`) takes the conversation: it completes the
     handshake at once and tells Claude, in the session, that s0ma is not
-    installed yet and that ``/s0ma:setup`` fixes it.
+    installed yet and that ``/s0ma:start`` fixes it.
 
     Nothing is installed and nothing is fetched on this path - see
     :func:`cmd_serve` for why - and the run ends with :data:`EXIT_OK` when the
@@ -1632,10 +1632,10 @@ def stub_instructions(resolution: Resolution) -> str:
         reason = reason[:-1]
     return (
         f"{reason}, so none of s0ma's own tools are available in this session "
-        "and this server can only report on that. Tell the person to run "
-        "/s0ma:setup, which installs s0ma (no license key is needed), and then "
-        "to restart this server - starting a new session is enough - so the "
-        "real s0ma takes over."
+        "and this server can only report on that. When the person wants s0ma, "
+        f"the {START_SKILL} skill installs it (no license key is needed) and "
+        "carries on with the s0ma command; s0ma's own tools arrive when this "
+        "server restarts - starting a new session is enough."
     )
 
 
@@ -1680,7 +1680,7 @@ def stub_tool() -> dict[str, Any]:
 def stub_status_text(report: Mapping[str, Any]) -> str:
     """The tool's answer: the same facts ``status`` prints, plus what to do now.
 
-    The report is taken fresh on every call, so a person who runs ``/s0ma:setup``
+    The report is taken fresh on every call, so a person who runs ``/s0ma:start``
     in the middle of a session and then asks again is told that s0ma has arrived
     and that restarting is all that is left.
     """
@@ -1759,7 +1759,7 @@ def stub_call_tool(
             stub_text_result(
                 f"There is no tool called `{_quote(name)}` in this session. s0ma "
                 f"is not installed yet, so the only tool here is {STUB_TOOL_NAME}, "
-                "which reports on that. Run /s0ma:setup to install s0ma, then "
+                f"which reports on that. Run {START_SKILL} to install s0ma, then "
                 "start a new session to get s0ma's own tools.",
                 is_error=True,
             ),
@@ -4210,7 +4210,7 @@ def cmd_activate(args: argparse.Namespace) -> int:
     notice = plain_sentence(answer.get("notice"))
     if notice:
         say(notice)
-    say(f"Run `{PROG} install` to get s0ma, or /s0ma:setup in Claude.")
+    say(f"Run `{PROG} install` to get s0ma, or {START_SKILL} in Claude.")
     return EXIT_OK
 
 
@@ -4262,15 +4262,19 @@ HINT_EVENT_NAME = "SessionStart"
 #: about never letting one long path turn a glance into a paragraph.
 HINT_MAX_CHARS = 600
 
-#: The skill that sets s0ma up. Named once here, and once in the plugin's
-#: session-start script (``hooks/session-start.sh``), which speaks when uv cannot
-#: run this file at all; a test holds the two to the same name.
-SETUP_SKILL = "/s0ma:setup"
+#: The front door: the skill that sets s0ma up and goes on to build something.
+#: Everything that says s0ma is not set up names it, and only from here: the
+#: "tools missing" lines below, the stub server's instructions and status text,
+#: and ``status``'s next step. The plugin's one message for when uv cannot run
+#: this file at all, ``scripts/not-set-up.txt``, names it too, and a test holds
+#: the two to the same name. ``/s0ma:setup`` stays the skill for repairing an
+#: install, and the texts that say so name it themselves.
+START_SKILL = "/s0ma:start"
 
 #: Cases 1 and 2 - there is nothing here to run, so the tools are not there.
 HINT_TOOLS_MISSING = "s0ma's tools are not available in this session."
-HINT_SETUP_ACTION = f"Run {SETUP_SKILL} in Claude to fix that."
-HINT_SETUP_SKILL = f"The {SETUP_SKILL} skill fixes that."
+HINT_START_ACTION = f"Run {START_SKILL} in Claude to fix that."
+HINT_START_SKILL = f"The {START_SKILL} skill fixes that."
 
 #: Case 3 - the key was refused the last time s0ma used it. Where a key goes is
 #: said in exactly the same words as everywhere else in this file, and the chat
@@ -4314,7 +4318,7 @@ HINT_TOO_LONG_MESSAGE = (
     "s0ma has something to say about this machine, and it did not fit in one "
     "line. Run /s0ma:doctor in Claude to see it."
 )
-HINT_TOO_LONG_CONTEXT = HINT_TOOLS_MISSING + " " + HINT_SETUP_SKILL
+HINT_TOO_LONG_CONTEXT = HINT_TOOLS_MISSING + " " + HINT_START_SKILL
 
 #: The standing note stays within this many characters. It is its own limit,
 #: separate from :data:`HINT_MAX_CHARS`, because the note is for the model, not
@@ -4324,6 +4328,7 @@ NOTE_MAX_CHARS = 1200
 
 #: The skills a person changes any of this through.
 OFF_SKILL = "/s0ma:off"
+BUILD_SKILL = "/s0ma:build"
 ON_SKILL = "/s0ma:on"
 PREFERENCES_SKILL = "/s0ma:preferences"
 
@@ -4367,6 +4372,10 @@ NOTE_STUDI0_ASKED = NOTE_STUDI0 + "is started only when the person asks."
 NOTE_IN_PROJECT = (
     "Edit the .s0ma sources and never the files in the build folder, and run "
     "`s0ma check` after an edit."
+)
+NOTE_DOORS = (
+    f"{START_SKILL} begins something new with s0ma, and the {BUILD_SKILL} "
+    "skill is how to work in a s0ma project."
 )
 NOTE_CHANGES = (
     "Any of this changes when the person says so: the "
@@ -4442,7 +4451,8 @@ def standing_note(prefs: Preferences) -> str:
 
     Plain ASCII sentences, within :data:`NOTE_MAX_CHARS`: what s0ma is for,
     whether this folder is a s0ma project, how the person wants s0ma and studi0
-    used, how to work in a s0ma project, and how any of it changes.
+    used, how to work in a s0ma project, which skill begins something new and
+    which one works in a project, and how any of it changes.
     """
     in_project = prefs.s0ma_root is not None
     if prefs.use == "always":
@@ -4463,6 +4473,7 @@ def standing_note(prefs: Preferences) -> str:
     ]
     if in_project:
         parts.append(NOTE_IN_PROJECT)
+    parts.append(NOTE_DOORS)
     parts.append(NOTE_CHANGES)
     return " ".join(parts)
 
@@ -4474,17 +4485,17 @@ def tools_missing_hint(reason: str) -> Hint:
     this command says whose length nobody controls - it can carry a directory
     somebody named in ``S0MA_TOOLCHAIN``. When saying why would push the line
     past what a person will read, the why is what goes: the symptom and the fix
-    are what matter, and ``/s0ma:setup`` prints the whole story anyway.
+    are what matter, and ``s0ma-launch status`` prints the whole story anyway.
     """
     full = Hint(
-        message=f"{HINT_TOOLS_MISSING} {reason} {HINT_SETUP_ACTION}",
-        context=f"{HINT_TOOLS_MISSING} {reason} {HINT_SETUP_SKILL}",
+        message=f"{HINT_TOOLS_MISSING} {reason} {HINT_START_ACTION}",
+        context=f"{HINT_TOOLS_MISSING} {reason} {HINT_START_SKILL}",
     )
     if hint_fits(full):
         return full
     return Hint(
-        message=f"{HINT_TOOLS_MISSING} {HINT_SETUP_ACTION}",
-        context=f"{HINT_TOOLS_MISSING} {HINT_SETUP_SKILL}",
+        message=f"{HINT_TOOLS_MISSING} {HINT_START_ACTION}",
+        context=f"{HINT_TOOLS_MISSING} {HINT_START_SKILL}",
     )
 
 

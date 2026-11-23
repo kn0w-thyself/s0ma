@@ -40,7 +40,7 @@ def test_status_on_an_empty_machine_says_so_kindly(run_cli: Any) -> None:
     assert "nothing yet" in out
     assert "s0ma is not installed on this machine yet." in out
     assert "Next step:" in out
-    assert "/s0ma:setup" in out
+    assert "/s0ma:start" in out
 
 
 def test_status_never_runs_longer_than_twelve_lines(
@@ -340,7 +340,7 @@ def test_serve_with_nothing_installed_explains_itself_on_stderr(run_cli: Any) ->
     assert code == 0
     assert out == ""
     assert "s0ma is not installed on this machine yet." in err
-    assert "/s0ma:setup" in err
+    assert "/s0ma:start" in err
 
 
 def test_serve_never_installs_anything(run_cli: Any, isolated_home: Path) -> None:
