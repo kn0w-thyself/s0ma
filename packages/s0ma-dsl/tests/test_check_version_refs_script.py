@@ -451,6 +451,38 @@ def test_every_shipped_allowlist_entry_still_matches_its_sentence(
     assert "WARNING stale allowlist entry" not in capsys.readouterr().out
 
 
+@requires_checkout
+def test_every_skill_the_claude_plugin_ships_is_a_living_doc() -> None:
+    """The skills are read from their folder, so a new one cannot be missed."""
+    checker = _checker()
+    folder = REPO_ROOT / checker.PLUGIN_SKILLS_DIR
+    on_disk = sorted(
+        f"{checker.PLUGIN_SKILLS_DIR}/{entry.name}/SKILL.md"
+        for entry in folder.iterdir()
+        if (entry / "SKILL.md").is_file()
+    )
+    assert len(on_disk) == 12, f"twelve skills are expected, found {on_disk}"
+    living = set(checker.LIVING_DOCS)
+    assert [rel for rel in on_disk if rel not in living] == []
+    scanned = sorted(rel for rel in living if rel.startswith(checker.PLUGIN_SKILLS_DIR + "/"))
+    assert scanned == on_disk
+
+
+def test_a_skill_added_to_the_folder_is_found(tmp_path: Path) -> None:
+    """What ``plugin_skills`` reads: each folder holding a SKILL.md, nothing else."""
+    checker = _checker()
+    folder = tmp_path / checker.PLUGIN_SKILLS_DIR
+    for name in ("zeta", "alpha"):
+        (folder / name).mkdir(parents=True)
+        (folder / name / "SKILL.md").write_text("# A skill\n", encoding="utf-8")
+    (folder / "empty").mkdir()
+    assert checker.plugin_skills(tmp_path) == (
+        f"{checker.PLUGIN_SKILLS_DIR}/alpha/SKILL.md",
+        f"{checker.PLUGIN_SKILLS_DIR}/zeta/SKILL.md",
+    )
+    assert checker.plugin_skills(tmp_path / "nowhere") == ()
+
+
 def test_every_shipped_allowlist_entry_names_a_living_doc() -> None:
     """An entry naming an unscanned page could never apply to anything."""
     checker = _checker()

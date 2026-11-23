@@ -127,6 +127,25 @@ LOCKSTEP_SITES: tuple[LockstepSite, ...] = (
     LockstepSite("packages/s0ma-studi0/src/s0ma_studi0/__init__.py", "module"),
 )
 
+#: The folder the Claude plugin's skills live in, one ``<name>/SKILL.md`` each.
+PLUGIN_SKILLS_DIR = "integrations/claude/plugin/skills"
+
+
+def plugin_skills(root: Path) -> tuple[str, ...]:
+    """Every skill file the Claude plugin ships under *root*, sorted."""
+    folder = root / PLUGIN_SKILLS_DIR
+    if not folder.is_dir():
+        return ()
+    return tuple(
+        f"{PLUGIN_SKILLS_DIR}/{entry.name}/SKILL.md"
+        for entry in sorted(folder.iterdir())
+        if (entry / "SKILL.md").is_file()
+    )
+
+
+#: The plugin's skills in this checkout. LIVING_DOCS takes them from here.
+PLUGIN_SKILLS: tuple[str, ...] = plugin_skills(ROOT)
+
 #: Docs whose version references are claims about the CURRENT release.
 #: Repo-relative POSIX paths. Add a page here when it starts naming a
 #: version a reader is expected to install or run.
@@ -190,15 +209,11 @@ LIVING_DOCS: tuple[str, ...] = (
     # The two contributor pages that describe the machinery as it is today.
     "docs/documentation-subsystem.md",
     "docs/operations/docs-maintenance.md",
-    # The six named commands the Claude plugin adds. They are instructions a
+    # Every named command the Claude plugin adds, read from its skills folder
+    # so a new skill is scanned the day it lands. They are instructions a
     # coding agent follows against the installed toolchain, so a version in one
     # of them is a statement about what is installed.
-    "integrations/claude/plugin/skills/doctor/SKILL.md",
-    "integrations/claude/plugin/skills/feedback/SKILL.md",
-    "integrations/claude/plugin/skills/new/SKILL.md",
-    "integrations/claude/plugin/skills/retrofit/SKILL.md",
-    "integrations/claude/plugin/skills/setup/SKILL.md",
-    "integrations/claude/plugin/skills/update/SKILL.md",
+    *PLUGIN_SKILLS,
 )
 
 #: A s0ma version is ``0.N.M`` while the product is pre-1.0 (PRD INV-4 /

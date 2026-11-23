@@ -35,8 +35,10 @@ with the runner's own Python and nothing else.
     Runs ``integrations/launcher/tests/test_e2e_real_wheels.py`` with
     ``S0MA_E2E=1`` and fails if any case skips.
 
-The real Claude Code (``claude plugin validate`` and ``claude --plugin-dir
-<dir> mcp list``) runs only when ``--claude <command>`` is given, and the
+The real Claude Code (``claude plugin validate --strict``, ``claude plugin
+validate --profile directory``, each of which must exit 0 and is printed in
+full, and ``claude --plugin-dir <dir> mcp list``) runs only when ``--claude
+<command>`` is given, and the
 workflow is the only thing that gives it. ``--no-claude`` says out loud that
 those checks were left out. One of the two is required, so nothing is left out
 in silence.
@@ -964,18 +966,51 @@ class Claude:
         results.add("claude --version", ran.stdout.strip())
 
     def validate(self, plugin_dir: Path, base: dict[str, str], cwd: Path) -> str:
+        """Both verdicts on one plugin folder: strict, then the directory profile.
+
+        ``--strict`` turns every warning the runtime would tolerate into a
+        failure. ``--profile directory`` also fails on what the plugin
+        directory would refuse a submission for. Each report is printed whole
+        by :func:`run`. A CLI that does not know ``--profile`` says so, and
+        that is printed and left there rather than failed: the flag is in the
+        CLI's help and not yet in its documentation.
+        """
+        strict = self.validate_strict(plugin_dir, base, cwd)
+        directory = self.validate_directory(plugin_dir, base, cwd)
+        return f"--strict: {strict}; --profile directory: {directory}"
+
+    def validate_strict(self, plugin_dir: Path, base: dict[str, str], cwd: Path) -> str:
         ran = run(
-            [self.path, "plugin", "validate", str(plugin_dir)], self.env(base), cwd
+            [self.path, "plugin", "validate", "--strict", str(plugin_dir)],
+            self.env(base),
+            cwd,
         )
-        expect(ran.code == 0, f"claude plugin validate exited {ran.code}")
-        lines = [
-            line.strip()
-            for line in (ran.stdout + ran.stderr).splitlines()
-            if line.strip()
-        ]
-        verdict = [line for line in lines if "Validation passed" in line]
-        expect(bool(verdict), "claude plugin validate did not say it passed")
-        return verdict[-1]
+        expect(ran.code == 0, f"claude plugin validate --strict exited {ran.code}")
+        return passed_verdict(ran, "claude plugin validate --strict")
+
+    def validate_directory(
+        self, plugin_dir: Path, base: dict[str, str], cwd: Path
+    ) -> str:
+        ran = run(
+            [
+                self.path,
+                "plugin",
+                "validate",
+                "--profile",
+                "directory",
+                str(plugin_dir),
+            ],
+            self.env(base),
+            cwd,
+        )
+        if ran.code != 0 and profile_rejected(ran):
+            say("  this claude does not take --profile; the directory profile is left out")
+            return "NOT RUN: this claude does not take --profile"
+        expect(
+            ran.code == 0,
+            f"claude plugin validate --profile directory exited {ran.code}",
+        )
+        return passed_verdict(ran, "claude plugin validate --profile directory")
 
     def mcp_list_line(self, plugin_dir: Path, base: dict[str, str], cwd: Path) -> str:
         ran = run(
@@ -990,6 +1025,33 @@ class Claude:
         line = self.mcp_list_line(plugin_dir, base, cwd)
         expect(is_connected(line), f"the s0ma server is not connected: {line}")
         return line
+
+
+def report_lines(ran: Ran) -> list[str]:
+    """Every non-blank line a command printed, on either stream, trimmed."""
+    return [
+        line.strip() for line in (ran.stdout + ran.stderr).splitlines() if line.strip()
+    ]
+
+
+def passed_verdict(ran: Ran, what: str) -> str:
+    """The validator's last "Validation passed" line, or a failed check."""
+    verdict = [line for line in report_lines(ran) if "Validation passed" in line]
+    expect(bool(verdict), f"{what} did not say it passed")
+    return verdict[-1]
+
+
+def profile_rejected(ran: Ran) -> bool:
+    """Whether the CLI refused ``--profile`` itself, before validating anything.
+
+    A run that validated prints a verdict, passed or failed, and that is never
+    read as a refusal of the flag: a failed report fails the check.
+    """
+    lines = report_lines(ran)
+    if any("Validation passed" in line or "Validation failed" in line for line in lines):
+        return False
+    text = "\n".join(lines).lower()
+    return "unknown option" in text or ("--profile" in text and "invalid" in text)
 
 
 def server_line(output: str) -> str:

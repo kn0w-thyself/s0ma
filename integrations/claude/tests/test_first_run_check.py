@@ -341,3 +341,111 @@ def test_the_finding_check_fails_on_anything_else(
         shown = finding(launcher, "[PARSE_ERROR] " + "x" * 4000)
     with pytest.raises(driver.CheckFailed):
         driver.check_edit_finding(hook_ran(driver, shown), launcher, "src/a.s0ma", "PARSE_ERROR")
+
+
+# ---------------------------------------------------------------------------
+# Reading `claude plugin validate`, strict and with the directory profile.
+# ---------------------------------------------------------------------------
+
+
+def ran(driver: ModuleType, code: int, stdout: str = "", stderr: str = "") -> object:
+    return driver.Ran(code, stdout, stderr)
+
+
+def test_a_passed_verdict_is_read(driver: ModuleType) -> None:
+    report = "Validating plugin manifest...\nWarnings:\n  ICON_MISSING\nValidation passed\n"
+    assert driver.passed_verdict(ran(driver, 0, report), "validate") == "Validation passed"
+
+
+def test_a_report_with_no_passed_verdict_fails(driver: ModuleType) -> None:
+    with pytest.raises(driver.CheckFailed):
+        driver.passed_verdict(ran(driver, 0, "Validation failed\n"), "validate")
+
+
+@pytest.mark.parametrize(
+    "stderr",
+    [
+        "error: unknown option '--profile'\n",
+        "error: option '--profile <name>' argument 'directory' is invalid.\n",
+    ],
+)
+def test_a_cli_that_refuses_the_profile_flag_is_told_apart(
+    driver: ModuleType, stderr: str
+) -> None:
+    assert driver.profile_rejected(ran(driver, 1, "", stderr)) is True
+
+
+def test_a_failed_directory_report_is_not_a_refused_flag(driver: ModuleType) -> None:
+    report = (
+        "Plugin directory: README_MISSING\n"
+        "To fail on problems the directory refuses, run this command with --profile directory.\n"
+        "Validation failed\n"
+    )
+    assert driver.profile_rejected(ran(driver, 1, report)) is False
+
+
+FAKE_CLI = """\
+#!/bin/sh
+# Answers like `claude plugin validate` would, as FAKE_VALIDATE says.
+printf '%s\\n' "$*" >> "$FAKE_LOG"
+case "$*" in
+    *--profile*)
+        case $FAKE_VALIDATE in
+            no-profile) echo "error: unknown option '--profile'" >&2; exit 1 ;;
+            directory-fails) echo "Plugin directory: README_MISSING"; echo "Validation failed"; exit 1 ;;
+        esac
+        echo "Plugin directory warning: ICON_MISSING"
+        echo "Validation passed"
+        ;;
+    *--strict*)
+        case $FAKE_VALIDATE in
+            strict-fails) echo "Validation failed (--strict treats warnings as errors)"; exit 1 ;;
+        esac
+        echo "Validation passed"
+        ;;
+    *) echo "neither flag was given" >&2; exit 2 ;;
+esac
+"""
+
+
+@pytest.mark.skipif(sys.platform.startswith("win"), reason="the stand-in CLI is a sh script")
+@pytest.mark.parametrize(
+    ("mode", "outcome"),
+    [
+        ("pass", "--strict: Validation passed; --profile directory: Validation passed"),
+        (
+            "no-profile",
+            "--strict: Validation passed; "
+            "--profile directory: NOT RUN: this claude does not take --profile",
+        ),
+        ("strict-fails", None),
+        ("directory-fails", None),
+    ],
+)
+def test_validate_runs_strict_then_the_directory_profile(
+    driver: ModuleType, tmp_path: Path, mode: str, outcome: str | None
+) -> None:
+    """Both runs happen, in that order, each must pass, and a CLI without the
+    flag is said out loud rather than failed. No real Claude is run."""
+    fake = tmp_path / "fake-cli"
+    fake.write_text(FAKE_CLI, encoding="utf-8")
+    fake.chmod(0o755)
+    log = tmp_path / "argv.log"
+    base = {
+        "PATH": "/usr/bin:/bin",
+        "FAKE_VALIDATE": mode,
+        "FAKE_LOG": str(log),
+    }
+    cli = driver.Claude(str(fake), "0.0.0", tmp_path / "work")
+    plugin = tmp_path / "plugin"
+    plugin.mkdir()
+    if outcome is None:
+        with pytest.raises(driver.CheckFailed):
+            cli.validate(plugin, base, tmp_path)
+    else:
+        assert cli.validate(plugin, base, tmp_path) == outcome
+    calls = log.read_text(encoding="utf-8").splitlines()
+    assert calls[0] == f"plugin validate --strict {plugin}"
+    if mode != "strict-fails":
+        assert calls[1] == f"plugin validate --profile directory {plugin}"
+        assert len(calls) == 2

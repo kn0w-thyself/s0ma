@@ -593,6 +593,12 @@
       "path": "editors/README.md"
     },
     {
+      "audience": "user",
+      "disposition": "living-authored",
+      "note": "The Claude Code plugin's own README: what the plugin runs, fetches, sends and writes, for a person deciding whether to install it. A test holds every host the plugin's manifest declares to this page.",
+      "path": "integrations/claude/plugin/README.md"
+    },
+    {
       "audience": "agent",
       "disposition": "living-authored",
       "note": "A skill the s0ma Claude Code plugin ships: hand-written instructions a model reads in full every time the skill is invoked.",

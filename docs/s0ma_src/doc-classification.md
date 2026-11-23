@@ -45,14 +45,14 @@ migration map; the catalog is what the build reads.
 | Disposition | Meaning | Count |
 |---|---|---|
 | `normative-current` | Binding today. The PRD, the current DSL spec, the current core spec, accepted ADRs, frozen contracts, and the repo agent contract. | 25 |
-| `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 58 |
+| `living-authored` | Hand-written and actively maintained. Guides, READMEs, runbooks, the changelog. | 59 |
 | `generated` | A rendered output of a generator or the s0ma build. Never hand-edited. | 60 |
 | `mirror` | A byte-for-byte copy of another file in this repo, kept honest by a gate. | 9 |
 | `historical` | A record of the past. Kept for provenance; must not be read as current guidance. | 18 |
 | `superseded-pointer` | A short stub whose only content is "this moved — go here". | 11 |
 | `working-plan` | Plans, notes, and review records: those under `plans/`, this summary beside the ledger it explains, and the result records of the B-phase spikes under `scripts/spikes/`. | 1 |
 | `non-documentation` | A `.md` file that is test data or test scaffolding, not part of the documentation corpus. | 4 |
-| **Total** | | **186** |
+| **Total** | | **187** |
 
 158 files were tracked at Phase A finalization (the walkthrough pointer stub added at the A5-findings pass is the 156th, and A7's two tester documents — `docs/troubleshooting.md` and `docs/uninstall.md` — are the 157th and 158th); the 159th row was this summary, which the ledger
 classifies in advance of its own commit.
@@ -752,3 +752,9 @@ The three skills that make the Claude Code plugin's front door, `start`,
 nine: a model reads each in full when it is invoked, and
 `integrations/claude/tests/test_skills.py` holds the sentences they say and the
 commands they name.
+
+The Claude Code plugin's own README, `integrations/claude/plugin/README.md`, is
+living-authored user guidance: it says what the plugin runs, fetches, sends and
+writes, for a person deciding whether to install it, and
+`integrations/claude/tests/test_plugin_manifest.py` holds every host the
+plugin's manifest declares to it.

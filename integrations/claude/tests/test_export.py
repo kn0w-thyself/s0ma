@@ -228,6 +228,16 @@ def test_the_plugin_arrives_byte_for_byte(export: Export, script: ModuleType) ->
     assert sorted(exported_plugin) == sorted(relative for relative, _ in expected)
 
 
+def test_the_plugins_readme_is_the_plugin_folders_own(
+    export: Export, script: ModuleType
+) -> None:
+    """The plugin in the export carries the README its folder carries, byte for
+    byte, so there is one text to keep true and not two that can drift."""
+    source = REPO_ROOT / script.PLUGIN_DIR / "README.md"
+    assert source.is_file(), "the plugin folder has no README of its own"
+    assert export.read(f"{script.EXPORT_PLUGIN_DIR}/README.md") == source.read_bytes()
+
+
 def test_the_root_license_is_the_plugins(export: Export, script: ModuleType) -> None:
     """One Apache-2.0 text, stated twice, identical both times."""
     plugin_license = (REPO_ROOT / script.PLUGIN_DIR / "LICENSE").read_bytes()
@@ -522,7 +532,7 @@ def test_prints_the_owner_commands_and_runs_none_of_them(
         assert "push" not in argv, f"it ran a push: {argv}"
         if program.startswith("git"):
             assert argv[3] in {"rev-parse", "status"}, f"git was asked to {argv[3]}"
-        else:
+        elif argv[1:2] != ["--version"]:
             assert argv[1:3] == ["plugin", "validate"], f"claude was asked to {argv[1:3]}"
             assert "install" not in argv and "marketplace" not in argv
 
@@ -531,8 +541,71 @@ def test_prints_the_owner_commands_and_runs_none_of_them(
     shutil.which("claude") is None,
     reason="no `claude` on PATH, so the CLI's own verdict on the export cannot be taken",
 )
-def test_the_claude_cli_accepts_the_export(export: Export) -> None:
+def test_the_claude_cli_accepts_the_export(export: Export, script: ModuleType) -> None:
     """Both halves validate: the marketplace, and the plugin inside it."""
+    binary = shutil.which("claude")
+    assert binary is not None
+    version = script.claude_version(binary)
+    if version is None or version < script.CLAUDE_FLOOR:
+        found = "a version that cannot be read" if version is None else script.dotted(version)
+        pytest.skip(
+            f"`claude` reports {found}; strict validation of the plugin needs "
+            f"{script.dotted(script.CLAUDE_FLOOR)} or newer"
+        )
     printed = export.result.stdout
     assert "the marketplace: accepted." in printed, printed
     assert "the plugin: accepted." in printed, printed
+
+
+# ---------------------------------------------------------------------------
+# A `claude` too old to judge the manifest is "not checked", never "rejected".
+# ---------------------------------------------------------------------------
+
+STAND_IN_CLI = """\
+#!/bin/sh
+# Answers like a `claude` of some build would, for the export's two questions.
+printf '%s\\n' "$*" >> "$STAND_IN_LOG"
+case "$*" in
+    --version) printf '%s\\n' "$STAND_IN_VERSION" ;;
+    "plugin validate --help") echo "  --strict  Treat warnings as errors" ;;
+    "plugin validate "*) echo "Validation passed" ;;
+    *) exit 2 ;;
+esac
+"""
+
+
+@pytest.mark.skipif(WINDOWS, reason="the stand-in CLI is a sh script")
+@pytest.mark.parametrize(
+    ("printed", "verdict", "said"),
+    [
+        ("2.1.311 (Claude Code)", None, "reports 2.1.311"),
+        ("2.1.330 (Claude Code)", True, "the plugin: accepted."),
+        ("Claude Code, some build", None, "reports a version it could not read"),
+    ],
+)
+def test_validation_waits_for_a_claude_that_knows_the_manifest(
+    script: ModuleType,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    printed: str,
+    verdict: bool | None,
+    said: str,
+) -> None:
+    fake = tmp_path / "stand-in-cli"
+    fake.write_text(STAND_IN_CLI, encoding="utf-8")
+    fake.chmod(0o755)
+    log = tmp_path / "argv.log"
+    monkeypatch.setenv("STAND_IN_VERSION", printed)
+    monkeypatch.setenv("STAND_IN_LOG", str(log))
+    monkeypatch.setattr(script, "find_claude", lambda: str(fake))
+    assert script.validate(tmp_path / "export") is verdict
+    out = capsys.readouterr().out
+    assert said in out, out
+    calls = log.read_text(encoding="utf-8").splitlines()
+    assert calls[0] == "--version"
+    if verdict is None:
+        assert "Not checked" in out and "2.1.328 or newer" in out
+        assert calls == ["--version"], "a too-old claude must not be asked to validate"
+    else:
+        assert any(call.endswith("--strict") for call in calls), calls

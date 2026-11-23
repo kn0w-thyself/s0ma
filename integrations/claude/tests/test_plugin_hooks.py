@@ -42,6 +42,7 @@ import argparse
 import importlib.util
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -101,6 +102,11 @@ SERVER_SCRIPT = PLUGIN_DIR / "scripts" / "s0ma-serve"
 MAX_TIMEOUT_SECONDS = 30
 
 #: Passed to every `claude` subprocess so a test run never reaches the network.
+#: The oldest `claude` whose strict validation knows every manifest field the
+#: plugin uses: ``network`` arrived in Claude Code 2.1.328. Below it the
+#: verdict tests skip, since the runtime tolerates a field it does not know.
+CLAUDE_FLOOR = (2, 1, 328)
+
 OFFLINE_ENV = {
     "DISABLE_AUTOUPDATER": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
@@ -154,9 +160,49 @@ def launcher() -> ModuleType:
     return module
 
 
-def claude_cli() -> str | None:
-    """The `claude` executable, if this machine has one on its PATH."""
-    return shutil.which("claude")
+def claude_version(binary: str) -> tuple[int, int, int] | None:
+    """The version `claude --version` reports, or ``None`` if it cannot be read."""
+    try:
+        result = subprocess.run(  # noqa: S603 - a fixed, local command
+            [binary, "--version"],
+            capture_output=True,
+            text=True,
+            timeout=120,
+            env={**os.environ, **OFFLINE_ENV},
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    found = re.search(r"\b(\d+)\.(\d+)\.(\d+)\b", result.stdout)
+    if result.returncode != 0 or found is None:
+        return None
+    major, minor, patch = (int(part) for part in found.groups())
+    return (major, minor, patch)
+
+
+def too_old_to_validate(binary: str) -> str | None:
+    """Why this `claude` cannot give a strict verdict on the plugin, or ``None``."""
+    version = claude_version(binary)
+    needed = ".".join(str(part) for part in CLAUDE_FLOOR)
+    if version is None:
+        return (
+            f"`claude --version` printed nothing this suite can read, so it is taken "
+            f"as older than {needed}, which strict validation of `network` needs"
+        )
+    if version < CLAUDE_FLOOR:
+        found = ".".join(str(part) for part in version)
+        return f"`claude` is {found}; strict validation of `network` needs {needed} or newer"
+    return None
+
+
+def claude_for_validation() -> str:
+    """The `claude` to take a strict verdict from, or a skip that says why not."""
+    binary = shutil.which("claude")
+    if binary is None:
+        pytest.skip("no `claude` on PATH, so the CLI's own verdict cannot be taken")
+    reason = too_old_to_validate(binary)
+    if reason is not None:
+        pytest.skip(reason)
+    return binary
 
 
 def validate_supports_strict(binary: str) -> bool:
@@ -372,9 +418,7 @@ def test_no_secret_shaped_string_is_in_the_file() -> None:
 
 def test_the_plugin_still_validates_with_the_hook_in_it() -> None:
     """`claude plugin validate` accepts the plugin, strictly where it can."""
-    binary = claude_cli()
-    if binary is None:
-        pytest.skip("no `claude` on PATH, so the CLI's own verdict cannot be taken")
+    binary = claude_for_validation()
     argv = [binary, "plugin", "validate", str(PLUGIN_DIR)]
     if validate_supports_strict(binary):
         argv.append("--strict")

@@ -1108,6 +1108,20 @@
     },
     {
       "audiences": [
+        "user"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-plugin-readme",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/README.md",
+      "status": "living",
+      "title": "s0ma for Claude Code"
+    },
+    {
+      "audiences": [
         "agent"
       ],
       "authority": "",

@@ -29,7 +29,11 @@ Run `command -v uv`.
   - Windows: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
 
   The reference is <https://docs.astral.sh/uv/getting-started/installation/>.
-  After it finishes, Claude has to be restarted before it can see uv.
+  There is no restart after it. The plugin's `s0ma` and `s0ma-launch`
+  commands look for uv on the path and in the places uv's installers put it,
+  so they find it in this same session. s0ma's own tools in Claude arrive with
+  the next session; until then, work through the `s0ma` command in the
+  terminal, and do not ask the person to restart.
 
 ## 2. What does s0ma think is going on?
 
