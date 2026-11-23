@@ -119,11 +119,13 @@ tool, which says the same thing. With uv and nothing installed, the line comes
 from s0ma's own launcher instead, you see it too, and the server is s0ma's own
 setup helper, which reports what it can see.
 
-**On Windows**, the line a session begins with needs Git for Windows, because
-Claude Code runs it through Git Bash; so do the two checks around Claude's
-edits, described [below](#around-claudes-edits), and the `s0ma` and `s0ma-launch`
-commands inside Claude, which are shell scripts, though each has a `.cmd` twin
-for a Windows shell without Git Bash. The server starts either way.
+**On Windows**, the line a session begins with and the two checks around
+Claude's edits, described [below](#around-claudes-edits), need Git for Windows,
+because Claude Code runs them through Git Bash. Without it they stay silent:
+nothing is said at the start of a session, and edits are neither checked nor
+refused. The `s0ma` and `s0ma-launch` commands inside Claude are shell scripts
+too, though each has a `.cmd` twin for a Windows shell without Git Bash. The
+server starts either way.
 
 **Where the `s0ma-launch` commands on this page run.** The plugin puts `s0ma`
 and `s0ma-launch` on the path of the terminal Claude Code itself uses, so

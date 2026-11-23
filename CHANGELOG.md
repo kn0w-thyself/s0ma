@@ -212,6 +212,11 @@ Historical entries describe artifacts as they were named at the time.
   launcher's new `before-edit` and `after-edit` commands. A test on the
   s0ma-lang-dsl side holds the launcher's copy of the default build folder to
   the compiler's rule, and the first-run check runs both hooks on each leg.
+  Every hook line, the session-start one included, now opens with
+  `echo --% >/dev/null;` and closes with `# | out-null`, so on Windows without
+  Git Bash, where Claude Code runs it in PowerShell, it runs nothing and prints
+  nothing instead of failing; the first-run check proves that in Windows
+  PowerShell 5.1 and PowerShell 7.
 
 ### Changed
 
