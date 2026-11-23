@@ -46,6 +46,7 @@ import queue
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 import threading
 import time
@@ -782,22 +783,45 @@ def path_without_claude(path: str) -> str:
 
 
 def export_tree(
-    work: Path, env: dict[str, str], results: Results, *, with_claude: bool
+    work: Path,
+    env: dict[str, str],
+    results: Results,
+    *,
+    with_claude: bool,
+    from_tar: Path | None = None,
 ) -> Path:
-    """Write the export and prove its executable bits came through."""
+    """Write the export, or unpack one, and prove its executable bits came through.
+
+    The export needs the workspace to check the plugin's skills against, so a
+    leg with no uv is handed the export as a tar file another job wrote with
+    ``uv run``; a tar file keeps the modes the export set.
+    """
     banner("The tree scripts/export_claude_marketplace.py writes")
     out = work / "export"
-    export_env = dict(env)
-    if not with_claude:
-        # The export runs claude plugin validate when it finds a claude.
-        export_env["PATH"] = path_without_claude(env.get("PATH", ""))
-    ran = run([sys.executable, str(EXPORT_SCRIPT), "--out", str(out)], export_env, ROOT)
-    expect(ran.code == 0, f"the export exited {ran.code}")
-    if with_claude:
-        expect(
-            "the plugin: accepted." in ran.stdout,
-            "the export did not report claude accepting the plugin",
+    if from_tar is not None:
+        say(f"unpacking the export from {from_tar}")
+        expect(from_tar.is_file(), f"{from_tar} is not there")
+        with tarfile.open(from_tar) as archive:
+            archive.extractall(out, filter="data")
+        for entry in sorted(out.rglob("*")):
+            if entry.is_file():
+                say(
+                    f"  {entry.stat().st_mode & 0o777:04o}  {entry.relative_to(out).as_posix()}"
+                )
+    else:
+        export_env = dict(env)
+        if not with_claude:
+            # The export runs claude plugin validate when it finds a claude.
+            export_env["PATH"] = path_without_claude(env.get("PATH", ""))
+        ran = run(
+            [sys.executable, str(EXPORT_SCRIPT), "--out", str(out)], export_env, ROOT
         )
+        expect(ran.code == 0, f"the export exited {ran.code}")
+        if with_claude:
+            expect(
+                "the plugin: accepted." in ran.stdout,
+                "the export did not report claude accepting the plugin",
+            )
     plugin = out / "plugins" / "s0ma"
     manifest = json.loads((out / "EXPORT-MANIFEST.json").read_text(encoding="utf-8"))
     modes = {entry["path"]: entry["mode"] for entry in manifest["files"]}
@@ -874,7 +898,9 @@ def leg_uv_absent(opts: argparse.Namespace, work: Path, results: Results) -> Non
     say(f"the message: {message}")
     env = child_env({"S0MA_HOME": str(work / "s0ma-home")})
     claude = Claude(opts.claude, opts.claude_version, work) if opts.claude else None
-    exported = export_tree(work, env, results, with_claude=claude is not None)
+    exported = export_tree(
+        work, env, results, with_claude=claude is not None, from_tar=opts.exported_tar
+    )
 
     for label, plugin_dir in (
         ("plugin folder", PLUGIN_DIR),
@@ -1171,6 +1197,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--claude-version", help="the exact Claude Code version --claude must be"
+    )
+    parser.add_argument(
+        "--exported-tar",
+        type=Path,
+        help="the export as a tar file, for a leg with no uv to write it with",
     )
     parser.add_argument(
         "--hide-uv",
