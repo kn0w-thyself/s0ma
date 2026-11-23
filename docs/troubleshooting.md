@@ -179,7 +179,7 @@ the sentence scrolled past. Zero is success. The rest:
 |---|---|---|
 | **2** | The command line was wrong, or what you asked for cannot be done here — a version that is not shaped like one, `pin` in a project that carries its own s0ma, `activate` where there is no terminal to type into, or a version the service has never heard of. | Read the sentence printed with it: each one names the correction. `activate` in particular needs a real terminal — in Claude, put the key in the plugin's settings instead. |
 | **3** | s0ma is not installed, or could not be. Either nothing is installed here, or this copy has no such command, or `uv` refused to build the environment — in which case the message quotes the last lines `uv` printed. | Run `/s0ma:setup`, or `s0ma-launch install`. When `uv` spoke, read its lines first: they are about your machine, not about s0ma. Nothing was installed and nothing already installed has changed. |
-| **4** | There is no license key on this machine, or the one that was used has been refused, or this account's access to new versions has ended. | The key goes in the plugin's **s0ma license key** field, or into `s0ma-launch activate` in your own terminal — never into a conversation. If access has ended, nothing installed stops working; only new downloads do. |
+| **4** | The license key that was used has been refused, or this account's access to new versions has ended. A machine with no key at all does not see this: it installs without one. | The key goes in the plugin's **s0ma license key** field, or into `s0ma-launch activate` in your own terminal — never into a conversation. If access has ended, nothing installed stops working; only new downloads do. |
 | **5** | Something about the network. The service could not be reached, or it was busy and asked this machine to wait, or it answered with something s0ma could not read. | Nothing was fetched and the copy on this machine keeps working. Try again in a little while; if it was a busy answer, the message says roughly how long it asked for. |
 | **6** | A downloaded file was not the file the service described, so it was deleted and the install stopped. | Nearly always a download cut short: run it again. If it keeps happening on the same file, tell us — that is worth knowing about. |
 | **7** | `uv` is not on this computer, or could not be run. | This is the one failure that stops everything, including the s0ma server itself. Install uv from <https://docs.astral.sh/uv/getting-started/installation/> and restart Claude. If uv *is* installed and this still happens, Claude was started without your shell's path: run `command -v uv` and paste that one path into the plugin's **Where uv lives on this computer** setting. |
@@ -187,7 +187,7 @@ the sentence scrolled past. Zero is success. The rest:
 ### The line a new session sometimes starts with
 
 s0ma tells a new session at most one thing, and only when there is something to
-say. Silence is the normal case and means all is well. The six it can say:
+say. Silence is the normal case and means all is well. The seven it can say:
 
 | You see | What it means | What to do |
 |---|---|---|
@@ -196,6 +196,7 @@ say. Silence is the normal case and means all is well. The six it can say:
 | *The last time s0ma used your license key, it was refused.* | The service did not accept the key when s0ma last tried to fetch something. Everything installed keeps working. | Check the whole key was pasted, then put it back in the plugin's settings, or run `s0ma-launch activate` in a terminal. Never type a key into the chat. |
 | *This account's access to new versions of s0ma has ended.* | News, not an error. The copy you have keeps working; only downloads of newer versions stop. | Nothing, unless you want new versions — in which case the message names the account page. |
 | *s0ma … is available; s0ma … is what runs here.* | This machine is set to `notify`, so it looked and did not fetch. | `/s0ma:update` when you want it, or switch the setting to `auto` and stop being asked. |
+| *s0ma … came with the s0ma plugin; s0ma … is what runs here.* | There is no license key on this machine, so nothing is fetched on its own, and a newer plugin brought a newer s0ma. | `/s0ma:update` when you want it. Set updates to `off` to stop being told. |
 | *s0ma … was fetched quietly in the background, and it is what Claude will use from your next session.* | An automatic update finished. Nothing changed underneath the session you were in. | Nothing. Start a new session whenever you like. |
 
 One more line exists for the rare case where the real sentence would be too long
@@ -230,6 +231,11 @@ That asks once and prints what is installed here, what the newest one is, and
 what to do about the difference. If it names a newer one, `s0ma-launch update`
 moves to it, and the change takes effect from your next session. If `--check`
 also says there is nothing newer, there is nothing newer.
+
+On a machine with no license key, nothing is asked at all: the newest s0ma it
+knows is the one the plugin brings, which `update --check` names. A newer one
+arrives when the plugin is updated; the line a session begins with then says
+so, and `/s0ma:update` installs it. Nothing arrives quietly with no key.
 
 Two other reasons a machine legitimately stays where it is, both of which
 `s0ma-launch status` names on its "Updates" and "Project" lines: **How s0ma

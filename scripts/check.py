@@ -33,8 +33,9 @@ runs every CI gate (PRD NFR-1):
     launcher held to ``mypy --strict`` in BOTH the native and the
     ``--platform win32`` view (it is the one file two shipped packages carry
     a copy of, and it runs on Windows for real), the sync script's
-    ``--check`` (the launcher copies, the three version sites and the
-    feedback skill's body are what the monorepo says they are — see
+    ``--check`` (the launcher copies, the three version sites, the
+    launcher's own version and the feedback skill's body are what the
+    monorepo says they are — see
     ``scripts/sync_integrations.py``), then the integrations test suite.
     Slotted after the four package suites because it is not one of them: it
     gates what is SHIPPED AROUND the packages, and its tests perform real
@@ -626,8 +627,9 @@ STAGES: list[Stage] = [
         #      thrash one shared cache.
         #   4. the sync script's --check: the two launcher copies are byte
         #      copies, the plugin manifest / extension manifest / extension
-        #      pyproject all state the lockstep version, and the plugin's
-        #      feedback skill has the body ``s0ma new project`` scaffolds.
+        #      pyproject and the launcher's LAUNCHER_VERSION line all state
+        #      the lockstep version, and the plugin's feedback skill has the
+        #      body ``s0ma new project`` scaffolds.
         #      One command fixes every one of them, and it says so.
         #   5. the integrations suite. It takes about forty seconds because
         #      the launcher's tests perform real (offline) installs with uv

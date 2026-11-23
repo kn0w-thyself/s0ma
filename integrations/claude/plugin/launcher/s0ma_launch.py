@@ -35,7 +35,9 @@ Reading order, roughly: the state directory, then which copy of s0ma runs here,
 then ``status`` and ``serve``, then the built-in stub server - the one this file
 speaks itself when there is no s0ma to start - then everything that talks to the
 control plane and looks after installed copies: install, update, pin and
-activate.
+activate. A machine with a license key installs from the control plane; a
+machine without one installs the launcher's own version through uv, from the
+package index, and the launcher itself contacts nobody.
 """
 
 from __future__ import annotations
@@ -67,6 +69,18 @@ from typing import Any
 # ---------------------------------------------------------------------------
 
 PROG = "s0ma-launch"
+
+#: The version of s0ma this copy of the launcher was released with. With no
+#: license key on the machine, this is the version ``install`` puts in place and
+#: the one ``update`` moves to, so a newer s0ma arrives when the plugin (or the
+#: Desktop extension) that carries this file is updated. One literal, kept
+#: equal to the lockstep version by ``scripts/sync_integrations.py``, which
+#: rewrites this line at a release cut.
+LAUNCHER_VERSION = "0.22.0"
+
+#: The distribution the keyless route asks uv for: the umbrella, which requires
+#: each of the four parts of s0ma at exactly its own version.
+INDEX_DISTRIBUTION = "s0ma-lang"
 
 #: Exit codes, frozen by the plan (section 4.3).
 EXIT_OK = 0
@@ -130,7 +144,9 @@ UPDATE_MODES = ("auto", "notify", "off")
 DEFAULT_UPDATE_MODE = "auto"
 
 #: The control plane: the one host this launcher ever talks to, and only for
-#: the manifest, the wheels it names, and a key check.
+#: the manifest, the wheels it names, and a key check - and only when there is
+#: a license key. With no key the launcher talks to nobody: uv fetches s0ma
+#: from whichever package index the machine is set up to use.
 DEFAULT_CP_HOST = "account.kn0wthyself.ai"
 
 #: The four distributions a copy of s0ma is made of, in the order they are
@@ -188,6 +204,11 @@ KIND_NONE = "none"
 #: The schema tag on ``status --json`` output, so a later reader can tell
 #: which shape it is looking at.
 STATUS_SCHEMA = "s0ma-launch-status@1"
+
+#: Where an install on this machine would come from, as ``status --json``
+#: reports it: the control plane with a license key, the package index without.
+INSTALL_ROUTE_CONTROL_PLANE = "control_plane"
+INSTALL_ROUTE_INDEX = "package_index"
 
 UV_MISSING_MESSAGE = (
     "s0ma needs the `uv` tool to look after its own Python environments, and "
@@ -1035,10 +1056,15 @@ def next_step(
 
     if resolution.found:
         key, _ = license_key(values, base)
-        if key is None and resolution.kind == KIND_MANAGED:
+        if (
+            key is None
+            and resolution.kind == KIND_MANAGED
+            and resolution.version is not None
+            and is_newer(LAUNCHER_VERSION, resolution.version)
+        ):
             return (
-                "Nothing urgent. Add your license key in the s0ma plugin's settings "
-                "when you want new versions to keep arriving."
+                f"Nothing urgent. s0ma {LAUNCHER_VERSION} came with the s0ma plugin; "
+                f"run `{PROG} update` to move to it now."
             )
         return "Nothing - s0ma is ready."
 
@@ -1105,6 +1131,8 @@ def status_report(
             "source": key_source,
         },
         "entitlement": state.get("entitlement", "unknown"),
+        "install_route": INSTALL_ROUTE_CONTROL_PLANE if key else INSTALL_ROUTE_INDEX,
+        "launcher_version": LAUNCHER_VERSION,
         "update": update_mode(values, config),
         "cp_host": cp_host(values, config),
         "uv": fwd(uv) if uv else None,
@@ -1147,11 +1175,33 @@ def status_lines(report: Mapping[str, Any]) -> list[str]:
     else:
         key_line = "not set"
 
-    updates = {
-        "auto": "automatic - a newer s0ma is fetched quietly and used next time",
-        "notify": "you are told when a newer s0ma is available",
-        "off": "off - s0ma never updates itself",
-    }[report["update"]]
+    keyless = report.get("install_route") == INSTALL_ROUTE_INDEX
+    if keyless:
+        # With no key nothing is fetched on its own, under any setting: the
+        # person is told, and a person's `update` installs it.
+        told = (
+            f"you are told when the plugin brings a newer s0ma, and `{PROG} "
+            "update` installs it"
+        )
+        updates = {
+            "auto": "automatic notice - " + told,
+            "notify": told,
+            "off": (
+                "off - s0ma never updates itself, and never says when the plugin "
+                "brings a newer s0ma"
+            ),
+        }[report["update"]]
+        source = (
+            f"the package index, no key needed (this launcher brings "
+            f"{report.get('launcher_version') or LAUNCHER_VERSION})"
+        )
+    else:
+        updates = {
+            "auto": "automatic - a newer s0ma is fetched quietly and used next time",
+            "notify": "you are told when a newer s0ma is available",
+            "off": "off - s0ma never updates itself",
+        }[report["update"]]
+        source = "the s0ma control plane, with the license key"
 
     return [
         f"Runs here:    {runs}",
@@ -1159,6 +1209,7 @@ def status_lines(report: Mapping[str, Any]) -> list[str]:
         f"Project:      {report['project']} ({pinned})",
         f"Installed:    {installed}",
         f"License key:  {key_line}",
+        f"Fetched from: {source}",
         f"Subscription: {ENTITLEMENT_WORDS.get(report['entitlement'], 'not checked yet')}",
         f"Updates:      {updates}",
         f"uv:           {report['uv'] or 'not found on this machine'}",
@@ -1438,9 +1489,9 @@ def stub_instructions(resolution: Resolution) -> str:
     return (
         f"{reason}, so none of s0ma's own tools are available in this session "
         "and this server can only report on that. Tell the person to run "
-        "/s0ma:setup, which installs s0ma and shows them where their license key "
-        "goes, and then to restart this server - starting a new session is "
-        "enough - so the real s0ma takes over."
+        "/s0ma:setup, which installs s0ma (no license key is needed), and then "
+        "to restart this server - starting a new session is enough - so the "
+        "real s0ma takes over."
     )
 
 
@@ -2447,6 +2498,15 @@ def download_wheel(
 # tests set `S0MA_LAUNCH_OFFLINE_INSTALL=1`, which adds `--offline`, and use
 # stand-in wheels with no dependencies at all - so the tests perform a real
 # install without ever touching a network.
+#
+# With no license key there is no manifest and nothing to download: the same
+# environment is built the same way, and uv is asked for `s0ma-lang==<version>`
+# - the umbrella, pinned to one exact version, which in turn pins each of its
+# four parts to that version. uv fetches it from whichever package index this
+# machine's uv is set up to use, exactly as it fetches the dependencies on the
+# keyed route, so this route trusts that index the way any `pip install`
+# does. The keyed route checks each file's sha256 against the manifest; this
+# one has no manifest to check against.
 # ---------------------------------------------------------------------------
 
 PARTIAL_SUFFIX = ".partial"
@@ -2617,16 +2677,25 @@ def install_version(
     new environment is built under a temporary name and moved into place at the
     end, and the record in ``state.json`` is written once, afterwards.
 
+    With no license key on the machine (and no *manifest* handed in) the
+    install takes the keyless route instead, :func:`install_from_index`, and
+    ``None`` means this launcher's own version.
+
     Taking the update lock is the caller's job - both callers do - because an
     update takes it once for the whole check-and-install, not twice.
     """
     values = environ(env)
+    if key is None:
+        key, _ = license_key(values, home)
+    if not key and manifest is None:
+        return install_from_index(
+            home, env=values, version=version, uv=uv, runner=runner, progress=progress
+        )
+
     config = load_config(home)
     base = cp_base_url(cp_host(values, config))
     tool = require_uv(values) if uv is None else uv
 
-    if key is None:
-        key, _ = license_key(values, home)
     if not key:
         raise LauncherError(EXIT_NO_KEY, KEY_MISSING_MESSAGE)
 
@@ -2739,6 +2808,126 @@ def install_version(
     state["last_error"] = None
     save_state(home, state)
     return resolved
+
+
+def index_requirement(version: str) -> str:
+    """What uv is asked for on the keyless route: the umbrella, at one version."""
+    return f"{INDEX_DISTRIBUTION}=={version}"
+
+
+def install_from_index(
+    home: Path,
+    *,
+    env: Mapping[str, str] | None = None,
+    version: str | None = None,
+    uv: Path | None = None,
+    runner: Callable[..., Any] | None = None,
+    progress: Callable[[str], None] = say,
+) -> str:
+    """Install one version of s0ma with no license key; return that version.
+
+    *version* defaults to :data:`LAUNCHER_VERSION`, the version this launcher
+    was released with. The launcher asks nobody anything here: uv is handed
+    ``s0ma-lang==<version>`` and fetches it from whichever package index the
+    machine's own uv configuration names, with the same environment every
+    other uv run gets (:func:`child_environment`, so never a key). Everything
+    after that is the keyed install's shape - a ``.partial`` environment, the
+    complete marker written last, one atomic move.
+
+    ``state.json`` is given only what is true: what is installed, and that
+    nothing went wrong. ``entitlement``, ``last_check`` and ``latest_seen``
+    are what a control plane said, and none was asked, so none is touched.
+    """
+    values = environ(env)
+    tool = require_uv(values) if uv is None else uv
+    resolved = version if version else LAUNCHER_VERSION
+
+    swept = sweep_unusable(home)
+    if swept:
+        progress(
+            f"Cleared away {len(swept)} unfinished install"
+            + ("s." if len(swept) != 1 else ".")
+        )
+
+    progress(
+        f"s0ma {resolved}: there is no license key on this machine, so uv fetches "
+        "it from the package index it is set up to use."
+    )
+    toolchains_dir(home).mkdir(parents=True, exist_ok=True)
+    _chmod_best_effort(toolchains_dir(home), DIR_MODE)
+    partial = toolchains_dir(home) / (resolved + PARTIAL_SUFFIX)
+    _remove_tree(partial)
+
+    offline = ["--offline"] if wants_offline_install(values) else []
+    try:
+        progress(f"Building a private Python environment for s0ma {resolved}...")
+        run_uv(
+            tool,
+            ["venv", "--relocatable", *offline, str(partial)],
+            env=values,
+            what=f"make a Python environment for s0ma {resolved}",
+            runner=runner,
+        )
+        interpreter = venv_python(partial)
+        if interpreter is None:
+            raise LauncherError(
+                EXIT_NOT_INSTALLED,
+                "uv did not leave a Python behind in the new environment at "
+                f"{fwd(partial)}, so s0ma could not be installed into it. Nothing "
+                "has changed; try again.",
+            )
+        progress(f"Installing s0ma {resolved} into it...")
+        run_uv(
+            tool,
+            [
+                "pip",
+                "install",
+                "--python",
+                str(interpreter),
+                *offline,
+                index_requirement(resolved),
+            ],
+            env=values,
+            what=f"install s0ma {resolved} from the package index",
+            runner=runner,
+        )
+    except LauncherError:
+        # Nothing half-built is left for a later run to puzzle over.
+        _remove_tree(partial)
+        raise
+
+    # Written last, on purpose: until this exists, nothing will run what is in
+    # this directory, and the next run sweeps it away.
+    (partial / COMPLETE_MARKER).write_text(resolved + "\n", encoding="utf-8", newline="\n")
+
+    final = managed_toolchain_dir(home, resolved)
+    if final.exists():
+        progress(f"Replacing the copy of s0ma {resolved} that was already here.")
+        _remove_tree(final)
+    try:
+        os.replace(partial, final)
+    except OSError as failure:
+        raise LauncherError(
+            EXIT_NOT_INSTALLED,
+            f"s0ma {resolved} was fetched and built, but it could not be moved "
+            f"into place at {fwd(final)} ({_reason_of(failure)}). This usually "
+            "means a s0ma that is still running is holding it open: close the "
+            "sessions that are using s0ma and try again. Nothing that works "
+            "today has been changed.",
+        ) from failure
+
+    state = load_state(home)
+    state["installed"] = installed_versions(home)
+    state["current"] = state["installed"][-1] if state["installed"] else resolved
+    state["last_error"] = None
+    save_state(home, state)
+    return resolved
+
+
+def has_license_key(env: Mapping[str, str] | None = None, home: Path | None = None) -> bool:
+    """Whether this machine has a license key, and so takes the keyed route."""
+    key, _ = license_key(env, home)
+    return bool(key)
 
 
 def cmd_install(args: argparse.Namespace) -> int:
@@ -2895,6 +3084,11 @@ class UpdateLock:
 # outlives the session - looks for something newer and installs it beside the
 # old one. Nothing is switched mid-session; the next session starts the new one.
 # The previous version is always kept, so going back is one `pin` away.
+#
+# All of that is for a machine with a key. On a machine with none, nobody is
+# asked and nothing is fetched on its own: the newest s0ma there is to know
+# about is `LAUNCHER_VERSION`, which changes when the plugin carrying this file
+# is updated. The session hint says so, and a person's `update` installs it.
 # ---------------------------------------------------------------------------
 
 #: Windows creation flags. Spelled out rather than read from `subprocess`,
@@ -3007,6 +3201,10 @@ def maybe_start_background_update(
     * updates are not switched off;
     * there is a key, so there is something to ask with;
     * the last check was more than a day ago.
+
+    With no key nothing is fetched on its own: a newer s0ma that comes with
+    the plugin is named by the session hint and installed when a person runs
+    ``update``.
     """
     try:
         values = environ(env)
@@ -3114,6 +3312,63 @@ def update_check_lines(
     return lines
 
 
+#: How a keyless machine learns about a newer s0ma: it does not ask, it is
+#: brought one. Said wherever a keyless ``update`` has nothing to do.
+KEYLESS_NEWER_SENTENCE = (
+    "There is no license key on this machine, so s0ma does not look for newer "
+    "versions; a newer s0ma arrives when the s0ma plugin (or the Claude Desktop "
+    "extension) is updated."
+)
+
+
+def keyless_current_sentence(installed: str) -> str:
+    """What a keyless ``update`` says when there is nothing to install."""
+    if installed == LAUNCHER_VERSION:
+        lead = f"s0ma {installed} is installed here, which is the version this plugin brings."
+    else:
+        lead = (
+            f"s0ma {installed} is installed here, and this plugin brings "
+            f"{LAUNCHER_VERSION}, so there is nothing newer to install."
+        )
+    return lead + " " + KEYLESS_NEWER_SENTENCE
+
+
+def keyless_update_check_lines(
+    home: Path,
+    *,
+    env: Mapping[str, str] | None = None,
+    project: Path | None = None,
+) -> list[str]:
+    """What ``update --check`` says with no key. Asks nobody anything."""
+    values = environ(env)
+    where = project_dir(values) if project is None else project
+    current = newest_installed(home)
+    lines = [
+        f"Installed here:  {current or 'nothing yet'}",
+        f"Plugin brings:   {LAUNCHER_VERSION}",
+    ]
+    if is_newer(LAUNCHER_VERSION, current):
+        lines.append(
+            f"s0ma {LAUNCHER_VERSION} came with the plugin. Run `{PROG} update` to "
+            "install it."
+        )
+    else:
+        lines.append("This machine already has the s0ma this plugin brings.")
+    lines.append(KEYLESS_NEWER_SENTENCE)
+    pin = read_pin(where)
+    if pin.version:
+        lines.append(
+            f"This project asks for s0ma {pin.version} in its {PIN_FILENAME} file, "
+            f"so it stays there until someone runs `{PROG} unpin`."
+        )
+    elif bin_dir_of(project_venv(where)) is not None:
+        lines.append(
+            "This project has its own copy of s0ma, so it keeps using that one "
+            "whatever is installed here."
+        )
+    return lines
+
+
 def perform_update(
     home: Path,
     *,
@@ -3140,20 +3395,30 @@ def perform_update(
             )
             return EXIT_OK
         previous = newest_installed(home)
-        manifest = look_for_newer(
-            home, env=values, opener=opener, timeout=timeout, progress=progress
-        )
-        if not is_newer(manifest.version, previous):
-            progress(f"s0ma {previous} is already the newest there is.")
-            return EXIT_OK
-        installed = install_version(
-            home,
-            env=values,
-            manifest=manifest,
-            opener=opener,
-            timeout=timeout,
-            progress=progress,
-        )
+        if not has_license_key(values, home):
+            # No key, so nobody to ask: the newest s0ma this machine can know
+            # about is the one this launcher was released with.
+            if previous is not None and not is_newer(LAUNCHER_VERSION, previous):
+                progress(keyless_current_sentence(previous))
+                return EXIT_OK
+            installed = install_version(
+                home, env=values, version=LAUNCHER_VERSION, progress=progress
+            )
+        else:
+            manifest = look_for_newer(
+                home, env=values, opener=opener, timeout=timeout, progress=progress
+            )
+            if not is_newer(manifest.version, previous):
+                progress(f"s0ma {previous} is already the newest there is.")
+                return EXIT_OK
+            installed = install_version(
+                home,
+                env=values,
+                manifest=manifest,
+                opener=opener,
+                timeout=timeout,
+                progress=progress,
+            )
         pin = read_pin(where)
         keep = {installed}
         if previous:
@@ -3209,6 +3474,13 @@ def run_background_update(
         mode = update_mode(values, config)
         if mode == "off":
             say("Updates are switched off on this machine, so nothing was checked.")
+            return EXIT_OK
+        if not has_license_key(values, home):
+            # No key: nothing is fetched unless a person asks for it.
+            say(
+                "There is no license key on this machine, so nothing is fetched "
+                f"on its own; run `{PROG} update` to install a newer s0ma."
+            )
             return EXIT_OK
         with UpdateLock(home) as taken:
             if not taken:
@@ -3269,6 +3541,10 @@ def cmd_update(args: argparse.Namespace) -> int:
     if getattr(args, "background", False):
         return run_background_update(home, env=values)
     if getattr(args, "check", False):
+        if not has_license_key(values, home):
+            for line in keyless_update_check_lines(home, env=values):
+                print(line)
+            return EXIT_OK
         try:
             manifest = look_for_newer(home, env=values)
         except LauncherError as failure:
@@ -3611,6 +3887,14 @@ HINT_NEWER_AVAILABLE = (
     "Run /s0ma:update in Claude when you want it."
 )
 
+#: Case 5 with no license key - the plugin brought a newer s0ma than the one
+#: installed. Nothing fetches it on its own, so this is said under ``auto`` as
+#: well as ``notify``, and the update skill is what installs it.
+HINT_PLUGIN_BRINGS = (
+    "s0ma {latest} came with the s0ma plugin; s0ma {running} is what runs here. "
+    "Run /s0ma:update in Claude to install it."
+)
+
 #: Case 6 - a newer version is already on this machine, waiting to be started.
 HINT_UPDATE_WAITING = (
     "s0ma {pending} was fetched quietly in the background, and it is what Claude "
@@ -3717,7 +4001,10 @@ def session_hint(
     2. The project asks for a version that is not installed.
     3. The key was refused the last time s0ma used it.
     4. This account's access to new versions has ended.
-    5. A newer version exists and this machine asked to be told about it.
+    5. A newer version exists and this machine asked to be told about it -
+       or, with no license key, the plugin brings a newer version than the one
+       that runs, which is said under ``auto`` too, because nothing is fetched
+       on its own without a key.
     6. A newer version has already been fetched and is waiting to be used.
 
     The last two are about updates, so ``S0MA_UPDATE=off`` silences both by the
@@ -3754,12 +4041,26 @@ def session_hint(
         return None
     mode = update_mode(values, config)
 
-    # 5. Told, not fetched.
-    latest = hint_version(state.get("latest_seen"))
-    if mode == "notify" and latest is not None and is_newer(latest, running):
-        return Hint(
-            message=HINT_NEWER_AVAILABLE.format(latest=latest, running=running)
-        )
+    # 5, with no key. Nothing is fetched on its own, so under ``auto`` and
+    # ``notify`` alike the person is told when the plugin brings a newer s0ma,
+    # and ``/s0ma:update`` installs it. ``latest_seen`` is not read: it is a
+    # control plane's offer, which cannot be fetched without a key. Reading the
+    # key is a file read, so nothing here reaches out.
+    key, _ = license_key(values, base)
+    if not key:
+        if mode in ("auto", "notify") and is_newer(LAUNCHER_VERSION, running):
+            return Hint(
+                message=HINT_PLUGIN_BRINGS.format(
+                    latest=LAUNCHER_VERSION, running=running
+                )
+            )
+    else:
+        # 5. Told, not fetched.
+        latest = hint_version(state.get("latest_seen"))
+        if mode == "notify" and latest is not None and is_newer(latest, running):
+            return Hint(
+                message=HINT_NEWER_AVAILABLE.format(latest=latest, running=running)
+            )
 
     # 6. Fetched, not yet started. ``serve`` clears ``pending`` the moment it
     # starts that version, so a ``pending`` still on disk is the launcher's own
@@ -3851,7 +4152,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     install = subcommands.add_parser("install", help="install s0ma on this machine")
     install.add_argument(
-        "--version", metavar="V", default=None, help="a version to install (default: the newest)"
+        "--version",
+        metavar="V",
+        default=None,
+        help=(
+            "a version to install (default: the newest, or with no license key "
+            "the version this plugin brings)"
+        ),
     )
     install.set_defaults(handler=cmd_install)
 

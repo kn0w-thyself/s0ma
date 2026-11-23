@@ -178,10 +178,29 @@ def edited_skill_body(sync: ModuleType, root: Path) -> str:
     return relative
 
 
+def stale_launcher_version(sync: ModuleType, root: Path) -> str:
+    """A release cut moved the packages and left the launcher's own version.
+
+    Only the source is edited, which is how the drift really arrives: the
+    copies are made from the source, so they still carry the right line.
+    """
+    relative = sync.LAUNCHER_SOURCE
+    path = root / relative
+    text = path.read_bytes().decode("utf-8")
+    stated = sync.LAUNCHER_VERSION_RE.findall(text)[0]
+    path.write_bytes(
+        text.replace(f'LAUNCHER_VERSION = "{stated}"', 'LAUNCHER_VERSION = "0.1.0"', 1).encode(
+            "utf-8"
+        )
+    )
+    return relative
+
+
 #: The drifts, each a callable that breaks one thing and names the file.
 DRIFTS = {
     "stale launcher copy (plugin)": stale_launcher_copy,
     "stale launcher copy (desktop)": stale_desktop_launcher_copy,
+    "stale launcher version (source)": stale_launcher_version,
     "wrong version (plugin manifest)": lambda sync, root: stale_manifest_version(sync, root, 0),
     "wrong version (desktop manifest)": lambda sync, root: stale_manifest_version(sync, root, 1),
     "wrong version (desktop pyproject)": stale_extension_pyproject,
@@ -362,6 +381,79 @@ class TestTheManifestsKeepTheirFormatting:
         text = (tree / relative).read_text(encoding="utf-8")
         assert text.startswith("# The Claude Desktop extension's project file.")
         assert "[project]" in text
+
+
+# ---------------------------------------------------------------------------
+# The launcher's own version
+# ---------------------------------------------------------------------------
+
+
+class TestTheLauncherVersion:
+    """With no license key the launcher installs the version it states, so that
+    line is a version site like the manifests, kept by the same script."""
+
+    def test_the_committed_launcher_states_the_lockstep_version(
+        self, sync: ModuleType
+    ) -> None:
+        text = (REPO_ROOT / sync.LAUNCHER_SOURCE).read_text(encoding="utf-8")
+        assert sync.LAUNCHER_VERSION_RE.findall(text) == [
+            sync.read_lockstep_version(REPO_ROOT)
+        ]
+
+    def test_a_clean_run_names_it(self, tree: Path) -> None:
+        stdout = run_script("--check", root=tree).stdout
+        assert "the launcher's own version" in stdout
+
+    def test_a_release_bump_moves_the_line_and_both_copies_in_one_write(
+        self, sync: ModuleType, tree: Path
+    ) -> None:
+        """The lockstep version moves; one ``--write`` brings the launcher's
+        line and its two copies along, and nothing else in them moves."""
+        source = tree / sync.VERSION_SOURCE
+        source.write_text(
+            sync.TOML_VERSION_RE.sub(
+                'version = "9.9.9"', source.read_text(encoding="utf-8"), count=1
+            ),
+            encoding="utf-8",
+            newline="\n",
+        )
+        check = run_script("--check", root=tree)
+        assert check.returncode == 1
+        assert sync.LAUNCHER_SOURCE in check.stdout
+        assert "states LAUNCHER_VERSION" in check.stdout
+
+        written = run_script("--write", root=tree)
+        assert written.returncode == 0, written.stdout + written.stderr
+        assert f"wrote: {sync.LAUNCHER_SOURCE} (LAUNCHER_VERSION " in written.stdout
+        assert run_script("--check", root=tree).returncode == 0
+
+        for relative in (sync.LAUNCHER_SOURCE, *sync.LAUNCHER_COPIES):
+            before = (REPO_ROOT / relative).read_text(encoding="utf-8").splitlines()
+            after = (tree / relative).read_text(encoding="utf-8").splitlines()
+            differing = [
+                (old, new) for old, new in zip(before, after, strict=True) if old != new
+            ]
+            assert differing == [
+                (differing[0][0], 'LAUNCHER_VERSION = "9.9.9"')
+            ], f"{relative}: {differing}"
+
+    @pytest.mark.parametrize("count", (0, 2))
+    def test_a_launcher_without_exactly_one_line_is_left_for_a_person(
+        self, sync: ModuleType, tree: Path, count: int
+    ) -> None:
+        """No guessing which line was meant: the finding says to fix it by hand."""
+        path = tree / sync.LAUNCHER_SOURCE
+        text = path.read_bytes().decode("utf-8")
+        line = sync.LAUNCHER_VERSION_RE.search(text).group(0)
+        changed = text.replace(line, "" if count == 0 else line + "\n" + line, 1)
+        path.write_bytes(changed.encode("utf-8"))
+        result = run_script("--check", root=tree)
+        assert result.returncode == 1
+        named = [line for line in result.stdout.splitlines() if "LAUNCHER_VERSION" in line]
+        assert len(named) == 1, result.stdout
+        assert sync.LAUNCHER_SOURCE in named[0]
+        assert "cannot fix this one" in named[0]
+        assert f"has {count} top-level" in named[0]
 
 
 # ---------------------------------------------------------------------------

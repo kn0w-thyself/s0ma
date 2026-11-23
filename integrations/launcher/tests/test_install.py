@@ -316,16 +316,29 @@ def test_something_that_is_not_a_version_is_refused_before_any_request(
     assert keyed.requests == []
 
 
-def test_installing_without_a_key_says_where_to_put_one(
-    run_cli: Any, control_plane: FakeControlPlane, monkeypatch: pytest.MonkeyPatch
+def test_installing_without_a_key_asks_the_control_plane_nothing(
+    run_cli: Any,
+    control_plane: FakeControlPlane,
+    launcher: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
 ) -> None:
+    """With no key, install takes the package-index route: uv is asked for the
+    umbrella at this launcher's own version, and the control plane hears
+    nothing. uv is pointed at a local directory of stand-in wheels, with the
+    package index switched off, so nothing here leaves the machine."""
     monkeypatch.setenv("S0MA_CP_HOST", control_plane.host)
+    links = tmp_path / "index"
+    fake_control_plane.build_fake_index(links, launcher.LAUNCHER_VERSION)
+    monkeypatch.setenv("UV_FIND_LINKS", str(links))
+    monkeypatch.setenv("UV_NO_INDEX", "1")
+    monkeypatch.setenv("S0MA_LAUNCH_OFFLINE_INSTALL", "1")
 
     code, _, err = run_cli("install")
 
-    assert code == 4
-    assert "there is no key on this machine" in err
-    assert "plugin's settings" in err
+    assert code == 0, err
+    assert f"s0ma {launcher.LAUNCHER_VERSION} is installed." in err
+    assert "there is no key on this machine" not in err
     assert control_plane.requests == [], "nothing is asked without a key"
 
 

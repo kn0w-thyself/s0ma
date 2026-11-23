@@ -12,6 +12,10 @@ starts. Nothing ever changes underneath a session in progress. The plugin's
 `notify` only says when something is waiting, `off` never looks. This skill is
 for the times someone wants to do it deliberately.
 
+With no license key on the machine, nothing updates itself: a newer s0ma comes
+with a newer version of the plugin, the line a session begins with says so,
+and step 3 below is what installs it.
+
 If any command answers that it is not built yet, this is a preview build: say
 exactly what it printed and stop.
 
@@ -33,9 +37,11 @@ Read the "Runs here" and "Why" lines back. They decide everything below:
 s0ma-launch update --check
 ```
 
-This asks the s0ma service once and reports the answer. It installs nothing
-and changes nothing about which version runs; the only thing it writes is
-its own note of what it was told, which `s0ma-launch status` reads back.
+With a license key this asks the s0ma service once and reports the answer;
+the only thing it writes is its own note of what it was told, which
+`s0ma-launch status` reads back. With no key it asks nobody and writes nothing,
+and reports the version this plugin brings instead. Either way it installs
+nothing and changes nothing about which version runs.
 
 ## 3. Move to it — after asking
 

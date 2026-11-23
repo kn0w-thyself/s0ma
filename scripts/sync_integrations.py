@@ -8,11 +8,15 @@ that drifts is a defect nobody sees until a user has it installed:
    launcher; the Claude Code plugin and the Claude Desktop extension each
    carry a byte-for-byte copy of it, because each is packaged and shipped on
    its own. A stale copy means the plugin runs last week's launcher.
-2. **The version, three times.** The plugin manifest, the extension manifest
-   and the extension's ``pyproject.toml`` each state a version, and Claude
-   Code treats the plugin's as a pin. They must equal the monorepo's lockstep
-   version (PRD INV-4), so a release cut that bumps the four packages and
-   forgets these ships a plugin claiming the old release.
+2. **The version, three times, and the launcher's own.** The plugin
+   manifest, the extension manifest and the extension's ``pyproject.toml``
+   each state a version, and Claude Code treats the plugin's as a pin. They
+   must equal the monorepo's lockstep version (PRD INV-4), so a release cut
+   that bumps the four packages and forgets these ships a plugin claiming the
+   old release. The launcher states one too, ``LAUNCHER_VERSION``: with no
+   license key it is the version the launcher installs, so a stale one ships
+   a plugin that installs the previous release. That line is rewritten in the
+   launcher's source, and the two copies follow it.
 3. **The feedback skill's body.** ``s0ma new project`` scaffolds a
    ``/s0ma-feedback`` skill into every project; the plugin ships the same
    text under its own invocation name. Two copies of one journey inside one
@@ -95,6 +99,10 @@ FEEDBACK_SOURCE = "packages/s0ma-dsl/src/s0ma_dsl/cli/new_project.py"
 #: ``scripts/release_cut.sh`` reads and rewrites; exactly one is required, so
 #: a manifest that grew a second one is reported rather than half-edited.
 TOML_VERSION_RE = re.compile(r'(?m)^version = "([^"]*)"$')
+
+#: The launcher's own version: one top-level ``LAUNCHER_VERSION = "..."`` line
+#: in ``LAUNCHER_SOURCE``. Exactly one is required, for the same reason.
+LAUNCHER_VERSION_RE = re.compile(r'(?m)^LAUNCHER_VERSION = "([^"]*)"$')
 
 
 class SyncError(Exception):
@@ -213,8 +221,14 @@ def scaffolded_feedback_body() -> str:
 # ---------------------------------------------------------------------------
 
 
-def launcher_findings(root: Path) -> list[Finding]:
-    """The two shipped copies of the launcher, byte for byte."""
+def launcher_findings(root: Path, version: str | None = None) -> list[Finding]:
+    """The launcher's own version, then its two shipped copies, byte for byte.
+
+    With *version* given, the source's ``LAUNCHER_VERSION`` line must state
+    it. The copies are compared with the source as it will be once that line
+    is right, so one ``--write`` repairs the line and the copies together,
+    and a source whose line alone is stale is one difference, not three.
+    """
     source = root / LAUNCHER_SOURCE
     if not source.is_file():
         return [
@@ -228,6 +242,10 @@ def launcher_findings(root: Path) -> list[Finding]:
         ]
     original = source.read_bytes()
     findings: list[Finding] = []
+    if version is not None:
+        version_finding, original = launcher_version_finding(source, original, version)
+        if version_finding is not None:
+            findings.append(version_finding)
     for relative in LAUNCHER_COPIES:
         target = root / relative
         if target.is_file() and target.read_bytes() == original:
@@ -246,6 +264,48 @@ def launcher_findings(root: Path) -> list[Finding]:
             )
         )
     return findings
+
+
+def launcher_version_finding(
+    source: Path, original: bytes, version: str
+) -> tuple[Finding | None, bytes]:
+    """Whether the launcher states *version*, and the bytes it should have.
+
+    Returns the finding (``None`` when the line is right) and the source as it
+    should read, which is what the two copies are compared with.
+    """
+    try:
+        text = original.decode("utf-8")
+    except UnicodeDecodeError as exc:  # pragma: no cover - a launcher that is not UTF-8
+        return Finding(LAUNCHER_SOURCE, f"cannot be read ({exc}).", None, ""), original
+    matches = LAUNCHER_VERSION_RE.findall(text)
+    if len(matches) != 1:
+        return (
+            Finding(
+                LAUNCHER_SOURCE,
+                f"has {len(matches)} top-level `LAUNCHER_VERSION = \"...\"` line(s); "
+                "exactly one is expected, and this script edits that line only.",
+                None,
+                "",
+            ),
+            original,
+        )
+    stated = matches[0]
+    if stated == version:
+        return None, original
+    expected = LAUNCHER_VERSION_RE.sub(
+        f'LAUNCHER_VERSION = "{version}"', text, count=1
+    ).encode("utf-8")
+    return (
+        Finding(
+            LAUNCHER_SOURCE,
+            f"states LAUNCHER_VERSION {stated}; the monorepo is at {version} "
+            f"({VERSION_SOURCE}).",
+            _copy_bytes(source, expected),
+            f"LAUNCHER_VERSION {stated} -> {version}",
+        ),
+        expected,
+    )
 
 
 def _copy_bytes(target: Path, data: bytes) -> Callable[[], None]:
@@ -389,11 +449,14 @@ def _write_skill_body(path: Path, front: str, body: str) -> Callable[[], None]:
 
 def collect(root: Path) -> list[Finding]:
     """Every difference in the tree at *root*, in a fixed order."""
-    findings = launcher_findings(root)
     try:
-        version = read_lockstep_version(root)
+        version: str | None = read_lockstep_version(root)
+        unreadable: SyncError | None = None
     except SyncError as exc:
-        findings.append(Finding(VERSION_SOURCE, str(exc), None, ""))
+        version, unreadable = None, exc
+    findings = launcher_findings(root, version)
+    if unreadable is not None or version is None:
+        findings.append(Finding(VERSION_SOURCE, str(unreadable), None, ""))
     else:
         findings.extend(json_version_findings(root, version))
         findings.extend(toml_version_findings(root, version))
@@ -410,7 +473,8 @@ def _summary(root: Path) -> str:
         return "the Claude integration is in step."
     return (
         f"the Claude integration is in step with the monorepo at {version}: "
-        f"{len(LAUNCHER_COPIES)} launcher copies, {sites} version sites, 1 skill body."
+        f"{len(LAUNCHER_COPIES)} launcher copies, {sites} version sites, "
+        f"the launcher's own version, 1 skill body."
     )
 
 
@@ -440,8 +504,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
             "Keep the Claude plugin and Desktop extension in step with the "
-            "monorepo: the two launcher copies, the three version sites and "
-            "the feedback skill's body."
+            "monorepo: the two launcher copies, the three version sites, the "
+            "launcher's own version and the feedback skill's body."
         )
     )
     mode = parser.add_mutually_exclusive_group(required=True)

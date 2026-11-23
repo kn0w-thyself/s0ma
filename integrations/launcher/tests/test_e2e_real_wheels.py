@@ -14,6 +14,11 @@ does exactly what a subscriber's machine does:
   the older one is still there to go back to.
 * **T3** a project pinned with ``.s0ma-version`` keeps running the version it
   asked for, and s0ma does not start an update behind its back.
+* **T4** with no license key: all five wheels, the umbrella ``s0ma-lang``
+  included, are built at a version no package index can hold, uv is pointed
+  at them through its own ``UV_FIND_LINKS`` setting, a keyless ``install``
+  puts that version in place without the fake control plane hearing a single
+  request, and ``serve`` starts the real ``s0ma-lang-mcp`` from it.
 
 **What this costs, and why it is not in the ordinary run.** Eight wheel builds,
 five real ``uv`` environments and four real server starts. On a machine whose uv
@@ -181,8 +186,10 @@ def next_patch(version: str) -> str:
     return ".".join([parts[0], parts[1], str(int(parts[2]) + 1)])
 
 
-def build_wheels(source_root: Path, into: Path) -> list[Path]:
-    """Build the four real wheels from *source_root* into *into*.
+def build_wheels(
+    source_root: Path, into: Path, distributions: tuple[str, ...] = DISTRIBUTIONS
+) -> list[Path]:
+    """Build the real wheels of *distributions* from *source_root* into *into*.
 
     The same call ``scripts/wheel_smoke.py`` makes: ``uv build --package <name>
     --wheel --out-dir <dir>``. The out-directory is always outside the worktree,
@@ -194,7 +201,7 @@ def build_wheels(source_root: Path, into: Path) -> list[Path]:
     and that is what :func:`offline_uv` governs.
     """
     into.mkdir(parents=True, exist_ok=True)
-    for distribution in DISTRIBUTIONS:
+    for distribution in distributions:
         finished = subprocess.run(
             ["uv", "build", "--package", distribution, "--wheel", "--out-dir", str(into)],
             cwd=str(source_root),
@@ -208,7 +215,9 @@ def build_wheels(source_root: Path, into: Path) -> list[Path]:
             f"uv build refused to build {distribution}:\n{finished.stderr}"
         )
     built = sorted(into.glob("*.whl"))
-    assert len(built) == len(DISTRIBUTIONS), f"expected four wheels, got {[p.name for p in built]}"
+    assert len(built) == len(distributions), (
+        f"expected {len(distributions)} wheels, got {[p.name for p in built]}"
+    )
     return built
 
 
@@ -345,6 +354,87 @@ def wheels_w(
     return into
 
 
+#: The umbrella distribution, which the keyless route asks uv for by name.
+UMBRELLA = "s0ma-lang"
+
+#: The local version label T4's wheels carry. A local label is a version the
+#: public package index refuses to accept at all, so a toolchain that reports
+#: it can only have come from the wheels this file built.
+KEYLESS_LABEL = "keyless"
+
+
+def bump_umbrella(root: Path, old: str, new: str) -> Path:
+    """Copy the umbrella's manifest into *root* and move it from *old* to *new*.
+
+    Its version line and its four exact pins move together, as a release cut
+    moves them, so ``s0ma-lang==<new>`` can only resolve to the four parts
+    built at *new* beside it.
+    """
+    source = PACKAGES_DIR / "s0ma-lang"
+    destination = root / "packages" / "s0ma-lang"
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in ("pyproject.toml", "README.md", "LICENSE"):
+        if (source / name).is_file():
+            shutil.copy2(source / name, destination / name)
+    manifest = destination / "pyproject.toml"
+    text = manifest.read_text(encoding="utf-8")
+    bumped = text.replace(f'version = "{old}"', f'version = "{new}"', 1)
+    assert bumped != text, f"{manifest} does not carry version {old}"
+    pins = bumped.count(f'== {old}"')
+    assert pins == len(DISTRIBUTIONS), f"the umbrella pins {pins} parts, not four"
+    manifest.write_text(
+        bumped.replace(f'== {old}"', f'== {new}"'), encoding="utf-8", newline="\n"
+    )
+    return manifest
+
+
+@pytest.fixture(scope="session")
+def version_k(version_w: str) -> str:
+    """K: W with a local version label, which no public package index can hold."""
+    return f"{version_w}+{KEYLESS_LABEL}"
+
+
+@pytest.fixture(scope="session")
+def wheels_keyless(
+    tmp_path_factory: pytest.TempPathFactory, version_v: str, version_k: str
+) -> Path:
+    """All five real wheels of version K, the umbrella included, in one directory.
+
+    The directory is what T4 hands uv as a find-links location, standing in
+    for a package index. Built from a bumped copy of this tree, exactly as
+    :func:`wheels_w` is, with the umbrella's manifest added and moved too.
+    """
+    work = tmp_path_factory.mktemp("wheels-keyless")
+    with Phase(f"building all five real wheels of s0ma {version_k} from a bumped copy"):
+        source = copy_buildable_tree(work / "tree")
+        bump_lockstep_sites(source, version_v, version_k)
+        bump_umbrella(source, version_v, version_k)
+        into = work / "index"
+        built = build_wheels(source, into, (*DISTRIBUTIONS, UMBRELLA))
+    names = sorted(wheel.name for wheel in built)
+    assert any(name.startswith("s0ma_lang-") for name in names), names
+    return into
+
+
+@pytest.fixture(scope="session")
+def keyless_launcher(tmp_path_factory: pytest.TempPathFactory, version_k: str) -> Path:
+    """A copy of this launcher whose own version is K: what a newer plugin carries.
+
+    Only the ``LAUNCHER_VERSION`` line differs from the launcher in this tree,
+    which is exactly what a release cut changes in it.
+    """
+    text = LAUNCHER_FILE.read_text(encoding="utf-8")
+    found = re.findall(r'(?m)^LAUNCHER_VERSION = "([^"]*)"$', text)
+    assert len(found) == 1, f"the launcher states its version {len(found)} times"
+    copy = tmp_path_factory.mktemp("keyless-launcher") / LAUNCHER_FILE.name
+    copy.write_text(
+        text.replace(f'LAUNCHER_VERSION = "{found[0]}"', f'LAUNCHER_VERSION = "{version_k}"', 1),
+        encoding="utf-8",
+        newline="\n",
+    )
+    return copy
+
+
 @pytest.fixture(scope="session")
 def offline_uv(tmp_path_factory: pytest.TempPathFactory, wheels_v: Path) -> bool:
     """Whether uv can install the real wheels without the network. Proved, not assumed.
@@ -479,11 +569,15 @@ def launcher_env(
 
 
 def run_launcher(
-    arguments: list[str], environment: dict[str, str], project: Path
+    arguments: list[str],
+    environment: dict[str, str],
+    project: Path,
+    *,
+    launcher_file: Path = LAUNCHER_FILE,
 ) -> subprocess.CompletedProcess[str]:
     """Run one launcher command as a real subprocess and wait for it."""
     return subprocess.run(
-        [sys.executable, str(LAUNCHER_FILE), *arguments],
+        [sys.executable, str(launcher_file), *arguments],
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -505,9 +599,15 @@ class ServeSession:
     launcher hands over to the real server correctly.
     """
 
-    def __init__(self, environment: dict[str, str], project: Path) -> None:
+    def __init__(
+        self,
+        environment: dict[str, str],
+        project: Path,
+        *,
+        launcher_file: Path = LAUNCHER_FILE,
+    ) -> None:
         self.process = subprocess.Popen(
-            [sys.executable, str(LAUNCHER_FILE), "serve"],
+            [sys.executable, str(launcher_file), "serve"],
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -920,3 +1020,90 @@ def test_t3_a_pinned_project_keeps_its_version_and_starts_no_update(
     assert_key_never_escaped(
         smoke_home, installed.stdout, installed.stderr, stderr, reported.stdout
     )
+
+
+# ---------------------------------------------------------------------------
+# T4 - no license key: the umbrella from a local index, and the real server.
+# ---------------------------------------------------------------------------
+
+
+def test_t4_a_keyless_install_from_the_wheels_this_tree_built(
+    launcher: ModuleType,
+    plane: FakeControlPlane,
+    smoke_home: Path,
+    smoke_project: Path,
+    version_k: str,
+    wheels_keyless: Path,
+    keyless_launcher: Path,
+    snapshot_tool_names: list[str],
+    offline_uv: bool,
+) -> None:
+    """No key, so the launcher asks nobody and uv does the fetching.
+
+    The fake control plane is up, and the launcher is pointed at it, so a
+    single request from the keyless route would be recorded. uv is pointed at
+    the five wheels through ``UV_FIND_LINKS``, its own setting: the launcher
+    has no switch for this, and needs none. K carries a local version label,
+    which the public package index does not accept, so a toolchain that
+    reports K is the one this file built and no other.
+    """
+    environment = launcher_env(
+        smoke_home, smoke_project, plane, update="auto", offline_uv=offline_uv
+    )
+    del environment["S0MA_LICENSE_KEY"]
+    environment["UV_FIND_LINKS"] = str(wheels_keyless)
+
+    with Phase(f"installing s0ma {version_k} with no license key, through uv"):
+        installed = run_launcher(
+            ["install"], environment, smoke_project, launcher_file=keyless_launcher
+        )
+    assert installed.returncode == 0, installed.stderr
+    assert f"s0ma {version_k} is installed." in installed.stderr, installed.stderr
+    assert plane.requests == [], f"a keyless install asked the control plane: {plane.requests}"
+
+    # Where it came from: the version only these wheels carry, in the
+    # environment's own records - the umbrella and the server alike.
+    toolchain = toolchain_of(launcher, smoke_home, version_k)
+    assert (toolchain / launcher.COMPLETE_MARKER).is_file()
+    assert launcher.installed_version_of(toolchain) == version_k
+    assert launcher.installed_version_of(toolchain, "s0ma_lang") == version_k
+    programs = launcher.bin_dir_of(toolchain)
+    assert programs is not None, "the install left no programs behind"
+    assert launcher.find_program(programs, launcher.CLI_PROGRAM) is not None
+    note(f"installed s0ma {version_k} from the wheels this tree built, with no key")
+
+    # What it wrote down: only what is true. No control plane was asked.
+    state = state_of(smoke_home)
+    assert state["installed"] == [version_k], state
+    assert state["current"] == version_k, state
+    assert state["entitlement"] == "unknown", state
+    assert state["last_check"] is None, state
+    assert state["latest_seen"] is None, state
+    assert state["last_error"] is None, state
+
+    with Phase("starting the real s0ma-lang-mcp from the keyless copy"):
+        with ServeSession(environment, smoke_project, launcher_file=keyless_launcher) as session:
+            result = session.handshake()
+            server = result["serverInfo"]
+            tools = session.list_tools()
+            code, stderr = session.close_stdin_and_wait()
+
+    assert server["name"] == "s0ma-authoring", server
+    assert server["version"] == version_k, server
+    assert tools == snapshot_tool_names, {"served": tools, "snapshot": snapshot_tool_names}
+    assert len(tools) == 15, tools
+    note(f"handshake: {server['name']} {server['version']}; tools/list returned {len(tools)} tools")
+    assert code == 0, f"serve exited {code}; its error output was:\n{stderr}"
+
+    # The copy that runs is the one this launcher brings, so serve left no
+    # quiet update behind - structurally, because no log was ever opened.
+    assert not update_log_path(smoke_home).exists(), "serve started a quiet update"
+    reported = run_launcher(
+        ["status", "--json"], environment, smoke_project, launcher_file=keyless_launcher
+    )
+    assert reported.returncode == 0, reported.stderr
+    report = json.loads(reported.stdout)
+    assert report["install_route"] == "package_index", report
+    assert report["launcher_version"] == version_k, report
+    assert plane.requests == [], f"the keyless route asked the control plane: {plane.requests}"
+    assert_key_never_escaped(smoke_home, installed.stdout, installed.stderr, stderr)

@@ -46,15 +46,22 @@ prompt. Never ask them to hand-edit a settings file.
 ## 3. Install s0ma when nothing is installed
 
 Ask first. Say what it does: it downloads the s0ma toolchain into s0ma's own
-directory in their home folder. Nothing in their project changes.
+directory in their home folder. With no license key on the machine, uv fetches
+it from the package index it is set up to use; with one, it comes from the s0ma
+service. Nothing in their project changes.
 
 Then run `s0ma-launch install` and let its progress show. A first install takes
-a few minutes on a slow connection.
+a few minutes on a slow connection. It works with no license key.
 
-## 4. Where the license key goes
+## 4. A license key is optional
+
+Nobody needs a license key to install or use s0ma. A key changes where s0ma
+comes from: with one, it is fetched from the s0ma service and every file is
+checked against what the service says it should be; without one, uv fetches it
+from the package index, at the version this plugin brings.
 
 Never ask anyone to type, paste or read out a license key here, and never print
-one. There are exactly two right places for it:
+one. For someone who has a key, there are exactly two right places for it:
 
 - the s0ma plugin's **s0ma license key** field in Claude, which masks what is
   typed and stores it in the operating system's own secure storage. Claude asks
@@ -68,14 +75,17 @@ one. There are exactly two right places for it:
   tell them to type that path followed by `activate` in a terminal of their
   own. Offer this only when the settings field is not an option for them.
 
-It is only needed to download s0ma. Someone running s0ma from a source checkout
-needs none.
+Someone without a key skips this step. Someone running s0ma from a source
+checkout needs none either.
 
 ## 5. Keep it current
 
-The s0ma toolchain looks after itself: it fetches newer versions quietly and
-uses them the next time a session starts. `/s0ma:update` covers checking,
-updating by hand and pinning a project.
+With a license key, the s0ma toolchain looks after itself: it fetches newer
+versions quietly and uses them the next time a session starts. Without one,
+nothing is fetched unless someone asks: each version of the plugin brings its
+own version of s0ma, and when the plugin is updated, the line a session begins
+with says a newer s0ma came with it, and `/s0ma:update` installs it.
+`/s0ma:update` also covers checking, updating by hand and pinning a project.
 
 The plugin is separate, and Claude only auto-updates marketplaces that are
 Anthropic's own. Tell the person how to turn it on for ours — `/plugin`,
