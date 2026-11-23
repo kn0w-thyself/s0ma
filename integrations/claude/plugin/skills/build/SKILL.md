@@ -26,7 +26,7 @@ off."), none of this applies: do not use s0ma there.
    project, and on anything inside the project it wins over this skill.
 2. **Edit the `.s0ma` sources**, under `src/` and `tests/`. Never edit the
    files in the build folder, `build/`: they are generated, and the next build
-   overwrites them.
+   stops at one that was edited by hand.
 3. **Check, build and test**, from the project folder:
 
    ```bash

@@ -69,7 +69,7 @@ Run `s0ma inspect --all` for a one-line summary of every module, and read the
 app map under `build/docs/`. Then say the one rule that matters most:
 
 > Edit the `.s0ma` files. Never edit anything under `build/` — it is generated,
-> and the next build overwrites it.
+> and the next build stops at a file that was edited by hand.
 
 Offer `s0ma docs show journey:first-project` for the guided walk through what
 was just created, and `/s0ma:doctor` if anything looked wrong.
