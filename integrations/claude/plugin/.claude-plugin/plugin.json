@@ -18,11 +18,14 @@
   "name": "s0ma",
   "network": {
     "hosts": [
+      "*.githubusercontent.com",
       "account.kn0wthyself.ai",
       "astral.sh",
       "files.pythonhosted.org",
+      "github.com",
       "localhost",
       "pypi.org",
+      "releases.astral.sh",
       "studi0.localhost"
     ]
   },

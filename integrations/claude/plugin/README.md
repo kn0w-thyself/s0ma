@@ -82,8 +82,10 @@ When you ask for s0ma to be installed or updated (`/s0ma:start`,
   dependencies from the package index, and never sees the key. With a key, and
   only with one, the launcher also looks for a newer version on its own at
   most once a day, unless you set updates to off.
-- **If this machine has no Python 3.11 or newer**, uv may download one, from
-  wherever its own settings point. The launcher does not choose that place.
+- **If this machine has no Python 3.11 or newer**, uv may download one. By
+  uv's documentation it comes from the python-build-standalone project's
+  releases on github.com, unless uv's own settings name a mirror. The launcher
+  does not choose that place.
 
 `s0ma-launch activate`, which you run yourself to save a key, asks
 account.kn0wthyself.ai once whether the key is good. `s0ma-launch pin` asks it
@@ -98,7 +100,9 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-That installer then fetches uv from uv's makers, not from s0ma.
+astral.sh serves that script from releases.astral.sh. By uv's documentation
+the installer then downloads uv from uv's releases on github.com. GitHub serves
+release files from its githubusercontent.com hosts.
 
 `/s0ma:feedback` sends one report to account.kn0wthyself.ai, and only after
 you have read the exact report and approved it. It needs feedback access,
@@ -136,9 +140,10 @@ The hooks write nothing, and neither does the stand-in server.
   turns it back on.
 - **Everywhere:** disable the s0ma plugin in Claude Code's `/plugin` manager.
 
-[Removing s0ma](../../../docs/uninstall.md) has the complete uninstall steps,
-and [What s0ma trusts](../../../docs/trust-model.md) has every connection s0ma
-can make, with the test that holds each one.
+[Removing s0ma](https://github.com/kn0w-thyself/s0ma/blob/main/docs/uninstall.md)
+has the complete uninstall steps, and
+[What s0ma trusts](https://github.com/kn0w-thyself/s0ma/blob/main/docs/trust-model.md)
+has every connection s0ma can make, with the test that holds each one.
 
 ## Reporting a problem
 
