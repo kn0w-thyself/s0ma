@@ -177,12 +177,12 @@ the sentence scrolled past. Zero is success. The rest:
 
 | You see | What it means | What to do |
 |---|---|---|
-| **2** | The command line was wrong, or what you asked for cannot be done here — a version that is not shaped like one, `pin` in a project that carries its own s0ma, `activate` where there is no terminal to type into, or a version the service has never heard of. | Read the sentence printed with it: each one names the correction. `activate` in particular needs a real terminal — in Claude, put the key in the plugin's settings instead. |
+| **2** | The command line was wrong, or what you asked for cannot be done here — a version that is not shaped like one, `pin` in a project that carries its own s0ma, `activate` where there is no terminal to type into, or a version the service has never heard of. | Read the sentence printed with it: each one names the correction. `activate` in particular needs a real terminal: in Claude Code, `/s0ma:setup` shows you the path to run it from a terminal of your own, and in Claude Desktop the key can go in the extension's settings instead. |
 | **3** | s0ma is not installed, or could not be. Either nothing is installed here, or this copy has no such command, or `uv` refused to build the environment — in which case the message quotes the last lines `uv` printed. | Run `/s0ma:setup`, or `s0ma-launch install`. When `uv` spoke, read its lines first: they are about your machine, not about s0ma. Nothing was installed and nothing already installed has changed. |
 | **4** | The license key that was used has been refused, or this account's access to new versions has ended. A machine with no key at all does not see this: it installs without one. | The key goes in the plugin's **s0ma license key** field, or into `s0ma-launch activate` in your own terminal — never into a conversation. If access has ended, nothing installed stops working; only new downloads do. |
 | **5** | Something about the network. The service could not be reached, or it was busy and asked this machine to wait, or it answered with something s0ma could not read. | Nothing was fetched and the copy on this machine keeps working. Try again in a little while; if it was a busy answer, the message says roughly how long it asked for. |
 | **6** | A downloaded file was not the file the service described, so it was deleted and the install stopped. | Nearly always a download cut short: run it again. If it keeps happening on the same file, tell us — that is worth knowing about. |
-| **7** | `uv` is not on this computer, or could not be run. | This is the one failure that stops everything, including the s0ma server itself. Install uv from <https://docs.astral.sh/uv/getting-started/installation/> and restart Claude. If uv *is* installed and this still happens, Claude was started without your shell's path: run `command -v uv` and paste that one path into the plugin's **Where uv lives on this computer** setting. |
+| **7** | `uv` is not on this computer, or could not be run. | This is the one failure that stops everything, including the s0ma server itself. Install uv from <https://docs.astral.sh/uv/getting-started/installation/> and restart Claude. If uv *is* installed and this still happens, Claude was started without your shell's path and uv is somewhere uv's own installers do not put it: install it again the normal way, then start a new session. |
 
 ### The line a new session sometimes starts with
 
@@ -193,9 +193,9 @@ say. Silence is the normal case and means all is well. The seven it can say:
 |---|---|---|
 | *s0ma's tools are not available in this session.* … *s0ma is not installed on this machine yet.* | Claude started, found no s0ma to run, and answered with a stand-in server that can only report that. | Run `/s0ma:setup`. Then start a new session, so the real s0ma takes over. |
 | *s0ma's tools are not available in this session.* … *This project asks for s0ma … in its `.s0ma-version` file, and that version is not installed on this machine.* | The project is pinned to a version this machine does not have. s0ma will not quietly run a different one. | `s0ma-launch install --version <the version it named>`, or `s0ma-launch unpin` to follow the newest installed version instead. |
-| *The last time s0ma used your license key, it was refused.* | The service did not accept the key when s0ma last tried to fetch something. Everything installed keeps working. | Check the whole key was pasted, then put it back in the plugin's settings, or run `s0ma-launch activate` in a terminal. Never type a key into the chat. |
+| *The last time s0ma used your license key, it was refused.* | The service did not accept the key when s0ma last tried to fetch something. Everything installed keeps working. | Check the whole key was pasted, then save it again with `s0ma-launch activate` in a terminal, or in Claude Desktop put it back in the extension's settings. Never type a key into the chat. |
 | *This account's access to new versions of s0ma has ended.* | News, not an error. The copy you have keeps working; only downloads of newer versions stop. | Nothing, unless you want new versions — in which case the message names the account page. |
-| *s0ma … is available; s0ma … is what runs here.* | This machine is set to `notify`, so it looked and did not fetch. | `/s0ma:update` when you want it, or switch the setting to `auto` and stop being asked. |
+| *s0ma … is available; s0ma … is what runs here.* | This machine is set to `notify`, so it looked and did not fetch. | `/s0ma:update` when you want it, or switch the setting to `auto` and stop being asked: in Claude Code, ask Claude to run `s0ma-launch set update auto`. |
 | *s0ma … came with the s0ma plugin; s0ma … is what runs here.* | There is no license key on this machine, so nothing is fetched on its own, and a newer plugin brought a newer s0ma. | `/s0ma:update` when you want it. Set updates to `off` to stop being told. |
 | *s0ma … was fetched quietly in the background, and it is what Claude will use from your next session.* | An automatic update finished. Nothing changed underneath the session you were in. | Nothing. Start a new session whenever you like. |
 
@@ -263,11 +263,11 @@ account's access to new versions has ended*, which is not about the key at all.
 1. **Check the whole key.** s0ma never prints a key back — the most you ever see
    of one, anywhere, is `s0ma_...` and its last four characters — so compare what
    you pasted with what your account page shows.
-2. **Put it in one of the two places it goes.** The **s0ma license key** field
-   in the plugin's or the extension's settings, where it is masked as you type
-   and kept by the operating system's own secure storage; or `s0ma-launch
-   activate`, typed by you at a terminal of your own, which asks without showing
-   what you type.
+2. **Put it in one of the two places it goes.** `s0ma-launch activate`, typed
+   by you at a terminal of your own, which asks without showing what you type;
+   or, in Claude Desktop, the **s0ma license key** field in the extension's
+   settings, where it is masked as you type and kept by the operating system's
+   own secure storage. The Claude Code plugin has no key field.
 3. **Never type or paste a key into a conversation.** No part of s0ma will ever
    ask you to, and none of the `/s0ma:*` commands will either. A key pasted into
    a chat is a key in a transcript. Claude cannot run `activate` for you, and
@@ -315,10 +315,11 @@ s0ma's own environments.
 1. **Check uv is really there**, in your own terminal: `command -v uv` on macOS
    and Linux, `where uv` on Windows. If nothing comes back, install it from
    <https://docs.astral.sh/uv/getting-started/installation/> and restart Claude.
-2. **If it printed a path**, that is the answer: paste that one path into the
-   plugin's **Where uv lives on this computer** setting, then restart Claude.
-   The setting exists for this and nothing else, which is why it is otherwise
-   best left alone.
+2. **If it printed a path** that is not one of the places uv's own installers
+   use (`~/.local/bin`, `~/.cargo/bin`, `/opt/homebrew/bin` or `/usr/local/bin`,
+   and on Windows `%USERPROFILE%\.local\bin`, `%LOCALAPPDATA%\uv\bin`,
+   `%USERPROFILE%\.cargo\bin` or `%ProgramFiles%\uv`), install uv again the
+   normal way and start a new session. There is no setting to fill in.
 3. **Then run `/s0ma:setup`**, which checks uv first and carries on from there.
 
 In Claude Desktop there is no uv setting to fill in: the extension is started

@@ -36,12 +36,11 @@ back to the person in your own words.
 If `s0ma-launch` is not found, the plugin's own programs are not on the path:
 check that `/plugin` lists s0ma as enabled, then restart Claude.
 
-If step 1 found uv but the s0ma server still did not start, Claude was launched
-without the shell's path. Show the person the path `command -v uv` printed and
-tell them to put it in the s0ma plugin's setting called **Where uv lives on
-this computer**: `/config` on a build that shows the plugin's settings,
-otherwise turn the s0ma plugin off and on again in `/plugin` and answer the
-prompt. Never ask them to hand-edit a settings file.
+If step 1 found uv but the session still began by saying s0ma is not set up
+here, the plugin could not find uv when the session started. The plugin looks
+on the path and in the places uv's own installers use. Installing uv the normal
+way, with the command in step 1, puts it in one of those; then start a new
+session. There is no setting to fill in for it.
 
 ## 3. Install s0ma when nothing is installed
 
@@ -61,19 +60,16 @@ checked against what the service says it should be; without one, uv fetches it
 from the package index, at the version this plugin brings.
 
 Never ask anyone to type, paste or read out a license key here, and never print
-one. For someone who has a key, there are exactly two right places for it:
+one. The plugin has no key setting. For someone who has a key, the right place
+for it is `s0ma-launch activate`, run by the person in their own terminal. It
+prompts without echoing and saves the answer for them. It needs a real
+terminal, so you cannot run it for them, and the plugin only puts
+`s0ma-launch` on the path of the terminal Claude uses, not on theirs. So run
+`command -v s0ma-launch` yourself, show them the full path it prints, and tell
+them to type that path followed by `activate` in a terminal of their own.
 
-- the s0ma plugin's **s0ma license key** field in Claude, which masks what is
-  typed and stores it in the operating system's own secure storage. Claude asks
-  when the plugin is enabled; to replace it, turn the plugin off and on again
-  in `/plugin`.
-- `s0ma-launch activate`, run by the person in their own terminal. It prompts
-  without echoing and saves the answer for them. It needs a real terminal, so
-  you cannot run it for them, and the plugin only puts `s0ma-launch` on the
-  path of the terminal Claude uses, not on theirs. So run
-  `command -v s0ma-launch` yourself, show them the full path it prints, and
-  tell them to type that path followed by `activate` in a terminal of their
-  own. Offer this only when the settings field is not an option for them.
+In Claude Desktop the s0ma extension has a license key field of its own in its
+settings, which masks what is typed; that is the other right place.
 
 Someone without a key skips this step. Someone running s0ma from a source
 checkout needs none either.
@@ -86,6 +82,10 @@ nothing is fetched unless someone asks: each version of the plugin brings its
 own version of s0ma, and when the plugin is updated, the line a session begins
 with says a newer s0ma came with it, and `/s0ma:update` installs it.
 `/s0ma:update` also covers checking, updating by hand and pinning a project.
+
+To change how s0ma keeps itself current, the person asks you, and you run
+`s0ma-launch set update auto`, `s0ma-launch set update notify` or
+`s0ma-launch set update off`. It is saved on this machine.
 
 The plugin is separate, and Claude only auto-updates marketplaces that are
 Anthropic's own. Tell the person how to turn it on for ours — `/plugin`,

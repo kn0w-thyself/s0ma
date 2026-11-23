@@ -102,18 +102,17 @@ uninstall:
 Find s0ma under installed plugins and uninstall it. In a terminal, the same
 thing is `claude plugin uninstall s0ma@kn0wthyself`.
 
-**Your key is Claude's to remove, not s0ma's.** What you typed into the
-**s0ma license key** field was masked as you typed it and handed to the
-operating system's own secure storage rather than written into a settings file,
-which is Claude Code's documented behaviour for a setting marked sensitive. What
-its uninstall does with that value is Anthropic's to document, not ours to
-assert — so if you would rather be certain, **empty the field before you
-uninstall**: open `/plugin`, clear **s0ma license key**, then remove the plugin.
+The plugin has no settings, so it holds no key. A key you saved with
+`s0ma-launch activate` is a file in s0ma's own folder, and
+[step 6](#6-remove-the-folder-in-your-home-directory) is where it goes.
 
 **The Claude Desktop extension.** Open **Settings → Extensions**, find s0ma, and
-remove it there. Its **s0ma license key** setting is held the same way — the
-operating system's secure storage — and the same advice applies: clear the field
-first if you want to be sure of it.
+remove it there. **Your key there is Claude Desktop's to remove, not s0ma's.**
+What you typed into its **s0ma license key** field was masked as you typed it
+and handed to the operating system's own secure storage rather than written into
+a settings file. What the uninstall does with that value is Anthropic's to
+document, not ours to assert, so if you would rather be certain, **empty the
+field before you remove the extension**.
 
 An extension is installed for one person, so removing it affects your own
 Claude Desktop and nobody else's.
@@ -314,8 +313,8 @@ access.
 
 | What is in it | What it is | What deleting it costs you |
 |---|---|---|
-| `license` | The key `s0ma-launch activate` saved here, readable by you and nobody else where the platform allows that | The next install or update fetches s0ma from the package index, with no key, instead of from the s0ma service. If your key lives in Claude's settings instead, this file was never written |
-| `launcher/config.json` | Two settings: how s0ma keeps itself current, and which host it asks | Both go back to their defaults |
+| `license` | The key `s0ma-launch activate` saved here, readable by you and nobody else where the platform allows that | The next install or update fetches s0ma from the package index, with no key, instead of from the s0ma service. If your key lives in the Claude Desktop extension's settings instead, this file was never written |
+| `launcher/config.json` | Two settings: how s0ma keeps itself current (what `s0ma-launch set update` writes), and which host it asks | Both go back to their defaults |
 | `launcher/state.json` | What is installed, which version runs here, when it last looked for a newer one, and the last thing that went wrong | Nothing you can lose. s0ma looks for a newer version on the next start instead of waiting out the day |
 | `launcher/update.log` | Everything the quiet update printed, in its own words, with the previous log kept beside it as `update.log.1` | Only the record of what past updates did. Nothing reads it back: the newest failure is kept in `state.json` instead |
 | `launcher/update.lock` | The file two updates use so that only one of them runs | Nothing, unless an update is running as you read this |

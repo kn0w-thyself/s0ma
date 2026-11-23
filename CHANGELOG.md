@@ -13,6 +13,24 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Added
 
+- **The Claude Code plugin asks nothing at install, and a first session shows
+  no error.** The plugin has no settings any more, so no settings dialog opens
+  when it is installed. A license key is saved with `s0ma-launch activate` in
+  a terminal (the Claude Desktop extension keeps its own key field), the
+  update mode is saved with the new `s0ma-launch set update <auto|notify|off>`
+  in the launcher's own config file, where `S0MA_UPDATE` still wins when it is
+  set, and uv is found on the path or where uv's installers put it, with no
+  setting to fill in. On a machine with no uv, or a uv with no Python it can
+  use without downloading one, the session begins with one plain line for
+  Claude saying s0ma is not set up here yet and that `/s0ma:setup` sets it up,
+  and the s0ma server stays connected as a small stand-in with one
+  setup-status tool rather than showing as failed. Neither the session line
+  nor the server start fetches anything: uv is run offline, with Python
+  downloads off and the lock file beside the launcher used as it is. On
+  Windows the session line needs Git for Windows; the server and the plugin's
+  `s0ma` and `s0ma-launch` commands also have `.cmd` twins for a Windows shell
+  without it.
+
 - **The launcher installs s0ma with no license key.** On a machine with no
   key, `s0ma-launch install` no longer stops with exit 4: it has uv install
   `s0ma-lang==<version>` from whichever package index that machine's uv is
