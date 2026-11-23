@@ -55,13 +55,15 @@ The same file takes `"use": "asked"`, `"studi0": "always"` and
 ## The studi0 offer
 
 When the note at the start of the session says studi0 is offered once per
-project, offer it once, after a build, if studi0 is not already showing. Then
-remember the answer, so it is not offered in this project again:
+project, offer it once, after a build, if studi0 is not already showing. The
+offer has three answers, and each one records something:
 
-- If they answer "always", write `"studi0": "always"` into the project's file.
-- If they answer anything else (no, not now, later, or nothing at all), write
-  `"studi0": "asked"` into the project's file. studi0 still opens whenever they
-  ask for it.
+- **"Yes, always"**: run `s0ma-launch set studi0 always`. That holds on this
+  machine, in every project. Nothing is written to the project's file for this
+  answer.
+- **"Just this once"**, **"No thanks"**, or no answer at all: write
+  `"studi0": "asked"` into the project's file, so it is not offered in this
+  project again. studi0 still opens whenever they ask for it.
 
 ## "What are my s0ma settings?"
 

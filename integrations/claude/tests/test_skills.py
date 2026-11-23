@@ -821,6 +821,16 @@ class TestThePreferenceSkills:
     ) -> None:
         text = _one_line(skills["preferences"])
         assert (
-            'If they answer anything else (no, not now, later, or nothing at all), '
-            'write `"studi0": "asked"` into the project\'s file.'
+            '**"Just this once"**, **"No thanks"**, or no answer at all: write '
+            '`"studi0": "asked"` into the project\'s file, so it is not offered in '
+            "this project again."
         ) in text
+
+    def test_yes_always_to_the_studi0_offer_is_set_for_the_machine(
+        self, skills: dict[str, str]
+    ) -> None:
+        text = _one_line(skills["preferences"])
+        assert '**"Yes, always"**: run `s0ma-launch set studi0 always`.' in text
+        assert (
+            "Nothing is written to the project's file for this answer." in text
+        )
