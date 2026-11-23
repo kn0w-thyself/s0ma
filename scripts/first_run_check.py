@@ -15,7 +15,9 @@ with the runner's own Python and nothing else.
     checks bite: a copy with the message removed and a copy with a broken
     stand-in must each fail them. Both edit hooks' commands are run too, as
     ``hooks/hooks.json`` writes them, for an edit in a s0ma project: with no uv
-    they say nothing and exit 0.
+    they say nothing and exit 0. Every hook command is run by each PowerShell
+    found (both on Windows), where it must exit 0 and print nothing, and the
+    skip path's mean time over ten runs is printed.
 
 ``uv-present``
     With uv, a fresh ``S0MA_HOME`` and no license key: the hook and the server
@@ -566,6 +568,112 @@ def check_edit_finding(ran: Ran, launcher: ModuleType, shown: str, code: str) ->
     return f"exit 0, stderr empty, additionalContext names {code} ({len(context)} characters)"
 
 
+#: The shells that run a shell-form hook on Windows when Git Bash is missing:
+#: Windows PowerShell 5.1 and PowerShell 7.
+POWERSHELLS = ("powershell", "pwsh")
+
+
+def all_hook_commands(plugin_dir: Path) -> list[tuple[str, str]]:
+    """``(event, command)`` for every hook, with the plugin root filled in."""
+    hooks = json.loads(
+        (plugin_dir / "hooks" / "hooks.json").read_text(encoding="utf-8")
+    )
+    root = plugin_root_text(plugin_dir)
+    found: list[tuple[str, str]] = []
+    for event, entries in sorted(hooks["hooks"].items()):
+        for command in sorted(
+            {str(h["command"]) for entry in entries for h in entry["hooks"]}
+        ):
+            found.append((event, command.replace("${CLAUDE_PLUGIN_ROOT}", root)))
+    return found
+
+
+def check_hooks_in_powershell(
+    plugin_dir: Path, env: dict[str, str], project: Path, results: Results
+) -> None:
+    """Every hook command, as hooks.json writes it, run by PowerShell.
+
+    Claude Code runs a shell-form hook in PowerShell on Windows when Git Bash
+    is missing. Each command line is written so that PowerShell runs nothing
+    and prints nothing there, and exits 0. On Windows both PowerShells must be
+    found; elsewhere whichever is on this machine runs, and the result says
+    which ran.
+    """
+    shells = [(name, shutil.which(name, path=env.get("PATH"))) for name in POWERSHELLS]
+    say(f"PowerShells found: {shells}")
+    if WINDOWS:
+        missing = [name for name, path in shells if path is None]
+        expect(not missing, f"no {missing} on this Windows machine")
+    ran_any = False
+    for name, path in shells:
+        if path is None:
+            continue
+        ran_any = True
+        for event, command in all_hook_commands(plugin_dir):
+            payload = json.dumps(
+                {"cwd": str(project), "hook_event_name": event, "session_id": "first-run-check"}
+            )
+            ran = run(
+                [path, "-NoProfile", "-NonInteractive", "-Command", command],
+                env,
+                project,
+                stdin=payload,
+                timeout=120,
+            )
+            expect(ran.code == 0, f"{name} exited {ran.code} on the {event} hook")
+            expect(ran.stdout == "", f"{name} printed {ran.stdout!r} on the {event} hook")
+            expect(ran.stderr == "", f"{name} wrote {ran.stderr!r} on the {event} hook")
+            results.add(
+                f"{event} hook in {name}", "exit 0, stdout empty, stderr empty"
+            )
+    if not ran_any:
+        results.add("hooks in PowerShell", "no powershell or pwsh on this machine; none ran")
+
+
+def skip_path_timing(
+    plugin_dir: Path, env: dict[str, str], work: Path, results: Results
+) -> None:
+    """The refusal hook for build/x.py in a folder that is no s0ma project:
+    the mean of ten runs, as Claude Code runs it. Printed, not asserted."""
+    plain = work / "no-project"
+    (plain / "build").mkdir(parents=True, exist_ok=True)
+    command = edit_hook_command(plugin_dir, "before-edit")
+    shell = [str(git_bash()), "-c"] if WINDOWS else ["/bin/sh", "-c"]
+    hook_env = dict(env)
+    hook_env["CLAUDE_PLUGIN_ROOT"] = plugin_root_text(plugin_dir)
+    hook_env["CLAUDE_PROJECT_DIR"] = str(plain)
+    payload = json.dumps(
+        {
+            "cwd": str(plain),
+            "hook_event_name": "PreToolUse",
+            "tool_name": "Write",
+            "tool_input": {"file_path": str(plain / "build" / "x.py"), "content": "x = 1\n"},
+        }
+    ).encode("utf-8")
+    times: list[float] = []
+    for _ in range(10):
+        start = time.perf_counter()
+        done = subprocess.run(  # noqa: S603 - a fixed, local command
+            [*shell, command],
+            input=payload,
+            capture_output=True,
+            env=hook_env,
+            cwd=str(plain),
+            timeout=60,
+            check=False,
+        )
+        times.append(time.perf_counter() - start)
+        expect(
+            (done.returncode, done.stdout, done.stderr) == (0, b"", b""),
+            f"the skip path did not stay silent: {done!r}",
+        )
+    mean = sum(times) / len(times) * 1000
+    results.add(
+        "skip path, before-edit outside a s0ma project",
+        f"mean {mean:.1f} ms over ten runs (min {min(times) * 1000:.1f}, max {max(times) * 1000:.1f})",
+    )
+
+
 def s0ma_shaped_project(where: Path) -> Path:
     """A folder that is a s0ma project by its pyproject.toml, with one source."""
     (where / "src").mkdir(parents=True)
@@ -1104,6 +1212,10 @@ def leg_uv_absent(opts: argparse.Namespace, work: Path, results: Results) -> Non
                 ),
             )
 
+    banner("uv absent: the hooks in PowerShell, and the cost of the skip path")
+    check_hooks_in_powershell(PLUGIN_DIR, env, project, results)
+    skip_path_timing(PLUGIN_DIR, env, work, results)
+
     no_message, broken = broken_copies(work)
     must_fail(
         "hook, message removed",
@@ -1337,6 +1449,10 @@ def leg_uv_present(opts: argparse.Namespace, work: Path, results: Results) -> No
                 "PARSE_ERROR",
             ),
         )
+
+        banner("uv present: the hooks in PowerShell, and the cost of the skip path")
+        check_hooks_in_powershell(PLUGIN_DIR, env, project, results)
+        skip_path_timing(PLUGIN_DIR, env, work, results)
 
         if claude is not None:
             for label, plugin_dir in (

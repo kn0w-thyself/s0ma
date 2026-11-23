@@ -11,7 +11,10 @@ would otherwise break quietly:
   (<https://code.claude.com/docs/en/hooks#exec-form-and-shell-form>). Each
   command is ``sh`` and one quoted path under ``${CLAUDE_PLUGIN_ROOT}``, and
   for the edit hooks one plain word saying which, so a machine with no uv
-  still has something that starts: the script, which finds uv itself. Exec
+  still has something that starts: the script, which finds uv itself. The
+  line opens with ``echo --% >/dev/null;`` and closes with ``# | out-null``,
+  so that PowerShell, which runs it on Windows when Git Bash is missing,
+  runs nothing and prints nothing instead of failing. Exec
   form would need uv to exist before anything could run, and a hook that
   cannot start is a hook error in front of the person.
 * **A timeout on every command.** The documented default is 600 seconds, and
@@ -64,8 +67,12 @@ EVENTS = ["PostToolUse", "PreToolUse", "SessionStart"]
 
 #: The edit hooks' command lines, and the script and launcher commands they name.
 EDIT_SCRIPT = PLUGIN_DIR / "hooks" / "edit-guard.sh"
-BEFORE_EDIT_LINE = 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh" before-edit'
-AFTER_EDIT_LINE = 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh" after-edit'
+BEFORE_EDIT_LINE = (
+    'echo --% >/dev/null; sh "${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh" before-edit # | out-null'
+)
+AFTER_EDIT_LINE = (
+    'echo --% >/dev/null; sh "${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh" after-edit # | out-null'
+)
 EDIT_COMMANDS = ("before-edit", "after-edit")
 
 #: The before-edit hook runs before every Write and Edit, so it gets less time
@@ -74,7 +81,18 @@ MAX_BEFORE_EDIT_SECONDS = 10
 MAX_AFTER_EDIT_SECONDS = 30
 
 #: The hook's whole command line, and the script it names.
-HOOK_SHELL_LINE = 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"'
+HOOK_SHELL_LINE = (
+    'echo --% >/dev/null; sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh" # | out-null'
+)
+
+#: Every hook line opens and closes the same way, so that the two shells
+#: Claude Code may hand it to both accept it. ``sh`` sends ``echo --%`` to
+#: /dev/null, runs the script, and reads ``# | out-null`` as a comment.
+#: PowerShell, used on Windows when Git Bash is missing, reads ``--%`` as the
+#: stop-parsing token: the rest of the line up to the pipe is text handed to
+#: ``echo``, ``out-null`` swallows it, and nothing runs or is printed.
+SHELL_OPENING = "echo --% >/dev/null; "
+SHELL_CLOSING = " # | out-null"
 HOOK_SCRIPT = PLUGIN_DIR / "hooks" / "session-start.sh"
 SERVER_SCRIPT = PLUGIN_DIR / "scripts" / "s0ma-serve"
 
@@ -210,7 +228,8 @@ def test_every_command_is_shell_form_with_a_timeout() -> None:
         assert handler["type"] == "command", event
         assert "args" not in handler, f"{event}: the hook must be shell form"
         command = handler["command"]
-        assert command.startswith('sh "${CLAUDE_PLUGIN_ROOT}/hooks/'), command
+        assert command.startswith(SHELL_OPENING + 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/'), command
+        assert command.endswith(SHELL_CLOSING), command
         assert command.count("${") == 1, f"{event}: one variable, the plugin root"
         assert "$" not in command.replace("${CLAUDE_PLUGIN_ROOT}", ""), command
         timeout = handler["timeout"]

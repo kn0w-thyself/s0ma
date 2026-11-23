@@ -205,17 +205,26 @@ def test_the_session_start_hook_is_shell_form() -> None:
     handler = handlers[0]
     assert "args" not in handler
     line = handler["command"]
-    for forbidden in ("$(", "`", "*", "?", "[", ";", "&", "|"):
-        assert forbidden not in line, f"the hook line carries {forbidden!r}: {line}"
-    assert line == 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"'
+    assert line == (
+        'echo --% >/dev/null; sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh" # | out-null'
+    )
 
 
 def test_every_hook_line_is_one_script_and_plain_words() -> None:
-    """The same for every hook: ``sh``, one quoted path, at most one plain word."""
+    """The same for every hook: ``sh``, one quoted path, at most one plain word,
+    between the opening and closing that make PowerShell run nothing.
+
+    Inside that frame, no command substitution, no wildcard, no second
+    command and no quoting but the one path's double quotes.
+    """
+    opening = "echo --% >/dev/null; "
+    closing = " # | out-null"
     for handler in hook_handlers():
         assert "args" not in handler
         line = handler["command"]
-        for forbidden in ("$(", "`", "*", "?", "[", ";", "&", "|", "'", "\\"):
+        assert line.startswith(opening) and line.endswith(closing), line
+        line = line[len(opening) : -len(closing)]
+        for forbidden in ("$(", "`", "*", "?", "[", ";", "&", "|", "#", ">", "'", "\\"):
             assert forbidden not in line, f"a hook line carries {forbidden!r}: {line}"
         words = line.split(" ")
         assert words[0] == "sh" and len(words) in (2, 3), line

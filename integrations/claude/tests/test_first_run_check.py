@@ -285,7 +285,7 @@ def test_the_driver_reads_both_edit_commands_from_hooks_json(driver: ModuleType)
     plugin = REPO_ROOT / "integrations" / "claude" / "plugin"
     for hook in ("before-edit", "after-edit"):
         command = driver.edit_hook_command(plugin, hook)
-        assert command.endswith(f'/hooks/edit-guard.sh" {hook}')
+        assert command.endswith(f'/hooks/edit-guard.sh" {hook} # | out-null')
         assert "${" not in command
 
 
