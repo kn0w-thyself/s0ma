@@ -12,7 +12,7 @@ behave, how to hold a project still, and how to take it all off again.
 **The short version.**
 
 - **Claude Code** — add the kn0wthyself marketplace, install `s0ma@kn0wthyself`,
-  run `/s0ma:setup`. The plugin asks nothing at install.
+  run `/s0ma:start`. The plugin asks nothing at install.
 - **Claude Desktop** — open the s0ma extension file and answer two settings.
 - **A key is optional.** Nobody needs one to install or use s0ma. If you have
   one, it goes into `s0ma-launch activate` at a terminal of your own, or in
@@ -68,7 +68,9 @@ macOS, Linux:  curl -LsSf https://astral.sh/uv/install.sh | sh
 Windows:       powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-Restart Claude afterwards, so it can see the new program.
+If you install it yourself, restart Claude afterwards, so it can see the new
+program. `/s0ma:start` can install it for you instead, and carries on in the
+same conversation.
 
 **A key** is optional. With none, uv fetches s0ma from the package index it is
 set up to use, at the version the plugin brings. With your key from
@@ -92,21 +94,26 @@ You do not need to install Python. uv provides one.
    /plugin install s0ma@kn0wthyself
    ```
 
-3. **Run `/s0ma:setup`.** It checks uv, reports what is installed, offers to
-   install s0ma if nothing is, says where your key goes, and finishes with
-   `s0ma doctor`. It works entirely through the terminal, so it still works when
-   the s0ma server itself could not start — which is the usual reason for
-   reading this page.
+3. **Run `/s0ma:start`.** It installs what is missing, asks what you want to
+   build, builds it and shows it to you in studi0, all in one conversation.
+   [Your first conversation](#your-first-conversation) below goes through it
+   step by step.
+
+`/s0ma:setup` is the detailed version of the same ground: it checks uv,
+reports what is installed, offers to install s0ma if nothing is, says where
+your key goes, and finishes with `s0ma doctor`. It works entirely through the
+terminal, so it still works when the s0ma server itself could not start, which
+makes it the place to go when an install needs repairing.
 
 The plugin asks nothing at install: there is no settings dialog. A key, if you
 have one, is saved with `s0ma-launch activate` (see below); how s0ma keeps
 itself current is a preference you change by asking Claude; and uv is found on
 the path or where uv's own installers put it.
 
-**Before `/s0ma:setup`.** A first session on a machine where s0ma is not set up
+**Before `/s0ma:start`.** A first session on a machine where s0ma is not set up
 yet shows no error. Claude is told, in one line at the start of the session,
 that the plugin is here but s0ma is not set up on this machine yet, so its tools
-are not available, and that `/s0ma:setup` sets it up. The s0ma server shows as
+are not available, and that `/s0ma:start` sets it up. The s0ma server shows as
 connected: with no uv on the machine, it is a small stand-in that offers one
 tool, which says the same thing. With uv and nothing installed, the line comes
 from s0ma's own launcher instead, you see it too, and the server is s0ma's own
@@ -123,6 +130,44 @@ and `s0ma-launch` on the path of the terminal Claude Code itself uses, so
 are not added to your own shell's path: in a terminal of your own, those
 commands exist only if you put them there — from a source checkout, or from the
 plugin's own folder.
+
+### Your first conversation
+
+`/s0ma:start` stops for you at most twice: once to install what is missing, if
+anything is, and once to ask what to build. In the order you meet it:
+
+1. **It looks at what is missing**, with `s0ma-launch status`, and asks
+   nothing if nothing is.
+2. **It asks one question for everything that is missing.** On a machine with
+   neither uv nor s0ma, it says: "Two things are missing on this Mac: uv, a
+   small tool s0ma uses to manage its own Python, and s0ma itself. Both go in
+   your home folder, and nothing in your projects changes. Install them?" (on
+   Windows it says "this PC", on Linux "this computer"). One yes covers all of
+   it. Say no and nothing happens; `/s0ma:start` picks up again any time.
+3. **It installs**, uv with uv's own installer and then s0ma with
+   `s0ma-launch install`, which needs no key, and says what it did in one short
+   line. There is no restart in between: the plugin's commands find uv where
+   its installer put it. If a step fails, it says what was printed and hands
+   over to `/s0ma:setup`.
+4. **It asks what you want to build**: "One sentence is enough. Or say "show
+   me" and I'll build a small sample so you can watch how it works."
+5. **It creates the project and builds it** without another question, in a
+   new folder inside the one the session is in, and names the folder it chose.
+   It reports in one line what was created, how many modules and parts were
+   built, and what the checks said, from what the commands printed.
+6. **It shows you studi0** without asking: "It's built, and studi0 is open
+   beside the chat. That's your app as a live map: every part and how they
+   connect. It updates as I build." In the terminal, where there is no pane
+   beside the chat, it gives you studi0's address instead.
+7. **It tells you what you can say next**: what to change, how any part works,
+   and two preferences you can set by saying them, "always use s0ma" and
+   "always show studi0".
+
+s0ma's own tools in Claude arrive with your next session. Until then, Claude
+works through the `s0ma` command, so nothing waits on a restart.
+
+In a folder that is already a s0ma project, `/s0ma:start` skips straight to
+building what you ask.
 
 ## Install in Claude Desktop
 
@@ -266,7 +311,7 @@ To stop thinking about it, turn auto-update on for our marketplace once:
 then checks after a session has started and asks you to reload; the session you
 are in keeps the version it loaded.
 
-The plugin is deliberately thin: six named commands, a start-up line, the
+The plugin is deliberately thin: twelve named commands, a start-up line, the
 script that starts the server and the small program that starts s0ma. So it
 changes rarely, and a slightly old one is not a problem.
 
@@ -351,12 +396,26 @@ There are three ways to have less s0ma:
 - **Gone.** Remove it, as [Taking it off again](#taking-it-off-again) below
   describes.
 
-## The nine things you can ask for by name
+### How studi0 is shown
 
-The plugin adds nine commands. Type the name, or just say what you want.
+studi0 is s0ma's local viewer: it shows a project its own graph, from this
+machine. Claude starts it with `s0ma studi0` as a command that keeps running in
+the background, reads the address it prints (`http://studi0.localhost:5710/`,
+or another port when that one is taken), and shows it to you. Where the session
+can open a web page in a pane beside the chat, as the Claude Desktop app can,
+studi0 opens there; anywhere else, Claude gives you the address as a link. If
+studi0 is already running for the project, Claude uses that one. When it shows
+up after a build is the studi0 preference above.
+
+## The twelve things you can ask for by name
+
+The plugin adds twelve commands. Type the name, or just say what you want.
 
 | Command | What it does |
 |---|---|
+| `/s0ma:start` | The quick way in: installs what is missing after one question, asks what to build, builds it, and shows it in studi0. |
+| `/s0ma:build` | How Claude works on a s0ma project: edits the `.s0ma` sources, checks, builds and tests, and shows studi0 after a build as your preference says. Claude uses it when you ask for changes to a s0ma project. |
+| `/s0ma:studi0` | Starts studi0 for this project and shows it, beside the chat or as a link. Say "show me studi0". |
 | `/s0ma:setup` | Gets s0ma working here: checks uv, installs the toolchain, says where the key goes, ends with a health check. The recovery path when anything is wrong. |
 | `/s0ma:new` | Starts a new s0ma project with `s0ma new project`, and proves it works. |
 | `/s0ma:retrofit` | Brings an existing codebase onto s0ma one module at a time, starting from the Python in it. The long version is [Retrofitting an existing codebase](retrofit-existing-codebase.md). |

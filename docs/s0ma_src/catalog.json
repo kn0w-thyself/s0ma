@@ -1111,6 +1111,20 @@
         "agent"
       ],
       "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/build/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-build",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/build/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:build skill - work on a s0ma project"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
       "canonical_source": "integrations/claude/plugin/skills/doctor/SKILL.md",
       "covers": [],
       "governed_by": [],
@@ -1217,6 +1231,34 @@
       "prose_locator": "integrations/claude/plugin/skills/setup/SKILL.md",
       "status": "living",
       "title": "The /s0ma:setup skill — set s0ma up in Claude"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/start/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-start",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/start/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:start skill - the quick way in"
+    },
+    {
+      "audiences": [
+        "agent"
+      ],
+      "authority": "",
+      "canonical_source": "integrations/claude/plugin/skills/studi0/SKILL.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-skill-studi0",
+      "kind": "guide",
+      "prose_locator": "integrations/claude/plugin/skills/studi0/SKILL.md",
+      "status": "living",
+      "title": "The /s0ma:studi0 skill - start studi0 and show it"
     },
     {
       "audiences": [

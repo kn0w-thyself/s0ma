@@ -85,7 +85,7 @@ Skip this if you never added the plugin or the extension — if `/plugin` in
 Claude Code does not list s0ma, and Claude Desktop's Extensions settings do not
 either, there is nothing here to do.
 
-Both of these are **wrappers**. Each one is a little configuration, six named
+Both of these are **wrappers**. Each one is a little configuration, twelve named
 commands, a start-up notice and a copy of the small program that starts s0ma.
 Neither holds the s0ma toolchain itself: that lives in one folder in your home
 directory, and [step 6](#6-remove-the-folder-in-your-home-directory) is where it

@@ -13,6 +13,23 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Added
 
+- **`/s0ma:start`, one front door from nothing to a built project with studi0
+  open.** In one conversation it sees what is missing with `s0ma-launch
+  status`, asks one question for everything that is missing, installs uv with
+  uv's own installer and s0ma with `s0ma-launch install` on one yes, asks what
+  to build, creates the project with `s0ma new project` and builds it, reports
+  in one line what the commands printed, and shows studi0. Two more skills go
+  with it: `/s0ma:build`, which says when and how Claude works on a s0ma
+  project and what happens with studi0 after a build under each `studi0`
+  preference, and `/s0ma:studi0`, which starts studi0 as a background command,
+  uses one already running for the project, and shows it in a pane beside the
+  chat where the session has one, or as a link. Everything that says s0ma is
+  not set up now names `/s0ma:start`: the session hint, the plugin's one
+  not-set-up message, the stub server's instructions and status, and
+  `s0ma-launch status`'s next step. `/s0ma:setup` stays the place for checking
+  each step and repairing an install. The standing note gains one sentence
+  naming `/s0ma:start` and the build skill.
+
 - **Tell s0ma how you want it, by saying so, and turn it off for one
   project.** Two preferences are kept for the machine beside the update
   setting: `use` (`asked`, the default, or `always`) and `studi0` (`offer`,

@@ -179,12 +179,13 @@ That half is this checklist. Run it after a release is cut and before the plugin
 **The steps**, and what to look for at each:
 
 1. **Install the plugin from inside Claude**, with `/plugin`. No settings dialog opens and nothing asks for a key.
-2. **Start a first session.** No hook error and no failed server anywhere on screen. Asked what it knows about s0ma, Claude says s0ma is not set up here yet and names `/s0ma:setup`. `/mcp` shows the s0ma server connected.
-3. **Run `/s0ma:setup`.** It finds no uv, offers the one install command for the system and asks before running it, then says to restart Claude. Run it again after the restart: it asks before installing s0ma, installs it with no key, and ends on `s0ma doctor` reporting `ok`. A new session afterwards shows you no line about s0ma at all, though Claude is told, out of your sight, that s0ma is there and how you want it used.
-4. **Build a new project with `/s0ma:new`.** The project is written where you agreed, and its checks pass.
-5. **Open studi0** on that project (ask Claude to, or run `s0ma studi0`). The page loads and draws the project's graph.
-6. **Change the update setting by asking**, for example "tell me about s0ma updates instead of installing them". Claude saves it with `s0ma-launch set update notify`, and `s0ma-launch status` then reports `notify`.
-7. **Remove s0ma** by following [Removing s0ma](uninstall.md). Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
+2. **Start a first session.** No hook error and no failed server anywhere on screen. Asked what it knows about s0ma, Claude says s0ma is not set up here yet and names `/s0ma:start`. `/mcp` shows the s0ma server connected.
+3. **Run `/s0ma:start`.** It finds neither uv nor s0ma and asks one question for both, in the words [the Claude guide](guides/claude-integration.md#your-first-conversation) quotes. One yes installs uv and then s0ma with no key, with no restart and no second question, and one short line says what was installed.
+4. **Say what to build.** It asks what you want to build; answer in one sentence, or say "show me". With no other question it names a folder, creates the project inside the session's folder, builds it and checks it, and reports one line whose module count, part count and checks match what `s0ma build .` and `s0ma inspect --all` print in that folder.
+5. **studi0 is shown without asking.** In the Desktop app's Code tab it opens beside the chat; in the terminal Claude gives its address as a link, and the page loads the project's graph. Claude ends by saying what you can ask next.
+6. **Set a preference by saying so**: "always show studi0". Claude answers in one sentence, and `s0ma-launch prefs` then reports studi0 `always`. A new session afterwards shows you no line about s0ma at all, though Claude is told, out of your sight, that s0ma is there and how you want it used.
+7. **Turn s0ma off for the project**: "turn s0ma off here". Claude answers that s0ma is off in this project and names the one file it added, `.s0ma/preferences.json`. A new session in that folder says nothing about s0ma.
+8. **Remove s0ma** by following [Removing s0ma](uninstall.md). Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
 
 Write down the host, the system, the Claude version and the s0ma version for each pass, and stop the publication at the first step that does not look as described.
 

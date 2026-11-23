@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 184 documents. 144 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 187 documents. 147 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -103,6 +103,7 @@ Getting a project running and writing your first declarations, then checking, bu
 | [Migrating from s0ma Python to .s0ma DSL](../packages/s0ma-dsl/docs/migration_guide.md) | `packages/s0ma-dsl/docs/migration_guide.md` | agents | maintained | links checked |
 | [s0ma User Guide](../packages/s0ma-core/docs/s0ma_user_guide.md) | `packages/s0ma-core/docs/s0ma_user_guide.md` | agents | maintained | links checked |
 | [s0ma — getting started as a free tester](hosting-getting-started.md) | `docs/hosting-getting-started.md` | users | maintained | links checked, version checked |
+| [The /s0ma:build skill - work on a s0ma project](../integrations/claude/plugin/skills/build/SKILL.md) | `integrations/claude/plugin/skills/build/SKILL.md` | agents | maintained | listed only |
 | [The /s0ma:doctor skill — diagnose s0ma](../integrations/claude/plugin/skills/doctor/SKILL.md) | `integrations/claude/plugin/skills/doctor/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:feedback skill — send feedback about s0ma](../integrations/claude/plugin/skills/feedback/SKILL.md) | `integrations/claude/plugin/skills/feedback/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:new skill — start a new s0ma project](../integrations/claude/plugin/skills/new/SKILL.md) | `integrations/claude/plugin/skills/new/SKILL.md` | agents | maintained | version checked |
@@ -111,6 +112,8 @@ Getting a project running and writing your first declarations, then checking, bu
 | [The /s0ma:preferences skill - how s0ma and studi0 are used](../integrations/claude/plugin/skills/preferences/SKILL.md) | `integrations/claude/plugin/skills/preferences/SKILL.md` | agents | maintained | listed only |
 | [The /s0ma:retrofit skill — the adoption ladder](../integrations/claude/plugin/skills/retrofit/SKILL.md) | `integrations/claude/plugin/skills/retrofit/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:setup skill — set s0ma up in Claude](../integrations/claude/plugin/skills/setup/SKILL.md) | `integrations/claude/plugin/skills/setup/SKILL.md` | agents | maintained | version checked |
+| [The /s0ma:start skill - the quick way in](../integrations/claude/plugin/skills/start/SKILL.md) | `integrations/claude/plugin/skills/start/SKILL.md` | agents | maintained | listed only |
+| [The /s0ma:studi0 skill - start studi0 and show it](../integrations/claude/plugin/skills/studi0/SKILL.md) | `integrations/claude/plugin/skills/studi0/SKILL.md` | agents | maintained | listed only |
 | [The /s0ma:update skill — update or pin s0ma](../integrations/claude/plugin/skills/update/SKILL.md) | `integrations/claude/plugin/skills/update/SKILL.md` | agents | maintained | version checked |
 | [The server that describes itself](../packages/s0ma-mcp/src/s0ma_mcp/_built/docs/selfhost_walkthrough.md) | `packages/s0ma-mcp/src/s0ma_mcp/_built/docs/selfhost_walkthrough.md` | agents | generated | rebuilt and compared |
 | [Your first module: the anatomy of a .s0ma file](guides/first-module.md) | `docs/guides/first-module.md` | users | maintained | links checked, version checked |
