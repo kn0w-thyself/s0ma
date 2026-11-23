@@ -88,11 +88,10 @@ s0ma build .
 ```
 
 ```text
-── {project}/build/core_domain.py (1 error(s), 0 warning(s)) ──
 {project}/build/core_domain.py:1: ERROR [GENERATED_FILE_DRIFT]
   {project}/build/core_domain.py was edited by hand; a build will not overwrite it until the .s0ma source says the same thing. Move changes into src/*.s0ma, or pass --force to discard them.
   Remediation: Move the hand edits back into the .s0ma source and rebuild, or re-run with --force to discard the edits and regenerate. `s0ma verify` classifies this file as EDITED and `s0ma check` reports it as a GENERATED_FILE_DRIFT warning.
-Results: 1 error(s), 1 warning(s) [mode: dev]
+Results: 1 error(s), 0 warning(s) [mode: dev]
 ```
 
 It stops, and it stops before writing anything. Your hand-written line is still
@@ -201,18 +200,10 @@ s0ma build .
 ```
 
 ```text
-{project}/pyproject.toml:1: WARNING [HOST_RUNTIME_UNDECLARED]
-  Generated Python imports the s0ma runtime, but the host project does not declare s0ma-lang-core, s0ma-lang-dsl in [project].dependencies.
-Results: 0 error(s), 1 warning(s) [mode: dev]
 Build complete: 3 module(s) → {project}/build (manifest: build.s0ma.json)
 ```
 
 Green, and earned under the reading that refuses a debt.
-
-One warning is still there, and it is a third kind of thing again. Nothing is
-wrong with what you wrote: `HOST_RUNTIME_UNDECLARED` is a fact about the
-environment around it, and it has been sitting under every build on this page.
-Which is the cue for the next section.
 
 ## When you cannot tell which of these you are in
 
@@ -226,8 +217,8 @@ and its exact contents honestly depend on the machine it runs on: which s0ma
 packages are installed, where, and at what versions is precisely the question
 it exists to answer, so no two machines print quite the same page. Those are the lines that settle the
 question. It answers what you would otherwise guess at: which s0ma packages
-this machine actually has and at what versions — which is what the warning
-above was really about — which mode this project is set to, whether the build
+this machine actually has and at what versions, which mode this project is
+set to, whether the build
 is older than the sources, and one thing to do next. It reads and reports; it
 changes nothing. When you are lost, this is the cheapest question available.
 

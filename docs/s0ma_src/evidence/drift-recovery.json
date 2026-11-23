@@ -92,10 +92,6 @@
         "stdout": [
           {
             "match": "line",
-            "text": "── {project}/build/core_domain.py (1 error(s), 0 warning(s)) ──"
-          },
-          {
-            "match": "line",
             "text": "{project}/build/core_domain.py:1: ERROR [GENERATED_FILE_DRIFT]"
           },
           {
@@ -108,7 +104,7 @@
           },
           {
             "match": "line",
-            "text": "Results: 1 error(s), 1 warning(s) [mode: dev]"
+            "text": "Results: 1 error(s), 0 warning(s) [mode: dev]"
           },
           {
             "match": "absent",
@@ -237,16 +233,8 @@
         "stderr": [],
         "stdout": [
           {
-            "match": "line",
-            "text": "{project}/pyproject.toml:1: WARNING [HOST_RUNTIME_UNDECLARED]"
-          },
-          {
-            "match": "line",
-            "text": "  Generated Python imports the s0ma runtime, but the host project does not declare s0ma-lang-core, s0ma-lang-dsl in [project].dependencies."
-          },
-          {
-            "match": "line",
-            "text": "Results: 0 error(s), 1 warning(s) [mode: dev]"
+            "match": "absent",
+            "text": "WARNING"
           },
           {
             "match": "line",

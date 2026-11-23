@@ -132,14 +132,10 @@ In the output below, `{project}` stands for the full path to your project; the r
 
 ```console
 $ s0ma build src
-{project}/pyproject.toml:1: WARNING [HOST_RUNTIME_UNDECLARED]
-Results: 0 error(s), 1 warning(s) [mode: dev]
 Build complete: 3 module(s) → {project}/build (manifest: build.s0ma.json)
   {project}/build/greeting_domain.py
   {project}/build/greeting_domain.s0ma.json
 ```
-
-The warning is about the throwaway project rather than about your module: nothing has declared that this project depends on the s0ma runtime it now imports. It is a warning and not a refusal because the mode is the everyday one.
 
 Two of those files are yours, and the second one is the interesting one.
 

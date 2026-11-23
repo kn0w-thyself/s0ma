@@ -183,6 +183,17 @@ Historical entries describe artifacts as they were named at the time.
   from the sources studi0's tests keep. The agent's own work is not replayed,
   and the guide says so.
 
+- **A new project carries a launch entry for studi0.** `s0ma new project`,
+  with or without a template, writes `.claude/launch.json` with one
+  configuration, `studi0`, at studi0's default address
+  `http://studi0.localhost:5710`, so the Claude Desktop app can open studi0
+  beside the chat. The entry has a `url` and no command: it reaches a studi0
+  that is already running on that port and starts nothing. Like the
+  `/s0ma-feedback` skill, the file is written only when absent, an existing one
+  is kept byte for byte and never causes a refusal, and the summary lists it
+  (`launch_config` in `--format json`). A studi0 test holds the entry to
+  studi0's own default address.
+
 ### Changed
 
 - **PRD v1.19: the Claude plugin is offered with no account (owner ruling
@@ -399,6 +410,32 @@ Historical entries describe artifacts as they were named at the time.
   `build_refused` block gains `baseline_path` and `baseline_recorded_at`. No
   existing field is renamed or removed. A stale baseline left by another branch
   or environment is now visible in the refusal itself.
+
+- **A new project builds with no warning.** The `[project]` table `s0ma new
+  project` creates, with or without a template, now names the runtime its
+  generated Python imports: `dependencies = ["s0ma-lang-core",
+  "s0ma-lang-dsl"]`, bare names with no version. Its first `s0ma build` no
+  longer prints `HOST_RUNTIME_UNDECLARED`, and `s0ma check`, `s0ma check --mode
+  release`, `s0ma build .` and `s0ma test` print no diagnostic on a fresh
+  project of any template. A `pyproject.toml` the project already had is still
+  only appended to, so the warning stays true there. The getting-started,
+  first-project, first-module, drift-recovery and MCP authoring guides, and
+  their replayed transcripts, show the clean build; the drift-recovery journey
+  no longer teaches a recovery from a warning its run never meets. The
+  plugin's `/s0ma:start` skill now says "All checks pass" by what a clean build
+  prints: a build prints a `Results:` line only when it has an error or a
+  warning, so the skill no longer waits for one.
+
+- **The feedback skill says what to do when this machine cannot send
+  feedback.** When the tool says the machine is not set up to send feedback,
+  the `/s0ma-feedback` skill (and the plugin's `/s0ma:feedback`, its copy)
+  tells Claude to name both cases briefly, since it cannot tell which applies:
+  with a s0ma license key, the person runs the `s0ma feedback enroll` command
+  the tool names in a terminal; with no key, the feedback channel cannot take
+  the report, and Claude points to the public issue tracker,
+  `https://github.com/kn0w-thyself/s0ma/issues`. Claude says an issue there is
+  public, never pastes the drafted report into one, leaves anything private
+  out if asked to help word one, and never looks for, reads or asks for a key.
 
 ### Fixed
 

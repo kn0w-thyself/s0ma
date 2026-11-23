@@ -1037,8 +1037,14 @@ class TestTheFrontDoor:
         assert "give the address as a link" in text
 
     def test_start_reports_only_what_was_printed(self, skills: dict[str, str]) -> None:
-        """Every fresh build warns HOST_RUNTIME_UNDECLARED, so "All checks pass"
-        has to be held to what the commands said, and a warning said aloud."""
+        """A build can print a warning while every check passes, so "All
+        checks pass" has to be held to what the commands said, and a warning
+        said aloud."""
         text = _one_line(skills["start"])
         assert 'Say "All checks pass" only when' in text
+        # A clean build prints no `Results:` line, so the condition must not
+        # ask for one.
+        assert "the build printed no error and no warning" in text
+        assert "a clean build prints none" in text
+        assert "the build's `Results:` line shows" not in text
         assert "A warning is not a failure, but it was printed, so say it" in text

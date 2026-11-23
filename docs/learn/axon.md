@@ -71,4 +71,4 @@ axon <source> -> <target>
 
 - Topic id: `concept:axon`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:d7e05949ae81d6c0`
+- Documentation snapshot: `sha256:7c7e5ec9b99dadae`

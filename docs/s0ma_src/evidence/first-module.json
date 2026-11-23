@@ -65,12 +65,8 @@
         ],
         "stdout": [
           {
-            "match": "line",
-            "text": "{project}/pyproject.toml:1: WARNING [HOST_RUNTIME_UNDECLARED]"
-          },
-          {
-            "match": "line",
-            "text": "Results: 0 error(s), 1 warning(s) [mode: dev]"
+            "match": "absent",
+            "text": "WARNING"
           },
           {
             "match": "line",

@@ -118,8 +118,9 @@ When step 1 found nothing missing, begin the conversation here, and leave out
    Take every part of it from what the commands printed. The modules are the
    number on the build's `Build complete:` line. The parts are the sum of the
    `Components` column `s0ma inspect --all` prints. Say "All checks pass" only
-   when `s0ma check` printed "No errors." and the build's `Results:` line shows
-   no errors and no warnings.
+   when `s0ma check` printed "No errors." and the build printed no error and no
+   warning. A build that has either prints a `Results:` line with the counts; a
+   clean build prints none.
 
    A warning is not a failure, but it was printed, so say it: put its count and
    its code in place of "All checks pass", for example "Checks pass, with 1

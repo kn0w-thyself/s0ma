@@ -68,14 +68,14 @@ JOURNEY_ID = "journey:drift-recovery"
 EVIDENCE_ID = "example:transcript/drift-recovery"
 GUIDE = "docs/guides/drift-recovery.md"
 
-#: The two failures this path exists to recover from, plus the one it
-#: sends a lost reader to the health report for. Written down rather than
-#: read back off the record: the point of the milestone is that *these*
-#: refusals are taught, and a recovery quietly disappearing should fail
-#: here by name rather than pass a weaker count.
+#: The two failures this path exists to recover from. Written down rather
+#: than read back off the record: the point of the milestone is that
+#: *these* refusals are taught, and a recovery quietly disappearing should
+#: fail here by name rather than pass a weaker count. A new project
+#: declares the runtime it imports, so the transcript never meets
+#: ``HOST_RUNTIME_UNDECLARED`` and the path teaches no recovery from it.
 EXPECTED_RECOVERIES: tuple[tuple[str, str], ...] = (
     ("GENERATED_FILE_DRIFT", "cli:s0ma/build"),
-    ("HOST_RUNTIME_UNDECLARED", "cli:s0ma/doctor"),
     ("SEMANTIC_PENDING_DEBT", "cli:s0ma/check"),
 )
 

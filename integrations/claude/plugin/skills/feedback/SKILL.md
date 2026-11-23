@@ -17,4 +17,6 @@ Then work the journey on the `s0ma-authoring` MCP server:
 4. Call `submit_feedback` with that report and fingerprint unchanged. The approval form does the asking: never state or assume that the user approved, and never read frustration as consent.
 5. Relay the outcome plainly: the receipt id when it sent, or — on refusal, on failure, or in a client with no approval form — the saved draft id and the one command that finishes it from a terminal: `s0ma feedback`.
 
+If the tool says this machine is not set up to send feedback, there are two cases and you cannot tell which, so say both briefly. With a s0ma license key, the command the tool names connects this machine, and the user runs it in a terminal. With no license key, the feedback channel cannot take this report: say so in one sentence, and point them to the public issue tracker, https://github.com/kn0w-thyself/s0ma/issues. Say that an issue there is public, never paste the drafted report into an issue yourself, and if they ask for help wording one, leave out anything private. Do not look for a key file, and never read or ask for a key.
+
 If the s0ma MCP server is not connected, run `s0ma feedback` in a terminal instead. It is the same journey, and it works in any client.

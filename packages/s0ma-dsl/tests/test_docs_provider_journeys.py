@@ -66,7 +66,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 #: of the migration is that these three paths are the ones B4 and B7
 #: proved and not three paths that happen to be here.
 EXPECTED_JOURNEYS: tuple[tuple[str, int, int], ...] = (
-    ("journey:drift-recovery", 6, 3),
+    ("journey:drift-recovery", 6, 2),
     ("journey:first-module", 3, 1),
     ("journey:first-project", 7, 2),
     ("journey:mcp-authoring-loop", 5, 3),

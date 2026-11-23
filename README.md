@@ -382,13 +382,12 @@ the proof that the self-model participates in what can ship.
 
 Static checks deliberately do not execute project code. The host probe runs
 under the application's own Python, and a fresh project does not have one yet:
-it has no environment and declares no dependencies. Give it both in one step:
-from inside `my-app`, run `uv add s0ma-lang-core s0ma-lang-dsl`, which creates
-`.venv`, installs the two packages, and names them in `[project].dependencies`
-(the build's `HOST_RUNTIME_UNDECLARED` warning asks for exactly that
-declaration; with pip, install the two packages into a `.venv` of your own and
-add the two names to `[project].dependencies` by hand; from a checkout, add the
-two wheels you built, as the Install section shows). Then,
+`s0ma new project` already names `s0ma-lang-core` and `s0ma-lang-dsl` in
+`[project].dependencies`, but there is no environment that holds them. Make
+one: from inside `my-app`, run `uv add s0ma-lang-core s0ma-lang-dsl`, which
+creates `.venv` and installs the two packages (with pip, install the two
+packages into a `.venv` of your own; from a checkout, add the two wheels you
+built, as the Install section shows). Then,
 after reviewing and trusting the application, run the separate probe:
 
 ```bash

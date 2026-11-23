@@ -407,6 +407,12 @@ studi0 opens there; anywhere else, Claude gives you the address as a link. If
 studi0 is already running for the project, Claude uses that one. When it shows
 up after a build is the studi0 preference above.
 
+A project made with `s0ma new project` also carries `.claude/launch.json`, an
+entry the Claude Desktop app reads to open studi0 beside the chat at its own
+address, `http://studi0.localhost:5710`. The entry starts nothing: it reaches a
+studi0 that is already running on that port, and not one that had to take
+another.
+
 ## The twelve things you can ask for by name
 
 The plugin adds twelve commands. Type the name, or just say what you want.

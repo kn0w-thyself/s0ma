@@ -147,7 +147,6 @@ FIXTURE_PROJECT = "{project}"
 QUOTED_INLINE: tuple[str, ...] = (
     "4 file(s) checked. No errors.",
     "Results: 1 error(s), 0 warning(s) [mode: dev]",
-    "Results: 0 error(s), 1 warning(s) [mode: dev]",
 )
 
 has_server = importlib.util.find_spec("s0ma_mcp") is not None
