@@ -185,6 +185,16 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Changed
 
+- **PRD v1.19: the Claude plugin is offered with no account (owner ruling
+  2026-11-22).** NFR-8 now says the Claude plugin no longer depends on an
+  account: from the release its public catalog is first cut from, the plugin
+  and that catalog are offered to everyone beside the clone, and with no
+  license key the plugin installs the toolchain from the public package index
+  and never contacts the control plane. §7.5 no longer counts the agent
+  integration among what the subscription sells, and FR-COM-1's built list
+  says the plugin has no key setting. The control plane, the keyed installer
+  and the feedback function's enrolment still depend on an account. No
+  principle and no invariant changes.
 - **studi0 has an address of its own.** `s0ma studi0` with no `--port` now
   serves at `http://studi0.localhost:5710/` and opens the browser there,
   where before it took a different port the system assigned on every launch.
