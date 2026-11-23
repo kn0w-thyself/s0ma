@@ -12,6 +12,10 @@ starts. Nothing ever changes underneath a session in progress. The plugin's
 `notify` only says when something is waiting, `off` never looks. This skill is
 for the times someone wants to do it deliberately.
 
+With no license key on the machine, nothing updates itself: a newer s0ma comes
+with a newer version of the plugin, the line a session begins with says so,
+and step 3 below is what installs it.
+
 If any command answers that it is not built yet, this is a preview build: say
 exactly what it printed and stop.
 

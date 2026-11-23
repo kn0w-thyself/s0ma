@@ -80,11 +80,12 @@ checkout needs none either.
 
 ## 5. Keep it current
 
-The s0ma toolchain looks after itself. With a license key, it fetches newer
-versions quietly and uses them the next time a session starts. Without one, it
-asks nobody: each version of the plugin brings its own version of s0ma, and
-when the plugin is updated, s0ma moves to that version quietly in the same way.
-`/s0ma:update` covers checking, updating by hand and pinning a project.
+With a license key, the s0ma toolchain looks after itself: it fetches newer
+versions quietly and uses them the next time a session starts. Without one,
+nothing is fetched unless someone asks: each version of the plugin brings its
+own version of s0ma, and when the plugin is updated, the line a session begins
+with says a newer s0ma came with it, and `/s0ma:update` installs it.
+`/s0ma:update` also covers checking, updating by hand and pinning a project.
 
 The plugin is separate, and Claude only auto-updates marketplaces that are
 Anthropic's own. Tell the person how to turn it on for ours — `/plugin`,
