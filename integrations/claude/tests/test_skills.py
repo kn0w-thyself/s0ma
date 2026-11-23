@@ -8,9 +8,9 @@ code. Four of them are worth a gate, and this file is those four:
   reads and nothing else, and a ``name`` that matches the directory - the
   invocation name comes from the front matter, so a mismatch renames the
   skill and silently breaks every ``/s0ma:<name>`` a document promises.
-* **It must never handle a secret.** A license key belongs in the plugin's
-  configuration screen or in ``s0ma-launch activate``'s hidden prompt, and
-  nowhere else. A skill that asks for one in the conversation puts it in a
+* **It must never handle a secret.** A license key belongs in
+  ``s0ma-launch activate``'s hidden prompt, or in the Claude Desktop
+  extension's settings screen, and nowhere else. A skill that asks for one in the conversation puts it in a
   transcript for ever. Both halves are checked: no key-shaped string in the
   text, and no sentence that asks anybody for one.
 * **Every command it names must exist.** A skill that tells a model to run
@@ -443,8 +443,8 @@ class TestNoSkillTouchesALicenseKey:
         offending = sentences_asking_for_a_secret(skills[name])
         assert offending == [], (
             f"{name}: asks for a secret in the conversation. The key goes in "
-            f"the plugin's configuration screen or through `s0ma-launch "
-            f"activate`, and nowhere else: {offending}"
+            f"`s0ma-launch activate` or the Desktop extension's settings, and "
+            f"nowhere else: {offending}"
         )
 
     def test_the_scanners_catch_what_they_are_for(self) -> None:

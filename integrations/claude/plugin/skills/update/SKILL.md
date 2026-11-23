@@ -7,10 +7,11 @@ description: Check for a newer s0ma, move to it, or hold a project on the versio
 
 s0ma normally updates itself: it starts the version that is installed, fetches
 a newer one quietly in the background, and uses it the next time a session
-starts. Nothing ever changes underneath a session in progress. The plugin's
-**How s0ma keeps itself current** setting decides that — `auto` is the default,
-`notify` only says when something is waiting, `off` never looks. This skill is
-for the times someone wants to do it deliberately.
+starts. Nothing ever changes underneath a session in progress. The update
+setting decides that: `auto` is the default, `notify` only says when something
+is waiting, `off` never looks. To change it, the person asks you and you run
+`s0ma-launch set update <auto|notify|off>`, which saves it on this machine.
+This skill is for the times someone wants to do it deliberately.
 
 With no license key on the machine, nothing updates itself: a newer s0ma comes
 with a newer version of the plugin, the line a session begins with says so,

@@ -219,11 +219,13 @@ UV_MISSING_MESSAGE = (
 
 #: Where a key goes. Said the same way everywhere, because a person who has
 #: just been told their key is missing should not have to guess which of the two
-#: places the other message meant.
+#: places the other message meant. The Claude Code plugin has no key setting, so
+#: there a key is saved with ``activate``; the Claude Desktop extension still has
+#: one in its own settings.
 KEY_HOMES_SENTENCE = (
-    "Put it in the s0ma plugin's settings in Claude, or run `s0ma-launch "
-    "activate` in a terminal to save it on this machine. Never type a license "
-    "key into a chat."
+    "Run `s0ma-launch activate` in a terminal to save it on this machine, or in "
+    "Claude Desktop put it in the s0ma extension's settings. Never type a "
+    "license key into a chat."
 )
 
 KEY_MISSING_MESSAGE = (
@@ -579,9 +581,9 @@ def license_key(
 ) -> tuple[str | None, str | None]:
     """Return ``(key, where_it_came_from)``; ``(None, None)`` when there is none.
 
-    Order, per decision CD-2: the ``S0MA_LICENSE_KEY`` variable the plugin sets
-    from its configuration screen, then the ``license`` file that
-    ``s0ma-launch activate`` writes.
+    Order, per decision CD-2: the ``S0MA_LICENSE_KEY`` variable (the Claude
+    Desktop extension sets it from its own settings screen), then the
+    ``license`` file that ``s0ma-launch activate`` writes.
     """
     values = environ(env)
     from_env = values.get(ENV_LICENSE_KEY, "").strip()
@@ -1168,7 +1170,9 @@ def status_lines(report: Mapping[str, Any]) -> list[str]:
     if key["present"]:
         shown = "s0ma_..." + (key["last4"] or "")
         if key["source"] == "environment":
-            where_from = "from the plugin's settings"
+            where_from = (
+                "from S0MA_LICENSE_KEY, which the Desktop extension's settings set"
+            )
         else:
             where_from = "saved on this machine"
         key_line = f"present ({shown}), {where_from}"
@@ -3697,6 +3701,56 @@ def cmd_unpin(args: argparse.Namespace) -> int:
 
 
 # ---------------------------------------------------------------------------
+# set: changing one of the launcher's own preferences.
+#
+# The Claude Code plugin asks nothing at install, so a preference lives in the
+# launcher's own config file and is changed with ``set <name> <value>``. Each
+# name is a row in SETTABLE with the values it takes; ``update`` is the only one
+# today, and a later name is one more row. Nothing here opens a connection.
+# ---------------------------------------------------------------------------
+
+#: What ``set`` may change, and the values each name takes.
+SETTABLE: dict[str, tuple[str, ...]] = {"update": UPDATE_MODES}
+
+#: Said for each name once its new value is saved.
+SET_CONFIRMATIONS: dict[str, str] = {
+    "update": "Saved. s0ma's update setting on this machine is now {value}.",
+}
+
+
+def set_usage() -> str:
+    """The one sentence ``set`` answers anything it cannot take with."""
+    forms = " or ".join(
+        f"`{PROG} set {name} <{'|'.join(values)}>`" for name, values in SETTABLE.items()
+    )
+    return f"Nothing was changed. Use {forms}."
+
+
+def cmd_set(args: argparse.Namespace) -> int:
+    """Save one preference in the launcher's config file."""
+    name = str(args.name or "").strip().lower()
+    value = str(args.value or "").strip().lower()
+    allowed = SETTABLE.get(name)
+    if allowed is None or value not in allowed:
+        say(set_usage())
+        return EXIT_USAGE
+    values = environ()
+    home = s0ma_home(values)
+    config = load_config(home)
+    config[name] = value
+    save_config(home, config)
+    say(SET_CONFIRMATIONS[name].format(value=value))
+    if name == "update":
+        chosen = values.get(ENV_UPDATE, "").strip().lower()
+        if chosen in UPDATE_MODES and chosen != value:
+            say(
+                f"{ENV_UPDATE} is set to {chosen} where this ran, and while it is "
+                "set it wins over this setting."
+            )
+    return EXIT_OK
+
+
+# ---------------------------------------------------------------------------
 # activate: taking a license key, once, without showing it.
 #
 # The key is typed at a hidden prompt, checked once against the control plane,
@@ -3711,8 +3765,8 @@ ACTIVATE_PROMPT = "Paste your s0ma license key (it will not be shown): "
 ACTIVATE_NEEDS_TERMINAL = (
     "`s0ma-launch activate` asks for your license key without showing it, which "
     "needs a real terminal, and this is not one.\n"
-    "Open a terminal and run `s0ma-launch activate` there - or, in Claude, put "
-    "the key in the s0ma plugin's settings instead."
+    "Open a terminal and run `s0ma-launch activate` there - or, in Claude "
+    "Desktop, put the key in the s0ma extension's settings instead."
 )
 
 
@@ -3827,8 +3881,10 @@ def cmd_activate(args: argparse.Namespace) -> int:
 # session-hint: the one line a new Claude session may begin with.
 #
 # The plugin runs this from a SessionStart hook
-# (integrations/claude/plugin/hooks/hooks.json). Three rules shape everything
-# below, and none of them is negotiable:
+# (integrations/claude/plugin/hooks/hooks.json), through the small shell script
+# beside it (hooks/session-start.sh), which finds uv and speaks for itself when
+# uv cannot run this file. Three rules shape everything below, and none of them
+# is negotiable:
 #
 # * **It never stops a session.** Claude's first answer waits for its
 #   SessionStart hooks, so this has to be quick, and anything at all that goes
@@ -3861,10 +3917,15 @@ HINT_EVENT_NAME = "SessionStart"
 #: about never letting one long path turn a glance into a paragraph.
 HINT_MAX_CHARS = 600
 
+#: The skill that sets s0ma up. Named once here, and once in the plugin's
+#: session-start script (``hooks/session-start.sh``), which speaks when uv cannot
+#: run this file at all; a test holds the two to the same name.
+SETUP_SKILL = "/s0ma:setup"
+
 #: Cases 1 and 2 - there is nothing here to run, so the tools are not there.
 HINT_TOOLS_MISSING = "s0ma's tools are not available in this session."
-HINT_SETUP_ACTION = "Run /s0ma:setup in Claude to fix that."
-HINT_SETUP_SKILL = "The /s0ma:setup skill fixes that."
+HINT_SETUP_ACTION = f"Run {SETUP_SKILL} in Claude to fix that."
+HINT_SETUP_SKILL = f"The {SETUP_SKILL} skill fixes that."
 
 #: Case 3 - the key was refused the last time s0ma used it. Where a key goes is
 #: said in exactly the same words as everywhere else in this file, and the chat
@@ -4182,6 +4243,17 @@ def build_parser() -> argparse.ArgumentParser:
 
     unpin = subcommands.add_parser("unpin", help="stop holding this project on one version")
     unpin.set_defaults(handler=cmd_unpin)
+
+    preference = subcommands.add_parser(
+        "set",
+        help="change one of s0ma's own preferences, for example: set update notify",
+        epilog=f"example: {PROG} set update notify",
+    )
+    preference.add_argument(
+        "name", nargs="?", default=None, help="the preference: " + ", ".join(SETTABLE)
+    )
+    preference.add_argument("value", nargs="?", default=None, help="its new value")
+    preference.set_defaults(handler=cmd_set)
 
     activate = subcommands.add_parser(
         "activate", help="save your license key on this machine (hidden prompt)"

@@ -4,13 +4,7 @@
       {
         "hooks": [
           {
-            "args": [
-              "run",
-              "--script",
-              "${CLAUDE_PLUGIN_ROOT}/launcher/s0ma_launch.py",
-              "session-hint"
-            ],
-            "command": "uv",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\"",
             "timeout": 10,
             "type": "command"
           }

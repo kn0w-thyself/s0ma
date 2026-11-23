@@ -72,6 +72,8 @@ def tracked_files(sync: ModuleType) -> tuple[str, ...]:
         sync.VERSION_SOURCE,
         sync.LAUNCHER_SOURCE,
         *sync.LAUNCHER_COPIES,
+        sync.LOCK_SOURCE,
+        *sync.LOCK_COPIES,
         *sync.JSON_VERSION_SITES,
         sync.TOML_VERSION_SITE,
         sync.FEEDBACK_SKILL,
@@ -140,6 +142,14 @@ def stale_desktop_launcher_copy(sync: ModuleType, root: Path) -> str:
     return relative
 
 
+def stale_lock_copy(sync: ModuleType, root: Path) -> str:
+    """The plugin ships a lock file the source no longer has."""
+    relative = sync.LOCK_COPIES[0]
+    path = root / relative
+    path.write_bytes(path.read_bytes().replace(b">=3.11", b">=3.10", 1))
+    return relative
+
+
 def stale_manifest_version(sync: ModuleType, root: Path, which: int) -> str:
     """A release cut bumped the packages and forgot one of the manifests."""
     relative = sync.JSON_VERSION_SITES[which]
@@ -201,6 +211,7 @@ DRIFTS = {
     "stale launcher copy (plugin)": stale_launcher_copy,
     "stale launcher copy (desktop)": stale_desktop_launcher_copy,
     "stale launcher version (source)": stale_launcher_version,
+    "stale lock file copy (plugin)": stale_lock_copy,
     "wrong version (plugin manifest)": lambda sync, root: stale_manifest_version(sync, root, 0),
     "wrong version (desktop manifest)": lambda sync, root: stale_manifest_version(sync, root, 1),
     "wrong version (desktop pyproject)": stale_extension_pyproject,
@@ -231,6 +242,7 @@ class TestTheCommittedTree:
         """Anti-vacuity: a green line that names nothing can hide a no-op."""
         stdout = run_script("--check", root=tree).stdout
         assert "2 launcher copies" in stdout
+        assert "1 lock file copy" in stdout
         assert "3 version sites" in stdout
         assert "1 skill body" in stdout
 

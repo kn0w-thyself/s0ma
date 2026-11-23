@@ -163,7 +163,8 @@ def test_without_a_terminal_it_says_where_else_a_key_can_go(
 
     assert code == 2
     assert "needs a real terminal" in err
-    assert "plugin's settings" in err
+    assert "s0ma extension's settings" in err
+    assert "plugin's settings" not in err
     assert unkeyed.requests == []
 
 

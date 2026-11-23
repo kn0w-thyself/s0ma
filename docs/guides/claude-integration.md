@@ -12,11 +12,12 @@ behave, how to hold a project still, and how to take it all off again.
 **The short version.**
 
 - **Claude Code** — add the kn0wthyself marketplace, install `s0ma@kn0wthyself`,
-  answer three settings, run `/s0ma:setup`.
+  run `/s0ma:setup`. The plugin asks nothing at install.
 - **Claude Desktop** — open the s0ma extension file and answer two settings.
 - **A key is optional.** Nobody needs one to install or use s0ma. If you have
-  one, it goes in the masked settings field, or into `s0ma-launch activate` at
-  a terminal of your own. Never into a conversation.
+  one, it goes into `s0ma-launch activate` at a terminal of your own, or in
+  Claude Desktop into the extension's masked settings field. Never into a
+  conversation.
 - **Updates** are fetched quietly in the background and used from your *next*
   session — never in the middle of one. The version you were on is kept. With
   no key nothing is fetched on its own: a newer s0ma comes with a newer plugin,
@@ -91,20 +92,30 @@ You do not need to install Python. uv provides one.
    /plugin install s0ma@kn0wthyself
    ```
 
-3. **Answer the three settings.** Claude asks for these when the plugin is
-   enabled. Each is named here exactly as it appears on screen:
-
-   | Setting | What to put there |
-   |---|---|
-   | **s0ma license key** | Your key. What you type is masked, and it is kept in this computer's own secure storage — never written into a settings file, never shown in a conversation. Leave it empty if you have none: s0ma installs without one. |
-   | **How s0ma keeps itself current** | `auto`, `notify` or `off`. `auto` is the default and is what most people want; the section on updates below says what each one does. |
-   | **Where uv lives on this computer** | Leave it alone. It exists for one failure: Claude started from a desktop icon cannot always see the programs your terminal can. If s0ma will not start, run `command -v uv` and paste that one path here. |
-
-4. **Run `/s0ma:setup`.** It checks uv, reports what is installed, offers to
+3. **Run `/s0ma:setup`.** It checks uv, reports what is installed, offers to
    install s0ma if nothing is, says where your key goes, and finishes with
    `s0ma doctor`. It works entirely through the terminal, so it still works when
    the s0ma server itself could not start — which is the usual reason for
    reading this page.
+
+The plugin asks nothing at install: there is no settings dialog. A key, if you
+have one, is saved with `s0ma-launch activate` (see below); how s0ma keeps
+itself current is a preference you change by asking Claude; and uv is found on
+the path or where uv's own installers put it.
+
+**Before `/s0ma:setup`.** A first session on a machine where s0ma is not set up
+yet shows no error. Claude is told, in one line at the start of the session,
+that the plugin is here but s0ma is not set up on this machine yet, so its tools
+are not available, and that `/s0ma:setup` sets it up. The s0ma server shows as
+connected: with no uv on the machine, it is a small stand-in that offers one
+tool, which says the same thing. With uv and nothing installed, the line comes
+from s0ma's own launcher instead, you see it too, and the server is s0ma's own
+setup helper, which reports what it can see.
+
+**On Windows**, the line a session begins with needs Git for Windows, because
+Claude Code runs it through Git Bash; so do the `s0ma` and `s0ma-launch`
+commands inside Claude, which are shell scripts, though each has a `.cmd` twin
+for a Windows shell without Git Bash. The server starts either way.
 
 **Where the `s0ma-launch` commands on this page run.** The plugin puts `s0ma`
 and `s0ma-launch` on the path of the terminal Claude Code itself uses, so
@@ -120,10 +131,12 @@ onto the Claude Desktop window, or use **Settings → Extensions → Advanced
 settings → Install Extension**. Claude Desktop shows you what the extension is
 and what it asks for before anything is installed.
 
-It asks for two settings, not three: **s0ma license key** and **How s0ma keeps
-itself current**, both exactly as described above. There is no uv setting here,
-because an extension of this kind is started by Claude Desktop through uv
-itself, which is also why you do not have to install Python for it.
+It asks for two settings: **s0ma license key**, which masks what you type and
+keeps it in this computer's own secure storage (leave it empty if you have no
+key), and **How s0ma keeps itself current**, which takes the answers described
+under updates below. There is no uv setting here, because an extension of this
+kind is started by Claude Desktop through uv itself, which is also why you do
+not have to install Python for it.
 
 Claude Desktop runs on macOS and Windows, so the extension does too. On Linux,
 use Claude Code.
@@ -138,9 +151,9 @@ where it is.
 You need no key to install or use s0ma. If you have one, there are two right
 places for it, and a conversation is not one of them:
 
-- **the masked settings field** in the plugin or the extension. What you type is
-  not echoed and is stored by the operating system, not by a file in your
-  project;
+- **the masked settings field** in the Claude Desktop extension. What you type
+  is not echoed and is stored by the operating system, not by a file in your
+  project. The Claude Code plugin has no such field;
 - **`s0ma-launch activate`**, typed by you at a terminal of your own — for
   anyone who has the launcher to hand, such as a source checkout. It prompts
   without showing what you type, checks the key once, and saves it in s0ma's own
@@ -149,9 +162,9 @@ places for it, and a conversation is not one of them:
   you to check the folder it is in. It needs a real terminal to type into and
   refuses anywhere else, so it is not something Claude can run for you.
 
-If you installed through Claude and have not gone looking for the launcher on
-your own machine, the settings field is your answer: it is the one place that
-needs nothing else.
+In Claude Code, `/s0ma:setup` finds the launcher for you and shows you the
+path to type `activate` after. In Claude Desktop, the settings field is the one
+place that needs nothing else.
 
 **Never type or paste a key into a chat.** No part of s0ma will ever ask you to,
 and none of the `/s0ma:*` commands will either. A key pasted into a conversation
@@ -180,7 +193,10 @@ s0ma, so a newer s0ma comes with a newer plugin. When it does, the line a
 session begins with says so, under `auto` and `notify` alike, and
 `/s0ma:update` (or `s0ma-launch update`) installs it.
 
-The three answers to **How s0ma keeps itself current**, in plain words:
+How s0ma keeps itself current is one preference with three answers. In Claude
+Code, ask Claude to change it: it runs `s0ma-launch set update <answer>`, which
+saves it on this machine. In Claude Desktop it is the extension's **How s0ma
+keeps itself current** setting. The three answers, in plain words:
 
 | Setting | What happens |
 |---|---|
@@ -250,9 +266,9 @@ To stop thinking about it, turn auto-update on for our marketplace once:
 then checks after a session has started and asks you to reload; the session you
 are in keeps the version it loaded.
 
-The plugin is deliberately thin — configuration, six named commands, a start-up
-notice and the small program that starts s0ma — so it changes rarely, and a
-slightly old one is not a problem.
+The plugin is deliberately thin: six named commands, a start-up line, the
+script that starts the server and the small program that starts s0ma. So it
+changes rarely, and a slightly old one is not a problem.
 
 ## When you are offline
 

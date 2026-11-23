@@ -1,0 +1,124 @@
+#!/bin/sh
+# s0ma-serve - start the s0ma MCP server for Claude Code, whatever this machine has.
+#
+# The plugin's .mcp.json names this file as the server's command. Claude Code
+# runs it directly on macOS and Linux; on Windows it runs s0ma-serve.cmd, the
+# file of the same name beside this one. Either way it does three things:
+#
+# 1. Find uv, the same way the session-start script and the bin/ shims do.
+# 2. If uv is there and has a Python 3.11 or newer without downloading one,
+#    hand this process over to the launcher's `serve`. From there the launcher
+#    decides everything, including its own setup helper when no copy of s0ma
+#    is installed yet.
+# 3. Otherwise, answer as a stand-in server, so the server never shows as
+#    failed on a machine with no uv. It speaks just enough MCP, one JSON
+#    message per line, to say that s0ma is not set up here yet, and offers
+#    the one setup-status tool the launcher's own helper offers.
+#
+# Nothing here installs anything, downloads anything, or opens a connection.
+# Nothing but protocol goes to stdout.
+#
+# POSIX sh only, plus sed - no bashisms, no jq, no Python. It also runs under
+# Git Bash on Windows.
+
+# The launcher and the message sit beside this file's folder. $0 is the path
+# Claude Code ran, so the folder is everything before its last slash.
+case $0 in
+    */*) scripts_dir=${0%/*} ;;
+    *) scripts_dir=. ;;
+esac
+launcher=$scripts_dir/../launcher/s0ma_launch.py
+
+# Find uv the way the launcher does: whatever the PATH offers first, then the
+# places uv's own installers put it. The list between the two markers is the
+# launcher's uv_candidates, POSIX places first and then the Windows ones that
+# Git Bash can see; a test fails if the two drift apart.
+uv=
+if command -v uv >/dev/null 2>&1; then
+    uv=$(command -v uv)
+else
+    # BEGIN uv places
+    for candidate in \
+        "${HOME:-/nonexistent}/.local/bin/uv" \
+        "${HOME:-/nonexistent}/.cargo/bin/uv" \
+        /opt/homebrew/bin/uv \
+        /usr/local/bin/uv \
+        "${USERPROFILE:-/nonexistent}/.local/bin/uv.exe" \
+        "${LOCALAPPDATA:-/nonexistent}/uv/bin/uv.exe" \
+        "${USERPROFILE:-/nonexistent}/.cargo/bin/uv.exe" \
+        "${ProgramFiles:-/nonexistent}/uv/uv.exe"
+    do
+        if [ -x "$candidate" ]; then
+            uv=$candidate
+            break
+        fi
+    done
+    # END uv places
+fi
+
+# Hand over only when nothing would have to be fetched first. `uv python find`
+# looks without downloading; the run itself is offline, with downloads off and
+# the lock file beside the launcher used as it is.
+if [ -n "$uv" ] && [ -f "$launcher" ] &&
+    "$uv" python find --offline --no-python-downloads '>=3.11' >/dev/null 2>&1; then
+    exec "$uv" run --frozen --offline --no-python-downloads --quiet --script "$launcher" serve
+fi
+
+# ---------------------------------------------------------------------------
+# The stand-in server.
+# ---------------------------------------------------------------------------
+
+# The message, read from the one file that holds it, then made safe to put
+# inside a JSON string.
+message=
+if [ -r "$scripts_dir/not-set-up.txt" ]; then
+    IFS= read -r message < "$scripts_dir/not-set-up.txt"
+fi
+message=$(printf '%s\n' "$message" | sed 's/\\/\\\\/g; s/"/\\"/g')
+
+# Who the stand-in says it is, and its one tool: the same as the launcher's own
+# setup helper (stub_server_info and stub_tool), which a test holds it to.
+server_info='{"name":"s0ma","title":"s0ma (setup needed)","version":"0.0.0-setup-stub"}'
+tool='{"name":"s0ma_setup_status","title":"s0ma setup status","description":"Report whether s0ma is installed on this machine, which copy of s0ma would run in this project and why, and the one thing to do next. Reads a few files and changes nothing.","inputSchema":{"type":"object","properties":{},"additionalProperties":false},"annotations":{"title":"s0ma setup status","readOnlyHint":true,"destructiveHint":false,"idempotentHint":true,"openWorldHint":false}}'
+unknown='This server cannot do that. s0ma is not set up on this machine yet, so a stand-in is answering, and it only knows initialize, ping, tools/list and tools/call.'
+
+result() {
+    printf '{"jsonrpc":"2.0","id":%s,"result":%s}\n' "$1" "$2"
+}
+
+cr=$(printf '\r')
+
+# One message per line, until Claude closes stdin. A line with no id is a
+# notification, and a line with no method is not a request; neither is
+# answered.
+while IFS= read -r line || [ -n "$line" ]; do
+    line=${line%"$cr"}
+    method=$(printf '%s\n' "$line" | sed -n -E 's/.*"method"[[:space:]]*:[[:space:]]*"([^"\\]*)".*/\1/p')
+    id=$(printf '%s\n' "$line" | sed -n -E 's/.*"id"[[:space:]]*:[[:space:]]*(-?[0-9]+|"([^"\\]|\\.)*").*/\1/p')
+    if [ -z "$method" ] || [ -z "$id" ]; then
+        continue
+    fi
+    case $method in
+        initialize)
+            asked=$(printf '%s\n' "$line" | sed -n -E 's/.*"protocolVersion"[[:space:]]*:[[:space:]]*"([^"\\]*)".*/\1/p')
+            case $asked in
+                2025-11-25 | 2025-06-18 | 2025-03-26 | 2024-11-05) version=$asked ;;
+                *) version=2025-11-25 ;;
+            esac
+            result "$id" "{\"protocolVersion\":\"$version\",\"capabilities\":{\"tools\":{}},\"serverInfo\":$server_info,\"instructions\":\"$message\"}"
+            ;;
+        ping)
+            result "$id" '{}'
+            ;;
+        tools/list)
+            result "$id" "{\"tools\":[$tool]}"
+            ;;
+        tools/call)
+            result "$id" "{\"content\":[{\"type\":\"text\",\"text\":\"$message\"}],\"isError\":false}"
+            ;;
+        *)
+            printf '{"jsonrpc":"2.0","id":%s,"error":{"code":-32601,"message":"%s"}}\n' "$id" "$unknown"
+            ;;
+    esac
+done
+exit 0

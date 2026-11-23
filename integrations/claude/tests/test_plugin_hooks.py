@@ -3,17 +3,19 @@
 The hook is four lines of JSON and one command, and every one of the rules below
 comes from something that would otherwise break quietly:
 
-* **Exec form.** ``args`` is present, so Claude Code resolves ``command`` as an
-  executable and spawns it directly, with each argument passed exactly as
-  written and no shell to reinterpret the placeholder in it
-  (<https://code.claude.com/docs/en/hooks#exec-form-and-shell-form>).
+* **Shell form, running one script.** There is no ``args``, so Claude Code
+  hands ``command`` to a shell: ``sh`` on macOS and Linux, Git Bash on Windows
+  (<https://code.claude.com/docs/en/hooks#exec-form-and-shell-form>). The
+  command is ``sh`` and one quoted path under ``${CLAUDE_PLUGIN_ROOT}``, so a
+  machine with no uv still has something that starts: the script, which finds
+  uv itself and says one plain thing when it cannot. Exec form would need uv
+  to exist before anything could run, and a hook that cannot start is a hook
+  error in front of the person.
 * **No ``${user_config.*}``.** Since Claude Code v2.1.207 those are rejected in
-  shell-form hook commands; exec form is the documented way round it, and this
-  hook needs no configured value at all, so it asks for none (research note
-  section 1.4).
-* **The same launcher the server runs.** ``.mcp.json`` and this file must name
-  one file. Two launchers, one of them stale, is the kind of difference nobody
-  finds for a week.
+  shell-form hook commands, and this hook needs no configured value at all.
+* **The same launcher the server runs.** The hook script and the server script
+  must run one file. Two launchers, one of them stale, is the kind of
+  difference nobody finds for a week.
 * **One event.** ``SessionStart`` runs on every session and Claude's first
   answer waits for it, so this plugin declares that one hook and no other.
 
@@ -46,6 +48,11 @@ LAUNCHER_PATH = REPO_ROOT / "integrations" / "launcher" / "s0ma_launch.py"
 
 #: The sub-command this hook exists to run.
 HOOK_COMMAND = "session-hint"
+
+#: The hook's whole command line, and the script it names.
+HOOK_SHELL_LINE = 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"'
+HOOK_SCRIPT = PLUGIN_DIR / "hooks" / "session-start.sh"
+SERVER_SCRIPT = PLUGIN_DIR / "scripts" / "s0ma-serve"
 
 #: A SessionStart hook runs before Claude's first answer, so it is given a
 #: short leash rather than the documented 600-second default.
@@ -159,17 +166,12 @@ def test_only_session_start_is_declared() -> None:
     assert len(handlers()) == 1
 
 
-def test_the_hook_runs_a_command_in_exec_form() -> None:
-    """``args`` present means no shell: each argument is passed exactly as written."""
+def test_the_hook_runs_a_command_in_shell_form() -> None:
+    """No ``args``: the command is one shell line, ``sh`` and the script's path."""
     handler = the_handler()
     assert handler["type"] == "command"
-    assert isinstance(handler.get("args"), list) and handler["args"], (
-        "the hook must be exec form: `command` plus a non-empty `args` list"
-    )
-    assert isinstance(handler["command"], str)
-    assert " " not in handler["command"], (
-        "in exec form `command` is one executable name, not a shell line"
-    )
+    assert "args" not in handler, "the hook must be shell form: no `args` list"
+    assert handler["command"] == HOOK_SHELL_LINE
 
 
 def test_the_hook_is_given_a_short_leash() -> None:
@@ -180,31 +182,27 @@ def test_the_hook_is_given_a_short_leash() -> None:
     assert 0 < timeout <= MAX_TIMEOUT_SECONDS
 
 
-def test_the_hook_runs_the_launcher_through_uv() -> None:
-    """``uv run --script <launcher> session-hint`` - the same three words the
-    MCP server is started with, and the sub-command this hook exists for."""
-    handler = the_handler()
-    assert handler["command"] == "uv"
-    assert handler["args"][:2] == ["run", "--script"]
-    assert handler["args"][-1] == HOOK_COMMAND
+def test_the_hook_script_runs_the_launcher_through_uv() -> None:
+    """The script runs ``session-hint`` from the launcher inside the plugin."""
+    text = HOOK_SCRIPT.read_text(encoding="utf-8")
+    assert "launcher=$hooks_dir/../launcher/s0ma_launch.py" in text
+    assert '--script "$launcher" session-hint' in text
 
 
 def test_the_hook_and_the_server_name_one_launcher() -> None:
-    """Both point at the copy inside the plugin, by the same placeholder."""
-    server = read_json(MCP_CONFIG)["mcpServers"]["s0ma"]
-    hook_script = the_handler()["args"][2]
-    assert hook_script == "${CLAUDE_PLUGIN_ROOT}/launcher/s0ma_launch.py"
-    assert hook_script in server["args"], (
-        f"the hook runs {hook_script}, which the MCP server does not: {server['args']}"
-    )
+    """Both scripts run the copy inside the plugin, by the same relative path."""
+    hook = HOOK_SCRIPT.read_text(encoding="utf-8")
+    server = SERVER_SCRIPT.read_text(encoding="utf-8")
+    assert "/../launcher/s0ma_launch.py" in hook
+    assert "launcher=$scripts_dir/../launcher/s0ma_launch.py" in server
+    assert '--script "$launcher" serve' in server
 
 
-def test_the_hook_named_script_is_there_and_is_the_launcher() -> None:
-    """The placeholder resolves to a file that exists and has its PEP 723 header."""
-    hook_script = the_handler()["args"][2]
-    resolved = PLUGIN_DIR / hook_script.replace("${CLAUDE_PLUGIN_ROOT}/", "")
-    assert resolved.is_file(), f"{resolved} is missing"
-    head = resolved.read_bytes()[:200].decode("utf-8")
+def test_the_hook_named_script_is_there_and_the_launcher_beside_it() -> None:
+    """The placeholder resolves to the script, and the launcher it runs is there."""
+    assert HOOK_SCRIPT.is_file(), f"{HOOK_SCRIPT} is missing"
+    launcher_copy = PLUGIN_DIR / "launcher" / "s0ma_launch.py"
+    head = launcher_copy.read_bytes()[:200].decode("utf-8")
     assert head.startswith("# /// script")
     assert "dependencies = []" in head
 
@@ -229,8 +227,8 @@ def test_the_sub_command_the_hook_runs_exists(launcher: ModuleType) -> None:
 def test_no_user_config_substitution_anywhere() -> None:
     """Rejected in shell-form hook commands since v2.1.207, and unnecessary here:
     this hook reads local files and needs nothing configured to do it."""
-    text = HOOKS_CONFIG.read_text(encoding="utf-8")
-    assert "${user_config." not in text
+    for path in (HOOKS_CONFIG, HOOK_SCRIPT):
+        assert "user_config" not in path.read_text(encoding="utf-8"), path.name
 
 
 def test_the_hook_sets_no_environment_variables() -> None:
