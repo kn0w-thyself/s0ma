@@ -1177,13 +1177,19 @@ def status_lines(report: Mapping[str, Any]) -> list[str]:
 
     keyless = report.get("install_route") == INSTALL_ROUTE_INDEX
     if keyless:
+        # With no key nothing is fetched on its own, under any setting: the
+        # person is told, and a person's `update` installs it.
+        told = (
+            f"you are told when the plugin brings a newer s0ma, and `{PROG} "
+            "update` installs it"
+        )
         updates = {
-            "auto": (
-                "automatic - a newer s0ma that comes with the plugin is fetched "
-                "quietly and used next time"
+            "auto": "automatic notice - " + told,
+            "notify": told,
+            "off": (
+                "off - s0ma never updates itself, and never says when the plugin "
+                "brings a newer s0ma"
             ),
-            "notify": "you are told when the plugin brings a newer s0ma",
-            "off": "off - s0ma never updates itself",
         }[report["update"]]
         source = (
             f"the package index, no key needed (this launcher brings "
@@ -1356,11 +1362,10 @@ def cmd_serve(args: argparse.Namespace) -> int:
     if program is None:
         return _serve_without_toolchain(resolution)
     # Decision CD-3: start what is installed now, and - only for a copy the
-    # launcher looks after, only when updates are on, and either with a key and
-    # only once a day, or with no key only when this launcher brings a newer
-    # version than the one installed - leave a process behind to fetch a newer
-    # one for the next session. It is started BEFORE the hand-off because on
-    # POSIX the hand-off replaces this process and nothing after it ever runs.
+    # launcher looks after, only when updates are on, only when there is a key,
+    # and only once a day - leave a process behind to fetch a newer one for the
+    # next session. It is started BEFORE the hand-off because on POSIX the
+    # hand-off replaces this process and nothing after it ever runs.
     maybe_start_background_update(resolution)
     return hand_off([str(program)])
 
@@ -3080,10 +3085,10 @@ class UpdateLock:
 # old one. Nothing is switched mid-session; the next session starts the new one.
 # The previous version is always kept, so going back is one `pin` away.
 #
-# "Something newer" is what the control plane offers, on a machine with a key.
-# On a machine with none, nobody is asked: the newest s0ma there is to know
-# about is `LAUNCHER_VERSION`, and it changes when the plugin carrying this file
-# is updated.
+# All of that is for a machine with a key. On a machine with none, nobody is
+# asked and nothing is fetched on its own: the newest s0ma there is to know
+# about is `LAUNCHER_VERSION`, which changes when the plugin carrying this file
+# is updated. The session hint says so, and a person's `update` installs it.
 # ---------------------------------------------------------------------------
 
 #: Windows creation flags. Spelled out rather than read from `subprocess`,
@@ -3187,7 +3192,7 @@ def maybe_start_background_update(
     and what a reader of the log can match up. Nothing in here may interrupt a
     session, so nothing in here raises: a failure means no update this time.
 
-    With a license key, all four conditions have to hold:
+    All four conditions have to hold:
 
     * the copy being started is one the launcher looks after - never a
       contributor's own checkout, never a project's own environment, and never a
@@ -3197,13 +3202,9 @@ def maybe_start_background_update(
     * there is a key, so there is something to ask with;
     * the last check was more than a day ago.
 
-    With no key nothing is asked of anybody, so there is no daily check. The
-    first two conditions still hold, and the third becomes: this launcher
-    brings a newer version (:data:`LAUNCHER_VERSION`) than the one starting.
-    That happens when the plugin that carries this file has been updated.
-    Under ``notify`` nothing is started - the session hint says what to run -
-    and since this is only ever reached with a copy already running, a first
-    install never happens here.
+    With no key nothing is fetched on its own: a newer s0ma that comes with
+    the plugin is named by the session hint and installed when a person runs
+    ``update``.
     """
     try:
         values = environ(env)
@@ -3211,8 +3212,7 @@ def maybe_start_background_update(
         if resolution.kind != KIND_MANAGED:
             return "not-managed"
         config = load_config(base_home)
-        mode = update_mode(values, config)
-        if mode == "off":
+        if update_mode(values, config) == "off":
             return "updates-off"
         state = load_state(base_home)
         pending = state.get("pending")
@@ -3223,16 +3223,7 @@ def maybe_start_background_update(
             save_state(base_home, state)
         key, _ = license_key(values, base_home)
         if not key:
-            running = resolution.version
-            if running is None or not is_newer(LAUNCHER_VERSION, running):
-                return "keyless-current"
-            if mode == "notify":
-                return "keyless-notify"
-            if not spawn_background_update(
-                base_home, env=values, spawn=spawn, windows=windows
-            ):
-                return "failed"
-            return "started"
+            return "no-key"
         last = state.get("last_check")
         if isinstance(last, (int, float)) and not isinstance(last, bool):
             if now_seconds() - int(last) < UPDATE_CHECK_INTERVAL_SECONDS:
@@ -3484,51 +3475,35 @@ def run_background_update(
         if mode == "off":
             say("Updates are switched off on this machine, so nothing was checked.")
             return EXIT_OK
+        if not has_license_key(values, home):
+            # No key: nothing is fetched unless a person asks for it.
+            say(
+                "There is no license key on this machine, so nothing is fetched "
+                f"on its own; run `{PROG} update` to install a newer s0ma."
+            )
+            return EXIT_OK
         with UpdateLock(home) as taken:
             if not taken:
                 say("Another run is already looking after this; nothing to do.")
                 return EXIT_OK
             previous = newest_installed(home)
-            if not has_license_key(values, home):
-                # No key: nothing is asked of anybody, and the version to move
-                # to is the one this launcher brings. A quiet update never makes
-                # the first install - that is for a person to start.
-                if previous is None:
-                    say(
-                        "Nothing is installed here, and a quiet update never makes "
-                        "the first install; nothing to do."
-                    )
-                    return EXIT_OK
-                if not is_newer(LAUNCHER_VERSION, previous):
-                    say(f"s0ma {previous} is what this plugin brings; nothing to do.")
-                    return EXIT_OK
-                if mode == "notify":
-                    say(
-                        f"s0ma {LAUNCHER_VERSION} came with the plugin; this machine "
-                        "is set to tell you rather than fetch it."
-                    )
-                    return EXIT_OK
-                installed = install_version(home, env=values, version=LAUNCHER_VERSION)
-            else:
-                manifest = look_for_newer(
-                    home, env=values, opener=opener, timeout=timeout
+            manifest = look_for_newer(home, env=values, opener=opener, timeout=timeout)
+            if not is_newer(manifest.version, previous):
+                say(f"s0ma {previous} is the newest there is; nothing to do.")
+                return EXIT_OK
+            if mode == "notify":
+                say(
+                    f"s0ma {manifest.version} is available; this machine is set to "
+                    "tell you rather than fetch it."
                 )
-                if not is_newer(manifest.version, previous):
-                    say(f"s0ma {previous} is the newest there is; nothing to do.")
-                    return EXIT_OK
-                if mode == "notify":
-                    say(
-                        f"s0ma {manifest.version} is available; this machine is set "
-                        "to tell you rather than fetch it."
-                    )
-                    return EXIT_OK
-                installed = install_version(
-                    home,
-                    env=values,
-                    manifest=manifest,
-                    opener=opener,
-                    timeout=timeout,
-                )
+                return EXIT_OK
+            installed = install_version(
+                home,
+                env=values,
+                manifest=manifest,
+                opener=opener,
+                timeout=timeout,
+            )
             keep = {installed}
             if previous:
                 keep.add(previous)
@@ -3912,6 +3887,14 @@ HINT_NEWER_AVAILABLE = (
     "Run /s0ma:update in Claude when you want it."
 )
 
+#: Case 5 with no license key - the plugin brought a newer s0ma than the one
+#: installed. Nothing fetches it on its own, so this is said under ``auto`` as
+#: well as ``notify``, and the update skill is what installs it.
+HINT_PLUGIN_BRINGS = (
+    "s0ma {latest} came with the s0ma plugin; s0ma {running} is what runs here. "
+    "Run /s0ma:update in Claude to install it."
+)
+
 #: Case 6 - a newer version is already on this machine, waiting to be started.
 HINT_UPDATE_WAITING = (
     "s0ma {pending} was fetched quietly in the background, and it is what Claude "
@@ -4018,7 +4001,10 @@ def session_hint(
     2. The project asks for a version that is not installed.
     3. The key was refused the last time s0ma used it.
     4. This account's access to new versions has ended.
-    5. A newer version exists and this machine asked to be told about it.
+    5. A newer version exists and this machine asked to be told about it -
+       or, with no license key, the plugin brings a newer version than the one
+       that runs, which is said under ``auto`` too, because nothing is fetched
+       on its own without a key.
     6. A newer version has already been fetched and is waiting to be used.
 
     The last two are about updates, so ``S0MA_UPDATE=off`` silences both by the
@@ -4055,20 +4041,26 @@ def session_hint(
         return None
     mode = update_mode(values, config)
 
-    # 5. Told, not fetched. ``latest_seen`` is what a control plane last
-    # offered. A machine with no key that has never heard from one has nothing
-    # there, and the newest s0ma it can know about is the one this launcher was
-    # released with - which ``update`` installs. Reading the key is a file
-    # read, so nothing here reaches out.
-    latest = hint_version(state.get("latest_seen"))
-    if latest is None:
-        key, _ = license_key(values, base)
-        if not key:
-            latest = LAUNCHER_VERSION
-    if mode == "notify" and latest is not None and is_newer(latest, running):
-        return Hint(
-            message=HINT_NEWER_AVAILABLE.format(latest=latest, running=running)
-        )
+    # 5, with no key. Nothing is fetched on its own, so under ``auto`` and
+    # ``notify`` alike the person is told when the plugin brings a newer s0ma,
+    # and ``/s0ma:update`` installs it. ``latest_seen`` is not read: it is a
+    # control plane's offer, which cannot be fetched without a key. Reading the
+    # key is a file read, so nothing here reaches out.
+    key, _ = license_key(values, base)
+    if not key:
+        if mode in ("auto", "notify") and is_newer(LAUNCHER_VERSION, running):
+            return Hint(
+                message=HINT_PLUGIN_BRINGS.format(
+                    latest=LAUNCHER_VERSION, running=running
+                )
+            )
+    else:
+        # 5. Told, not fetched.
+        latest = hint_version(state.get("latest_seen"))
+        if mode == "notify" and latest is not None and is_newer(latest, running):
+            return Hint(
+                message=HINT_NEWER_AVAILABLE.format(latest=latest, running=running)
+            )
 
     # 6. Fetched, not yet started. ``serve`` clears ``pending`` the moment it
     # starts that version, so a ``pending`` still on disk is the launcher's own
