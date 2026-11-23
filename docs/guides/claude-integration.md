@@ -26,19 +26,22 @@ behave, how to hold a project still, and how to take it all off again.
   `s0ma-launch unpin` lets it follow along again.
 - **A project that already carries its own s0ma** is never moved by any of this.
 
-## Not the route the public repository offers
+## What the next release holds
 
-**Nothing on this page is part of the public repository's first release.** The
-public repository offers two ways in, installing from PyPI and cloning the
-repository to build from it, both stated
-once in [Getting started §1](../getting-started.md#1-create-a-real-project),
-with their commands in the root `README.md` "Install" section. The plugin, the
-marketplace and the Desktop extension are built and work; publishing them is a
-later step, and this page is the account of the route they make, kept for when
-that step is taken. Until then:
+**The public repository's first release does not offer this route; the next
+one does.** In that release the plugin installs with no license key: uv fetches
+s0ma from the package index, at the version the plugin brings, and nobody
+needs an account. A public catalog to install it from opens once that release
+has passed its first-run test. Until then, the two ways in are the ones the
+first release offers, installing from PyPI and cloning the repository to build
+from it, both stated once in
+[Getting started §1](../getting-started.md#1-create-a-real-project), with
+their commands in the root `README.md` "Install" section.
+
+From a checkout you can try the plugin now:
 
 - **Claude Code** installs from a folder. Point it at the folder that holds
-  `.claude-plugin/marketplace.json` — in a checkout of the s0ma repository that
+  `.claude-plugin/marketplace.json`; in a checkout of the s0ma repository that
   is `integrations/claude/`:
 
   ```text
@@ -53,8 +56,8 @@ that step is taken. Until then:
   repository, and prints the two commands that pack it when the packer is not
   already installed.
 
-When this route is published, the marketplace lives at
-`kn0w-thyself/claude-plugins` and the extension file is published alongside it.
+[The plugin's own README](../../integrations/claude/plugin/README.md) says
+everything it runs, fetches, sends and writes.
 
 ## What you need first
 
