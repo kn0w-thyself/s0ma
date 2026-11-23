@@ -26,6 +26,7 @@ both CLI builds refuse a source that climbs out with ``..``.
 
 from __future__ import annotations
 
+import importlib
 import importlib.util
 import json
 import os
@@ -528,6 +529,28 @@ def test_marketplace_entry_does_not_restate_the_version() -> None:
     """``plugin.json`` wins over the marketplace entry, so only one file carries it."""
     entry = read_json(MARKETPLACE_MANIFEST)["plugins"][0]
     assert "version" not in entry
+
+
+def test_a_new_project_names_this_catalog_and_this_plugin() -> None:
+    """``s0ma new project`` writes ``.claude/settings.json`` naming the catalog
+    and the plugin, so its names are these manifests' names and its catalog
+    repository is the one the plugin says it is published from. The
+    comparison sits here because this suite may read the language package
+    and the language package reads nothing under ``integrations/``."""
+    new_project = importlib.import_module("s0ma_dsl.cli.new_project")
+    marketplace = read_json(MARKETPLACE_MANIFEST)
+    plugin = read_json(PLUGIN_MANIFEST)
+    assert new_project.PLUGIN_MARKETPLACE_NAME == marketplace["name"]
+    assert new_project.PLUGIN_NAME == plugin["name"]
+    assert new_project.PLUGIN_NAME == marketplace["plugins"][0]["name"]
+    assert plugin["repository"] == (
+        f"https://github.com/{new_project.PLUGIN_MARKETPLACE_REPO}"
+    )
+    settings = json.loads(new_project._project_settings_json())
+    assert settings["enabledPlugins"] == {
+        f"{plugin['name']}@{marketplace['name']}": True
+    }
+    assert list(settings["extraKnownMarketplaces"]) == [marketplace["name"]]
 
 
 # ---------------------------------------------------------------------------

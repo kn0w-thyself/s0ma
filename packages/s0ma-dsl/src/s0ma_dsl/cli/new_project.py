@@ -35,6 +35,12 @@ What it lays down (STD-M6, feature-first standard — patterns guide §25/§29)
   running beside the chat and starts nothing itself. Written only when
   absent, listed in the summary, and outside the atomic-refusal set, the
   same as the feedback skill.
+- Claude Code's **project settings** (``.claude/settings.json``): the
+  s0ma plugin's catalog in ``extraKnownMarketplaces`` and the plugin
+  turned on in ``enabledPlugins``. Claude Code honors them once the person
+  trusts the folder; they install nothing. Written only when absent, never
+  merged into, listed in the summary, and outside the atomic-refusal set,
+  the same as the launch entry.
 - A ``[project]`` table, when the directory has no ``pyproject.toml``, that
   names the s0ma runtime the generated Python imports
   (``dependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]``), so the first
@@ -183,6 +189,21 @@ LAUNCH_CONFIG_RELPATH = ".claude/launch.json"
 #: package's defaults.
 STUDI0_LAUNCH_HOST = "studi0.localhost"
 STUDI0_LAUNCH_PORT = 5710
+
+#: The Claude Code project settings this command lays down: they name the
+#: s0ma plugin's catalog and turn the plugin on, so Claude Code offers the
+#: catalog to a person who trusts the folder. They install nothing. Created
+#: when absent; never part of the atomic-refusal set, the same as the
+#: launch configuration.
+PROJECT_SETTINGS_RELPATH = ".claude/settings.json"
+
+#: The catalog's name, where it is published, and the plugin's name in it.
+#: A repository test holds the two names equal to the marketplace and
+#: plugin manifests under ``integrations/claude/``.
+PLUGIN_MARKETPLACE_NAME = "kn0wthyself"
+PLUGIN_MARKETPLACE_REPO = "kn0w-thyself/claude-plugins"
+PLUGIN_NAME = "s0ma"
+PLUGIN_INSTALL_HINT = f"/plugin install {PLUGIN_NAME}@{PLUGIN_MARKETPLACE_NAME}"
 
 
 def _module_names(project_name: str) -> tuple[str, str] | None:
@@ -471,8 +492,12 @@ def _agents_md(
         "\n"
         "- **Author components as `.s0ma` declarations via the "
         "`s0ma-authoring` MCP server — never as bare Python files.** The "
-        "build emits the `.py`; you edit the `.s0ma`. Register the server "
-        f"with `{MCP_HINT}` if it is not already connected.\n"
+        "build emits the `.py`; you edit the `.s0ma`. This project names "
+        "the s0ma plugin's catalog in `.claude/settings.json`; in Claude "
+        "Code the plugin brings this server, so register nothing else. If "
+        "the plugin is not installed, offer the person its install line, "
+        f"`{PLUGIN_INSTALL_HINT}`, and do not run it for them. Without the "
+        f"plugin, register the server with `{MCP_HINT}` instead.\n"
         "- **Orient before authoring.** On the first session read the "
         "outcome-first `s0ma://guide/getting-started`, then read "
         "`s0ma://guide/system-prompt` and keep `s0ma://guide/survival-card` "
@@ -654,6 +679,29 @@ def _launch_config_json() -> str:
     return json.dumps(document, indent=2) + "\n"
 
 
+def _project_settings_json() -> str:
+    """The ``.claude/settings.json`` Claude Code reads (always LF).
+
+    Two keys and nothing else: ``extraKnownMarketplaces`` names the s0ma
+    plugin's catalog on GitHub with background updates on, and
+    ``enabledPlugins`` turns the plugin on. Claude Code honors them only in
+    a folder the person has trusted, and neither installs the plugin.
+    """
+    document = {
+        "extraKnownMarketplaces": {
+            PLUGIN_MARKETPLACE_NAME: {
+                "source": {
+                    "source": "github",
+                    "repo": PLUGIN_MARKETPLACE_REPO,
+                },
+                "autoUpdate": True,
+            }
+        },
+        "enabledPlugins": {f"{PLUGIN_NAME}@{PLUGIN_MARKETPLACE_NAME}": True},
+    }
+    return json.dumps(document, indent=2) + "\n"
+
+
 def _claude_md() -> str:
     """The thin CLAUDE.md — exactly one line importing AGENTS.md (P-2).
 
@@ -788,6 +836,24 @@ def scaffold_launch_config(target: Path) -> tuple[Path, bool]:
         _launch_config_json(), encoding="utf-8", newline="\n"
     )
     return launch_path, True
+
+
+def scaffold_project_settings(target: Path) -> tuple[Path, bool]:
+    """Write ``.claude/settings.json`` when absent; return ``(path, created)``.
+
+    Created-if-absent, like :func:`scaffold_launch_config`: a project that
+    already has Claude Code project settings keeps them byte for byte, they
+    are never merged into, and the scaffold still succeeds. The summary
+    lists the file either way.
+    """
+    settings_path = target.joinpath(*PROJECT_SETTINGS_RELPATH.split("/"))
+    if settings_path.exists():
+        return settings_path, False
+    settings_path.parent.mkdir(parents=True, exist_ok=True)
+    settings_path.write_text(
+        _project_settings_json(), encoding="utf-8", newline="\n"
+    )
+    return settings_path, True
 
 
 def _refusal_reasons(
@@ -984,6 +1050,7 @@ def _scaffold_archetype(
     )
     skill_path, skill_created = scaffold_feedback_skill(target)
     launch_path, launch_created = scaffold_launch_config(target)
+    settings_path, settings_created = scaffold_project_settings(target)
 
     # ---- Post-write validation of the first .s0ma source (same gate as
     # the minimal path): catch a template/validator drift before the build.
@@ -1047,6 +1114,8 @@ def _scaffold_archetype(
         skill_created=skill_created,
         launch_path=launch_path,
         launch_created=launch_created,
+        settings_path=settings_path,
+        settings_created=settings_created,
         planned=planned,
         build_dir=build_dir,
         built_modules=built_modules,
@@ -1117,6 +1186,8 @@ def _print_archetype_summary(
     skill_created: bool,
     launch_path: Path,
     launch_created: bool,
+    settings_path: Path,
+    settings_created: bool,
     planned: list[tuple[Path, str]],
     build_dir: Path,
     built_modules: list[str],
@@ -1160,6 +1231,10 @@ def _print_archetype_summary(
                     "launch_config": {
                         "path": str(launch_path),
                         "created": launch_created,
+                    },
+                    "project_settings": {
+                        "path": str(settings_path),
+                        "created": settings_created,
                     },
                     "build": {
                         "build_dir": str(build_dir),
@@ -1216,6 +1291,12 @@ def _print_archetype_summary(
         + ("     opens studi0 beside the chat (Claude Desktop app)"
            if launch_created
            else "     already present — kept as it was")
+    )
+    print(
+        f"  {PROJECT_SETTINGS_RELPATH}"
+        + ("   names the s0ma plugin's catalog (Claude Code)"
+           if settings_created
+           else "   already present — kept as it was")
     )
     print(
         "  build/                  first build complete "
@@ -1401,6 +1482,7 @@ def run_new_project(args: argparse.Namespace) -> int:
     scaffold_agent_files(target, project_name, feature, module_name, authoring)
     skill_path, skill_created = scaffold_feedback_skill(target)
     launch_path, launch_created = scaffold_launch_config(target)
+    settings_path, settings_created = scaffold_project_settings(target)
 
     # ---- Post-write validation of the starter module (same gate as
     # `s0ma new module`): catch a template/validator drift before the
@@ -1496,6 +1578,10 @@ def run_new_project(args: argparse.Namespace) -> int:
                         "path": str(launch_path),
                         "created": launch_created,
                     },
+                    "project_settings": {
+                        "path": str(settings_path),
+                        "created": settings_created,
+                    },
                     "build": {
                         "build_dir": str(build_dir),
                         "modules": built_modules,
@@ -1554,6 +1640,12 @@ def run_new_project(args: argparse.Namespace) -> int:
         + ("     opens studi0 beside the chat (Claude Desktop app)"
            if launch_created
            else "     already present — kept as it was")
+    )
+    print(
+        f"  {PROJECT_SETTINGS_RELPATH}"
+        + ("   names the s0ma plugin's catalog (Claude Code)"
+           if settings_created
+           else "   already present — kept as it was")
     )
     print(
         "  build/                  first build complete "
