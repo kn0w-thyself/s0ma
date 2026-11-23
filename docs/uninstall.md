@@ -13,7 +13,8 @@ Three things worth knowing before you start.
 a package-manager command. There is no account to close as part of removing
 s0ma and no farewell message sent anywhere. One part of s0ma does start
 something by itself — the launcher looking for a newer version, at most once a
-day, and only when it was installed through Claude — and removing it is
+day with a key, or having uv fetch the version a newer plugin brings with none,
+and only when it was installed through Claude — and removing it is
 [step 2](#2-take-s0ma-out-of-claude). Every request s0ma can make is listed, one
 row each, in [what s0ma trusts](trust-model.md#every-connection-s0ma-can-make).
 
@@ -314,7 +315,7 @@ access.
 
 | What is in it | What it is | What deleting it costs you |
 |---|---|---|
-| `license` | The key `s0ma-launch activate` saved here, readable by you and nobody else where the platform allows that | You are asked for a key again the next time s0ma fetches anything. If your key lives in Claude's settings instead, this file was never written |
+| `license` | The key `s0ma-launch activate` saved here, readable by you and nobody else where the platform allows that | The next install or update fetches s0ma from the package index, with no key, instead of from the s0ma service. If your key lives in Claude's settings instead, this file was never written |
 | `launcher/config.json` | Two settings: how s0ma keeps itself current, and which host it asks | Both go back to their defaults |
 | `launcher/state.json` | What is installed, which version runs here, when it last looked for a newer one, and the last thing that went wrong | Nothing you can lose. s0ma looks for a newer version on the next start instead of waiting out the day |
 | `launcher/update.log` | Everything the quiet update printed, in its own words, with the previous log kept beside it as `update.log.1` | Only the record of what past updates did. Nothing reads it back: the newest failure is kept in `state.json` instead |

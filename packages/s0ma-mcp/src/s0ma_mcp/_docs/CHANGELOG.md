@@ -13,6 +13,28 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Added
 
+- **The launcher installs s0ma with no license key.** On a machine with no
+  key, `s0ma-launch install` no longer stops with exit 4: it has uv install
+  `s0ma-lang==<version>` from whichever package index that machine's uv is
+  set up to use, into the same private environment a keyed install builds,
+  and the launcher itself contacts nobody. With no version named, the
+  version is the one the launcher was released with, which `status --json`
+  now reports as `launcher_version`, beside a new `install_route` field
+  (`package_index` or `control_plane`); the text report gains a "Fetched
+  from" line. A newer s0ma arrives when the plugin (or the Desktop
+  extension) is updated: `update` moves an older copy to the launcher's
+  version and otherwise says the copy is current, `update --check` says the
+  same and installs nothing, and the quiet update `serve` can leave behind
+  installs the launcher's version only when a copy the launcher looks after
+  is running, older, unpinned, and updates are `auto` (under `notify` the
+  session line names the version and `/s0ma:update`). Nothing is fetched on
+  a machine with nothing installed until a person runs `install`. A keyless
+  install records only what is installed; it writes no `entitlement`,
+  `last_check` or `latest_seen`. This route trusts the package index the way
+  any `pip install` does, where the keyed route checks each file's sha256
+  against the control plane's manifest. A machine with a key behaves
+  exactly as before. `/s0ma:setup` now says a key is optional.
+
 - **studi0 explains s0ma's own words, in s0ma's words.** `GET /api/graph`
   now answers with four keys: `schema`, `seq`, `graph`, and a new `terms`.
   The envelope's schema string stays `s0ma-studi0-graph@1`, and the graph it

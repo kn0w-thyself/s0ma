@@ -14,8 +14,9 @@ behave, how to hold a project still, and how to take it all off again.
 - **Claude Code** — add the kn0wthyself marketplace, install `s0ma@kn0wthyself`,
   answer three settings, run `/s0ma:setup`.
 - **Claude Desktop** — open the s0ma extension file and answer two settings.
-- **Your key** goes in the masked settings field — or into `s0ma-launch
-  activate` at a terminal of your own. Never into a conversation.
+- **A key is optional.** Nobody needs one to install or use s0ma. If you have
+  one, it goes in the masked settings field, or into `s0ma-launch activate` at
+  a terminal of your own. Never into a conversation.
 - **Updates** are fetched quietly in the background and used from your *next*
   session — never in the middle of one. The version you were on is kept.
 - **One project on one version:** `s0ma-launch pin` holds it there,
@@ -66,9 +67,11 @@ Windows:       powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/i
 
 Restart Claude afterwards, so it can see the new program.
 
-**A key**, if you want the download. Your key from account.kn0wthyself.ai is
-what fetches s0ma's own files and nothing else. Running s0ma from a source
-checkout needs no key at all.
+**A key** is optional. With none, uv fetches s0ma from the package index it is
+set up to use, at the version the plugin brings. With your key from
+account.kn0wthyself.ai, s0ma's own files come from that service instead, and
+the key is used for that and nothing else. Running s0ma from a source checkout
+needs no key at all.
 
 You do not need to install Python. uv provides one.
 
@@ -91,7 +94,7 @@ You do not need to install Python. uv provides one.
 
    | Setting | What to put there |
    |---|---|
-   | **s0ma license key** | Your key. What you type is masked, and it is kept in this computer's own secure storage — never written into a settings file, never shown in a conversation. Leave it empty if you run s0ma from source. |
+   | **s0ma license key** | Your key. What you type is masked, and it is kept in this computer's own secure storage — never written into a settings file, never shown in a conversation. Leave it empty if you have none: s0ma installs without one. |
    | **How s0ma keeps itself current** | `auto`, `notify` or `off`. `auto` is the default and is what most people want; the section on updates below says what each one does. |
    | **Where uv lives on this computer** | Leave it alone. It exists for one failure: Claude started from a desktop icon cannot always see the programs your terminal can. If s0ma will not start, run `command -v uv` and paste that one path here. |
 
@@ -130,7 +133,8 @@ where it is.
 
 ## Where your key goes, and where it must never go
 
-There are two right places, and a conversation is not one of them:
+You need no key to install or use s0ma. If you have one, there are two right
+places for it, and a conversation is not one of them:
 
 - **the masked settings field** in the plugin or the extension. What you type is
   not echoed and is stored by the operating system, not by a file in your
@@ -168,6 +172,10 @@ newer one and installs it beside the old one. The newer one is used **from your
 next session**. Nothing ever changes underneath a session in progress, and the
 version you were on is kept.
 
+With no key, s0ma asks nobody whether there is a newer version. Each version of
+the plugin brings its own version of s0ma, so a newer s0ma arrives when the
+plugin is updated, and is then installed the same quiet way.
+
 The three answers to **How s0ma keeps itself current**, in plain words:
 
 | Setting | What happens |
@@ -179,7 +187,7 @@ The three answers to **How s0ma keeps itself current**, in plain words:
 Four things hold whatever the setting says:
 
 - **s0ma never asks more than once a day**, and never at all without a key to
-  ask with.
+  ask with. With no key, the version the plugin brings is the newest it knows.
 - **It only ever moves the copy s0ma installed for itself.** A project with its
   own s0ma, a project pinned to a version, and a checkout you pointed s0ma at
   are all left exactly as they are.
@@ -194,7 +202,7 @@ Four things hold whatever the setting says:
 To do it deliberately, ask Claude for `/s0ma:update`, or run it yourself:
 
 ```text
-s0ma-launch update --check     # asks whether there is a newer one; installs nothing
+s0ma-launch update --check     # says whether there is a newer one; installs nothing
 s0ma-launch update             # move to it now
 ```
 
@@ -249,8 +257,9 @@ and writes one line down where `status` can show it to you later.
 
 A deliberate `install` or `update` with no network says so plainly — that it
 could not reach the service, that the copy on this machine keeps working, and to
-try again when the network is back. Nothing is half-installed: a version is
-built beside the one in use and only takes its place once it is complete.
+try again when the network is back. With no key, it is uv that cannot reach the
+package index, and s0ma shows what uv said. Nothing is half-installed: a version
+is built beside the one in use and only takes its place once it is complete.
 
 ## When access to new versions ends
 

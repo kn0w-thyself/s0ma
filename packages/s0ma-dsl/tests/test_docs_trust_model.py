@@ -134,6 +134,13 @@ POINTERS: tuple[str, ...] = (
     "integrations/launcher/tests/test_install.py"
     "::test_the_key_travels_in_the_header_and_nowhere_else",
     "integrations/launcher/tests/test_install.py::test_uv_is_never_handed_the_key",
+    # The keyless route: with no license key the launcher asks nobody, and uv
+    # fetches s0ma from the machine's own package index.
+    "integrations/launcher/tests/test_keyless.py",
+    "integrations/launcher/tests/test_keyless.py"
+    "::test_every_keyless_command_leaves_the_control_plane_unasked",
+    "integrations/launcher/tests/test_keyless.py"
+    "::test_the_quiet_update_starts_nothing_in_every_other_case",
     "integrations/launcher/tests/test_pin.py",
     "integrations/launcher/tests/test_pin.py::test_pin_asks_whether_the_version_exists",
     "integrations/launcher/tests/test_session_hint.py",

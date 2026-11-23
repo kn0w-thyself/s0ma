@@ -68,4 +68,4 @@ Do not use s0ma for a single package: the runtime is s0ma-lang-core, the languag
 
 - Topic id: `concept:s0ma`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:676e0ed0e7f53931`
+- Documentation snapshot: `sha256:ba8bfe6ddec4e10c`
