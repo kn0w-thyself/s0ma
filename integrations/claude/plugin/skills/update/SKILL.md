@@ -33,9 +33,11 @@ Read the "Runs here" and "Why" lines back. They decide everything below:
 s0ma-launch update --check
 ```
 
-This asks the s0ma service once and reports the answer. It installs nothing
-and changes nothing about which version runs; the only thing it writes is
-its own note of what it was told, which `s0ma-launch status` reads back.
+With a license key this asks the s0ma service once and reports the answer;
+the only thing it writes is its own note of what it was told, which
+`s0ma-launch status` reads back. With no key it asks nobody and writes nothing,
+and reports the version this plugin brings instead. Either way it installs
+nothing and changes nothing about which version runs.
 
 ## 3. Move to it — after asking
 
