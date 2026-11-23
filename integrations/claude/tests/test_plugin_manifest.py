@@ -26,6 +26,7 @@ both CLI builds refuse a source that climbs out with ``..``.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import re
@@ -51,6 +52,7 @@ PLUGIN_MANIFEST = PLUGIN_DIR / ".claude-plugin" / "plugin.json"
 MCP_CONFIG = PLUGIN_DIR / ".mcp.json"
 MARKETPLACE_MANIFEST = MARKETPLACE_DIR / ".claude-plugin" / "marketplace.json"
 PLUGIN_LICENSE = PLUGIN_DIR / "LICENSE"
+PLUGIN_README = PLUGIN_DIR / "README.md"
 PLUGIN_LAUNCHER = PLUGIN_DIR / "launcher" / "s0ma_launch.py"
 
 SHIMS = (PLUGIN_DIR / "bin" / "s0ma", PLUGIN_DIR / "bin" / "s0ma-launch")
@@ -233,6 +235,50 @@ def test_the_plugin_asks_nothing_at_install() -> None:
     manifest = read_json(PLUGIN_MANIFEST)
     assert "userConfig" not in manifest
     assert find_keys(manifest, "userConfig") == []
+
+
+def declared_hosts() -> list[str]:
+    """What ``network.hosts`` in the plugin manifest lists."""
+    network = read_json(PLUGIN_MANIFEST).get("network")
+    assert isinstance(network, dict), "plugin.json declares no `network` block"
+    hosts = network.get("hosts")
+    assert isinstance(hosts, list) and hosts, "plugin.json declares no hosts"
+    assert all(isinstance(host, str) for host in hosts)
+    return hosts
+
+
+#: A bare hostname or a ``*.`` wildcard: no scheme, no path, no port.
+HOST_SHAPED = re.compile(r"(\*\.)?[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*")
+
+
+def test_the_declared_hosts_are_bare_hostnames() -> None:
+    """``network.hosts`` is written in the sandbox's domain syntax, not as URLs."""
+    hosts = declared_hosts()
+    assert hosts == sorted(set(hosts)), "list each host once, sorted"
+    for host in hosts:
+        assert HOST_SHAPED.fullmatch(host), f"{host!r} is not a bare hostname"
+
+
+def test_the_control_plane_host_is_the_launchers_own() -> None:
+    """The host the manifest declares is the one the launcher's constant names."""
+    spec = importlib.util.spec_from_file_location(
+        "s0ma_launch_for_manifest_tests", PLUGIN_LAUNCHER
+    )
+    assert spec is not None and spec.loader is not None
+    launcher = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = launcher
+    spec.loader.exec_module(launcher)
+    assert launcher.DEFAULT_CP_HOST in declared_hosts()
+
+
+def test_the_readme_names_every_declared_host() -> None:
+    """Whatever the manifest says the plugin can reach, its README says too."""
+    readme = PLUGIN_README.read_text(encoding="utf-8")
+    fetches = readme.split("## What it fetches, and when", 1)
+    assert len(fetches) == 2, "the README has no 'What it fetches, and when' section"
+    section = fetches[1].split("\n## ", 1)[0]
+    missing = [host for host in declared_hosts() if host not in section]
+    assert missing == [], f"the README's fetch section does not name {missing}"
 
 
 @pytest.mark.parametrize("key", FORBIDDEN_MANIFEST_KEYS)

@@ -16,6 +16,16 @@
   ],
   "license": "Apache-2.0",
   "name": "s0ma",
+  "network": {
+    "hosts": [
+      "account.kn0wthyself.ai",
+      "astral.sh",
+      "files.pythonhosted.org",
+      "localhost",
+      "pypi.org",
+      "studi0.localhost"
+    ]
+  },
   "repository": "https://github.com/kn0w-thyself/claude-plugins",
   "version": "0.22.0"
 }
