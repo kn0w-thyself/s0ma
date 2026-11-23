@@ -228,6 +228,16 @@ def test_the_plugin_arrives_byte_for_byte(export: Export, script: ModuleType) ->
     assert sorted(exported_plugin) == sorted(relative for relative, _ in expected)
 
 
+def test_the_plugins_readme_is_the_plugin_folders_own(
+    export: Export, script: ModuleType
+) -> None:
+    """The plugin in the export carries the README its folder carries, byte for
+    byte, so there is one text to keep true and not two that can drift."""
+    source = REPO_ROOT / script.PLUGIN_DIR / "README.md"
+    assert source.is_file(), "the plugin folder has no README of its own"
+    assert export.read(f"{script.EXPORT_PLUGIN_DIR}/README.md") == source.read_bytes()
+
+
 def test_the_root_license_is_the_plugins(export: Export, script: ModuleType) -> None:
     """One Apache-2.0 text, stated twice, identical both times."""
     plugin_license = (REPO_ROOT / script.PLUGIN_DIR / "LICENSE").read_bytes()
