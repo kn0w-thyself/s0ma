@@ -902,7 +902,7 @@ A production module attempts to `uses:` a `visibility: TEST` component cross-mod
 
 ### UNBOUND_NAME_AT_LOAD
 
-The emitted module reads a name at load (an annotation, default, decorator, base class, constant, or class field) and nothing has bound it when it is read: no binding, a later one, or one only under `if TYPE_CHECKING:`. Import raises `NameError` on Python 3.11 to 3.13, and on every Python unless the read is an annotation. Declare the name, move its declaration up, or quote the annotation.
+The emitted module reads a name at load (an annotation, default, decorator, base class, constant, or class field) and nothing has bound it when it is read: no binding, a later one, or one only under `if TYPE_CHECKING:`. If the read runs, import raises `NameError` on Python 3.11 to 3.13, and on every Python unless it is an annotation. Declare the name, move its declaration up, or quote the annotation.
 
 - **Severity by mode** — migration `error`, dev `error`, strict `error`, release `error`
 - **Addressed as** — `diagnostic:UNBOUND_NAME_AT_LOAD`

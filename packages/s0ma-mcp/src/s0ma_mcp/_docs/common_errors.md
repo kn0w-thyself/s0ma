@@ -5,7 +5,7 @@ module: "common_errors"
 format: "markdown"
 intent: "Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sentence description. Auto-generated from the canonical error-code registry (`SEVERITY_MATRIX` + `OUT_OF_MATRIX_CODES_THAT_MUST_STILL_BE_TRACEABLE` + `ERROR_CODE_DESCRIPTIONS` in `s0ma_dsl.config`)."
 schema_version: "3.0.0"
-content_hash: "1:69c7b92c503649496108099fcf98d412f36a8b20d30d7e5b74feb5cdd7fbfcde"
+content_hash: "1:7be94021e9898764ac542018f8683b33cab22116ccd77fd2e74ad02339cdc1e9"
 ---
 
 # CommonErrorsTable
@@ -122,7 +122,7 @@ Derived table of every s0ma-lang-dsl error code, severity by mode, and a one-sen
 | `TEMPLATE_SYNTAX_ERROR` | error | error | error | error | A template expression `{{...}}` or `covers:` filter fails the narrow doc-subsystem grammar. |
 | `TEST_NOT_COLLECTED` | warning | warning | error | error | A `test` declaration's code defines no function named `test...`, so the test runner never runs it, while the declaration still counts as coverage for the parts it names. Name the function `test_<something>`; when the block holds fixtures or several definitions, declare each one as a `helper` instead of renaming it. |
 | `TEST_VISIBILITY_VIOLATION` | error | error | error | error | A production module attempts to `uses:` a `visibility: TEST` component cross-module. |
-| `UNBOUND_NAME_AT_LOAD` | error | error | error | error | The emitted module reads a name at load (an annotation, default, decorator, base class, constant, or class field) and nothing has bound it when it is read: no binding, a later one, or one only under `if TYPE_CHECKING:`. Import raises `NameError` on Python 3.11 to 3.13, and on every Python unless the read is an annotation. Declare the name, move its declaration up, or quote the annotation. |
+| `UNBOUND_NAME_AT_LOAD` | error | error | error | error | The emitted module reads a name at load (an annotation, default, decorator, base class, constant, or class field) and nothing has bound it when it is read: no binding, a later one, or one only under `if TYPE_CHECKING:`. If the read runs, import raises `NameError` on Python 3.11 to 3.13, and on every Python unless it is an annotation. Declare the name, move its declaration up, or quote the annotation. |
 | `UNBOUND_NAME_IN_BODY` | warning | warning | error | error | The emitted module reads a name only when a body runs and nothing binds it, so the call raises `NameError`. A `uses:` entry removed while a body still calls it and a public `tests:` target with no `uses:` entry both land here. Declare the name in `requires:` or `uses:`, or correct it. |
 | `UNDECLARED_PLACEHOLDER` | warning | warning | error | error | A CONSTANT cell's `content: @file(...)` embedded content contains a placeholder-shaped string matching `__[A-Z][A-Z0-9_]*__` that is not listed in the cell's `placeholders:` field. |
 | `UNKNOWN_FIELD` | warning | warning | error | error | A declaration carries a field that kind of declaration does not have — usually a misspelt name, or a field that belongs to another kind. s0ma does not read the line, so whatever it was meant to say is not said; correct the name or remove the line. |

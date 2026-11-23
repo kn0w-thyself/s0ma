@@ -64,4 +64,4 @@ Do not call a document a mirror when it is edited in its own right, or when it m
 
 - Topic id: `concept:mirror`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:ce3413c0e6db9797`
+- Documentation snapshot: `sha256:676e0ed0e7f53931`

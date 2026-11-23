@@ -921,7 +921,12 @@ def _parity(
         # build is what refuses on it, and saying "differences" here would
         # name the wrong problem.
         return None, 0
-    result = compare_surfaces(entry.surface, surface, built_path=built.name)
+    result = compare_surfaces(
+        entry.surface,
+        surface,
+        built_path=built.name,
+        future_annotations=entry.future_annotations,
+    )
     if result.clean:
         return PARITY_SAME_SURFACE, 0
     return PARITY_DIFFERENCES, len(result.findings)

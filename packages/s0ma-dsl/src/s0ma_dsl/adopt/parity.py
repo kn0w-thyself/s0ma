@@ -33,6 +33,7 @@ Shape::
         "bookshelf.errors": {
           "source_path": "src/bookshelf/errors.py",
           "source_hash": "sha256:...",
+          "future_annotations": true,
           "captured_surface": { "module": ..., "entries": [...], "dunder_all": [...] }
         }
       }
@@ -42,7 +43,9 @@ The dotted module name is the key, so it is not repeated inside the
 entry. ``source_hash`` uses the toolchain's one hashing convention
 (:func:`s0ma_dsl.adoption.compute_adopted_hash`, ``sha256:`` over the
 file's text) so a baseline's hash and an adopted file's hash mean the
-same thing and can be compared with each other.
+same thing and can be compared with each other. ``future_annotations``
+is written only when the original file has a ``from __future__ import
+annotations`` in force, and is left out otherwise.
 
 Additive fields ride ``@1`` — a reader that meets a field it does not
 know ignores it — and an unknown schema is refused rather than guessed
@@ -51,12 +54,18 @@ since a record was written reads back as ``None`` rather than refusing,
 so a baseline captured by an older s0ma still loads. That is the point
 of a record that cannot be recaptured. ``annotation``, the declared type
 of a constant or attribute, is the first field to arrive this way.
+``future_annotations`` is the second: a record without it reads as a file
+that did not have the import, so its comparison stays exactly as strict
+as it was. Capturing such a file again adds that one line, once, and every
+capture after that rewrites the same bytes.
 """
 
 from __future__ import annotations
 
+import ast
 import json
 import textwrap
+import warnings
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -149,19 +158,27 @@ class BaselineEntry:
       measured?" has an answer.
     * ``surface`` — what the module promised: the captured
       :class:`~s0ma_dsl.adopt.model.ModuleSurface`, ready to compare.
+    * ``future_annotations``: whether the original file had ``from
+      __future__ import annotations`` in force. A conversion drops that
+      import, so this is what lets the comparer tell a quote the
+      conversion needed from a real change. On disk only when true.
     """
 
     module: str
     source_path: str
     source_hash: str
     surface: ModuleSurface
+    future_annotations: bool = False
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        document: dict[str, Any] = {
             "source_path": self.source_path,
             "source_hash": self.source_hash,
             "captured_surface": self.surface.to_dict(),
         }
+        if self.future_annotations:
+            document["future_annotations"] = True
+        return document
 
 
 # ---------------------------------------------------------------------------
@@ -219,7 +236,9 @@ def capture_baseline(root: Path, module: str, source_path: str | Path) -> Baseli
         # refusal from here is printed to somebody, and it must name the
         # module and the project-relative path, never this machine's
         # absolute one.
-        surface = surface_from_source(target.read_text(encoding="utf-8"), module)
+        text = target.read_text(encoding="utf-8")
+        surface = surface_from_source(text, module)
+        future_annotations = _has_future_annotations(text)
         source_hash = compute_adopted_hash(target)
     except SurfaceReadError as exc:
         raise BaselineRecordError(f"No baseline was captured for {module}. {exc}") from exc
@@ -234,6 +253,37 @@ def capture_baseline(root: Path, module: str, source_path: str | Path) -> Baseli
         source_path=relative,
         source_hash=source_hash,
         surface=surface,
+        future_annotations=future_annotations,
+    )
+
+
+def _has_future_annotations(source: str) -> bool:
+    """Whether *source* has ``from __future__ import annotations`` in force.
+
+    Read the way Python reads it: a future import counts only in the run
+    of them that opens the file, after an optional docstring. One written
+    anywhere later is a syntax error when the file is compiled, so it
+    never changed what an annotation held.
+    """
+    body = ast.parse(source).body
+    start = 1 if body and _is_docstring(body[0]) else 0
+    for statement in body[start:]:
+        if (
+            not isinstance(statement, ast.ImportFrom)
+            or statement.module != "__future__"
+            or statement.level
+        ):
+            return False
+        if any(alias.name == "annotations" for alias in statement.names):
+            return True
+    return False
+
+
+def _is_docstring(statement: ast.stmt) -> bool:
+    return (
+        isinstance(statement, ast.Expr)
+        and isinstance(statement.value, ast.Constant)
+        and isinstance(statement.value.value, str)
     )
 
 
@@ -319,6 +369,11 @@ def _entry_from_dict(module: str, data: object) -> BaselineEntry:
         source_hash=_as_str(body.get("source_hash"), where=f"'source_hash' in {where}"),
         surface=_surface_from_dict(
             body.get("captured_surface"), where=f"the captured surface in {where}",
+        ),
+        # Absent from every record of a file without the import, and from
+        # every record written before the field existed. Both read as false.
+        future_annotations=_as_flag(
+            body.get("future_annotations"), where=f"'future_annotations' in {where}",
         ),
     )
 
@@ -467,6 +522,14 @@ def _as_optional_str(value: object, *, where: str) -> str | None:
     raise BaselineRecordError(_malformed(f"{where} should be text or null"))
 
 
+def _as_flag(value: object, *, where: str) -> bool:
+    if value is None:
+        return False
+    if isinstance(value, bool):
+        return value
+    raise BaselineRecordError(_malformed(f"{where} should be true or false"))
+
+
 def _as_str_tuple(value: object, *, where: str) -> tuple[str, ...]:
     if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
         raise BaselineRecordError(_malformed(f"{where} should be a list of text"))
@@ -613,7 +676,11 @@ FINDING_PHRASES: Mapping[str, str] = {
 
 
 def compare_surfaces(
-    baseline: ModuleSurface, built: ModuleSurface, *, built_path: str = "",
+    baseline: ModuleSurface,
+    built: ModuleSurface,
+    *,
+    built_path: str = "",
+    future_annotations: bool = False,
 ) -> ParityResult:
     """Compare what a module promised with what the build emitted.
 
@@ -641,6 +708,18 @@ def compare_surfaces(
     which is the whole point of the authoring step. A docstring that was
     there and is now different, or gone, is exactly the drift parity
     exists to catch, so that direction is reported.
+
+    **A quote the conversion needed is not a difference.** With
+    *future_annotations* true, the original file held every annotation
+    as a string, and a build cannot carry that import, so a draft quotes
+    an annotation that names something not yet defined. ``-> Book`` under
+    the import and ``-> "Book"`` without it hold the same string. So a
+    built annotation that is one whole string is also read unquoted, once,
+    and matches if that is the baseline's text. Only the built side is
+    read that way: an original ``-> "Book"`` under the import held
+    ``"'Book'"``, and a built ``-> Book`` does not. Defaults and strings
+    inside an annotation are never touched, and a finding always shows
+    both sides as written.
     """
     before = {entry.name: _without_emitter_decorators(entry) for entry in baseline.entries}
     after = {entry.name: _without_emitter_decorators(entry) for entry in built.entries}
@@ -651,7 +730,9 @@ def compare_surfaces(
     for name in sorted(set(after) - set(before)):
         findings.append(_new(after[name]))
     for name in sorted(set(before) & set(after)):
-        findings.extend(_changes(before[name], after[name]))
+        findings.extend(
+            _changes(before[name], after[name], future_annotations=future_annotations)
+        )
     findings.extend(_export_findings(baseline, built, compared=set(before) | set(after)))
 
     return ParityResult(
@@ -703,8 +784,96 @@ def _decorator_name(decorator: str) -> str:
     return head.strip()
 
 
-def _changes(before: SurfaceEntry, after: SurfaceEntry) -> list[ParityFinding]:
-    """Every difference between two entries for the same name."""
+def _same_signature(baseline: str | None, built: str | None) -> bool:
+    """Whether *built* is *baseline* once a quote the conversion needed is read away.
+
+    Each annotation is judged against its own counterpart, so one the
+    original already quoted, and the build kept quoted, stays as it is
+    beside one that only the draft quoted.
+    """
+    if baseline == built:
+        return True
+    if baseline is None or built is None:
+        return False
+    before = _parsed_signature(baseline)
+    after = _parsed_signature(built)
+    if before is None or after is None:
+        return False
+    originals = {arg.arg: arg.annotation for arg in _parameters(before.args)}
+    for parameter in _parameters(after.args):
+        parameter.annotation = _unquoted_to_match(
+            parameter.annotation, originals.get(parameter.arg),
+        )
+    after.returns = _unquoted_to_match(after.returns, before.returns)
+    returns = f" -> {ast.unparse(after.returns)}" if after.returns is not None else ""
+    return f"({ast.unparse(after.args)}){returns}" == baseline
+
+
+def _parsed_signature(signature: str) -> ast.FunctionDef | None:
+    """A recorded ``(parameters) -> returns`` text as a function node, or ``None``."""
+    try:
+        statement = ast.parse(f"def _{signature}: pass").body[0]
+    except (SyntaxError, ValueError, MemoryError, RecursionError):
+        return None
+    return statement if isinstance(statement, ast.FunctionDef) else None
+
+
+def _parameters(arguments: ast.arguments) -> list[ast.arg]:
+    named = [*arguments.posonlyargs, *arguments.args, *arguments.kwonlyargs]
+    return named + [arg for arg in (arguments.vararg, arguments.kwarg) if arg is not None]
+
+
+def _unquoted_to_match(
+    built: ast.expr | None, original: ast.expr | None,
+) -> ast.expr | None:
+    """*built* with its whole-string quote removed if that yields *original*."""
+    if built is None or original is None:
+        return built
+    inner = _unquoted(built)
+    if inner is None or ast.unparse(inner) != ast.unparse(original):
+        return built
+    return inner
+
+
+def _unquoted(annotation: ast.expr) -> ast.expr | None:
+    """The expression a whole-string annotation spells, or ``None``.
+
+    Removes one level of quoting. A string that does not parse as an
+    expression spells nothing, so it stays as written.
+    """
+    if not isinstance(annotation, ast.Constant) or not isinstance(annotation.value, str):
+        return None
+    try:
+        # The text is the author's and may hold an escape Python warns about.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            return ast.parse(annotation.value, mode="eval").body
+    except (SyntaxError, ValueError, MemoryError, RecursionError):
+        return None
+
+
+def _same_declared_type(baseline: str | None, built: str | None) -> bool:
+    """Whether *built* is *baseline*, as written or with its whole quote read away."""
+    if baseline == built:
+        return True
+    if baseline is None or built is None:
+        return False
+    try:
+        expression = ast.parse(built, mode="eval").body
+    except (SyntaxError, ValueError, MemoryError, RecursionError):
+        return False
+    inner = _unquoted(expression)
+    return inner is not None and ast.unparse(inner) == baseline
+
+
+def _changes(
+    before: SurfaceEntry, after: SurfaceEntry, *, future_annotations: bool = False,
+) -> list[ParityFinding]:
+    """Every difference between two entries for the same name.
+
+    *future_annotations* is the baseline's record of the original file's
+    import, and is the only thing that lets a quoted annotation match.
+    """
     if before.category != after.category:
         # What something *is* has changed, so comparing the rest of it
         # would report the same break several times over in different
@@ -725,7 +894,10 @@ def _changes(before: SurfaceEntry, after: SurfaceEntry) -> list[ParityFinding]:
         ]
 
     findings: list[ParityFinding] = []
-    if before.signature != after.signature:
+    same_signature = before.signature == after.signature or (
+        future_annotations and _same_signature(before.signature, after.signature)
+    )
+    if not same_signature:
         findings.append(
             ParityFinding(
                 kind="signature_changed",
@@ -739,7 +911,10 @@ def _changes(before: SurfaceEntry, after: SurfaceEntry) -> list[ParityFinding]:
                 ),
             )
         )
-    if before.annotation != after.annotation:
+    same_declared_type = before.annotation == after.annotation or (
+        future_annotations and _same_declared_type(before.annotation, after.annotation)
+    )
+    if not same_declared_type:
         findings.append(
             ParityFinding(
                 kind="annotation_changed",

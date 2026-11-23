@@ -32,7 +32,16 @@ imports. In a function body the same broad handler is no guard, because that
 is how a removed ``uses:`` entry gets swallowed, so the read stays reported.
 A class with an explicit ``metaclass=`` may supply names through
 ``__prepare__``. The bounds and values of PEP 695 type parameters and aliases
-are evaluated lazily and are not read.
+are evaluated lazily and are not read. The true branch of ``if TYPE_CHECKING:``
+never runs, so nothing it reads is reported, at any scope. Its ``else`` runs,
+and a project's own ``TYPE_CHECKING = True`` or a parameter of that name is no
+guard.
+
+**A load read that may not run.** Outside those cases, a load read of a name
+nothing binds is an error in every mode. Whether it can run is often not
+decidable from its shape: ``if True:``, a ``with`` body, and a loop over items
+all run. So a read off the always-run path below stays refused, and only its
+message differs, to say the import fails if that line runs.
 
 A module that reaches its own namespace can also write names no walk sees,
 so the analysis stops for one that looks itself up in ``sys.modules``, loads
@@ -161,6 +170,9 @@ class UnboundRead:
     #: Every reported read of the name is an annotation, so it fails only
     #: on the Pythons that evaluate annotations at load.
     annotation_only: bool = False
+    #: A load read of a name nothing binds, with no read of that name on the
+    #: path that always runs. It stays an error, and its message says "if".
+    may_not_run: bool = False
 
 
 @dataclass(eq=False)
@@ -540,8 +552,11 @@ def _reaches_its_own_module(tree: ast.Module, module_name: str | None) -> bool:
 class _Reader:
     """Walks one module and records every read nothing binds."""
 
-    def __init__(self, future_annotations: bool) -> None:
+    def __init__(
+        self, future_annotations: bool, guards: frozenset[str],
+    ) -> None:
         self.future_annotations = future_annotations
+        self.guards = guards
         self.namespace_is_open = False
         self.load_reads: dict[str, list[int]] = {}
         self.body_reads: dict[str, list[int]] = {}
@@ -558,12 +573,33 @@ class _Reader:
 
     def walk(self, tree: ast.Module, module_scope: _Scope) -> None:
         self._push(tree.body, module_scope, True, False)
-        while self._stack:
+        self._drain()
+
+    def _drain(self) -> None:
+        while self._stack and not self.namespace_is_open:
             node, scope, at_load, guarded = self._stack.pop()
             if _opens_the_namespace(node, scope):
                 self.namespace_is_open = True
                 return
             self._visit(node, scope, at_load, guarded)
+
+    def _visit_unrun(
+        self,
+        body: list[ast.stmt],
+        scope: _Scope,
+        at_load: bool,
+        guarded: bool,
+    ) -> None:
+        """Walk a branch that never runs and keep none of what it reads.
+
+        It is still walked, so that a call in it that opens the namespace
+        keeps the module out of the analysis. This branch can only take a
+        finding away.
+        """
+        unrun = _Reader(self.future_annotations, self.guards)
+        unrun._push(body, scope, at_load, guarded)
+        unrun._drain()
+        self.namespace_is_open = self.namespace_is_open or unrun.namespace_is_open
 
     def _visit(
         self, node: ast.AST, scope: _Scope, at_load: bool, guarded: bool,
@@ -600,6 +636,12 @@ class _Reader:
             self._push(node.handlers, scope, at_load, guarded)
             self._push(node.orelse, scope, at_load, guarded)
             self._push(node.finalbody, scope, at_load, guarded)
+        elif isinstance(node, ast.If) and _guards_this_scope(
+            node.test, scope, self.guards,
+        ):
+            self._push([node.test], scope, at_load, guarded)
+            self._push(node.orelse, scope, at_load, guarded)
+            self._visit_unrun(node.body, scope, at_load, guarded)
         elif _TYPE_ALIAS and isinstance(node, _TYPE_ALIAS):
             return
         else:
@@ -894,6 +936,9 @@ class _LoadOrder:
         self._assigned = self._names_assigned_at_top(tree)
         self._open_classes: set[str] = set()
         self.reads: dict[str, list[_OrderedRead]] = {}
+        #: Names no module-level statement binds, read on the path that
+        #: always runs.
+        self.always_read_unbound: set[str] = set()
 
     @staticmethod
     def _names_assigned_at_top(tree: ast.Module) -> set[str]:
@@ -918,13 +963,14 @@ class _LoadOrder:
         if name in _ALWAYS_BOUND or name in site.parameters:
             return
         frame = site.frame
-        if frame is not None and (
-            frame.open_namespace
-            or name in frame.binds
-            or name in _CLASS_BODY_NAMES
-        ):
+        if frame is not None and (name in frame.binds or name in _CLASS_BODY_NAMES):
             return
-        if name in self._bound_now or name not in self._module_bound:
+        if name not in self._module_bound:
+            # Before the open-namespace test: an inherited metaclass may answer
+            # for the name, but the read still runs.
+            self.always_read_unbound.add(name)
+            return
+        if (frame is not None and frame.open_namespace) or name in self._bound_now:
             return
         if site.annotation and not self._annotations_run:
             return
@@ -1093,6 +1139,26 @@ def _is_type_checking_test(test: ast.expr, guards: frozenset[str]) -> bool:
     )
 
 
+def _guards_this_scope(
+    test: ast.expr, scope: _Scope, guards: frozenset[str],
+) -> bool:
+    """Whether *test* is a real ``TYPE_CHECKING`` guard where it is read.
+
+    The guard names are decided for the module. A parameter is the one
+    thing that can still shadow one inside a function, since every other
+    binding of that name already disqualifies it.
+    """
+    if not _is_type_checking_test(test, guards):
+        return False
+    head = test.id if isinstance(test, ast.Name) else "typing"
+    current = scope
+    while current.parent is not None:
+        if head in current.bound:
+            return False
+        current = current.parent
+    return True
+
+
 def _type_parameters(
     node: ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef,
 ) -> frozenset[str]:
@@ -1106,8 +1172,12 @@ def _load_order_reads(
     *,
     future_annotations: bool,
     requires_python: tuple[str, ...] | None,
-) -> list[UnboundRead]:
-    """Each bound name a load read reaches before its binding."""
+) -> tuple[list[UnboundRead], set[str]]:
+    """Each bound name a load read reaches before its binding.
+
+    Also returns the names nothing binds that are read on the path that
+    always runs, which is how a load read that may not run is told apart.
+    """
     walk = _LoadOrder(
         tree,
         module_bound,
@@ -1127,7 +1197,7 @@ def _load_order_reads(
             first.cause,
             annotation_only=all(read.annotation for read in reads),
         ))
-    return found
+    return found, walk.always_read_unbound
 
 
 def find_unbound_names(
@@ -1167,13 +1237,22 @@ def find_unbound_names(
     module_scope.bound.update(declared_global)
     _bind(module_scope, tree.body)
 
-    reader = _Reader(future_annotations)
+    reader = _Reader(future_annotations, _type_checking_names(tree))
     reader.walk(tree, module_scope)
     if reader.namespace_is_open:
         return []
 
+    order_reads, always_read = _load_order_reads(
+        tree,
+        module_scope.bound,
+        declared_global,
+        future_annotations=future_annotations,
+        requires_python=requires_python,
+    )
     found = [
-        UnboundRead(name, min(lines), True, len(lines))
+        UnboundRead(
+            name, min(lines), True, len(lines), may_not_run=name not in always_read,
+        )
         for name, lines in reader.load_reads.items()
     ]
     found.extend(
@@ -1181,13 +1260,7 @@ def find_unbound_names(
         for name, lines in reader.body_reads.items()
         if name not in reader.load_reads
     )
-    found.extend(_load_order_reads(
-        tree,
-        module_scope.bound,
-        declared_global,
-        future_annotations=future_annotations,
-        requires_python=requires_python,
-    ))
+    found.extend(order_reads)
     return sorted(found, key=lambda read: (read.line, read.name))
 
 
@@ -1309,7 +1382,28 @@ def unbound_name_findings(
             ))
             continue
         fix = _fix_for(read.name)
-        if read.at_load:
+        if read.may_not_run:
+            findings.append(S0maError(
+                code="UNBOUND_NAME_AT_LOAD",
+                message=(
+                    f"Module '{module.module.name}' reads '{read.name}'{where} "
+                    f"at load, in code that may not run, and nothing binds that "
+                    f"name. If that line runs, importing the module raises "
+                    f"NameError on Python 3.11 to 3.13."
+                ),
+                severity=get_severity("UNBOUND_NAME_AT_LOAD", mode) or "error",
+                remediation=(
+                    f"To bind '{read.name}', {fix}. Otherwise delete the branch "
+                    f"that reads it, or guard the read with `except NameError`. "
+                    f"The build writes nothing for this module until the read "
+                    f"is fixed."
+                ),
+                file=location.source_file,
+                line=line,
+                column=0,
+                context=context,
+            ))
+        elif read.at_load:
             findings.append(S0maError(
                 code="UNBOUND_NAME_AT_LOAD",
                 message=(

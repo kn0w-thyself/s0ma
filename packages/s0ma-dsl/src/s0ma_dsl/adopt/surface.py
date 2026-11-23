@@ -95,7 +95,11 @@ and ``from __future__ import annotations`` makes no difference, because
 a reader that never imports the module has no way to resolve either and
 should not pretend otherwise. Comparison is therefore textual: renaming
 a type alias reads as a change, which is the safe direction to be wrong
-in.
+in. There is one exception, and it is the comparer's rather than this
+reader's. When the baseline records that the original file had that
+future import, a built annotation that is one whole quoted string also
+matches the baseline's unquoted text, because ``-> Book`` under the
+import and ``-> "Book"`` without it hold the same string.
 
 A name declared with a type but no value (``due: date``) is an entry
 like any other, with ``value`` ``None`` — at class level it is a
