@@ -1,0 +1,5 @@
+{
+  "name": "trial-stdio-spawn",
+  "version": "0.0.0",
+  "description": "Throwaway plugin for a CI trial of stdio server startup."
+}
