@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "8b7c93a0416548b21df1924e424fc823969cb8c2dc765c380807340bcfbcf622",
+      "content_sha256": "51d461ed0c0b97112f29b8376d179222703d68d5a9f675920b311683ded3c24c",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.22.0] — 2026-11-19",
@@ -3708,6 +3708,15 @@
     },
     {
       "authority": "",
+      "canonical_source": "integrations/claude/plugin/README.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:guide/claude-plugin-readme",
+      "prose_locator": "integrations/claude/plugin/README.md",
+      "title": "s0ma for Claude Code"
+    },
+    {
+      "authority": "",
       "canonical_source": "integrations/claude/plugin/skills/build/SKILL.md",
       "covers": [],
       "governed_by": [],
@@ -5661,7 +5670,7 @@
     "build_channel": "preview",
     "release_version": "0.22.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:2fa21878816c76de"
+    "snapshot_hash": "sha256:1b24594874edaceb"
   },
   "surfaces": [
     {

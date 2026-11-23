@@ -218,6 +218,25 @@ Historical entries describe artifacts as they were named at the time.
   nothing instead of failing; the first-run check proves that in Windows
   PowerShell 5.1 and PowerShell 7.
 
+- **The Claude plugin has a README of its own, declares the hosts it can
+  reach, and is validated strictly.** `integrations/claude/plugin/README.md`
+  says what the plugin runs (the three hooks, the server's start script and
+  its two stand-ins, the launcher through `uv run --frozen` and its lock file,
+  the `bin/` commands), what it fetches and when, what it sends, what it
+  writes and where, how to switch it off, and where to report a problem. The
+  marketplace export carries that file as the plugin's README, byte for byte.
+  `plugin.json` gains `network.hosts`, listing every host the plugin's parts
+  or the tools they start can reach: account.kn0wthyself.ai, pypi.org,
+  files.pythonhosted.org, astral.sh, and localhost and studi0.localhost on the
+  machine itself. The field allows and blocks nothing; it is disclosure, and a
+  test holds every entry to the README and the control plane's entry to the
+  launcher's own constant. The first-run check now runs
+  `claude plugin validate --strict` and `claude plugin validate --profile
+  directory` on the plugin folder and on the exported tree, prints each report
+  whole, and requires both to pass; a Claude Code that does not take
+  `--profile` is reported and not failed. The version-currency check reads the
+  plugin's skills from their folder, so it scans all twelve rather than six.
+
 ### Changed
 
 - **PRD v1.19: the Claude plugin is offered with no account (owner ruling
@@ -727,6 +746,18 @@ Historical entries describe artifacts as they were named at the time.
   finding on its code, module and symbol and never on its line. The codes,
   the severities, the wording of each message, the IR, and the emitted
   Python do not change.
+
+- **The plugin's texts say what the plugin does now.** The README and the
+  PRIVACY note the marketplace export writes no longer describe a license-key
+  field and settings the plugin does not have: the plugin asks nothing when it
+  is switched on, `/s0ma:start` is the way in, a key is optional and is saved
+  with `s0ma-launch activate`, and with no key the launcher contacts nobody,
+  since uv fetches s0ma from the package index. The `/s0ma:setup` skill no
+  longer says Claude must be restarted after uv is installed: the plugin's
+  commands find uv in the same session, and s0ma's own tools arrive with the
+  next one, as `/s0ma:start` already said. The Claude integration guide says
+  what the next release holds: the plugin installs with no license key, and a
+  public catalog opens once that release has passed its first-run test.
 
 ## [0.22.0] — 2026-11-19
 

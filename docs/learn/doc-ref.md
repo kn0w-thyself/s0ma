@@ -74,4 +74,4 @@ doc-ref <name>
 
 - Topic id: `concept:doc-ref`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:2fa21878816c76de`
+- Documentation snapshot: `sha256:1b24594874edaceb`

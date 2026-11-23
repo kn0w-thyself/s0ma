@@ -6,7 +6,7 @@ This is the map of record: every document this repository keeps, what it is, who
 
 A row here is wrong, or a document is missing? The place to fix it is the catalog this page is rendered from — [`docs/s0ma_src/catalog.json`](s0ma_src/catalog.json) — and the next build writes the page again.
 
-There are 187 documents. 147 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
+There are 188 documents. 148 of them describe s0ma as it is now and are grouped below by what you would be trying to do; the rest are copies that ship inside the wheels, records of the past, and working notes, each behind its own heading further down. 4 more tracked files are listed at the end as what they are: test data rather than documentation.
 
 ## Contents
 
@@ -103,17 +103,17 @@ Getting a project running and writing your first declarations, then checking, bu
 | [Migrating from s0ma Python to .s0ma DSL](../packages/s0ma-dsl/docs/migration_guide.md) | `packages/s0ma-dsl/docs/migration_guide.md` | agents | maintained | links checked |
 | [s0ma User Guide](../packages/s0ma-core/docs/s0ma_user_guide.md) | `packages/s0ma-core/docs/s0ma_user_guide.md` | agents | maintained | links checked |
 | [s0ma — getting started as a free tester](hosting-getting-started.md) | `docs/hosting-getting-started.md` | users | maintained | links checked, version checked |
-| [The /s0ma:build skill - work on a s0ma project](../integrations/claude/plugin/skills/build/SKILL.md) | `integrations/claude/plugin/skills/build/SKILL.md` | agents | maintained | listed only |
+| [The /s0ma:build skill - work on a s0ma project](../integrations/claude/plugin/skills/build/SKILL.md) | `integrations/claude/plugin/skills/build/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:doctor skill — diagnose s0ma](../integrations/claude/plugin/skills/doctor/SKILL.md) | `integrations/claude/plugin/skills/doctor/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:feedback skill — send feedback about s0ma](../integrations/claude/plugin/skills/feedback/SKILL.md) | `integrations/claude/plugin/skills/feedback/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:new skill — start a new s0ma project](../integrations/claude/plugin/skills/new/SKILL.md) | `integrations/claude/plugin/skills/new/SKILL.md` | agents | maintained | version checked |
-| [The /s0ma:off skill - turn s0ma off in one project](../integrations/claude/plugin/skills/off/SKILL.md) | `integrations/claude/plugin/skills/off/SKILL.md` | agents | maintained | listed only |
-| [The /s0ma:on skill - turn s0ma back on in a project](../integrations/claude/plugin/skills/on/SKILL.md) | `integrations/claude/plugin/skills/on/SKILL.md` | agents | maintained | listed only |
-| [The /s0ma:preferences skill - how s0ma and studi0 are used](../integrations/claude/plugin/skills/preferences/SKILL.md) | `integrations/claude/plugin/skills/preferences/SKILL.md` | agents | maintained | listed only |
+| [The /s0ma:off skill - turn s0ma off in one project](../integrations/claude/plugin/skills/off/SKILL.md) | `integrations/claude/plugin/skills/off/SKILL.md` | agents | maintained | version checked |
+| [The /s0ma:on skill - turn s0ma back on in a project](../integrations/claude/plugin/skills/on/SKILL.md) | `integrations/claude/plugin/skills/on/SKILL.md` | agents | maintained | version checked |
+| [The /s0ma:preferences skill - how s0ma and studi0 are used](../integrations/claude/plugin/skills/preferences/SKILL.md) | `integrations/claude/plugin/skills/preferences/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:retrofit skill — the adoption ladder](../integrations/claude/plugin/skills/retrofit/SKILL.md) | `integrations/claude/plugin/skills/retrofit/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:setup skill — set s0ma up in Claude](../integrations/claude/plugin/skills/setup/SKILL.md) | `integrations/claude/plugin/skills/setup/SKILL.md` | agents | maintained | version checked |
-| [The /s0ma:start skill - the quick way in](../integrations/claude/plugin/skills/start/SKILL.md) | `integrations/claude/plugin/skills/start/SKILL.md` | agents | maintained | listed only |
-| [The /s0ma:studi0 skill - start studi0 and show it](../integrations/claude/plugin/skills/studi0/SKILL.md) | `integrations/claude/plugin/skills/studi0/SKILL.md` | agents | maintained | listed only |
+| [The /s0ma:start skill - the quick way in](../integrations/claude/plugin/skills/start/SKILL.md) | `integrations/claude/plugin/skills/start/SKILL.md` | agents | maintained | version checked |
+| [The /s0ma:studi0 skill - start studi0 and show it](../integrations/claude/plugin/skills/studi0/SKILL.md) | `integrations/claude/plugin/skills/studi0/SKILL.md` | agents | maintained | version checked |
 | [The /s0ma:update skill — update or pin s0ma](../integrations/claude/plugin/skills/update/SKILL.md) | `integrations/claude/plugin/skills/update/SKILL.md` | agents | maintained | version checked |
 | [The server that describes itself](../packages/s0ma-mcp/src/s0ma_mcp/_built/docs/selfhost_walkthrough.md) | `packages/s0ma-mcp/src/s0ma_mcp/_built/docs/selfhost_walkthrough.md` | agents | generated | rebuilt and compared |
 | [Your first module: the anatomy of a .s0ma file](guides/first-module.md) | `docs/guides/first-module.md` | users | maintained | links checked, version checked |
@@ -130,6 +130,7 @@ The parts you work through day to day: your editor, the server a coding agent ta
 | [Editor support for `.s0ma` files](../editors/README.md) | `editors/README.md` | contributors | maintained | version checked |
 | [Packaging a s0ma project as a wheel](guides/packaging.md) | `docs/guides/packaging.md` | agents, users | maintained | links checked |
 | [Retrofitting an existing codebase](guides/retrofit-existing-codebase.md) | `docs/guides/retrofit-existing-codebase.md` | agents, users | maintained | links checked, version checked |
+| [s0ma for Claude Code](../integrations/claude/plugin/README.md) | `integrations/claude/plugin/README.md` | users | maintained | listed only |
 | [s0ma in Claude](guides/claude-integration.md) | `docs/guides/claude-integration.md` | users | maintained | links checked, version checked |
 | [Seeing your system, and telling the s0ma team what you found](guides/studi0-feedback.md) | `docs/guides/studi0-feedback.md` | users | maintained | links checked, version checked |
 | [The documentation subsystem](documentation-subsystem.md) | `docs/documentation-subsystem.md` | agents, contributors | maintained | links checked, version checked |
