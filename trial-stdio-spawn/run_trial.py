@@ -94,6 +94,7 @@ def main():
                ["PATH=" + os.path.join(HERE, "onlyenv") + os.pathsep
                 + env["PATH"]]),
         "f7": (["trial-no-such-command-xyz"], []),
+        "f8": ([os.path.join(HERE, "lone", "stub")], []),
     }
     for name, (cmd, extra_env) in forms.items():
         envflags = ["-e", f"TRIAL_FORM={name}", "-e", f"TRIAL_LOG={log}"]
@@ -139,8 +140,13 @@ def main():
     else:
         print("no spawn log written")
 
-    if label.endswith("main"):
-        plugin(c, env, work, label)
+    plugin(c, env, work, label)
+    banner(f"SPAWN LOG AFTER PLUGIN {label}")
+    if os.path.exists(log):
+        with open(log, encoding="utf-8") as fh:
+            for line in fh:
+                if '"plugin' in line:
+                    print(line.rstrip())
 
     banner(f"RESULTS {label} ({sys.platform})")
     lines = (listing + "\n" + listerr).splitlines()
@@ -152,14 +158,10 @@ def main():
 
 def plugin(c, env, work, label):
     banner(f"PLUGIN {label}")
-    pdir = os.path.join(HERE, "plugin")
-    _, h, _ = run(c + ["--help"], env, work)
-    if "--plugin-dir" not in h:
-        print("no --plugin-dir in --help")
-    run(c + ["plugin", "--help"], env, work)
-    run(c + ["plugin", "validate", pdir], env, work)
-    run(c + ["--plugin-dir", pdir, "mcp", "list"], env, work, timeout=300)
-    run(c + ["mcp", "list", "--plugin-dir", pdir], env, work, timeout=300)
+    for sub in ("plugin", "plugin-lone"):
+        pdir = os.path.join(HERE, sub)
+        run(c + ["plugin", "validate", pdir], env, work)
+        run(c + ["--plugin-dir", pdir, "mcp", "list"], env, work, timeout=300)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "pstub": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/stub",
+      "args": [],
+      "env": {"TRIAL_FORM": "plugin-lone"}
+    }
+  }
+}

@@ -1,0 +1,6 @@
+#!/bin/sh
+TRIAL_WRAPPER=lone/stub
+export TRIAL_WRAPPER
+d=$(cd "$(dirname "$0")" && pwd)
+if command -v python3 >/dev/null 2>&1; then exec python3 "$d/../stub_server.py" "$@"; fi
+exec python "$d/../stub_server.py" "$@"
