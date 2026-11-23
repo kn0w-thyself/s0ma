@@ -1,6 +1,6 @@
 Topic: concept:self-knowledge
 Release: 0.18.1 (preview)
-Snapshot: sha256:3c3c7652bb8a6fda
+Snapshot: sha256:f732908e05f7c835
 Examples: none recorded
 Decided by: authority:prd/glossary.self-knowledge, authority:prd/section.vision
 
