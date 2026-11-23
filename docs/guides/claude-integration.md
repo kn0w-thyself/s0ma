@@ -11,9 +11,8 @@ behave, how to hold a project still, and how to take it all off again.
 
 **The short version.**
 
-- **Claude Code** — add the kn0wthyself marketplace (from a checkout today,
-  from the public catalog once it opens), install `s0ma@kn0wthyself`, run
-  `/s0ma:start`. The plugin asks nothing at install.
+- **Claude Code** — add the kn0wthyself marketplace, install `s0ma@kn0wthyself`,
+  run `/s0ma:start`. The plugin asks nothing at install.
 - **Claude Desktop** — open the s0ma extension file and answer two settings.
 - **A key is optional.** Nobody needs one to install or use s0ma. If you have
   one, it goes into `s0ma-launch activate` at a terminal of your own, or in
@@ -27,19 +26,16 @@ behave, how to hold a project still, and how to take it all off again.
   `s0ma-launch unpin` lets it follow along again.
 - **A project that already carries its own s0ma** is never moved by any of this.
 
-## What the next release holds
+## Where the plugin comes from
 
-**The public repository's first release does not offer this route; the next
-one does.** In that release the plugin installs with no license key: uv fetches
-s0ma from the package index, at the version the plugin brings, and nobody
-needs an account. A public catalog to install it from opens once that release
-has passed its first-run test. Until then, the two ways in are the ones the
-first release offers, installing from PyPI and cloning the repository to build
-from it, both stated once in
+The plugin installs from the public catalog, `kn0w-thyself/claude-plugins`,
+with no license key: uv fetches s0ma from the package index, at the version the
+plugin brings, and nobody needs an account. The other ways in, installing from
+PyPI and cloning the repository to build from it, are stated once in
 [Getting started §1](../getting-started.md#1-create-a-real-project), with
 their commands in the root `README.md` "Install" section.
 
-From a checkout you can try the plugin now:
+A checkout remains the way to try changes that are not released yet:
 
 - **Claude Code** installs from a folder. Point it at the folder that holds
   `.claude-plugin/marketplace.json`; in a checkout of the s0ma repository that
@@ -85,11 +81,6 @@ needs no key at all.
 You do not need to install Python. uv provides one.
 
 ## Install in Claude Code
-
-Step 1 names the public catalog, which opens once the next release has passed
-its first-run test. Until it is open, add the marketplace from a checkout
-instead, as [What the next release holds](#what-the-next-release-holds) shows;
-every step after that is the same.
 
 1. **Add the marketplace.** Ours needs nobody's approval and is not Anthropic's:
 
@@ -449,6 +440,14 @@ entry the Claude Desktop app reads to open studi0 beside the chat at its own
 address, `http://studi0.localhost:5710`. The entry starts nothing: it reaches a
 studi0 that is already running on that port, and not one that had to take
 another.
+
+It also carries `.claude/settings.json`, which names the kn0wthyself catalog
+(`extraKnownMarketplaces`, with background updates on) and turns the s0ma
+plugin on (`enabledPlugins`). Claude Code reads it once you trust the folder,
+so the catalog is known without adding it; it does not install the plugin, and
+`/plugin install s0ma@kn0wthyself` still does that. Like the launch entry, it is
+written only when the project has no such file, and one you already have is
+kept as it is.
 
 ## The twelve things you can ask for by name
 

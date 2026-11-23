@@ -175,6 +175,9 @@ pip install s0ma-lang
 `s0ma-lang` carries no code. It requires each of the four at exactly its own
 version, so one name installs the toolchain as it was released together.
 
+In Claude Code, s0ma also installs as a plugin:
+[s0ma in Claude](docs/guides/claude-integration.md#install-in-claude-code) says how.
+
 The packages carry `lang` in their names and nothing else does: you still
 `import s0ma` and type `s0ma`. `s0ma-lang-core` on its own is fully supported:
 the runtime, with zero hard dependencies. `s0ma-lang-dsl` adds the `.s0ma`
