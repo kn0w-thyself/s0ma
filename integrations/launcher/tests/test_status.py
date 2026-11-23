@@ -432,6 +432,8 @@ def test_every_frozen_sub_command_exists(launcher: ModuleType) -> None:
         "unpin",
         "activate",
         "session-hint",
+        "before-edit",
+        "after-edit",
         "run",
         "set",
         "prefs",

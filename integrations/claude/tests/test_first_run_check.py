@@ -8,7 +8,9 @@ mcp list`` lines in both sets of marks and calls a failed server failed, its
 MCP client fails on a server that says nothing or writes something that is not
 JSON, it takes Git's shell off a Windows ``PATH`` while keeping ``Git\\cmd``,
 and it reads the hook's line once s0ma is installed: the standing note for
-Claude and nothing for the person, or the one off line and nothing else.
+Claude and nothing for the person, or the one off line and nothing else. It
+reads the edit hooks' answers too: silence, the refusal with the build folder
+named, and a finding between the lead-in and the closing line.
 
 Nothing here runs Claude: no test passes ``--claude``.
 """
@@ -252,3 +254,90 @@ def test_the_off_hook_check_fails_on_anything_more(
         printed["systemMessage"] = "s0ma's tools are not available in this session."
     with pytest.raises(driver.CheckFailed):
         driver.check_hook_off(hook_ran(driver, printed), launcher)
+
+
+# ---------------------------------------------------------------------------
+# The edit hooks.
+# ---------------------------------------------------------------------------
+
+
+def refusal(launcher: ModuleType, build_dir: str = "build") -> dict[str, object]:
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": launcher.BUILD_DIR_REFUSAL.format(build_dir=build_dir),
+        }
+    }
+
+
+def finding(launcher: ModuleType, body: str = "x:1: ERROR [PARSE_ERROR]") -> dict[str, object]:
+    lead = launcher.EDIT_CHECK_LEAD.format(path="src/a.s0ma")
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": "PostToolUse",
+            "additionalContext": f"{lead}\n{body}\n{launcher.EDIT_CHECK_CLOSE}",
+        }
+    }
+
+
+def test_the_driver_reads_both_edit_commands_from_hooks_json(driver: ModuleType) -> None:
+    plugin = REPO_ROOT / "integrations" / "claude" / "plugin"
+    for hook in ("before-edit", "after-edit"):
+        command = driver.edit_hook_command(plugin, hook)
+        assert command.endswith(f'/hooks/edit-guard.sh" {hook} # | out-null')
+        assert "${" not in command
+
+
+def test_a_silent_edit_hook_passes_and_anything_else_fails(driver: ModuleType) -> None:
+    assert "stdout empty" in driver.check_edit_hook_silent(hook_ran(driver, ""), "before-edit")
+    for ran in (hook_ran(driver, "x\n"), hook_ran(driver, "", code=1), hook_ran(driver, "", stderr="x")):
+        with pytest.raises(driver.CheckFailed):
+            driver.check_edit_hook_silent(ran, "before-edit")
+
+
+def test_the_refusal_is_read(driver: ModuleType, launcher: ModuleType) -> None:
+    verdict = driver.check_edit_refused(hook_ran(driver, refusal(launcher)), launcher, "build")
+    assert "deny naming build/" in verdict
+
+
+@pytest.mark.parametrize(
+    "printed",
+    ["", "not json\n", "refusal for another folder", "allow"],
+)
+def test_the_refusal_check_fails_on_anything_else(
+    driver: ModuleType, launcher: ModuleType, printed: str
+) -> None:
+    shown: object = printed
+    if printed == "refusal for another folder":
+        shown = refusal(launcher, "out")
+    elif printed == "allow":
+        answer = refusal(launcher)
+        answer["hookSpecificOutput"]["permissionDecision"] = "allow"  # type: ignore[index]
+        shown = answer
+    with pytest.raises(driver.CheckFailed):
+        driver.check_edit_refused(hook_ran(driver, shown), launcher, "build")
+
+
+def test_the_finding_is_read(driver: ModuleType, launcher: ModuleType) -> None:
+    verdict = driver.check_edit_finding(
+        hook_ran(driver, finding(launcher)), launcher, "src/a.s0ma", "PARSE_ERROR"
+    )
+    assert "names PARSE_ERROR" in verdict
+
+
+@pytest.mark.parametrize("case", ["silent", "another code", "wrong event", "too long"])
+def test_the_finding_check_fails_on_anything_else(
+    driver: ModuleType, launcher: ModuleType, case: str
+) -> None:
+    shown: object = ""
+    if case == "another code":
+        shown = finding(launcher, "x:1: ERROR [OTHER]")
+    elif case == "wrong event":
+        answer = finding(launcher)
+        answer["hookSpecificOutput"]["hookEventName"] = "PreToolUse"  # type: ignore[index]
+        shown = answer
+    elif case == "too long":
+        shown = finding(launcher, "[PARSE_ERROR] " + "x" * 4000)
+    with pytest.raises(driver.CheckFailed):
+        driver.check_edit_finding(hook_ran(driver, shown), launcher, "src/a.s0ma", "PARSE_ERROR")

@@ -258,7 +258,7 @@ read it and approve it first.
 | The viewer, `s0ma studi0` | **local listener** | `127.0.0.1` and nothing else, on port 5710 unless you name one with `--port` or 5710 is taken, when the machine picks one. It answers only requests addressed to `studi0.localhost`, `localhost` or `127.0.0.1` | Nothing leaves the machine. It answers `GET` and nothing else, on a fixed list of paths, and writes nothing at all in response to any request | While you have it running | — | You | Ctrl-C in the terminal it is running in | `packages/s0ma-studi0/tests/test_api.py::test_every_route_table_entry_has_the_declared_shape` |
 | The authoring server, `s0ma-lang-mcp` — the one a coding agent talks to | **no socket at all** | none: there is no port and no address | It speaks over the standard input and output of a program your agent starts, so there is nothing for anyone to connect to, on this machine or any other. The stand-in server the launcher answers with when s0ma is not installed yet works the same way | Whenever your agent is running it | — | Your coding agent | Quit the agent, or take the registration out of it | `packages/s0ma-mcp/tests/test_stdio_smoke.py::TestStdioTransport` |
 | The optional HTTP view of a project's self-model, from the `api` extra | **a listener only if you make one** | whatever you bind it to. s0ma binds nothing: it builds the application object and hands it to you | Your project's whole self-model, over 14 read-only routes with no authentication of any kind. Thirteen answer `GET`; one, `/self/query`, takes a question as a `POST` and changes nothing | Only if you installed the extra *and* handed the object to a server yourself | — | You | Do not run one. If you do, bind `127.0.0.1` — see [what listens, and to whom](#what-listens-and-to-whom) | `packages/s0ma-core/src/s0ma/api/rest.py` |
-| The Claude plugin: what a session is told at its start, and the twelve commands you can ask for by name | **neither — no request, no listener** | none | Nothing. What a session is told is computed from files on this machine: the launcher's own, in its folder, and in the project its version pin, its own preferences file and the nearest `pyproject.toml`. It writes nothing, not even the tidying-up the launcher's ordinary reader does; on a machine where uv cannot run the launcher, it is one fixed sentence read from the plugin's own folder, or nothing at all when the project's preferences file turns s0ma off, and the server is a stand-in that reads the same sentence and speaks only over standard input and output. The twelve commands are instructions; what they run is `s0ma-launch` and `s0ma`, which is the rest of this table, and uv's own installer when uv is missing and you say yes to installing it, which fetches uv from uv's makers and not from s0ma. Four of them have Claude write that one preferences file in the project when you ask, or when you answer studi0's offer | At the start of a session: a line for you when there is something to say, and a note for Claude whenever s0ma can be used there | — | Claude | Remove the plugin | `integrations/launcher/tests/test_session_hint.py::test_no_socket_is_opened` |
+| The Claude plugin: what a session is told at its start, the checks around Claude's edits, and the twelve commands you can ask for by name | **neither — no request, no listener** | none | Nothing. What a session is told is computed from files on this machine: the launcher's own, in its folder, and in the project its version pin, its own preferences file and the nearest `pyproject.toml`. It writes nothing, not even the tidying-up the launcher's ordinary reader does; on a machine where uv cannot run the launcher, it is one fixed sentence read from the plugin's own folder, or nothing at all when the project's preferences file turns s0ma off, and the server is a stand-in that reads the same sentence and speaks only over standard input and output. Before an edit, the plugin reads the nearest `pyproject.toml` and the project's preferences file; after an edit to a `.s0ma` file, the copy of s0ma already installed for the project runs `s0ma check` on that file, and nothing is installed or fetched for it. The twelve commands are instructions; what they run is `s0ma-launch` and `s0ma`, which is the rest of this table, and uv's own installer when uv is missing and you say yes to installing it, which fetches uv from uv's makers and not from s0ma. Four of them have Claude write that one preferences file in the project when you ask, or when you answer studi0's offer | At the start of a session: a line for you when there is something to say, and a note for Claude whenever s0ma can be used there. Before and after each of Claude's edits, in a s0ma project | — | Claude | Remove the plugin | `integrations/launcher/tests/test_session_hint.py::test_no_socket_is_opened` |
 | Every other `s0ma` command — `check`, `build`, `doctor`, `docs`, `graph`, `new`, `score`, `adopt` and the rest | **neither** | none | Nothing. They read and write your own files. `doctor`'s `license` and `update check` lines are deliberate placeholders that contact nobody and say so on screen | — | — | You | Nothing to stop | `packages/s0ma-dsl/src/s0ma_dsl/cli/doctor.py` |
 
 Three commands are the exception to that last row, and they are exceptions you
@@ -351,8 +351,18 @@ version pin, its own preferences file and the nearest `pyproject.toml` — no
 request, no subprocess, and no writing, not even the tidying-up the launcher's
 ordinary reader does when it meets a spoiled file.
 
-**The plugin itself sends nothing.** It is configuration, twelve skill files, a
-start-up hook and a copy of the launcher. Four of the skills have Claude write
+**The checks around an edit open no socket either.** Before Claude's Write or
+Edit tool changes a file, the plugin reads the nearest `pyproject.toml` and, in
+a s0ma project, its preferences file; outside a s0ma project it stops there,
+without starting uv or Python. After an edit to a `.s0ma` file, the copy of
+s0ma already installed for the project runs `s0ma check` on that one file.
+Nothing is installed, updated or fetched for either, and neither writes
+anything.
+
+**The plugin itself sends nothing.** It is configuration, twelve skill files,
+three hooks and a copy of the launcher: one hook runs when a session starts,
+one before each of Claude's edits, and one after an edit to a `.s0ma` file.
+Four of the skills have Claude write
 one small preferences file in a project's own `.s0ma` folder when you ask, or
 when you answer studi0's offer,
 which holds your answers for that project; s0ma itself only ever reads it. Fetching the
@@ -361,15 +371,16 @@ marketplace lives, on Claude's schedule and under Claude's settings — not
 s0ma's.
 
 *Held by:* `integrations/launcher/s0ma_launch.py`, whose control-plane section
-carries these rules as comments beside the code that keeps them, and six tests
+carries these rules as comments beside the code that keeps them, and seven tests
 that each prove one of them:
 `integrations/launcher/tests/test_install.py::test_the_key_travels_in_the_header_and_nowhere_else`,
 `integrations/launcher/tests/test_install.py::test_uv_is_never_handed_the_key`,
 `integrations/launcher/tests/test_update.py::test_the_control_plane_is_asked_at_most_once_a_day`,
 `integrations/launcher/tests/test_keyless.py::test_every_keyless_command_leaves_the_control_plane_unasked`,
-`integrations/launcher/tests/test_keyless.py::test_the_serve_path_starts_nothing_with_no_key`
+`integrations/launcher/tests/test_keyless.py::test_the_serve_path_starts_nothing_with_no_key`,
+`integrations/launcher/tests/test_session_hint.py::test_no_socket_is_opened`
 and
-`integrations/launcher/tests/test_session_hint.py::test_no_socket_is_opened`.
+`integrations/launcher/tests/test_edit_hooks.py::test_no_socket_is_opened_and_nothing_is_installed`.
 
 ## Feedback: nothing leaves without you
 
@@ -482,6 +493,7 @@ it, the source it read, the schema it read against, and a hash of the bytes.
 | With a key, s0ma asks about a newer version at most once a day | `integrations/launcher/tests/test_update.py` |
 | With no key, nothing is fetched until you ask, and the launcher asks nobody | `integrations/launcher/tests/test_keyless.py` |
 | The line a session begins with opens no socket | `integrations/launcher/tests/test_session_hint.py` |
+| The checks around an edit open no socket and install nothing | `integrations/launcher/tests/test_edit_hooks.py` |
 | The feedback engine carries a socket in one module only | `packages/s0ma-dsl/tests/test_feedback_context.py` |
 | What each feedback request sends, and to where | `packages/s0ma-dsl/tests/test_feedback_client.py` |
 | The agent-tool log is written only when you switch it on | `packages/s0ma-mcp/tests/test_telemetry_invisibility.py` |

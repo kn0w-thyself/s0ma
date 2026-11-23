@@ -1,10 +1,46 @@
 {
   "hooks": {
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "echo --% >/dev/null; sh \"${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh\" after-edit # | out-null",
+            "if": "Write(**/*.s0ma)",
+            "timeout": 30,
+            "type": "command"
+          }
+        ],
+        "matcher": "Write"
+      },
+      {
+        "hooks": [
+          {
+            "command": "echo --% >/dev/null; sh \"${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh\" after-edit # | out-null",
+            "if": "Edit(**/*.s0ma)",
+            "timeout": 30,
+            "type": "command"
+          }
+        ],
+        "matcher": "Edit"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "echo --% >/dev/null; sh \"${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh\" before-edit # | out-null",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "Write|Edit"
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
           {
-            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\"",
+            "command": "echo --% >/dev/null; sh \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\" # | out-null",
             "timeout": 10,
             "type": "command"
           }

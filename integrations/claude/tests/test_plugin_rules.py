@@ -47,6 +47,7 @@ PLUGIN_MANIFEST = PLUGIN_DIR / ".claude-plugin" / "plugin.json"
 HOOKS_CONFIG = PLUGIN_DIR / "hooks" / "hooks.json"
 MCP_CONFIG = PLUGIN_DIR / ".mcp.json"
 HOOK_SCRIPT = PLUGIN_DIR / "hooks" / "session-start.sh"
+EDIT_SCRIPT = PLUGIN_DIR / "hooks" / "edit-guard.sh"
 SERVER_SCRIPT = PLUGIN_DIR / "scripts" / "s0ma-serve"
 SERVER_CMD = PLUGIN_DIR / "scripts" / "s0ma-serve.cmd"
 STAND_IN_PS1 = PLUGIN_DIR / "scripts" / "s0ma-stand-in.ps1"
@@ -57,6 +58,7 @@ PLUGIN_LOCK = PLUGIN_DIR / "launcher" / "s0ma_launch.py.lock"
 #: Every POSIX script that finds uv on its own.
 SH_FINDERS = (
     HOOK_SCRIPT,
+    EDIT_SCRIPT,
     SERVER_SCRIPT,
     PLUGIN_DIR / "bin" / "s0ma",
     PLUGIN_DIR / "bin" / "s0ma-launch",
@@ -70,7 +72,7 @@ CMD_FINDERS = (
 )
 
 #: Every script a hook command or a server command runs, directly or by name.
-COMMAND_SCRIPTS = (HOOK_SCRIPT, SERVER_SCRIPT, SERVER_CMD)
+COMMAND_SCRIPTS = (HOOK_SCRIPT, EDIT_SCRIPT, SERVER_SCRIPT, SERVER_CMD)
 
 #: The one variable a hook or server command may contain.
 ALLOWED_VARIABLE = "CLAUDE_PLUGIN_ROOT"
@@ -168,7 +170,7 @@ def test_the_plugin_manifest_has_no_user_config() -> None:
 def test_commands_name_no_variable_but_the_plugin_root() -> None:
     """In every hook command and server command, its arguments included."""
     lines = command_lines()
-    assert len(lines) == 2, f"one hook and one server are expected: {lines}"
+    assert len(lines) == 5, f"four hook commands and one server are expected: {lines}"
     for where, words in lines:
         for word in words:
             for braced, bare in VARIABLE.findall(word):
@@ -203,9 +205,32 @@ def test_the_session_start_hook_is_shell_form() -> None:
     handler = handlers[0]
     assert "args" not in handler
     line = handler["command"]
-    for forbidden in ("$(", "`", "*", "?", "[", ";", "&", "|"):
-        assert forbidden not in line, f"the hook line carries {forbidden!r}: {line}"
-    assert line == 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"'
+    assert line == (
+        'echo --% >/dev/null; sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh" # | out-null'
+    )
+
+
+def test_every_hook_line_is_one_script_and_plain_words() -> None:
+    """The same for every hook: ``sh``, one quoted path, at most one plain word,
+    between the opening and closing that make PowerShell run nothing.
+
+    Inside that frame, no command substitution, no wildcard, no second
+    command and no quoting but the one path's double quotes.
+    """
+    opening = "echo --% >/dev/null; "
+    closing = " # | out-null"
+    for handler in hook_handlers():
+        assert "args" not in handler
+        line = handler["command"]
+        assert line.startswith(opening) and line.endswith(closing), line
+        line = line[len(opening) : -len(closing)]
+        for forbidden in ("$(", "`", "*", "?", "[", ";", "&", "|", "#", ">", "'", "\\"):
+            assert forbidden not in line, f"a hook line carries {forbidden!r}: {line}"
+        words = line.split(" ")
+        assert words[0] == "sh" and len(words) in (2, 3), line
+        assert re.fullmatch(r'"\$\{CLAUDE_PLUGIN_ROOT\}/hooks/[a-z-]+\.sh"', words[1]), line
+        if len(words) == 3:
+            assert re.fullmatch(r"[a-z-]+", words[2]), line
 
 
 def test_the_server_command_is_a_script_with_its_windows_twin() -> None:

@@ -128,6 +128,11 @@ POINTERS: tuple[str, ...] = (
     "integrations/launcher/tests/test_activate.py",
     "integrations/launcher/tests/test_activate.py"
     "::test_the_key_is_checked_exactly_once_and_only_in_a_header",
+    # The plugin's edit hooks: the checks around an edit open no socket and
+    # install nothing.
+    "integrations/launcher/tests/test_edit_hooks.py",
+    "integrations/launcher/tests/test_edit_hooks.py"
+    "::test_no_socket_is_opened_and_nothing_is_installed",
     "integrations/launcher/tests/test_install.py",
     "integrations/launcher/tests/test_install.py"
     "::test_a_wheel_already_downloaded_is_used_again",

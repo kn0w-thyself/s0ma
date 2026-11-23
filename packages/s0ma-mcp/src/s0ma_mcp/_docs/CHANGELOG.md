@@ -194,6 +194,30 @@ Historical entries describe artifacts as they were named at the time.
   (`launch_config` in `--format json`). A studi0 test holds the entry to
   studi0's own default address.
 
+- **The Claude plugin checks a `.s0ma` edit, and refuses edits under the build
+  folder.** Two hooks join the one a session starts with. Before Claude's Write
+  or Edit tool changes a file under a s0ma project's build folder, read from
+  `[tool.s0ma].build_dir` or s0ma's own default for the project's name, the
+  edit is refused, and Claude is told that the file is generated, that a build
+  stops at a hand-edited one, and to make the change in the `.s0ma` source and
+  run `s0ma build`. After a Write or Edit to a `.s0ma` file, the copy of s0ma
+  installed for the project runs `s0ma check` on that file, and when it reports
+  errors or warnings Claude is handed its findings, cut at a line past 3,000
+  characters. Both say nothing outside a s0ma project and nothing where the
+  project's preferences turn s0ma off; both fail open, so anything unexpected
+  lets the edit through in silence; neither installs, updates, fetches or
+  writes anything. The refusal runs before every Write and Edit while the
+  plugin is on: the new `hooks/edit-guard.sh` settles a file outside any s0ma
+  project with a shell and a few file reads, and hands everything else to the
+  launcher's new `before-edit` and `after-edit` commands. A test on the
+  s0ma-lang-dsl side holds the launcher's copy of the default build folder to
+  the compiler's rule, and the first-run check runs both hooks on each leg.
+  Every hook line, the session-start one included, now opens with
+  `echo --% >/dev/null;` and closes with `# | out-null`, so on Windows without
+  Git Bash, where Claude Code runs it in PowerShell, it runs nothing and prints
+  nothing instead of failing; the first-run check proves that in Windows
+  PowerShell 5.1 and PowerShell 7.
+
 ### Changed
 
 - **PRD v1.19: the Claude plugin is offered with no account (owner ruling
