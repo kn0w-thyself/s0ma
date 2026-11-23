@@ -66,4 +66,4 @@ Do not describe a feedback report as anonymous; it is pseudonymous and locally r
 
 - Topic id: `concept:feedback`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:a01eabc8973a206a`
+- Documentation snapshot: `sha256:d7e05949ae81d6c0`
