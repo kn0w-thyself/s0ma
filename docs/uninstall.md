@@ -13,8 +13,7 @@ Three things worth knowing before you start.
 a package-manager command. There is no account to close as part of removing
 s0ma and no farewell message sent anywhere. One part of s0ma does start
 something by itself — the launcher looking for a newer version, at most once a
-day with a key, or having uv fetch the version a newer plugin brings with none,
-and only when it was installed through Claude — and removing it is
+day, and only when it was installed through Claude — and removing it is
 [step 2](#2-take-s0ma-out-of-claude). Every request s0ma can make is listed, one
 row each, in [what s0ma trusts](trust-model.md#every-connection-s0ma-can-make).
 

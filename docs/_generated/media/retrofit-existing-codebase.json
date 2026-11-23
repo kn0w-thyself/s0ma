@@ -4,7 +4,7 @@
     "journey": "journey:retrofit-existing-codebase",
     "published_by": "doc:guide/retrofit-existing-codebase",
     "release": "0.22.0 (preview)",
-    "snapshot": "sha256:ba8bfe6ddec4e10c"
+    "snapshot": "sha256:75fd1a0dd42db3ad"
   },
   "package": {
     "audience": [

@@ -187,7 +187,7 @@ the sentence scrolled past. Zero is success. The rest:
 ### The line a new session sometimes starts with
 
 s0ma tells a new session at most one thing, and only when there is something to
-say. Silence is the normal case and means all is well. The six it can say:
+say. Silence is the normal case and means all is well. The seven it can say:
 
 | You see | What it means | What to do |
 |---|---|---|
@@ -195,7 +195,8 @@ say. Silence is the normal case and means all is well. The six it can say:
 | *s0ma's tools are not available in this session.* … *This project asks for s0ma … in its `.s0ma-version` file, and that version is not installed on this machine.* | The project is pinned to a version this machine does not have. s0ma will not quietly run a different one. | `s0ma-launch install --version <the version it named>`, or `s0ma-launch unpin` to follow the newest installed version instead. |
 | *The last time s0ma used your license key, it was refused.* | The service did not accept the key when s0ma last tried to fetch something. Everything installed keeps working. | Check the whole key was pasted, then put it back in the plugin's settings, or run `s0ma-launch activate` in a terminal. Never type a key into the chat. |
 | *This account's access to new versions of s0ma has ended.* | News, not an error. The copy you have keeps working; only downloads of newer versions stop. | Nothing, unless you want new versions — in which case the message names the account page. |
-| *s0ma … is available; s0ma … is what runs here.* | This machine is set to `notify`, so it looked and did not fetch. With no key, the newer one is the version the plugin brings. | `/s0ma:update` when you want it, or switch the setting to `auto` and stop being asked. |
+| *s0ma … is available; s0ma … is what runs here.* | This machine is set to `notify`, so it looked and did not fetch. | `/s0ma:update` when you want it, or switch the setting to `auto` and stop being asked. |
+| *s0ma … came with the s0ma plugin; s0ma … is what runs here.* | There is no license key on this machine, so nothing is fetched on its own, and a newer plugin brought a newer s0ma. | `/s0ma:update` when you want it. Set updates to `off` to stop being told. |
 | *s0ma … was fetched quietly in the background, and it is what Claude will use from your next session.* | An automatic update finished. Nothing changed underneath the session you were in. | Nothing. Start a new session whenever you like. |
 
 One more line exists for the rare case where the real sentence would be too long
@@ -233,7 +234,8 @@ also says there is nothing newer, there is nothing newer.
 
 On a machine with no license key, nothing is asked at all: the newest s0ma it
 knows is the one the plugin brings, which `update --check` names. A newer one
-arrives when the plugin is updated, and is then installed the same quiet way.
+arrives when the plugin is updated; the line a session begins with then says
+so, and `/s0ma:update` installs it. Nothing arrives quietly with no key.
 
 Two other reasons a machine legitimately stays where it is, both of which
 `s0ma-launch status` names on its "Updates" and "Project" lines: **How s0ma

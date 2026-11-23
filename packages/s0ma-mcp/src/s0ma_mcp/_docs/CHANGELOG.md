@@ -21,14 +21,13 @@ Historical entries describe artifacts as they were named at the time.
   version is the one the launcher was released with, which `status --json`
   now reports as `launcher_version`, beside a new `install_route` field
   (`package_index` or `control_plane`); the text report gains a "Fetched
-  from" line. A newer s0ma arrives when the plugin (or the Desktop
-  extension) is updated: `update` moves an older copy to the launcher's
-  version and otherwise says the copy is current, `update --check` says the
-  same and installs nothing, and the quiet update `serve` can leave behind
-  installs the launcher's version only when a copy the launcher looks after
-  is running, older, unpinned, and updates are `auto` (under `notify` the
-  session line names the version and `/s0ma:update`). Nothing is fetched on
-  a machine with nothing installed until a person runs `install`. A keyless
+  from" line. With no key nothing is fetched unless a person asks: there is
+  no quiet update. A newer s0ma comes with a newer plugin (or Desktop
+  extension); when a copy the launcher looks after is older than the
+  launcher's version, the project is not pinned and updates are not `off`,
+  the line a session begins with says so and names `/s0ma:update`. `update`
+  moves an older copy to the launcher's version and otherwise says the copy
+  is current, and `update --check` says the same and installs nothing. A keyless
   install records only what is installed; it writes no `entitlement`,
   `last_check` or `latest_seen`. This route trusts the package index the way
   any `pip install` does, where the keyed route checks each file's sha256

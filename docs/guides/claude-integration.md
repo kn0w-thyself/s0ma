@@ -18,7 +18,9 @@ behave, how to hold a project still, and how to take it all off again.
   one, it goes in the masked settings field, or into `s0ma-launch activate` at
   a terminal of your own. Never into a conversation.
 - **Updates** are fetched quietly in the background and used from your *next*
-  session — never in the middle of one. The version you were on is kept.
+  session — never in the middle of one. The version you were on is kept. With
+  no key nothing is fetched on its own: a newer s0ma comes with a newer plugin,
+  the session's opening line says so, and `/s0ma:update` installs it.
 - **One project on one version:** `s0ma-launch pin` holds it there,
   `s0ma-launch unpin` lets it follow along again.
 - **A project that already carries its own s0ma** is never moved by any of this.
@@ -172,9 +174,11 @@ newer one and installs it beside the old one. The newer one is used **from your
 next session**. Nothing ever changes underneath a session in progress, and the
 version you were on is kept.
 
-With no key, s0ma asks nobody whether there is a newer version. Each version of
-the plugin brings its own version of s0ma, so a newer s0ma arrives when the
-plugin is updated, and is then installed the same quiet way.
+With no key, none of that happens on its own: s0ma asks nobody, and fetches
+nothing until you ask. Each version of the plugin brings its own version of
+s0ma, so a newer s0ma comes with a newer plugin. When it does, the line a
+session begins with says so, under `auto` and `notify` alike, and
+`/s0ma:update` (or `s0ma-launch update`) installs it.
 
 The three answers to **How s0ma keeps itself current**, in plain words:
 
@@ -187,7 +191,8 @@ The three answers to **How s0ma keeps itself current**, in plain words:
 Four things hold whatever the setting says:
 
 - **s0ma never asks more than once a day**, and never at all without a key to
-  ask with. With no key, the version the plugin brings is the newest it knows.
+  ask with. With no key, the version the plugin brings is the newest it knows,
+  and nothing is fetched until you ask.
 - **It only ever moves the copy s0ma installed for itself.** A project with its
   own s0ma, a project pinned to a version, and a checkout you pointed s0ma at
   are all left exactly as they are.

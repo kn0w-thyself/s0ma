@@ -249,7 +249,7 @@ read it and approve it first.
 | `s0ma-launch activate` asking whether a key is any good (`GET /api/key/check`) | outbound request | the control plane | The same three headers. No body. | Only when you run `s0ma-launch activate` yourself | Once per run | You | Do not run it — put the key in the plugin's settings instead | `integrations/launcher/tests/test_activate.py::test_the_key_is_checked_exactly_once_and_only_in_a_header` |
 | `s0ma-launch pin` asking whether a version exists — the same request as the first row | outbound request | the control plane | The same three headers, with the version you typed in the address. No body. | Only when you run `s0ma-launch pin <version>` | Once. Not at all with `--offline`, and not at all on a machine with no key — it pins anyway and says it could not check | You | `s0ma-launch pin --offline` | `integrations/launcher/tests/test_pin.py::test_pin_asks_whether_the_version_exists` |
 | `uv` working out what those four files depend on, while a version is installed | outbound request | **not ours:** whichever Python package index that machine is set to use | uv's own requests, in the ordinary way. Your key is not among them: s0ma hands uv an environment with the key taken out of it | Only while a version is being installed | Once per install; nothing at all when the machine already has what it needs | You, or the quiet update | Nothing here to switch off — it is part of installing. Point uv at the index you want, as you would for any Python project | `integrations/launcher/tests/test_install.py::test_uv_is_never_handed_the_key` |
-| `uv` fetching s0ma itself, on a machine with no license key: `s0ma-lang==<version>`, the umbrella at one exact version, and through it the four parts at that same version | outbound request | **not ours:** whichever Python package index that machine is set to use | uv's own requests, in the ordinary way. The launcher sends nothing and asks nobody, and uv gets an environment with any key taken out of it. This route trusts that index as any `pip install` does: the keyed route checks each file's sha256 against the control plane's manifest, and here there is no manifest to check against | Installing or updating with no key, and the quiet update when the plugin brings a newer version than the one installed | Once per command. On its own, at the start of a session while the plugin brings a newer version than the one installed, and never as a first install | You, or the quiet update | Do not run `install` or `update`. For the quiet update: set updates to off or to notify, or pin the project. Point uv at the index you want, as you would for any Python project | `integrations/launcher/tests/test_keyless.py::test_every_keyless_command_leaves_the_control_plane_unasked` |
+| `uv` fetching s0ma itself, on a machine with no license key: `s0ma-lang==<version>`, the umbrella at one exact version, and through it the four parts at that same version | outbound request | **not ours:** whichever Python package index that machine is set to use | uv's own requests, in the ordinary way. The launcher sends nothing and asks nobody, and uv gets an environment with any key taken out of it. This route trusts that index as any `pip install` does: the keyed route checks each file's sha256 against the control plane's manifest, and here there is no manifest to check against | Only when you run `install` or `update` on a machine with no key | Once per command | You | Do not run `install` or `update`. Point uv at the index you want, as you would for any Python project | `integrations/launcher/tests/test_keyless.py::test_the_serve_path_starts_nothing_with_no_key` |
 | The keyed installer you run in a terminal (`scripts/install.sh`): one request for the manifest, one per file, and one that gets this machine feedback access | outbound request | the control plane | Your license key in `Authorization`, read from a file so it is never on a command line where other programs could see it. The feedback request also sends `Content-Type: application/json` and a body of `{}` — empty deliberately, so nothing ties this machine to your account | Only when you run the installer | Once per run | You | Do not run it. `--no-feedback` leaves out the feedback request alone | `scripts/install.sh` |
 | `s0ma feedback enroll` exchanging your key for this machine's feedback access (`POST /api/feedback/token`) | outbound request | the control plane | Your license key in `Authorization`, plus `Content-Type: application/json`, `Accept: application/json` and `User-Agent: s0ma-feedback/<version>`. The body is `{}` | Only when you run it, or during a keyed install | Once per run | You | Do not run it. Without it this machine cannot send feedback at all | `packages/s0ma-dsl/tests/test_feedback_client.py::test_enrolling_sends_the_license_key_and_stores_the_token` |
 | Sending one feedback report you have approved (`POST /api/feedback`) | outbound request | the control plane | The report you read, and nothing else — at most 32 KB of it. In the headers: this machine's feedback access in `Authorization`, **never your license key**; `Content-Type: application/json`; `Accept: application/json`; `User-Agent: s0ma-feedback/<version>`; and the draft's own key, so sending twice cannot file a second report | Only after you have read the report and said yes | Once per approval. It is never retried on its own | You | Say anything that is not yes | `packages/s0ma-dsl/tests/test_feedback_client.py::test_the_license_key_never_travels_with_a_report` |
@@ -283,8 +283,7 @@ Each of these is a "no" the code has to keep, not a reassurance:
 - **Nothing asks whether you are still entitled before s0ma runs.** No part of
   a built application, and no part of the toolchain, checks an account before
   doing its work; the only part of s0ma that contacts anything unasked is the
-  launcher looking for a newer version, or, with no key, having uv fetch the
-  version a newer plugin brings. [What can change, and how you will
+  launcher looking for a newer version. [What can change, and how you will
   know](stability.md#what-beta-means) states that as a standing invariant.
 - **A license key, where there is one, goes to one place and one place only**
   — the `Authorization` header of a request to the host above; an install from
@@ -323,29 +322,28 @@ repository's first release does not offer it; the launcher's code ships in this
 repository all the same, so this section stays, for anyone reading that code or
 running it. Installing that way adds one small program to the picture: a
 launcher that works out which copy of s0ma belongs to this project, starts it,
-and keeps it current. It is the only part of s0ma that ever contacts anything,
-or has uv do so, without being asked, which is why it gets a section of its own.
+and keeps it current. It is the only part of s0ma that ever contacts anything
+without being asked, which is why it gets a section of its own.
 [Installing and updating s0ma in Claude](guides/claude-integration.md) is the
 same subject written as instructions.
 
 Everything it can send is in [the table above](#every-connection-s0ma-can-make)
 — the first six rows: what a version is made of, one file at a time, checking a
 key, the question `pin` asks, uv working out what those files need, and uv
-fetching s0ma itself when there is no key. With no key, the launcher itself
-sends nothing at all. What is left to say here is the part that is particular
-to this route.
+fetching s0ma itself when you install or update with no key. With no key, the
+launcher itself sends nothing at all. What is left to say here is the part that
+is particular to this route.
 
 **The automatic check is the only thing here that happens without you**, and
-two conditions always have to hold first: the copy being started is one s0ma
+four conditions all have to hold first: the copy being started is one s0ma
 installed for itself — never a project's own copy, never a project pinned to a
-version, never a checkout you pointed it at — and updates are not switched off.
-With a key, the last check also has to be more than a day ago. With no key
-nobody is asked anything: the quiet update starts only when the plugin brings a
-newer version than the one installed, starts nothing under `notify`, and never
-makes a first install. It runs
+version, never a checkout you pointed it at — updates are not switched off,
+there is a key to ask with, and the last check was more than a day ago. It runs
 in a detached process, so nothing waits for it, and it cannot fail in front of
 you: what went wrong is written into `state.json` for the launcher's `status`
-report to pass on.
+report to pass on. With no key there is no automatic check at all, and nothing
+is fetched until you ask: the line a session may begin with says when the plugin
+brings a newer s0ma, and `/s0ma:update` installs it.
 
 **The line a session may begin with opens no socket.** It is computed from two
 local files and nothing else — no request, no subprocess, and no writing, not
@@ -364,7 +362,7 @@ that each prove one of them:
 `integrations/launcher/tests/test_install.py::test_uv_is_never_handed_the_key`,
 `integrations/launcher/tests/test_update.py::test_the_control_plane_is_asked_at_most_once_a_day`,
 `integrations/launcher/tests/test_keyless.py::test_every_keyless_command_leaves_the_control_plane_unasked`,
-`integrations/launcher/tests/test_keyless.py::test_the_quiet_update_starts_nothing_in_every_other_case`
+`integrations/launcher/tests/test_keyless.py::test_the_serve_path_starts_nothing_with_no_key`
 and
 `integrations/launcher/tests/test_session_hint.py::test_no_socket_is_opened`.
 
@@ -477,7 +475,7 @@ it, the source it read, the schema it read against, and a hash of the bytes.
 | `pin` asks about a version only when you let it | `integrations/launcher/tests/test_pin.py` |
 | What the keyed installer asks for, and with what | `scripts/install.sh` |
 | With a key, s0ma asks about a newer version at most once a day | `integrations/launcher/tests/test_update.py` |
-| With no key, the launcher asks nobody, and uv fetches s0ma | `integrations/launcher/tests/test_keyless.py` |
+| With no key, nothing is fetched until you ask, and the launcher asks nobody | `integrations/launcher/tests/test_keyless.py` |
 | The line a session begins with opens no socket | `integrations/launcher/tests/test_session_hint.py` |
 | The feedback engine carries a socket in one module only | `packages/s0ma-dsl/tests/test_feedback_context.py` |
 | What each feedback request sends, and to where | `packages/s0ma-dsl/tests/test_feedback_client.py` |
