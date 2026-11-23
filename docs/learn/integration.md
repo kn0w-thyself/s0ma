@@ -72,4 +72,4 @@ integration <Name> :: INFRASTRUCTURE
 
 - Topic id: `concept:integration`
 - Release: `0.22.0 (preview)`
-- Documentation snapshot: `sha256:36fed21225a49c28`
+- Documentation snapshot: `sha256:aca5c8de1aca81d4`

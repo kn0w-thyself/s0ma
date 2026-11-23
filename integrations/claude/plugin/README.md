@@ -71,17 +71,17 @@ When you ask for s0ma to be installed or updated (`/s0ma:start`,
 `s0ma-launch update`):
 
 - **With no license key**, which is the usual case, the launcher contacts
-  nobody. uv fetches s0ma at the version this plugin brings, and the
-  open-source packages it depends on, from the Python package index uv is set
-  up to use: by default pypi.org, which serves its files from
-  files.pythonhosted.org.
+  nobody. uv fetches s0ma at the version this plugin brings, the
+  open-source packages it depends on, and pytest, which `s0ma test` needs,
+  from the Python package index uv is set up to use: by default pypi.org,
+  which serves its files from files.pythonhosted.org.
 - **With a license key**, the launcher asks account.kn0wthyself.ai what that
   version is made of, downloads its four files from there, and checks each
   against the checksum it was given. The key travels in the request's
   authorization header and nowhere else. uv still fetches the open-source
-  dependencies from the package index, and never sees the key. With a key, and
-  only with one, the launcher also looks for a newer version on its own at
-  most once a day, unless you set updates to off.
+  dependencies and pytest from the package index, and never sees the key.
+  With a key, and only with one, the launcher also looks for a newer version
+  on its own at most once a day, unless you set updates to off.
 - **If this machine has no Python 3.11 or newer**, uv may download one. By
   uv's documentation it comes from the python-build-standalone project's
   releases on github.com, unless uv's own settings name a mirror. The launcher

@@ -651,16 +651,17 @@ leave it off.
 ## What this sends over the network
 
 With no license key, the plugin's launcher contacts nobody. When you install
-or update s0ma, uv fetches it, and the open-source Python packages it depends
-on, from the Python package index your machine uses.
+or update s0ma, uv fetches it, the open-source Python packages it depends on,
+and pytest, which `s0ma test` needs, from the Python package index your
+machine uses.
 
 With a key, when the launcher looks for a newer s0ma - by itself at most once a
 day, and only while its update setting is `auto` or `notify` - it asks
 account.kn0wthyself.ai which release exists and where its files are, with your
 key in the request's authorization header rather than in the web address, and
 downloads the files that answer names. While a version is being installed, uv
-also fetches the open-source Python packages s0ma depends on from the Python
-package index your machine uses; your key is never given to it.
+also fetches the open-source Python packages s0ma depends on, and pytest, from
+the Python package index your machine uses; your key is never given to it.
 
 Either way nothing else is sent: no analytics, no usage counts, and nothing
 about your project, your files or your conversation.
@@ -714,10 +715,11 @@ release of s0ma exists and to fetch it. Two requests, no more:
 
 ## The one other place an install reaches
 
-s0ma is built on a handful of open-source Python packages. While a version is
-being installed, uv - the program that builds s0ma's environment - fetches
-those from the Python package index (pypi.org, or whichever index your machine
-is set up to use), exactly as it would for any other Python program. With no
+s0ma is built on a handful of open-source Python packages, and `s0ma test`
+runs a project's tests with pytest. While a version is being installed, uv -
+the program that builds s0ma's environment - fetches those, pytest included,
+from the Python package index (pypi.org, or whichever index your machine is
+set up to use), exactly as it would for any other Python program. With no
 license key, uv fetches s0ma itself from there too, at the version the plugin
 brings. That request is uv's own: it carries nothing about you or your project,
 and the launcher removes your license key from uv's environment before it

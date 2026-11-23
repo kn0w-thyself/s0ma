@@ -79,7 +79,9 @@ same conversation.
 **A key** is optional. With none, uv fetches s0ma from the package index it is
 set up to use, at the version the plugin brings. With your key from
 account.kn0wthyself.ai, s0ma's own files come from that service instead, and
-the key is used for that and nothing else. Running s0ma from a source checkout
+the key is used for that and nothing else. Either way uv fetches the
+open-source packages s0ma depends on, and pytest, which `s0ma test` needs,
+from the package index. Running s0ma from a source checkout
 needs no key at all.
 
 You do not need to install Python. uv provides one.
