@@ -77,7 +77,12 @@ def _record_line(name: str, data: bytes) -> str:
 
 
 def build_fake_wheel(
-    into: Path, distribution: str, version: str, *, console_script: str | None = None
+    into: Path,
+    distribution: str,
+    version: str,
+    *,
+    console_script: str | None = None,
+    requires: Iterable[str] = (),
 ) -> Path:
     """Build one real, tiny, dependency-free wheel and return the file.
 
@@ -86,7 +91,8 @@ def build_fake_wheel(
     ``RECORD`` with a real hash for every file (uv checks it), one module, and
     - when the distribution provides a command - an ``entry_points.txt`` that
     makes the package manager write that command into the environment's ``bin``
-    (or ``Scripts``) directory.
+    (or ``Scripts``) directory. *requires* become ``Requires-Dist`` lines, which
+    is how the stand-in umbrella pins its four parts.
     """
     into.mkdir(parents=True, exist_ok=True)
     module = distribution + "_stand_in"
@@ -105,6 +111,7 @@ def build_fake_wheel(
             f"Name: {distribution.replace('_', '-')}\n"
             f"Version: {version}\n"
             "Summary: a stand-in built by the s0ma launcher's tests\n"
+            + "".join(f"Requires-Dist: {requirement}\n" for requirement in requires)
         ).encode("utf-8"),
         dist_info + "/WHEEL": _WHEEL_METADATA.encode("utf-8"),
     }
@@ -130,6 +137,32 @@ def build_fake_wheels(into: Path, version: str) -> list[Path]:
         build_fake_wheel(into, distribution, version, console_script=script)
         for distribution, script in FAKE_DISTRIBUTIONS
     ]
+
+
+#: The umbrella the keyless route asks uv for, by its wheel name.
+FAKE_UMBRELLA = "s0ma_lang"
+
+
+def build_fake_index(into: Path, version: str) -> list[Path]:
+    """The four wheels and the umbrella that pins them, as a package index has them.
+
+    This is what the keyless route installs from: a directory uv is pointed at
+    with its own ``UV_FIND_LINKS`` setting, standing in for the package index.
+    The umbrella requires each of the four at exactly *version*, as the real
+    ``s0ma-lang`` does, so asking uv for ``s0ma-lang==<version>`` installs all
+    five and nothing else.
+    """
+    parts = build_fake_wheels(into, version)
+    umbrella = build_fake_wheel(
+        into,
+        FAKE_UMBRELLA,
+        version,
+        requires=[
+            f"{distribution.replace('_', '-')}=={version}"
+            for distribution, _ in FAKE_DISTRIBUTIONS
+        ],
+    )
+    return [*parts, umbrella]
 
 
 @dataclass

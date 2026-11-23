@@ -140,15 +140,21 @@ def test_check_names_a_projects_own_copy(
     assert "has its own copy of s0ma" in out
 
 
-def test_check_without_a_key_says_where_a_key_goes(
-    run_cli: Any, control_plane: FakeControlPlane, monkeypatch: pytest.MonkeyPatch
+def test_check_without_a_key_names_what_the_plugin_brings(
+    run_cli: Any,
+    control_plane: FakeControlPlane,
+    launcher: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """No key, so nobody to ask: the answer is the launcher's own version."""
     monkeypatch.setenv("S0MA_CP_HOST", control_plane.host)
 
-    code, _, err = run_cli("update", "--check")
+    code, out, err = run_cli("update", "--check")
 
-    assert code == 4
-    assert "plugin's settings" in err
+    assert code == 0, err
+    assert "Installed here:  nothing yet" in out
+    assert f"Plugin brings:   {launcher.LAUNCHER_VERSION}" in out
+    assert control_plane.requests == []
 
 
 # ---------------------------------------------------------------------------
@@ -390,16 +396,17 @@ def test_notify_still_looks_but_will_not_fetch(
     )
 
 
-def test_without_a_key_there_is_nothing_to_ask_with(
+def test_without_a_key_a_current_copy_starts_nothing(
     launcher: ModuleType, isolated_home: Path
 ) -> None:
+    """No key and nothing newer than what this launcher brings: no update."""
     spawner = Spawner()
 
     decision = launcher.maybe_start_background_update(
-        managed(launcher), home=isolated_home, spawn=spawner
+        managed(launcher, launcher.LAUNCHER_VERSION), home=isolated_home, spawn=spawner
     )
 
-    assert decision == "no-key"
+    assert decision == "keyless-current"
     assert spawner.calls == []
 
 
