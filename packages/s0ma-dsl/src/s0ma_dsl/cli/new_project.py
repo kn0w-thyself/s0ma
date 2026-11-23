@@ -29,7 +29,7 @@ What it lays down (STD-M6, feature-first standard — patterns guide §25/§29)
   same prepare → review → approve → submit feedback mechanics. Written only
   when absent, listed in the summary (that listing is the installation
   disclosure), and deliberately NOT part of the atomic-refusal set.
-- The Claude desktop app's **launch entry for studi0**
+- The Claude Desktop app's **launch entry for studi0**
   (``.claude/launch.json``) — one configuration with studi0's default
   address and no command, so the app opens a studi0 that is already
   running beside the chat and starts nothing itself. Written only when
@@ -171,7 +171,7 @@ FEEDBACK_SKILL_RELPATH = ".claude/skills/s0ma-feedback/SKILL.md"
 #: check has nothing to report on a new project.
 RUNTIME_DEPENDENCIES: tuple[str, ...] = ("s0ma-lang-core", "s0ma-lang-dsl")
 
-#: The Claude desktop app's launch configuration this command lays down:
+#: The Claude Desktop app's launch configuration this command lays down:
 #: one entry that opens studi0 beside the chat. It carries a ``url`` and no
 #: command, so the app attaches to a studi0 that is already running and
 #: starts nothing. Created when absent; never part of the atomic-refusal
@@ -616,14 +616,16 @@ def _feedback_skill_md() -> str:
         "saved draft id and the one command that finishes it from a "
         "terminal: `s0ma feedback`.\n"
         "\n"
-        "If the tool says this machine has no license key, or is not set up "
-        "to send feedback, the feedback channel cannot take this report: "
-        "tell the user so in one sentence, and point them to the public "
-        "issue tracker, https://github.com/kn0w-thyself/s0ma/issues. Say "
-        "that an issue there is public, never paste the drafted report into "
-        "an issue yourself, and if they ask for help wording one, leave out "
-        "anything private. Go by what the tool reports: do not look for a "
-        "key file, and never read a key.\n"
+        "If the tool says this machine is not set up to send feedback, there "
+        "are two cases and you cannot tell which, so say both briefly. With a "
+        "s0ma license key, the command the tool names connects this machine, "
+        "and the user runs it in a terminal. With no license key, the "
+        "feedback channel cannot take this report: say so in one sentence, "
+        "and point them to the public issue tracker, "
+        "https://github.com/kn0w-thyself/s0ma/issues. Say that an issue there "
+        "is public, never paste the drafted report into an issue yourself, "
+        "and if they ask for help wording one, leave out anything private. Do "
+        "not look for a key file, and never read or ask for a key.\n"
         "\n"
         "If the s0ma MCP server is not connected, run `s0ma feedback` in a "
         "terminal instead. It is the same journey, and it works in any "
@@ -632,7 +634,7 @@ def _feedback_skill_md() -> str:
 
 
 def _launch_config_json() -> str:
-    """The ``.claude/launch.json`` the Claude desktop app reads (always LF).
+    """The ``.claude/launch.json`` the Claude Desktop app reads (always LF).
 
     One configuration, named ``studi0``, whose ``url`` is studi0's default
     origin and whose ``port`` is that origin's port. There is no command:
@@ -1211,7 +1213,7 @@ def _print_archetype_summary(
     )
     print(
         f"  {LAUNCH_CONFIG_RELPATH}"
-        + ("     opens studi0 beside the chat (Claude desktop app)"
+        + ("     opens studi0 beside the chat (Claude Desktop app)"
            if launch_created
            else "     already present — kept as it was")
     )
@@ -1549,7 +1551,7 @@ def run_new_project(args: argparse.Namespace) -> int:
     )
     print(
         f"  {LAUNCH_CONFIG_RELPATH}"
-        + ("     opens studi0 beside the chat (Claude desktop app)"
+        + ("     opens studi0 beside the chat (Claude Desktop app)"
            if launch_created
            else "     already present — kept as it was")
     )

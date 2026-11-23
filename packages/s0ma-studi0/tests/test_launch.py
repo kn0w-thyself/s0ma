@@ -175,7 +175,7 @@ def test_the_default_address_is_declared_once() -> None:
 
 
 def test_a_new_projects_launch_entry_is_the_default_address() -> None:
-    """``s0ma new project`` writes a launch entry for the Claude desktop app
+    """``s0ma new project`` writes a launch entry for the Claude Desktop app
     that opens studi0 at its default address. The entry starts nothing, so
     it reaches studi0 only if it holds the address studi0 really takes when
     no port is asked for: the name and port here, and the origin of

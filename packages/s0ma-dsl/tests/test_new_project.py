@@ -1424,7 +1424,7 @@ class TestFreshProjectIsClean:
 
 
 class TestLaunchConfig:
-    """``.claude/launch.json``: the Claude desktop app's entry for studi0.
+    """``.claude/launch.json``: the Claude Desktop app's entry for studi0.
 
     One configuration with a ``url`` and no command, so the app attaches to
     a studi0 already running and starts nothing. Like the feedback skill it
@@ -1497,7 +1497,7 @@ class TestLaunchConfig:
         out = capsys.readouterr().out
         assert (
             "  .claude/launch.json     opens studi0 beside the chat "
-            "(Claude desktop app)\n"
+            "(Claude Desktop app)\n"
         ) in out
 
 
@@ -1509,7 +1509,17 @@ class TestFeedbackSkillWithNoKey:
 
         skill = " ".join(new_project._feedback_skill_md().split())
         assert "https://github.com/kn0w-thyself/s0ma/issues" in skill
-        assert "If the tool says this machine has no license key" in skill
+        assert (
+            "If the tool says this machine is not set up to send feedback, "
+            "there are two cases and you cannot tell which, so say both "
+            "briefly."
+        ) in skill
+        # A user with a key only has to enroll; the tracker is for no key.
+        assert (
+            "With a s0ma license key, the command the tool names connects "
+            "this machine, and the user runs it in a terminal."
+        ) in skill
+        assert "With no license key, the feedback channel cannot take this report" in skill
         assert "an issue there is public" in skill
         assert "never paste the drafted report into an issue yourself" in skill
-        assert "do not look for a key file, and never read a key" in skill
+        assert "Do not look for a key file, and never read or ask for a key." in skill
