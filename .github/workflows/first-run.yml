@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v10.3.3
+        uses: astral-sh/setup-uv@v10.4.0
         with:
           version: "0.9.21"
           python-version: "3.13"
@@ -97,7 +97,7 @@ jobs:
 
       - name: Fetch the exported tree (uv absent)
         if: matrix.uv == 'absent'
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: marketplace-export
           path: ${{ runner.temp }}/marketplace-export
@@ -109,7 +109,7 @@ jobs:
       # uv present: installed exactly as ci.yml installs it.
       - name: Install uv (uv present)
         if: matrix.uv == 'present'
-        uses: astral-sh/setup-uv@v10.3.3
+        uses: astral-sh/setup-uv@v10.4.0
         with:
           version: "0.9.21"
           python-version: "3.13"
