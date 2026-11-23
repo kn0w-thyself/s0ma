@@ -36,6 +36,19 @@ with the runner's own Python and nothing else.
     Runs ``integrations/launcher/tests/test_e2e_real_wheels.py`` with
     ``S0MA_E2E=1`` and fails if any case skips.
 
+``real-index --version X.Y.Z``
+    After a release: the install a person gets from the public package index.
+    The version is checked before anything runs, and the launcher in this tree
+    must be at it, because a plugin installs the version it brings. With uv, a
+    fresh ``S0MA_HOME``, no license key, no local wheels, no find-links and uv
+    not offline, the exported plugin's ``s0ma-launch install`` has uv fetch
+    ``s0ma-lang==X.Y.Z`` from the index. Then only what holds for any released
+    version is checked: the version the installed ``s0ma doctor`` reports for
+    each s0ma package (s0ma has no ``--version`` flag), the plugin's server
+    and its tools, ``new project``, ``check``, ``build .`` and ``test`` in a
+    fresh project, and no request to the stand-in control plane. Every
+    installed distribution is printed with its version. No Claude step runs.
+
 The real Claude Code (``claude plugin validate --strict``, ``claude plugin
 validate --profile directory``, each of which must exit 0 and is printed in
 full, and ``claude --plugin-dir <dir> mcp list``) runs only when ``--claude
@@ -55,6 +68,7 @@ import importlib.util
 import json
 import os
 import queue
+import re
 import shutil
 import subprocess
 import sys
@@ -905,7 +919,13 @@ def check_stand_in(
 
 
 def check_real_server(
-    plugin_dir: Path, version: str, names: list[str], env: dict[str, str], project: Path
+    plugin_dir: Path,
+    version: str,
+    names: list[str],
+    env: dict[str, str],
+    project: Path,
+    *,
+    count: int = 15,
 ) -> str:
     """The server command with s0ma installed: the real server and its tools."""
     session = McpSession(server_command(plugin_dir), env, project)
@@ -923,7 +943,7 @@ def check_real_server(
         )
         say(f"tools: {tools}")
         expect(tools == names, f"tools/list gave {tools}, the snapshot pins {names}")
-        expect(len(tools) == 15, f"{len(tools)} tools, not 15")
+        expect(len(tools) == count, f"{len(tools)} tools, not {count}")
         code = session.close()
         expect(code == 0, f"the server exited {code} when stdin closed")
     finally:
@@ -1555,6 +1575,250 @@ def leg_uv_present(opts: argparse.Namespace, work: Path, results: Results) -> No
         plane.stop()
 
 
+# ---------------------------------------------------------------------------
+# After a release: the install a person gets from the public package index.
+# ---------------------------------------------------------------------------
+
+#: A released version: digits and dots, then at most a pre-release or
+#: post-release tail of letters, digits and dots (``1.0.0rc1``, ``1.0.0.post1``).
+#: No local label, no space, nothing a shell would read.
+RELEASE_VERSION_RE = re.compile(r"\A[0-9]+(?:\.[0-9]+)*(?:\.?[A-Za-z][A-Za-z0-9.]*)?\Z")
+
+#: What would point uv anywhere but the public package index, or keep it off
+#: the network. None of it reaches uv in the ``real-index`` leg.
+INDEX_STEERING = (
+    "UV_FIND_LINKS",
+    "UV_OFFLINE",
+    "UV_NO_INDEX",
+    "UV_INDEX",
+    "UV_INDEX_URL",
+    "UV_DEFAULT_INDEX",
+    "UV_EXTRA_INDEX_URL",
+    "UV_CONFIG_FILE",
+    "PIP_FIND_LINKS",
+    "PIP_INDEX_URL",
+    "PIP_EXTRA_INDEX_URL",
+    "PIP_NO_INDEX",
+)
+
+
+def release_version(text: str) -> str:
+    """*text*, if it is a released version; otherwise a refusal naming it."""
+    if len(text) > 64 or RELEASE_VERSION_RE.match(text) is None or text.endswith("."):
+        raise argparse.ArgumentTypeError(
+            f"{text!r} is not a released version: give digits and dots, such as "
+            "0.22.0, with at most a pre-release or post-release tail such as rc1"
+        )
+    return text
+
+
+def launcher_version_line(launcher_file: Path) -> str:
+    """The one ``LAUNCHER_VERSION = "..."`` value in a launcher file."""
+    found = re.findall(
+        r'(?m)^LAUNCHER_VERSION = "([^"]*)"$', launcher_file.read_text(encoding="utf-8")
+    )
+    expect(len(found) == 1, f"{launcher_file} states its version {len(found)} times")
+    return str(found[0])
+
+
+def check_launcher_is_at(version: str, launcher_file: Path = LAUNCHER_FILE) -> str:
+    """The launcher in this tree must bring *version*: it is what a plugin installs."""
+    brings = launcher_version_line(launcher_file)
+    expect(
+        brings == version,
+        f"the launcher in this tree brings s0ma {brings} and the version given is "
+        f"{version}, so run this from the tag of {version}, because a plugin "
+        "installs the version it brings",
+    )
+    return brings
+
+
+def real_index_env(home: Path, cp_host: str, uv_cache: Path) -> dict[str, str]:
+    """The machine's environment for an install from the public package index.
+
+    No key and no s0ma setting (:func:`child_env`), nothing that steers uv to
+    another index, to local files, or off the network, no uv configuration
+    file, and a uv cache of its own, so every file is fetched in this run.
+    """
+    env = {
+        key: value
+        for key, value in child_env().items()
+        if key.upper() not in INDEX_STEERING
+    }
+    env["UV_NO_CONFIG"] = "1"
+    env["UV_CACHE_DIR"] = str(uv_cache)
+    env["S0MA_HOME"] = str(home)
+    env["S0MA_CP_HOST"] = cp_host
+    return env
+
+
+def launch_command(plugin_dir: Path, *arguments: str) -> list[str] | str:
+    """The plugin's own ``s0ma-launch``, as a command line in Claude runs it."""
+    if WINDOWS:
+        command = str(plugin_dir.resolve() / "bin" / "s0ma-launch.cmd")
+        return f'cmd.exe /d /s /c ""{command}" {" ".join(arguments)}"'
+    return [str(plugin_dir / "bin" / "s0ma-launch"), *arguments]
+
+
+def install_from_real_index(
+    plugin_dir: Path, version: str, env: dict[str, str], cwd: Path
+) -> str:
+    """``s0ma-launch install`` with no key and no local wheels: uv asks the index."""
+    for name in (*INDEX_STEERING, "S0MA_LICENSE_KEY", "S0MA_LAUNCH_OFFLINE_INSTALL"):
+        expect(name not in env, f"{name} would reach uv in an install from the index")
+    ran = run(launch_command(plugin_dir, "install"), env, cwd, timeout=900)
+    expect(ran.code == 0, f"s0ma-launch install exited {ran.code}")
+    expect(
+        f"s0ma {version} is installed." in ran.stdout + ran.stderr,
+        f"s0ma-launch install did not say it installed {version}",
+    )
+    return f"exit 0, s0ma {version} is installed, with no key and no local wheels"
+
+
+def installed_distributions(uv: str, python: Path, env: dict[str, str], cwd: Path) -> str:
+    """Every distribution in the installed environment, ``name==version``."""
+    ran = run([uv, "pip", "list", "--python", str(python), "--format", "json"], env, cwd)
+    expect(ran.code == 0, f"uv pip list exited {ran.code}")
+    listed = json.loads(ran.stdout)
+    return ", ".join(sorted(f"{item['name']}=={item['version']}" for item in listed))
+
+
+#: The four packages ``s0ma doctor`` lists in its ``versions`` block.
+DOCTOR_PACKAGES = ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
+
+
+def check_doctor_versions(output: str, version: str) -> str:
+    """Each s0ma package in ``s0ma doctor``'s ``versions`` block is at *version*."""
+    found: dict[str, str] = {}
+    for line in output.splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[0] in DOCTOR_PACKAGES and line.startswith(" "):
+            found[parts[0]] = parts[1]
+    expect(
+        sorted(found) == sorted(DOCTOR_PACKAGES),
+        f"s0ma doctor listed {sorted(found)}, not the four s0ma packages",
+    )
+    wrong = {name: seen for name, seen in found.items() if seen != version}
+    expect(not wrong, f"s0ma doctor reports {wrong}, not {version}")
+    return ", ".join(f"{name} {found[name]}" for name in DOCTOR_PACKAGES)
+
+
+def run_fresh_project_steps(
+    cli: Path, env: dict[str, str], parent: Path, results: Results
+) -> None:
+    """``new project``, ``check``, ``build .`` and ``test`` each exit 0."""
+    ran = run([str(cli), "new", "project", "demo", "--name", "demo"], env, parent)
+    expect(ran.code == 0, f"s0ma new project exited {ran.code}")
+    results.add("s0ma new project demo", "exit 0")
+    fresh = parent / "demo"
+    ran = run([str(cli), "check"], env, fresh)
+    expect(ran.code == 0, f"s0ma check exited {ran.code}")
+    results.add("s0ma check", "exit 0")
+    ran = run([str(cli), "build", "."], env, fresh)
+    expect(ran.code == 0, f"s0ma build . exited {ran.code}")
+    # A warning in the build is printed above, with everything it said, and
+    # does not fail this leg: what a release warns about is not a first-run fault.
+    said = [line.strip() for line in (ran.stdout + ran.stderr).splitlines() if line.strip()]
+    results.add("s0ma build .", f"exit 0, last line: {said[-1] if said else '(nothing)'}")
+    ran = run([str(cli), "test"], env, fresh)
+    expect(ran.code == 0, f"s0ma test exited {ran.code}")
+    passed = [
+        line.strip("= ")
+        for line in ran.stdout.splitlines()
+        if line.startswith("=") and " passed" in line
+    ]
+    expect(len(passed) == 1, "s0ma test printed no pytest pass line")
+    expect(
+        "failed" not in passed[0] and "error" not in passed[0],
+        f"s0ma test reported {passed[0]}",
+    )
+    results.add("s0ma test", f"exit 0, {passed[0]}")
+
+
+def leg_real_index(opts: argparse.Namespace, work: Path, results: Results) -> None:
+    version = str(opts.version)
+    banner(f"After a release: s0ma {version} from the public package index")
+    brings = check_launcher_is_at(version)
+    results.add("launcher in this tree", f"brings s0ma {brings}, the version given")
+    launcher = load_launcher()
+    sys.path.insert(0, str(LAUNCHER_TESTS))
+    from fake_control_plane import FakeControlPlane  # type: ignore[import-not-found]
+
+    project = work / "project"
+    project.mkdir()
+    home = work / "s0ma-home"
+    uv = shutil.which("uv", path=child_env().get("PATH"))
+    expect(uv is not None, "the real-index leg found no uv on the PATH")
+    assert uv is not None
+    say(f"uv is {uv}")
+    ran = run([uv, "--version"], child_env(), project)
+    results.add("uv", ran.stdout.strip())
+
+    # A loopback stand-in for the control plane: a keyless install that asked
+    # it anything would be recorded, and nothing here reaches the real one.
+    plane = FakeControlPlane(key="first-run-check-never-sent", work=work / "control-plane")
+    plane.start()
+    try:
+        env = real_index_env(home, plane.host, work / "uv-cache")
+        say(f"S0MA_HOME={home}  S0MA_CP_HOST={plane.host}  no license key, no find-links")
+        exported = export_tree(work, env, results, with_claude=False)
+        expect(
+            launcher_version_line(exported / "launcher" / "s0ma_launch.py") == version,
+            f"the exported plugin's launcher does not bring {version}",
+        )
+
+        banner(f"s0ma-launch install: uv fetches s0ma-lang=={version} from the index")
+        results.add("keyless install from the index", install_from_real_index(exported, version, env, project))
+        toolchain = launcher.managed_toolchain_dir(home, version)
+        state = json.loads(launcher.state_path(home).read_text(encoding="utf-8"))
+        say(f"state.json: {json.dumps(state, sort_keys=True)}")
+        expect(
+            state.get("installed") == [version],
+            f"state.json installed {state.get('installed')!r}",
+        )
+        for distribution in (None, "s0ma_lang", "s0ma_lang_mcp"):
+            found = launcher.installed_version_of(toolchain, distribution)
+            expect(
+                found == version,
+                f"{distribution or 'the toolchain'} is {found!r}, not {version}",
+            )
+        python = launcher.venv_python(toolchain)
+        expect(python is not None, f"no Python in {toolchain}")
+        results.add("installed", installed_distributions(uv, python, env, project))
+
+        bin_dir = launcher.bin_dir_of(toolchain)
+        cli = launcher.find_program(bin_dir, "s0ma") if bin_dir is not None else None
+        expect(cli is not None, f"no s0ma program in {toolchain}")
+        assert cli is not None
+        # s0ma has no --version flag; `s0ma doctor` is how it says its version,
+        # one line per s0ma package in its `versions` block.
+        ran = run([str(cli), "doctor"], env, project)
+        expect(ran.code == 0, f"s0ma doctor exited {ran.code}")
+        results.add("s0ma doctor, versions", check_doctor_versions(ran.stdout, version))
+
+        names = sorted(
+            str(t["name"])
+            for t in json.loads(SURFACE_SNAPSHOT.read_text(encoding="utf-8"))["tools"]
+        )
+        results.add(
+            "server, the exported plugin",
+            check_real_server(exported, version, names, env, project, count=len(names)),
+        )
+
+        banner("The installed s0ma in a fresh project")
+        fresh_parent = work / "fresh"
+        fresh_parent.mkdir()
+        run_fresh_project_steps(cli, env, fresh_parent, results)
+
+        results.add("claude checks", "none in this leg")
+        expect(
+            plane.requests == [], f"something asked the control plane: {plane.requests}"
+        )
+        results.add("control plane", "running and configured; no request from anything in this leg")
+    finally:
+        plane.stop()
+
+
 def leg_e2e(work: Path, results: Results) -> None:
     banner("The real-wheel end-to-end test, every case, none skipped")
     report = work / "e2e.xml"
@@ -1608,7 +1872,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="The first-run check of the Claude Code plugin."
     )
-    parser.add_argument("leg", choices=("uv-absent", "uv-present", "e2e"))
+    parser.add_argument("leg", choices=("uv-absent", "uv-present", "e2e", "real-index"))
     who = parser.add_mutually_exclusive_group()
     who.add_argument(
         "--claude",
@@ -1633,9 +1897,22 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="move a uv this machine has out of view (CI only)",
     )
+    parser.add_argument(
+        "--version",
+        type=release_version,
+        help="real-index only: the released version to install from the package index",
+    )
     opts = parser.parse_args(argv)
-    if opts.leg != "e2e" and not opts.claude and not opts.no_claude:
-        parser.error("say --claude <command> or --no-claude")
+    if opts.leg == "real-index":
+        if opts.claude:
+            parser.error("real-index runs no Claude Code step; leave --claude out")
+        if opts.version is None:
+            parser.error("real-index needs --version, the released version to install")
+    else:
+        if opts.version is not None:
+            parser.error("--version belongs to the real-index leg only")
+        if opts.leg != "e2e" and not opts.claude and not opts.no_claude:
+            parser.error("say --claude <command> or --no-claude")
     if opts.claude and not opts.claude_version:
         parser.error("--claude needs --claude-version")
 
@@ -1647,6 +1924,8 @@ def main(argv: list[str] | None = None) -> int:
             leg_uv_absent(opts, work, results)
         elif opts.leg == "uv-present":
             leg_uv_present(opts, work, results)
+        elif opts.leg == "real-index":
+            leg_real_index(opts, work, results)
         else:
             leg_e2e(work, results)
     except CheckFailed as failure:
