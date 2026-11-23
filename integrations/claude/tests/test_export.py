@@ -179,6 +179,7 @@ def test_the_expected_files_are_there(export: Export, script: ModuleType) -> Non
         f"{script.EXPORT_PLUGIN_DIR}/.mcp.json",
         f"{script.EXPORT_PLUGIN_DIR}/hooks/hooks.json",
         f"{script.EXPORT_PLUGIN_DIR}/hooks/session-start.sh",
+        f"{script.EXPORT_PLUGIN_DIR}/hooks/edit-guard.sh",
         f"{script.EXPORT_PLUGIN_DIR}/launcher/s0ma_launch.py",
         f"{script.EXPORT_PLUGIN_DIR}/launcher/s0ma_launch.py.lock",
         f"{script.EXPORT_PLUGIN_DIR}/scripts/s0ma-serve",

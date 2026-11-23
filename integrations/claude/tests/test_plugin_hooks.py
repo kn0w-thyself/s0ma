@@ -1,23 +1,33 @@
-"""What the plugin's ``SessionStart`` hook must look like.
+"""What the plugin's three hooks must look like.
 
-The hook is four lines of JSON and one command, and every one of the rules below
-comes from something that would otherwise break quietly:
+``SessionStart`` says the one line a session may begin with. ``PreToolUse`` on
+Write and Edit refuses an edit under a s0ma project's build folder, and
+``PostToolUse`` on Write and Edit to a ``.s0ma`` file hands Claude what
+``s0ma check`` found. Every one of the rules below comes from something that
+would otherwise break quietly:
 
 * **Shell form, running one script.** There is no ``args``, so Claude Code
   hands ``command`` to a shell: ``sh`` on macOS and Linux, Git Bash on Windows
-  (<https://code.claude.com/docs/en/hooks#exec-form-and-shell-form>). The
-  command is ``sh`` and one quoted path under ``${CLAUDE_PLUGIN_ROOT}``, so a
-  machine with no uv still has something that starts: the script, which finds
-  uv itself and says one plain thing when it cannot. Exec form would need uv
-  to exist before anything could run, and a hook that cannot start is a hook
-  error in front of the person.
+  (<https://code.claude.com/docs/en/hooks#exec-form-and-shell-form>). Each
+  command is ``sh`` and one quoted path under ``${CLAUDE_PLUGIN_ROOT}``, and
+  for the edit hooks one plain word saying which, so a machine with no uv
+  still has something that starts: the script, which finds uv itself. Exec
+  form would need uv to exist before anything could run, and a hook that
+  cannot start is a hook error in front of the person.
+* **A timeout on every command.** The documented default is 600 seconds, and
+  Claude waits for each of these.
+* **No ``if`` on ``SessionStart``.** ``if`` is read on tool events only; on any
+  other event a hook that has one never runs. The check after an edit has one
+  per tool, ``Write(**/*.s0ma)`` and ``Edit(**/*.s0ma)``, so it runs only for
+  a ``.s0ma`` file where Claude Code honors it; its script gives the same
+  answer where it does not.
 * **No ``${user_config.*}``.** Since Claude Code v2.1.207 those are rejected in
-  shell-form hook commands, and this hook needs no configured value at all.
+  shell-form hook commands, and these hooks need no configured value at all.
 * **The same launcher the server runs.** The hook script and the server script
   must run one file. Two launchers, one of them stale, is the kind of
   difference nobody finds for a week.
-* **One event.** ``SessionStart`` runs on every session and Claude's first
-  answer waits for it, so this plugin declares that one hook and no other.
+* **Three events, and no more.** A plugin that hooks more than it says it does
+  is a plugin nobody can review from its install screen.
 
 Nothing here installs a plugin, changes any Claude configuration, or runs a
 model: the only subprocess is the CLI's own offline ``plugin validate``.
@@ -48,6 +58,20 @@ LAUNCHER_PATH = REPO_ROOT / "integrations" / "launcher" / "s0ma_launch.py"
 
 #: The sub-command this hook exists to run.
 HOOK_COMMAND = "session-hint"
+
+#: The events this plugin hooks, and nothing else.
+EVENTS = ["PostToolUse", "PreToolUse", "SessionStart"]
+
+#: The edit hooks' command lines, and the script and launcher commands they name.
+EDIT_SCRIPT = PLUGIN_DIR / "hooks" / "edit-guard.sh"
+BEFORE_EDIT_LINE = 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh" before-edit'
+AFTER_EDIT_LINE = 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/edit-guard.sh" after-edit'
+EDIT_COMMANDS = ("before-edit", "after-edit")
+
+#: The before-edit hook runs before every Write and Edit, so it gets less time
+#: than the one that runs a check after an edit.
+MAX_BEFORE_EDIT_SECONDS = 10
+MAX_AFTER_EDIT_SECONDS = 30
 
 #: The hook's whole command line, and the script it names.
 HOOK_SHELL_LINE = 'sh "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"'
@@ -156,14 +180,88 @@ def test_hooks_config_is_canonical() -> None:
     )
 
 
-def test_only_session_start_is_declared() -> None:
-    """One event, one handler. A plugin that hooks more than it says it does is
-    a plugin nobody can review from its install screen."""
+def test_exactly_three_events_are_declared() -> None:
+    """SessionStart, PreToolUse and PostToolUse, and no other. A plugin that
+    hooks more than it says it does is a plugin nobody can review from its
+    install screen."""
     config = read_json(HOOKS_CONFIG)
     assert list(config) == ["hooks"]
-    assert list(config["hooks"]) == ["SessionStart"]
+    assert sorted(config["hooks"]) == EVENTS
     assert len(config["hooks"]["SessionStart"]) == 1
     assert len(handlers()) == 1
+
+
+def every_handler() -> list[tuple[str, dict[str, Any], dict[str, Any]]]:
+    """``(event, matcher entry, handler)`` for every handler in the file."""
+    found = []
+    for event, entries in read_json(HOOKS_CONFIG)["hooks"].items():
+        for entry in entries:
+            for handler in entry["hooks"]:
+                found.append((event, entry, handler))
+    return found
+
+
+def test_every_command_is_shell_form_with_a_timeout() -> None:
+    """For each handler: a command, no ``args``, only ``${CLAUDE_PLUGIN_ROOT}``,
+    and a timeout of its own."""
+    seen = every_handler()
+    assert len(seen) == 4
+    for event, _entry, handler in seen:
+        assert handler["type"] == "command", event
+        assert "args" not in handler, f"{event}: the hook must be shell form"
+        command = handler["command"]
+        assert command.startswith('sh "${CLAUDE_PLUGIN_ROOT}/hooks/'), command
+        assert command.count("${") == 1, f"{event}: one variable, the plugin root"
+        assert "$" not in command.replace("${CLAUDE_PLUGIN_ROOT}", ""), command
+        timeout = handler["timeout"]
+        assert isinstance(timeout, int) and not isinstance(timeout, bool), event
+        assert 0 < timeout <= MAX_TIMEOUT_SECONDS, event
+
+
+def test_no_if_on_session_start() -> None:
+    """``if`` switches a SessionStart hook off; it belongs on tool events only."""
+    for event, entry, handler in every_handler():
+        if event == "SessionStart":
+            assert "if" not in handler and "if" not in entry
+            assert "matcher" not in entry
+
+
+def test_the_refusal_runs_before_every_write_and_edit() -> None:
+    """No path filter: a project names its own build folder, so none would fit."""
+    entries = read_json(HOOKS_CONFIG)["hooks"]["PreToolUse"]
+    assert len(entries) == 1
+    entry = entries[0]
+    assert entry["matcher"] == "Write|Edit"
+    [handler] = entry["hooks"]
+    assert handler["command"] == BEFORE_EDIT_LINE
+    assert "if" not in handler
+    assert handler["timeout"] <= MAX_BEFORE_EDIT_SECONDS
+
+
+def test_the_check_runs_after_a_s0ma_edit_once_per_tool() -> None:
+    """One entry per tool, each with the one rule its ``if`` can hold."""
+    entries = read_json(HOOKS_CONFIG)["hooks"]["PostToolUse"]
+    seen = {}
+    for entry in entries:
+        [handler] = entry["hooks"]
+        assert handler["command"] == AFTER_EDIT_LINE
+        assert handler["timeout"] <= MAX_AFTER_EDIT_SECONDS
+        seen[entry["matcher"]] = handler["if"]
+    assert seen == {"Write": "Write(**/*.s0ma)", "Edit": "Edit(**/*.s0ma)"}
+
+
+def test_the_edit_script_runs_the_launcher_commands_that_exist(launcher: ModuleType) -> None:
+    """The script hands each hook's word to the launcher, which offers both."""
+    text = EDIT_SCRIPT.read_text(encoding="utf-8")
+    assert "launcher=$hooks_dir/../launcher/s0ma_launch.py" in text
+    assert '--script "$launcher" "$event"' in text
+    assert "before-edit | after-edit)" in text
+    parser = launcher.build_parser()
+    names: set[str] = set()
+    for action in parser._actions:
+        if isinstance(action, argparse._SubParsersAction):
+            names.update(action.choices)
+    assert set(EDIT_COMMANDS) <= names
 
 
 def test_the_hook_runs_a_command_in_shell_form() -> None:
@@ -227,7 +325,7 @@ def test_the_sub_command_the_hook_runs_exists(launcher: ModuleType) -> None:
 def test_no_user_config_substitution_anywhere() -> None:
     """Rejected in shell-form hook commands since v2.1.207, and unnecessary here:
     this hook reads local files and needs nothing configured to do it."""
-    for path in (HOOKS_CONFIG, HOOK_SCRIPT):
+    for path in (HOOKS_CONFIG, HOOK_SCRIPT, EDIT_SCRIPT):
         assert "user_config" not in path.read_text(encoding="utf-8"), path.name
 
 
@@ -235,7 +333,8 @@ def test_the_hook_sets_no_environment_variables() -> None:
     """A command hook handler has no documented ``env`` field, so the hook cannot
     widen ``PATH`` the way the MCP server's own ``env`` block does. Writing one
     anyway would be an unknown field that a strict validator may refuse."""
-    assert "env" not in the_handler()
+    for _event, _entry, handler in every_handler():
+        assert "env" not in handler
 
 
 def test_no_secret_shaped_string_is_in_the_file() -> None:
