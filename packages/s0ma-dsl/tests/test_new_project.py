@@ -169,6 +169,33 @@ class TestEndToEnd:
         # The one-time-approval note near the top.
         assert "one-time approval dialog" in agents
 
+    def test_agents_md_puts_the_plugin_first_and_the_mcp_line_second(
+        self, cli: S0maCLI, tmp_path: Path
+    ) -> None:
+        """With the plugin installed, registering the server again would
+        give the project two s0ma servers. So the guide names the plugin,
+        has the agent offer its install line rather than run it, and keeps
+        the ``claude mcp add`` line only for someone without the plugin."""
+        target = tmp_path / "pluginfirst"
+        assert cli.run(
+            ["new", "project", str(target), "--quiet"]
+        ) == EXIT_SUCCESS
+
+        agents = " ".join(
+            (target / "AGENTS.md").read_text(encoding="utf-8").split()
+        )
+        assert (
+            "This project names the s0ma plugin's catalog in "
+            "`.claude/settings.json`; in Claude Code the plugin brings this "
+            "server, so register nothing else. If the plugin is not "
+            "installed, offer the person `/plugin install s0ma@kn0wthyself` "
+            "and do not run it for them. "
+            f"Without the plugin, register the server with `{MCP_HINT}` "
+            "instead."
+        ) in agents
+        assert "if it is not already connected" not in agents
+        assert agents.count(MCP_HINT) == 1
+
     def test_agents_md_carries_the_feedback_standing_rule(
         self, cli: S0maCLI, tmp_path: Path
     ) -> None:
@@ -1499,6 +1526,123 @@ class TestLaunchConfig:
             "  .claude/launch.json     opens studi0 beside the chat "
             "(Claude Desktop app)\n"
         ) in out
+
+
+#: The exact bytes of ``.claude/settings.json``.
+_SETTINGS_JSON = (
+    "{\n"
+    '  "extraKnownMarketplaces": {\n'
+    '    "kn0wthyself": {\n'
+    '      "source": {\n'
+    '        "source": "github",\n'
+    '        "repo": "kn0w-thyself/claude-plugins"\n'
+    "      },\n"
+    '      "autoUpdate": true\n'
+    "    }\n"
+    "  },\n"
+    '  "enabledPlugins": {\n'
+    '    "s0ma@kn0wthyself": true\n'
+    "  }\n"
+    "}\n"
+)
+
+_SETTINGS_PARTS = (".claude", "settings.json")
+
+
+class TestProjectSettings:
+    """``.claude/settings.json``: the s0ma plugin's catalog, and the plugin on.
+
+    Claude Code honors these once the person trusts the folder, and they
+    install nothing. Like the launch entry it is a file in the user's client
+    configuration: created only when absent, never merged into, never part
+    of the atomic refusal, and listed in the summary either way.
+    """
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_the_bytes_are_exact(
+        self, cli: S0maCLI, tmp_path: Path, template: str | None
+    ) -> None:
+        target = tmp_path / f"{template or 'plain'}-settings"
+        assert cli.run(_new_project_argv(target, template)) == EXIT_SUCCESS
+
+        assert target.joinpath(*_SETTINGS_PARTS).read_bytes() == (
+            _SETTINGS_JSON.encode("ascii")
+        )
+
+    def test_it_holds_the_catalog_and_the_plugin_and_nothing_else(self) -> None:
+        from s0ma_dsl.cli import new_project
+
+        settings = json.loads(new_project._project_settings_json())
+        assert set(settings) == {"extraKnownMarketplaces", "enabledPlugins"}
+        (name,) = settings["extraKnownMarketplaces"]
+        assert settings["enabledPlugins"] == {f"s0ma@{name}": True}
+        assert f"/plugin install s0ma@{name}" == new_project.PLUGIN_INSTALL_HINT
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_an_existing_file_is_kept_and_never_causes_a_refusal(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        template: str | None,
+    ) -> None:
+        target = tmp_path / f"{template or 'plain'}-mysettings"
+        settings_path = target.joinpath(*_SETTINGS_PARTS)
+        settings_path.parent.mkdir(parents=True)
+        mine = b'{"permissions": {"allow": ["Bash(ls)"]}}\r\n'
+        settings_path.write_bytes(mine)
+
+        argv = ["new", "project", str(target), "--format", "json"]
+        if template is not None:
+            argv += ["--template", template]
+        assert cli.run(argv) == EXIT_SUCCESS
+
+        report = json.loads(capsys.readouterr().out)
+        assert report["project_settings"] == {
+            "path": str(settings_path),
+            "created": False,
+        }
+        assert settings_path.read_bytes() == mine
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_the_summary_lists_it(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        template: str | None,
+    ) -> None:
+        target = tmp_path / f"{template or 'plain'}-settings-listed"
+        argv = ["new", "project", str(target)]
+        if template is not None:
+            argv += ["--template", template]
+        assert cli.run(argv) == EXIT_SUCCESS
+
+        out = capsys.readouterr().out
+        assert (
+            "  .claude/settings.json   names the s0ma plugin's catalog "
+            "(Claude Code)\n"
+        ) in out
+
+    @pytest.mark.parametrize("template", _EVERY_SCAFFOLD)
+    def test_the_json_summary_reports_it_created(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        template: str | None,
+    ) -> None:
+        target = tmp_path / f"{template or 'plain'}-settings-json"
+        argv = ["new", "project", str(target), "--format", "json"]
+        if template is not None:
+            argv += ["--template", template]
+        assert cli.run(argv) == EXIT_SUCCESS
+
+        report = json.loads(capsys.readouterr().out)
+        assert report["project_settings"] == {
+            "path": str(target.joinpath(*_SETTINGS_PARTS)),
+            "created": True,
+        }
 
 
 class TestFeedbackSkillWithNoKey:

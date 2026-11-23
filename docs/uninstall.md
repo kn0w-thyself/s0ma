@@ -271,19 +271,27 @@ If your project's package file sets a different build directory
 
 One more, only if you kept the project: the scaffolder wrote the
 `/s0ma-feedback` shortcut for Claude Code into
-`.claude/skills/s0ma-feedback/SKILL.md`, and the entry the Claude Desktop app
-reads to open studi0 beside the chat into `.claude/launch.json`. They sit with
-your project's other agent files and do nothing once the software is gone, so
-remove them too:
+`.claude/skills/s0ma-feedback/SKILL.md`, the entry the Claude Desktop app
+reads to open studi0 beside the chat into `.claude/launch.json`, and the Claude
+Code settings that name the s0ma plugin's catalog into `.claude/settings.json`.
+They sit with your project's other agent files and do nothing once the software
+is gone, so remove them too:
 
 ```bash
 rm -rf .claude/skills/s0ma-feedback
 rm .claude/launch.json
+rm .claude/settings.json
 ```
 
 If `.claude/launch.json` was there before the project was made, the scaffolder
 left it as it was, and it is yours to keep. If you have added entries of your
 own to the file since, delete only the `studi0` entry and keep the file.
+
+The same holds for `.claude/settings.json`: if it was there before the project
+was made, it is yours to keep. If you have added settings of your own to it
+since, delete only the two s0ma entries, `kn0wthyself` under
+`extraKnownMarketplaces` and `s0ma@kn0wthyself` under `enabledPlugins`, and keep
+the file.
 
 ### The project's own s0ma settings — a change to the project
 
