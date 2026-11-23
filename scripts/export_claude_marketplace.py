@@ -17,7 +17,8 @@ What lands in that directory::
                                       the plugin sits next to the catalog in
                                       the monorepo) to "./plugins/s0ma"
     plugins/s0ma/**                   the plugin, byte for byte, with the two
-                                      shell shims still executable
+                                      shell shims and the server script still
+                                      executable
     LICENSE                           the same Apache-2.0 text the plugin carries
     README.md                         for somebody who has never heard of s0ma
     PRIVACY.md                        what the launcher does on the network
@@ -92,11 +93,12 @@ SOURCE_IN_EXPORT = "./plugins/s0ma"
 PUBLIC_REPO = "kn0w-thyself/claude-plugins"
 MARKETPLACE_NAME = "kn0wthyself"
 
-#: The only two files in the plugin that have to be executable. Named here
+#: The only files in the plugin that have to be executable: the two shims the
+#: Bash tool runs, and the script Claude Code starts the server with. Named here
 #: rather than read from the filesystem, so that an export built on Windows -
 #: where there is no executable bit to read - records the same modes as one
 #: built on macOS, and the manifest stays byte-identical across platforms.
-EXECUTABLE_FILES = ("bin/s0ma", "bin/s0ma-launch")
+EXECUTABLE_FILES = ("bin/s0ma", "bin/s0ma-launch", "scripts/s0ma-serve")
 
 #: Never copied: build litter that is not part of the plugin.
 SKIPPED_NAMES = frozenset({"__pycache__", ".DS_Store"})
@@ -313,7 +315,7 @@ def plugin_sources(plugin_dir: Path) -> list[tuple[str, Path]]:
 def record_file(out: Path, target: Path, data: bytes, mode: int = 0o644) -> ExportedFile:
     """Record one written file, by its path relative to the export root."""
     if os.name == "posix":
-        os.chmod(target, mode)  # noqa: S103 - 0755 on two shims, 0644 on the rest
+        os.chmod(target, mode)  # noqa: S103 - 0755 on EXECUTABLE_FILES, 0644 on the rest
     return ExportedFile(
         path=fwd(target.relative_to(out)),
         mode=mode,
@@ -364,9 +366,9 @@ def build(root: Path, out: Path) -> tuple[list[ExportedFile], str, str]:
         ]
         if stray:
             raise Refusal(
-                "these plugin files are executable but are not one of the two "
-                "shims, so the export cannot tell what mode they should have in "
-                "the public repository: " + ", ".join(stray)
+                "these plugin files are executable but are not one of the "
+                "files named in EXECUTABLE_FILES, so the export cannot tell what "
+                "mode they should have in the public repository: " + ", ".join(stray)
             )
 
     license_text = plugin_dir / "LICENSE"
@@ -508,7 +510,7 @@ def print_owner_commands(out: Path, version: str, commit: str) -> None:
     print("  git add -A")
     if os.name != "posix":
         print("  # This export was built on Windows, which has no executable bit, so")
-        print("  # git has just recorded both shims as ordinary files. This line puts")
+        print("  # git has just recorded these scripts as ordinary files. This line puts")
         print("  # the bit into the index, where it is what actually gets published:")
         print(f"  git update-index --chmod=+x {shims}")
     print(
@@ -532,7 +534,7 @@ def print_owner_commands(out: Path, version: str, commit: str) -> None:
     print("")
     print("==> Executable bits")
     if os.name == "posix":
-        print("  Set here: both shims are 0755 and every other file is 0644. git")
+        print("  Set here: these scripts are 0755 and every other file is 0644. git")
         print("  reads the bit off the filesystem, so it survives into the public")
         print("  repository - `git ls-files -s` after `git add` shows 100755 on")
         for name in EXECUTABLE_FILES:

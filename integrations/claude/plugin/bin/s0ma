@@ -44,18 +44,31 @@ if [ ! -f "$launcher" ]; then
     exit 1
 fi
 
-# Find uv the way the plugin's MCP server does: whatever the PATH offers first,
-# then the places uv's own installers put it.
+# Find uv the way the launcher does: whatever the PATH offers first, then the
+# places uv's own installers put it. The list between the two markers is the
+# launcher's uv_candidates, POSIX places first and then the Windows ones that
+# Git Bash can see; a test fails if the two drift apart.
 uv=
 if command -v uv >/dev/null 2>&1; then
     uv=$(command -v uv)
 else
-    for dir in "${HOME:-/nonexistent}/.local/bin" "${HOME:-/nonexistent}/.cargo/bin" /opt/homebrew/bin /usr/local/bin; do
-        if [ -x "$dir/uv" ]; then
-            uv=$dir/uv
+    # BEGIN uv places
+    for candidate in \
+        "${HOME:-/nonexistent}/.local/bin/uv" \
+        "${HOME:-/nonexistent}/.cargo/bin/uv" \
+        /opt/homebrew/bin/uv \
+        /usr/local/bin/uv \
+        "${USERPROFILE:-/nonexistent}/.local/bin/uv.exe" \
+        "${LOCALAPPDATA:-/nonexistent}/uv/bin/uv.exe" \
+        "${USERPROFILE:-/nonexistent}/.cargo/bin/uv.exe" \
+        "${ProgramFiles:-/nonexistent}/uv/uv.exe"
+    do
+        if [ -x "$candidate" ]; then
+            uv=$candidate
             break
         fi
     done
+    # END uv places
 fi
 
 if [ -z "$uv" ]; then
@@ -63,4 +76,4 @@ if [ -z "$uv" ]; then
     exit 7
 fi
 
-exec "$uv" run --script "$launcher" run -- s0ma "$@"
+exec "$uv" run --frozen --script "$launcher" run -- s0ma "$@"

@@ -7,8 +7,8 @@ of question.
 
 *Is the tree right?* Every expected file is present, the catalog's plugin entry
 points at the plugin's new home, the plugin's own files arrive byte for byte
-with the two shims still executable, and the export manifest states the hash
-and the mode of every one of them.
+with the shims and the server script still executable, and the export
+manifest states the hash and the mode of every one of them.
 
 *Is it safe to publish?* Nothing in the output names the machine that built it.
 The two files written for readers carry no key-shaped string, no version number
@@ -178,7 +178,15 @@ def test_the_expected_files_are_there(export: Export, script: ModuleType) -> Non
         f"{script.EXPORT_PLUGIN_DIR}/.claude-plugin/plugin.json",
         f"{script.EXPORT_PLUGIN_DIR}/.mcp.json",
         f"{script.EXPORT_PLUGIN_DIR}/hooks/hooks.json",
+        f"{script.EXPORT_PLUGIN_DIR}/hooks/session-start.sh",
         f"{script.EXPORT_PLUGIN_DIR}/launcher/s0ma_launch.py",
+        f"{script.EXPORT_PLUGIN_DIR}/launcher/s0ma_launch.py.lock",
+        f"{script.EXPORT_PLUGIN_DIR}/scripts/s0ma-serve",
+        f"{script.EXPORT_PLUGIN_DIR}/scripts/s0ma-serve.cmd",
+        f"{script.EXPORT_PLUGIN_DIR}/scripts/s0ma-stand-in.ps1",
+        f"{script.EXPORT_PLUGIN_DIR}/scripts/not-set-up.txt",
+        f"{script.EXPORT_PLUGIN_DIR}/bin/s0ma.cmd",
+        f"{script.EXPORT_PLUGIN_DIR}/bin/s0ma-launch.cmd",
     ):
         assert expected in present, f"{expected} is missing from the export"
     skills = [path for path in present if "/skills/" in path]
@@ -232,11 +240,13 @@ def test_the_root_license_is_the_plugins(export: Export, script: ModuleType) -> 
     reason=(
         "Windows has no executable bit to read: the export records the modes in "
         "EXPORT-MANIFEST.json instead, and the printed instructions tell the "
-        "owner to run `git update-index --chmod=+x` on the two shims"
+        "owner to run `git update-index --chmod=+x` on the executable scripts"
     ),
 )
 def test_the_shims_are_executable(export: Export, script: ModuleType) -> None:
-    """The two programs the Bash tool runs keep their bit through the copy."""
+    """The two programs the Bash tool runs, and the server script Claude Code
+    starts, keep their bit through the copy; nothing else has one."""
+    assert "scripts/s0ma-serve" in script.EXECUTABLE_FILES
     for name in script.EXECUTABLE_FILES:
         landed = export.out / script.EXPORT_PLUGIN_DIR / name
         assert landed.stat().st_mode & 0o777 == 0o755, f"{name} is not 0755"

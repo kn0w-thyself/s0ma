@@ -1,6 +1,6 @@
 """What the Claude Code plugin and the kn0wthyself marketplace must look like.
 
-These tests pin the three JSON files, the two shell shims and the licence copy
+These tests pin the three JSON files, the shell scripts and the licence copy
 that make up the plugin, so that none of them can drift without somebody
 noticing. They are deliberately cheap: nothing here opens a socket, nothing
 writes to disk, and the only subprocess is the ``claude`` CLI's own offline
@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -53,6 +54,17 @@ PLUGIN_LICENSE = PLUGIN_DIR / "LICENSE"
 PLUGIN_LAUNCHER = PLUGIN_DIR / "launcher" / "s0ma_launch.py"
 
 SHIMS = (PLUGIN_DIR / "bin" / "s0ma", PLUGIN_DIR / "bin" / "s0ma-launch")
+
+#: The two other POSIX scripts: the session-start hook and the server script.
+HOOK_SCRIPT = PLUGIN_DIR / "hooks" / "session-start.sh"
+SERVER_SCRIPT = PLUGIN_DIR / "scripts" / "s0ma-serve"
+
+#: Every POSIX sh file in the plugin, held to the same house rules.
+SH_SCRIPTS = (*SHIMS, HOOK_SCRIPT, SERVER_SCRIPT)
+
+#: The ones that are run by their own path, so their executable bit matters.
+#: The hook script is run as `sh <path>` and needs none.
+EXECUTABLE_SCRIPTS = (*SHIMS, SERVER_SCRIPT)
 
 #: Where the one version number every s0ma package shares is written down.
 LOCKSTEP_PYPROJECT = REPO_ROOT / "packages" / "s0ma-mcp" / "pyproject.toml"
@@ -212,47 +224,15 @@ def test_plugin_version_is_the_lockstep_version() -> None:
     assert manifest["version"] == lockstep_version()
 
 
-def test_license_key_is_sensitive_and_optional() -> None:
-    """A key is masked and kept in secure storage - and nobody is forced to have one.
+def test_the_plugin_asks_nothing_at_install() -> None:
+    """No ``userConfig``, so Claude Code opens no settings dialog at install.
 
-    Somebody running s0ma from its source code, with ``S0MA_TOOLCHAIN`` pointing
-    at their own checkout, has no key and must still be able to enable the
-    plugin.
+    A key is saved with ``s0ma-launch activate``, the update preference with
+    ``s0ma-launch set update``, and uv is found by the scripts themselves.
     """
-    option = read_json(PLUGIN_MANIFEST)["userConfig"]["license_key"]
-    assert option["type"] == "string"
-    assert option["sensitive"] is True
-    assert option.get("required", False) is False
-    assert option["title"].strip()
-    assert option["description"].strip()
-    assert "default" not in option, "a licence key must never have a default value"
-
-
-def test_update_and_uv_path_options() -> None:
-    """The two plain settings, and the defaults the .mcp.json leans on.
-
-    ``uv_path`` defaulting to ``uv`` is what makes ``${user_config.uv_path}`` in
-    the server's ``command`` substitute to a bare ``uv`` when the user has
-    stored nothing - proven in the P0 spike.
-    """
-    user_config = read_json(PLUGIN_MANIFEST)["userConfig"]
-
-    update = user_config["update"]
-    assert update["type"] == "string"
-    assert update["default"] == "auto"
-    assert not update.get("sensitive", False)
-
-    uv_path = user_config["uv_path"]
-    assert uv_path["type"] == "string"
-    assert uv_path["default"] == "uv"
-    assert not uv_path.get("sensitive", False)
-
-
-def test_every_user_config_option_is_labelled() -> None:
-    """`type`, `title` and `description` are required on every option."""
-    for name, option in read_json(PLUGIN_MANIFEST)["userConfig"].items():
-        for field in ("type", "title", "description"):
-            assert option.get(field), f"userConfig.{name} is missing `{field}`"
+    manifest = read_json(PLUGIN_MANIFEST)
+    assert "userConfig" not in manifest
+    assert find_keys(manifest, "userConfig") == []
 
 
 @pytest.mark.parametrize("key", FORBIDDEN_MANIFEST_KEYS)
@@ -279,50 +259,15 @@ def test_mcp_config_declares_exactly_one_server() -> None:
     assert list(config["mcpServers"]) == ["s0ma"]
 
 
-def test_mcp_command_and_args() -> None:
-    """The command the P0 spike proved, pointing at the launcher inside the plugin."""
+def test_mcp_command_is_the_server_script() -> None:
+    """The script pair under the plugin root: ``s0ma-serve``, and on Windows the
+    ``s0ma-serve.cmd`` beside it. It finds uv itself, so the server needs no
+    arguments and no environment of its own."""
     server = read_json(MCP_CONFIG)["mcpServers"]["s0ma"]
-    assert server["command"] == "${user_config.uv_path}"
-    assert server["args"] == [
-        "run",
-        "--script",
-        "${CLAUDE_PLUGIN_ROOT}/launcher/s0ma_launch.py",
-        "serve",
-    ]
-
-
-def test_mcp_env_carries_the_three_values_and_nothing_else() -> None:
-    server = read_json(MCP_CONFIG)["mcpServers"]["s0ma"]
-    assert sorted(server["env"]) == ["PATH", "S0MA_LICENSE_KEY", "S0MA_UPDATE"]
-    assert server["env"]["S0MA_LICENSE_KEY"] == "${user_config.license_key}"
-    assert server["env"]["S0MA_UPDATE"] == "${user_config.update}"
-
-
-def test_mcp_path_is_widened_at_both_ends() -> None:
-    """``${PATH}`` appears first and last, and the probe directories sit between.
-
-    Windows joins its ``PATH`` with ``;``, so the colon-joined probe directories
-    glue themselves onto whichever real entry they touch. Writing the real
-    ``PATH`` at both ends means the first copy loses only its last entry to that
-    glue and the second only its first, so every directory the user really has
-    is searched in at least one of them (P0 spike, "Recommendation for P1").
-    """
-    path_value = read_json(MCP_CONFIG)["mcpServers"]["s0ma"]["env"]["PATH"]
-    assert path_value.startswith("${PATH}"), "PATH must begin with the user's own PATH"
-    assert path_value.endswith("${PATH}"), "PATH must end with the user's own PATH"
-    assert path_value.count("${PATH}") == 2
-
-    for probe in (
-        "${HOME:-/nonexistent}/.local/bin",
-        "${HOME:-/nonexistent}/.cargo/bin",
-        "/opt/homebrew/bin",
-        "/usr/local/bin",
-    ):
-        assert probe in path_value, f"the PATH widening is missing {probe}"
-
-    # HOME carries a default because an unset variable with no default draws a
-    # missing-variable warning, and HOME is usually unset on Windows.
-    assert "${HOME}" not in path_value
+    assert server == {"command": "${CLAUDE_PLUGIN_ROOT}/scripts/s0ma-serve"}
+    script = PLUGIN_DIR / "scripts" / "s0ma-serve"
+    assert script.is_file(), f"{script} is missing"
+    assert (PLUGIN_DIR / "scripts" / "s0ma-serve.cmd").is_file()
 
 
 def test_mcp_config_points_at_a_launcher_that_is_there() -> None:
@@ -352,7 +297,7 @@ def test_license_is_the_same_file_s0ma_core_ships() -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("shim", SHIMS, ids=lambda path: path.name)
+@pytest.mark.parametrize("shim", SH_SCRIPTS, ids=lambda path: path.name)
 def test_shim_is_posix_sh(shim: Path) -> None:
     """A ``/bin/sh`` shebang, LF endings, plain ASCII, and no bash-only syntax."""
     raw = shim.read_bytes()
@@ -360,15 +305,20 @@ def test_shim_is_posix_sh(shim: Path) -> None:
     assert b"\r\n" not in raw, f"{shim.name} must use LF line endings"
     text = raw.decode("utf-8")
     assert text.isascii(), f"{shim.name} must be plain ASCII"
+    # A POSIX character class such as ``[[:space:]]`` inside a sed pattern is
+    # not bash's ``[[`` test, so it is taken out before looking.
+    text = re.sub(r"\[\[:[a-z]+:\]", "", text)
     for bashism in ("[[", "function ", "$(( ", "local ", "echo -e", "source "):
         assert bashism not in text, f"{shim.name} uses a bash-only form: {bashism}"
 
 
 @pytest.mark.parametrize("shim", SHIMS, ids=lambda path: path.name)
 def test_shim_finds_uv_the_same_way_the_server_does(shim: Path) -> None:
-    """The shim's fallbacks match the ``PATH`` the ``.mcp.json`` hands the server.
+    """The shim looks where the server script does.
 
-    If the two lists ever diverge, ``s0ma doctor`` in a conversation and the MCP
+    The full list is held equal to the launcher's own by
+    ``test_plugin_rules.py``; this is the quick read of it. If the lists ever
+    diverge, ``s0ma doctor`` in a conversation and the MCP
     server itself would disagree about whether uv exists - the most confusing
     failure this design can produce.
     """
@@ -389,10 +339,10 @@ def test_shim_finds_uv_the_same_way_the_server_does(shim: Path) -> None:
 def test_shims_call_the_launcher_correctly() -> None:
     """``s0ma`` runs a toolchain program; ``s0ma-launch`` is the launcher itself."""
     s0ma, s0ma_launch = SHIMS
-    assert 'exec "$uv" run --script "$launcher" run -- s0ma "$@"' in s0ma.read_text(
+    assert 'exec "$uv" run --frozen --script "$launcher" run -- s0ma "$@"' in s0ma.read_text(
         encoding="utf-8"
     )
-    assert 'exec "$uv" run --script "$launcher" "$@"' in s0ma_launch.read_text(
+    assert 'exec "$uv" run --frozen --script "$launcher" "$@"' in s0ma_launch.read_text(
         encoding="utf-8"
     )
 
@@ -400,7 +350,7 @@ def test_shims_call_the_launcher_correctly() -> None:
 @pytest.mark.skipif(
     WINDOWS, reason="Windows checkouts have no executable bit; the shims are POSIX-only"
 )
-@pytest.mark.parametrize("shim", SHIMS, ids=lambda path: path.name)
+@pytest.mark.parametrize("shim", EXECUTABLE_SCRIPTS, ids=lambda path: path.name)
 def test_shim_is_executable(shim: Path) -> None:
     """The exec bit is load-bearing: without it the spawn fails with EACCES (P0)."""
     mode = shim.stat().st_mode
@@ -412,7 +362,7 @@ def test_shim_is_executable(shim: Path) -> None:
 @pytest.mark.skipif(
     WINDOWS, reason="no POSIX shell to parse the shims with on Windows"
 )
-@pytest.mark.parametrize("shim", SHIMS, ids=lambda path: path.name)
+@pytest.mark.parametrize("shim", SH_SCRIPTS, ids=lambda path: path.name)
 def test_shim_parses_as_posix_sh(shim: Path) -> None:
     """``sh -n`` reads the whole file without running any of it."""
     result = subprocess.run(  # noqa: S603 - a fixed, local command
@@ -422,7 +372,7 @@ def test_shim_parses_as_posix_sh(shim: Path) -> None:
 
 
 @pytest.mark.skipif(WINDOWS, reason="shellcheck is not run on Windows here")
-@pytest.mark.parametrize("shim", SHIMS, ids=lambda path: path.name)
+@pytest.mark.parametrize("shim", SH_SCRIPTS, ids=lambda path: path.name)
 def test_shim_passes_shellcheck(shim: Path) -> None:
     """Run shellcheck when the machine has it, and say so plainly when it does not."""
     shellcheck = shutil.which("shellcheck")
