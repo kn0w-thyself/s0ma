@@ -69,7 +69,7 @@
       },
       {
         "path": "pyproject.toml",
-        "text": "[project]\nname = \"song\"\nversion = \"0.1.0\"\nrequires-python = \">=3.11\"\n\n[tool.s0ma]\nsource_roots = [\"src\"]\ntest_roots = [\"tests\"]\nbuild_dir = \"build\"\nmode = \"dev\"\nauthoring = \"on\"\nfeedback = \"suggest\"\nbootstrap_files = [\"bootstrap/main.py\"]\n"
+        "text": "[project]\nname = \"song\"\nversion = \"0.1.0\"\nrequires-python = \">=3.11\"\ndependencies = [\"s0ma-lang-core\", \"s0ma-lang-dsl\"]\n\n[tool.s0ma]\nsource_roots = [\"src\"]\ntest_roots = [\"tests\"]\nbuild_dir = \"build\"\nmode = \"dev\"\nauthoring = \"on\"\nfeedback = \"suggest\"\nbootstrap_files = [\"bootstrap/main.py\"]\n"
       },
       {
         "path": "src/app_map.s0ma",
@@ -100,8 +100,8 @@
         "stderr": [],
         "stdout": [
           {
-            "match": "line",
-            "text": "Results: 0 error(s), 1 warning(s) [mode: dev]"
+            "match": "absent",
+            "text": "WARNING"
           },
           {
             "match": "line",
@@ -173,8 +173,8 @@
         "stderr": [],
         "stdout": [
           {
-            "match": "line",
-            "text": "Results: 0 error(s), 1 warning(s) [mode: dev]"
+            "match": "absent",
+            "text": "WARNING"
           },
           {
             "match": "line",
@@ -254,8 +254,8 @@
         "stderr": [],
         "stdout": [
           {
-            "match": "line",
-            "text": "Results: 0 error(s), 1 warning(s) [mode: dev]"
+            "match": "absent",
+            "text": "WARNING"
           },
           {
             "match": "line",
