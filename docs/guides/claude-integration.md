@@ -11,8 +11,9 @@ behave, how to hold a project still, and how to take it all off again.
 
 **The short version.**
 
-- **Claude Code** — add the kn0wthyself marketplace, install `s0ma@kn0wthyself`,
-  run `/s0ma:start`. The plugin asks nothing at install.
+- **Claude Code** — add the kn0wthyself marketplace (from a checkout today,
+  from the public catalog once it opens), install `s0ma@kn0wthyself`, run
+  `/s0ma:start`. The plugin asks nothing at install.
 - **Claude Desktop** — open the s0ma extension file and answer two settings.
 - **A key is optional.** Nobody needs one to install or use s0ma. If you have
   one, it goes into `s0ma-launch activate` at a terminal of your own, or in
@@ -84,6 +85,11 @@ needs no key at all.
 You do not need to install Python. uv provides one.
 
 ## Install in Claude Code
+
+Step 1 names the public catalog, which opens once the next release has passed
+its first-run test. Until it is open, add the marketplace from a checkout
+instead, as [What the next release holds](#what-the-next-release-holds) shows;
+every step after that is the same.
 
 1. **Add the marketplace.** Ours needs nobody's approval and is not Anthropic's:
 
