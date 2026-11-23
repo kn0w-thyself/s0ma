@@ -36,6 +36,8 @@ def run(cmd, env, cwd, timeout=180):
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     label = sys.argv[1]
     strip_git_sh = "--strip-git-sh" in sys.argv
     env = dict(os.environ)
