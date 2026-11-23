@@ -143,14 +143,46 @@ def build_fake_wheels(into: Path, version: str) -> list[Path]:
 FAKE_UMBRELLA = "s0ma_lang"
 
 
+#: The version of the stand-in pytest. Real pytest is never this small, so a
+#: toolchain that reports it got its pytest from a test's own directory.
+FAKE_PYTEST_VERSION = "8.0.0"
+
+
+def build_fake_pytest(into: Path) -> Path:
+    """A stand-in for pytest, the one open-source package the launcher asks for.
+
+    Both install routes ask uv for the launcher's ``PYTEST_REQUIREMENT`` beside
+    s0ma. A directory holding this wheel, reached through uv's own
+    ``UV_FIND_LINKS`` with ``UV_NO_INDEX`` set, answers that requirement with
+    no network and no dependence on what uv's cache happens to hold.
+    """
+    return build_fake_wheel(into, "pytest", FAKE_PYTEST_VERSION)
+
+
+def only_from(links: Path) -> Path:
+    """A uv settings file that resolves from *links* and from no index at all.
+
+    Set as ``UV_CONFIG_FILE``. It is a file rather than ``UV_NO_INDEX`` because
+    not every uv reads ``UV_NO_INDEX`` for ``uv pip install``, and one that
+    does not would quietly answer the pytest requirement from its cache. With
+    the file, the stand-in pytest is the only pytest uv can see.
+    """
+    settings = links.parent / f"{links.name}-uv.toml"
+    settings.write_text(
+        "no-index = true\n" f"find-links = [{json.dumps(links.as_posix())}]\n",
+        encoding="utf-8",
+    )
+    return settings
+
+
 def build_fake_index(into: Path, version: str) -> list[Path]:
-    """The four wheels and the umbrella that pins them, as a package index has them.
+    """The four wheels, the umbrella that pins them, and pytest, as an index has them.
 
     This is what the keyless route installs from: a directory uv is pointed at
     with its own ``UV_FIND_LINKS`` setting, standing in for the package index.
     The umbrella requires each of the four at exactly *version*, as the real
-    ``s0ma-lang`` does, so asking uv for ``s0ma-lang==<version>`` installs all
-    five and nothing else.
+    ``s0ma-lang`` does, so asking uv for ``s0ma-lang==<version>`` and pytest
+    installs those six and nothing else.
     """
     parts = build_fake_wheels(into, version)
     umbrella = build_fake_wheel(
@@ -162,7 +194,7 @@ def build_fake_index(into: Path, version: str) -> list[Path]:
             for distribution, _ in FAKE_DISTRIBUTIONS
         ],
     )
-    return [*parts, umbrella]
+    return [*parts, umbrella, build_fake_pytest(into)]
 
 
 @dataclass
@@ -201,6 +233,9 @@ class FakeControlPlane:
     requests: list[str] = field(default_factory=list)
     #: Every ``Authorization`` header seen, in the order they arrived.
     authorizations: list[str] = field(default_factory=list)
+    #: Every request's headers, as ``(name, value)`` pairs in the order sent.
+    #: Read by the tests that prove what the launcher sends has not changed.
+    headers: list[list[tuple[str, str]]] = field(default_factory=list)
 
     server: ThreadingHTTPServer | None = None
     thread: threading.Thread | None = None
@@ -366,6 +401,7 @@ def _handler_for(plane: FakeControlPlane) -> type[BaseHTTPRequestHandler]:
 
         def do_GET(self) -> None:  # noqa: N802 - the name http.server requires
             plane.requests.append(f"GET {self.path}")
+            plane.headers.append([(name, value) for name, value in self.headers.items()])
             if not self._gate():
                 return
             split = urlsplit(self.path)
@@ -450,9 +486,14 @@ def keyed(
     """A running fake plane that the launcher is pointed at, with a key set.
 
     Also switches on the test-only offline flag, so the real ``uv`` install the
-    tests perform resolves nothing from any network.
+    tests perform resolves nothing from any network, and points uv at a
+    directory holding the stand-in pytest, with the package index off
+    (:func:`only_from`), for the pytest the launcher asks for beside s0ma.
     """
+    links = control_plane.work / "index"
+    build_fake_pytest(links)
     monkeypatch.setenv("S0MA_CP_HOST", control_plane.host)
     monkeypatch.setenv("S0MA_LICENSE_KEY", control_plane.key)
     monkeypatch.setenv("S0MA_LAUNCH_OFFLINE_INSTALL", "1")
+    monkeypatch.setenv("UV_CONFIG_FILE", str(only_from(links)))
     return control_plane

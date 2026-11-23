@@ -15,7 +15,9 @@ so.
 from __future__ import annotations
 
 import json
+import re
 import subprocess
+import tomllib
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -87,6 +89,134 @@ def test_install_really_installs_a_working_copy_of_s0ma(
     assert state["entitlement"] == "ok"
     assert state["last_error"] is None
     assert state["latest_seen"] == "0.18.0"
+
+
+def test_pytest_is_installed_with_s0ma_in_the_same_environment(
+    run_cli: Any, keyed: FakeControlPlane, isolated_home: Path, launcher: ModuleType
+) -> None:
+    """`s0ma test` runs pytest from this environment, so the install puts it there."""
+    code, _, err = run_cli("install")
+
+    assert code == 0, err
+    toolchain = isolated_home / "toolchains" / "0.18.0"
+    assert (
+        launcher.installed_version_of(toolchain, "pytest")
+        == fake_control_plane.FAKE_PYTEST_VERSION
+    )
+
+
+def test_uv_is_asked_for_the_checked_files_and_pytest_in_one_call(
+    run_cli: Any,
+    keyed: FakeControlPlane,
+    launcher: ModuleType,
+    isolated_home: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    seen: list[list[str]] = []
+    real = subprocess.run
+
+    def watching(command: Any, **kwargs: Any) -> Any:
+        seen.append([str(part) for part in command])
+        return real(command, **kwargs)
+
+    monkeypatch.setattr(launcher.subprocess, "run", watching)
+
+    assert run_cli("install")[0] == 0
+    partial = isolated_home / "toolchains" / "0.18.0.partial"
+    venv, pip = seen
+    assert venv[1:] == ["venv", "--relocatable", "--offline", str(partial)]
+    python = launcher.venv_python(isolated_home / "toolchains" / "0.18.0")
+    assert python is not None
+    interpreter = partial / python.relative_to(isolated_home / "toolchains" / "0.18.0")
+    downloads = isolated_home / "downloads"
+    assert pip[1:] == [
+        "pip",
+        "install",
+        "--python",
+        str(interpreter),
+        "--offline",
+        *[str(downloads / wheel.name) for wheel in keyed.versions["0.18.0"]],
+        "pytest>=7.0",
+    ]
+
+
+def test_the_control_plane_is_asked_exactly_what_it_was_asked_before(
+    run_cli: Any, keyed: FakeControlPlane
+) -> None:
+    """Pytest comes from the package index through uv; the launcher's own
+    requests are the manifest and the four files, in that order, with the
+    same three headers each, and nothing else."""
+    assert run_cli("install")[0] == 0
+
+    names = [wheel.name for wheel in keyed.versions["0.18.0"]]
+    assert keyed.requests == [
+        "GET /api/dist/manifest?version=latest",
+        *[f"GET /dist/0.18.0/{name}" for name in names],
+    ]
+    host = keyed.host.removeprefix("http://")
+    expected = [
+        ("Accept-Encoding", "identity"),
+        ("Host", host),
+        ("Authorization", "Bearer " + keyed.key),
+        ("Accept", "*/*"),
+        ("User-Agent", "s0ma-launch"),
+        ("Connection", "close"),
+    ]
+    assert keyed.headers == [expected] * len(keyed.requests)
+
+
+def test_a_failed_uv_install_leaves_nothing_installed(
+    run_cli: Any,
+    keyed: FakeControlPlane,
+    launcher: ModuleType,
+    isolated_home: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """uv refuses the one call that installs s0ma and pytest: nothing is in place."""
+    real = subprocess.run
+
+    def refusing(command: Any, **kwargs: Any) -> Any:
+        if [str(part) for part in command[1:3]] == ["pip", "install"]:
+            return subprocess.CompletedProcess(
+                command, 1, "", "  x No solution found when resolving dependencies\n"
+            )
+        return real(command, **kwargs)
+
+    monkeypatch.setattr(launcher.subprocess, "run", refusing)
+
+    code, _, err = run_cli("install")
+
+    assert code == 3
+    assert "s0ma could not install the s0ma packages for 0.18.0" in err
+    assert launcher.installed_versions(isolated_home) == []
+    assert not (isolated_home / "toolchains" / "0.18.0").exists()
+    partial = isolated_home / "toolchains" / "0.18.0.partial"
+    assert not (partial / launcher.COMPLETE_MARKER).exists()
+    state = state_of(isolated_home)
+    assert state["installed"] == []
+    assert state["current"] is None
+    # The next run sweeps the unfinished environment away, as before.
+    monkeypatch.setattr(launcher.subprocess, "run", real)
+    code, _, err = run_cli("install")
+    assert code == 0, err
+    assert "Cleared away 1 unfinished install." in err
+    assert launcher.installed_versions(isolated_home) == ["0.18.0"]
+
+
+def test_the_pytest_floor_is_the_one_the_packages_state(launcher: ModuleType) -> None:
+    """The launcher asks for the pytest the packages' own development extras ask for."""
+    packages = Path(__file__).resolve().parents[3] / "packages"
+    floors: set[str] = set()
+    for pyproject in sorted(packages.glob("*/pyproject.toml")):
+        project = tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]
+        for requirements in (project.get("optional-dependencies") or {}).values():
+            for requirement in requirements:
+                found = re.fullmatch(r"pytest\s*>=\s*([0-9][0-9.]*)", requirement.strip())
+                if found:
+                    floors.add(found.group(1))
+    assert floors, "no package states a pytest floor"
+    assert len(floors) == 1, f"the packages state more than one pytest floor: {floors}"
+    assert launcher.PYTEST_REQUIREMENT == f"pytest>={floors.pop()}"
 
 
 def test_after_installing_that_copy_is_what_runs_here(
@@ -333,6 +463,7 @@ def test_installing_without_a_key_asks_the_control_plane_nothing(
     fake_control_plane.build_fake_index(links, launcher.LAUNCHER_VERSION)
     monkeypatch.setenv("UV_FIND_LINKS", str(links))
     monkeypatch.setenv("UV_NO_INDEX", "1")
+    monkeypatch.setenv("UV_CONFIG_FILE", str(fake_control_plane.only_from(links)))
     monkeypatch.setenv("S0MA_LAUNCH_OFFLINE_INSTALL", "1")
 
     code, _, err = run_cli("install")
@@ -341,6 +472,11 @@ def test_installing_without_a_key_asks_the_control_plane_nothing(
     assert f"s0ma {launcher.LAUNCHER_VERSION} is installed." in err
     assert "there is no key on this machine" not in err
     assert control_plane.requests == [], "nothing is asked without a key"
+    toolchain = launcher.managed_toolchain_dir(launcher.s0ma_home(), launcher.LAUNCHER_VERSION)
+    assert (
+        launcher.installed_version_of(toolchain, "pytest")
+        == fake_control_plane.FAKE_PYTEST_VERSION
+    )
 
 
 def test_installing_without_uv_says_how_to_get_it(
@@ -461,6 +597,7 @@ def test_uv_is_never_handed_the_key(
 
     assert run_cli("install")[0] == 0
     assert seen, "uv was run"
+    assert any(command[-1] == launcher.PYTEST_REQUIREMENT for command, _ in seen)
     for command, env in seen:
         assert keyed.key not in " ".join(command)
         assert "S0MA_LICENSE_KEY" not in env

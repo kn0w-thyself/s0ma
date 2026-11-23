@@ -487,6 +487,21 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Fixed
 
+- **`s0ma test` works where the launcher installed s0ma.** It runs a
+  project's tests with pytest from s0ma's own environment, and nothing put
+  pytest in the private environment `s0ma-launch install` builds, so on a
+  machine the Claude plugin set up it stopped with "pytest is not importable"
+  and exit 2. Both install routes now ask uv for `pytest>=7.0`, the floor the
+  packages' development extras state, in the same call that installs s0ma, so
+  a refused install still leaves nothing half-built. uv fetches pytest from
+  the package index like s0ma's other open-source dependencies; the
+  launcher's own requests to the control plane are unchanged, and uv never
+  sees a key. A copy installed before this change has no pytest: run
+  `s0ma-launch install` to build it again. The first-run check now runs
+  `s0ma test` in the fresh project it makes, and the plugin's README, its
+  privacy notes, the trust model and the Claude integration guide say that
+  an install fetches pytest.
+
 - **`s0ma check` reports a name nothing binds.** A signature that said
   `-> dict[str, Any]` with no `typing.Any` in `requires:` used to check clean,
   build, and raise `NameError` when the build loaded. `check` and `build` now

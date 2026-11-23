@@ -20,6 +20,11 @@ does exactly what a subscriber's machine does:
   puts that version in place without the fake control plane hearing a single
   request, and ``serve`` starts the real ``s0ma-lang-mcp`` from it.
 
+After the installs in T1 and T4, the installed ``s0ma`` makes a fresh project
+with ``s0ma new project`` and runs ``s0ma test`` in it, which needs the pytest
+the launcher installs beside s0ma: it must exit 0 with the starter tests
+passed.
+
 **What this costs, and why it is not in the ordinary run.** Eight wheel builds,
 five real ``uv`` environments and four real server starts. On a machine whose uv
 cache already holds s0ma's dependencies that is about ten seconds; on a cold one
@@ -453,7 +458,9 @@ def launcher_at_version(into: Path, version_k: str) -> Path:
 
 
 @pytest.fixture(scope="session")
-def offline_uv(tmp_path_factory: pytest.TempPathFactory, wheels_v: Path) -> bool:
+def offline_uv(
+    tmp_path_factory: pytest.TempPathFactory, wheels_v: Path, launcher: ModuleType
+) -> bool:
     """Whether uv can install the real wheels without the network. Proved, not assumed.
 
     The real wheels have real dependencies - lark, the MCP SDK, and what that
@@ -464,7 +471,8 @@ def offline_uv(tmp_path_factory: pytest.TempPathFactory, wheels_v: Path) -> bool
     that ever leaves the machine - and the run says so out loud.
 
     The proof is a dry run: the same resolution the install will do, against the
-    same wheels, with nothing written and the network off.
+    same wheels and the same pytest requirement, with nothing written and the
+    network off.
     """
     probe = tmp_path_factory.mktemp("uv-cache-probe")
     made = subprocess.run(
@@ -486,6 +494,7 @@ def offline_uv(tmp_path_factory: pytest.TempPathFactory, wheels_v: Path) -> bool
             str(interpreter),
             "--dry-run",
             *[str(wheel) for wheel in sorted(wheels_v.glob("*.whl"))],
+            launcher.PYTEST_REQUIREMENT,
         ],
         capture_output=True,
         text=True,
@@ -790,6 +799,55 @@ def toolchain_of(launcher: ModuleType, home: Path, version: str) -> Path:
     return directory
 
 
+#: What pytest prints when every test it ran passed: "N passed", and no
+#: "failed" or "error" beside it.
+PASSED_LINE = re.compile(r"=+ (\d+) passed[^=]* in [0-9.]+s =+")
+
+
+def s0ma_test_in_a_fresh_project(
+    launcher: ModuleType, toolchain: Path, environment: dict[str, str], parent: Path
+) -> str:
+    """Make a project with the installed ``s0ma`` and run its ``s0ma test`` there.
+
+    ``s0ma test`` runs pytest from the toolchain's own environment, so this is
+    the proof that the install put pytest there. Returns pytest's pass line.
+    """
+    programs = launcher.bin_dir_of(toolchain)
+    assert programs is not None, "the install left no programs behind"
+    cli = launcher.find_program(programs, launcher.CLI_PROGRAM)
+    assert cli is not None, "the install left no s0ma program behind"
+    values = {name: value for name, value in environment.items() if name != "VIRTUAL_ENV"}
+    parent.mkdir(parents=True, exist_ok=True)
+    made = subprocess.run(
+        [str(cli), "new", "project", "demo", "--name", "demo"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env=values,
+        cwd=str(parent),
+        timeout=COMMAND_TIMEOUT_SECONDS,
+        check=False,
+    )
+    assert made.returncode == 0, f"s0ma new project exited {made.returncode}:\n{made.stderr}"
+    tested = subprocess.run(
+        [str(cli), "test"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env=values,
+        cwd=str(parent / "demo"),
+        timeout=COMMAND_TIMEOUT_SECONDS,
+        check=False,
+    )
+    said = f"stdout:\n{tested.stdout}\nstderr:\n{tested.stderr}"
+    assert tested.returncode == 0, f"s0ma test exited {tested.returncode}\n{said}"
+    found = PASSED_LINE.search(tested.stdout)
+    assert found is not None, f"s0ma test printed no pass line\n{said}"
+    assert int(found.group(1)) > 0, said
+    assert "failed" not in found.group(0) and "error" not in found.group(0), said
+    return found.group(0).strip("= ")
+
+
 def wait_for_installed(home: Path, version: str, *, seconds: float = UPDATE_WAIT_SECONDS) -> float:
     """Poll ``state.json`` until *version* is installed; return how long it took."""
     started = time.monotonic()
@@ -848,6 +906,13 @@ def test_t1_install_then_serve_the_real_mcp_server(
     assert launcher.find_program(programs, launcher.MCP_PROGRAM) is not None
     assert launcher.find_program(programs, launcher.CLI_PROGRAM) is not None
     note(f"installed s0ma {version_v} into {toolchain.name} with the real wheels")
+    assert launcher.installed_version_of(toolchain, "pytest") is not None, "no pytest"
+
+    with Phase("running s0ma test in a fresh project with the installed s0ma"):
+        passed = s0ma_test_in_a_fresh_project(
+            launcher, toolchain, environment, smoke_project.parent / "fresh"
+        )
+    note(f"s0ma test in a fresh project: {passed}")
 
     # The key travelled in the Authorization header and nowhere else.
     assert plane.authorizations, "the plane was never asked for anything"
@@ -1088,6 +1153,13 @@ def test_t4_a_keyless_install_from_the_wheels_this_tree_built(
     assert programs is not None, "the install left no programs behind"
     assert launcher.find_program(programs, launcher.CLI_PROGRAM) is not None
     note(f"installed s0ma {version_k} from the wheels this tree built, with no key")
+    assert launcher.installed_version_of(toolchain, "pytest") is not None, "no pytest"
+
+    with Phase("running s0ma test in a fresh project with the keyless copy"):
+        passed = s0ma_test_in_a_fresh_project(
+            launcher, toolchain, environment, smoke_project.parent / "fresh"
+        )
+    note(f"s0ma test in a fresh project: {passed}")
 
     # What it wrote down: only what is true. No control plane was asked.
     state = state_of(smoke_home)
