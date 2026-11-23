@@ -247,6 +247,139 @@ def test_the_hook_exits_0_even_with_its_launcher_missing(tmp_path: Path) -> None
 
 
 # ---------------------------------------------------------------------------
+# hooks/session-start.sh, with s0ma turned off in the project
+# ---------------------------------------------------------------------------
+
+#: The line the launcher prints when s0ma is off in the project.
+OFF_LINE = (
+    "s0ma is turned off for this project. Do not use s0ma or its tools here, "
+    "do not offer studi0, and do not bring s0ma up unless the person does; "
+    "/s0ma:on turns it back on."
+)
+
+
+def write_project_prefs(project: Path, content: str) -> None:
+    folder = project / ".s0ma"
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / "preferences.json").write_text(content, encoding="utf-8", newline="\n")
+
+
+@needs_sh
+@pytest.mark.parametrize(
+    "content",
+    ['{"s0ma": "off"}', '{\n  "s0ma" : "off",\n  "use": "always"\n}\n'],
+    ids=["one line", "spread over lines"],
+)
+def test_the_hook_with_a_failing_uv_says_nothing_when_s0ma_is_off(
+    tmp_path: Path, content: str
+) -> None:
+    bin_dir = tmp_path / "bin"
+    stand_in_uv(bin_dir, 'echo "uv: no Python here" >&2\nexit 2\n')
+    write_project_prefs(tmp_path, content)
+    result = run_sh(HOOK_SCRIPT, isolated_env(tmp_path, [bin_dir]))
+    assert (result.returncode, result.stdout, result.stderr) == (0, "", "")
+
+
+@needs_sh
+def test_the_hook_with_no_uv_says_nothing_when_s0ma_is_off(tmp_path: Path) -> None:
+    skip_if_uv_is_fixed()
+    write_project_prefs(tmp_path, '{"s0ma": "off"}')
+    result = run_sh(HOOK_SCRIPT, isolated_env(tmp_path, [tmp_path / "empty"]))
+    assert (result.returncode, result.stdout, result.stderr) == (0, "", "")
+
+
+@needs_sh
+@pytest.mark.parametrize(
+    "content",
+    ['{"s0ma": "on"}', '{"use": "always"}', '{"s0ma": "offline"}', "{ not json"],
+    ids=["on", "another key", "another value", "not json"],
+)
+def test_the_hook_speaks_as_before_when_s0ma_is_not_off(
+    tmp_path: Path, content: str
+) -> None:
+    bin_dir = tmp_path / "bin"
+    stand_in_uv(bin_dir, "exit 2\n")
+    write_project_prefs(tmp_path, content)
+    result = run_sh(HOOK_SCRIPT, isolated_env(tmp_path, [bin_dir]))
+    assert result.returncode == 0
+    assert result.stdout == message() + "\n"
+    assert result.stderr == ""
+
+
+@needs_sh
+def test_the_hook_reads_the_working_directory_when_claude_names_no_project(
+    tmp_path: Path,
+) -> None:
+    bin_dir = tmp_path / "bin"
+    stand_in_uv(bin_dir, "exit 2\n")
+    project = tmp_path / "work"
+    project.mkdir()
+    write_project_prefs(project, '{"s0ma": "off"}')
+    env = isolated_env(tmp_path, [bin_dir])
+    del env["CLAUDE_PROJECT_DIR"]
+    assert SH is not None
+    result = subprocess.run(  # noqa: S603 - a fixed, local command
+        [SH, posix(HOOK_SCRIPT)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env=env,
+        cwd=str(project),
+        timeout=TIMEOUT,
+        check=False,
+    )
+    assert (result.returncode, result.stdout, result.stderr) == (0, "", "")
+    # Another folder, with no file, still hears the message.
+    other = tmp_path / "other"
+    other.mkdir()
+    again = subprocess.run(  # noqa: S603 - a fixed, local command
+        [SH, posix(HOOK_SCRIPT)],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        env=env,
+        cwd=str(other),
+        timeout=TIMEOUT,
+        check=False,
+    )
+    assert again.stdout == message() + "\n"
+
+
+@needs_sh
+def test_the_hook_passes_the_launchers_off_line_through(tmp_path: Path) -> None:
+    """With a uv that runs the launcher, the launcher says the one off line."""
+    bin_dir = tmp_path / "bin"
+    stand_in_uv(
+        bin_dir,
+        "while [ $# -gt 0 ]; do\n"
+        f'    if [ "$1" = --script ]; then shift; exec "{posix(sys.executable)}" "$@"; fi\n'
+        "    shift\n"
+        "done\n"
+        "exit 9\n",
+    )
+    write_project_prefs(tmp_path, '{"s0ma": "off"}')
+    result = run_sh(HOOK_SCRIPT, isolated_env(tmp_path, [bin_dir]))
+    assert (result.returncode, result.stderr) == (0, "")
+    assert json.loads(result.stdout) == {
+        "hookSpecificOutput": {
+            "additionalContext": OFF_LINE,
+            "hookEventName": "SessionStart",
+        }
+    }
+
+
+@needs_sh
+def test_the_hook_stays_posix_and_uses_no_new_program() -> None:
+    """``grep`` is the one program the off check adds; no bashism comes with it."""
+    text = HOOK_SCRIPT.read_text(encoding="utf-8")
+    assert text.startswith("#!/bin/sh\n")
+    for bashism in ("[[ ", "==", "function ", "local ", "$(<", "source "):
+        assert bashism not in text, bashism
+    assert "CLAUDE_PROJECT_DIR" in text
+    assert "grep -q" in text
+
+
+# ---------------------------------------------------------------------------
 # The stand-in server: a small client.
 # ---------------------------------------------------------------------------
 
