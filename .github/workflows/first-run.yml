@@ -1,0 +1,128 @@
+# The first-run gate: the Claude Code plugin on a machine that has just met it,
+# loaded by the real Claude Code, on Linux, macOS and Windows.
+#
+# The ordinary gate (ci.yml) cannot cover this. Its "no uv on this machine"
+# tests skip wherever uv sits in a place no environment can hide, and nothing
+# there runs the real Claude Code. Here each system runs two legs:
+#
+#   uv absent  — uv is proved absent (moved out of view if the runner image
+#                has one; the runner is thrown away afterwards), then the
+#                session-start hook, the server's stand-in and
+#                `claude --plugin-dir <dir> mcp list` are checked, and a
+#                broken copy of the plugin is shown to fail the same checks.
+#   uv present — uv as ci.yml installs it, no license key, a fresh S0MA_HOME:
+#                the real-wheel end-to-end test, then the hook and the server
+#                with nothing installed, then a keyless install from wheels
+#                built in the job at a version no package index can hold.
+#
+# All of it is driven by scripts/first_run_check.py, standard library only.
+# Nothing here signs in to anything or holds a secret: Claude Code runs with a
+# fresh config directory and no key, and only the commands that need neither
+# (`--version`, `plugin validate`, `mcp list`) are used. No model runs.
+name: first-run
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  # The one Claude Code version this job loads the plugin with. To move it,
+  # change this line, push, and read the new run's `mcp list` and `plugin
+  # validate` lines before merging; the driver fails if `claude --version`
+  # reports anything else.
+  CLAUDE_CODE_VERSION: "2.1.330"
+
+jobs:
+  # The export checks the plugin's skills against the workspace, so it needs
+  # uv. It is written once here and handed to the uv-absent legs as a tar
+  # file, which keeps the executable bits an artifact's zip would drop. The
+  # export is byte-identical on every system, so one build serves all three.
+  export:
+    name: export the marketplace tree
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.9.21"
+          python-version: "3.13"
+
+      - name: Export, then pack it with its modes
+        run: |
+          uv sync --all-packages --all-extras
+          uv run python scripts/export_claude_marketplace.py --out "$RUNNER_TEMP/export"
+          tar -cvf "$RUNNER_TEMP/export.tar" -C "$RUNNER_TEMP/export" .
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: marketplace-export
+          path: ${{ runner.temp }}/export.tar
+          if-no-files-found: error
+
+  first-run:
+    name: first-run (${{ matrix.os }}, uv ${{ matrix.uv }})
+    runs-on: ${{ matrix.os }}
+    needs: export
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        uv: [absent, present]
+    steps:
+      - uses: actions/checkout@v7
+
+      # Claude Code is installed from npm, pinned to the exact version above.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22.23.5"
+
+      - name: Install Claude Code ${{ env.CLAUDE_CODE_VERSION }}
+        run: npm install -g --no-fund --no-audit "@anthropic-ai/claude-code@${{ env.CLAUDE_CODE_VERSION }}"
+
+      # uv absent: the runner's own Python runs the driver, and uv is never
+      # installed. The driver hides any uv the image brings.
+      - name: Set up Python (uv absent)
+        if: matrix.uv == 'absent'
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Fetch the exported tree (uv absent)
+        if: matrix.uv == 'absent'
+        uses: actions/download-artifact@v7
+        with:
+          name: marketplace-export
+          path: ${{ runner.temp }}/marketplace-export
+
+      - name: The first run with no uv
+        if: matrix.uv == 'absent'
+        run: python scripts/first_run_check.py uv-absent --hide-uv --exported-tar "${{ runner.temp }}/marketplace-export/export.tar" --claude claude --claude-version ${{ env.CLAUDE_CODE_VERSION }}
+
+      # uv present: installed exactly as ci.yml installs it.
+      - name: Install uv (uv present)
+        if: matrix.uv == 'present'
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.9.21"
+          python-version: "3.13"
+          enable-cache: true
+
+      - name: Sync workspace (all packages, all extras)
+        if: matrix.uv == 'present'
+        run: uv sync --all-packages --all-extras
+
+      - name: The real-wheel end-to-end test, every case
+        if: matrix.uv == 'present'
+        run: uv run python scripts/first_run_check.py e2e
+
+      - name: The first run with uv and no license key
+        if: matrix.uv == 'present'
+        run: uv run python scripts/first_run_check.py uv-present --claude claude --claude-version ${{ env.CLAUDE_CODE_VERSION }}

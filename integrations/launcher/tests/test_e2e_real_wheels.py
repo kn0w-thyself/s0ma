@@ -404,7 +404,15 @@ def wheels_keyless(
     for a package index. Built from a bumped copy of this tree, exactly as
     :func:`wheels_w` is, with the umbrella's manifest added and moved too.
     """
-    work = tmp_path_factory.mktemp("wheels-keyless")
+    return build_keyless_wheels(tmp_path_factory.mktemp("wheels-keyless"), version_v, version_k)
+
+
+def build_keyless_wheels(work: Path, version_v: str, version_k: str) -> Path:
+    """Build all five real wheels at *version_k* under *work*; return their directory.
+
+    A plain function rather than only a fixture, so that
+    ``scripts/first_run_check.py`` builds its keyless wheels the same way.
+    """
     with Phase(f"building all five real wheels of s0ma {version_k} from a bumped copy"):
         source = copy_buildable_tree(work / "tree")
         bump_lockstep_sites(source, version_v, version_k)
@@ -423,10 +431,19 @@ def keyless_launcher(tmp_path_factory: pytest.TempPathFactory, version_k: str) -
     Only the ``LAUNCHER_VERSION`` line differs from the launcher in this tree,
     which is exactly what a release cut changes in it.
     """
+    return launcher_at_version(tmp_path_factory.mktemp("keyless-launcher"), version_k)
+
+
+def launcher_at_version(into: Path, version_k: str) -> Path:
+    """Write a copy of this launcher into *into* whose own version is *version_k*.
+
+    A plain function rather than only a fixture, so that
+    ``scripts/first_run_check.py`` makes its keyless launcher the same way.
+    """
     text = LAUNCHER_FILE.read_text(encoding="utf-8")
     found = re.findall(r'(?m)^LAUNCHER_VERSION = "([^"]*)"$', text)
     assert len(found) == 1, f"the launcher states its version {len(found)} times"
-    copy = tmp_path_factory.mktemp("keyless-launcher") / LAUNCHER_FILE.name
+    copy = into / LAUNCHER_FILE.name
     copy.write_text(
         text.replace(f'LAUNCHER_VERSION = "{found[0]}"', f'LAUNCHER_VERSION = "{version_k}"', 1),
         encoding="utf-8",

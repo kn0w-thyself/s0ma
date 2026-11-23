@@ -161,6 +161,33 @@ The control-plane site (installer, distribution endpoints) deploys **manually** 
 S0MA_SMOKE_KEY=<key> scripts/verify_served.sh --version X.Y.Z
 ```
 
+## ☐ OWNER — the first run of the Claude plugin, by hand
+
+The `first-run` workflow ([`.github/workflows/first-run.yml`](../.github/workflows/first-run.yml)) covers half of the plugin's first run on every pull request. On Linux, macOS and Windows, with uv absent and with uv present, it runs the session-start hook's command as Claude Code runs it, speaks MCP to the plugin's server command, and has a pinned Claude Code validate the plugin and report its server Connected in `claude --plugin-dir <plugin> mcp list`, both from `integrations/claude/plugin` and from the tree `scripts/export_claude_marketplace.py` writes. With uv it also installs s0ma with no license key from wheels built in the job and lists the real server's tools. It cannot prove the rest: no model runs, so no skill is ever followed; no hook fires inside a real session; Claude Code is never signed in; the Claude Desktop app is never opened; and nobody looks at what a person sees.
+
+That half is this checklist. Run it after a release is cut and before the plugin is published anywhere, once per host: the Desktop app's Code tab and the terminal, each on macOS and on Windows.
+
+**A clean account** is one where all of these hold:
+
+- no `uv` on the `PATH`, and none in the places the launcher looks (`~/.local/bin`, `~/.cargo/bin`, `/opt/homebrew/bin` and `/usr/local/bin`; on Windows `%USERPROFILE%\.local\bin`, `%LOCALAPPDATA%\uv\bin`, `%USERPROFILE%\.cargo\bin` and `%ProgramFiles%\uv`);
+- no `~/.s0ma` folder;
+- no `s0ma` or `s0ma-mcp` command anywhere on the `PATH`;
+- no s0ma plugin, marketplace or setting in `~/.claude`;
+- Claude Code or the Claude Desktop app at its current version, and signed in;
+- the network on.
+
+**The steps**, and what to look for at each:
+
+1. **Install the plugin from inside Claude**, with `/plugin`. No settings dialog opens and nothing asks for a key.
+2. **Start a first session.** No hook error and no failed server anywhere on screen. Asked what it knows about s0ma, Claude says s0ma is not set up here yet and names `/s0ma:setup`. `/mcp` shows the s0ma server connected.
+3. **Run `/s0ma:setup`.** It finds no uv, offers the one install command for the system and asks before running it, then says to restart Claude. Run it again after the restart: it asks before installing s0ma, installs it with no key, and ends on `s0ma doctor` reporting `ok`. A new session afterwards begins with no line about s0ma at all.
+4. **Build a new project with `/s0ma:new`.** The project is written where you agreed, and its checks pass.
+5. **Open studi0** on that project (ask Claude to, or run `s0ma studi0`). The page loads and draws the project's graph.
+6. **Change the update setting by asking**, for example "tell me about s0ma updates instead of installing them". Claude saves it with `s0ma-launch set update notify`, and `s0ma-launch status` then reports `notify`.
+7. **Remove s0ma** by following [Removing s0ma](uninstall.md). Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
+
+Write down the host, the system, the Claude version and the s0ma version for each pass, and stop the publication at the first step that does not look as described.
+
 ## Rollback
 
 Put prod back on a known-good release by moving the manifest pointer (wheel objects stay immutable), then prove it:

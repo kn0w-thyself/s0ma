@@ -678,7 +678,9 @@ STAGES: list[Stage] = [
             ),
             (
                 "integrations test suite",
-                _cmd([*PY, "pytest", "integrations", "-q"], ROOT),
+                # -rs: say why each skipped test skipped, so a CI log shows what
+                # did not run on that system.
+                _cmd([*PY, "pytest", "integrations", "-q", "-rs"], ROOT),
             ),
         ),
     ),

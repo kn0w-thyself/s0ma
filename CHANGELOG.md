@@ -13,6 +13,21 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Added
 
+- **CI runs the Claude Code plugin's first run under the real Claude Code.**
+  A new `first-run` workflow runs on Linux, macOS and Windows, each with uv
+  absent and with uv present. With no uv, it proves uv is nowhere the plugin
+  looks, runs the session-start hook's command as Claude Code runs it, speaks
+  MCP to the server's stand-in, and has a pinned Claude Code validate the
+  plugin and report its server connected; a copy with the message removed or
+  the stand-in broken must fail the same checks. With uv and no license key,
+  it runs the real-wheel end-to-end test for the first time in CI, then
+  installs s0ma from wheels built in the job at a version no package index
+  can hold and lists the real server's tools through the plugin's server
+  command. Both legs also load the plugin from the exported marketplace tree.
+  The integrations suite in `scripts/check.py` now says why each skipped test
+  skipped, and `docs/RELEASING.md` gains the checklist for the half of the
+  first run only a person can do.
+
 - **The Claude Code plugin asks nothing at install, and a first session shows
   no error.** The plugin has no settings any more, so no settings dialog opens
   when it is installed. A license key is saved with `s0ma-launch activate` in
