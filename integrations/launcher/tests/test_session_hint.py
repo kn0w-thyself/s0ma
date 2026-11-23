@@ -61,8 +61,8 @@ PIN_NOT_INSTALLED_CONTEXT = (
 )
 KEY_REFUSED = (
     "The last time s0ma used your license key, it was refused. "
-    "Put it in the s0ma plugin's settings in Claude, or run `s0ma-launch "
-    "activate` in a terminal to save it on this machine. "
+    "Run `s0ma-launch activate` in a terminal to save it on this machine, or in "
+    "Claude Desktop put it in the s0ma extension's settings. "
     "Never type a license key into a chat."
 )
 ACCESS_ENDED = (

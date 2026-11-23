@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Keep the Claude integration in step with the monorepo it ships from.
 
-Three things under ``integrations/`` are copies of something else, and a copy
+Four things under ``integrations/`` are copies of something else, and a copy
 that drifts is a defect nobody sees until a user has it installed:
 
 1. **The launcher, twice.** ``integrations/launcher/s0ma_launch.py`` is the
@@ -17,7 +17,15 @@ that drifts is a defect nobody sees until a user has it installed:
    license key it is the version the launcher installs, so a stale one ships
    a plugin that installs the previous release. That line is rewritten in the
    launcher's source, and the two copies follow it.
-3. **The feedback skill's body.** ``s0ma new project`` scaffolds a
+3. **The launcher's lock file.** The plugin runs its launcher with
+   ``uv run --frozen --script``, which reads ``s0ma_launch.py.lock`` beside
+   the script: newer uv refuses ``--frozen`` with no lock file there. The
+   lock is written by ``uv lock --script`` next to the source launcher and
+   the plugin carries a byte-for-byte copy beside its own. (The Desktop
+   extension runs its copy as a project with a ``pyproject.toml`` and needs
+   none.) Whether the lock still matches the launcher's header is a uv
+   question, so ``integrations/claude/tests/test_plugin_rules.py`` asks uv.
+4. **The feedback skill's body.** ``s0ma new project`` scaffolds a
    ``/s0ma-feedback`` skill into every project; the plugin ships the same
    text under its own invocation name. Two copies of one journey inside one
    release is two journeys. Only the front matter's ``name`` differs - the
@@ -74,6 +82,10 @@ LAUNCHER_COPIES: tuple[str, ...] = (
     "integrations/claude/plugin/launcher/s0ma_launch.py",
     "integrations/claude/desktop/server/s0ma_launch.py",
 )
+
+#: The launcher's lock file, and the one shipped copy of it.
+LOCK_SOURCE = "integrations/launcher/s0ma_launch.py.lock"
+LOCK_COPIES: tuple[str, ...] = ("integrations/claude/plugin/launcher/s0ma_launch.py.lock",)
 
 #: The monorepo's lockstep version, read from one manifest. s0ma-lang-mcp is the
 #: one the integration ships (``s0ma-lang-mcp`` is the server the launcher starts);
@@ -217,7 +229,7 @@ def scaffolded_feedback_body() -> str:
 
 
 # ---------------------------------------------------------------------------
-# The three things kept in step
+# The things kept in step
 # ---------------------------------------------------------------------------
 
 
@@ -316,6 +328,36 @@ def _copy_bytes(target: Path, data: bytes) -> Callable[[], None]:
         target.write_bytes(data)
 
     return write
+
+
+def lock_findings(root: Path) -> list[Finding]:
+    """The plugin's lock file is a byte-for-byte copy of the source's."""
+    source = root / LOCK_SOURCE
+    if not source.is_file():
+        return [
+            Finding(
+                LOCK_SOURCE,
+                "is missing; write it with `uv lock --script "
+                "integrations/launcher/s0ma_launch.py`.",
+                None,
+                "",
+            )
+        ]
+    original = source.read_bytes()
+    findings: list[Finding] = []
+    for relative in LOCK_COPIES:
+        target = root / relative
+        if target.is_file() and target.read_bytes() == original:
+            continue
+        problem = (
+            f"is missing; it is a byte-for-byte copy of {LOCK_SOURCE}."
+            if not target.is_file()
+            else f"is not a byte-for-byte copy of {LOCK_SOURCE}."
+        )
+        findings.append(
+            Finding(relative, problem, _copy_bytes(target, original), f"copied from {LOCK_SOURCE}")
+        )
+    return findings
 
 
 def json_version_findings(root: Path, version: str) -> list[Finding]:
@@ -455,6 +497,7 @@ def collect(root: Path) -> list[Finding]:
     except SyncError as exc:
         version, unreadable = None, exc
     findings = launcher_findings(root, version)
+    findings.extend(lock_findings(root))
     if unreadable is not None or version is None:
         findings.append(Finding(VERSION_SOURCE, str(unreadable), None, ""))
     else:
@@ -473,7 +516,8 @@ def _summary(root: Path) -> str:
         return "the Claude integration is in step."
     return (
         f"the Claude integration is in step with the monorepo at {version}: "
-        f"{len(LAUNCHER_COPIES)} launcher copies, {sites} version sites, "
+        f"{len(LAUNCHER_COPIES)} launcher copies, {len(LOCK_COPIES)} lock file copy, "
+        f"{sites} version sites, "
         f"the launcher's own version, 1 skill body."
     )
 
@@ -504,8 +548,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
             "Keep the Claude plugin and Desktop extension in step with the "
-            "monorepo: the two launcher copies, the three version sites, the "
-            "launcher's own version and the feedback skill's body."
+            "monorepo: the two launcher copies, the lock file copy, the three "
+            "version sites, the launcher's own version and the feedback skill's "
+            "body."
         )
     )
     mode = parser.add_mutually_exclusive_group(required=True)

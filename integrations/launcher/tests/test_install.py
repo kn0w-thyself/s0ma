@@ -202,7 +202,8 @@ def test_a_key_the_control_plane_refuses_says_where_a_key_goes(
 
     assert code == 4
     assert "did not accept this license key" in err
-    assert "plugin's settings" in err
+    assert "s0ma extension's settings" in err
+    assert "plugin's settings" not in err
     assert "s0ma-launch activate" in err
     assert "Never type a license key into a chat." in err
     assert state_of(isolated_home)["entitlement"] == "invalid_key"

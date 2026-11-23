@@ -112,7 +112,7 @@ def test_a_key_shows_as_present_and_four_characters_only(
     _, out, _ = run_cli("status")
 
     assert "License key:  present (s0ma_...wxyz)" in out
-    assert "from the plugin's settings" in out
+    assert "from S0MA_LICENSE_KEY, which the Desktop extension's settings set" in out
     assert "not_a_real_key" not in out
     assert KEY_SHAPED.search(out) is None
 
@@ -433,6 +433,7 @@ def test_every_frozen_sub_command_exists(launcher: ModuleType) -> None:
         "activate",
         "session-hint",
         "run",
+        "set",
     }
 
 
