@@ -89,6 +89,15 @@ TOO_LONG = (
 # ---------------------------------------------------------------------------
 
 
+@pytest.fixture
+def with_a_key(monkeypatch: pytest.MonkeyPatch, fake_key: str) -> str:
+    """A license key, as the plugin sets one: these tests are about the keyed
+    lines. With no key, a newer s0ma comes with the plugin instead, and
+    ``test_keyless.py`` holds what the hint says then."""
+    monkeypatch.setenv("S0MA_LICENSE_KEY", fake_key)
+    return fake_key
+
+
 def write_state(launcher: ModuleType, home: Path, **fields: Any) -> Path:
     """Write ``launcher/state.json`` with *fields* over the defaults."""
     state = launcher.default_state()
@@ -273,6 +282,7 @@ def test_an_untroubled_entitlement_says_nothing(
     isolated_home: Path,
     make_toolchain: Any,
     entitlement: str,
+    with_a_key: str,
 ) -> None:
     make_toolchain("0.18.0")
     write_state(launcher, isolated_home, entitlement=entitlement)
@@ -291,6 +301,7 @@ def test_notify_names_both_versions_and_the_update_skill(
     isolated_home: Path,
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
+    with_a_key: str,
 ) -> None:
     make_toolchain("0.18.0")
     write_state(launcher, isolated_home, entitlement="ok", latest_seen="0.19.0")
@@ -302,7 +313,7 @@ def test_notify_names_both_versions_and_the_update_skill(
 
 
 def test_the_stored_setting_is_read_when_the_variable_is_unset(
-    run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any
+    run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any, with_a_key: str
 ) -> None:
     """``notify`` in ``config.json`` does the same as ``S0MA_UPDATE=notify``."""
     make_toolchain("0.18.0")
@@ -319,6 +330,7 @@ def test_notify_says_nothing_when_the_newest_seen_is_what_runs(
     isolated_home: Path,
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
+    with_a_key: str,
 ) -> None:
     make_toolchain("0.19.0")
     write_state(launcher, isolated_home, entitlement="ok", latest_seen="0.19.0")
@@ -333,6 +345,7 @@ def test_notify_compares_versions_as_numbers(
     isolated_home: Path,
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
+    with_a_key: str,
 ) -> None:
     """0.9.0 is older than 0.10.0, whatever sorting the two strings would say."""
     make_toolchain("0.10.0")
@@ -348,6 +361,7 @@ def test_auto_does_not_announce_a_version_it_will_fetch_by_itself(
     isolated_home: Path,
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
+    with_a_key: str,
 ) -> None:
     """Under ``auto`` the whole point is that nobody has to do anything."""
     make_toolchain("0.18.0")
@@ -370,6 +384,7 @@ def test_a_waiting_update_is_one_calm_line(
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
     mode: str,
+    with_a_key: str,
 ) -> None:
     make_toolchain("0.18.0")
     make_toolchain("0.19.0")
@@ -393,6 +408,7 @@ def test_a_stale_pending_record_is_not_news(
     isolated_home: Path,
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
+    with_a_key: str,
 ) -> None:
     """A ``pending`` naming a version older than the one that would start here
     is a record left behind, not an update waiting."""
@@ -410,6 +426,7 @@ def test_nonsense_in_the_pending_field_is_ignored(
     isolated_home: Path,
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
+    with_a_key: str,
 ) -> None:
     make_toolchain("0.18.0")
     write_state(launcher, isolated_home, entitlement="ok", pending={"not": "a version"})
@@ -582,6 +599,7 @@ def test_being_told_outranks_something_already_waiting(
     isolated_home: Path,
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
+    with_a_key: str,
 ) -> None:
     make_toolchain("0.18.0")
     make_toolchain("0.19.0")
@@ -764,7 +782,7 @@ def test_an_empty_state_directory_stays_empty(
 
 
 def test_a_spoiled_state_file_is_neither_repaired_nor_complained_about(
-    run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any
+    run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any, with_a_key: str
 ) -> None:
     """The everyday reader would move this aside, write a fresh one and say so
     on stderr. A hook does none of the three."""
@@ -779,7 +797,7 @@ def test_a_spoiled_state_file_is_neither_repaired_nor_complained_about(
 
 
 def test_a_spoiled_settings_file_is_left_alone_too(
-    run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any
+    run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any, with_a_key: str
 ) -> None:
     make_toolchain("0.18.0")
     path = launcher.config_path(isolated_home)
@@ -792,7 +810,7 @@ def test_a_spoiled_settings_file_is_left_alone_too(
 
 
 def test_a_state_file_holding_the_wrong_kinds_of_value_says_nothing(
-    run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any
+    run_cli: Any, launcher: ModuleType, isolated_home: Path, make_toolchain: Any, with_a_key: str
 ) -> None:
     make_toolchain("0.18.0")
     path = launcher.state_path(isolated_home)

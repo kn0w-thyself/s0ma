@@ -396,17 +396,16 @@ def test_notify_still_looks_but_will_not_fetch(
     )
 
 
-def test_without_a_key_a_current_copy_starts_nothing(
+def test_without_a_key_there_is_nothing_to_ask_with(
     launcher: ModuleType, isolated_home: Path
 ) -> None:
-    """No key and nothing newer than what this launcher brings: no update."""
     spawner = Spawner()
 
     decision = launcher.maybe_start_background_update(
-        managed(launcher, launcher.LAUNCHER_VERSION), home=isolated_home, spawn=spawner
+        managed(launcher), home=isolated_home, spawn=spawner
     )
 
-    assert decision == "keyless-current"
+    assert decision == "no-key"
     assert spawner.calls == []
 
 

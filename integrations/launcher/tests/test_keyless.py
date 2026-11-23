@@ -167,8 +167,8 @@ def test_every_keyless_command_leaves_the_control_plane_unasked(
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """install, update, update --check, the serve path's decision and the quiet
-    update it starts, status, session-hint and pin, one after another on one
+    """install, update --check, the serve path's decision and the background
+    run, update, status, session-hint and pin, one after another on one
     machine with no key, against a control plane that is up and listening."""
     monkeypatch.setenv("S0MA_CP_HOST", control_plane.host)
     stand_in = FakeUv()
@@ -183,21 +183,21 @@ def test_every_keyless_command_leaves_the_control_plane_unasked(
     assert run_cli("install", "--version", "0.18.0")[0] == 0
     assert run_cli("update", "--check")[0] == 0
 
-    # The quiet update: this launcher brings a newer version than the copy
-    # that runs, so serve decides to start one, and the background run
-    # installs it.
+    # The serve path: an older copy runs and the plugin brings a newer one,
+    # and still nothing is started, and a background run fetches nothing.
     spawner = Spawner()
     decision = launcher.maybe_start_background_update(
         launcher.resolve_toolchain(), home=isolated_home, spawn=spawner
     )
-    assert decision == "started"
-    assert spawner.calls, "the quiet update was started"
+    assert decision == "no-key"
+    assert spawner.calls == []
+    installs_before = len(stand_in.installs())
     assert run_cli("update", "--background")[0] == 0
-    assert state_of(isolated_home)["pending"] == launcher.LAUNCHER_VERSION
-    assert (isolated_home / "toolchains" / launcher.LAUNCHER_VERSION / ".complete").is_file()
+    assert len(stand_in.installs()) == installs_before
 
-    # And a person's own update, with nothing newer to fetch.
+    # A person's own update is what installs the plugin's version.
     assert run_cli("update")[0] == 0
+    assert (isolated_home / "toolchains" / launcher.LAUNCHER_VERSION / ".complete").is_file()
 
     assert run_cli("status")[0] == 0
     assert run_cli("status", "--json")[0] == 0
@@ -211,18 +211,29 @@ def test_every_keyless_command_leaves_the_control_plane_unasked(
     assert stand_in.installs(), "uv did the fetching"
 
 
-def test_the_serve_path_starts_nothing_that_asks_anybody(
+@pytest.mark.parametrize("mode", ["auto", "notify", "off"])
+@pytest.mark.parametrize("installed", ["0.18.0", "same", "99.0.0", "pinned"])
+def test_the_serve_path_starts_nothing_with_no_key(
     run_cli: Any,
     launcher: ModuleType,
     control_plane: FakeControlPlane,
     make_toolchain: Any,
+    project: Path,
     monkeypatch: pytest.MonkeyPatch,
     no_sockets: None,
+    installed: str,
+    mode: str,
 ) -> None:
-    """``serve`` itself, end to end with the hand-off stood in: the decision to
-    leave a quiet update behind is made, and nothing is asked of anybody."""
+    """``serve`` itself, with the hand-off stood in. With no key nothing is
+    fetched on its own: not for an older copy, the same one, a newer one or a
+    pinned project, under any update setting."""
     monkeypatch.setenv("S0MA_CP_HOST", control_plane.host)
-    make_toolchain(launcher.LAUNCHER_VERSION)
+    monkeypatch.setenv("S0MA_UPDATE", mode)
+    if installed == "pinned":
+        make_toolchain("0.18.0")
+        (project / ".s0ma-version").write_text("0.18.0\n", encoding="utf-8")
+    else:
+        make_toolchain(launcher.LAUNCHER_VERSION if installed == "same" else installed)
     started: list[str] = []
     monkeypatch.setattr(launcher, "hand_off", lambda *a, **k: 0)
     monkeypatch.setattr(
@@ -234,7 +245,7 @@ def test_the_serve_path_starts_nothing_that_asks_anybody(
     code, out, err = run_cli("serve")
 
     assert (code, out, err) == (0, "", "")
-    assert started == [], "a current copy needs no quiet update"
+    assert started == [], "a keyless machine started a quiet update"
     assert control_plane.requests == []
 
 
@@ -600,79 +611,60 @@ def test_update_check_names_the_projects_pin(
 
 
 # ---------------------------------------------------------------------------
-# C. The quiet update with no key: it follows the plugin, and only that.
+# C. No quiet update with no key: nothing is fetched unless a person asks.
 # ---------------------------------------------------------------------------
 
 
-def test_the_quiet_update_starts_when_the_plugin_brings_a_newer_version(
-    launcher: ModuleType, isolated_home: Path, fake_uv: FakeUv
-) -> None:
-    spawner = Spawner()
-
-    decision = launcher.maybe_start_background_update(
-        managed(launcher, "0.18.0"), home=isolated_home, spawn=spawner, windows=fake_uv.windows
-    )
-
-    assert decision == "started"
-    command, kwargs = spawner.calls[0]
-    assert command[-2:] == ["update", "--background"]
-    if fake_uv.windows:
-        assert kwargs["creationflags"] == 0x00000008 | 0x00000200
-    else:
-        assert kwargs["start_new_session"] is True
-
-
-def test_the_quiet_update_does_not_wait_a_day_with_no_key(
-    launcher: ModuleType, isolated_home: Path
-) -> None:
-    """The daily rule is about asking a control plane; nothing is asked here."""
-    write_state(launcher, isolated_home, last_check=launcher.now_seconds() - 60)
-
-    decision = launcher.maybe_start_background_update(
-        managed(launcher, "0.18.0"), home=isolated_home, spawn=Spawner()
-    )
-
-    assert decision == "started"
-
-
-@pytest.mark.parametrize(
-    ("resolution_kind", "version", "mode", "expected"),
-    [
-        ("managed", "same", "auto", "keyless-current"),
-        ("managed", "99.0.0", "auto", "keyless-current"),
-        ("pinned", "0.18.0", "auto", "not-managed"),
-        ("project", "0.18.0", "auto", "not-managed"),
-        ("override", "0.18.0", "auto", "not-managed"),
-        ("none", None, "auto", "not-managed"),
-        ("managed", "0.18.0", "off", "updates-off"),
-        ("managed", "0.18.0", "notify", "keyless-notify"),
-        ("managed", None, "auto", "keyless-current"),
-    ],
-)
-def test_the_quiet_update_starts_nothing_in_every_other_case(
+@pytest.mark.parametrize("mode", ["auto", "notify"])
+@pytest.mark.parametrize("version", ["0.18.0", "same", "99.0.0", None])
+def test_the_quiet_update_decision_is_no_key_in_every_case(
     launcher: ModuleType,
     isolated_home: Path,
     monkeypatch: pytest.MonkeyPatch,
-    resolution_kind: str,
     version: str | None,
     mode: str,
-    expected: str,
 ) -> None:
     monkeypatch.setenv("S0MA_UPDATE", mode)
     spawner = Spawner()
-    resolution = launcher.Resolution(
-        kind=resolution_kind,
-        path=Path("/x/bin") if resolution_kind != "none" else None,
-        version=launcher.LAUNCHER_VERSION if version == "same" else version,
-        reason=".",
-    )
 
     decision = launcher.maybe_start_background_update(
-        resolution, home=isolated_home, spawn=spawner
+        managed(launcher, launcher.LAUNCHER_VERSION if version == "same" else version),
+        home=isolated_home,
+        spawn=spawner,
     )
 
-    assert decision == expected
+    assert decision == "no-key"
     assert spawner.calls == []
+
+
+@pytest.mark.parametrize("mode", ["auto", "notify"])
+@pytest.mark.parametrize("installed", [None, "0.18.0", "same"])
+def test_the_background_run_installs_nothing_with_no_key(
+    run_cli: Any,
+    launcher: ModuleType,
+    isolated_home: Path,
+    make_toolchain: Any,
+    fake_uv: FakeUv,
+    monkeypatch: pytest.MonkeyPatch,
+    installed: str | None,
+    mode: str,
+) -> None:
+    """Started by hand, or left over from before: still nothing is fetched."""
+    if installed is not None:
+        version = launcher.LAUNCHER_VERSION if installed == "same" else installed
+        make_toolchain(version, windows=fake_uv.windows)
+    monkeypatch.setenv("S0MA_UPDATE", mode)
+    before = launcher.installed_versions(isolated_home)
+
+    code, out, err = run_cli("update", "--background")
+
+    assert code == 0
+    assert out == ""
+    assert "nothing is fetched on its own" in err
+    assert "s0ma-launch update" in err
+    assert fake_uv.calls == []
+    assert launcher.installed_versions(isolated_home) == before
+    assert not (isolated_home / "launcher" / "state.json").exists()
 
 
 def test_serve_with_nothing_installed_starts_no_install(
@@ -690,84 +682,6 @@ def test_serve_with_nothing_installed_starts_no_install(
     assert code == 0
     assert out == ""
     assert spawned == []
-
-
-def test_the_background_run_installs_the_launchers_version_and_leaves_it_waiting(
-    run_cli: Any,
-    launcher: ModuleType,
-    isolated_home: Path,
-    make_toolchain: Any,
-    fake_uv: FakeUv,
-) -> None:
-    make_toolchain("0.18.0", windows=fake_uv.windows)
-
-    code, out, err = run_cli("update", "--background")
-
-    assert code == 0
-    assert out == ""
-    assert fake_uv.installs()[-1][-1] == f"s0ma-lang=={launcher.LAUNCHER_VERSION}"
-    state = state_of(isolated_home)
-    assert state["pending"] == launcher.LAUNCHER_VERSION
-    assert state["current"] == launcher.LAUNCHER_VERSION
-    assert state["installed"] == ["0.18.0", launcher.LAUNCHER_VERSION]
-    assert state["latest_seen"] is None
-    assert state["entitlement"] == "unknown"
-    assert "waiting for the next session" in err
-
-
-@pytest.mark.parametrize(
-    ("installed", "mode", "said"),
-    [
-        (None, "auto", "never makes the first install"),
-        ("same", "auto", "is what this plugin brings; nothing to do"),
-        ("0.18.0", "notify", "set to tell you rather than fetch it"),
-        ("0.18.0", "off", "switched off"),
-    ],
-)
-def test_the_background_run_installs_nothing_otherwise(
-    run_cli: Any,
-    launcher: ModuleType,
-    isolated_home: Path,
-    make_toolchain: Any,
-    fake_uv: FakeUv,
-    monkeypatch: pytest.MonkeyPatch,
-    installed: str | None,
-    mode: str,
-    said: str,
-) -> None:
-    if installed is not None:
-        version = launcher.LAUNCHER_VERSION if installed == "same" else installed
-        make_toolchain(version, windows=fake_uv.windows)
-    monkeypatch.setenv("S0MA_UPDATE", mode)
-
-    code, out, err = run_cli("update", "--background")
-
-    assert code == 0
-    assert out == ""
-    assert said in err
-    assert fake_uv.calls == []
-
-
-def test_a_background_run_that_fails_writes_one_sentence(
-    run_cli: Any,
-    launcher: ModuleType,
-    isolated_home: Path,
-    make_toolchain: Any,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    make_toolchain("0.18.0")
-    monkeypatch.setattr(launcher.subprocess, "run", FakeUv(fail=True))
-
-    code, out, _ = run_cli("update", "--background")
-
-    assert code == 0
-    assert out == ""
-    state = state_of(isolated_home)
-    assert launcher.LAUNCHER_VERSION not in state["installed"]
-    assert launcher.installed_versions(isolated_home) == ["0.18.0"]
-    assert state["pending"] is None
-    assert state["entitlement"] == "unknown"
-    assert isinstance(state["last_error"], str) and "\n" not in state["last_error"]
 
 
 # ---------------------------------------------------------------------------
@@ -788,7 +702,11 @@ def test_status_says_where_an_install_comes_from(
         f"Next step:    Nothing urgent. s0ma {launcher.LAUNCHER_VERSION} came with the "
         "s0ma plugin; run `s0ma-launch update` to move to it now."
     ) in out
-    assert "Updates:      automatic - a newer s0ma that comes with the plugin" in out
+    assert (
+        "Updates:      automatic notice - you are told when the plugin brings a "
+        "newer s0ma, and `s0ma-launch update` installs it"
+    ) in out
+    assert "fetched quietly" not in out
 
     _, out, _ = run_cli("status", "--json")
     report = json.loads(out)
@@ -830,39 +748,72 @@ def test_the_stub_says_no_key_is_needed(launcher: ModuleType) -> None:
     assert "where their license key goes" not in instructions
 
 
-def test_notify_with_no_key_names_the_version_the_plugin_brings(
+HINT_PLUGIN_BRINGS = (
+    "s0ma {latest} came with the s0ma plugin; s0ma 0.18.0 is what runs here. "
+    "Run /s0ma:update in Claude to install it."
+)
+
+
+@pytest.mark.parametrize("mode", ["auto", "notify"])
+def test_the_hint_names_what_the_plugin_brings_under_auto_and_notify(
     run_cli: Any,
     launcher: ModuleType,
     make_toolchain: Any,
     monkeypatch: pytest.MonkeyPatch,
     no_sockets: None,
+    isolated_home: Path,
+    mode: str,
 ) -> None:
     make_toolchain("0.18.0")
-    monkeypatch.setenv("S0MA_UPDATE", "notify")
-
-    code, out, _ = run_cli("session-hint")
-
-    assert code == 0
-    message = json.loads(out)["systemMessage"]
-    assert message == (
-        f"s0ma {launcher.LAUNCHER_VERSION} is available; s0ma 0.18.0 is what runs "
-        "here. Run /s0ma:update in Claude when you want it."
-    )
-
-
-@pytest.mark.parametrize("mode", ["auto", "notify"])
-def test_the_hint_is_silent_when_the_plugin_brings_nothing_newer(
-    run_cli: Any, launcher: ModuleType, make_toolchain: Any, monkeypatch: pytest.MonkeyPatch, mode: str
-) -> None:
-    make_toolchain(launcher.LAUNCHER_VERSION)
     monkeypatch.setenv("S0MA_UPDATE", mode)
+    before = sorted(str(path) for path in isolated_home.rglob("*"))
+
+    code, out, err = run_cli("session-hint")
+
+    assert (code, err) == (0, "")
+    message = json.loads(out)["systemMessage"]
+    assert message == HINT_PLUGIN_BRINGS.format(latest=launcher.LAUNCHER_VERSION)
+    assert len(out.strip()) < launcher.HINT_MAX_CHARS
+    assert sorted(str(path) for path in isolated_home.rglob("*")) == before, "nothing written"
+
+
+def test_the_hint_never_names_a_control_planes_old_offer_with_no_key(
+    run_cli: Any, launcher: ModuleType, make_toolchain: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """``latest_seen`` from a key this machine once had cannot be fetched now."""
+    make_toolchain(launcher.LAUNCHER_VERSION)
+    write_state(launcher, launcher.s0ma_home(), entitlement="ok", latest_seen="99.0.0")
+    monkeypatch.setenv("S0MA_UPDATE", "notify")
 
     assert run_cli("session-hint") == (0, "", "")
 
 
-def test_the_hint_under_auto_says_nothing_about_a_version_it_will_fetch(
-    run_cli: Any, make_toolchain: Any
+@pytest.mark.parametrize(
+    ("installed", "mode", "pinned"),
+    [
+        ("0.18.0", "off", False),
+        ("0.18.0", "auto", True),
+        ("0.18.0", "notify", True),
+        ("same", "auto", False),
+        ("same", "notify", False),
+        ("99.0.0", "notify", False),
+    ],
+)
+def test_the_hint_is_silent_otherwise(
+    run_cli: Any,
+    launcher: ModuleType,
+    make_toolchain: Any,
+    project: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    installed: str,
+    mode: str,
+    pinned: bool,
 ) -> None:
-    make_toolchain("0.18.0")
+    """Updates off, a pinned project, or nothing newer with the launcher."""
+    version = launcher.LAUNCHER_VERSION if installed == "same" else installed
+    make_toolchain(version)
+    if pinned:
+        (project / ".s0ma-version").write_text(version + "\n", encoding="utf-8")
+    monkeypatch.setenv("S0MA_UPDATE", mode)
 
     assert run_cli("session-hint") == (0, "", "")
