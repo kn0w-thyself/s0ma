@@ -38,10 +38,11 @@ where `--%` turns the rest of the line into plain text for `echo` and
 
 **The server**, from `.mcp.json`, is started by `scripts/s0ma-serve` on macOS
 and Linux, and by `scripts/s0ma-serve.cmd` on Windows. When uv is on the
-machine and already has Python 3.11 or newer, it hands over to the launcher's
-`serve`. Otherwise a stand-in answers, so the server never shows as failed: on
-macOS and Linux the stand-in is the end of `scripts/s0ma-serve` itself, and on
-Windows it is `scripts/s0ma-stand-in.ps1`, started in Windows PowerShell with
+machine and already has a Python s0ma supports, 3.11 to 3.13, it hands over
+to the launcher's `serve`. Otherwise a stand-in answers, so the server never
+shows as failed: on macOS and Linux the stand-in is the end of
+`scripts/s0ma-serve` itself, and on Windows it is `scripts/s0ma-stand-in.ps1`,
+started in Windows PowerShell with
 `-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File`. The
 stand-in speaks over standard input and output only, and offers one tool that
 says s0ma is not set up here yet.
@@ -82,10 +83,13 @@ When you ask for s0ma to be installed or updated (`/s0ma:start`,
   dependencies and pytest from the package index, and never sees the key.
   With a key, and only with one, the launcher also looks for a newer version
   on its own at most once a day, unless you set updates to off.
-- **If this machine has no Python 3.11 or newer**, uv may download one. By
-  uv's documentation it comes from the python-build-standalone project's
-  releases on github.com, unless uv's own settings name a mirror. The launcher
-  does not choose that place.
+- **If this machine has no Python s0ma supports** (3.11, 3.12 or 3.13), uv
+  downloads one the first time `s0ma` or `s0ma-launch` runs, and s0ma's own
+  environment is built on it. A newer Python is never used, even when it is
+  the one installed. By uv's documentation the download comes from the
+  python-build-standalone project's releases on github.com, unless uv's own
+  settings name a mirror. The launcher does not choose that place, only the
+  folder it is kept in (below).
 
 `s0ma-launch activate`, which you run yourself to save a key, asks
 account.kn0wthyself.ai once whether the key is good. `s0ma-launch pin` asks it
@@ -123,6 +127,12 @@ project, your files or your conversation leaves the machine.
   they were installed from, the launcher's settings and state, the update log,
   a key if you saved one with `s0ma-launch activate`, and feedback drafts and
   receipts. `S0MA_HOME` moves the launcher's part of it.
+- **The Python uv downloads for s0ma**, in `python` inside s0ma's folder, or
+  inside the `S0MA_HOME` folder when that is set. The plugin's scripts and the
+  launcher tell uv so with uv's own `UV_PYTHON_INSTALL_DIR`, unless you set it
+  yourself. It is kept there, not in uv's usual folder, because some packaged
+  Windows apps redirect writes to that folder and leave uv unable to find the
+  Python it just installed. uv's cache stays where uv keeps it.
 - **uv**, if `/s0ma:start` installed it, wherever uv's installer puts it in
   your home folder.
 - **In a project**, only when you ask: a new project folder from `/s0ma:start`
