@@ -59,4 +59,4 @@ The standard does not reach writing that names no part of the system. Conceptual
 
 - Topic id: `concept:executable-evidence`
 - Release: `0.23.0 (preview)`
-- Documentation snapshot: `sha256:1a3d759e7d7ab763`
+- Documentation snapshot: `sha256:428d3fe3482c707c`
