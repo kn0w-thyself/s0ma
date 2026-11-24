@@ -2,7 +2,7 @@
 """The first-run check: the Claude Code plugin on a machine that has just met it.
 
 ``.github/workflows/first-run.yml`` runs this on Linux, macOS and Windows, in
-two legs each. It is standard library only, so the uv-absent leg can run it
+three legs each. It is standard library only, so the uv-absent leg can run it
 with the runner's own Python and nothing else.
 
 ``uv-absent``
@@ -32,6 +32,19 @@ with the runner's own Python and nothing else.
     on what ``s0ma check`` finds in a broken ``.s0ma`` file. Imports the
     end-to-end test's helpers, so run it with ``uv run python``.
 
+``python-download``
+    With the newest uv and no Python handed to it: every variable that names
+    an interpreter or where uv keeps Pythons is cleared, and
+    ``UV_PYTHON_PREFERENCE=only-managed`` is set for the plugin's commands, so
+    no Python already on the machine can be used and uv has to download one.
+    That stands in for a machine with no Python. A keyless install from wheels
+    built here then runs through the plugin's own ``s0ma-launch``. It must
+    succeed; the installed environment's Python must be one s0ma supports and
+    its files must be under the leg's s0ma home; uv's default Python folder
+    for this user must gain nothing; and ``new project``, ``check``, ``build
+    .`` and ``test`` must pass with it. No Claude step runs. Imports the
+    end-to-end test's helpers, so run it with ``uv run python``.
+
 ``e2e``
     Runs ``integrations/launcher/tests/test_e2e_real_wheels.py`` with
     ``S0MA_E2E=1`` and fails if any case skips.
@@ -42,7 +55,10 @@ with the runner's own Python and nothing else.
     must be at it, because a plugin installs the version it brings. With uv, a
     fresh ``S0MA_HOME``, no license key, no local wheels, no find-links and uv
     not offline, the exported plugin's ``s0ma-launch install`` has uv fetch
-    ``s0ma-lang==X.Y.Z`` from the index. Then only what holds for any released
+    ``s0ma-lang==X.Y.Z`` from the index. A version the index does not show
+    yet, which happens for a few minutes after a release is published, is
+    asked for again every half minute for up to five minutes, and each wait
+    is printed. Then only what holds for any released
     version is checked: the version the installed ``s0ma doctor`` reports for
     each s0ma package (s0ma has no ``--version`` flag), the plugin's server
     and its tools, ``new project``, ``check``, ``build .`` and ``test`` in a
@@ -1660,19 +1676,59 @@ def launch_command(plugin_dir: Path, *arguments: str) -> list[str] | str:
     return [str(plugin_dir / "bin" / "s0ma-launch"), *arguments]
 
 
+#: How long an install from the index waits, in all, for a version the index
+#: does not show yet, and how long each wait is. A version published a minute
+#: ago can be missing from the index's answer for a little while.
+INDEX_WAIT_SECONDS = 300.0
+INDEX_RETRY_SECONDS = 30.0
+
+
+def not_on_the_index_yet(ran: Ran, version: str) -> bool:
+    """Whether uv refused because the index has no ``s0ma-lang==<version>``."""
+    said = (ran.stdout + ran.stderr).lower()
+    return f"no version of s0ma-lang=={version}".lower() in said
+
+
 def install_from_real_index(
-    plugin_dir: Path, version: str, env: dict[str, str], cwd: Path
+    plugin_dir: Path,
+    version: str,
+    env: dict[str, str],
+    cwd: Path,
+    *,
+    sleep: Any = time.sleep,
+    clock: Any = time.monotonic,
 ) -> str:
-    """``s0ma-launch install`` with no key and no local wheels: uv asks the index."""
+    """``s0ma-launch install`` with no key and no local wheels: uv asks the index.
+
+    When uv says the version does not exist, the install is tried again after
+    a wait, for up to :data:`INDEX_WAIT_SECONDS` in all. Any other failure
+    fails at once.
+    """
     for name in (*INDEX_STEERING, "S0MA_LICENSE_KEY", "S0MA_LAUNCH_OFFLINE_INSTALL"):
         expect(name not in env, f"{name} would reach uv in an install from the index")
-    ran = run(launch_command(plugin_dir, "install"), env, cwd, timeout=900)
+    deadline = clock() + INDEX_WAIT_SECONDS
+    waits = 0
+    while True:
+        ran = run(launch_command(plugin_dir, "install"), env, cwd, timeout=900)
+        if ran.code == 0 or not not_on_the_index_yet(ran, version):
+            break
+        left = deadline - clock()
+        if left <= 0:
+            break
+        pause = min(INDEX_RETRY_SECONDS, left)
+        waits += 1
+        say(
+            f"WAIT {waits}: the index does not show s0ma-lang=={version} yet; "
+            f"asking again in {pause:.0f}s (up to {INDEX_WAIT_SECONDS:.0f}s in all)"
+        )
+        sleep(pause)
     expect(ran.code == 0, f"s0ma-launch install exited {ran.code}")
     expect(
         f"s0ma {version} is installed." in ran.stdout + ran.stderr,
         f"s0ma-launch install did not say it installed {version}",
     )
-    return f"exit 0, s0ma {version} is installed, with no key and no local wheels"
+    after = f", after {waits} wait{'s' if waits != 1 else ''} for the index" if waits else ""
+    return f"exit 0, s0ma {version} is installed, with no key and no local wheels{after}"
 
 
 def installed_distributions(uv: str, python: Path, env: dict[str, str], cwd: Path) -> str:
@@ -1819,6 +1875,264 @@ def leg_real_index(opts: argparse.Namespace, work: Path, results: Results) -> No
         plane.stop()
 
 
+# ---------------------------------------------------------------------------
+# uv chooses the Python: a machine with no Python, stood in for.
+# ---------------------------------------------------------------------------
+
+#: What names an interpreter, or where uv keeps or finds Pythons. None of it
+#: reaches the plugin's commands in the ``python-download`` leg, so the choice
+#: is uv's and the plugin's alone.
+PYTHON_STEERING = (
+    "UV_PYTHON",
+    "UV_PYTHON_INSTALL_DIR",
+    "UV_PYTHON_BIN_DIR",
+    "UV_PYTHON_PREFERENCE",
+    "UV_PYTHON_DOWNLOADS",
+    "UV_MANAGED_PYTHON",
+    "UV_NO_MANAGED_PYTHON",
+    "UV_SYSTEM_PYTHON",
+    "UV_PROJECT_ENVIRONMENT",
+    "UV_OFFLINE",
+    "UV_CONFIG_FILE",
+    "CONDA_PREFIX",
+    "PYTHONHOME",
+    "PYTHONPATH",
+)
+
+
+def python_download_env(home: Path, cp_host: str) -> dict[str, str]:
+    """The plugin's environment when uv must download the Python itself.
+
+    Nothing names an interpreter or a Python folder, no uv configuration file
+    is read, and only Pythons uv manages may be used, which on a fresh s0ma
+    home means one uv downloads.
+    """
+    env = {
+        key: value
+        for key, value in child_env().items()
+        if key.upper() not in PYTHON_STEERING
+    }
+    env["UV_NO_CONFIG"] = "1"
+    env["UV_PYTHON_PREFERENCE"] = "only-managed"
+    env["S0MA_HOME"] = str(home)
+    env["S0MA_CP_HOST"] = cp_host
+    return env
+
+
+def supported_minors(spec: str) -> set[int]:
+    """``>=3.A,<3.B``, the launcher's supported range, as the minors A to B-1."""
+    found = re.fullmatch(r">=3\.(\d+),<3\.(\d+)", spec)
+    expect(found is not None, f"the launcher's supported range is not >=3.A,<3.B: {spec}")
+    assert found is not None
+    return set(range(int(found.group(1)), int(found.group(2))))
+
+
+def default_python_dirs(uv: str, cwd: Path) -> list[Path]:
+    """uv's own Python folders for this user: its default, and the runner's if set.
+
+    The default is what ``uv python dir`` says with no setting naming one. A
+    folder this machine's environment names (a CI action may set one) is
+    watched too.
+    """
+    env = {
+        key: value
+        for key, value in child_env().items()
+        if key.upper() not in ("UV_PYTHON_INSTALL_DIR", "UV_CONFIG_FILE")
+    }
+    env["UV_NO_CONFIG"] = "1"
+    ran = run([uv, "python", "dir"], env, cwd)
+    expect(ran.code == 0 and ran.stdout.strip() != "", "uv python dir said nothing")
+    folders = [Path(ran.stdout.strip().splitlines()[-1])]
+    named = os.environ.get("UV_PYTHON_INSTALL_DIR", "").strip()
+    if named and not any(same_dir(named, folder) for folder in folders):
+        folders.append(Path(named))
+    return folders
+
+
+def entry_names(folder: Path) -> list[str]:
+    """The names directly inside *folder*, without reading any of them."""
+    try:
+        return sorted(os.listdir(folder))
+    except FileNotFoundError:
+        return []
+
+
+def is_under(path: Path, folder: Path) -> bool:
+    try:
+        path.resolve().relative_to(folder.resolve())
+    except ValueError:
+        return False
+    return True
+
+
+def plugin_with_launcher(work: Path, launcher_file: Path) -> Path:
+    """A copy of the plugin folder whose launcher is *launcher_file*.
+
+    The lock file beside it is the plugin's own: only the launcher's version
+    line differs, and the header the lock matches is the same.
+    """
+    copy = work / "plugin"
+    shutil.copytree(PLUGIN_DIR, copy, symlinks=True)
+    shutil.copyfile(launcher_file, copy / "launcher" / "s0ma_launch.py")
+    return copy
+
+
+def deps_are_cached(
+    uv: str, index: Path, version: str, launcher: ModuleType, work: Path
+) -> bool:
+    """Whether every dependency of the built wheels is in uv's cache already.
+
+    A dry run, offline, in a scratch environment made the way this machine's
+    uv makes one: no Python is downloaded for it and nothing is installed.
+    """
+    probe = work / "deps-probe"
+    env = child_env({"UV_OFFLINE": "1", "UV_PYTHON_DOWNLOADS": "never"})
+    ran = run([uv, "venv", str(probe)], env, work)
+    if ran.code != 0:
+        return False
+    python = launcher.venv_python(probe)
+    if python is None:
+        return False
+    ran = run(
+        [
+            uv,
+            "pip",
+            "install",
+            "--python",
+            str(python),
+            "--dry-run",
+            "--find-links",
+            str(index),
+            launcher.index_requirement(version),
+            launcher.PYTEST_REQUIREMENT,
+        ],
+        env,
+        work,
+    )
+    return ran.code == 0
+
+
+def leg_python_download(work: Path, results: Results) -> None:
+    launcher = load_launcher()
+    e2e = import_e2e_helpers()
+    from fake_control_plane import FakeControlPlane  # type: ignore[import-not-found]
+
+    banner("uv chooses the Python: none is handed to it and none on this machine may be used")
+    project = work / "project"
+    project.mkdir()
+    # A space in the home, as a Windows user name often has.
+    home = work / "s0ma home"
+    uv = shutil.which("uv", path=child_env().get("PATH"))
+    expect(uv is not None, "the python-download leg found no uv on the PATH")
+    assert uv is not None
+    say(f"uv is {uv}")
+    ran = run([uv, "--version"], child_env(), project)
+    results.add("uv", ran.stdout.strip())
+    supported = supported_minors(launcher.SUPPORTED_PYTHON)
+
+    watched = default_python_dirs(uv, project)
+    before = {folder: entry_names(folder) for folder in watched}
+    for folder, names in before.items():
+        say(f"before: {folder} holds {names}")
+
+    version_v = e2e.tree_version()
+    version_k = f"{e2e.next_patch(version_v)}+{e2e.KEYLESS_LABEL}"
+    say(f"the tree is {version_v}; the wheels are built as {version_k}")
+    index = e2e.build_keyless_wheels(work / "wheels", version_v, version_k)
+    for wheel in sorted(index.glob("*.whl")):
+        say(f"built {wheel.name}")
+    plugin = plugin_with_launcher(work, e2e.launcher_at_version(work, version_k))
+
+    plane = FakeControlPlane(key="first-run-check-never-sent", work=work / "control-plane")
+    plane.start()
+    try:
+        env = python_download_env(home, plane.host)
+        say(f"S0MA_HOME={home}  S0MA_CP_HOST={plane.host}  no license key")
+        say(f"UV_PYTHON_PREFERENCE={env['UV_PYTHON_PREFERENCE']}  cleared: {', '.join(PYTHON_STEERING)}")
+        install_env = dict(env)
+        install_env["UV_FIND_LINKS"] = str(index)
+        # The index is left on, as a person's install has it, unless every
+        # dependency is already cached here: then the launcher's own offline
+        # switch keeps the install to this machine. The Python itself is
+        # downloaded either way, by the `uv run` that starts the launcher.
+        if deps_are_cached(uv, index, version_k, launcher, work):
+            install_env["S0MA_LAUNCH_OFFLINE_INSTALL"] = "1"
+            results.add("package index", "not asked: every dependency was in uv's cache")
+        else:
+            results.add("package index", "asked for the dependencies uv's cache did not hold")
+
+        banner("s0ma-launch install, through the plugin's own command")
+        ran = run(launch_command(plugin, "install"), install_env, project, timeout=900)
+        expect(ran.code == 0, f"s0ma-launch install exited {ran.code}")
+        expect(
+            f"s0ma {version_k} is installed." in ran.stdout + ran.stderr,
+            "the install did not say it installed the built version",
+        )
+        results.add("keyless install", f"exit 0, s0ma {version_k} from UV_FIND_LINKS={index.name}/")
+
+        toolchain = launcher.managed_toolchain_dir(home, version_k)
+        python = launcher.venv_python(toolchain)
+        expect(python is not None, f"no Python in {toolchain}")
+        assert python is not None
+        ran = run(
+            [
+                str(python),
+                "-c",
+                "import json, sys; print(json.dumps([list(sys.version_info[:3]), sys.base_prefix]))",
+            ],
+            env,
+            project,
+        )
+        expect(ran.code == 0, f"the environment's Python exited {ran.code}")
+        numbers, base = json.loads(ran.stdout.strip().splitlines()[-1])
+        shown = ".".join(str(n) for n in numbers)
+        expect(
+            numbers[0] == 3 and numbers[1] in supported,
+            f"the environment runs Python {shown}, outside {launcher.SUPPORTED_PYTHON}",
+        )
+        results.add("environment's Python", f"{shown}, inside {launcher.SUPPORTED_PYTHON}")
+        pythons = launcher.python_install_dir(home)
+        expect(
+            is_under(Path(base), pythons),
+            f"the environment's Python lives at {base}, not under {pythons}",
+        )
+        results.add("environment's Python, where", f"{base}, under the leg's s0ma home")
+        results.add("the leg's Python folder", f"{pythons} holds {entry_names(pythons)}")
+
+        for folder in watched:
+            after = entry_names(folder)
+            say(f"after: {folder} holds {after}")
+            expect(
+                after == before[folder],
+                f"uv's Python folder {folder} changed: {before[folder]} before, {after} after",
+            )
+            results.add(
+                "uv's default Python folder",
+                f"{folder}: {before[folder]} before, {after} after, nothing gained",
+            )
+
+        ran = run(launch_command(plugin, "status"), env, project)
+        expect(ran.code == 0, f"s0ma-launch status exited {ran.code}")
+        results.add("s0ma-launch status", "exit 0")
+
+        banner("The installed s0ma in a fresh project")
+        bin_dir = launcher.bin_dir_of(toolchain)
+        cli = launcher.find_program(bin_dir, "s0ma") if bin_dir is not None else None
+        expect(cli is not None, f"no s0ma program in {toolchain}")
+        assert cli is not None
+        fresh_parent = work / "fresh"
+        fresh_parent.mkdir()
+        run_fresh_project_steps(cli, env, fresh_parent, results)
+
+        results.add("claude checks", "none in this leg")
+        expect(
+            plane.requests == [], f"something asked the control plane: {plane.requests}"
+        )
+        results.add("control plane", "no request from anything in this leg")
+    finally:
+        plane.stop()
+
+
 def leg_e2e(work: Path, results: Results) -> None:
     banner("The real-wheel end-to-end test, every case, none skipped")
     report = work / "e2e.xml"
@@ -1872,7 +2186,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="The first-run check of the Claude Code plugin."
     )
-    parser.add_argument("leg", choices=("uv-absent", "uv-present", "e2e", "real-index"))
+    parser.add_argument(
+        "leg", choices=("uv-absent", "uv-present", "python-download", "e2e", "real-index")
+    )
     who = parser.add_mutually_exclusive_group()
     who.add_argument(
         "--claude",
@@ -1903,15 +2219,15 @@ def main(argv: list[str] | None = None) -> int:
         help="real-index only: the released version to install from the package index",
     )
     opts = parser.parse_args(argv)
+    if opts.leg in ("real-index", "python-download") and opts.claude:
+        parser.error(f"{opts.leg} runs no Claude Code step; leave --claude out")
     if opts.leg == "real-index":
-        if opts.claude:
-            parser.error("real-index runs no Claude Code step; leave --claude out")
         if opts.version is None:
             parser.error("real-index needs --version, the released version to install")
     else:
         if opts.version is not None:
             parser.error("--version belongs to the real-index leg only")
-        if opts.leg != "e2e" and not opts.claude and not opts.no_claude:
+        if opts.leg in ("uv-absent", "uv-present") and not opts.claude and not opts.no_claude:
             parser.error("say --claude <command> or --no-claude")
     if opts.claude and not opts.claude_version:
         parser.error("--claude needs --claude-version")
@@ -1926,6 +2242,8 @@ def main(argv: list[str] | None = None) -> int:
             leg_uv_present(opts, work, results)
         elif opts.leg == "real-index":
             leg_real_index(opts, work, results)
+        elif opts.leg == "python-download":
+            leg_python_download(work, results)
         else:
             leg_e2e(work, results)
     except CheckFailed as failure:

@@ -15,6 +15,13 @@
 #                with nothing installed, then a keyless install from wheels
 #                built in the job at a version no package index can hold.
 #
+# A third job, python-download, runs on each system with the newest uv and no
+# Python handed to it: the driver clears everything that names an interpreter
+# and lets uv use only Pythons it downloads itself, which stands in for a
+# machine with no Python. The keyless install then has to download one, keep
+# it under the leg's s0ma home, choose one s0ma supports, and leave uv's own
+# Python folder as it was.
+#
 # All of it is driven by scripts/first_run_check.py, standard library only.
 # Nothing here signs in to anything or holds a secret: Claude Code runs with a
 # fresh config directory and no key, and only the commands that need neither
@@ -152,6 +159,35 @@ jobs:
       - name: The first run with uv and no license key
         if: matrix.uv == 'present'
         run: uv run python scripts/first_run_check.py uv-present --claude claude --claude-version ${{ env.CLAUDE_CODE_VERSION }}
+
+  # uv chooses and downloads the Python: see the top of this file. The newest
+  # uv, not the pinned one, because a person's uv is whatever they installed
+  # last. Python 3.13 here is only for the workspace that runs the driver;
+  # the driver keeps it, and every other Python on the runner, away from the
+  # plugin's commands.
+  python-download:
+    name: first-run, uv downloads the Python (${{ matrix.os }})
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the newest uv
+        uses: astral-sh/setup-uv@v10.4.0
+        with:
+          version: "latest"
+          python-version: "3.13"
+
+      - name: Sync workspace (all packages, all extras)
+        run: uv sync --all-packages --all-extras
+
+      - name: The first install, with a Python uv has to download
+        run: uv run python scripts/first_run_check.py python-download
 
   # Started by hand only: see the top of this file.
   real-index:
