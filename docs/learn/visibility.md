@@ -66,5 +66,5 @@ nerve <name> :: <LAYER>
 ## Identity
 
 - Topic id: `concept:visibility`
-- Release: `0.23.0 (preview)`
+- Release: `0.23.0`
 - Documentation snapshot: `sha256:1a3d759e7d7ab763`

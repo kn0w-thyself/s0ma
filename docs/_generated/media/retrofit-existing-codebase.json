@@ -1,9 +1,9 @@
 {
   "identity": {
-    "channel": "preview",
+    "channel": "release",
     "journey": "journey:retrofit-existing-codebase",
     "published_by": "doc:guide/retrofit-existing-codebase",
-    "release": "0.23.0 (preview)",
+    "release": "0.23.0",
     "snapshot": "sha256:1a3d759e7d7ab763"
   },
   "package": {
