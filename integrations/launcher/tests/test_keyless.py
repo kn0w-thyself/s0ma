@@ -272,7 +272,14 @@ def test_uv_is_asked_for_the_umbrella_at_the_launchers_own_version(
     assert installed == launcher.LAUNCHER_VERSION
     partial = isolated_home / "toolchains" / (launcher.LAUNCHER_VERSION + ".partial")
     venv, pip = (command for command, _ in fake_uv.calls)
-    assert venv == ["uv", "venv", "--relocatable", str(partial)]
+    assert venv == [
+        "uv",
+        "venv",
+        "--relocatable",
+        "--python",
+        launcher.SUPPORTED_PYTHON,
+        str(partial),
+    ]
     python = "Scripts/python.exe" if fake_uv.windows else "bin/python"
     assert pip == [
         "uv",
@@ -353,6 +360,52 @@ def test_uv_keeps_the_machines_own_settings(
     for _, env in fake_uv.calls:
         assert env["UV_INDEX_URL"] == "https://mirror.example.invalid/simple"
         assert env["UV_CACHE_DIR"] == str(isolated_home.parent / "uv-cache")
+
+
+def test_uv_keeps_the_python_it_downloads_under_s0mas_home(
+    launcher: ModuleType,
+    isolated_home: Path,
+    fake_uv: FakeUv,
+    run_cli: Any,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Every uv call is told where to keep a Python: ``python`` under s0ma's home."""
+    monkeypatch.delenv("UV_PYTHON_INSTALL_DIR", raising=False)
+
+    assert run_cli("install")[0] == 0
+    assert fake_uv.calls
+    for _, env in fake_uv.calls:
+        assert env["UV_PYTHON_INSTALL_DIR"] == str(isolated_home / "python")
+
+
+def test_a_python_folder_the_person_chose_is_left_alone(
+    launcher: ModuleType,
+    isolated_home: Path,
+    fake_uv: FakeUv,
+    run_cli: Any,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    chosen = str(isolated_home.parent / "my-pythons")
+    monkeypatch.setenv("UV_PYTHON_INSTALL_DIR", chosen)
+
+    assert run_cli("install")[0] == 0
+    assert fake_uv.calls
+    for _, env in fake_uv.calls:
+        assert env["UV_PYTHON_INSTALL_DIR"] == chosen
+
+
+def test_the_supported_pythons_are_what_the_header_and_the_lock_say(
+    launcher: ModuleType,
+) -> None:
+    """The launcher runs on the Pythons it builds s0ma's environment on."""
+    source = Path(launcher.__file__)
+    header = re.search(r'(?m)^# requires-python = "([^"]*)"$', source.read_text(encoding="utf-8"))
+    assert header is not None
+    assert header.group(1) == launcher.SUPPORTED_PYTHON
+    lock = source.with_name(source.name + ".lock").read_text(encoding="utf-8")
+    locked = re.search(r'(?m)^requires-python = "([^"]*)"$', lock)
+    assert locked is not None
+    assert locked.group(1).replace(" ", "") == launcher.SUPPORTED_PYTHON
 
 
 def test_a_failed_uv_run_leaves_nothing_installed_and_nothing_false(
