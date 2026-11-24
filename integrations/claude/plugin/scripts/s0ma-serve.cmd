@@ -3,10 +3,10 @@ rem s0ma-serve.cmd - start the s0ma MCP server for Claude Code on Windows.
 rem
 rem The plugin's .mcp.json names scripts/s0ma-serve as the server's command, and
 rem on Windows Claude Code runs this file of the same name through cmd.exe. It
-rem does what the POSIX script does: find uv; if uv has a Python 3.11 or newer
-rem without downloading one, hand over to the launcher's `serve`; otherwise
-rem start the stand-in server, s0ma-stand-in.ps1, in Windows PowerShell, so the
-rem server never shows as failed on a machine with no uv.
+rem does what the POSIX script does: find uv; if uv has a Python s0ma supports
+rem (3.11 to 3.13) without downloading one, hand over to the launcher's
+rem `serve`; otherwise start the stand-in server, s0ma-stand-in.ps1, in Windows
+rem PowerShell, so the server never shows as failed on a machine with no uv.
 rem
 rem Nothing here installs anything, downloads anything, or opens a connection,
 rem and nothing but protocol goes to stdout.
@@ -31,9 +31,21 @@ if not defined uv if defined USERPROFILE if exist "%USERPROFILE%\.cargo\bin\uv.e
 if not defined uv if defined ProgramFiles if exist "%ProgramFiles%\uv\uv.exe" set "uv=%ProgramFiles%\uv\uv.exe"
 rem END uv places
 
+rem Keep the Pythons uv downloads for s0ma under s0ma's home, the folder the
+rem launcher's s0ma_home names: S0MA_HOME when it is set and not blank,
+rem otherwise USERPROFILE\.s0ma. A UV_PYTHON_INSTALL_DIR set by the person is
+rem left alone. The lines between the two markers are the same in every batch
+rem file that runs uv; a test holds them to the launcher.
+rem BEGIN s0ma home
+set "s0ma_dir="
+if defined S0MA_HOME set "s0ma_dir=%S0MA_HOME: =%"
+if not defined UV_PYTHON_INSTALL_DIR if defined s0ma_dir set "UV_PYTHON_INSTALL_DIR=%S0MA_HOME%\python"
+if not defined UV_PYTHON_INSTALL_DIR if defined USERPROFILE set "UV_PYTHON_INSTALL_DIR=%USERPROFILE%\.s0ma\python"
+rem END s0ma home
+
 rem Hand over only when nothing would have to be fetched first.
 set "ready="
-if defined uv if exist "%launcher%" "%uv%" python find --offline --no-python-downloads ">=3.11" >nul 2>&1 && set "ready=1"
+if defined uv if exist "%launcher%" "%uv%" python find --offline --no-python-downloads ">=3.11,<3.14" >nul 2>&1 && set "ready=1"
 if defined ready "%uv%" run --frozen --offline --no-python-downloads --quiet --script "%launcher%" serve
 if defined ready exit /b %ERRORLEVEL%
 
