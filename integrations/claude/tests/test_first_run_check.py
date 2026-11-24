@@ -18,7 +18,9 @@ Nothing here runs Claude: no test passes ``--claude``.
 from __future__ import annotations
 
 import importlib.util
+import inspect
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -449,3 +451,189 @@ def test_validate_runs_strict_then_the_directory_profile(
     if mode != "strict-fails":
         assert calls[1] == f"plugin validate --profile directory {plugin}"
         assert len(calls) == 2
+
+
+# ---------------------------------------------------------------------------
+# After a release: the install from the public package index.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("version", ["0.22.0", "1.0", "1.0.0rc1", "1.0.0a2", "1.0.0.post1", "2.0.0b1.dev3"])
+def test_a_released_version_is_taken(driver: ModuleType, version: str) -> None:
+    assert driver.release_version(version) == version
+
+
+@pytest.mark.parametrize(
+    "version",
+    [
+        "",
+        "v0.22.0",
+        "0.22.0+keyless",
+        "0.22.0 ",
+        " 0.22.0",
+        "0.22.0;echo",
+        "0.22.0$(id)",
+        "0.22.0\n",
+        "0..22",
+        "0.22.",
+        "0.22.0rc1.",
+        ".0.22",
+        "0.22.0-rc1",
+        "../0.22.0",
+        "latest",
+        "1" * 65,
+    ],
+)
+def test_anything_else_is_refused_before_anything_runs(version: str) -> None:
+    done = subprocess.run(  # noqa: S603 - this repository's own script
+        [sys.executable, str(DRIVER), "real-index", "--version", version],
+        capture_output=True,
+        text=True,
+        timeout=60,
+        check=False,
+    )
+    assert done.returncode == 2
+    assert "is not a released version" in done.stderr
+    assert "working in" not in done.stdout
+
+
+def test_the_real_index_leg_needs_a_version_and_runs_no_claude() -> None:
+    for argv, said in (
+        (["real-index"], "real-index needs --version"),
+        (["real-index", "--version", "0.22.0", "--claude", "claude"], "runs no Claude Code step"),
+    ):
+        done = subprocess.run(  # noqa: S603 - this repository's own script
+            [sys.executable, str(DRIVER), *argv],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            check=False,
+        )
+        assert done.returncode == 2
+        assert said in done.stderr
+
+
+@pytest.mark.parametrize("leg", ["uv-absent", "uv-present", "e2e"])
+def test_the_ordinary_legs_take_no_version(leg: str) -> None:
+    done = subprocess.run(  # noqa: S603 - this repository's own script
+        [sys.executable, str(DRIVER), leg, "--no-claude", "--version", "0.22.0"],
+        capture_output=True,
+        text=True,
+        timeout=60,
+        check=False,
+    )
+    assert done.returncode == 2
+    assert "--version belongs to the real-index leg only" in done.stderr
+
+
+def test_the_ordinary_legs_still_hold_their_tools_count(driver: ModuleType) -> None:
+    """The uv-present leg's real-server check still pins 15 tools by default."""
+    assert inspect.signature(driver.check_real_server).parameters["count"].default == 15
+
+
+def test_a_launcher_at_another_version_stops_the_leg_before_anything_runs(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def no_command(*args: object, **kwargs: object) -> None:
+        raise AssertionError(f"a command ran: {args!r}")
+
+    monkeypatch.setattr(driver, "run", no_command)
+    brings = driver.launcher_version_line(driver.LAUNCHER_FILE)
+    other = "999.0.0"
+    opts = driver.argparse.Namespace(version=other)
+    with pytest.raises(driver.CheckFailed) as failure:
+        driver.leg_real_index(opts, tmp_path, driver.Results("real-index"))
+    message = str(failure.value)
+    assert f"the launcher in this tree brings s0ma {brings}" in message
+    assert f"the version given is {other}" in message
+    assert "a plugin installs the version it brings" in message
+    assert driver.check_launcher_is_at(brings) == brings
+
+
+def test_doctor_versions_are_read(driver: ModuleType) -> None:
+    output = (
+        "s0ma doctor\n\nversions\n  python           3.13.1\n"
+        "  s0ma-lang-core   0.22.0\n  s0ma-lang-dsl    0.22.0\n"
+        "  s0ma-lang-mcp    0.22.0\n  s0ma-lang-studi0 0.22.0\n  mcp SDK          1.30.0\n"
+    )
+    assert "s0ma-lang-studi0 0.22.0" in driver.check_doctor_versions(output, "0.22.0")
+    with pytest.raises(driver.CheckFailed, match="not 0.23.0"):
+        driver.check_doctor_versions(output, "0.23.0")
+    with pytest.raises(driver.CheckFailed, match="not the four"):
+        driver.check_doctor_versions(output.replace("  s0ma-lang-mcp    0.22.0\n", ""), "0.22.0")
+
+
+#: A stand-in uv: it writes down what it was asked and with what environment,
+#: runs ``uv run --script`` with this Python, makes a ``venv`` with a ``python``
+#: in it, and answers ``pip install`` without installing anything.
+FAKE_UV = """\
+#!{python}
+import json, os, sys
+from pathlib import Path
+args = sys.argv[1:]
+watched = {watched}
+with open(os.environ["FAKE_UV_LOG"], "a", encoding="utf-8") as log:
+    log.write(json.dumps({{"args": args, "env": {{k: os.environ[k] for k in watched if k in os.environ}}}}) + "\\n")
+if args[:1] == ["run"]:
+    script = args[args.index("--script") + 1]
+    rest = args[args.index("--script") + 2:]
+    os.execv(sys.executable, [sys.executable, script, *rest])
+if args[:1] == ["venv"]:
+    target = Path(args[-1]) / "bin"
+    target.mkdir(parents=True)
+    (target / "python").symlink_to(sys.executable)
+sys.exit(0)
+"""
+
+
+@pytest.mark.skipif(sys.platform.startswith("win"), reason="the stand-in uv is a POSIX script")
+def test_no_find_links_no_offline_flag_and_no_key_reach_uv(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Every way a run could steer uv off the index, or hand it a key, is set,
+    and none of it reaches uv: it is asked for ``s0ma-lang==<version>`` alone."""
+    bin_dir = tmp_path / "fake-bin"
+    bin_dir.mkdir()
+    watched = sorted(
+        {*driver.INDEX_STEERING, "S0MA_LICENSE_KEY", "S0MA_LAUNCH_OFFLINE_INSTALL", "UV_NO_CONFIG"}
+    )
+    fake = bin_dir / "uv"
+    fake.write_text(FAKE_UV.format(python=sys.executable, watched=watched), encoding="utf-8")
+    fake.chmod(0o755)
+    log = tmp_path / "uv.log"
+    monkeypatch.setenv("PATH", f"{bin_dir}{os.pathsep}/usr/bin{os.pathsep}/bin")
+    monkeypatch.setenv("FAKE_UV_LOG", str(log))
+    for name in driver.INDEX_STEERING:
+        monkeypatch.setenv(name, "/somewhere/local" if "LINKS" in name or "URL" in name else "1")
+    monkeypatch.setenv("S0MA_LICENSE_KEY", "s0ma_test_key_never_sent")
+    monkeypatch.setenv("S0MA_LAUNCH_OFFLINE_INSTALL", "1")
+
+    home = tmp_path / "s0ma-home"
+    env = driver.real_index_env(home, "127.0.0.1:9", tmp_path / "uv-cache")
+    version = driver.launcher_version_line(driver.LAUNCHER_FILE)
+    verdict = driver.install_from_real_index(driver.PLUGIN_DIR, version, env, tmp_path)
+    assert f"s0ma {version} is installed" in verdict
+
+    calls = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
+    assert calls[0]["args"][:3] == ["run", "--frozen", "--script"]
+    pip = [call for call in calls if call["args"][:2] == ["pip", "install"]]
+    assert len(pip) == 1
+    asked = pip[0]["args"]
+    assert f"s0ma-lang=={version}" in asked
+    for flag in ("--offline", "--find-links", "-f", "--no-index", "--index-url", "--extra-index-url"):
+        assert flag not in asked
+    for call in calls:
+        assert "--offline" not in call["args"]
+        assert call["env"] == {"UV_NO_CONFIG": "1"}
+
+
+def test_the_install_refuses_an_environment_that_steers_uv(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def no_command(*args: object, **kwargs: object) -> None:
+        raise AssertionError(f"a command ran: {args!r}")
+
+    monkeypatch.setattr(driver, "run", no_command)
+    for name in ("UV_FIND_LINKS", "UV_OFFLINE", "S0MA_LICENSE_KEY"):
+        with pytest.raises(driver.CheckFailed, match=name):
+            driver.install_from_real_index(driver.PLUGIN_DIR, "0.22.0", {name: "x"}, tmp_path)

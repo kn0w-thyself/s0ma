@@ -242,6 +242,28 @@ Historical entries describe artifacts as they were named at the time.
   `--profile` is reported and not failed. The version-currency check reads the
   plugin's skills from their folder, so it scans all twelve rather than six.
 
+- **A first-run check against the real package index, started by hand after
+  a release.** The `first-run` workflow can now be run from the Actions tab,
+  or with `gh workflow run first-run.yml --ref vX.Y.Z -f version=X.Y.Z`, on a
+  release's tag. On Linux, macOS and Windows its one job, `real-index`,
+  exports the plugin from that tag, runs its `s0ma-launch install` with uv, a
+  fresh s0ma home, no license key, no local wheels and uv not offline, so uv
+  fetches `s0ma-lang==X.Y.Z` from the public package index, and then checks
+  what holds for any release: `s0ma doctor` reports that version for each
+  s0ma package, the plugin's server answers and lists its tools, and `new
+  project`, `check`, `build .` and `test` each exit 0 in a fresh project, with
+  no request to the stand-in control plane. It prints every installed
+  distribution with its version. The driver, `scripts/first_run_check.py
+  real-index --version X.Y.Z`, refuses a version that is not digits and dots
+  with an optional pre-release or post-release tail before it runs anything,
+  and stops when the launcher in the tree brings another version. Pushes and
+  pull requests run the same jobs as before. `docs/RELEASING.md` gains the
+  step that starts it after the release is published, and its hand-run
+  checklist now says how the plugin reaches the clean account while no
+  catalog lists it (exported from the tag into a folder, then added in Claude
+  as a marketplace), what to see from the two edit hooks, and what Windows
+  without Git for Windows shows.
+
 ### Changed
 
 - **PRD v1.19: the Claude plugin is offered with no account (owner ruling

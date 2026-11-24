@@ -19,6 +19,24 @@
 # Nothing here signs in to anything or holds a secret: Claude Code runs with a
 # fresh config directory and no key, and only the commands that need neither
 # (`--version`, `plugin validate`, `mcp list`) are used. No model runs.
+#
+# Started by hand, after a release: the install a person gets from the public
+# package index. A push or a pull request never runs it, and a run started by
+# hand runs only it: the `real-index` job at the end of this file. Start it
+# from the Actions tab ("first-run", then "Run workflow"), or with
+#
+#   gh workflow run first-run.yml --ref vX.Y.Z -f version=X.Y.Z
+#
+# Give it the release's tag as the ref and the release's version, without the
+# "v", as the version; the driver refuses a version the launcher in that tree
+# does not bring. On Linux, macOS and Windows, with uv and no license key, the
+# exported plugin's `s0ma-launch install` has uv fetch `s0ma-lang==X.Y.Z` from
+# the index, and the installed s0ma is checked: its version, the server and its
+# tools, and `new project`, `check`, `build .` and `test` in a fresh project.
+# No Claude Code is installed for it and no Claude step runs. Nothing signs
+# in, nothing is published, and the version typed in reaches the shell only
+# through an environment variable, which the driver checks before it runs
+# anything.
 name: first-run
 
 on:
@@ -26,6 +44,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The released version to install from the package index, such as 0.22.0 (run it on the release's tag)"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -44,6 +68,7 @@ jobs:
   # export is byte-identical on every system, so one build serves all three.
   export:
     name: export the marketplace tree
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -68,6 +93,7 @@ jobs:
 
   first-run:
     name: first-run (${{ matrix.os }}, uv ${{ matrix.uv }})
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ${{ matrix.os }}
     needs: export
     timeout-minutes: 45
@@ -126,3 +152,31 @@ jobs:
       - name: The first run with uv and no license key
         if: matrix.uv == 'present'
         run: uv run python scripts/first_run_check.py uv-present --claude claude --claude-version ${{ env.CLAUDE_CODE_VERSION }}
+
+  # Started by hand only: see the top of this file.
+  real-index:
+    name: real-index (${{ matrix.os }})
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.4.0
+        with:
+          version: "0.9.21"
+          python-version: "3.13"
+
+      - name: Sync workspace (all packages, all extras)
+        run: uv sync --all-packages --all-extras
+
+      - name: Install the release from the public package index, with no license key
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: uv run python scripts/first_run_check.py real-index --no-claude --version="$RELEASE_VERSION"
