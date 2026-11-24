@@ -268,61 +268,61 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "ae8b19f376753caf56a14cbb0b7d5f732a8f7821c221b92435e63093b1f76a11",
+      "content_sha256": "73f516dc9f891f5e264e49fbb4fa9de791f11dae98363a06a3621dccaa891a63",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang",
       "section": "[project]",
       "source": "packages/s0ma-lang/pyproject.toml",
-      "status": "Declared; depends=s0ma-lang-core,s0ma-lang-dsl,s0ma-lang-mcp,s0ma-lang-studi0; version=0.22.0"
+      "status": "Declared; depends=s0ma-lang-core,s0ma-lang-dsl,s0ma-lang-mcp,s0ma-lang-studi0; version=0.23.0"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "3b76d65997159f8c7fdfb014afa59eafee6669516596fac4be030245adf5d849",
+      "content_sha256": "91558537bf740ea88a5edf529489b2f0c00408bb1616681c434ec609736ced74",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-core",
       "section": "[project]",
       "source": "packages/s0ma-core/pyproject.toml",
-      "status": "Declared; depends=none; version=0.22.0"
+      "status": "Declared; depends=none; version=0.23.0"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "15c5ea2f1d78b7b27534b4e0e2b2c351c53f2d1fd8e24f72187248b2f487b3f6",
+      "content_sha256": "90a427fd5f0701ba0eb536db2541153134526daf2d3ed97810e6764b91511d20",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-dsl",
       "section": "[project]",
       "source": "packages/s0ma-dsl/pyproject.toml",
-      "status": "Declared; depends=s0ma-lang-core; version=0.22.0"
+      "status": "Declared; depends=s0ma-lang-core; version=0.23.0"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "c797a98707d54ca27728cdd2dbcc81e961a4c9fd2103864b64d27b882d7035f2",
+      "content_sha256": "f4053795416f0a7f6dff6feb27197d2da902df8355ad52f2b82958a861599d66",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-mcp",
       "section": "[project]",
       "source": "packages/s0ma-mcp/pyproject.toml",
-      "status": "Declared; depends=s0ma-lang-core,s0ma-lang-dsl; version=0.22.0"
+      "status": "Declared; depends=s0ma-lang-core,s0ma-lang-dsl; version=0.23.0"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "ca65dccd5f0ebde181a1b3d53d239c5ffa963fd7d0c01f664ffb957a7fae444d",
+      "content_sha256": "26f6fe37627211b05595c93c4070fd4e8ce716e5bd0bc3064d099d2377311601",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-studi0",
       "section": "[project]",
       "source": "packages/s0ma-studi0/pyproject.toml",
-      "status": "Declared; depends=s0ma-lang-core,s0ma-lang-dsl; version=0.22.0"
+      "status": "Declared; depends=s0ma-lang-core,s0ma-lang-dsl; version=0.23.0"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "7cbf36c3b255df12b6dbb9daf84c32538316400537af68499d807026c7415f80",
+      "content_sha256": "883efa0c645f8a7a38302ed17d6a7fc4a1167505dd99707b36b9af5cbdd8e10a",
       "delegates": [],
       "id": "authority:declared/release",
-      "section": "[0.22.0] — 2026-11-19",
+      "section": "[0.23.0] — 2026-11-23",
       "source": "CHANGELOG.md",
-      "status": "Released; date=2026-11-19; unreleased=present; version=0.22.0"
+      "status": "Released; date=2026-11-23; unreleased=present; version=0.23.0"
     },
     {
       "authority_class": "declared",
-      "content_sha256": "26c6707a0d7b0923af0868949d3a2cead1e502db16578dde26b87f175093acba",
+      "content_sha256": "0dbb2e5c92d6737d6e10252a46ce8650d845a88b354812b601feaf60bd5a1183",
       "delegates": [],
       "id": "authority:declared/studi0.narration-event",
       "section": "NARRATION_TYPE",
@@ -331,7 +331,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "26c6707a0d7b0923af0868949d3a2cead1e502db16578dde26b87f175093acba",
+      "content_sha256": "0dbb2e5c92d6737d6e10252a46ce8650d845a88b354812b601feaf60bd5a1183",
       "delegates": [],
       "id": "authority:declared/studi0.presence-marker",
       "section": "PRESENCE_PATH_PARTS",
@@ -340,7 +340,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "0e2fd6c649256626ccb69ee048df8928d4b68f9f1d3daa579b2df20bb85bd0b8",
+      "content_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60",
       "delegates": [],
       "id": "authority:declared/studi0.serving-contract",
       "section": "Studi0ServerConfig",
@@ -349,7 +349,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "7c7d3b57bbda438f33a5be9b63dfd3f89f2734e5866921a5963d1f343fa83200",
+      "content_sha256": "15d78cd53525df153b34da4c5aaf6959d6e0ecd865c2dbd71056de7ab6ad5c78",
       "delegates": [],
       "id": "authority:declared/studi0.watch-contract",
       "section": "Studi0WatchConfig",
@@ -358,7 +358,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "9a36ffe4b4d65394bb52eb13fab4cc5b5fdf211b2b3fc4048cac26b6ca5d039b",
+      "content_sha256": "8d1a2f1d67423ccfa0735bfcd2af50b4c2532de9cb6fa49ac315c9b589e11b03",
       "delegates": [],
       "id": "authority:declared/studi0.wire-graph",
       "section": "GRAPH_SCHEMA",
@@ -367,7 +367,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "9a36ffe4b4d65394bb52eb13fab4cc5b5fdf211b2b3fc4048cac26b6ca5d039b",
+      "content_sha256": "8d1a2f1d67423ccfa0735bfcd2af50b4c2532de9cb6fa49ac315c9b589e11b03",
       "delegates": [],
       "id": "authority:declared/studi0.wire-state",
       "section": "STATE_SCHEMA",
@@ -4609,6 +4609,15 @@
       "title": "s0ma-lang-core — Runtime Specification & Coding Agent Rulebook (historical: v0.21.1)"
     },
     {
+      "authority": "",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.22.0.md",
+      "covers": [],
+      "governed_by": [],
+      "id": "doc:historical/s0ma-core-spec-v0-22-0",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.22.0.md",
+      "title": "s0ma-lang-core — Runtime Specification & Coding Agent Rulebook (historical: v0.22.0)"
+    },
+    {
       "authority": "authority:adr/s0ma-dsl.ADR-004",
       "canonical_source": "packages/s0ma-dsl/docs/adr/ADR-004-separate-project.md",
       "covers": [],
@@ -4884,11 +4893,11 @@
     },
     {
       "authority": "",
-      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.22.0.md",
+      "canonical_source": "packages/s0ma-core/docs/s0ma-core-spec-v0.23.0.md",
       "covers": [],
       "governed_by": [],
-      "id": "doc:normative/s0ma-core-spec-v0-22-0",
-      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.22.0.md",
+      "id": "doc:normative/s0ma-core-spec-v0-23-0",
+      "prose_locator": "packages/s0ma-core/docs/s0ma-core-spec-v0.23.0.md",
       "title": "s0ma-lang-core — Runtime Specification & Coding Agent Rulebook"
     },
     {
@@ -5668,9 +5677,9 @@
   "sequences": [],
   "stamp": {
     "build_channel": "preview",
-    "release_version": "0.22.0",
+    "release_version": "0.23.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:8480c2e489f89e68"
+    "snapshot_hash": "sha256:1a3d759e7d7ab763"
   },
   "surfaces": [
     {
@@ -11543,7 +11552,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "0e2fd6c649256626ccb69ee048df8928d4b68f9f1d3daa579b2df20bb85bd0b8"
+        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
       },
       "public_name": "/api/graph",
       "side_effects": [
@@ -11570,7 +11579,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "0e2fd6c649256626ccb69ee048df8928d4b68f9f1d3daa579b2df20bb85bd0b8"
+        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
       },
       "public_name": "/api/state",
       "side_effects": [
@@ -11592,7 +11601,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "0e2fd6c649256626ccb69ee048df8928d4b68f9f1d3daa579b2df20bb85bd0b8"
+        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
       },
       "public_name": "/assets/app.css",
       "side_effects": [
@@ -11614,7 +11623,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "0e2fd6c649256626ccb69ee048df8928d4b68f9f1d3daa579b2df20bb85bd0b8"
+        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
       },
       "public_name": "/assets/app.js",
       "side_effects": [
@@ -11636,7 +11645,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "0e2fd6c649256626ccb69ee048df8928d4b68f9f1d3daa579b2df20bb85bd0b8"
+        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
       },
       "public_name": "/",
       "side_effects": [

@@ -11,6 +11,8 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+## [0.23.0] — 2026-11-23
+
 ### Added
 
 - **`/s0ma:start`, one front door from nothing to a built project with studi0

@@ -1247,7 +1247,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:67eef9d0de40d0ac3657d45dd55555a1559737de81639afafa3e28df080ee49b",
+    "content_hash": "sha256:5a7c3236181895c22f2e91d3258f5bee613a93e0c7b0100ef5621d06f4a66f76",
     "exports_helpers": {
       "state": "none"
     },
@@ -1260,9 +1260,9 @@
     "source_file": "s0ma_src/studi0_server.s0ma",
     "tags": [],
     "transpiled_file": "studi0_server.py",
-    "version": "0.22.0"
+    "version": "0.23.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:67eef9d0de40d0ac",
+  "source_hash": "sha256:5a7c3236181895c2",
   "transpiler_version": "1.0.0"
 }

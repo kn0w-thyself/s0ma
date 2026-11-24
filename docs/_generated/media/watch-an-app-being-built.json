@@ -3,8 +3,8 @@
     "channel": "preview",
     "journey": "journey:watch-an-app-being-built",
     "published_by": "doc:guide/watch-an-app-being-built",
-    "release": "0.22.0 (preview)",
-    "snapshot": "sha256:8480c2e489f89e68"
+    "release": "0.23.0 (preview)",
+    "snapshot": "sha256:1a3d759e7d7ab763"
   },
   "package": {
     "audience": [

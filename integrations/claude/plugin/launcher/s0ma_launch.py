@@ -85,7 +85,7 @@ PROG = "s0ma-launch"
 #: Desktop extension) that carries this file is updated. One literal, kept
 #: equal to the lockstep version by ``scripts/sync_integrations.py``, which
 #: rewrites this line at a release cut.
-LAUNCHER_VERSION = "0.22.0"
+LAUNCHER_VERSION = "0.23.0"
 
 #: The distribution the keyless route asks uv for: the umbrella, which requires
 #: each of the four parts of s0ma at exactly its own version.
