@@ -71,5 +71,5 @@ integration <Name> :: INFRASTRUCTURE
 ## Identity
 
 - Topic id: `concept:integration`
-- Release: `0.23.0`
+- Release: `0.23.0 (preview)`
 - Documentation snapshot: `sha256:1a3d759e7d7ab763`

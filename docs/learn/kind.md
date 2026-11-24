@@ -68,5 +68,5 @@ cell <Name> :: <LAYER>
 ## Identity
 
 - Topic id: `concept:kind`
-- Release: `0.23.0`
+- Release: `0.23.0 (preview)`
 - Documentation snapshot: `sha256:1a3d759e7d7ab763`
