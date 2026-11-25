@@ -979,7 +979,7 @@ class TestTheFrontDoor:
     def test_every_option_named_is_one_the_command_takes(
         self, name: str, skills: dict[str, str], cli_parsers: dict[str, argparse.ArgumentParser]
     ) -> None:
-        """``s0ma studi0 --no-open``, ``s0ma new project --template pipeline``.
+        """``s0ma studi0 --no-open``, ``s0ma new project --template agent``.
 
         Read from each command's own parser, so a flag or a template name the
         CLI does not have fails here rather than in a person's first session.
@@ -1013,8 +1013,8 @@ class TestTheFrontDoor:
             for text in skills.values()
             for found in re.findall(r"--template ([a-z]+)", text)
         }
-        assert {"pipeline", "service", "library", "cli"} <= named
         assert named <= set(offered), sorted(named - set(offered))
+        assert named == set(offered), sorted(set(offered) - named)
 
     def test_the_tools_build_names_are_tools_the_server_serves(
         self, skills: dict[str, str]
