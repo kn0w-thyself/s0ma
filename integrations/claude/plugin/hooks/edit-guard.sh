@@ -239,6 +239,33 @@ if [ -z "$uv" ]; then
     exit 0
 fi
 
+# Keep the Pythons uv downloads for s0ma under s0ma's home, the folder the
+# launcher's s0ma_home names: S0MA_HOME when it is set, otherwise .s0ma in the
+# home folder, which on Windows (where OS is Windows_NT, Git Bash included) is
+# USERPROFILE. A UV_PYTHON_INSTALL_DIR set by the person is left alone. The
+# lines between the two markers are the same in every script that runs uv; a
+# test holds them to the launcher.
+# BEGIN s0ma home
+if [ -z "${UV_PYTHON_INSTALL_DIR:-}" ]; then
+    s0ma_dir=${S0MA_HOME:-}
+    s0ma_dir=${s0ma_dir#"${s0ma_dir%%[![:space:]]*}"}
+    s0ma_dir=${s0ma_dir%"${s0ma_dir##*[![:space:]]}"}
+    user_dir=${HOME:-}
+    if [ "${OS:-}" = Windows_NT ]; then
+        user_dir=${USERPROFILE:-}
+    fi
+    case $s0ma_dir in
+        '') s0ma_dir=${user_dir:+$user_dir/.s0ma} ;;
+        \~) s0ma_dir=$user_dir ;;
+        \~/*) s0ma_dir=${user_dir:+$user_dir/${s0ma_dir#\~/}} ;;
+    esac
+    if [ -n "$s0ma_dir" ]; then
+        UV_PYTHON_INSTALL_DIR=$s0ma_dir/python
+        export UV_PYTHON_INSTALL_DIR
+    fi
+fi
+# END s0ma home
+
 # --frozen: use the lock file beside the launcher as it is, resolving nothing.
 # --offline and --no-python-downloads: if running the launcher would need
 # anything from the network, uv refuses instead of fetching it. The launcher's

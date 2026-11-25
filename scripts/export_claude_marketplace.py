@@ -727,6 +727,16 @@ starts it.
 It happens once per installed version, and never when nothing is being
 installed.
 
+## A Python, if this machine has none s0ma supports
+
+s0ma runs on Python 3.11, 3.12 and 3.13. If none of those is on the machine,
+uv downloads one the first time `s0ma` or `s0ma-launch` runs: uv's own request,
+by uv's documentation to the python-build-standalone project's releases on
+github.com, unless uv is set up to use a mirror. It carries nothing about you
+or your project. The Python is kept in a `python` folder inside your s0ma home
+directory, used only by s0ma, and removed with that folder. The hooks and the
+server never download one.
+
 ## When
 
 - By itself: only with a license key, at most once a day, and only while the

@@ -637,3 +637,206 @@ def test_the_install_refuses_an_environment_that_steers_uv(
     for name in ("UV_FIND_LINKS", "UV_OFFLINE", "S0MA_LICENSE_KEY"):
         with pytest.raises(driver.CheckFailed, match=name):
             driver.install_from_real_index(driver.PLUGIN_DIR, "0.22.0", {name: "x"}, tmp_path)
+
+
+# ---------------------------------------------------------------------------
+# The real-index leg waits for a version the index does not show yet.
+# ---------------------------------------------------------------------------
+
+
+class Clock:
+    """A clock that moves only when the leg sleeps."""
+
+    def __init__(self) -> None:
+        self.now = 0.0
+        self.pauses: list[float] = []
+
+    def __call__(self) -> float:
+        return self.now
+
+    def sleep(self, seconds: float) -> None:
+        self.pauses.append(seconds)
+        self.now += seconds
+
+
+def answers(driver: ModuleType, *outcomes: tuple[int, str]) -> tuple[list[object], object]:
+    """A stand-in for ``run`` that gives *outcomes* in turn, then the last again."""
+    calls: list[object] = []
+
+    def fake_run(command: object, env: object, cwd: object, **kwargs: object) -> object:
+        calls.append(command)
+        code, stderr = outcomes[min(len(calls), len(outcomes)) - 1]
+        return driver.Ran(code, "", stderr)
+
+    return calls, fake_run
+
+
+MISSING = "  Because there is no version of s0ma-lang==0.23.1 and you require s0ma-lang==0.23.1, ..."
+
+
+def test_a_version_the_index_does_not_show_yet_is_asked_for_again(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    clock = Clock()
+    calls, fake_run = answers(
+        driver, (3, MISSING), (3, MISSING), (0, "s0ma 0.23.1 is installed.")
+    )
+    monkeypatch.setattr(driver, "run", fake_run)
+    verdict = driver.install_from_real_index(
+        driver.PLUGIN_DIR, "0.23.1", {}, tmp_path, sleep=clock.sleep, clock=clock
+    )
+    assert len(calls) == 3
+    assert clock.pauses == [driver.INDEX_RETRY_SECONDS] * 2
+    assert "after 2 waits for the index" in verdict
+    printed = capsys.readouterr().out
+    assert "WAIT 1: the index does not show s0ma-lang==0.23.1 yet" in printed
+    assert "WAIT 2:" in printed
+
+
+def test_the_wait_for_the_index_ends_after_five_minutes(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    clock = Clock()
+    calls, fake_run = answers(driver, (3, MISSING))
+    monkeypatch.setattr(driver, "run", fake_run)
+    with pytest.raises(driver.CheckFailed, match="exited 3"):
+        driver.install_from_real_index(
+            driver.PLUGIN_DIR, "0.23.1", {}, tmp_path, sleep=clock.sleep, clock=clock
+        )
+    assert driver.INDEX_WAIT_SECONDS == 300.0
+    assert sum(clock.pauses) == driver.INDEX_WAIT_SECONDS
+    assert len(calls) == len(clock.pauses) + 1
+
+
+def test_any_other_failure_of_the_index_install_is_not_retried(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    clock = Clock()
+    for said in ("  Failed to download s0ma-lang", MISSING.replace("0.23.1", "0.23.0")):
+        calls, fake_run = answers(driver, (3, said))
+        monkeypatch.setattr(driver, "run", fake_run)
+        with pytest.raises(driver.CheckFailed, match="exited 3"):
+            driver.install_from_real_index(
+                driver.PLUGIN_DIR, "0.23.1", {}, tmp_path, sleep=clock.sleep, clock=clock
+            )
+        assert len(calls) == 1
+    assert clock.pauses == []
+
+
+# ---------------------------------------------------------------------------
+# The python-download leg: uv chooses, and the plugin says where it keeps it.
+# ---------------------------------------------------------------------------
+
+
+def test_the_python_download_leg_runs_no_claude_and_takes_no_version() -> None:
+    for argv, said in (
+        (["python-download", "--claude", "claude", "--claude-version", "1"], "runs no Claude Code step"),
+        (["python-download", "--version", "0.22.0"], "--version belongs to the real-index leg only"),
+    ):
+        done = subprocess.run(  # noqa: S603 - this repository's own script
+            [sys.executable, str(DRIVER), *argv],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            check=False,
+        )
+        assert done.returncode == 2
+        assert said in done.stderr
+
+
+def test_the_supported_range_is_read_as_minor_versions(driver: ModuleType) -> None:
+    assert driver.supported_minors(">=3.11,<3.14") == {11, 12, 13}
+    with pytest.raises(driver.CheckFailed, match="not >=3.A,<3.B"):
+        driver.supported_minors(">=3.11")
+
+
+def test_nothing_that_names_a_python_reaches_the_plugin(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    for name in driver.PYTHON_STEERING:
+        monkeypatch.setenv(name, "3.15")
+    env = driver.python_download_env(tmp_path / "s0ma home", "127.0.0.1:9")
+    for name in driver.PYTHON_STEERING:
+        if name != "UV_PYTHON_PREFERENCE":
+            assert name not in env, name
+    assert env["UV_PYTHON_PREFERENCE"] == "only-managed"
+    assert env["UV_NO_CONFIG"] == "1"
+    assert env["S0MA_HOME"] == str(tmp_path / "s0ma home")
+
+
+#: A stand-in uv that writes down the environment it was given, then runs
+#: ``uv run --script`` with this Python and answers ``python dir`` with a path.
+FAKE_UV_PYTHON = """\
+#!{python}
+import json, os, sys
+args = sys.argv[1:]
+watched = {watched}
+with open(os.environ["FAKE_UV_LOG"], "a", encoding="utf-8") as log:
+    log.write(json.dumps({{"args": args, "env": {{k: os.environ[k] for k in watched if k in os.environ}}}}) + "\\n")
+if args[:2] == ["python", "dir"]:
+    print(os.environ.get("UV_PYTHON_INSTALL_DIR", "/default/uv/python"))
+    sys.exit(0)
+if args[:1] == ["run"]:
+    script = args[args.index("--script") + 1]
+    rest = args[args.index("--script") + 2:]
+    os.execv(sys.executable, [sys.executable, script, *rest])
+sys.exit(0)
+"""
+
+
+def fake_uv_python(tmp_path: Path, driver: ModuleType, monkeypatch: pytest.MonkeyPatch) -> Path:
+    bin_dir = tmp_path / "fake-bin"
+    bin_dir.mkdir()
+    fake = bin_dir / "uv"
+    watched = sorted({*driver.PYTHON_STEERING, "UV_NO_CONFIG"})
+    fake.write_text(FAKE_UV_PYTHON.format(python=sys.executable, watched=watched), encoding="utf-8")
+    fake.chmod(0o755)
+    log = tmp_path / "uv.log"
+    monkeypatch.setenv("PATH", f"{bin_dir}{os.pathsep}/usr/bin{os.pathsep}/bin")
+    monkeypatch.setenv("FAKE_UV_LOG", str(log))
+    return log
+
+
+@pytest.mark.skipif(sys.platform.startswith("win"), reason="the stand-in uv is a POSIX script")
+def test_the_plugins_command_hands_uv_only_its_own_python_folder(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The runner's Python settings are cleared; the plugin names the folder itself."""
+    log = fake_uv_python(tmp_path, driver, monkeypatch)
+    monkeypatch.setenv("UV_PYTHON", "3.13")
+    monkeypatch.setenv("UV_PYTHON_INSTALL_DIR", str(tmp_path / "runner-pythons"))
+    home = tmp_path / "s0ma home"
+    env = driver.python_download_env(home, "127.0.0.1:9")
+    ran = driver.run(driver.launch_command(driver.PLUGIN_DIR, "status"), env, tmp_path)
+    assert ran.code == 0, ran.stderr
+    calls = [json.loads(line) for line in log.read_text(encoding="utf-8").splitlines()]
+    assert calls[0]["args"][:3] == ["run", "--frozen", "--script"]
+    assert calls[0]["env"] == {
+        "UV_NO_CONFIG": "1",
+        "UV_PYTHON_INSTALL_DIR": str(home / "python"),
+        "UV_PYTHON_PREFERENCE": "only-managed",
+    }
+
+
+@pytest.mark.skipif(sys.platform.startswith("win"), reason="the stand-in uv is a POSIX script")
+def test_uvs_default_folder_and_the_runners_are_both_watched(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    log = fake_uv_python(tmp_path, driver, monkeypatch)
+    monkeypatch.setenv("UV_PYTHON_INSTALL_DIR", str(tmp_path / "runner-pythons"))
+    folders = driver.default_python_dirs("uv", tmp_path)
+    assert folders == [Path("/default/uv/python"), tmp_path / "runner-pythons"]
+    asked = json.loads(log.read_text(encoding="utf-8").splitlines()[0])
+    assert asked["args"] == ["python", "dir"]
+    assert "UV_PYTHON_INSTALL_DIR" not in asked["env"]
+    monkeypatch.delenv("UV_PYTHON_INSTALL_DIR")
+    assert driver.default_python_dirs("uv", tmp_path) == [Path("/default/uv/python")]
+
+
+def test_a_folders_entries_are_listed_by_name_only(driver: ModuleType, tmp_path: Path) -> None:
+    assert driver.entry_names(tmp_path / "missing") == []
+    (tmp_path / "b").mkdir()
+    (tmp_path / "a").write_text("x", encoding="utf-8")
+    assert driver.entry_names(tmp_path) == ["a", "b"]
+    assert driver.is_under(tmp_path / "b", tmp_path)
+    assert not driver.is_under(tmp_path, tmp_path / "b")

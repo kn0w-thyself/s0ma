@@ -501,7 +501,7 @@ def test_bundle_has_the_pyproject_the_uv_type_requires() -> None:
     assert project["dependencies"] == [], (
         "the launcher is standard library only; this list stays empty"
     )
-    assert project["requires-python"] == ">=3.11"
+    assert project["requires-python"] == ">=3.11,<3.14"
     assert project["version"] == lockstep_version()
     assert "build-system" not in data, (
         "without a [build-system] table uv runs in the project instead of "

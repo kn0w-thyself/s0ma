@@ -31,5 +31,17 @@ rem END uv places
 if not defined uv echo s0ma needs a small program called uv, and it is not on this computer yet - install it with: powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex" 1>&2
 if not defined uv exit /b 7
 
+rem Keep the Pythons uv downloads for s0ma under s0ma's home, the folder the
+rem launcher's s0ma_home names: S0MA_HOME when it is set and not blank,
+rem otherwise USERPROFILE\.s0ma. A UV_PYTHON_INSTALL_DIR set by the person is
+rem left alone. The lines between the two markers are the same in every batch
+rem file that runs uv; a test holds them to the launcher.
+rem BEGIN s0ma home
+set "s0ma_dir="
+if defined S0MA_HOME set "s0ma_dir=%S0MA_HOME: =%"
+if not defined UV_PYTHON_INSTALL_DIR if defined s0ma_dir set "UV_PYTHON_INSTALL_DIR=%S0MA_HOME%\python"
+if not defined UV_PYTHON_INSTALL_DIR if defined USERPROFILE set "UV_PYTHON_INSTALL_DIR=%USERPROFILE%\.s0ma\python"
+rem END s0ma home
+
 "%uv%" run --frozen --script "%launcher%" %*
 exit /b %ERRORLEVEL%

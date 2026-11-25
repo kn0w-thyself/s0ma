@@ -84,7 +84,9 @@ open-source packages s0ma depends on, and pytest, which `s0ma test` needs,
 from the package index. Running s0ma from a source checkout
 needs no key at all.
 
-You do not need to install Python. uv provides one.
+You do not need to install Python. If this machine has none that s0ma
+supports, 3.11 to 3.13, uv downloads one the first time s0ma runs and keeps it
+in s0ma's own folder. A newer Python is not used until s0ma is tested on it.
 
 ## Install in Claude Code
 
@@ -480,8 +482,9 @@ Remove the plugin with `/plugin`, or the extension through Claude Desktop's
 Extensions settings; each is Claude's own uninstall and takes the wrapper away,
 not the toolchain.
 
-The toolchain, everything s0ma downloaded, and your key if you saved it with
-`s0ma-launch activate`, all live in one folder in your home directory —
+The toolchain, everything s0ma downloaded, the Python uv downloaded for it if
+it needed one, and your key if you saved it with `s0ma-launch activate`, all
+live in one folder in your home directory —
 `~/.s0ma` on macOS and Linux, `%USERPROFILE%\.s0ma` on Windows — which is never
 inside a project.
 [Removing s0ma](../uninstall.md) is the complete account: what to stop first,

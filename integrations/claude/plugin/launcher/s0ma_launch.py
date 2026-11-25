@@ -1,5 +1,5 @@
 # /// script
-# requires-python = ">=3.11"
+# requires-python = ">=3.11,<3.14"
 # dependencies = []
 # ///
 """s0ma-launch - the one small program that decides which s0ma runs, and starts it.
@@ -96,6 +96,11 @@ INDEX_DISTRIBUTION = "s0ma-lang"
 #: s0ma requires it. The floor is the one the packages' development extras state.
 PYTEST_REQUIREMENT = "pytest>=7.0"
 
+#: The Pythons s0ma runs on, as a request uv understands. It is the range the
+#: test matrix runs, so a newer Python that uv happens to offer is never used
+#: until s0ma is tested on it.
+SUPPORTED_PYTHON = ">=3.11,<3.14"
+
 #: Exit codes, frozen by the plan (section 4.3).
 EXIT_OK = 0
 EXIT_USAGE = 2
@@ -113,6 +118,10 @@ ENV_TOOLCHAIN = "S0MA_TOOLCHAIN"
 ENV_CP_HOST = "S0MA_CP_HOST"
 ENV_PROJECT_DIR = "CLAUDE_PROJECT_DIR"
 ENV_PLUGIN_DATA = "CLAUDE_PLUGIN_DATA"
+#: uv's own setting for where the Pythons it downloads are kept. The launcher
+#: and every script the plugin runs point it at ``PYTHON_DIRNAME`` under s0ma's
+#: home, unless the person has set it themselves.
+ENV_UV_PYTHON_INSTALL_DIR = "UV_PYTHON_INSTALL_DIR"
 
 #: Default state directory, relative to the user's home.
 DEFAULT_HOME_DIRNAME = ".s0ma"
@@ -126,6 +135,7 @@ TOOLCHAINS_DIRNAME = "toolchains"
 DOWNLOADS_DIRNAME = "downloads"
 UPDATE_LOCK_FILENAME = "update.lock"
 UPDATE_LOG_FILENAME = "update.log"
+PYTHON_DIRNAME = "python"
 
 #: Written last inside a toolchain directory. A directory without it is
 #: half-built: it is never used, and a later run sweeps it away.
@@ -392,6 +402,11 @@ def s0ma_home(env: Mapping[str, str] | None = None) -> Path:
 def launcher_dir(home: Path) -> Path:
     """The launcher's own corner of the state directory."""
     return home / LAUNCHER_DIRNAME
+
+
+def python_install_dir(home: Path) -> Path:
+    """Where uv keeps the Pythons it downloads for s0ma: under s0ma's own home."""
+    return home / PYTHON_DIRNAME
 
 
 def config_path(home: Path) -> Path:
@@ -2689,9 +2704,15 @@ def child_environment(env: Mapping[str, str] | None = None) -> dict[str, str]:
     ``uv`` has no use for a license key, and a value that is not passed on is a
     value that cannot be written into a log, a crash report or a lock file by
     something that is not this launcher.
+
+    A Python that uv downloads is kept under s0ma's home, the same folder the
+    plugin's scripts name before the launcher runs, unless the person has set
+    ``UV_PYTHON_INSTALL_DIR`` themselves.
     """
     values = dict(environ(env))
     values.pop(ENV_LICENSE_KEY, None)
+    if not values.get(ENV_UV_PYTHON_INSTALL_DIR, ""):
+        values[ENV_UV_PYTHON_INSTALL_DIR] = str(python_install_dir(s0ma_home(values)))
     return values
 
 
@@ -2898,7 +2919,7 @@ def install_version(
     progress(f"Building a private Python environment for s0ma {resolved}...")
     run_uv(
         tool,
-        ["venv", "--relocatable", *offline, str(partial)],
+        ["venv", "--relocatable", "--python", SUPPORTED_PYTHON, *offline, str(partial)],
         env=values,
         what=f"make a Python environment for s0ma {resolved}",
         runner=runner,
@@ -3021,7 +3042,7 @@ def install_from_index(
         progress(f"Building a private Python environment for s0ma {resolved}...")
         run_uv(
             tool,
-            ["venv", "--relocatable", *offline, str(partial)],
+            ["venv", "--relocatable", "--python", SUPPORTED_PYTHON, *offline, str(partial)],
             env=values,
             what=f"make a Python environment for s0ma {resolved}",
             runner=runner,

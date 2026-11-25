@@ -11,6 +11,43 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The Claude Code plugin's first install uses a Python s0ma supports, and
+  keeps it under s0ma's home.** On a machine with no Python, uv downloaded the
+  newest one there was, which s0ma is not tested on, and nothing told it which
+  to choose or where to keep it. On Windows inside a packaged app, writes to
+  uv's own Python folder can be redirected, after which uv stopped with
+  "Missing expected target directory for Python minor version link" and every
+  `s0ma-launch` command failed, `status` included. The launcher now names the
+  supported range once, `SUPPORTED_PYTHON = ">=3.11,<3.14"`, the Pythons the
+  test matrix runs; its script header and lock file carry it, both of its
+  `uv venv` calls ask for it, and the server scripts' probe uses it, so a
+  machine whose only Python is newer gets the not-set-up line and the
+  stand-in server rather than an error. The Claude Desktop extension's
+  `pyproject.toml` asks its host for the same range. Every plugin script that
+  runs uv, and the launcher for the uv it starts, set `UV_PYTHON_INSTALL_DIR`
+  to `python` under s0ma's home (`S0MA_HOME`, or `.s0ma` in the home folder, which is
+  `%USERPROFILE%` on Windows) unless it is already set, so a Python uv
+  downloads for s0ma lives in a folder s0ma owns. uv's cache and everything
+  else of uv's stay where they were. A test holds each script's rule to the
+  launcher's, and another holds the range to the CI matrix and the packages'
+  classifiers. An environment an earlier version built on a newer Python keeps
+  running; `s0ma-launch install` builds it again on a supported one. The
+  plugin's README, its privacy notes, the trust model, the Claude integration
+  guide and the uninstall guide say which Python is used and where it goes.
+
+- **The first-run check covers a machine where uv has to download the
+  Python.** A new `python-download` job on Linux, macOS and Windows runs the
+  newest uv with nothing naming an interpreter and only uv's own downloaded
+  Pythons allowed, then installs s0ma with no key through the plugin's
+  `s0ma-launch` from wheels built in the job. It checks that the
+  environment's Python is in the supported range and lives under the leg's
+  s0ma home, that uv's default Python folder gained nothing, and that `new
+  project`, `check`, `build .` and `test` pass. The run started by hand after
+  a release now waits, for up to five minutes and saying so at each wait,
+  when the package index does not show a version published moments before.
+
 ## [0.23.0] — 2026-11-23
 
 ### Added

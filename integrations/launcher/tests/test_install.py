@@ -124,7 +124,14 @@ def test_uv_is_asked_for_the_checked_files_and_pytest_in_one_call(
     assert run_cli("install")[0] == 0
     partial = isolated_home / "toolchains" / "0.18.0.partial"
     venv, pip = seen
-    assert venv[1:] == ["venv", "--relocatable", "--offline", str(partial)]
+    assert venv[1:] == [
+        "venv",
+        "--relocatable",
+        "--python",
+        launcher.SUPPORTED_PYTHON,
+        "--offline",
+        str(partial),
+    ]
     python = launcher.venv_python(isolated_home / "toolchains" / "0.18.0")
     assert python is not None
     interpreter = partial / python.relative_to(isolated_home / "toolchains" / "0.18.0")

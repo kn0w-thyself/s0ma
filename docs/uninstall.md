@@ -327,6 +327,7 @@ access.
 | `launcher/update.lock` | The file two updates use so that only one of them runs | Nothing, unless an update is running as you read this |
 | `toolchains/<version>/` | One private Python environment per version of s0ma, each finished with a `.complete` marker so a half-built one is never used | **The installed software itself.** Every version has to be downloaded and built again |
 | `downloads/` | The files each version was installed from, kept and checked against their checksums so a reinstall need not fetch them twice | Only time: they are fetched again on the next install |
+| `python/` | The Python uv downloaded for s0ma, on a machine that had none s0ma supports. It is kept here, not in uv's own Python folder, and only s0ma uses it | Every installed version built on it stops working until it is installed again, and uv downloads the Python again the next time s0ma runs. Nothing else on the machine used it |
 | `feedback-token` | This machine's feedback access. **Not** your license key — the key was exchanged for this once, and never travels with a report | `s0ma feedback` stops working until `uv run s0ma feedback enroll` |
 | `installation_id` | The random identifier that stands in for your name on a feedback report | Nothing you can lose. A new one is made when it is next needed, so reports sent afterwards no longer look like the same machine as the ones before |
 | `feedback-drafts/` | One file per report you wrote and have not sent | Anything unsent. Check first — the command is below |
@@ -334,9 +335,9 @@ access.
 
 **One folder, two owners, and a variable that moves only half of it.** If you
 set `S0MA_HOME`, it moves the launcher's own files — the key, the settings, the
-installed versions, the downloads. The feedback rows always use your home
-directory. So on a machine where `S0MA_HOME` is set there are two places to
-look, not one.
+installed versions, the downloads, the Python uv downloaded for s0ma. The
+feedback rows always use your home directory. So on a machine where
+`S0MA_HOME` is set there are two places to look, not one.
 
 **Confirm you have sent anything you meant to send**, because unsent drafts are
 in here:
@@ -357,11 +358,11 @@ you set `S0MA_HOME`, remove that folder too — and this one, which still holds
 the feedback rows.
 
 **If you would rather keep some of it**, the table above is the menu. Deleting
-`toolchains/` and `downloads/` reclaims nearly all the disk space and leaves
-your key, your settings and your feedback record in place:
+`toolchains/`, `downloads/` and `python/` reclaims nearly all the disk space and
+leaves your key, your settings and your feedback record in place:
 
 ```bash
-rm -rf ~/.s0ma/toolchains ~/.s0ma/downloads
+rm -rf ~/.s0ma/toolchains ~/.s0ma/downloads ~/.s0ma/python
 ```
 
 Deleting any of this does not delete anything you already sent, and it does not
@@ -381,7 +382,9 @@ None of the steps above go near:
   generated into `build/` and its own state directories.
 - **Your git repository.** Nothing here runs a git command.
 - **Python, `uv`, `curl`, or your editor.** They were prerequisites, not part of
-  s0ma, and other things on your machine use them.
+  s0ma, and other things on your machine use them. The one exception is a
+  Python uv downloaded for s0ma, which is in `python/` in the folder of step 6
+  and goes with it. uv itself and uv's cache stay where uv keeps them.
 - **Claude itself.** Step 2 removes one plugin or one extension; step 3 removes
   one server registration. Neither touches anything else Claude holds.
 - **Anything on the s0ma side** — feedback you already sent, and, if this

@@ -334,6 +334,14 @@ fetching s0ma itself when you install or update with no key. With no key, the
 launcher itself sends nothing at all. What is left to say here is the part that
 is particular to this route.
 
+**uv may download a Python, once.** On a machine with no Python s0ma supports
+(3.11, 3.12 or 3.13), the first `s0ma` or `s0ma-launch` command has uv download
+one, in uv's own request to wherever uv is set up to fetch Pythons from: by
+uv's documentation, the python-build-standalone project's releases on
+github.com. It is kept in a `python` folder inside s0ma's own folder, and the
+launcher builds s0ma's environment on it. The hooks and the server never
+download one.
+
 **The automatic check is the only thing here that happens without you**, and
 four conditions all have to hold first: the copy being started is one s0ma
 installed for itself — never a project's own copy, never a project pinned to a

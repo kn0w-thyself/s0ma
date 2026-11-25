@@ -19,10 +19,18 @@ Then the lists that several files carry and that must stay one list:
 * the front door's name, ``/s0ma:start``, in the launcher's "tools missing"
   lines, its stub server, its ``status`` and in the plugin's one message;
 * the lock file beside the launcher, which ``--frozen`` reads, still matching
-  the launcher's header.
+  the launcher's header;
+* where uv keeps the Pythons it downloads for s0ma: the launcher's
+  ``child_environment``, and the copy of that rule in every script that runs
+  uv before the launcher does;
+* the Pythons s0ma supports: the launcher's ``SUPPORTED_PYTHON``, the server
+  scripts' probe, the Python versions the ``CI`` workflow runs, and the
+  packages' classifiers.
 
-Everything here reads files, except the last test, which asks the local uv,
-offline, whether the lock file is current.
+Everything here reads files, except three kinds of test: the lock test asks
+the local uv, offline, whether the lock file is current, and the python-folder
+tests run each script's rule in ``sh`` (not on Windows) and in ``cmd.exe`` (on
+Windows only).
 """
 
 from __future__ import annotations
@@ -31,8 +39,10 @@ import importlib.util
 import json
 import re
 import shutil
+import os
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -54,6 +64,8 @@ STAND_IN_PS1 = PLUGIN_DIR / "scripts" / "s0ma-stand-in.ps1"
 MESSAGE_FILE = PLUGIN_DIR / "scripts" / "not-set-up.txt"
 PLUGIN_LAUNCHER = PLUGIN_DIR / "launcher" / "s0ma_launch.py"
 PLUGIN_LOCK = PLUGIN_DIR / "launcher" / "s0ma_launch.py.lock"
+CI_WORKFLOW = REPO_ROOT / ".github" / "workflows" / "ci.yml"
+PACKAGE_PYPROJECTS = sorted((REPO_ROOT / "packages").glob("*/pyproject.toml"))
 
 #: Every POSIX script that finds uv on its own.
 SH_FINDERS = (
@@ -424,3 +436,224 @@ def test_the_lock_file_matches_the_launchers_header(tmp_path: Path) -> None:
         "--script integrations/launcher/s0ma_launch.py`, then "
         f"`uv run python scripts/sync_integrations.py --write`:\n{result.stderr}"
     )
+
+
+# ---------------------------------------------------------------------------
+# One folder for the Pythons uv downloads for s0ma.
+# ---------------------------------------------------------------------------
+
+#: The variable every script and the launcher set, unless the person has.
+PYTHON_DIR_VARIABLE = "UV_PYTHON_INSTALL_DIR"
+
+
+def home_block(text: str, comment: str) -> str:
+    """The lines between ``BEGIN s0ma home`` and ``END s0ma home``, both markers in."""
+    begin = f"{comment} BEGIN s0ma home"
+    end = f"{comment} END s0ma home"
+    assert text.count(begin) == 1 and text.count(end) == 1, "one marked block"
+    start = text.index(begin)
+    return text[start : text.index(end) + len(end)]
+
+
+def first_uv_call(text: str) -> int:
+    """Where a script first runs uv: ``uv run`` or ``uv python find``."""
+    found = [
+        text.index(line)
+        for line in text.splitlines()
+        if re.search(r'(?:"\$uv"|"%uv%")\s+(?:run|python)\b', line)
+        and not line.lstrip().startswith(("#", "rem "))
+    ]
+    assert found, "the script runs uv"
+    return min(found)
+
+
+def blocks_differ(blocks: dict[str, str]) -> list[str]:
+    """The scripts whose block is not the first one's, by name."""
+    first = next(iter(blocks.values()))
+    return [name for name, block in blocks.items() if block != first]
+
+
+def test_every_script_that_runs_uv_names_the_python_folder_first() -> None:
+    """All eight entry scripts carry the rule, before uv is run."""
+    for path, comment in [*((p, "#") for p in SH_FINDERS), *((p, "rem") for p in CMD_FINDERS)]:
+        text = path.read_text(encoding="utf-8")
+        block = home_block(text, comment)
+        assert PYTHON_DIR_VARIABLE in block, path.name
+        assert text.index(block) < first_uv_call(text), f"{path.name} runs uv first"
+    assert len(SH_FINDERS) + len(CMD_FINDERS) == 8
+
+
+def test_the_rule_is_the_same_in_every_script_of_a_kind() -> None:
+    """A change to one script that is not made in the others fails here."""
+    sh = {p.name: home_block(p.read_text(encoding="utf-8"), "#") for p in SH_FINDERS}
+    cmd = {p.name: home_block(p.read_text(encoding="utf-8"), "rem") for p in CMD_FINDERS}
+    assert blocks_differ(sh) == [], "the POSIX scripts' rules drifted apart"
+    assert blocks_differ(cmd) == [], "the batch files' rules drifted apart"
+
+
+def test_the_sameness_check_catches_a_drift() -> None:
+    """Anti-vacuity: one script with its folder renamed does not pass."""
+    sh = {p.name: home_block(p.read_text(encoding="utf-8"), "#") for p in SH_FINDERS}
+    sh[SERVER_SCRIPT.name] = sh[SERVER_SCRIPT.name].replace("/python", "/pythons")
+    assert blocks_differ(sh) == [SERVER_SCRIPT.name]
+
+
+#: ``(case, environment)``: what the rule is held to, Windows or not.
+POSIX_CASES = (
+    ("home only", {"HOME": "/h o/me"}),
+    ("S0MA_HOME", {"HOME": "/h", "S0MA_HOME": "/a b/state"}),
+    ("S0MA_HOME blank", {"HOME": "/h", "S0MA_HOME": "   "}),
+    ("S0MA_HOME padded", {"HOME": "/h", "S0MA_HOME": "  /a b/state  "}),
+    ("S0MA_HOME under ~", {"HOME": "/h o", "S0MA_HOME": "~/state"}),
+    ("set by the person", {"HOME": "/h", PYTHON_DIR_VARIABLE: "/mine/pythons"}),
+)
+WINDOWS_CASES = (
+    ("profile only", {"USERPROFILE": "C:\\Users\\Rob Smith", "HOME": "/c/Users/Rob Smith"}),
+    ("S0MA_HOME", {"USERPROFILE": "C:\\Users\\Rob", "S0MA_HOME": "D:\\s0ma state"}),
+    ("S0MA_HOME blank", {"USERPROFILE": "C:\\Users\\Rob", "S0MA_HOME": "   "}),
+    ("set by the person", {"USERPROFILE": "C:\\Users\\Rob", PYTHON_DIR_VARIABLE: "E:\\py"}),
+)
+
+
+def launchers_folder(
+    launcher: ModuleType, env: dict[str, str], windows: bool, monkeypatch: pytest.MonkeyPatch
+) -> str:
+    """What the launcher hands uv for *env*, with forward slashes.
+
+    ``Path.expanduser`` reads this process's ``HOME``, so it is set to *env*'s.
+    """
+    monkeypatch.setattr(launcher, "is_windows", lambda: windows)
+    if "HOME" in env:
+        monkeypatch.setenv("HOME", env["HOME"])
+    return str(launcher.child_environment(env)[PYTHON_DIR_VARIABLE]).replace("\\", "/")
+
+
+def sh_folder(env: dict[str, str], tmp_path: Path) -> str:
+    """What the POSIX scripts' rule sets for *env*, run in ``sh``."""
+    script = tmp_path / "rule.sh"
+    block = home_block(SERVER_SCRIPT.read_text(encoding="utf-8"), "#")
+    script.write_text(
+        block + '\nprintf \'%s\\n\' "${UV_PYTHON_INSTALL_DIR-}"\n', encoding="utf-8", newline="\n"
+    )
+    done = subprocess.run(  # noqa: S603 - a fixed, local command
+        ["sh", str(script)], env=env, capture_output=True, text=True, timeout=30, check=False
+    )
+    assert done.returncode == 0 and done.stderr == "", done.stderr
+    return done.stdout.rstrip("\n").replace("\\", "/")
+
+
+posix_only = pytest.mark.skipif(
+    os.name == "nt" or shutil.which("sh") is None,
+    reason="the POSIX rule is run in a POSIX sh; Git Bash rewrites HOME as it starts",
+)
+windows_only = pytest.mark.skipif(os.name != "nt", reason="cmd.exe runs only on Windows")
+
+
+@posix_only
+@pytest.mark.parametrize(("case", "env"), POSIX_CASES, ids=[c for c, _ in POSIX_CASES])
+def test_the_posix_rule_is_the_launchers(
+    case: str,
+    env: dict[str, str],
+    launcher: ModuleType,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    assert sh_folder(env, tmp_path) == launchers_folder(launcher, env, False, monkeypatch), case
+
+
+@posix_only
+@pytest.mark.parametrize(("case", "env"), WINDOWS_CASES, ids=[c for c, _ in WINDOWS_CASES])
+def test_the_posix_rule_is_the_launchers_under_git_bash(
+    case: str,
+    env: dict[str, str],
+    launcher: ModuleType,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Windows marks itself with ``OS=Windows_NT``, which Git Bash passes on."""
+    env = {**env, "OS": "Windows_NT"}
+    assert sh_folder(env, tmp_path) == launchers_folder(launcher, env, True, monkeypatch), case
+
+
+@windows_only
+@pytest.mark.parametrize(("case", "env"), WINDOWS_CASES, ids=[c for c, _ in WINDOWS_CASES])
+def test_the_batch_rule_is_the_launchers(
+    case: str,
+    env: dict[str, str],
+    launcher: ModuleType,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:  # pragma: no cover - Windows only
+    script = tmp_path / "rule.cmd"
+    block = home_block(SERVER_CMD.read_text(encoding="utf-8"), "rem")
+    script.write_text(
+        "@echo off\nsetlocal\n" + block + "\necho [%UV_PYTHON_INSTALL_DIR%]\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    names = ("S0MA_HOME", "USERPROFILE", "HOME", PYTHON_DIR_VARIABLE)
+    base = {k: v for k, v in os.environ.items() if k.upper() not in names}
+    done = subprocess.run(  # noqa: S603 - a fixed, local command
+        ["cmd.exe", "/d", "/c", str(script)],
+        env={**base, **env},
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+    assert done.returncode == 0 and done.stderr == "", done.stderr
+    shown = done.stdout.strip()
+    assert shown.startswith("[") and shown.endswith("]"), shown
+    got = shown[1:-1].replace("\\", "/")
+    assert got == launchers_folder(launcher, env, True, monkeypatch), case
+
+
+# ---------------------------------------------------------------------------
+# The Pythons s0ma supports.
+# ---------------------------------------------------------------------------
+
+
+def supported_minors(launcher: ModuleType) -> set[int]:
+    """``>=3.A,<3.B`` as the set of minor versions A to B-1."""
+    found = re.fullmatch(r">=3\.(\d+),<3\.(\d+)", launcher.SUPPORTED_PYTHON)
+    assert found is not None, f"not a range of 3.x: {launcher.SUPPORTED_PYTHON}"
+    return set(range(int(found.group(1)), int(found.group(2))))
+
+
+def test_the_supported_pythons_are_the_ones_ci_runs(launcher: ModuleType) -> None:
+    """When the CI matrix grows, this is what says to move the cap.
+
+    ``.github/workflows/ci.yml`` runs the gate on each ``python-version`` in its
+    matrix; the range the launcher asks uv for is exactly those.
+    """
+    text = CI_WORKFLOW.read_text(encoding="utf-8")
+    listed = re.search(r"(?m)^\s+python-version:\s*\[([^\]]*)\]", text)
+    assert listed is not None, "ci.yml has no python-version list"
+    versions = {item.strip().strip("\"'") for item in listed.group(1).split(",")}
+    assert {int(v.split(".")[1]) for v in versions} == supported_minors(launcher)
+    assert all(v.startswith("3.") for v in versions), versions
+
+
+def test_the_supported_pythons_are_the_packages_classifiers(launcher: ModuleType) -> None:
+    """Each package says which Pythons it is for, and its floor is the launcher's."""
+    assert PACKAGE_PYPROJECTS, "no package manifests found"
+    for path in PACKAGE_PYPROJECTS:
+        with path.open("rb") as handle:
+            project = tomllib.load(handle)["project"]
+        minors = {
+            int(c.rsplit(".", 1)[1])
+            for c in project.get("classifiers", [])
+            if re.fullmatch(r"Programming Language :: Python :: 3\.\d+", c)
+        }
+        if not minors:
+            continue
+        assert minors == supported_minors(launcher), path.parent.name
+        floor = min(supported_minors(launcher))
+        assert project["requires-python"] == f">=3.{floor}", path.parent.name
+
+
+def test_the_server_scripts_probe_for_a_supported_python(launcher: ModuleType) -> None:
+    """The stand-in or the real server is chosen by the range the launcher accepts."""
+    for path in (SERVER_SCRIPT, SERVER_CMD):
+        probes = re.findall(r"python find [^\n]*?['\"]([^'\"]+)['\"]", path.read_text(encoding="utf-8"))
+        assert probes == [launcher.SUPPORTED_PYTHON], f"{path.name}: {probes}"

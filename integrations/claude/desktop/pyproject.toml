@@ -8,8 +8,9 @@
 #
 # There is nothing to install. The launcher is standard library only, by rule
 # (plan `beta-prep-2-claude`, section 3.1, rule 7), so the dependency list is
-# empty and stays empty. `requires-python` matches the launcher's own PEP 723
-# header.
+# empty and stays empty. `requires-python` is the launcher's own PEP 723
+# header, the Pythons s0ma supports, so the host never builds on a newer one;
+# a test holds the two together.
 #
 # There is deliberately no [build-system] table: without one, uv treats this as
 # a project to run in rather than a package to build, so no wheel is ever made
@@ -19,5 +20,5 @@
 name = "s0ma-desktop-extension"
 version = "0.23.0"
 description = "Starts s0ma for Claude Desktop."
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.14"
 dependencies = []
