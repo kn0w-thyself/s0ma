@@ -92,8 +92,10 @@ LAUNCHER_VERSION = "0.23.0"
 INDEX_DISTRIBUTION = "s0ma-lang"
 
 #: Installed beside s0ma on both routes, in the same uv call: `s0ma test` runs
-#: a project's tests with pytest from s0ma's own environment, and no package of
-#: s0ma requires it. The floor is the one the packages' development extras state.
+#: a project's tests with pytest from s0ma's own environment. The umbrella
+#: brings pytest through the `test` extra of s0ma-lang-dsl, but the keyed route
+#: installs the four parts by file without the umbrella, so the launcher asks
+#: for it too. The floor is the one that extra states, and a test holds them equal.
 PYTEST_REQUIREMENT = "pytest>=7.0"
 
 #: The Pythons s0ma runs on, as a request uv understands. It is the range the
@@ -2677,7 +2679,9 @@ def download_wheel(
 #
 # On both routes the same uv call also asks for `PYTEST_REQUIREMENT`, from the
 # package index like any other open-source dependency, because `s0ma test`
-# needs pytest in this environment and none of s0ma's packages requires it.
+# needs pytest in this environment. The umbrella brings it on the keyless
+# route. On the keyed route nothing else does: the four parts are installed by
+# file, and only the umbrella asks for the `test` extra of s0ma-lang-dsl.
 # One call for both keeps the install whole: if uv refuses, nothing is in place.
 # ---------------------------------------------------------------------------
 
