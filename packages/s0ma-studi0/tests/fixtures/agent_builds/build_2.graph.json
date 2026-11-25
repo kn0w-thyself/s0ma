@@ -1,0 +1,516 @@
+{
+  "components": {
+    "inbox::Message": {
+      "canonical_id": "inbox::Message",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The text is never empty."
+        },
+        "schema": {
+          "state": "value",
+          "value": "text: str, order_number: str | None"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "One message from a customer: the words they wrote and the order number they gave, if any."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 24,
+        "file": "src/inbox/inbox.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "inbox",
+      "visibility": "PUBLIC"
+    },
+    "inbox::read_message": {
+      "canonical_id": "inbox::read_message",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "The words a customer wrote."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never changes what the customer said; it only tidies the spaces."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back the message with extra spaces removed, and the order number when it has the form A followed by four digits."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Reads what a customer wrote and picks out the order number."
+      },
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 50,
+        "file": "src/inbox/inbox.s0ma",
+        "line": 26,
+        "start_line": 26
+      },
+      "module": "inbox",
+      "visibility": "PUBLIC"
+    },
+    "inbox_tests::test_read_message_finds_the_order": {
+      "canonical_id": "inbox_tests::test_read_message_finds_the_order",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "inbox.read_message"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A message with an order number gives that number back, and one without gives none."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 22,
+        "file": "tests/inbox/inbox_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "inbox_tests",
+      "visibility": null
+    },
+    "rules::Reply": {
+      "canonical_id": "rules::Reply",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The action is answer or hand_off."
+        },
+        "schema": {
+          "state": "value",
+          "value": "action: str, text: str"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "What the agent does with one message: answer it, or hand it to a person, and the words it sends."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 24,
+        "file": "src/rules/rules.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "rules",
+      "visibility": "PUBLIC"
+    },
+    "rules::keep_the_rules": {
+      "canonical_id": "rules::keep_the_rules",
+      "declaration_type": "nerve",
+      "fields": {
+        "consumes_via_dict": {
+          "state": "none"
+        },
+        "covered_by": {
+          "state": "none"
+        },
+        "declares_attributes": {
+          "state": "none"
+        },
+        "depends_on": {
+          "state": "none"
+        },
+        "evaluates_at": "FUNCTION_BOUNDARY",
+        "expected_exceptions": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "value",
+          "value": "A reply the agent wants to send."
+        },
+        "forbids": {
+          "state": "value",
+          "value": "Never lets out a reply that promises a refund."
+        },
+        "guarantees": {
+          "state": "value",
+          "value": "Gives back the reply unchanged when it keeps the rules, and a hand-off to a person when it does not."
+        },
+        "interface": {
+          "state": "none"
+        },
+        "internal_helpers": {
+          "state": "none"
+        },
+        "latency_ms": {
+          "state": "none"
+        },
+        "provides": {
+          "state": "none"
+        },
+        "raises": {
+          "state": "none"
+        },
+        "returns": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Checks a reply against the rules before it goes out."
+      },
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 50,
+        "file": "src/rules/rules.s0ma",
+        "line": 26,
+        "start_line": 26
+      },
+      "module": "rules",
+      "visibility": "PUBLIC"
+    },
+    "rules_tests::test_keep_the_rules_stops_a_refund_promise": {
+      "canonical_id": "rules_tests::test_keep_the_rules_stops_a_refund_promise",
+      "declaration_type": "test",
+      "fields": {
+        "depends_on": {
+          "state": "none"
+        },
+        "expects": {
+          "state": "none"
+        },
+        "mocks": {
+          "state": "none"
+        },
+        "tests": {
+          "state": "value",
+          "value": [
+            "rules.keep_the_rules"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "A reply that promises a refund becomes a hand-off, and any other reply goes out as it was."
+      },
+      "kind": null,
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 23,
+        "file": "tests/rules/rules_tests.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "rules_tests",
+      "visibility": null
+    }
+  },
+  "edges": {
+    "authored": [],
+    "derived": [
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "inbox::read_message",
+        "target": "inbox::Message"
+      },
+      {
+        "origin": "function_signature",
+        "relation": "TYPE_USES",
+        "source": "rules::keep_the_rules",
+        "target": "rules::Reply"
+      }
+    ],
+    "verification": [
+      {
+        "origin": "tests_field",
+        "test": "inbox_tests::test_read_message_finds_the_order",
+        "validates": "inbox::read_message"
+      },
+      {
+        "origin": "tests_field",
+        "test": "rules_tests::test_keep_the_rules_stops_a_refund_promise",
+        "validates": "rules::keep_the_rules"
+      }
+    ]
+  },
+  "freshness": {
+    "basis": "build.s0ma.json",
+    "manifest_found": true,
+    "stale_modules": [],
+    "status": "fresh",
+    "transpiler_version": "0.23.0"
+  },
+  "integrations": [],
+  "modules": [
+    {
+      "components": [],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file is the map of the agent: a list of its public parts, written from the agent itself."
+      },
+      "layer": "PRESENTATION",
+      "name": "app_map",
+      "source_file": "src/app_map.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "inbox::Message",
+        "inbox::read_message"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "Message",
+          "read_message"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass",
+            "re"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file is what the agent hears: a customer message, and the order number in it if there is one."
+      },
+      "layer": "DOMAIN",
+      "name": "inbox",
+      "source_file": "src/inbox/inbox.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "inbox_tests::test_read_message_finds_the_order"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "inbox.read_message"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for reading a customer message."
+      },
+      "layer": "DOMAIN",
+      "name": "inbox_tests",
+      "source_file": "tests/inbox/inbox_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "rules::Reply",
+        "rules::keep_the_rules"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "Reply",
+          "keep_the_rules"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file holds what the agent must do and what it must never do."
+      },
+      "layer": "DOMAIN",
+      "name": "rules",
+      "source_file": "src/rules/rules.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "rules_tests::test_keep_the_rules_stops_a_refund_promise"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "rules.Reply",
+            "rules.keep_the_rules"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for the rules the agent keeps."
+      },
+      "layer": "DOMAIN",
+      "name": "rules_tests",
+      "source_file": "tests/rules/rules_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    }
+  ],
+  "nodes": [
+    "inbox::Message",
+    "inbox::read_message",
+    "inbox_tests::test_read_message_finds_the_order",
+    "rules::Reply",
+    "rules::keep_the_rules",
+    "rules_tests::test_keep_the_rules_stops_a_refund_promise"
+  ],
+  "schema": "s0ma-graph@2"
+}
