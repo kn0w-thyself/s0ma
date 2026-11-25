@@ -761,9 +761,15 @@
     },
     {
       "audience": "agent",
-      "disposition": "normative-current",
-      "note": "The current core specification, cut at 0.23.0 from 0.22.0. Section 13 records that core's runtime code, contracts and served surfaces did not change; the packaged teaching slice is the one this release composed. Retains the invariant and generated-inventory discipline. Pinned to the package version by test_doc_consistency.py.",
+      "disposition": "historical",
+      "note": "The core specification cut at 0.23.0, retained with a historical banner after the 0.23.1 cut.",
       "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.23.0.md"
+    },
+    {
+      "audience": "agent",
+      "disposition": "normative-current",
+      "note": "The current core specification, cut at 0.23.1 from 0.23.0. Section 13 records that core's runtime code, contracts and served surfaces did not change; the packaged teaching slice is the one this release composed. Retains the invariant and generated-inventory discipline. Pinned to the package version by test_doc_consistency.py.",
+      "path": "packages/s0ma-core/docs/s0ma-core-spec-v0.23.1.md"
     },
     {
       "audience": "contributor",
