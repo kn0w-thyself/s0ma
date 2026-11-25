@@ -256,8 +256,8 @@ if [ -z "${UV_PYTHON_INSTALL_DIR:-}" ]; then
     fi
     case $s0ma_dir in
         '') s0ma_dir=${user_dir:+$user_dir/.s0ma} ;;
-        '~') s0ma_dir=$user_dir ;;
-        '~/'*) s0ma_dir=${user_dir:+$user_dir/${s0ma_dir#'~/'}} ;;
+        \~) s0ma_dir=$user_dir ;;
+        \~/*) s0ma_dir=${user_dir:+$user_dir/${s0ma_dir#\~/}} ;;
     esac
     if [ -n "$s0ma_dir" ]; then
         UV_PYTHON_INSTALL_DIR=$s0ma_dir/python
