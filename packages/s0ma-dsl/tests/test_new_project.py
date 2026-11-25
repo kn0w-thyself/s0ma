@@ -22,7 +22,7 @@ import json
 import re
 import subprocess
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
@@ -1525,7 +1525,11 @@ class TestAgentTemplate:
             {"number": number, "name": name, "intent": intent}
             for number, (name, intent) in enumerate(_AGENT_STEPS, start=1)
         ]
-        assert report["parts"] == 10
+        # Both counts are read from the built project: modules as the
+        # build's closing line counts them, parts as the Components column
+        # of `s0ma inspect --all` adds up.
+        assert report["modules"] == 14
+        assert report["parts"] == 16
         assert report["features"] == [
             "inbox", "rules", "tools", "model", "stand_in", "triage", "watch",
         ]
@@ -1539,7 +1543,7 @@ class TestAgentTemplate:
         assert cli.run(argv) == EXIT_SUCCESS
 
         report = json.loads(capsys.readouterr().out)
-        for key in ("called", "example_question", "steps", "parts"):
+        for key in ("called", "example_question", "steps", "modules", "parts"):
             assert key not in report
 
     def test_the_cli_offers_exactly_the_template_list(self) -> None:
@@ -1554,6 +1558,445 @@ class TestAgentTemplate:
         (template,) = (a for a in new._actions if a.dest == "template")
         assert list(template.choices) == list(TEMPLATE_CHOICES)
         assert "agent" in TEMPLATE_CHOICES
+
+
+#: What ``s0ma build`` and ``s0ma inspect --all`` show after steps 0 to N:
+#: ``(modules, parts)``.
+_AGENT_COUNTS = {0: (0, 0), 1: (3, 3), 2: (5, 6), 3: (7, 9), 4: (12, 14), 5: (14, 16)}
+
+
+def _project_files(target: Path) -> dict[str, bytes]:
+    """Every file a person keeps: all but ``build/``, caches, and dot folders.
+
+    ``.claude/`` is kept, since the scaffold writes it.
+    """
+    files: dict[str, bytes] = {}
+    for path in sorted(target.rglob("*")):
+        if not path.is_file():
+            continue
+        parts = path.relative_to(target).parts
+        if parts[0] == "build" or "__pycache__" in parts:
+            continue
+        if any(p.startswith(".") for p in parts) and parts[0] != ".claude":
+            continue
+        files["/".join(parts)] = path.read_bytes()
+    return files
+
+
+def _every_byte(target: Path) -> dict[str, bytes]:
+    """Every file under *target*, the build included."""
+    return {
+        p.relative_to(target).as_posix(): p.read_bytes()
+        for p in sorted(target.rglob("*"))
+        if p.is_file()
+    }
+
+
+def _step_argv(target: Path, step: int, *extra: str) -> list[str]:
+    return ["new", "project", str(target), "--template", "agent",
+            "--step", str(step), *extra]
+
+
+def _run_json(
+    cli: S0maCLI, argv: list[str], capsys: pytest.CaptureFixture[str]
+) -> tuple[int, dict[str, Any]]:
+    capsys.readouterr()
+    rc = cli.run([*argv, "--format", "json"])
+    return rc, json.loads(capsys.readouterr().out)
+
+
+def _step_line(number: int) -> str:
+    name, intent = _AGENT_STEPS[number - 1]
+    return f"Step {number} of 5: {name}. {intent}"
+
+
+class TestAgentSteps:
+    """``--step N`` and ``--sample``: the agent laid down one step at a time.
+
+    No state file is kept; the step a project is on is read from its files.
+    """
+
+    def test_walking_every_step_ends_where_the_one_shot_ends(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Step 0, then 1 to 5, one call each; every stop checks, builds, tests."""
+        target = tmp_path / "walk"
+        assert cli.run(_step_argv(target, 0)) == EXIT_SUCCESS
+        out = capsys.readouterr().out
+        assert out == (
+            f"Step 0 of 5: the project is ready at {target}, and nothing "
+            f"is built yet.\n"
+        )
+        assert not (target / "build").exists()
+        assert not list(target.rglob("*.s0ma"))
+
+        root = ["--project-root", str(target)]
+        for number in range(1, 6):
+            assert cli.run(_step_argv(target, number)) == EXIT_SUCCESS
+            out = capsys.readouterr().out
+            assert out.splitlines()[0] == _step_line(number)
+            modules, parts = _AGENT_COUNTS[number]
+            assert (
+                f"{modules} module(s) built with {parts} parts, mode dev)."
+                in out.splitlines()[1]
+            )
+            for argv in (
+                [*root, "check"],
+                [*root, "check", "--mode", "release"],
+                [*root, "build", str(target)],
+                [*root, "test"],
+            ):
+                assert cli.run(argv) == EXIT_SUCCESS, (number, argv)
+                captured = capsys.readouterr()
+                printed = captured.out + captured.err
+                assert _DIAGNOSTIC_LINE.findall(printed) == [], (argv, printed)
+
+        whole = tmp_path / "walk"
+        one_shot = tmp_path / "one-shot" / "walk"
+        assert cli.run(_new_project_argv(one_shot, "agent")) == EXIT_SUCCESS
+        assert _project_files(whole) == _project_files(one_shot)
+
+    @pytest.mark.parametrize("number", [0, 2, 5])
+    def test_a_step_run_again_changes_nothing(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        number: int,
+    ) -> None:
+        target = tmp_path / f"again-{number}"
+        assert cli.run(_step_argv(target, number)) == EXIT_SUCCESS
+        first = capsys.readouterr().out.splitlines()[0]
+        before = _every_byte(target)
+
+        assert cli.run(_step_argv(target, number)) == EXIT_SUCCESS
+        out = capsys.readouterr().out.splitlines()
+        assert out[0] == first
+        assert _every_byte(target) == before
+
+        rc, report = _run_json(cli, _step_argv(target, number), capsys)
+        assert rc == EXIT_SUCCESS
+        assert report["unchanged"] is True
+        assert report["files_written"] == []
+        assert _every_byte(target) == before
+
+    def test_an_edited_file_the_next_step_replaces_is_refused(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Step 4 replaces the bootstrap; an edit to it stops the call."""
+        target = tmp_path / "edited"
+        assert cli.run(_step_argv(target, 3)) == EXIT_SUCCESS
+        bootstrap = target / "bootstrap" / "main.py"
+        bootstrap.write_bytes(bootstrap.read_bytes() + b"# mine\n")
+        before = _every_byte(target)
+        capsys.readouterr()
+
+        assert cli.run(_step_argv(target, 4)) == EXIT_VALIDATION_ERROR
+        out = capsys.readouterr().out
+        assert "(nothing was changed)" in out
+        assert (
+            "  - bootstrap/main.py has changes of yours, and step 4 would "
+            "replace it\n"
+        ) in out
+        assert _every_byte(target) == before
+
+        rc, report = _run_json(cli, _step_argv(target, 5), capsys)
+        assert rc == EXIT_VALIDATION_ERROR
+        assert report["ok"] is False
+        assert report["at_step"] == 3
+        assert _every_byte(target) == before
+
+    def test_files_no_later_step_touches_are_kept_and_reported(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """An added file and an edit to a file no later step replaces."""
+        target = tmp_path / "kept"
+        assert cli.run(_step_argv(target, 4)) == EXIT_SUCCESS
+        (target / "notes.md").write_text("my notes\n", encoding="utf-8")
+        bootstrap = target / "bootstrap" / "main.py"
+        edited = bootstrap.read_bytes() + b"# mine\n"
+        bootstrap.write_bytes(edited)
+
+        rc, report = _run_json(cli, _step_argv(target, 5), capsys)
+        assert rc == EXIT_SUCCESS
+        assert report["files_kept"] == ["bootstrap/main.py", "notes.md"]
+        assert report["files_written"] == [
+            "src/watch/watch.s0ma", "tests/watch/watch_tests.s0ma",
+        ]
+        assert bootstrap.read_bytes() == edited
+        assert (target / "notes.md").read_text(encoding="utf-8") == "my notes\n"
+
+        capsys.readouterr()
+        assert cli.run(_step_argv(target, 5)) == EXIT_SUCCESS
+        out = capsys.readouterr().out
+        assert "  notes.md  kept as you left it\n" in out
+        assert "  bootstrap/main.py  kept as you left it\n" in out
+
+    @pytest.mark.parametrize("start", [None, 0, 2])
+    def test_the_last_step_finishes_from_anywhere(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        start: int | None,
+    ) -> None:
+        target = tmp_path / "finish"
+        if start is not None:
+            assert cli.run(_step_argv(target, start)) == EXIT_SUCCESS
+        rc, report = _run_json(cli, _step_argv(target, 5), capsys)
+        assert rc == EXIT_SUCCESS
+        assert report["finished"] is True
+
+        one_shot = tmp_path / "one-shot" / "finish"
+        assert cli.run(_new_project_argv(one_shot, "agent")) == EXIT_SUCCESS
+        assert _project_files(target) == _project_files(one_shot)
+
+    def test_going_back_a_step_is_refused(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        target = tmp_path / "back"
+        assert cli.run(_step_argv(target, 3)) == EXIT_SUCCESS
+        before = _every_byte(target)
+        capsys.readouterr()
+
+        assert cli.run(_step_argv(target, 1)) == EXIT_VALIDATION_ERROR
+        assert capsys.readouterr().out == (
+            f"s0ma new project: {target} is at step 3 of 5, and --step does "
+            f"not go back to step 1.\n"
+        )
+        assert _every_byte(target) == before
+
+    def test_step_needs_a_template_made_of_steps(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        target = tmp_path / "svc"
+        argv = ["new", "project", str(target), "--template", "service",
+                "--step", "1"]
+        assert cli.run(argv) == EXIT_USAGE_ERROR
+        assert capsys.readouterr().out == (
+            "s0ma new project: --template service has no steps, so --step "
+            "does not apply to it.\n"
+        )
+        assert cli.run(["new", "project", str(target), "--step", "1"]) == (
+            EXIT_USAGE_ERROR
+        )
+        assert "--step needs --template or --sample" in capsys.readouterr().out
+        assert not target.exists()
+
+    @pytest.mark.parametrize("number", [-1, 6])
+    def test_a_step_out_of_range_names_the_range(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        number: int,
+    ) -> None:
+        target = tmp_path / "range"
+        assert cli.run(_step_argv(target, number)) == EXIT_USAGE_ERROR
+        assert capsys.readouterr().out == (
+            f"s0ma new project: --step must be between 0 and 5 for "
+            f"--template agent, not {number}.\n"
+        )
+        assert not target.exists()
+
+    def test_a_s0ma_project_from_something_else_is_refused(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        target = tmp_path / "other"
+        assert cli.run(_new_project_argv(target, "service")) == EXIT_SUCCESS
+        before = _every_byte(target)
+        capsys.readouterr()
+
+        assert cli.run(_step_argv(target, 1)) == EXIT_VALIDATION_ERROR
+        out = capsys.readouterr().out
+        assert "this is already a s0ma project" in out
+        assert _every_byte(target) == before
+
+    def test_sample_alone_is_the_whole_sample_in_its_own_folder(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        from s0ma_dsl.cli.templates import FIRST_RUN_SAMPLE, get_archetype
+
+        assert FIRST_RUN_SAMPLE == "agent"
+        assert get_archetype("agent").default_project_name == "support-agent"
+        monkeypatch.chdir(tmp_path)
+        rc, report = _run_json(cli, ["new", "project", "--sample"], capsys)
+        assert rc == EXIT_SUCCESS
+        target = tmp_path / "support-agent"
+        assert report["project_root"] == str(target.resolve())
+        assert report["project_name"] == "support-agent"
+        assert report["template"] == "agent"
+        assert "step" not in report
+
+        one_shot = tmp_path / "one-shot" / "support-agent"
+        assert cli.run(_new_project_argv(one_shot, "agent")) == EXIT_SUCCESS
+        assert _project_files(target) == _project_files(one_shot)
+
+    def test_sample_step_zero_says_where_the_project_is(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.chdir(tmp_path)
+        argv = ["new", "project", "--sample", "--step", "0"]
+        rc, report = _run_json(cli, argv, capsys)
+        assert rc == EXIT_SUCCESS
+        target = (tmp_path / "support-agent").resolve()
+        assert report["project_root"] == str(target)
+
+        # The next call names the same folder and goes on from there.
+        rc, report = _run_json(
+            cli,
+            ["new", "project", report["project_root"], "--sample",
+             "--step", "1"],
+            capsys,
+        )
+        assert rc == EXIT_SUCCESS
+        assert report["step"]["number"] == 1
+        assert report["pyproject"]["action"] == "kept"
+
+    def test_sample_with_a_name_uses_that_folder(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        target = tmp_path / "my-helper"
+        rc, report = _run_json(
+            cli, ["new", "project", str(target), "--sample", "--step", "1"],
+            capsys,
+        )
+        assert rc == EXIT_SUCCESS
+        assert report["project_root"] == str(target)
+        assert report["project_name"] == "my-helper"
+        assert not (tmp_path / "support-agent").exists()
+
+    def test_sample_with_template_is_an_error(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        target = tmp_path / "both"
+        argv = ["new", "project", str(target), "--sample", "--template",
+                "agent"]
+        assert cli.run(argv) == EXIT_USAGE_ERROR
+        assert capsys.readouterr().out == (
+            "s0ma new project: use --sample or --template, not both.\n"
+        )
+        assert not target.exists()
+
+    def test_a_project_without_a_folder_is_an_error(
+        self, cli: S0maCLI, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        assert cli.run(["new", "project"]) == EXIT_USAGE_ERROR
+        assert "name the folder for the project" in capsys.readouterr().out
+
+    @pytest.mark.parametrize("number", [0, 3, 5])
+    def test_the_json_shape(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        number: int,
+    ) -> None:
+        target = tmp_path / f"shape-{number}"
+        rc, report = _run_json(cli, _step_argv(target, number), capsys)
+        assert rc == EXIT_SUCCESS
+        assert set(report) == {
+            "ok", "project_root", "project_name", "template", "mode",
+            "authoring", "feedback", "features", "pyproject", "sources",
+            "bootstrap_files", "agents_file", "claude_file",
+            "feedback_skill", "launch_config", "build", "teaches",
+            "next_steps", "called", "example_question", "steps", "modules",
+            "parts", "step", "line", "finished", "unchanged",
+            "files_written", "files_kept",
+        }
+        name, intent = _AGENT_STEPS[number - 1] if number else (None, None)
+        assert report["step"] == {
+            "number": number, "of": 5, "name": name, "intent": intent,
+        }
+        assert (report["modules"], report["parts"]) == _AGENT_COUNTS[number]
+        assert report["finished"] is (number == 5)
+        assert report["unchanged"] is False
+        assert report["files_kept"] == []
+        assert len(report["steps"]) == 5
+        bare = ["pyproject.toml", "AGENTS.md", "CLAUDE.md",
+                ".claude/skills/s0ma-feedback/SKILL.md", ".claude/launch.json"]
+        if number == 0:
+            assert report["build"] is None
+            assert report["files_written"] == bare
+            assert report["sources"] == []
+            assert report["features"] == []
+        else:
+            from s0ma_dsl.cli.templates import get_archetype
+
+            files = get_archetype("agent").files_through(number)
+            assert report["files_written"] == bare + [f.relpath for f in files]
+            assert len(report["build"]["modules"]) == report["modules"]
+        if number == 3:
+            assert report["line"] == _step_line(3)
+            assert report["features"] == ["inbox", "rules", "tools"]
+
+    def test_parts_are_what_inspect_all_shows(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """The whole sample's counts agree with ``build`` and ``inspect --all``."""
+        target = tmp_path / "counted"
+        rc, report = _run_json(
+            cli, ["new", "project", str(target), "--template", "agent"], capsys
+        )
+        assert rc == EXIT_SUCCESS
+
+        root = ["--project-root", str(target)]
+        assert cli.run([*root, "inspect", "--all", "--format", "json"]) == (
+            EXIT_SUCCESS
+        )
+        survey = json.loads(capsys.readouterr().out)
+        assert report["parts"] == sum(row["components"] for row in survey)
+
+        assert cli.run([*root, "inspect", "--all"]) == EXIT_SUCCESS
+        table = capsys.readouterr().out.splitlines()
+        column = table[0].index("Components") + len("Components")
+        shown = sum(
+            int(line[:column].split()[-1]) for line in table[2:len(survey) + 2]
+        )
+        assert report["parts"] == shown
+
+        assert cli.run([*root, "build", str(target)]) == EXIT_SUCCESS
+        built = re.search(
+            r"Build complete: (\d+) module\(s\)", capsys.readouterr().out
+        )
+        assert built is not None
+        assert report["modules"] == int(built.group(1))
+
+    def test_crlf_copies_still_count_as_the_templates(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """A checkout that turned LF into CRLF is not read as an edit.
+
+        What the command writes is LF on every platform, and the paths it
+        reports are POSIX.
+        """
+        target = tmp_path / "crlf"
+        assert cli.run(_step_argv(target, 3)) == EXIT_SUCCESS
+        for path in list((target / "src").rglob("*.s0ma")) + [
+            target / "bootstrap" / "main.py"
+        ]:
+            path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+
+        rc, report = _run_json(cli, _step_argv(target, 3), capsys)
+        assert rc == EXIT_SUCCESS
+        assert report["unchanged"] is True
+
+        rc, report = _run_json(cli, _step_argv(target, 4), capsys)
+        assert rc == EXIT_SUCCESS, report
+        assert "bootstrap/main.py" in report["files_written"]
+        assert report["files_kept"] == []
+        for relpath in report["files_written"]:
+            assert "\\" not in relpath
+            data = target.joinpath(*relpath.split("/")).read_bytes()
+            assert b"\r" not in data, relpath
 
 
 # ---------------------------------------------------------------------------

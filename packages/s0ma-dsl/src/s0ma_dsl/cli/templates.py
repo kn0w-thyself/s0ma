@@ -50,7 +50,6 @@ build, summary) stays in :mod:`s0ma_dsl.cli.new_project`.
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
@@ -68,6 +67,11 @@ TEMPLATE_CHOICES: tuple[str, ...] = (
     "pipeline",
     "agent",
 )
+
+#: The template s0ma lays down as its own first-run sample. ``s0ma new
+#: project --sample`` stands for ``--template`` with this name, so a caller
+#: never has to name the template.
+FIRST_RUN_SAMPLE = "agent"
 
 
 @dataclass(frozen=True)
@@ -126,22 +130,6 @@ def _features_of(files: tuple[ArchetypeFile, ...]) -> tuple[str, ...]:
     return tuple(features)
 
 
-#: A top-level declaration that counts as one working part of a sample.
-_PART_LINE = re.compile(r"^(?:cell|nerve|ganglion) \w+ ::", re.MULTILINE)
-
-
-def count_parts(files: tuple[ArchetypeFile, ...]) -> int:
-    """The working parts *files* declare: cells, nerves, and ganglia under ``src/``.
-
-    Tests and the app map's doc declarations are not counted.
-    """
-    return sum(
-        len(_PART_LINE.findall(file.content))
-        for file in files
-        if file.relpath.startswith("src/") and file.relpath.endswith(".s0ma")
-    )
-
-
 @dataclass(frozen=True)
 class Archetype:
     """A complete archetype: the files it writes plus its summary facts.
@@ -175,6 +163,8 @@ class Archetype:
     example_question: str = ""
     #: ``[tool.s0ma].health_command`` to declare; empty declares none.
     health_command: str = ""
+    #: The folder and project name ``--sample`` uses when none is given.
+    default_project_name: str = ""
 
     def __post_init__(self) -> None:
         if not self.steps:
@@ -1837,6 +1827,7 @@ def _agent() -> Archetype:
         ),
         called="a small agent",
         example_question="what is this agent never allowed to do?",
+        default_project_name="support-agent",
         bootstrap_files=("bootstrap/main.py",),
         health_command="python bootstrap/main.py",
         run_hint=(
