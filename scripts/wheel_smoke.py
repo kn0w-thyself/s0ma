@@ -360,6 +360,50 @@ for argv, wanted in (
     assert "(installed)" in first and EXPECTED_SNAPSHOT_HASH in first, (argv, first)
     assert wanted in answer.stdout, (argv, wanted, answer.stdout[:400])
 print("cold: s0ma docs / list / show / search answer from the installed wheel")
+
+# Every worked example a journey lists opens from the installed wheel, with
+# each of its commands, and no journey page ends in a repository path that
+# a person with only the wheel cannot open.
+listing = json.loads(
+    run(str(S0MA), "docs", "list", "build", "--format", "json", cwd=scratch).stdout
+)
+journeys = sorted(
+    topic["id"]
+    for category in listing["categories"]
+    for topic in category["topics"]
+    if topic["id"].startswith("journey:")
+)
+assert journeys, listing
+examples = 0
+for journey in journeys:
+    shown = json.loads(
+        run(str(S0MA), "docs", "show", journey, "--format", "json", cwd=scratch).stdout
+    )
+    page = run(str(S0MA), "docs", "show", journey, cwd=scratch).stdout
+    last = page.rstrip().splitlines()[-1]
+    if last.startswith("Read more: "):
+        for target in last[len("Read more: ") :].split(", "):
+            assert target.startswith(
+                ("s0ma docs show ", "https://github.com/kn0w-thyself/s0ma/")
+            ), (journey, last)
+    for example in shown["identity"]["examples"]:
+        assert f"- `{example}`: run `s0ma docs show {example}`" in page, (journey, example)
+        text = run(str(S0MA), "docs", "show", example, cwd=scratch).stdout
+        assert "(installed)" in text.splitlines()[0], (example, text[:200])
+        data = json.loads(
+            run(str(S0MA), "docs", "show", example, "--format", "json", cwd=scratch).stdout
+        )
+        assert data["id"] == example and data["steps"], (example, data)
+        for step in data["steps"]:
+            if step["kind"] == "command":
+                assert step["command"] in text, (example, step["command"])
+        examples += 1
+assert examples, journeys
+print(
+    f"cold: {examples} worked examples across {len(journeys)} journeys open "
+    f"from the installed wheel"
+)
+print("cold: no journey page from the installed wheel ends in a repository path")
 '''
 
 
@@ -627,7 +671,7 @@ MCP_SNAPSHOT_ARTIFACT = "docs/_generated/s0ma-docs-model.json"
 
 #: The dsl wheel's copy of the same composed snapshot — the one the four
 #: ``s0ma docs`` commands read when there is no checkout. It is the third
-#: of the loop's five mirrors, and it is here because its
+#: of the loop's six mirrors, and it is here because its
 #: absence was invisible for four milestones: the mcp copy above served the
 #: MCP resources, the core slice served the teaching API, and the command
 #: line had nothing at all. Every ``s0ma docs`` invocation from an
@@ -635,6 +679,11 @@ MCP_SNAPSHOT_ARTIFACT = "docs/_generated/s0ma-docs-model.json"
 #: every gate in this repository ran inside a checkout and saw the
 #: checkout's answer. The cold probe below now runs the command.
 DSL_SNAPSHOT_MEMBER = "s0ma_dsl/_docs_snapshot/s0ma-docs-model.json"
+
+#: Where the s0ma-lang-dsl wheel carries the worked examples a journey lists,
+#: and the folder in the checkout they are copied from.
+DSL_EVIDENCE_PREFIX = "s0ma_dsl/_docs_snapshot/evidence/"
+EVIDENCE_SOURCE = ROOT / "docs" / "s0ma_src" / "evidence"
 
 
 @dataclass(frozen=True)
@@ -1030,6 +1079,29 @@ def _payloads_from_wheels(by_name: Mapping[str, Path]) -> DocsPayloads:
     )
 
 
+def _assert_dsl_evidence(wheel: Path) -> None:
+    """The dsl wheel carries every worked example, byte for byte."""
+    with zipfile.ZipFile(wheel) as archive:
+        carried = {
+            name[len(DSL_EVIDENCE_PREFIX) :]: archive.read(name)
+            for name in archive.namelist()
+            if name.startswith(DSL_EVIDENCE_PREFIX) and name.endswith(".json")
+        }
+    expected = {path.name: path.read_bytes() for path in EVIDENCE_SOURCE.glob("*.json")}
+    assert expected, f"{EVIDENCE_SOURCE.relative_to(ROOT)} holds no worked examples"
+    assert carried == expected, (
+        f"the s0ma-lang-dsl wheel's {DSL_EVIDENCE_PREFIX} is not "
+        f"docs/s0ma_src/evidence/: missing {sorted(set(expected) - set(carried))}, "
+        f"unexpected {sorted(set(carried) - set(expected))}, differing "
+        f"{sorted(n for n in set(expected) & set(carried) if expected[n] != carried[n])}. "
+        f"Refresh the copy (docs/operations/docs-maintenance.md, step 3)."
+    )
+    print(
+        f"wheel payload: s0ma-lang-dsl {DSL_EVIDENCE_PREFIX} carries "
+        f"{len(carried)} worked examples, byte-identical to docs/s0ma_src/evidence/"
+    )
+
+
 def _assert_docs_identity(by_name: Mapping[str, Path], *, head_tag: str = "") -> None:
     """The wheel-side half of H2, over the wheels this run built."""
     from s0ma_dsl.docs_model.manifest import manifest_from_json
@@ -1073,6 +1145,7 @@ def _inspect_wheels(dist: Path, *, head_tag: str = "") -> list[Path]:
     assert set(by_name) == {item.distribution for item in EXPECTED}
     _assert_studi0_payload(by_name["s0ma-lang-studi0"])
     _assert_docs_identity(by_name, head_tag=head_tag)
+    _assert_dsl_evidence(by_name["s0ma-lang-dsl"])
     return [by_name[item.distribution] for item in EXPECTED]
 
 
