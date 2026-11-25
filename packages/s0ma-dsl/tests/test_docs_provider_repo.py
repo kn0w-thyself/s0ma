@@ -360,7 +360,7 @@ class TestRequirements:
     def test_the_glossary_terms_are_addressable(
         self, index: dict[str, AuthorityRef]
     ) -> None:
-        """Including the four kinds that share one row, and studi0/sh0w."""
+        """Including the four kinds that share one row, studi0, and a term of two words."""
         for term in (
             "self-knowledge",
             "proprioception",
@@ -374,7 +374,7 @@ class TestRequirements:
             "doc-guide",
             "example",
             "studi0",
-            "sh0w",
+            "release-channel",
         ):
             assert f"authority:prd/glossary.{term}" in index
 

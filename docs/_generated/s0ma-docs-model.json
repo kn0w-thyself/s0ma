@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "c3cb481dd953aa7e26e1b2615105df32591786eb4530aac0b25c26592eb4de8f",
+      "content_sha256": "440bd9f919d3284b5293f84830015685f3a316f629cf60467d4e13660c173ada",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.23.0] — 2026-11-23",
@@ -394,7 +394,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-COM-1",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -403,7 +403,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-COM-2",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -412,7 +412,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-COM-3",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -421,7 +421,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-COM-4",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -430,7 +430,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-COM-5",
       "section": "7.5 Commercial access (FR-COM) **[NEW v1.1; restated v1.12]**",
@@ -439,7 +439,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-1",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -448,7 +448,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-2",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -457,7 +457,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-3",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -466,7 +466,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-4",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -475,7 +475,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-5",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -484,7 +484,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-6",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -493,7 +493,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-7",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -502,7 +502,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-8",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -511,7 +511,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-CORE-9",
       "section": "7.1 `s0ma-lang-core` — the runtime (FR-CORE)",
@@ -520,7 +520,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [
         {
           "domain": "language",
@@ -535,7 +535,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-DSL-2",
       "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
@@ -544,7 +544,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-DSL-3",
       "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
@@ -553,7 +553,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-DSL-4",
       "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
@@ -562,7 +562,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-DSL-5",
       "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
@@ -571,7 +571,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-DSL-6",
       "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
@@ -580,7 +580,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-DSL-7",
       "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
@@ -589,7 +589,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-DSL-8",
       "section": "7.2 `s0ma-lang-dsl` — the language and compiler (FR-DSL)",
@@ -598,7 +598,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-1",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -607,7 +607,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-10",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -616,7 +616,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-11",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -625,7 +625,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-12",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -634,7 +634,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-2",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -643,7 +643,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-3",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -652,7 +652,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-4",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -661,7 +661,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-5",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -670,7 +670,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-6",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -679,7 +679,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-7",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -688,7 +688,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-8",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -697,7 +697,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-FB-9",
       "section": "7.7 Feedback (FR-FB) **[NEW v1.9]**",
@@ -706,7 +706,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-1",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -715,7 +715,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-10",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -724,7 +724,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-11",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -733,7 +733,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-2",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -742,7 +742,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-3",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -751,7 +751,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-4",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -760,7 +760,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-5",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -769,7 +769,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-6",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -778,7 +778,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-7",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -787,7 +787,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-8",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -796,7 +796,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-MCP-9",
       "section": "7.3 `s0ma-lang-mcp` — the agent authoring interface (FR-MCP) **[NEW]**",
@@ -805,7 +805,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-1",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -814,7 +814,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-10",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -823,7 +823,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-2",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -832,7 +832,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-3",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -841,7 +841,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-4",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -850,7 +850,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-5",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -859,7 +859,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-6",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -868,7 +868,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-7",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -877,7 +877,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-8",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -886,7 +886,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-STUDI0-9",
       "section": "7.6 `s0ma-lang-studi0` — the visual development environment (FR-STUDI0) **[NEW v1.6]**",
@@ -895,7 +895,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-X-1",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -904,7 +904,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-X-2",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -913,7 +913,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-X-3",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -922,7 +922,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-X-4",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -931,7 +931,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/FR-X-5",
       "section": "7.4 Cross-cutting (FR-X)",
@@ -940,7 +940,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-1",
       "section": "6. Invariants (INV-#) — never break these",
@@ -949,7 +949,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-2",
       "section": "6. Invariants (INV-#) — never break these",
@@ -958,7 +958,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-3",
       "section": "6. Invariants (INV-#) — never break these",
@@ -967,7 +967,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-4",
       "section": "6. Invariants (INV-#) — never break these",
@@ -976,7 +976,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-5",
       "section": "6. Invariants (INV-#) — never break these",
@@ -985,7 +985,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-6",
       "section": "6. Invariants (INV-#) — never break these",
@@ -994,7 +994,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-7",
       "section": "6. Invariants (INV-#) — never break these",
@@ -1003,7 +1003,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-8",
       "section": "6. Invariants (INV-#) — never break these",
@@ -1012,7 +1012,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/INV-9",
       "section": "6. Invariants (INV-#) — never break these",
@@ -1021,7 +1021,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/NFR-1",
       "section": "8. Non-functional requirements (NFR)",
@@ -1030,7 +1030,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/NFR-2",
       "section": "8. Non-functional requirements (NFR)",
@@ -1039,7 +1039,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/NFR-3",
       "section": "8. Non-functional requirements (NFR)",
@@ -1048,7 +1048,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/NFR-4",
       "section": "8. Non-functional requirements (NFR)",
@@ -1057,7 +1057,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/NFR-5",
       "section": "8. Non-functional requirements (NFR)",
@@ -1066,7 +1066,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/NFR-6",
       "section": "8. Non-functional requirements (NFR)",
@@ -1075,7 +1075,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/NFR-7",
       "section": "8. Non-functional requirements (NFR)",
@@ -1084,7 +1084,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/NFR-8",
       "section": "8. Non-functional requirements (NFR)",
@@ -1093,7 +1093,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-1",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1102,7 +1102,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-2",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1111,7 +1111,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-3",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1120,7 +1120,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-4",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1129,7 +1129,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-5",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1138,7 +1138,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-6",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1147,7 +1147,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-7",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1156,7 +1156,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-8",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1165,7 +1165,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/P-9",
       "section": "5. Principles (P-#) — the philosophy, enforced",
@@ -1174,16 +1174,16 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/document",
       "section": "",
       "source": "references/s0ma-prd.md",
-      "status": "Living; version=1.19"
+      "status": "Living; version=1.20"
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.adoption-ladder",
       "section": "11. Glossary",
@@ -1192,7 +1192,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.axon",
       "section": "11. Glossary",
@@ -1201,7 +1201,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.cell",
       "section": "11. Glossary",
@@ -1210,7 +1210,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.component",
       "section": "11. Glossary",
@@ -1219,7 +1219,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.dead-code-pathology",
       "section": "11. Glossary",
@@ -1228,7 +1228,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.declaration-kind",
       "section": "11. Glossary",
@@ -1237,7 +1237,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.derived-edge",
       "section": "11. Glossary",
@@ -1246,7 +1246,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.doc-guide",
       "section": "11. Glossary",
@@ -1255,7 +1255,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.doc-ref",
       "section": "11. Glossary",
@@ -1264,7 +1264,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.drift",
       "section": "11. Glossary",
@@ -1273,7 +1273,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.embodiment",
       "section": "11. Glossary",
@@ -1282,7 +1282,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.example",
       "section": "11. Glossary",
@@ -1291,7 +1291,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.ganglion",
       "section": "11. Glossary",
@@ -1300,7 +1300,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.import-hook",
       "section": "11. Glossary",
@@ -1309,7 +1309,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.interoception",
       "section": "11. Glossary",
@@ -1318,7 +1318,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.ir",
       "section": "11. Glossary",
@@ -1327,7 +1327,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.metacognition",
       "section": "11. Glossary",
@@ -1336,7 +1336,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.mirror",
       "section": "11. Glossary",
@@ -1345,7 +1345,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.naming-law",
       "section": "11. Glossary",
@@ -1354,7 +1354,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.nerve",
       "section": "11. Glossary",
@@ -1363,7 +1363,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.parity-baseline",
       "section": "11. Glossary",
@@ -1372,7 +1372,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.perimeter",
       "section": "11. Glossary",
@@ -1381,7 +1381,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.proprioception",
       "section": "11. Glossary",
@@ -1390,7 +1390,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.release-channel",
       "section": "11. Glossary",
@@ -1399,7 +1399,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.self-knowledge",
       "section": "11. Glossary",
@@ -1408,7 +1408,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.self-model",
       "section": "11. Glossary",
@@ -1417,16 +1417,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
-      "delegates": [],
-      "id": "authority:prd/glossary.sh0w",
-      "section": "11. Glossary",
-      "source": "references/s0ma-prd.md",
-      "status": "Current"
-    },
-    {
-      "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.strictness-modes",
       "section": "11. Glossary",
@@ -1435,7 +1426,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.studi0",
       "section": "11. Glossary",
@@ -1444,7 +1435,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/glossary.verifier",
       "section": "11. Glossary",
@@ -1453,7 +1444,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/section.problem-statement",
       "section": "2",
@@ -1462,7 +1453,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/section.product-thesis",
       "section": "3",
@@ -1471,7 +1462,7 @@
     },
     {
       "authority_class": "prd",
-      "content_sha256": "bbc7b7e785996dd39c68fccc4a1fcc29c7d0e95cdd10f7806716b24567dab1a2",
+      "content_sha256": "80632c2d8f444b1a9d4878b813dbac83164b3de3074c7147bc99395d0cf0ceaa",
       "delegates": [],
       "id": "authority:prd/section.vision",
       "section": "1",
@@ -5679,7 +5670,7 @@
     "build_channel": "preview",
     "release_version": "0.23.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:dd82e235b293e9f4"
+    "snapshot_hash": "sha256:2460b6a06bd61926"
   },
   "surfaces": [
     {
