@@ -62,5 +62,5 @@ Do not use proprioception for how a system is behaving while it runs — that is
 ## Identity
 
 - Topic id: `concept:proprioception`
-- Release: `0.23.1 (preview)`
+- Release: `0.23.1`
 - Documentation snapshot: `sha256:adbfb3b65aab099d`
