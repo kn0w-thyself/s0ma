@@ -140,6 +140,11 @@ var EMPTY_BAND_H =
   ORGAN_PAD_BOTTOM +
   BAND_PAD_BOTTOM;
 
+/* What studi0 says when a source file differs from the build on screen:
+ * in the banner, and in the inspector for a part or module of that file.
+ * The banner clears by itself once the next build lands. */
+var STALE_TEXT = "Changes detected. View updates after next build.";
+
 var LAYER_ORDER = [
   "PRESENTATION",
   "APPLICATION",
@@ -733,6 +738,31 @@ function isModuleVisible(moduleName) {
   return true;
 }
 
+/* Whether the model holds anything the framework layer toggle acts on:
+ * a module or a part whose layer is FRAMEWORK. With none, the toggle is
+ * hidden, because a click would change nothing on the canvas. */
+function hasFrameworkLayer(model) {
+  if (!model) {
+    return false;
+  }
+  for (var name in model.modules) {
+    if (
+      Object.prototype.hasOwnProperty.call(model.modules, name) &&
+      model.modules[name] &&
+      model.modules[name].layer === "FRAMEWORK"
+    ) {
+      return true;
+    }
+  }
+  var ids = model.componentIds || [];
+  for (var i = 0; i < ids.length; i += 1) {
+    if (model.components[ids[i]].layer === "FRAMEWORK") {
+      return true;
+    }
+  }
+  return false;
+}
+
 /* ------------------------------------------------------------------ *
  * Layout (deterministic; no physics, no measurement)
  * ------------------------------------------------------------------ */
@@ -927,13 +957,14 @@ function computeLayout() {
 
 /* The layout of a project with nothing built: every standard band, in
  * the usual order and with the usual names, holding nothing. The
- * FRAMEWORK band follows its toolbar toggle, as it does with a graph. */
+ * FRAMEWORK band is left out: with no build there is no FRAMEWORK
+ * module, and its toggle is hidden. */
 function emptyLayout() {
   var width = CONTENT_X * 2 + ORGAN_MIN_W * 3 + ORGAN_GAP_X * 2;
   var bands = [];
   var y = 0;
   for (var i = 0; i < LAYER_ORDER.length; i += 1) {
-    if (LAYER_ORDER[i] === "FRAMEWORK" && !state.toggles.framework) {
+    if (LAYER_ORDER[i] === "FRAMEWORK") {
       continue;
     }
     bands.push({
@@ -1381,6 +1412,8 @@ function buildShell(mount) {
   });
   ui.toggleFramework.setAttribute("aria-pressed", "false");
   ui.toggleFramework.title = "show FRAMEWORK-layer modules";
+  /* Hidden until a build holds a FRAMEWORK module (see syncViewToggles). */
+  ui.toggleFramework.hidden = true;
 
   toolbar.appendChild(ui.toggleTests);
   toolbar.appendChild(ui.toggleFramework);
@@ -1630,15 +1663,22 @@ function buildLegend() {
  * Render
  * ------------------------------------------------------------------ */
 
-function render() {
-  if (!ui.root) {
-    return;
-  }
+/* The two view toggles say whether they are on, and the framework layer
+ * toggle shows only when the model has something it acts on. */
+function syncViewToggles() {
   ui.toggleTests.setAttribute("aria-pressed", String(state.toggles.tests));
   ui.toggleFramework.setAttribute(
     "aria-pressed",
     String(state.toggles.framework)
   );
+  ui.toggleFramework.hidden = !hasFrameworkLayer(state.model);
+}
+
+function render() {
+  if (!ui.root) {
+    return;
+  }
+  syncViewToggles();
 
   renderBanners();
   renderChanges();
@@ -1737,19 +1777,7 @@ function renderBanners() {
   if (state.buildStatus === "stale" && state.staleModules.length > 0) {
     var stale = el("div", "banner banner--stale");
     stale.setAttribute("role", "status");
-    stale.appendChild(el("span", "chip chip--stale", "stale"));
-    var text = el("span", "banner-text");
-    text.appendChild(
-      el("span", "banner-modules", state.staleModules.join(", "))
-    );
-    text.appendChild(
-      document.createTextNode(
-        (state.staleModules.length === 1 ? " has" : " have") +
-          " changed since the last build — " +
-          "showing last canonical build — run s0ma build to refresh"
-      )
-    );
-    stale.appendChild(text);
+    stale.appendChild(el("span", "banner-text", STALE_TEXT));
     ui.banners.appendChild(stale);
   }
 }
@@ -3187,14 +3215,7 @@ function componentHead(component) {
   ui.inspector.appendChild(where);
 
   if (isStaleModule(component.module)) {
-    var note = el(
-      "p",
-      "inspector-note",
-      "stale — last canonical build. Module " +
-        component.module +
-        " has changed since this build; run s0ma build to refresh."
-    );
-    ui.inspector.appendChild(note);
+    ui.inspector.appendChild(el("p", "inspector-note", STALE_TEXT));
   }
 }
 
@@ -3604,15 +3625,7 @@ function moduleHead(module) {
   ui.inspector.appendChild(where);
 
   if (isStaleModule(module.name)) {
-    ui.inspector.appendChild(
-      el(
-        "p",
-        "inspector-note",
-        "stale — last canonical build. Module " +
-          module.name +
-          " has changed since this build; run s0ma build to refresh."
-      )
-    );
+    ui.inspector.appendChild(el("p", "inspector-note", STALE_TEXT));
   }
 }
 
