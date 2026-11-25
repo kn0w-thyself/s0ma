@@ -492,7 +492,7 @@ carries no code: it requires each of the four at exactly its own version, so
 that one name installs the whole toolchain as it was released together.
 
 **The spelling.** It is `s0ma` with a digit **zero**, everywhere, and
-`studi0`, `sh0w` and `kn0wthyself` likewise. The letter-o spelling is a build
+`studi0` and `kn0wthyself` likewise. The letter-o spelling is a build
 failure rather than a preference ([PRD](references/s0ma-prd.md) INV-1).
 
 ## For coding agents
