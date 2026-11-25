@@ -77,6 +77,7 @@ if TYPE_CHECKING:
     from s0ma_dsl.codegen.doc_emitter import DocHashIndex, RenderedOutput
     from s0ma_dsl.docs_model.application import Build
     from s0ma_dsl.docs_model.bundle import Snapshot
+    from s0ma_dsl.docs_model.evidence import EvidenceRecord
     from s0ma_dsl.docs_model.providers import Finding
     from s0ma_dsl.docs_model.resolve import (
         Candidate,
@@ -1064,7 +1065,9 @@ TERMINAL_ENVELOPE: tuple[str, ...] = (
 TERMINAL_TRANSFORMATIONS: tuple[str, ...] = (
     "the page is the human channel's, rendered verbatim",
     "the build identity is written as the first line, before the page",
-    "the committed page this topic is written on is named as the last line",
+    "the last line names where to read more: a repository path from a "
+    "checkout, or a s0ma docs show command or the page's address on GitHub "
+    "from an installed wheel",
     "prose is not wrapped: the terminal wraps it, so the bytes do not "
     "depend on the terminal's width",
     "line endings: line feed, with exactly one at the end",
@@ -1166,9 +1169,50 @@ def read_more(snapshot: Snapshot, view: TopicView) -> tuple[str, ...]:
     return tuple(covering)
 
 
+#: Where the repository is published. A reader with only the installed
+#: wheel opens a page here, at the tag of the release they installed.
+REPOSITORY_URL = "https://github.com/kn0w-thyself/s0ma"
+
+
+def public_address(snapshot: Snapshot, page: str) -> str:
+    """``page`` on GitHub, at the tag of the release this snapshot describes."""
+    from s0ma_dsl.docs_model.manifest import version_tag
+
+    return f"{REPOSITORY_URL}/blob/{version_tag(snapshot.release_version())}/{page}"
+
+
+def read_more_targets(snapshot: Snapshot, view: TopicView) -> tuple[str, ...]:
+    """What the "Read more" line names, as something the reader can open.
+
+    From a checkout, the repository paths :func:`read_more` returns: the
+    reader is standing in the tree that holds them. From an installed
+    wheel there is no tree, so each page becomes a ``s0ma docs show``
+    command when it is a document in the docs model, and its public
+    address on GitHub otherwise. A document's own page always takes the
+    address, because a command that shows the same page again opens
+    nothing new.
+    """
+    from s0ma_dsl.docs_model.bundle import CHECKOUT
+
+    pages = read_more(snapshot, view)
+    if snapshot.origin == CHECKOUT:
+        return pages
+    documents: dict[str, str] = {}
+    for document in snapshot.bundle.documents:
+        documents.setdefault(document.canonical_source, document.id)
+    targets: list[str] = []
+    for page in pages:
+        document_id = documents.get(page)
+        if document_id is not None and document_id != view.id:
+            targets.append(f"s0ma docs show {document_id}")
+        else:
+            targets.append(public_address(snapshot, page))
+    return tuple(targets)
+
+
 def envelope_of(snapshot: Snapshot, view: TopicView) -> tuple[str, ...]:
     """Exactly the envelope lines this invocation writes, in order."""
-    pages = read_more(snapshot, view)
+    pages = read_more_targets(snapshot, view)
     lines = [identity_line(snapshot), ""]
     if pages:
         lines.append(TERMINAL_ENVELOPE[1].format(pages=", ".join(pages)))
@@ -1185,7 +1229,7 @@ def render_terminal(snapshot: Snapshot, view: TopicView) -> str:
 
     page = render_human(view)
     lines = [identity_line(snapshot), "", *page.split("\n")]
-    pages = read_more(snapshot, view)
+    pages = read_more_targets(snapshot, view)
     if pages:
         lines.append(TERMINAL_ENVELOPE[1].format(pages=", ".join(pages)))
         lines.append("")
@@ -1214,6 +1258,266 @@ def undeclared_lines(
             continue
         found.append(line)
     return tuple(found)
+
+
+# ---------------------------------------------------------------------------
+# Worked examples
+# ---------------------------------------------------------------------------
+
+#: Where the worked examples sit inside the installed ``s0ma_dsl`` package.
+#: The documentation loop copies ``docs/s0ma_src/evidence/*.json`` here, so
+#: the wheel carries every transcript a journey lists.
+PACKAGED_EVIDENCE = "_docs_snapshot/evidence"
+
+#: How each kind of expectation reads, as the start of a sentence.
+_EXPECTATION_WORDS: Mapping[str, str] = {
+    "absent": "never contains",
+    "contains": "contains",
+    "line": "has the line",
+    "regex": "has a line matching",
+}
+
+#: The two streams a command step expects something of, as a reader names them.
+_STREAM_WORDS: Mapping[str, str] = {
+    "stdout": "Output",
+    "stderr": "Error output",
+}
+
+#: How each channel's example is run, in a few words.
+_CHANNEL_WORDS: Mapping[str, str] = {
+    "cli": "on the command line",
+    "mcp": "through the authoring server's tools",
+}
+
+
+def listed_examples(snapshot: Snapshot) -> Mapping[str, str]:
+    """Every worked example a journey lists, mapped to that journey's id."""
+    from s0ma_dsl.docs_model.ids import normalize_id
+
+    found: dict[str, str] = {}
+    for journey in snapshot.bundle.journeys:
+        for example in journey.evidence:
+            found.setdefault(normalize_id(example.id), journey.id)
+    return found
+
+
+def packaged_evidence_root() -> Path:
+    """The installed ``s0ma_dsl`` package directory the packaged copy sits in."""
+    return Path(__file__).resolve().parent.parent
+
+
+def evidence_places(snapshot: Snapshot) -> tuple[tuple[Path, str], ...]:
+    """Where a worked example is read from, in the order they are tried.
+
+    The checkout's own folder first, when the snapshot came from a
+    checkout, and then the copy packaged in the wheel.
+    """
+    from s0ma_dsl.docs_model.bundle import CHECKOUT, checkout_root
+    from s0ma_dsl.docs_model.evidence import EVIDENCE_DIR
+
+    places: list[tuple[Path, str]] = []
+    if snapshot.origin == CHECKOUT:
+        root = checkout_root(Path(snapshot.location).parent)
+        if root is not None:
+            places.append((root, EVIDENCE_DIR))
+    places.append((packaged_evidence_root(), PACKAGED_EVIDENCE))
+    return tuple(places)
+
+
+def load_example(
+    identifier: str, places: Sequence[tuple[Path, str]]
+) -> EvidenceRecord | None:
+    """The worked example ``identifier`` names, from the first place that has it."""
+    from s0ma_dsl.docs_model.evidence import DocsEvidenceError, EvidenceLibrary
+
+    for root, relative in places:
+        try:
+            return EvidenceLibrary.load(root, relative=relative).by_id(identifier)
+        except DocsEvidenceError:
+            continue
+    return None
+
+
+def _command(argv: Sequence[str]) -> str:
+    """One command as a reader types it."""
+    return " ".join(part if " " not in part else f'"{part}"' for part in argv)
+
+
+def _arguments(arguments: Sequence[tuple[str, Any]]) -> str:
+    """A tool call's arguments as one line of JSON."""
+    return json.dumps(dict(arguments), sort_keys=True, ensure_ascii=False)
+
+
+def _expectations(record: EvidenceRecord) -> list[Any]:
+    """Every expectation in ``record``, flattened, for the placeholder scan."""
+    from s0ma_dsl.docs_model.evidence import CallStep, CommandStep, WriteStep
+
+    found: list[Any] = [record.intent, record.scaffold.argv, record.scaffold.files]
+    for step in record.steps:
+        if isinstance(step, CommandStep):
+            found.extend([step.argv, step.stdout, step.stderr])
+        elif isinstance(step, CallStep):
+            found.extend([step.arguments, step.text, step.fields])
+        elif isinstance(step, WriteStep):
+            found.extend([step.path, step.text])
+    return found
+
+
+#: What each placeholder stands for, in the words of the person following
+#: the example rather than of the replay that checks it.
+_PLACEHOLDER_WORDS: Mapping[str, str] = {
+    "{tmp}": "the empty folder you started in",
+    "{project}": "the project folder you work in",
+    "{version}": "the version of s0ma you run",
+    "{duration}": "a time, which is different on every run",
+}
+
+
+def _placeholders(record: EvidenceRecord) -> list[tuple[str, str]]:
+    """The placeholders ``record`` uses, with what each stands for."""
+    from s0ma_dsl.docs_model.evidence import PLACEHOLDERS
+
+    text = repr(_expectations(record))
+    return [
+        (token, _PLACEHOLDER_WORDS.get(token, meaning))
+        for token, meaning in PLACEHOLDERS.items()
+        if token in text
+    ]
+
+
+def _fenced(text: str, indent: str) -> list[str]:
+    """``text`` inside a fenced block, every line indented by ``indent``."""
+    body = text[:-1] if text.endswith("\n") else text
+    inside = [f"{indent}{line}".rstrip() for line in body.split("\n")]
+    return [f"{indent}```text", *inside, f"{indent}```"]
+
+
+def example_document(snapshot: Snapshot, record: EvidenceRecord) -> dict[str, Any]:
+    """One worked example as data, for ``--format json``."""
+    from s0ma_dsl.docs_model.evidence import CallStep, CommandStep
+
+    def expected(items: Sequence[Any]) -> list[dict[str, str]]:
+        return [
+            {"match": item.match, "reason": item.reason, "text": item.text}
+            for item in items
+        ]
+
+    steps: list[dict[str, Any]] = []
+    for step in record.steps:
+        if isinstance(step, CommandStep):
+            steps.append(
+                {
+                    "argv": list(step.argv),
+                    "command": _command(step.argv),
+                    "exit_code": step.exit_code,
+                    "kind": "command",
+                    "stderr": expected(step.stderr),
+                    "stdout": expected(step.stdout),
+                }
+            )
+        elif isinstance(step, CallStep):
+            steps.append(
+                {
+                    "arguments": dict(step.arguments),
+                    "fields": [
+                        {"equals": item.equals, "path": item.path} for item in step.fields
+                    ],
+                    "kind": "call",
+                    "text": expected(step.text),
+                    "tool": step.tool,
+                }
+            )
+        else:
+            steps.append({"kind": "write", "path": step.path, "text": step.text})
+    scaffold = record.scaffold
+    return {
+        "channel": record.channel,
+        "id": record.id,
+        "intent": record.intent,
+        "journey": record.journey,
+        "origin": snapshot.origin,
+        "placeholders": dict(_placeholders(record)),
+        "release_version": snapshot.release_version(),
+        "setup": {
+            "argv": list(scaffold.argv),
+            "command": _command(scaffold.argv) if scaffold.argv else "",
+            "files": [{"path": path, "text": text} for path, text in scaffold.files],
+            "kind": scaffold.kind,
+            "workdir": scaffold.workdir,
+        },
+        "snapshot_hash": snapshot.snapshot_hash(),
+        "steps": steps,
+    }
+
+
+def render_example(snapshot: Snapshot, record: EvidenceRecord) -> str:
+    """One worked example, as a person follows it in a terminal."""
+    from s0ma_dsl.docs_model.evidence import CallStep, CommandStep
+
+    channel = _CHANNEL_WORDS.get(record.channel, f"on the {record.channel} channel")
+    lines = [
+        identity_line(snapshot),
+        "",
+        f"# {record.id}",
+        "",
+        f"A worked example for `{record.journey}`, run {channel}.",
+        "",
+        "## What it does",
+        "",
+        record.intent,
+        "",
+        "## Before you start",
+        "",
+    ]
+    scaffold = record.scaffold
+    if scaffold.argv:
+        lines.append(
+            f"In an empty folder, run `{_command(scaffold.argv)}`, then work "
+            f"in `{scaffold.workdir}`."
+        )
+    if scaffold.files:
+        lines.append(
+            f"In an empty folder, write these files, then work in "
+            f"`{scaffold.workdir}`."
+        )
+        for path, text in scaffold.files:
+            lines.extend(["", f"`{path}`:", "", *_fenced(text, "")])
+    lines.extend(["", "## The steps", ""])
+    indent = "   "
+    for number, step in enumerate(record.steps, start=1):
+        if isinstance(step, CommandStep):
+            lines.append(f"{number}. Run `{_command(step.argv)}`")
+            lines.append(f"{indent}It exits with {step.exit_code}.")
+            for stream, items in (("stdout", step.stdout), ("stderr", step.stderr)):
+                for item in items:
+                    lines.append(
+                        f"{indent}{_STREAM_WORDS[stream]} "
+                        f"{_EXPECTATION_WORDS.get(item.match, item.match)}: {item.text}"
+                    )
+        elif isinstance(step, CallStep):
+            lines.append(f"{number}. Call the `{step.tool}` tool")
+            lines.append(f"{indent}Arguments: {_arguments(step.arguments)}")
+            for item in step.text:
+                lines.append(
+                    f"{indent}The reply "
+                    f"{_EXPECTATION_WORDS.get(item.match, item.match)}: {item.text}"
+                )
+            for field_item in step.fields:
+                lines.append(
+                    f"{indent}`{field_item.path}` is "
+                    f"{json.dumps(field_item.equals, ensure_ascii=False)}"
+                )
+        else:
+            lines.append(f"{number}. Write `{step.path}`")
+            lines.extend(["", *_fenced(step.text, indent)])
+        lines.append("")
+    placeholders = _placeholders(record)
+    if placeholders:
+        lines.extend(["## Placeholders", ""])
+        lines.extend(f"- `{token}`: {meaning}" for token, meaning in placeholders)
+        lines.append("")
+    lines.append(TERMINAL_ENVELOPE[1].format(pages=f"s0ma docs show {record.journey}"))
+    return "\n".join(lines) + "\n"
 
 
 # ---------------------------------------------------------------------------
@@ -1586,6 +1890,47 @@ def cmd_docs_list(args: argparse.Namespace) -> int:
     return _EXIT_SUCCESS
 
 
+def _show_example(snapshot: Snapshot, query: str, *, as_json: bool) -> int | None:
+    """Show the worked example ``query`` names, when a journey lists it.
+
+    ``None`` when no journey lists it, so the caller reports the miss as
+    it always has.
+    """
+    from s0ma_dsl.docs_model.ids import normalize_id
+
+    listed = listed_examples(snapshot)
+    wanted = normalize_id(query.strip())
+    if wanted not in listed:
+        return None
+    record = load_example(wanted, evidence_places(snapshot))
+    if record is None:
+        message = (
+            f"{wanted} is a worked example for {listed[wanted]}, and this "
+            f"installation does not carry its transcript. Reinstall from the "
+            f"release wheels, which carry it"
+        )
+        if as_json:
+            _print_json(
+                {
+                    "error": message,
+                    "found": False,
+                    "query": query,
+                    "release_version": snapshot.release_version(),
+                    "snapshot_hash": snapshot.snapshot_hash(),
+                }
+            )
+        else:
+            print(identity_line(snapshot), file=sys.stderr)
+            print(file=sys.stderr)
+            print(f"{message}.", file=sys.stderr)
+        return _EXIT_VALIDATION_ERROR
+    if as_json:
+        _print_json(example_document(snapshot, record))
+    else:
+        print(render_example(snapshot, record), end="")
+    return _EXIT_SUCCESS
+
+
 @component(
     name="S0maDSL_cmd_docs_show",
     kind=ComponentKind.FUNCTION,
@@ -1621,6 +1966,10 @@ def cmd_docs_show(args: argparse.Namespace) -> int:
         else:
             print(render_terminal(snapshot, resolution.topic), end="")
         return _EXIT_SUCCESS
+
+    shown = _show_example(snapshot, args.topic, as_json=as_json)
+    if shown is not None:
+        return shown
 
     if resolution.candidates:
         if as_json:

@@ -84,4 +84,4 @@ nerve <name> :: <LAYER>
 
 - Topic id: `concept:nerve`
 - Release: `0.23.0 (preview)`
-- Documentation snapshot: `sha256:98c3d025d7c8bd0f`
+- Documentation snapshot: `sha256:d779436f7d857283`

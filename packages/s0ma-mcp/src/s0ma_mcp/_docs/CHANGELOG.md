@@ -57,6 +57,19 @@ Historical entries describe artifacts as they were named at the time.
   finds fewer than four pins. The release check installs the umbrella wheel
   by itself and runs `s0ma test` in a new project.
 
+- **The worked examples a journey lists open from an installed s0ma.** Before,
+  `s0ma docs show journey:first-project` listed
+  `example:transcript/first-project`, and asking for it said it named no
+  topic, because the wheel carried only the ids. The s0ma-lang-dsl wheel now
+  carries all nine transcripts, and `s0ma docs show <example id>` prints the
+  setup and each step: the command and what it should print or exit with,
+  the file a step writes, or the tool a step calls and its arguments.
+  `--format json` gives the same as data. Each line under "Worked examples"
+  on a journey page now says the command that opens it. A page shown from an
+  installed s0ma ends its "Read more" line with a `s0ma docs show` command or
+  the page's address on GitHub at the installed version's tag, where it used
+  to name a repository path. From a checkout it still names the path.
+
 ## [0.23.0] — 2026-11-23
 
 ### Added

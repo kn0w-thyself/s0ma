@@ -80,13 +80,15 @@ one folder whose name is its distribution's name, and nothing depends on it.
   repository and the README reaches them by URL.
 - Other committed mirrors under `s0ma_mcp/_docs/` must remain byte-identical to
   the source recorded in `resources.GUIDE_DOCS`.
-- The documentation loop ends in **five** mirror copies, and a change to what
-  the build composes needs all five or a wheel ships stale documentation:
+- The documentation loop ends in **six** mirror copies, or a wheel ships
+  stale documentation. Five are of what the build composes:
   `docs/_generated/s0ma-docs-model.json` into `s0ma_mcp/_docs/` and into
   `s0ma_dsl/_docs_snapshot/`, `docs/_generated/core-teaching-slice.json`
   into `s0ma/_teaching/slice.json`, and the quick reference in both its
   forms, `docs/reference/quick-reference-readable.md` and
   `docs/_generated/quick-reference-machine.json`, into `s0ma_mcp/_docs/`.
+  The sixth is the worked examples, `docs/s0ma_src/evidence/*.json` into
+  `s0ma_dsl/_docs_snapshot/evidence/`, needed whenever a transcript changes.
   They are `cp` outputs, never edited. The loop is written once, in
   [`docs/operations/docs-maintenance.md`](docs/operations/docs-maintenance.md).
 - Generated DSL docs identify their generator in the file or nearby tests. Use

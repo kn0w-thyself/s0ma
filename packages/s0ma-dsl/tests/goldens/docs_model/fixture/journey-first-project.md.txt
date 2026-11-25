@@ -40,7 +40,7 @@ Take somebody who has never written a s0ma project from an empty folder to a fir
 
 ## Worked examples
 
-- `example:first_project_walkthrough`
+- `example:first_project_walkthrough`: run `s0ma docs show example:first_project_walkthrough`
 
 ## What decides this
 

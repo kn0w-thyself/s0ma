@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "e4db8fffd16a67652fdc5af592957efaa6c52c236708c4f0d57bda7f7f407b83",
+      "content_sha256": "1cdd00a248eb9faeb1c3001523ba13745aff5bf32214d43d0667ec45477e474f",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.23.0] — 2026-11-23",
@@ -5679,7 +5679,7 @@
     "build_channel": "preview",
     "release_version": "0.23.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:98c3d025d7c8bd0f"
+    "snapshot_hash": "sha256:d779436f7d857283"
   },
   "surfaces": [
     {

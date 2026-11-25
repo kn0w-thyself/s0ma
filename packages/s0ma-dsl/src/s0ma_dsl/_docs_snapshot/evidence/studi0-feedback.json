@@ -1,0 +1,185 @@
+{
+  "record": {
+    "channel": "cli",
+    "covers": [
+      "cli:s0ma/feedback/drafts"
+    ],
+    "id": "example:transcript/studi0-feedback",
+    "intent": "Walk this path as far as a machine honestly can: the graph the viewer draws, printed from the build itself; the product's own account of what it will and will not send; and then the consent gate, run for real — with no terminal to approve in, s0ma composes nothing, saves nothing, and sends nothing, and says so in words.",
+    "journey": "journey:studi0-feedback",
+    "not_covered": [
+      {
+        "reason": "Sending is the one thing this transcript must never do, and the product makes that easy to honour: a report is composed, shown, and sent only with a person at the keyboard answering two questions, so there is no replay of the whole step. What the transcript runs instead is the same command with no terminal behind it, and records the refusal — nothing composed, nothing saved, nothing sent, exit code 5. The step's own approval boundary is the fact being evidenced here.",
+        "surface": "cli:s0ma/feedback"
+      },
+      {
+        "reason": "The resume path asks for the same approval a second time, so it is unreplayable for the same reason and refuses in the same words. The transcript runs it against a draft identifier and records that the refusal comes before the draft is even looked for: no terminal, no approval, no send.",
+        "surface": "cli:s0ma/feedback/submit"
+      },
+      {
+        "reason": "Launching the viewer binds a loopback port and serves until it is interrupted, so there is no terminating replay of it and no output that arrives before the waiting starts. What this transcript can show instead is that the build the viewer reads is there and answers, which is the first command below.",
+        "surface": "cli:s0ma/studi0"
+      },
+      {
+        "reason": "The route answers only while the viewer is running, so reaching it means launching the step above. It hands back the graph exactly as the build produced it, wrapped in a reading number — so the first command in this transcript, which asks the build for that same graph at the same level of detail, is a boundary of the channel rather than a gap in the path.",
+        "surface": "studi0:action/api/graph"
+      }
+    ],
+    "scaffold": {
+      "argv": [
+        "s0ma",
+        "new",
+        "project",
+        "demo",
+        "--name",
+        "demo"
+      ],
+      "kind": "new-project",
+      "workdir": "demo"
+    },
+    "steps": [
+      {
+        "argv": [
+          "s0ma",
+          "graph",
+          ".",
+          "--format",
+          "json",
+          "--detail",
+          "full"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "contains",
+            "text": "\"components\": {"
+          },
+          {
+            "match": "contains",
+            "text": "\"core_domain::describe_self\""
+          },
+          {
+            "match": "contains",
+            "text": "\"nodes\": ["
+          },
+          {
+            "match": "line",
+            "text": "  \"schema\": \"s0ma-graph@2\""
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "feedback",
+          "--help"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Send feedback about s0ma to the s0ma team. You see the exact feedback data,"
+          },
+          {
+            "match": "line",
+            "text": "and approve it, before anything leaves this machine."
+          },
+          {
+            "match": "line",
+            "text": "files, or your conversations. Nothing is ever sent without your approval."
+          },
+          {
+            "match": "line",
+            "text": "docs/contracts/feedback-v1.md."
+          },
+          {
+            "match": "absent",
+            "text": "--anonymous"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "feedback",
+          "-m",
+          "the graph view did not say which reading it was showing"
+        ],
+        "exit_code": 5,
+        "stderr": [
+          {
+            "match": "line",
+            "text": "This needs a terminal: you have to see the exact feedback data, and approve it,"
+          },
+          {
+            "match": "line",
+            "text": "before anything is sent — and there is no way to do that without one."
+          },
+          {
+            "match": "line",
+            "text": "Nothing was sent."
+          },
+          {
+            "match": "line",
+            "text": "Run it again in a terminal. No flag skips the approval step — that is the point"
+          },
+          {
+            "match": "line",
+            "text": "Command: s0ma feedback"
+          }
+        ],
+        "stdout": []
+      },
+      {
+        "argv": [
+          "s0ma",
+          "feedback",
+          "drafts"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "You have no unsent feedback reports on this machine."
+          },
+          {
+            "match": "line",
+            "text": "To write one, run: s0ma feedback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "feedback",
+          "submit",
+          "fbd_1a2b3c4d"
+        ],
+        "exit_code": 5,
+        "stderr": [
+          {
+            "match": "line",
+            "text": "This needs a terminal: you have to see the exact feedback data, and approve it,"
+          },
+          {
+            "match": "line",
+            "text": "Nothing was sent."
+          },
+          {
+            "match": "line",
+            "text": "Command: s0ma feedback submit"
+          }
+        ],
+        "stdout": []
+      }
+    ]
+  },
+  "schema": "s0ma-docs-evidence@1"
+}

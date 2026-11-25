@@ -40,9 +40,11 @@ uv run s0ma --project-root docs docs compose --output-dir docs
 # 2. Check: byte-compare what you just built against what is committed.
 uv run s0ma --project-root docs docs check --output-dir docs
 
-# 3. Mirrors: three wheels carry copies of what compose produced. Refresh
-#    all five. The third is what `s0ma docs` reads with no checkout; the
-#    last two are the quick reference the authoring server serves.
+# 3. Mirrors: three wheels carry copies of what compose produced, and the
+#    dsl wheel also carries the worked examples. Refresh all six. The third
+#    is what `s0ma docs` reads with no checkout; the fourth and fifth are
+#    the quick reference the authoring server serves; the sixth is what
+#    `s0ma docs show example:...` reads with no checkout.
 cp docs/_generated/s0ma-docs-model.json \
    packages/s0ma-mcp/src/s0ma_mcp/_docs/s0ma-docs-model.json
 cp docs/_generated/core-teaching-slice.json \
@@ -53,6 +55,8 @@ cp docs/reference/quick-reference-readable.md \
    packages/s0ma-mcp/src/s0ma_mcp/_docs/quick-reference-readable.md
 cp docs/_generated/quick-reference-machine.json \
    packages/s0ma-mcp/src/s0ma_mcp/_docs/quick-reference-machine.json
+cp docs/s0ma_src/evidence/*.json \
+   packages/s0ma-dsl/src/s0ma_dsl/_docs_snapshot/evidence/
 
 # 4. Goldens: re-stamp the rendered fixtures. From packages/s0ma-dsl.
 uv run python - <<'EOF'
@@ -78,7 +82,7 @@ after you.
 |---|---|---|
 | 1. Compose | Always. Anything that changes what the build composes changes the snapshot digest, and every generated page carries that digest. | Never. |
 | 2. Check | You want the answer before the full gate does. It is the same comparison the `docs-application` stage makes, in about a second. | Never harmful; it is the cheapest check you have. |
-| 3. Mirrors | Compose changed `docs/_generated/s0ma-docs-model.json`, `docs/_generated/core-teaching-slice.json`, or the quick reference in either form. In practice: almost any change at all, because the snapshot digest moves and the quick reference carries it. Four artifacts, five copies: the snapshot is mirrored into both the mcp and the dsl package, and the quick reference's page and data twin into the mcp package, which serves them. | Only when compose left all four artifacts byte-identical. `git status` tells you. |
+| 3. Mirrors | Compose changed `docs/_generated/s0ma-docs-model.json`, `docs/_generated/core-teaching-slice.json`, or the quick reference in either form. In practice: almost any change at all, because the snapshot digest moves and the quick reference carries it. Four artifacts, five copies: the snapshot is mirrored into both the mcp and the dsl package, and the quick reference's page and data twin into the mcp package, which serves them. The sixth copy is not a compose output: it is the worked examples in `docs/s0ma_src/evidence/`, mirrored into the dsl package so an installed `s0ma docs show` can open them. | Only when compose left all four artifacts byte-identical and no file under `docs/s0ma_src/evidence/` changed. `git status` tells you. |
 | 4. Goldens | You changed a renderer, a resolver, or the prose of a topic a golden fixture captures. | You only added or edited a document, a catalog row or a ledger row. |
 | 5. The gate | Always, before you hand the work on. | Never. |
 

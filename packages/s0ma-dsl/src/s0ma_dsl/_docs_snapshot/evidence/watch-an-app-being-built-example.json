@@ -1,0 +1,99 @@
+{
+  "record": {
+    "channel": "cli",
+    "covers": [
+      "cli:s0ma/new"
+    ],
+    "id": "example:transcript/watch-an-app-being-built-example",
+    "intent": "Walk the first half of this path for real: make the finished example the guide tours, and read back the graph studi0 draws from it, down to the four lines of the part the guide has a reader click.",
+    "journey": "journey:watch-an-app-being-built",
+    "not_covered": [
+      {
+        "reason": "Launching the viewer binds a loopback port and serves until it is interrupted, so there is no terminating replay of it and no output that arrives before the waiting starts. The path opens it twice, once on each project, and what this transcript shows instead is that the build the viewer reads is there and answers.",
+        "surface": "cli:s0ma/studi0"
+      },
+      {
+        "reason": "This call is made by the reader's own agent at the end of each request, from files it wrote itself, and replaying it would mean running a model, which no transcript may do. This transcript stops before any request is made: it is the finished example, and the agent's builds belong to the second project, whose own transcript says what stands in for them.",
+        "surface": "mcp:tool/build_project"
+      },
+      {
+        "reason": "The route answers only while the viewer is running, so reaching it means launching the step before it. It hands the page the graph the build produced, and the graph command in this transcript emits that same graph at the same detail, which makes this a boundary of the channel rather than a gap in the path.",
+        "surface": "studi0:action/api/graph"
+      },
+      {
+        "reason": "The poll answers only while the viewer is running, so it shares the launch step's boundary. What it reports is whether a newer build has landed, and the growth transcript for this path lands three builds one after another and reads the graph back after each, which is what the poll would notice.",
+        "surface": "studi0:action/api/state"
+      }
+    ],
+    "scaffold": {
+      "argv": [
+        "s0ma",
+        "new",
+        "project",
+        "example",
+        "--template",
+        "pipeline"
+      ],
+      "kind": "new-project",
+      "workdir": "example"
+    },
+    "steps": [
+      {
+        "argv": [
+          "s0ma",
+          "graph",
+          ".",
+          "--format",
+          "json",
+          "--detail",
+          "full"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "contains",
+            "text": "\"coach::watch_swings\": {"
+          },
+          {
+            "match": "contains",
+            "text": "\"music::settle_mood\": {"
+          },
+          {
+            "match": "contains",
+            "text": "\"value\": \"The scores for how a song sounds.\""
+          },
+          {
+            "match": "contains",
+            "text": "\"value\": \"Never picks a mood outside those four.\""
+          },
+          {
+            "match": "contains",
+            "text": "\"value\": \"Gives back exactly one of four moods: lively, tense, calm, or low.\""
+          },
+          {
+            "match": "contains",
+            "text": "\"value\": \"Decides which mood a song puts across, from how it sounds.\""
+          },
+          {
+            "match": "contains",
+            "text": "\"page::song_to_page\": {"
+          },
+          {
+            "match": "contains",
+            "text": "\"player::read_now_playing\": {"
+          },
+          {
+            "match": "line",
+            "text": "  \"schema\": \"s0ma-graph@2\""
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      }
+    ]
+  },
+  "schema": "s0ma-docs-evidence@1"
+}
