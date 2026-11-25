@@ -2369,6 +2369,43 @@ def _service_provides_nerve(name: str, layer: str) -> str:
     )
 
 
+
+def survey_row(name: str, doc: dict[str, Any]) -> dict[str, Any]:
+    """One module's row of ``s0ma inspect --all``, from its loaded IR *doc*.
+
+    The row carries the module *name*, its layer, a count per component
+    kind, and ``components``, the number in the table's Components column.
+    """
+    mod = doc.get("module", {})
+    components = doc.get("components", [])
+    kind_counts: dict[str, int] = {}
+    for comp in components:
+        kind = str(comp.get("kind", "?"))
+        kind_counts[kind] = kind_counts.get(kind, 0) + 1
+    return {
+        "name": name,
+        "layer": mod.get("layer", "?"),
+        "kind_counts": kind_counts,
+        "components": len(components),
+    }
+
+
+def survey_build(build_dir: Path) -> list[dict[str, Any]]:
+    """Every built module's ``s0ma inspect --all`` row, in manifest order.
+
+    Raises what reading the manifest or an IR file raises
+    (:class:`ManifestSchemaError`, :class:`IRSchemaVersionError`,
+    :class:`OSError`, :class:`json.JSONDecodeError`).
+    """
+    from s0ma_dsl.codegen.build_manifest import load_manifest
+
+    rows: list[dict[str, Any]] = []
+    for entry in load_manifest(build_dir).modules:
+        doc = json.loads((build_dir / entry.ir).read_text(encoding="utf-8"))
+        validate_ir_schema_version(doc)
+        rows.append(survey_row(entry.name, doc))
+    return rows
+
 def _legacy_scaffold_template(
     decl_type: str,
     name: str,
@@ -4226,9 +4263,12 @@ class S0maCLI:
         )
         np.add_argument(
             "name",
+            nargs="?",
+            default=None,
             help=(
                 "Name for the new declaration (PascalCase or "
-                "snake_case); for 'project': the target directory"
+                "snake_case); for 'project': the target directory, which "
+                "--sample may leave out"
             ),
         )
         np.add_argument(
@@ -4280,6 +4320,27 @@ class S0maCLI:
                 "support-inbox agent in five steps, with a scripted "
                 "stand-in for its model). Default: the minimal "
                 "single-feature starter."
+            ),
+        )
+        np.add_argument(
+            "--sample",
+            action="store_true",
+            help=(
+                "('project' only) Lay down s0ma's own first-run sample. "
+                "It stands for --template with the sample's name, and the "
+                "folder may be left out to use the sample's own name."
+            ),
+        )
+        np.add_argument(
+            "--step",
+            type=int,
+            default=None,
+            metavar="N",
+            help=(
+                "('project' only, for a template made of steps) Bring the "
+                "project to step N. Step 0 is the bare project with "
+                "nothing built. Running it again on a project at step N "
+                "changes nothing."
             ),
         )
         np.add_argument(
@@ -7823,18 +7884,7 @@ class S0maCLI:
                     file=sys.stderr,
                 )
                 return EXIT_INTERNAL_ERROR
-            mod = doc.get("module", {})
-            components = doc.get("components", [])
-            kind_counts: dict[str, int] = {}
-            for comp in components:
-                kind = str(comp.get("kind", "?"))
-                kind_counts[kind] = kind_counts.get(kind, 0) + 1
-            survey.append({
-                "name": entry.name,
-                "layer": mod.get("layer", "?"),
-                "kind_counts": kind_counts,
-                "components": len(components),
-            })
+            survey.append(survey_row(entry.name, doc))
 
         if args.output_format == "json":
             print(json.dumps(survey, indent=2, sort_keys=True))
@@ -9217,6 +9267,13 @@ class S0maCLI:
             from s0ma_dsl.cli.new_project import run_new_project
 
             return run_new_project(args)
+
+        if args.name is None:
+            print(
+                f"s0ma new {args.type}: name the new declaration.",
+                file=sys.stderr,
+            )
+            return EXIT_USAGE_ERROR
 
         decl_type: str = args.type
         name: str = args.name

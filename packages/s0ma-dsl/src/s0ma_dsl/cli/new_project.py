@@ -908,6 +908,7 @@ def _scaffold_archetype(
     json_mode: bool,
     quiet: bool,
     fail: Callable[[dict[str, Any], str, int], int],
+    count: int | None = None,
 ) -> int:
     """Scaffold an ``--template`` archetype (STD-M7).
 
@@ -918,81 +919,39 @@ def _scaffold_archetype(
     :func:`_first_build`) and mirrors the minimal path's contract exactly —
     atomic refusal, post-write validation, first build of the whole project
     root, and a text/``--format json`` summary for both readerships (P-5).
+
+    With *count*, only steps 1 to *count* of an archetype declared as steps
+    are laid down (``--step``), and the summary says which step that is.
     """
     from s0ma_dsl.cli.templates import get_archetype
 
     archetype = get_archetype(template)
+    files = archetype.files if count is None else archetype.files_through(count)
 
     pyproject = target / "pyproject.toml"
     agents_path = target / "AGENTS.md"
     claude_path = target / "CLAUDE.md"
-    planned = [(target / f.relpath, f.content) for f in archetype.files]
+    planned = [(target / f.relpath, f.content) for f in files]
 
     # ---- Atomic refusal: plan first, list every reason, touch nothing.
     reasons = _archetype_refusal_reasons(
         target, pyproject, planned, agents_path, claude_path
     )
     if reasons:
-        if json_mode:
-            print(
-                json.dumps(
-                    {
-                        "ok": False,
-                        "project_root": str(target),
-                        "refusals": reasons,
-                    },
-                    indent=2,
-                )
-            )
-        else:
-            print(
-                f"s0ma new project: refusing to initialize {target} "
-                f"(nothing was changed):"
-            )
-            for reason in reasons:
-                print(f"  - {reason}")
-        return EXIT_VALIDATION_ERROR
+        return _print_refusal(target, reasons, json_mode)
 
-    # ---- Lay down the project skeleton (the target may not exist yet).
-    (target / "src").mkdir(parents=True, exist_ok=True)
-    (target / "tests").mkdir(parents=True, exist_ok=True)
-
-    # ---- pyproject: byte-preserving append, or a minimal create.
-    table = _tool_s0ma_table_with_bootstrap(
-        mode,
-        authoring,
-        archetype.bootstrap_files,
-        FEEDBACK_POSTURE,
-        archetype.health_command,
+    # ---- The bare project: pyproject, AGENTS.md + CLAUDE.md, the
+    # feedback skill and the launch entry.
+    bare = write_bare_project(
+        target, archetype, project_name, mode, authoring
     )
-    if pyproject.is_file():
-        original = pyproject.read_bytes()
-        separator = b"\n" if original.endswith(b"\n") else b"\n\n"
-        pyproject.write_bytes(original + separator + table.encode("utf-8"))
-        pyproject_action = "appended"
-    else:
-        pyproject.write_text(
-            _project_table(project_name) + "\n" + table,
-            encoding="utf-8",
-            newline="\n",
-        )
-        pyproject_action = "created"
 
-    # ---- Write every archetype file (dirs created as needed), then the
-    # AGENTS.md + thin CLAUDE.md (the starter feature's name labels the
-    # agent guide; an archetype's first feature is its anchor).
+    # ---- Write every archetype file (dirs created as needed).
     for path, content in planned:
         path.parent.mkdir(parents=True, exist_ok=True)
         if path.suffix == ".s0ma":
             content = current_grammar_source(content, path.as_posix())
         path.write_text(content, encoding="utf-8", newline="\n")
-
-    anchor_feature = archetype.features[0]
-    scaffold_agent_files(
-        target, project_name, anchor_feature, anchor_feature, authoring
-    )
-    skill_path, skill_created = scaffold_feedback_skill(target)
-    launch_path, launch_created = scaffold_launch_config(target)
 
     # ---- Post-write validation of the first .s0ma source (same gate as
     # the minimal path): catch a template/validator drift before the build.
@@ -1030,39 +989,148 @@ def _scaffold_archetype(
             build_rc,
         )
 
-    from s0ma_dsl.codegen.build_manifest import (
-        MANIFEST_FILENAME,
-        ManifestSchemaError,
-        load_manifest,
-    )
+    step = None
+    if count is not None:
+        from s0ma_dsl.cli.project_steps import kept_files, step_report
 
-    built_modules: list[str] = []
-    with contextlib.suppress(ManifestSchemaError):
-        built_modules = sorted(
-            entry.name for entry in load_manifest(build_dir).modules
+        written = [*bare.written, *(f.relpath for f in files)]
+        step = step_report(
+            archetype,
+            count,
+            target,
+            written=written,
+            kept=kept_files(target, files),
         )
 
     return _print_archetype_summary(
         archetype=archetype,
+        files=files,
         target=target,
         project_name=project_name,
         mode=mode,
         authoring=authoring,
         pyproject=pyproject,
-        pyproject_action=pyproject_action,
+        pyproject_action=bare.pyproject_action,
         agents_path=agents_path,
         claude_path=claude_path,
+        skill_path=bare.skill_path,
+        skill_created=bare.skill_created,
+        launch_path=bare.launch_path,
+        launch_created=bare.launch_created,
+        build_dir=build_dir,
+        json_mode=json_mode,
+        quiet=quiet,
+        step=step,
+    )
+
+
+class BareProject:
+    """What :func:`write_bare_project` wrote, for the summary."""
+
+    def __init__(
+        self,
+        *,
+        pyproject_action: str,
+        skill_path: Path,
+        skill_created: bool,
+        launch_path: Path,
+        launch_created: bool,
+        written: list[str],
+    ) -> None:
+        self.pyproject_action = pyproject_action
+        self.skill_path = skill_path
+        self.skill_created = skill_created
+        self.launch_path = launch_path
+        self.launch_created = launch_created
+        #: Project-root-relative POSIX paths of every file written.
+        self.written = written
+
+
+def write_bare_project(
+    target: Path,
+    archetype: Any,
+    project_name: str,
+    mode: str,
+    authoring: str,
+) -> BareProject:
+    """Write everything an archetype scaffold lays down that is not its files.
+
+    That is ``src/`` and ``tests/``, the ``[tool.s0ma]`` table (appended to
+    an existing ``pyproject.toml`` byte for byte, or in a new one), AGENTS.md
+    with the thin CLAUDE.md, and the feedback skill and launch entry when
+    they are absent. The caller has already run the refusal scan.
+    """
+    # ---- Lay down the project skeleton (the target may not exist yet).
+    (target / "src").mkdir(parents=True, exist_ok=True)
+    (target / "tests").mkdir(parents=True, exist_ok=True)
+
+    # ---- pyproject: byte-preserving append, or a minimal create.
+    pyproject = target / "pyproject.toml"
+    table = _tool_s0ma_table_with_bootstrap(
+        mode,
+        authoring,
+        archetype.bootstrap_files,
+        FEEDBACK_POSTURE,
+        archetype.health_command,
+    )
+    if pyproject.is_file():
+        original = pyproject.read_bytes()
+        separator = b"\n" if original.endswith(b"\n") else b"\n\n"
+        pyproject.write_bytes(original + separator + table.encode("utf-8"))
+        pyproject_action = "appended"
+    else:
+        pyproject.write_text(
+            _project_table(project_name) + "\n" + table,
+            encoding="utf-8",
+            newline="\n",
+        )
+        pyproject_action = "created"
+
+    # ---- AGENTS.md + thin CLAUDE.md (the starter feature's name labels the
+    # agent guide; an archetype's first feature is its anchor, the same
+    # one whichever step the project is laid down to).
+    anchor_feature = archetype.features[0]
+    scaffold_agent_files(
+        target, project_name, anchor_feature, anchor_feature, authoring
+    )
+    skill_path, skill_created = scaffold_feedback_skill(target)
+    launch_path, launch_created = scaffold_launch_config(target)
+    written = ["pyproject.toml", "AGENTS.md", "CLAUDE.md"]
+    if skill_created:
+        written.append(FEEDBACK_SKILL_RELPATH)
+    if launch_created:
+        written.append(LAUNCH_CONFIG_RELPATH)
+    return BareProject(
+        pyproject_action=pyproject_action,
         skill_path=skill_path,
         skill_created=skill_created,
         launch_path=launch_path,
         launch_created=launch_created,
-        planned=planned,
-        build_dir=build_dir,
-        built_modules=built_modules,
-        manifest_filename=MANIFEST_FILENAME,
-        json_mode=json_mode,
-        quiet=quiet,
+        written=written,
     )
+
+
+def _print_refusal(target: Path, reasons: list[str], json_mode: bool) -> int:
+    """Print an atomic refusal, every reason listed; nothing was changed."""
+    if json_mode:
+        print(
+            json.dumps(
+                {
+                    "ok": False,
+                    "project_root": str(target),
+                    "refusals": reasons,
+                },
+                indent=2,
+            )
+        )
+    else:
+        print(
+            f"s0ma new project: refusing to initialize {target} "
+            f"(nothing was changed):"
+        )
+        for reason in reasons:
+            print(f"  - {reason}")
+    return EXIT_VALIDATION_ERROR
 
 
 def _archetype_refusal_reasons(
@@ -1114,6 +1182,7 @@ def _archetype_refusal_reasons(
 def _print_archetype_summary(
     *,
     archetype: Any,
+    files: tuple[Any, ...],
     target: Path,
     project_name: str,
     mode: str,
@@ -1126,21 +1195,42 @@ def _print_archetype_summary(
     skill_created: bool,
     launch_path: Path,
     launch_created: bool,
-    planned: list[tuple[Path, str]],
-    build_dir: Path,
-    built_modules: list[str],
-    manifest_filename: str,
+    build_dir: Path | None,
     json_mode: bool,
     quiet: bool,
+    step: dict[str, Any] | None = None,
+    verb: str = "initialized",
 ) -> int:
-    """Emit the archetype's text/JSON summary (P-5: both readerships)."""
+    """Emit the archetype's text/JSON summary (P-5: both readerships).
 
-    def _rel(path: Path) -> str:
-        return path.relative_to(target).as_posix()
+    *files* are the archetype files the project holds now (all of them, or
+    steps 1 to N). *build_dir* is ``None`` when nothing is built (step 0).
+    *step* carries what :func:`s0ma_dsl.cli.project_steps.step_report`
+    worked out for a ``--step`` call.
+    """
+    from s0ma_dsl.cli.templates import _features_of
+    from s0ma_dsl.codegen.build_manifest import (
+        MANIFEST_FILENAME,
+        ManifestSchemaError,
+    )
 
     check_command = "s0ma check"
-    s0ma_files = [_rel(p) for p, _ in planned if p.suffix == ".s0ma"]
-    bootstrap_files = [_rel(p) for p, _ in planned if p.suffix == ".py"]
+    s0ma_files = [f.relpath for f in files if f.relpath.endswith(".s0ma")]
+    bootstrap_files = [f.relpath for f in files if f.relpath.endswith(".py")]
+    if tuple(files) == archetype.files:
+        features = list(archetype.features)
+    else:
+        features = list(_features_of(tuple(files)))
+
+    survey: list[dict[str, Any]] = []
+    if build_dir is not None:
+        from s0ma_dsl.cli.main import survey_build
+
+        with contextlib.suppress(ManifestSchemaError, OSError, ValueError):
+            survey = survey_build(build_dir)
+    built_modules = sorted(row["name"] for row in survey)
+    module_count = len(survey)
+    parts = sum(row["components"] for row in survey)
 
     if json_mode:
         report: dict[str, Any] = {
@@ -1151,7 +1241,7 @@ def _print_archetype_summary(
             "mode": mode,
             "authoring": authoring,
             "feedback": FEEDBACK_POSTURE,
-            "features": list(archetype.features),
+            "features": features,
             "pyproject": {
                 "path": str(pyproject),
                 "action": pyproject_action,
@@ -1168,11 +1258,15 @@ def _print_archetype_summary(
                 "path": str(launch_path),
                 "created": launch_created,
             },
-            "build": {
-                "build_dir": str(build_dir),
-                "modules": built_modules,
-                "manifest_path": str(build_dir / manifest_filename),
-            },
+            "build": (
+                None
+                if build_dir is None
+                else {
+                    "build_dir": str(build_dir),
+                    "modules": built_modules,
+                    "manifest_path": str(build_dir / MANIFEST_FILENAME),
+                }
+            ),
             "teaches": archetype.teaches,
             "next_steps": {
                 "check": check_command,
@@ -1184,23 +1278,37 @@ def _print_archetype_summary(
             },
         }
         if archetype.steps:
-            # What a sample declared as steps says about itself.
-            from s0ma_dsl.cli.templates import count_parts
-
+            # What a sample declared as steps says about itself. The two
+            # counts are read from the build, as ``s0ma build`` and
+            # ``s0ma inspect --all`` show them.
             report["called"] = archetype.called
             report["example_question"] = archetype.example_question
             report["steps"] = [
-                {"number": number, "name": step.name, "intent": step.intent}
-                for number, step in enumerate(archetype.steps, start=1)
+                {"number": number, "name": s.name, "intent": s.intent}
+                for number, s in enumerate(archetype.steps, start=1)
             ]
-            report["parts"] = count_parts(archetype.files)
+            report["modules"] = module_count
+            report["parts"] = parts
+        if step is not None:
+            report.update(step)
         print(json.dumps(report, indent=2))
         return EXIT_SUCCESS
 
+    if step is not None:
+        print(step["line"])
+        if step.get("unchanged") or build_dir is None:
+            if step.get("unchanged"):
+                print(f"Nothing to do: {target} is already at this step.")
+            for rel in step["files_kept"]:
+                print(f"  {rel}  kept as you left it")
+            return EXIT_SUCCESS
+
+    built = f"{len(built_modules)} module(s) built"
+    if archetype.steps:
+        built = f"{module_count} module(s) built with {parts} parts"
     summary = (
-        f"s0ma new project: initialized {target} "
-        f"(--template {archetype.name}; {len(built_modules)} module(s) "
-        f"built, mode {mode})."
+        f"s0ma new project: {verb} {target} "
+        f"(--template {archetype.name}; {built}, mode {mode})."
     )
     if quiet:
         print(summary)
@@ -1214,11 +1322,14 @@ def _print_archetype_summary(
         f"(mode = {mode}, authoring = {authoring}, "
         f"feedback = {FEEDBACK_POSTURE})"
     )
-    print(f"  features:               {', '.join(archetype.features)}")
+    print(f"  features:               {', '.join(features)}")
     for rel in s0ma_files:
         print(f"  {rel}")
     for rel in bootstrap_files:
         print(f"  {rel}  (bootstrap_files; the one sanctioned plain Python)")
+    if step is not None:
+        for rel in step["files_kept"]:
+            print(f"  {rel}  kept as you left it")
     print("  AGENTS.md               agent guide (s0ma rules, layout, handshake)")
     print("  CLAUDE.md               imports AGENTS.md (@AGENTS.md)")
     print(
@@ -1233,9 +1344,10 @@ def _print_archetype_summary(
            if launch_created
            else "     already present — kept as it was")
     )
+    first = "first " if verb == "initialized" else ""
     print(
-        "  build/                  first build complete "
-        f"(manifest: {manifest_filename}; app map → build/docs/)"
+        f"  build/                  {first}build complete "
+        f"(manifest: {MANIFEST_FILENAME}; app map → build/docs/)"
     )
     print()
     print("Next steps:")
@@ -1280,7 +1392,42 @@ def run_new_project(args: argparse.Namespace) -> int:
             EXIT_USAGE_ERROR,
         )
 
-    target = Path(args.name).expanduser().resolve()
+    # --sample stands for --template with the name s0ma gives its own
+    # first-run sample, so a caller never names the template.
+    from s0ma_dsl.cli.templates import (
+        FIRST_RUN_SAMPLE,
+        TEMPLATE_CHOICES,
+        get_archetype,
+    )
+
+    template: str | None = getattr(args, "template", None)
+    step: int | None = getattr(args, "step", None)
+    raw_name: str | None = getattr(args, "name", None)
+    if getattr(args, "sample", False):
+        if template is not None:
+            return _fail(
+                {"error": "--sample and --template cannot be used together"},
+                "s0ma new project: use --sample or --template, not both.",
+                EXIT_USAGE_ERROR,
+            )
+        template = FIRST_RUN_SAMPLE
+        if raw_name is None:
+            raw_name = get_archetype(template).default_project_name
+    if raw_name is None:
+        return _fail(
+            {"error": "the project folder is missing"},
+            "s0ma new project: name the folder for the project, or pass "
+            "--sample to use the sample's own name.",
+            EXIT_USAGE_ERROR,
+        )
+    if step is not None and template is None:
+        return _fail(
+            {"error": "--step needs --template or --sample"},
+            "s0ma new project: --step needs --template or --sample.",
+            EXIT_USAGE_ERROR,
+        )
+
+    target = Path(raw_name).expanduser().resolve()
     if target.exists() and not target.is_dir():
         return _fail(
             {"error": f"target is not a directory: {target}"},
@@ -1303,9 +1450,6 @@ def run_new_project(args: argparse.Namespace) -> int:
     # single-feature starter, handled below. Archetypes use fixed
     # feature/module names, so they need a valid [project].name but not the
     # minimal path's --layer-driven module-name derivation.
-    from s0ma_dsl.cli.templates import TEMPLATE_CHOICES
-
-    template: str | None = getattr(args, "template", None)
     if template is not None:
         if template not in TEMPLATE_CHOICES:
             return _fail(
@@ -1313,6 +1457,20 @@ def run_new_project(args: argparse.Namespace) -> int:
                 f"s0ma new project: unknown --template '{template}'. "
                 f"Valid: {', '.join(TEMPLATE_CHOICES)}.",
                 EXIT_USAGE_ERROR,
+            )
+        if step is not None:
+            from s0ma_dsl.cli.project_steps import run_step
+
+            return run_step(
+                template=template,
+                number=step,
+                target=target,
+                project_name=project_name,
+                mode=mode,
+                authoring=authoring,
+                json_mode=json_mode,
+                quiet=quiet,
+                fail=_fail,
             )
         return _scaffold_archetype(
             template=template,
