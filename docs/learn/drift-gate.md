@@ -66,4 +66,4 @@ Do not use drift gate for the condition it detects — the divergence itself is 
 
 - Topic id: `concept:drift-gate`
 - Release: `0.23.0 (preview)`
-- Documentation snapshot: `sha256:c31285c67c7f86bf`
+- Documentation snapshot: `sha256:98c3d025d7c8bd0f`

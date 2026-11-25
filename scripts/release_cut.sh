@@ -211,28 +211,42 @@ EOF
 ${LOCKSTEP_MISMATCH}Reconcile them by hand before cutting a release."
 
 # The umbrella's pins are lockstep sites too. Print every `<name> == X`
-# requirement in its manifest whose X is not the current version, and refuse
-# a manifest that carries no exact pin at all: it would be bumped to a
-# version whose parts it no longer names.
+# requirement in its manifest whose X is not the current version. A pin may
+# name one extra (`<name>[extra] == X`). Refuse a manifest with fewer exact
+# pins than the umbrella has parts: a pin this check cannot read would be
+# left behind at the old version while the rest move.
 UMBRELLA_PYPROJECT="$ROOT/packages/$UMBRELLA/pyproject.toml"
+UMBRELLA_PIN_COUNT=0
+for _pkg in $PACKAGES; do
+    [ "$_pkg" = "$UMBRELLA" ] || UMBRELLA_PIN_COUNT=$((UMBRELLA_PIN_COUNT + 1))
+done
 umbrella_pin_drift() {
-    python3 - "$1" "$2" <<'PY'
+    python3 - "$1" "$2" "$3" <<'PY'
 import pathlib
 import re
 import sys
 
 path = pathlib.Path(sys.argv[1])
 current = sys.argv[2]
+expected = int(sys.argv[3])
 text = path.read_bytes().decode("utf-8")
-pins = re.findall(r'(?m)^\s*"([A-Za-z0-9._-]+) == ([^"\s]+)",?$', text)
+pins = re.findall(
+    r'(?m)^\s*"([A-Za-z0-9._-]+(?:\[[A-Za-z0-9._-]+\])?) == ([^"\s]+)",?$', text
+)
 if not pins:
     sys.exit(f'{path}: expected the exact pins of the umbrella (`"<name> == X.Y.Z"`), found none')
+if len(pins) < expected:
+    names = ", ".join(name for name, _ in pins)
+    sys.exit(
+        f"{path}: expected {expected} exact pins of the umbrella, found {len(pins)} ({names}). "
+        "A pin in another form would not move with the version."
+    )
 for name, version in pins:
     if version != current:
         print(f"{path}: {name} == {version} (expected {current})")
 PY
 }
-UMBRELLA_DRIFT="$(umbrella_pin_drift "$UMBRELLA_PYPROJECT" "$CURRENT")" || exit 1
+UMBRELLA_DRIFT="$(umbrella_pin_drift "$UMBRELLA_PYPROJECT" "$CURRENT" "$UMBRELLA_PIN_COUNT")" || exit 1
 [ -z "$UMBRELLA_DRIFT" ] || die "the umbrella's pins are NOT on the lockstep version (PRD INV-4):
 ${UMBRELLA_DRIFT}
 Reconcile them by hand before cutting a release."
@@ -343,8 +357,9 @@ PY
 }
 
 # Move every exact pin in the umbrella manifest from one version to the next,
-# and print how many moved. The structural check above already proved each
-# pin is at the current version, so that count is every pin the manifest has.
+# keeping any extra a pin names, and print how many moved. The structural
+# check above already proved each pin is at the current version, so that
+# count is every pin the manifest has.
 bump_umbrella_pins() {
     python3 - "$1" "$2" "$3" <<'PY'
 import pathlib
@@ -354,7 +369,7 @@ import sys
 path = pathlib.Path(sys.argv[1])
 current, new = sys.argv[2], sys.argv[3]
 text = path.read_bytes().decode("utf-8")
-pattern = rf'(?m)^(\s*"[A-Za-z0-9._-]+ == ){re.escape(current)}(",?)$'
+pattern = rf'(?m)^(\s*"[A-Za-z0-9._-]+(?:\[[A-Za-z0-9._-]+\])? == ){re.escape(current)}(",?)$'
 text, moved = re.subn(pattern, rf"\g<1>{new}\g<2>", text)
 if moved == 0:
     sys.exit(f'{path}: expected at least one `"<name> == {current}"` pin')

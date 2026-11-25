@@ -48,6 +48,15 @@ Historical entries describe artifacts as they were named at the time.
   a release now waits, for up to five minutes and saying so at each wait,
   when the package index does not show a version published moments before.
 
+- **`s0ma test` runs right after `pip install s0ma-lang`.** Before, a new
+  project's `s0ma test` stopped with exit code 2 because nothing had installed
+  pytest. The umbrella now asks for s0ma-lang-dsl with its new `test` extra,
+  which brings pytest 7.0 or later. Installing s0ma-lang-dsl alone still
+  leaves pytest out, and `s0ma test` still says how to add it. The release
+  cut and the version check read the new pin, and the cut now stops when it
+  finds fewer than four pins. The release check installs the umbrella wheel
+  by itself and runs `s0ma test` in a new project.
+
 ## [0.23.0] — 2026-11-23
 
 ### Added

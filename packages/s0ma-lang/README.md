@@ -21,7 +21,7 @@ s0ma is on PyPI:
 pip install s0ma-lang
 ```
 
-That one command installs all four. In a [uv](https://docs.astral.sh/uv/) project, `uv add s0ma-lang` does the same. The other ways in, taking one part, working inside a checkout or building the wheels yourself, are in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install), and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
+That one command installs all four. It also brings pytest, so `s0ma test` runs a project's tests with nothing else to install. In a [uv](https://docs.astral.sh/uv/) project, `uv add s0ma-lang` does the same. The other ways in, taking one part, working inside a checkout or building the wheels yourself, are in the [root README's "Install" section](https://github.com/kn0w-thyself/s0ma/blob/main/README.md#install), and [getting started](https://github.com/kn0w-thyself/s0ma/blob/main/docs/getting-started.md#1-create-a-real-project) is the journey to walk once the `s0ma` command runs.
 
 ## One version, exactly
 

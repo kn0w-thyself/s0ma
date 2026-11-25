@@ -226,6 +226,23 @@ def test_the_pytest_floor_is_the_one_the_packages_state(launcher: ModuleType) ->
     assert launcher.PYTEST_REQUIREMENT == f"pytest>={floors.pop()}"
 
 
+def test_the_pytest_floor_is_the_one_the_dsl_test_extra_states(launcher: ModuleType) -> None:
+    """The keyed route asks for pytest itself, because it installs the four
+    parts without the umbrella that asks for the DSL's `test` extra. Both
+    routes then get the same pytest a `pip install s0ma-lang` gets."""
+    packages = Path(__file__).resolve().parents[3] / "packages"
+    dsl = tomllib.loads((packages / "s0ma-dsl" / "pyproject.toml").read_text(encoding="utf-8"))
+    extra = [re.sub(r"\s+", "", item) for item in dsl["project"]["optional-dependencies"]["test"]]
+    assert extra == [launcher.PYTEST_REQUIREMENT], extra
+    umbrella = tomllib.loads(
+        (packages / "s0ma-lang" / "pyproject.toml").read_text(encoding="utf-8")
+    )
+    assert any(
+        requirement.startswith("s0ma-lang-dsl[test] ==")
+        for requirement in umbrella["project"]["dependencies"]
+    ), umbrella["project"]["dependencies"]
+
+
 def test_after_installing_that_copy_is_what_runs_here(
     run_cli: Any, keyed: FakeControlPlane
 ) -> None:

@@ -20,8 +20,11 @@ wheels and documentation disagree stops before anything is published.
 from __future__ import annotations
 
 import argparse
+import base64
+import csv
 import email
 import hashlib
+import io
 import json
 import os
 import re
@@ -80,9 +83,9 @@ EXPECTED = (
         "License :: OSI Approved :: Apache Software License",
         "Apache License",
     ),
-    # The umbrella: no code, four exact pins. It is built, inspected and
-    # installed here beside the four it requires, last, so the cold install
-    # proves its pins resolve to the wheels this commit builds.
+    # The umbrella: no code, four exact pins. It is built and inspected here
+    # with the four it requires, and the cold install installs it alone, so
+    # its pins have to resolve to the wheels this commit builds.
     PackageLicense(
         "s0ma-lang",
         "Apache-2.0",
@@ -143,15 +146,17 @@ versions = {name: metadata.version(name) for name in ("s0ma-lang-core", "s0ma-la
 assert len(set(versions.values())) == 1, versions
 print("cold: versions/imports", versions)
 
-# The umbrella is installed beside them and is nothing but four exact pins on
+# The umbrella is what was installed, and it is nothing but four exact pins on
 # its own version: what `pip install s0ma-lang==X` promises is that the parts
 # it brings are the ones released as X, and a floor here would not promise it.
+# The DSL pin asks for its `test` extra, which brings the pytest `s0ma test`
+# runs.
 umbrella_version = metadata.version("s0ma-lang")
 assert {umbrella_version} == set(versions.values()), (umbrella_version, versions)
 umbrella_requires = sorted(re.sub(r"\s+", "", item) for item in metadata.requires("s0ma-lang") or [])
 assert umbrella_requires == [
     f"{name}=={umbrella_version}"
-    for name in ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
+    for name in ("s0ma-lang-core", "s0ma-lang-dsl[test]", "s0ma-lang-mcp", "s0ma-lang-studi0")
 ], umbrella_requires
 assert metadata.version("s0ma-lang-studi0") == umbrella_version
 print("cold: umbrella", umbrella_version, umbrella_requires)
@@ -222,6 +227,12 @@ run(str(S0MA), "new", "project", str(project), "--quiet", cwd=scratch)
 # installed in this exact host interpreter.
 project_text = (project / "pyproject.toml").read_text(encoding="utf-8")
 assert 'dependencies = ["s0ma-lang-core", "s0ma-lang-dsl"]\n' in project_text, project_text
+
+# Installing the umbrella alone is enough to run a new project's tests:
+# it brings pytest, so `s0ma test` runs the starter test and passes.
+tested = run(str(S0MA), "--project-root", str(project), "test", cwd=project)
+assert re.search(r"(?m)^=+ 1 passed\b", tested.stdout), tested.stdout
+print("cold: s0ma test in a new project:", tested.stdout.strip().splitlines()[-1])
 
 run(str(S0MA), "--project-root", str(project), "check", "--mode", "release", cwd=scratch)
 run(str(S0MA), "--project-root", str(project), "score", "--gate-mode", "release", "--gate", cwd=scratch)
@@ -1065,6 +1076,51 @@ def _inspect_wheels(dist: Path, *, head_tag: str = "") -> list[Path]:
     return [by_name[item.distribution] for item in EXPECTED]
 
 
+def _assert_installed_from(wheels: list[Path], python: Path) -> None:
+    """Fail unless every file each wheel lists is installed with its hash.
+
+    The cold install asks for the umbrella alone, so its parts come from
+    a resolver that also reads the package index. A release already on the
+    index carries the same version as a build of main, and this is what shows
+    the parts installed are the ones this commit built.
+    """
+    purelib = Path(
+        subprocess.run(
+            [
+                str(python),
+                "-I",
+                "-c",
+                "import sysconfig; print(sysconfig.get_paths()['purelib'])",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    )
+    for wheel in wheels:
+        with zipfile.ZipFile(wheel) as archive:
+            record = next(n for n in archive.namelist() if n.endswith(".dist-info/RECORD"))
+            rows = list(csv.reader(io.StringIO(archive.read(record).decode("utf-8"))))
+        checked = 0
+        for path, digest, _size in rows:
+            if not digest or ".dist-info/" in path or ".data/" in path:
+                continue
+            algorithm, _, expected = digest.partition("=")
+            installed = purelib / path
+            actual = (
+                base64.urlsafe_b64encode(hashlib.new(algorithm, installed.read_bytes()).digest())
+                .rstrip(b"=")
+                .decode("ascii")
+            )
+            assert actual == expected, (
+                f"{installed} is not the file {wheel.name} carries: the cold install "
+                f"took a part from somewhere other than this build"
+            )
+            checked += 1
+        assert checked, wheel.name
+        print(f"cold install: {wheel.name} installed from this build ({checked} files)")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -1120,7 +1176,15 @@ def main(argv: list[str] | None = None) -> int:
         python = environment / (
             "Scripts/python.exe" if os.name == "nt" else "bin/python"
         )
-        run(["uv", "pip", "install", "--python", python, *wheels], cwd=temporary)
+        # Install the umbrella alone, the way `pip install s0ma-lang` does,
+        # and let its four pins resolve from the wheels just built.
+        umbrella = wheels[-1]
+        assert umbrella.name.startswith("s0ma_lang-"), umbrella.name
+        run(
+            ["uv", "pip", "install", "--python", python, "--find-links", dist, umbrella],
+            cwd=temporary,
+        )
+        _assert_installed_from(wheels[:-1], python)
         probe = temporary / "cold_probe.py"
         probe.write_text(cold_probe_source(), encoding="utf-8", newline="\n")
         run([python, "-I", probe], cwd=temporary)
