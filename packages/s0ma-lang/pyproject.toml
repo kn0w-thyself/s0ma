@@ -33,9 +33,10 @@ dependencies = [
     # scripts/release_cut.sh rewrites both, and the docs-version-currency
     # stage (scripts/check_version_refs.py) fails when a pin and the lockstep
     # version disagree or when a workspace distribution is missing from this
-    # list.
+    # list. The DSL pin asks for its `test` extra, which brings the pytest
+    # that `s0ma test` runs.
     "s0ma-lang-core == 0.23.0",
-    "s0ma-lang-dsl == 0.23.0",
+    "s0ma-lang-dsl[test] == 0.23.0",
     "s0ma-lang-mcp == 0.23.0",
     "s0ma-lang-studi0 == 0.23.0",
 ]

@@ -53,6 +53,12 @@ Changelog = "https://github.com/kn0w-thyself/s0ma/blob/main/CHANGELOG.md"
 Issues = "https://github.com/kn0w-thyself/s0ma/issues"
 
 [project.optional-dependencies]
+# The s0ma-lang umbrella asks for this extra, so `pip install s0ma-lang`
+# brings the pytest that `s0ma test` runs. Installing s0ma-lang-dsl alone
+# does not.
+test = [
+    "pytest >= 7.0",
+]
 dev = [
     "pytest >= 7.0",
     "pytest-cov >= 4.0",
