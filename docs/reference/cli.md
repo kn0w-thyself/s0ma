@@ -2,7 +2,7 @@
 
 This page is generated. Every line below is read from s0ma itself when the documentation is built, so editing it here would be undone by the next build — the place to make a change is the thing being described.
 
-Every command `s0ma` serves, read off the command-line parser your shell actually meets rather than from a list somebody kept up to date. This build serves 44 commands with 110 options and 33 arguments between them, and 37 of the 44 reach code the model can point at.
+Every command `s0ma` serves, read off the command-line parser your shell actually meets rather than from a list somebody kept up to date. This build serves 44 commands with 112 options and 33 arguments between them, and 37 of the 44 reach code the model can point at.
 
 A line here is wrong? The place to fix it is the command — its help text, its flags, or what its handler does — and the next build writes this page again.
 
@@ -699,7 +699,7 @@ The handler this command reaches was transcribed from the dispatch — argparse 
 | Argument | How many | Default | Accepted values |
 | --- | --- | --- | --- |
 | `type` | one, required | — | `module`, `nerve`, `cell`, `test`, `project` |
-| `name` | one, required | — | — |
+| `name` | one, optional | — | — |
 
 | Option | Takes | Default | Accepted values |
 | --- | --- | --- | --- |
@@ -711,6 +711,8 @@ The handler this command reaches was transcribed from the dispatch — argparse 
 | `--name` | a value | — | — |
 | `--output-dir`, `-o` | a value | `.` | — |
 | `--quiet`, `-q` | no value | `false` | — |
+| `--sample` | no value | `false` | — |
+| `--step` | a value | — | — |
 | `--template` | a value | — | `service`, `library`, `cli`, `pipeline`, `agent` |
 
 ### s0ma score
