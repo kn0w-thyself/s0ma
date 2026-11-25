@@ -1281,7 +1281,7 @@ If a *production* module tries the same import — adding `event_builder._build_
 
 > Added in v0.11.0 (batch-01a D3).
 
-A nerve body is exactly one `def` (§ the body rules; a `class` or multiple top-level statements is a `PARSE_ERROR`). Reaching for "I need several functions in this module", agents in benchmark batch-01a invented a workaround that detonates at runtime. Name it so you can avoid it: **the factory-dict module trap.**
+A nerve body opens with one `def` (§ the body rules; a body whose first top-level statement is anything else is refused, and only a `SERVICE` or `ADAPTER` nerve may open with a `class`). Reaching for "I need several functions in this module", agents in benchmark batch-01a invented a workaround that detonates at runtime. Name it so you can avoid it: **the factory-dict module trap.**
 
 **The anti-pattern.** Cram every operation into one nerve that returns a dict, then consume it from another module with a *bare* `uses:` entry and subscript the imported name:
 
