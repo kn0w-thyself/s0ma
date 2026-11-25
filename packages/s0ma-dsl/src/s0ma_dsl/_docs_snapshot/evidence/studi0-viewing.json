@@ -1,0 +1,98 @@
+{
+  "record": {
+    "channel": "cli",
+    "covers": [
+      "cli:s0ma/inspect"
+    ],
+    "id": "example:transcript/studi0-viewing",
+    "intent": "Prove the answerable half of the viewing path: the graph a reader looks at is available from a built project, and one component in it gives its own account of itself when asked by name.",
+    "journey": "journey:studi0-viewing",
+    "not_covered": [
+      {
+        "reason": "Launching the viewer binds a loopback port and serves until it is interrupted, so there is no terminating replay of it and no output that arrives before the waiting starts. What this transcript can show instead is that the build the viewer reads is there and answers, which is the first command below.",
+        "surface": "cli:s0ma/studi0"
+      },
+      {
+        "reason": "The route answers only while the viewer is running, so reaching it means launching the step above. The graph command in this transcript emits the same graph the viewer renders — the launch command's own description says so — which makes this a boundary of the channel rather than a gap in the path.",
+        "surface": "studi0:action/api/graph"
+      }
+    ],
+    "scaffold": {
+      "argv": [
+        "s0ma",
+        "new",
+        "project",
+        "demo",
+        "--name",
+        "demo"
+      ],
+      "kind": "new-project",
+      "workdir": "demo"
+    },
+    "steps": [
+      {
+        "argv": [
+          "s0ma",
+          "graph",
+          ".",
+          "--format",
+          "json",
+          "--detail",
+          "full"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "contains",
+            "text": "\"components\": {"
+          },
+          {
+            "match": "contains",
+            "text": "\"core_domain::describe_self\""
+          },
+          {
+            "match": "contains",
+            "text": "\"nodes\": ["
+          },
+          {
+            "match": "contains",
+            "text": "\"core_domain::describe_self\""
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "inspect",
+          "core_domain"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Module: core_domain"
+          },
+          {
+            "match": "line",
+            "text": "  Layer: DOMAIN"
+          },
+          {
+            "match": "contains",
+            "text": "core_domain::describe_self"
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      }
+    ]
+  },
+  "schema": "s0ma-docs-evidence@1"
+}
