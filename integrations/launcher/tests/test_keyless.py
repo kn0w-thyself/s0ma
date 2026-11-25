@@ -20,6 +20,7 @@ import json
 import re
 import socket
 import subprocess
+import tomllib
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -397,7 +398,8 @@ def test_a_python_folder_the_person_chose_is_left_alone(
 def test_the_supported_pythons_are_what_the_header_and_the_lock_say(
     launcher: ModuleType,
 ) -> None:
-    """The launcher runs on the Pythons it builds s0ma's environment on."""
+    """The launcher runs on the Pythons it builds s0ma's environment on, and the
+    Desktop extension's project file asks its host for the same ones."""
     source = Path(launcher.__file__)
     header = re.search(r'(?m)^# requires-python = "([^"]*)"$', source.read_text(encoding="utf-8"))
     assert header is not None
@@ -406,6 +408,10 @@ def test_the_supported_pythons_are_what_the_header_and_the_lock_say(
     locked = re.search(r'(?m)^requires-python = "([^"]*)"$', lock)
     assert locked is not None
     assert locked.group(1).replace(" ", "") == launcher.SUPPORTED_PYTHON
+    desktop = source.parents[1] / "claude" / "desktop" / "pyproject.toml"
+    with desktop.open("rb") as handle:
+        declared = tomllib.load(handle)["project"]["requires-python"]
+    assert declared == launcher.SUPPORTED_PYTHON, "the Desktop extension asks for another range"
 
 
 def test_a_failed_uv_run_leaves_nothing_installed_and_nothing_false(
