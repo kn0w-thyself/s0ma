@@ -1,4 +1,4 @@
-"""Tripwires for the sh0w frontend assets (M4).
+"""Tripwires for the studi0 frontend assets (M4).
 
 There is no Node toolchain in this repository (owner decision D-4), so
 there are no JavaScript unit tests. What lives here is deliberately
@@ -77,9 +77,9 @@ INDEX_HTML = ASSET_DIR / "index.html"
 APP_CSS = ASSET_DIR / "app.css"
 APP_JS = ASSET_DIR / "app.js"
 DEV_HARNESS = FIXTURE_DIR / "dev_harness.html"
-FIXTURE_PAYLOAD = FIXTURE_DIR / "sh0w_fixture_payload.json"
-NARRATION_FIXTURE = FIXTURE_DIR / "sh0w_narration_fixture.json"
-TERMS_FIXTURE = FIXTURE_DIR / "sh0w_terms_fixture.json"
+FIXTURE_PAYLOAD = FIXTURE_DIR / "graph_fixture_payload.json"
+NARRATION_FIXTURE = FIXTURE_DIR / "narration_fixture.json"
+TERMS_FIXTURE = FIXTURE_DIR / "terms_fixture.json"
 
 ASSET_FILES = (INDEX_HTML, APP_CSS, APP_JS)
 SELF_CONTAINED_FILES = (INDEX_HTML, APP_CSS, APP_JS, DEV_HARNESS)
@@ -135,13 +135,13 @@ def test_the_materialize_beat_is_the_only_motion() -> None:
     app_css = read(APP_CSS)
     declared = set(re.findall(r"@keyframes\s+([A-Za-z0-9_-]+)", app_css))
     assert declared == {
-        "sh0w-materialize",
-        "sh0w-vanish",
-        "sh0w-ring-fade",
-        "sh0w-outline-pulse",
+        "studi0-materialize",
+        "studi0-vanish",
+        "studi0-ring-fade",
+        "studi0-outline-pulse",
     }
     # The ring outlives the movement, and then stops.
-    assert "sh0w-ring-fade 4000ms" in app_css
+    assert "studi0-ring-fade 4000ms" in app_css
     assert "BEAT_RING_MS = 4000" in read(APP_JS)
 
 
@@ -248,7 +248,7 @@ def _embedded(harness: str, element_id: str) -> object:
 
 def test_dev_harness_payload_matches_the_checked_in_fixture() -> None:
     """The harness embeds the payload; the two must not drift."""
-    assert _embedded(read(DEV_HARNESS), "sh0w-fixture") == json.loads(
+    assert _embedded(read(DEV_HARNESS), "graph-fixture") == json.loads(
         read(FIXTURE_PAYLOAD)
     )
 
@@ -398,7 +398,7 @@ def test_dev_harness_narration_matches_the_checked_in_fixture() -> None:
     """The harness embeds the narration block too; the two must not drift."""
     harness = read(DEV_HARNESS)
     assert "__S0MA_NARRATION__" in harness
-    assert _embedded(harness, "sh0w-narration") == json.loads(read(NARRATION_FIXTURE))
+    assert _embedded(harness, "graph-narration") == json.loads(read(NARRATION_FIXTURE))
 
 
 # ---------------------------------------------------------------------------
@@ -889,7 +889,7 @@ def test_the_terms_fixture_is_what_the_server_builds() -> None:
 def test_dev_harness_terms_match_the_checked_in_fixture() -> None:
     harness = read(DEV_HARNESS)
     assert "__S0MA_TERMS__" in harness
-    assert _embedded(harness, "sh0w-terms") == json.loads(read(TERMS_FIXTURE))
+    assert _embedded(harness, "graph-terms") == json.loads(read(TERMS_FIXTURE))
 
 
 # ---------------------------------------------------------------- not built

@@ -1,7 +1,7 @@
 {
   "components": [
     {
-      "canonical_id": "sh0w_assets::INDEX_HTML",
+      "canonical_id": "studi0_assets::INDEX_HTML",
       "declaration_type": "cell",
       "fields": {
         "covered_by": {
@@ -21,7 +21,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "The document served at the root: a standalone HTML5 page that mounts sh0w and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7)."
+        "value": "The document served at the root: a standalone HTML5 page that mounts the graph viewer and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7)."
       },
       "kind": "CONSTANT",
       "location": {
@@ -31,7 +31,7 @@
       "visibility": "PUBLIC"
     },
     {
-      "canonical_id": "sh0w_assets::APP_CSS",
+      "canonical_id": "studi0_assets::APP_CSS",
       "declaration_type": "cell",
       "fields": {
         "covered_by": {
@@ -51,7 +51,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "The stylesheet served at /assets/app.css: the whole visual language of sh0w — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth."
+        "value": "The stylesheet served at /assets/app.css: the whole visual language of the studi0 page — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth."
       },
       "kind": "CONSTANT",
       "location": {
@@ -61,7 +61,7 @@
       "visibility": "PUBLIC"
     },
     {
-      "canonical_id": "sh0w_assets::APP_JS",
+      "canonical_id": "studi0_assets::APP_JS",
       "declaration_type": "cell",
       "fields": {
         "covered_by": {
@@ -89,7 +89,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
+        "value": "The script served at /assets/app.js: the whole graph viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
       },
       "kind": "CONSTANT",
       "location": {
@@ -138,22 +138,22 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:e825ba13dccfef3993ade47e36254d7f8a2e8a7442b96436e618dc819ae34f0e",
+    "content_hash": "sha256:9d4ecb00b19a161d699dbd9f5c66b4a78f40984c7a1e96ef1d6f481f7d6451b1",
     "exports_helpers": {
       "state": "none"
     },
     "intent": {
       "state": "value",
-      "value": "The sh0w page itself, carried inside studi0's own self-model. The three files a browser needs — the document, its stylesheet, its script — are authored in their native syntax under assets/ and embedded here by reference, so the page studi0 serves is part of the build rather than a directory the server happens to find next to it (FR-STUDI0-8). One installed artifact, no loose files, nothing fetched from anywhere."
+      "value": "The studi0 page itself, carried inside studi0's own self-model. The three files a browser needs — the document, its stylesheet, its script — are authored in their native syntax under assets/ and embedded here by reference, so the page studi0 serves is part of the build rather than a directory the server happens to find next to it (FR-STUDI0-8). One installed artifact, no loose files, nothing fetched from anywhere."
     },
     "layer": "PRESENTATION",
-    "name": "sh0w_assets",
-    "source_file": "s0ma_src/sh0w_assets.s0ma",
+    "name": "studi0_assets",
+    "source_file": "s0ma_src/studi0_assets.s0ma",
     "tags": [],
-    "transpiled_file": "sh0w_assets.py",
+    "transpiled_file": "studi0_assets.py",
     "version": "0.23.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:e825ba13dccfef39",
+  "source_hash": "sha256:9d4ecb00b19a161d",
   "transpiler_version": "1.0.0"
 }

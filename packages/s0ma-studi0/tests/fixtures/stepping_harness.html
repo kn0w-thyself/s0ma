@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>sh0w stepping harness: six builds landing</title>
+    <title>studi0 stepping harness: six builds landing</title>
     <!-- Stepping harness: the real page in its live mode, watching a small
          app grow over six builds, with no server and no model call.
 
@@ -45,7 +45,7 @@
         font-family: var(--font);
         font-size: 13px;
       }
-      .stepper + .sh0w-mount {
+      .stepper + .studi0-mount {
         height: calc(100% - 40px);
       }
     </style>
@@ -56,8 +56,8 @@
       <button id="stepper-reset" type="button">Start over</button>
       <span id="stepper-line" aria-live="polite">Showing: nothing built yet.</span>
     </div>
-    <div id="s0ma-sh0w" class="sh0w-mount"></div>
-    <script id="sh0w-unbuilt" type="application/json">
+    <div id="s0ma-studi0" class="studi0-mount"></div>
+    <script id="graph-unbuilt" type="application/json">
 {
   "/api/graph": {
     "body": {
@@ -96,7 +96,7 @@
   }
 }
     </script>
-    <script id="sh0w-build-1" type="application/json">
+    <script id="graph-build-1" type="application/json">
 {
   "components": {
     "inbox::Message": {
@@ -385,7 +385,7 @@
   "schema": "s0ma-graph@2"
 }
     </script>
-    <script id="sh0w-build-2" type="application/json">
+    <script id="graph-build-2" type="application/json">
 {
   "components": {
     "inbox::Message": {
@@ -903,7 +903,7 @@
   "schema": "s0ma-graph@2"
 }
     </script>
-    <script id="sh0w-build-3" type="application/json">
+    <script id="graph-build-3" type="application/json">
 {
   "components": {
     "inbox::Message": {
@@ -1682,7 +1682,7 @@
   "schema": "s0ma-graph@2"
 }
     </script>
-    <script id="sh0w-build-4" type="application/json">
+    <script id="graph-build-4" type="application/json">
 {
   "components": {
     "inbox::Message": {
@@ -3009,7 +3009,7 @@
   "schema": "s0ma-graph@2"
 }
     </script>
-    <script id="sh0w-build-5" type="application/json">
+    <script id="graph-build-5" type="application/json">
 {
   "components": {
     "inbox::Message": {
@@ -4510,7 +4510,7 @@
   "schema": "s0ma-graph@2"
 }
     </script>
-    <script id="sh0w-build-6" type="application/json">
+    <script id="graph-build-6" type="application/json">
 {
   "components": {
     "inbox::Message": {
@@ -6011,7 +6011,7 @@
   "schema": "s0ma-graph@2"
 }
     </script>
-    <script id="sh0w-lines" type="application/json">
+    <script id="graph-lines" type="application/json">
 [
   "Showing: nothing built yet.",
   "Showing build 1 of 6: step 1, what it hears.",
@@ -6022,7 +6022,7 @@
   "Showing build 6 of 6: one rule changed by hand."
 ]
     </script>
-    <script id="sh0w-terms" type="application/json">
+    <script id="graph-terms" type="application/json">
 {
   "entries": [
     {
@@ -6409,12 +6409,12 @@
         function block(id) {
           return JSON.parse(document.getElementById(id).textContent);
         }
-        var unbuilt = block("sh0w-unbuilt");
-        var terms = block("sh0w-terms");
-        var lines = block("sh0w-lines");
+        var unbuilt = block("graph-unbuilt");
+        var terms = block("graph-terms");
+        var lines = block("graph-lines");
         var builds = [];
         for (var n = 1; n < lines.length; n += 1) {
-          builds.push(block("sh0w-build-" + n));
+          builds.push(block("graph-build-" + n));
         }
         var landed = 0;
         var asked = {};

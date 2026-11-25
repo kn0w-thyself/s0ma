@@ -69,7 +69,7 @@ if TYPE_CHECKING:
     # Static identity for type checkers only — the same files the
     # bootstrap imports below under their flat names (see the
     # docstring).
-    from s0ma_studi0._built import sh0w_assets as sh0w_assets
+    from s0ma_studi0._built import studi0_assets as studi0_assets
     from s0ma_studi0._built import studi0_narration as studi0_narration
     from s0ma_studi0._built import studi0_server as studi0_server
     from s0ma_studi0._built import studi0_state as studi0_state
@@ -81,7 +81,7 @@ __all__ = [
     "__version__",
     "launch",
     "main",
-    "sh0w_assets",
+    "studi0_assets",
     "studi0_narration",
     "studi0_server",
     "studi0_state",
@@ -104,13 +104,13 @@ if not TYPE_CHECKING:
     # `from s0ma_studi0.studi0_server import route_request` and
     # `import s0ma_studi0.studi0_server` both work. One object, two
     # names — never two executions.
-    sh0w_assets = _built_modules["sh0w_assets"]
+    studi0_assets = _built_modules["studi0_assets"]
     studi0_narration = _built_modules["studi0_narration"]
     studi0_server = _built_modules["studi0_server"]
     studi0_state = _built_modules["studi0_state"]
     studi0_watch = _built_modules["studi0_watch"]
     for _flat_name in (
-        "sh0w_assets",
+        "studi0_assets",
         "studi0_narration",
         "studi0_server",
         "studi0_state",

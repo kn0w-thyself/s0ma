@@ -1,7 +1,7 @@
-module sh0w_assets
+module studi0_assets
     layer: PRESENTATION
     version: 0.23.0
-    intent: "The sh0w page itself, carried inside studi0's own self-model. The three files a browser needs — the document, its stylesheet, its script — are authored in their native syntax under assets/ and embedded here by reference, so the page studi0 serves is part of the build rather than a directory the server happens to find next to it (FR-STUDI0-8). One installed artifact, no loose files, nothing fetched from anywhere."
+    intent: "The studi0 page itself, carried inside studi0's own self-model. The three files a browser needs — the document, its stylesheet, its script — are authored in their native syntax under assets/ and embedded here by reference, so the page studi0 serves is part of the build rather than a directory the server happens to find next to it (FR-STUDI0-8). One installed artifact, no loose files, nothing fetched from anywhere."
     exports: [INDEX_HTML, APP_CSS, APP_JS]
 
     requires: []
@@ -14,7 +14,7 @@ module sh0w_assets
 cell INDEX_HTML :: PRESENTATION
     kind: CONSTANT
     visibility: PUBLIC
-    intent: "The document served at the root: a standalone HTML5 page that mounts sh0w and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7)."
+    intent: "The document served at the root: a standalone HTML5 page that mounts the graph viewer and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7)."
     schema: "str constant — one standalone HTML5 document, embedded verbatim from assets/index.html."
     content: @file("assets/index.html")
     invariants: "Served byte-for-byte as embedded: studi0 substitutes nothing into this page at request time, so what a browser receives is exactly what the build recorded."
@@ -23,7 +23,7 @@ cell INDEX_HTML :: PRESENTATION
 cell APP_CSS :: PRESENTATION
     kind: CONSTANT
     visibility: PUBLIC
-    intent: "The stylesheet served at /assets/app.css: the whole visual language of sh0w — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth."
+    intent: "The stylesheet served at /assets/app.css: the whole visual language of the studi0 page — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth."
     schema: "str constant — one CSS stylesheet, embedded verbatim from assets/app.css."
     content: @file("assets/app.css")
     invariants: "Served byte-for-byte as embedded."
@@ -32,7 +32,7 @@ cell APP_CSS :: PRESENTATION
 cell APP_JS :: PRESENTATION
     kind: CONSTANT
     visibility: PUBLIC
-    intent: "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
+    intent: "The script served at /assets/app.js: the whole graph viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
     schema: "str constant — one JavaScript file, embedded verbatim from assets/app.js."
     content: @file("assets/app.js")
     placeholders: [__S0MA_FIXTURE__, __S0MA_NARRATION__, __S0MA_TERMS__]

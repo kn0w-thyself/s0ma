@@ -225,7 +225,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "The Content-Type header value studi0 sends with the sh0w stylesheet, named here rather than at the route so the charset is declared once and cannot drift between assets."
+        "value": "The Content-Type header value studi0 sends with the page's stylesheet, named here rather than at the route so the charset is declared once and cannot drift between assets."
       },
       "kind": "CONSTANT",
       "location": {
@@ -255,7 +255,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "The Content-Type header value studi0 sends with the sh0w script. It must be a JavaScript type a browser will accept for a module script, or the page loads its stylesheet and then draws nothing."
+        "value": "The Content-Type header value studi0 sends with the page's script. It must be a JavaScript type a browser will accept for a module script, or the page loads its stylesheet and then draws nothing."
       },
       "kind": "CONSTANT",
       "location": {
@@ -458,7 +458,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
+        "value": "Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the studi0 page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
       },
       "kind": "FUNCTION",
       "location": {
@@ -927,18 +927,18 @@
         "target": "studi0_server::Studi0ServerConfig"
       },
       {
-        "carries": "the sh0w stylesheet",
+        "carries": "the page's stylesheet",
         "coupling": "TIGHT",
-        "intent": "route_request READS APP_CSS: the sh0w stylesheet",
+        "intent": "route_request READS APP_CSS: the page's stylesheet",
         "origin": "inline_depends_on",
         "relation": "READS",
         "source": "studi0_server::route_request",
         "target": "studi0_server::APP_CSS"
       },
       {
-        "carries": "the sh0w script",
+        "carries": "the page's script",
         "coupling": "TIGHT",
-        "intent": "route_request READS APP_JS: the sh0w script",
+        "intent": "route_request READS APP_JS: the page's script",
         "origin": "inline_depends_on",
         "relation": "READS",
         "source": "studi0_server::route_request",
@@ -954,9 +954,9 @@
         "target": "studi0_server::FOREIGN_HOST_ERROR"
       },
       {
-        "carries": "the sh0w page served at the root",
+        "carries": "the studi0 page served at the root",
         "coupling": "TIGHT",
-        "intent": "route_request READS INDEX_HTML: the sh0w page served at the root",
+        "intent": "route_request READS INDEX_HTML: the studi0 page served at the root",
         "origin": "inline_depends_on",
         "relation": "READS",
         "source": "studi0_server::route_request",
@@ -1239,21 +1239,21 @@
         "studi0_state.read_snapshot",
         "studi0_state.state_document",
         "studi0_state.graph_document",
-        "sh0w_assets.INDEX_HTML",
-        "sh0w_assets.APP_CSS",
-        "sh0w_assets.APP_JS"
+        "studi0_assets.INDEX_HTML",
+        "studi0_assets.APP_CSS",
+        "studi0_assets.APP_JS"
       ]
     }
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:5a7c3236181895c22f2e91d3258f5bee613a93e0c7b0100ef5621d06f4a66f76",
+    "content_hash": "sha256:2f75f5eac65dd3f2f07b50e82d34532b47dd6af3cc9e10ef453dae8dad00b5ef",
     "exports_helpers": {
       "state": "none"
     },
     "intent": {
       "state": "value",
-      "value": "The studi0 local host: a loopback-only HTTP server that serves one page per s0ma project — the sh0w view of the project's own component graph — plus the read-only graph API the page polls. It binds 127.0.0.1 only, offers itself at http://studi0.localhost:5710/ by default, answers only requests addressed to its own names, answers GET only, and writes nothing at all: the one file studi0 ever puts in the project it is showing is the presence marker its launcher writes (studi0_narration.write_presence), and no request path touches disk."
+      "value": "The studi0 local host: a loopback-only HTTP server that serves one page per s0ma project — the graph view of the project's own component graph — plus the read-only graph API the page polls. It binds 127.0.0.1 only, offers itself at http://studi0.localhost:5710/ by default, answers only requests addressed to its own names, answers GET only, and writes nothing at all: the one file studi0 ever puts in the project it is showing is the presence marker its launcher writes (studi0_narration.write_presence), and no request path touches disk."
     },
     "layer": "PRESENTATION",
     "name": "studi0_server",
@@ -1263,6 +1263,6 @@
     "version": "0.23.0"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:5a7c3236181895c2",
+  "source_hash": "sha256:2f75f5eac65dd3f2",
   "transpiler_version": "1.0.0"
 }

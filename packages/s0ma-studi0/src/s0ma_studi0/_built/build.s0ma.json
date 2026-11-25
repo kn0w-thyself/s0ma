@@ -1,30 +1,30 @@
 {
   "build_dir": "src/s0ma_studi0/_built",
   "external_content_files": {
-    "sh0w_assets::APP_CSS": {
-      "hash": "sha256:7f192ca378a7283744787fe47161fbd9bc442841da262beeddbf439347f8eccc",
+    "studi0_assets::APP_CSS": {
+      "hash": "sha256:933542666164ba90feb7c279e90db2a6553d0940ab8519be63c308cf242fdaf4",
       "path": "assets/app.css"
     },
-    "sh0w_assets::APP_JS": {
-      "hash": "sha256:12c8da047817386012719068741f7509f73aee78a5d64aa20731eaa07b37314f",
+    "studi0_assets::APP_JS": {
+      "hash": "sha256:da95b86ca1db5fbc434d2015e2cc4e187c4bcee9e2e6fb750e3007472b647340",
       "path": "assets/app.js"
     },
-    "sh0w_assets::INDEX_HTML": {
-      "hash": "sha256:553f6c7939edb8dba6ddaa1f5779a46eee2b96c08480687b1a3724132ec50f25",
+    "studi0_assets::INDEX_HTML": {
+      "hash": "sha256:a6b03d6128ee0a586bc949d22d06124cc06d3f8b419b80c75356654e2cc95161",
       "path": "assets/index.html"
     }
   },
   "modules": [
     {
-      "ir": "sh0w_assets.s0ma.json",
-      "logical_path": "sh0w_assets.s0ma",
-      "name": "sh0w_assets",
-      "output": "sh0w_assets.py",
-      "output_hash": "sha256:5968341c6d75609e92cf990a2da23b2183534b48bde81f68388fcfbe4f9655ac",
+      "ir": "studi0_assets.s0ma.json",
+      "logical_path": "studi0_assets.s0ma",
+      "name": "studi0_assets",
+      "output": "studi0_assets.py",
+      "output_hash": "sha256:da3d1939199e1a935ef9d642c164824562907fc85fc9f72b6208ca6c1501fe2c",
       "role": "source",
-      "source": "s0ma_src/sh0w_assets.s0ma",
-      "source_hash": "sha256:e825ba13dccfef3993ade47e36254d7f8a2e8a7442b96436e618dc819ae34f0e",
-      "source_map": "sh0w_assets.s0ma.map",
+      "source": "s0ma_src/studi0_assets.s0ma",
+      "source_hash": "sha256:9d4ecb00b19a161d699dbd9f5c66b4a78f40984c7a1e96ef1d6f481f7d6451b1",
+      "source_map": "studi0_assets.s0ma.map",
       "source_root": "s0ma_src"
     },
     {
@@ -44,10 +44,10 @@
       "logical_path": "studi0_server.s0ma",
       "name": "studi0_server",
       "output": "studi0_server.py",
-      "output_hash": "sha256:d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60",
+      "output_hash": "sha256:97eb880cdd37edc4d6844a87c9e006200e8e24ee000bdb19fbdca2e64359e88d",
       "role": "source",
       "source": "s0ma_src/studi0_server.s0ma",
-      "source_hash": "sha256:5a7c3236181895c22f2e91d3258f5bee613a93e0c7b0100ef5621d06f4a66f76",
+      "source_hash": "sha256:2f75f5eac65dd3f2f07b50e82d34532b47dd6af3cc9e10ef453dae8dad00b5ef",
       "source_map": "studi0_server.s0ma.map",
       "source_root": "s0ma_src"
     },
@@ -81,19 +81,19 @@
   "self_context": {
     "json": {
       "path": "self_context.json",
-      "sha256": "sha256:b18e10738da2674ba0f312f02f7ea2d0d5e678e7d93e33927717b246bfab16c1"
+      "sha256": "sha256:9b3635e2cbf39e6df37801543875e7de753604a08722f9d8a87148c5f84c603c"
     },
     "prompt_card": {
       "path": "self_prompt_card.md",
-      "sha256": "sha256:9f24a4ddd0c6ba66932fd1a160914a438f9c8e65149048ddd508926b44521b00"
+      "sha256": "sha256:b4d8348f5fe995c37c95af567e293b254ec48a4166609f54c47cb08ff23fc7e9"
     }
   },
   "topological_import_order": [
-    "studi0_server",
+    "studi0_assets",
+    "studi0_narration",
     "studi0_state",
-    "studi0_watch",
-    "sh0w_assets",
-    "studi0_narration"
+    "studi0_server",
+    "studi0_watch"
   ],
   "transpiler_version": "0.23.0"
 }

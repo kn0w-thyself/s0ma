@@ -65,7 +65,7 @@ FIXTURE_DIR = PACKAGE_ROOT / "tests" / "fixtures"
 BUILDS_DIR = FIXTURE_DIR / "agent_builds"
 UNBUILT_ANSWERS = BUILDS_DIR / "unbuilt_answers.json"
 STEPPING_HARNESS = FIXTURE_DIR / "stepping_harness.html"
-TERMS_FIXTURE = FIXTURE_DIR / "sh0w_terms_fixture.json"
+TERMS_FIXTURE = FIXTURE_DIR / "terms_fixture.json"
 
 #: The sample the builds are made from, and its number of steps.
 SAMPLE = "agent"
@@ -256,12 +256,12 @@ def _splice(harness: str, element_id: str, document: object) -> str:
 def harness_blocks() -> dict[str, object]:
     """The data the harness must embed, by element id."""
     blocks: dict[str, object] = {
-        "sh0w-unbuilt": json.loads(read(UNBUILT_ANSWERS)),
-        "sh0w-terms": json.loads(read(TERMS_FIXTURE)),
-        "sh0w-lines": harness_lines(),
+        "graph-unbuilt": json.loads(read(UNBUILT_ANSWERS)),
+        "graph-terms": json.loads(read(TERMS_FIXTURE)),
+        "graph-lines": harness_lines(),
     }
     for number, name in enumerate(BUILDS, start=1):
-        blocks[f"sh0w-build-{number}"] = json.loads(read(graph_path(name)))
+        blocks[f"graph-build-{number}"] = json.loads(read(graph_path(name)))
     return blocks
 
 
@@ -431,7 +431,7 @@ def test_stepping_harness_embeds_the_committed_fixtures() -> None:
     harness = read(STEPPING_HARNESS)
     for element_id, document in harness_blocks().items():
         assert _embedded(harness, element_id) == document, element_id
-    assert len(re.findall(r'<script id="sh0w-build-\d+"', harness)) == len(BUILDS)
+    assert len(re.findall(r'<script id="graph-build-\d+"', harness)) == len(BUILDS)
 
 
 def test_stepping_harness_boots_the_real_page_in_live_mode() -> None:
@@ -449,7 +449,7 @@ def test_stepping_harness_boots_the_real_page_in_live_mode() -> None:
     assert "Land the next build" in harness
     assert "Start over" in harness
     # The controls sit outside the page's mount, so the page owns its own.
-    assert harness.index('id="stepper"') < harness.index('id="s0ma-sh0w"')
+    assert harness.index('id="stepper"') < harness.index('id="s0ma-studi0"')
     assert "http://" not in harness
     assert "https://" not in harness
 

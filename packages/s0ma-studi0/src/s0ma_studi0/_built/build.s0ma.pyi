@@ -12,14 +12,14 @@
 from types import ModuleType
 from typing import TypedDict
 
-sh0w_assets: ModuleType
+studi0_assets: ModuleType
 studi0_narration: ModuleType
 studi0_server: ModuleType
 studi0_state: ModuleType
 studi0_watch: ModuleType
 
 class BootstrapModules(TypedDict):
-    sh0w_assets: ModuleType
+    studi0_assets: ModuleType
     studi0_narration: ModuleType
     studi0_server: ModuleType
     studi0_state: ModuleType
