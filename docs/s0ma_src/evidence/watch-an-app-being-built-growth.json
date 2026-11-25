@@ -5,7 +5,7 @@
       "cli:s0ma/new"
     ],
     "id": "example:transcript/watch-an-app-being-built-growth",
-    "intent": "Walk the second half of this path as far as a machine honestly can: make the reader's own project, then land the example's three builds in it one after another, from the sources committed with studi0's tests, and read the graph back after each. The three builds stand in for the three requests. They are the growth the requests ask for, not a replay of any agent.",
+    "intent": "Walk the second half of this path as far as a machine honestly can: make the reader's own project at step 0 of the sample, then lay the sample's five steps down on it one after another, make the one change the last request asks for by hand, and read the graph back after each build. The steps and the edit stand in for the six requests. They are the growth the requests ask for, not a replay of any agent.",
     "journey": "journey:watch-an-app-being-built",
     "not_covered": [
       {
@@ -13,7 +13,7 @@
         "surface": "cli:s0ma/studi0"
       },
       {
-        "reason": "This call is made by the reader's own agent at the end of each request, from files it wrote itself, and replaying it would mean running a model, which no transcript may do. What this transcript runs in its place is the same build through the command line, on the example's own sources for each of the three builds, so the growth the requests ask for is built and read back and the agent's own version of it is not.",
+        "reason": "This call is made by the reader's own agent at the end of each request, from files it wrote itself, and replaying it would mean running a model, which no transcript may do. What this transcript runs in its place is the sample's own five steps through the command line, each of which builds, then one hand edit and the same build, so the growth the requests ask for is built and read back and the agent's own version of it is not.",
         "surface": "mcp:tool/build_project"
       },
       {
@@ -21,7 +21,7 @@
         "surface": "studi0:action/api/graph"
       },
       {
-        "reason": "The poll answers only while the viewer is running, so it shares the launch step's boundary. What it reports is whether a newer build has landed, and the growth transcript for this path lands three builds one after another and reads the graph back after each, which is what the poll would notice.",
+        "reason": "The poll answers only while the viewer is running, so it shares the launch step's boundary. What it reports is whether a newer build has landed, and the growth transcript for this path lands six builds one after another and reads the graph back after each, which is what the poll would notice.",
         "surface": "studi0:action/api/state"
       }
     ],
@@ -30,10 +30,13 @@
         "s0ma",
         "new",
         "project",
-        "song"
+        "helpdesk",
+        "--sample",
+        "--step",
+        "0"
       ],
       "kind": "new-project",
-      "workdir": "song"
+      "workdir": "helpdesk"
     },
     "steps": [
       {
@@ -46,17 +49,18 @@
           "--detail",
           "full"
         ],
-        "exit_code": 0,
-        "stderr": [],
-        "stdout": [
-          {
-            "match": "contains",
-            "text": "\"core_domain::describe_self\": {"
-          },
+        "exit_code": 2,
+        "stderr": [
           {
             "match": "line",
-            "text": "  \"schema\": \"s0ma-graph@2\""
+            "text": "No .s0ma.json files found at: ."
           },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ],
+        "stdout": [
           {
             "match": "absent",
             "text": "Traceback"
@@ -64,48 +68,29 @@
         ]
       },
       {
-        "path": "bootstrap/main.py",
-        "text": "\"\"\"Pipeline bootstrap: the single handwritten entry point.\n\nThis is the one sanctioned plain-Python module in the project (declared in\n``[tool.s0ma].bootstrap_files``). Everything else is authored as ``.s0ma``\nand emitted into the build directory; this file only hands the song the\nplayer reads to the music file, and prints the mood.\n\nRun it after a build (``s0ma build .``)::\n\n    python bootstrap/main.py        # the first built-in song\n    python bootstrap/main.py 1      # the second one\n\"\"\"\n\nfrom __future__ import annotations\n\nimport sys\nfrom pathlib import Path\n\nfrom s0ma.bootstrap import bootstrap_imports\n\n\ndef main(turn: int = 0) -> str:\n    \"\"\"Read the song for *turn*, settle its mood, and print it.\"\"\"\n    build_dir = Path(__file__).resolve().parent.parent / \"build\"\n    modules = bootstrap_imports(build_dir.as_posix())\n\n    track = modules[\"player\"].read_now_playing(turn)\n    mood = modules[\"music\"].settle_mood(track)\n    print(f\"now playing: {track.title} by {track.artist}\")\n    print(f\"the mood is {mood.name}: {mood.description}\")\n    return str(mood.name)\n\n\nif __name__ == \"__main__\":\n    main(int(sys.argv[1]) if len(sys.argv) > 1 else 0)\n"
-      },
-      {
-        "path": "pyproject.toml",
-        "text": "[project]\nname = \"song\"\nversion = \"0.1.0\"\nrequires-python = \">=3.11\"\ndependencies = [\"s0ma-lang-core\", \"s0ma-lang-dsl\"]\n\n[tool.s0ma]\nsource_roots = [\"src\"]\ntest_roots = [\"tests\"]\nbuild_dir = \"build\"\nmode = \"dev\"\nauthoring = \"on\"\nfeedback = \"suggest\"\nbootstrap_files = [\"bootstrap/main.py\"]\n"
-      },
-      {
-        "path": "src/app_map.s0ma",
-        "text": "module app_map\n    layer: PRESENTATION\n    version: 0.1.0\n    intent: \"This file is the map of the app: a list of its public parts and a short tour of how they fit together.\"\n    exports: []\n\n    requires: none\n    uses: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ndoc-ref public_api_reference\n    intent: \"A list of every public working part of the app, written from the app itself so it always matches.\"\n    format: markdown\n    output: docs/public_api_reference.md\n    covers: [nerve where visibility == PUBLIC]\n    sections: [intent, expects, guarantees, forbids]\n\ndoc-guide architecture_map\n    intent: \"A short tour of the app: what it is made of, how it behaves, and how it checks itself.\"\n    format: markdown\n    output: docs/architecture_map.md\n    covers: [nerve::settle_mood]\n    asserts: [nerve::settle_mood.visibility == PUBLIC, nerve::settle_mood.layer == DOMAIN]\n    examples: []\n    ---\n    # Architecture map\n\n    This app reads what is playing and settles on a mood. It keeps an accurate model of itself, and this map is read from that model.\n\n    ## Structure\n\n    The app is two files so far, one for each layer it has:\n\n    - The player file (INFRASTRUCTURE) finds out what is playing. It uses four built-in sample songs and contacts nothing outside the app.\n    - The music file (DOMAIN) settles on one of four moods from how fast and loud a song is and its key. {{nerve::settle_mood}} is where that decision is made.\n\n    A file may only reach toward the middle of the app. The music file is the middle and uses no other file. The player file is at an edge and uses the music file. The build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the music file.\n\n    ## Runtime state\n\n    How the app behaves compared with what it said it would do. Nothing watches the app yet.\n\n    ## Reasoning over the model\n\n    The app can answer questions about its own parts: what each one is for, what it promises, and what depends on it. This map is checked on every build, so a change to a part it names that is not reflected here fails the build.\n"
-      },
-      {
-        "path": "src/music/music.s0ma",
-        "text": "module music\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"This file holds what the app knows about music: a song and the mood it settles on.\"\n    requires: [dataclasses:dataclass]\n    exports: [Track, Mood, settle_mood]\n\n    uses: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ncell Track :: DOMAIN\n    kind: MODEL\n    visibility: PUBLIC\n    intent: \"A song that is playing: its title, who made it, how fast and how loud it is, and whether it is in a major key.\"\n    schema: \"title: str, artist: str, beats_per_minute: int, loudness: float, major_key: bool\"\n    invariants: \"Loudness runs from 0, silent, to 1, as loud as the song gets.\"\n    covered_by: none\n    ---\n    @dataclass(frozen=True)\n    class Track:\n        title: str\n        artist: str\n        beats_per_minute: int\n        loudness: float\n        major_key: bool\n\ncell Mood :: DOMAIN\n    kind: MODEL\n    visibility: PUBLIC\n    intent: \"The mood a song puts across, as one word and a short plain description.\"\n    schema: \"name: str, description: str\"\n    invariants: \"The name is one of lively, tense, calm, or low.\"\n    covered_by: none\n    ---\n    @dataclass(frozen=True)\n    class Mood:\n        name: str\n        description: str\n\nnerve settle_mood :: DOMAIN\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Decides which mood a song puts across, from how fast and loud it is and its key.\"\n    expects: \"A song.\"\n    guarantees: \"Gives back exactly one of four moods: lively, tense, calm, or low.\"\n    forbids: \"Never picks a mood outside those four.\"\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def settle_mood(track: Track) -> Mood:\n        \"\"\"Settle on one of four moods from *track*.\"\"\"\n        energetic = track.beats_per_minute >= 100 and track.loudness >= 0.5\n        bright = track.major_key\n        if energetic and bright:\n            return Mood(name=\"lively\", description=\"full of energy and bright\")\n        if energetic:\n            return Mood(name=\"tense\", description=\"full of energy and dark\")\n        if bright:\n            return Mood(name=\"calm\", description=\"quiet and bright\")\n        return Mood(name=\"low\", description=\"quiet and dark\")\n"
-      },
-      {
-        "path": "src/player/player.s0ma",
-        "text": "module player\n    layer: INFRASTRUCTURE\n    version: 0.1.0\n    intent: \"This file finds out what is playing right now.\"\n    uses: [music.Track]\n    exports: [read_now_playing]\n\n    requires: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\nnerve read_now_playing :: INFRASTRUCTURE\n    kind: ADAPTER\n    visibility: PUBLIC\n    intent: \"Tells the app which song is playing right now.\"\n    expects: \"A turn number, which picks one of the built-in sample songs.\"\n    guarantees: \"Gives back one of four built-in sample songs, and the same turn number always gives the same song.\"\n    forbids: \"Never contacts a music player or a music service; the four sample songs are built into this file.\"\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def read_now_playing(turn: int = 0) -> Track:\n        \"\"\"Return the built-in sample song for *turn*.\"\"\"\n        samples = (\n            Track(title=\"Morning Walk\", artist=\"The Example Quartet\",\n                  beats_per_minute=76, loudness=0.3, major_key=True),\n            Track(title=\"Night Drive\", artist=\"Practice Room\",\n                  beats_per_minute=128, loudness=0.8, major_key=False),\n            Track(title=\"Market Day\", artist=\"Demo Brass Band\",\n                  beats_per_minute=118, loudness=0.7, major_key=True),\n            Track(title=\"Rain on Glass\", artist=\"Test Pattern\",\n                  beats_per_minute=64, loudness=0.2, major_key=False),\n        )\n        return samples[turn % len(samples)]\n"
-      },
-      {
-        "path": "tests/music/music_tests.s0ma",
-        "text": "module music_tests\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"Tests for settling on a song's mood.\"\n    uses: [music.Track, music.settle_mood]\n    exports: []\n\n    requires: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ntest test_settle_mood_picks_one_of_four :: DOMAIN\n    intent: \"How fast and loud a song is, and its key, decide which of the four moods it gets.\"\n    tests: [music.settle_mood]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_settle_mood_picks_one_of_four() -> None:\n        def song(bpm: int, loudness: float, major: bool) -> Track:\n            return Track(title=\"t\", artist=\"a\", beats_per_minute=bpm,\n                         loudness=loudness, major_key=major)\n        assert settle_mood(song(130, 0.9, True)).name == \"lively\"\n        assert settle_mood(song(130, 0.9, False)).name == \"tense\"\n        assert settle_mood(song(70, 0.2, True)).name == \"calm\"\n        assert settle_mood(song(70, 0.2, False)).name == \"low\"\n"
-      },
-      {
-        "path": "tests/player/player_tests.s0ma",
-        "text": "module player_tests\n    layer: INFRASTRUCTURE\n    version: 0.1.0\n    intent: \"Tests for finding out what is playing.\"\n    uses: [player.read_now_playing]\n    exports: []\n\n    requires: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ntest test_read_now_playing_is_repeatable :: INFRASTRUCTURE\n    intent: \"The same turn number always gives the same built-in song, and the songs take turns.\"\n    tests: [player.read_now_playing]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_read_now_playing_is_repeatable() -> None:\n        assert read_now_playing(0) == read_now_playing(0)\n        assert read_now_playing(0) == read_now_playing(4)\n        assert read_now_playing(0).title == \"Morning Walk\"\n        assert read_now_playing(1).title == \"Night Drive\"\n"
-      },
-      {
         "argv": [
           "s0ma",
-          "build"
+          "new",
+          "project",
+          ".",
+          "--sample",
+          "--step",
+          "1"
         ],
         "exit_code": 0,
         "stderr": [],
         "stdout": [
           {
-            "match": "absent",
-            "text": "WARNING"
+            "match": "line",
+            "text": "Step 1 of 5: What it hears. A customer's message, and the order number in it if there is one."
           },
           {
             "match": "line",
-            "text": "Build complete: 7 module(s) → {project}/build (manifest: build.s0ma.json)"
+            "text": "s0ma new project: updated {project} (--template agent; 3 module(s) built with 3 parts, mode dev)."
+          },
+          {
+            "match": "absent",
+            "text": "WARNING"
           },
           {
             "match": "absent",
@@ -128,15 +113,11 @@
         "stdout": [
           {
             "match": "contains",
-            "text": "\"core_domain::describe_self\": {"
+            "text": "\"inbox::Message\": {"
           },
           {
             "match": "contains",
-            "text": "\"music::settle_mood\": {"
-          },
-          {
-            "match": "contains",
-            "text": "\"player::read_now_playing\": {"
+            "text": "\"inbox::read_message\": {"
           },
           {
             "match": "line",
@@ -149,36 +130,29 @@
         ]
       },
       {
-        "path": "bootstrap/main.py",
-        "text": "\"\"\"Pipeline bootstrap: the single handwritten entry point.\n\nThis is the one sanctioned plain-Python module in the project (declared in\n``[tool.s0ma].bootstrap_files``). Everything else is authored as ``.s0ma``\nand emitted into the build directory; this file only hands the song the\nplayer reads to the music file, and prints the mood.\n\nRun it after a build (``s0ma build .``)::\n\n    python bootstrap/main.py        # the first built-in song\n    python bootstrap/main.py 1      # the second one\n\"\"\"\n\nfrom __future__ import annotations\n\nimport sys\nfrom pathlib import Path\n\nfrom s0ma.bootstrap import bootstrap_imports\n\n\ndef main(turn: int = 0) -> str:\n    \"\"\"Read the song for *turn*, settle its mood, and print it.\"\"\"\n    build_dir = Path(__file__).resolve().parent.parent / \"build\"\n    modules = bootstrap_imports(build_dir.as_posix())\n    music = modules[\"music\"]\n\n    track = modules[\"player\"].read_now_playing(turn)\n    mood = music.settle_mood(music.measure_features(track))\n    print(f\"now playing: {track.title} by {track.artist}\")\n    print(f\"the mood is {mood.name}: {mood.description}\")\n    return str(mood.name)\n\n\nif __name__ == \"__main__\":\n    main(int(sys.argv[1]) if len(sys.argv) > 1 else 0)\n"
-      },
-      {
-        "path": "src/app_map.s0ma",
-        "text": "module app_map\n    layer: PRESENTATION\n    version: 0.1.0\n    intent: \"This file is the map of the app: a list of its public parts and a short tour of how they fit together.\"\n    exports: []\n\n    requires: none\n    uses: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ndoc-ref public_api_reference\n    intent: \"A list of every public working part of the app, written from the app itself so it always matches.\"\n    format: markdown\n    output: docs/public_api_reference.md\n    covers: [nerve where visibility == PUBLIC]\n    sections: [intent, expects, guarantees, forbids]\n\ndoc-guide architecture_map\n    intent: \"A short tour of the app: what it is made of, how it behaves, and how it checks itself.\"\n    format: markdown\n    output: docs/architecture_map.md\n    covers: [nerve::settle_mood]\n    asserts: [nerve::settle_mood.visibility == PUBLIC, nerve::settle_mood.layer == DOMAIN]\n    examples: []\n    ---\n    # Architecture map\n\n    This app reads what is playing, measures the song, and settles on a mood. It keeps an accurate model of itself, and this map is read from that model.\n\n    ## Structure\n\n    The app is two files so far, one for each layer it has:\n\n    - The player file (INFRASTRUCTURE) finds out what is playing. It uses four built-in sample songs and contacts nothing outside the app.\n    - The music file (DOMAIN) scores how a song sounds and settles on one of four moods from those scores. {{nerve::settle_mood}} is where that decision is made.\n\n    A file may only reach toward the middle of the app. The music file is the middle and uses no other file. The player file is at an edge and uses the music file. The build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the music file.\n\n    ## Runtime state\n\n    How the app behaves compared with what it said it would do. Nothing watches the app yet.\n\n    ## Reasoning over the model\n\n    The app can answer questions about its own parts: what each one is for, what it promises, and what depends on it. This map is checked on every build, so a change to a part it names that is not reflected here fails the build.\n"
-      },
-      {
-        "path": "src/music/music.s0ma",
-        "text": "module music\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"This file holds what the app knows about music: a song, how it sounds, and the mood it settles on.\"\n    requires: [dataclasses:dataclass]\n    exports: [Track, Features, Mood, measure_features, settle_mood]\n\n    uses: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ncell Track :: DOMAIN\n    kind: MODEL\n    visibility: PUBLIC\n    intent: \"A song that is playing: its title, who made it, how fast and how loud it is, and whether it is in a major key.\"\n    schema: \"title: str, artist: str, beats_per_minute: int, loudness: float, major_key: bool\"\n    invariants: \"Loudness runs from 0, silent, to 1, as loud as the song gets.\"\n    covered_by: none\n    ---\n    @dataclass(frozen=True)\n    class Track:\n        title: str\n        artist: str\n        beats_per_minute: int\n        loudness: float\n        major_key: bool\n\ncell Features :: DOMAIN\n    kind: MODEL\n    visibility: PUBLIC\n    intent: \"How a song sounds, as three scores: how fast it feels, how much energy it has, and how bright it sounds.\"\n    schema: \"pace: float, energy: float, brightness: float\"\n    invariants: \"Each score runs from 0 to 1.\"\n    covered_by: none\n    ---\n    @dataclass(frozen=True)\n    class Features:\n        pace: float\n        energy: float\n        brightness: float\n\ncell Mood :: DOMAIN\n    kind: MODEL\n    visibility: PUBLIC\n    intent: \"The mood a song puts across, as one word and a short plain description.\"\n    schema: \"name: str, description: str\"\n    invariants: \"The name is one of lively, tense, calm, or low.\"\n    covered_by: none\n    ---\n    @dataclass(frozen=True)\n    class Mood:\n        name: str\n        description: str\n\nnerve measure_features :: DOMAIN\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Reads the facts about a song and scores how it sounds.\"\n    expects: \"A song.\"\n    guarantees: \"Gives back a pace, an energy, and a brightness score, each from 0 to 1.\"\n    forbids: \"Never changes the song it is given; it only reads it.\"\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def measure_features(track: Track) -> Features:\n        \"\"\"Score how *track* sounds, each score from 0 to 1.\"\"\"\n        pace = min(1.0, max(0.0, (track.beats_per_minute - 60) / 80))\n        energy = (pace + track.loudness) / 2\n        brightness = 0.8 if track.major_key else 0.2\n        return Features(pace=pace, energy=energy, brightness=brightness)\n\nnerve settle_mood :: DOMAIN\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Decides which mood a song puts across, from how it sounds.\"\n    expects: \"The scores for how a song sounds.\"\n    guarantees: \"Gives back exactly one of four moods: lively, tense, calm, or low.\"\n    forbids: \"Never picks a mood outside those four.\"\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def settle_mood(features: Features) -> Mood:\n        \"\"\"Settle on one of four moods from *features*.\"\"\"\n        energetic = features.energy >= 0.5\n        bright = features.brightness >= 0.5\n        if energetic and bright:\n            return Mood(name=\"lively\", description=\"full of energy and bright\")\n        if energetic:\n            return Mood(name=\"tense\", description=\"full of energy and dark\")\n        if bright:\n            return Mood(name=\"calm\", description=\"quiet and bright\")\n        return Mood(name=\"low\", description=\"quiet and dark\")\n"
-      },
-      {
-        "path": "tests/music/music_tests.s0ma",
-        "text": "module music_tests\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"Tests for scoring a song and settling on its mood.\"\n    uses: [music.Track, music.Features, music.measure_features, music.settle_mood]\n    exports: []\n\n    requires: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ntest test_measure_features_scores_a_song :: DOMAIN\n    intent: \"A fast, loud song in a major key scores high on every count.\"\n    tests: [music.measure_features]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_measure_features_scores_a_song() -> None:\n        song = Track(title=\"t\", artist=\"a\", beats_per_minute=140,\n                     loudness=1.0, major_key=True)\n        assert measure_features(song) == Features(\n            pace=1.0, energy=1.0, brightness=0.8\n        )\n\ntest test_settle_mood_picks_one_of_four :: DOMAIN\n    intent: \"Energy and brightness together decide which of the four moods a song gets.\"\n    tests: [music.settle_mood]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_settle_mood_picks_one_of_four() -> None:\n        assert settle_mood(Features(pace=1.0, energy=0.9, brightness=0.8)).name == \"lively\"\n        assert settle_mood(Features(pace=1.0, energy=0.9, brightness=0.2)).name == \"tense\"\n        assert settle_mood(Features(pace=0.1, energy=0.2, brightness=0.8)).name == \"calm\"\n        assert settle_mood(Features(pace=0.1, energy=0.2, brightness=0.2)).name == \"low\"\n"
-      },
-      {
         "argv": [
           "s0ma",
-          "build"
+          "new",
+          "project",
+          ".",
+          "--sample",
+          "--step",
+          "2"
         ],
         "exit_code": 0,
         "stderr": [],
         "stdout": [
           {
-            "match": "absent",
-            "text": "WARNING"
+            "match": "line",
+            "text": "Step 2 of 5: What it must and must never do. It answers or hands off to a person, and it never promises a refund."
           },
           {
             "match": "line",
-            "text": "Build complete: 7 module(s) → {project}/build (manifest: build.s0ma.json)"
+            "text": "s0ma new project: updated {project} (--template agent; 5 module(s) built with 6 parts, mode dev)."
+          },
+          {
+            "match": "absent",
+            "text": "WARNING"
           },
           {
             "match": "absent",
@@ -201,15 +175,15 @@
         "stdout": [
           {
             "match": "contains",
-            "text": "\"music::Features\": {"
+            "text": "\"rules::Reply\": {"
           },
           {
             "match": "contains",
-            "text": "\"music::measure_features\": {"
+            "text": "\"rules::keep_the_rules\": {"
           },
           {
             "match": "contains",
-            "text": "\"value\": \"The scores for how a song sounds.\""
+            "text": "\"value\": \"Never lets out a reply that promises a refund.\""
           },
           {
             "match": "line",
@@ -222,44 +196,29 @@
         ]
       },
       {
-        "path": "bootstrap/main.py",
-        "text": "\"\"\"Pipeline bootstrap: the single handwritten entry point.\n\nThis is the one sanctioned plain-Python module in the project (declared in\n``[tool.s0ma].bootstrap_files``). Everything else is authored as ``.s0ma``\nand emitted into the build directory; this file only hands the song the\nplayer reads to the page, and prints the page.\n\nRun it after a build (``s0ma build .``)::\n\n    python bootstrap/main.py        # the first built-in song\n    python bootstrap/main.py 1      # the second one\n\"\"\"\n\nfrom __future__ import annotations\n\nimport sys\nfrom pathlib import Path\n\nfrom s0ma.bootstrap import bootstrap_imports\n\n\ndef main(turn: int = 0) -> str:\n    \"\"\"Read the song for *turn*, build its page, and print it.\"\"\"\n    build_dir = Path(__file__).resolve().parent.parent / \"build\"\n    modules = bootstrap_imports(build_dir.as_posix())\n\n    track = modules[\"player\"].read_now_playing(turn)\n    text: str = modules[\"page\"].song_to_page(track)\n    print(f\"now playing: {track.title} by {track.artist}\")\n    print(text, end=\"\")\n    return text\n\n\nif __name__ == \"__main__\":\n    main(int(sys.argv[1]) if len(sys.argv) > 1 else 0)\n"
-      },
-      {
-        "path": "src/app_map.s0ma",
-        "text": "module app_map\n    layer: PRESENTATION\n    version: 0.1.0\n    intent: \"This file is the map of the app: a list of its public parts and a short tour of how they fit together.\"\n    exports: []\n\n    requires: none\n    uses: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ndoc-ref public_api_reference\n    intent: \"A list of every public working part of the app, written from the app itself so it always matches.\"\n    format: markdown\n    output: docs/public_api_reference.md\n    covers: [nerve where visibility == PUBLIC]\n    sections: [intent, expects, guarantees, forbids]\n\ndoc-guide architecture_map\n    intent: \"A short tour of the app: what it is made of, how it behaves, and how it checks itself.\"\n    format: markdown\n    output: docs/architecture_map.md\n    covers: [nerve::song_to_page]\n    asserts: [nerve::song_to_page.visibility == PUBLIC, nerve::song_to_page.layer == PRESENTATION]\n    examples: []\n    ---\n    # Architecture map\n\n    This app reads what is playing, measures the song, settles on a mood, chooses a nudge, and shows it. It keeps an accurate model of itself, and this map is read from that model.\n\n    ## Structure\n\n    The app is four files, one for each layer:\n\n    - The player file (INFRASTRUCTURE) finds out what is playing. It uses four built-in sample songs and contacts nothing outside the app.\n    - The music file (DOMAIN) scores how a song sounds and settles on one of four moods.\n    - The coach file (APPLICATION) picks a small suggestion for the mood and watches whether the mood keeps flipping back and forth.\n    - The page file (PRESENTATION) fills a small web page with the mood and the suggestion. {{nerve::song_to_page}} runs the whole way from a song to the finished page.\n\n    A file may only reach toward the middle of the app. The music file is the middle and uses no other file. The coach file uses the music file. The player file and the page file are the two edges: the player uses the music file, the page uses the coach and music files, and the two edges never use each other. The build refuses anything else. The bootstrap file, the one plain Python file in the project, hands the song from the player to the page.\n\n    ## Runtime state\n\n    How the app behaves compared with what it said it would do. The coach file's watcher counts how often the mood flips back to the mood it just left.\n\n    ## Reasoning over the model\n\n    The app can answer questions about its own parts: what each one is for, what it promises, and what depends on it. This map is checked on every build, so a change to a part it names that is not reflected here fails the build.\n"
-      },
-      {
-        "path": "src/coach/coach.s0ma",
-        "text": "module coach\n    layer: APPLICATION\n    version: 0.1.0\n    intent: \"This file turns a mood into a small suggestion and keeps an eye on how steady the mood is.\"\n    uses: [music.Mood]\n    requires: [dataclasses:dataclass]\n    exports: [Nudge, choose_nudge, watch_swings]\n\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ncell Nudge :: APPLICATION\n    kind: MODEL\n    visibility: PUBLIC\n    intent: \"A small suggestion for the listener, and the mood it was chosen for.\"\n    schema: \"mood: str, message: str\"\n    invariants: \"The message is one short sentence.\"\n    covered_by: none\n    ---\n    @dataclass(frozen=True)\n    class Nudge:\n        mood: str\n        message: str\n\nnerve choose_nudge :: APPLICATION\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Picks a small suggestion that fits the mood.\"\n    expects: \"A mood.\"\n    guarantees: \"Gives back one suggestion from a short written list, one for each of the four moods.\"\n    forbids: \"Never makes up a suggestion; every message comes from the written list in this file.\"\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def choose_nudge(mood: Mood) -> Nudge:\n        \"\"\"Pick the suggestion written for *mood*.\"\"\"\n        messages = {\n            \"lively\": \"Good moment to start the hardest thing on your list.\",\n            \"tense\": \"Take three slow breaths before the next thing.\",\n            \"calm\": \"Pick one thing and give it your full attention.\",\n            \"low\": \"Stand up and stretch for a minute.\",\n        }\n        message = messages.get(mood.name, messages[\"calm\"])\n        return Nudge(mood=mood.name, message=message)\n\nganglion watch_swings :: APPLICATION\n    visibility: PUBLIC\n    intent: \"Watches the moods the app settles on and notices when they keep flipping back and forth.\"\n    observes: [settle_mood]\n    scope: SUBSYSTEM\n    priors: \"The mood should stay put or move on, not flip back to the mood it just left.\"\n    on_anomaly: \"Reports how many times the mood flipped back, so a person can look at the songs.\"\n    forbids: \"Never changes a mood; it only counts what it sees.\"\n    depends_on: none\n    covered_by: none\n    ---\n    def watch_swings(signals: list[Mood]) -> dict[str, object]:\n        \"\"\"Count how often the mood flips back to the one before it.\"\"\"\n        names = [mood.name for mood in signals]\n        flips = sum(\n            1\n            for before, now, after in zip(names, names[1:], names[2:])\n            if before == after and before != now\n        )\n        return {\"flips\": flips, \"steady\": flips == 0}\n"
-      },
-      {
-        "path": "src/page/page.s0ma",
-        "text": "module page\n    layer: PRESENTATION\n    version: 0.1.0\n    intent: \"This file shows the suggestion to the listener as a small web page.\"\n    uses: [music.Track, music.measure_features, music.settle_mood, coach.choose_nudge, coach.Nudge]\n    requires: [html]\n    exports: [PAGE_HTML, show_page, song_to_page]\n\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ncell PAGE_HTML :: PRESENTATION\n    kind: CONSTANT\n    visibility: PUBLIC\n    intent: \"The outline of the page, with gaps where the mood and the suggestion go.\"\n    schema: \"The text of a web page with two gaps, {mood} and {message}.\"\n    invariants: none\n    covered_by: none\n    ---\n    PAGE_HTML = (\n        \"<!doctype html>\\n\"\n        \"<html><head><meta charset=\\\"utf-8\\\"><title>Now playing</title></head>\\n\"\n        \"<body>\\n\"\n        \"<h1>The mood is {mood}</h1>\\n\"\n        \"<p>{message}</p>\\n\"\n        \"</body></html>\\n\"\n    )\n\nnerve show_page :: PRESENTATION\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Fills the page outline with the mood and the suggestion.\"\n    expects: \"A suggestion and the mood it was chosen for.\"\n    guarantees: \"Gives back the full text of the page, with the mood and the suggestion in it.\"\n    forbids: \"Never puts text on the page unescaped, so a song title or message cannot break the page.\"\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def show_page(nudge: Nudge) -> str:\n        \"\"\"Return the page text for *nudge*.\"\"\"\n        return PAGE_HTML.format(\n            mood=html.escape(nudge.mood),\n            message=html.escape(nudge.message),\n        )\n\nnerve song_to_page :: PRESENTATION\n    kind: ORCHESTRATOR\n    visibility: PUBLIC\n    intent: \"Takes a song all the way to a finished page: measure it, settle the mood, choose a suggestion, and show it.\"\n    expects: \"The song that is playing.\"\n    guarantees: \"Gives back the full text of the page for that song.\"\n    forbids: \"Never opens a network connection or starts a web server; it hands back the page as text.\"\n    evaluates_at: SUBSYSTEM\n    depends_on:\n        music.measure_features: {relation: CALLS, carries: \"the song, to score how it sounds\", coupling: LOOSE}\n        music.settle_mood: {relation: CALLS, carries: \"the scores, to settle on a mood\", coupling: LOOSE}\n        coach.choose_nudge: {relation: CALLS, carries: \"the mood, to pick a suggestion\", coupling: LOOSE}\n        show_page: {relation: CALLS, carries: \"the suggestion, to fill in the page\", coupling: TIGHT}\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def song_to_page(track: Track) -> str:\n        \"\"\"Return the finished page for *track*.\"\"\"\n        mood = settle_mood(measure_features(track))\n        return show_page(choose_nudge(mood))\n"
-      },
-      {
-        "path": "tests/coach/coach_tests.s0ma",
-        "text": "module coach_tests\n    layer: APPLICATION\n    version: 0.1.0\n    intent: \"Tests for choosing a suggestion and for watching the mood.\"\n    uses: [music.Mood, coach.choose_nudge, coach.watch_swings]\n    exports: []\n\n    requires: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ntest test_choose_nudge_fits_the_mood :: APPLICATION\n    intent: \"Each mood gets its own suggestion from the written list.\"\n    tests: [coach.choose_nudge]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_choose_nudge_fits_the_mood() -> None:\n        nudge = choose_nudge(Mood(name=\"low\", description=\"quiet and dark\"))\n        assert nudge.mood == \"low\"\n        assert nudge.message == \"Stand up and stretch for a minute.\"\n\ntest test_watch_swings_counts_flips :: APPLICATION\n    intent: \"The watcher counts a mood that flips back to the one it just left, and stays quiet when the mood moves on.\"\n    tests: [coach.watch_swings]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_watch_swings_counts_flips() -> None:\n        calm = Mood(name=\"calm\", description=\"quiet and bright\")\n        tense = Mood(name=\"tense\", description=\"full of energy and dark\")\n        low = Mood(name=\"low\", description=\"quiet and dark\")\n        assert watch_swings([calm, tense, calm, tense]) == {\"flips\": 2, \"steady\": False}\n        assert watch_swings([calm, calm, tense, low]) == {\"flips\": 0, \"steady\": True}\n"
-      },
-      {
-        "path": "tests/page/page_tests.s0ma",
-        "text": "module page_tests\n    layer: PRESENTATION\n    version: 0.1.0\n    intent: \"Tests for showing the page.\"\n    uses: [music.Track, coach.Nudge, page.show_page, page.song_to_page]\n    exports: []\n\n    requires: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ntest test_show_page_escapes_text :: PRESENTATION\n    intent: \"The page shows the mood and the suggestion, with any markup in them made harmless.\"\n    tests: [page.show_page]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_show_page_escapes_text() -> None:\n        text = show_page(Nudge(mood=\"calm\", message=\"Rest <now>.\"))\n        assert \"The mood is calm\" in text\n        assert \"Rest &lt;now&gt;.\" in text\n\ntest test_song_to_page_runs_the_whole_way :: PRESENTATION\n    intent: \"A quiet, bright song comes out as a calm page with the calm suggestion.\"\n    tests: [page.song_to_page]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_song_to_page_runs_the_whole_way() -> None:\n        song = Track(title=\"t\", artist=\"a\", beats_per_minute=70,\n                     loudness=0.2, major_key=True)\n        text = song_to_page(song)\n        assert \"The mood is calm\" in text\n        assert \"Pick one thing and give it your full attention.\" in text\n"
-      },
-      {
         "argv": [
           "s0ma",
-          "build"
+          "new",
+          "project",
+          ".",
+          "--sample",
+          "--step",
+          "3"
         ],
         "exit_code": 0,
         "stderr": [],
         "stdout": [
           {
-            "match": "absent",
-            "text": "WARNING"
+            "match": "line",
+            "text": "Step 3 of 5: Its tools. A short list of common answers, and a way to look up an order."
           },
           {
             "match": "line",
-            "text": "Build complete: 11 module(s) → {project}/build (manifest: build.s0ma.json)"
+            "text": "s0ma new project: updated {project} (--template agent; 7 module(s) built with 9 parts, mode dev)."
+          },
+          {
+            "match": "absent",
+            "text": "WARNING"
           },
           {
             "match": "absent",
@@ -282,27 +241,196 @@
         "stdout": [
           {
             "match": "contains",
-            "text": "\"coach::Nudge\": {"
+            "text": "\"tools::answer_from_faq\": {"
           },
           {
             "match": "contains",
-            "text": "\"coach::choose_nudge\": {"
+            "text": "\"tools::look_up_order\": {"
+          },
+          {
+            "match": "line",
+            "text": "  \"schema\": \"s0ma-graph@2\""
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "new",
+          "project",
+          ".",
+          "--sample",
+          "--step",
+          "4"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Step 4 of 5: How it decides. It picks one of three: answer from the list, look up the order, or hand off to a person. A scripted stand-in plays the model, so it runs with no account."
+          },
+          {
+            "match": "line",
+            "text": "s0ma new project: updated {project} (--template agent; 12 module(s) built with 14 parts, mode dev)."
+          },
+          {
+            "match": "absent",
+            "text": "WARNING"
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "graph",
+          ".",
+          "--format",
+          "json",
+          "--detail",
+          "full"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "contains",
+            "text": "\"model::ReplyModel\": {"
           },
           {
             "match": "contains",
-            "text": "\"coach::watch_swings\": {"
+            "text": "\"scripted_model::ScriptedModel\": {"
           },
           {
             "match": "contains",
-            "text": "\"page::PAGE_HTML\": {"
+            "text": "\"triage::decide\": {"
           },
           {
-            "match": "contains",
-            "text": "\"page::show_page\": {"
+            "match": "line",
+            "text": "  \"schema\": \"s0ma-graph@2\""
           },
           {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "new",
+          "project",
+          ".",
+          "--sample",
+          "--step",
+          "5"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "line",
+            "text": "Step 5 of 5: The check that watches it. It counts how many messages get handed to a person."
+          },
+          {
+            "match": "line",
+            "text": "s0ma new project: updated {project} (--template agent; 14 module(s) built with 16 parts, mode dev)."
+          },
+          {
+            "match": "absent",
+            "text": "WARNING"
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "graph",
+          ".",
+          "--format",
+          "json",
+          "--detail",
+          "full"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
             "match": "contains",
-            "text": "\"page::song_to_page\": {"
+            "text": "\"watch::watch_replies\": {"
+          },
+          {
+            "match": "line",
+            "text": "  \"schema\": \"s0ma-graph@2\""
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "path": "src/rules/rules.s0ma",
+        "text": "module rules\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"This file holds what the agent must do and what it must never do.\"\n    requires: [dataclasses:dataclass]\n    exports: [Reply, keep_the_rules]\n\n    uses: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ncell Reply :: DOMAIN\n    kind: MODEL\n    visibility: PUBLIC\n    intent: \"What the agent does with one message: answer it, or hand it to a person, and the words it sends.\"\n    schema: \"action: str, text: str\"\n    invariants: \"The action is answer or hand_off.\"\n    covered_by: none\n    ---\n    @dataclass(frozen=True)\n    class Reply:\n        action: str\n        text: str\n\nnerve keep_the_rules :: DOMAIN\n    kind: FUNCTION\n    visibility: PUBLIC\n    intent: \"Checks a reply against the rules before it goes out.\"\n    expects: \"A reply the agent wants to send.\"\n    guarantees: \"Gives back the reply unchanged when it keeps the rules, and a hand-off to a person when it does not.\"\n    forbids: \"Never lets out a reply that promises a refund or a delivery date.\"\n    evaluates_at: FUNCTION_BOUNDARY\n    provides: none\n    returns: none\n    raises: none\n    interface: none\n    latency_ms: none\n    depends_on: none\n    internal: none\n    expected_exceptions: none\n    consumes_via_dict: none\n    declares_attributes: none\n    covered_by: none\n    ---\n    def keep_the_rules(reply: Reply) -> Reply:\n        \"\"\"Hand off any reply that promises a refund or a delivery date.\"\"\"\n        if any(word in reply.text.lower() for word in (\"refund\", \"will arrive\")):\n            return Reply(action=\"hand_off\", text=\"A person will look at this and write back.\")\n        return reply\n"
+      },
+      {
+        "path": "tests/rules/rules_tests.s0ma",
+        "text": "module rules_tests\n    layer: DOMAIN\n    version: 0.1.0\n    intent: \"Tests for the rules the agent keeps.\"\n    uses: [rules.Reply, rules.keep_the_rules]\n    exports: []\n\n    requires: none\n    soft_requires: none\n    runtime_only_requires: none\n    deferred_requires: none\n    exports_helpers: none\ntest test_keep_the_rules_stops_a_refund_promise :: DOMAIN\n    intent: \"A reply that promises a refund or a delivery date becomes a hand-off, and any other reply goes out as it was.\"\n    tests: [rules.keep_the_rules]\n    expects: none\n    depends_on: none\n    mocks: none\n    ---\n    def test_keep_the_rules_stops_a_refund_promise() -> None:\n        assert keep_the_rules(Reply(action=\"answer\", text=\"You will get a refund.\")).action == \"hand_off\"\n        assert keep_the_rules(Reply(action=\"answer\", text=\"It will arrive on Friday.\")).action == \"hand_off\"\n        ok = Reply(action=\"answer\", text=\"It ships today.\")\n        assert keep_the_rules(ok) == ok\n"
+      },
+      {
+        "argv": [
+          "s0ma",
+          "build"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "absent",
+            "text": "WARNING"
+          },
+          {
+            "match": "line",
+            "text": "Build complete: 14 module(s) → {project}/build (manifest: build.s0ma.json)"
+          },
+          {
+            "match": "absent",
+            "text": "Traceback"
+          }
+        ]
+      },
+      {
+        "argv": [
+          "s0ma",
+          "graph",
+          ".",
+          "--format",
+          "json",
+          "--detail",
+          "full"
+        ],
+        "exit_code": 0,
+        "stderr": [],
+        "stdout": [
+          {
+            "match": "contains",
+            "text": "\"value\": \"Never lets out a reply that promises a refund or a delivery date.\""
+          },
+          {
+            "match": "absent",
+            "text": "\"value\": \"Never lets out a reply that promises a refund.\""
           },
           {
             "match": "line",

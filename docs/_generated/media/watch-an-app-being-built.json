@@ -4,7 +4,7 @@
     "journey": "journey:watch-an-app-being-built",
     "published_by": "doc:guide/watch-an-app-being-built",
     "release": "0.23.0 (preview)",
-    "snapshot": "sha256:363ee5a63303230e"
+    "snapshot": "sha256:c64046d3e612bca7"
   },
   "package": {
     "audience": [
@@ -109,7 +109,7 @@
         "source": "docs/s0ma_src/evidence/watch-an-app-being-built-growth.json"
       }
     ],
-    "outcome": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in three requests, reading on the page what each build really added and changed.",
+    "outcome": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in six requests, reading on the page what each build really added and changed.",
     "prerequisites": [
       {
         "concept": "concept:s0ma",
@@ -127,7 +127,7 @@
     "steps": [
       {
         "channel": "cli",
-        "expected_visible_state": "A finished example app in its own folder, already built: twelve parts in four modules, one module per layer. It contacts nothing, because its songs are built-in samples.",
+        "expected_visible_state": "A finished example agent in its own folder, already built: sixteen parts in fourteen modules, and six of the parts are tests. It contacts nothing, because a scripted stand-in plays its model and its answers and orders are built in.",
         "ordinal": "1",
         "purpose": "Have a finished app to look at and to compare with later, before any agent is involved.",
         "side_effects": [
@@ -163,7 +163,7 @@
       },
       {
         "channel": "cli",
-        "expected_visible_state": "A second, separate project, built once already, holding only the small starter part every new project begins with.",
+        "expected_visible_state": "A second, separate project with nothing built: the same sample at step 0, with its project file and no module.",
         "ordinal": "4",
         "purpose": "Start the project your agent will build in, so its work lands somewhere you are watching.",
         "side_effects": [
@@ -175,7 +175,7 @@
       },
       {
         "channel": "cli",
-        "expected_visible_state": "The viewer on your own project, showing the starter part and an empty list of changes.",
+        "expected_visible_state": "The viewer on your own project, saying nothing is built yet, with an empty list of changes.",
         "ordinal": "5",
         "purpose": "Open the page on your project before the agent starts, so every build it makes arrives while you watch.",
         "side_effects": [

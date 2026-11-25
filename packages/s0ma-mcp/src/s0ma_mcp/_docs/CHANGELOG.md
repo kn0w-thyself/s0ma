@@ -66,6 +66,20 @@ Historical entries describe artifacts as they were named at the time.
   the other next steps. The first-run check now drives the walk with the
   installed s0ma, twice.
 
+- **The guide "Watch an app being built" uses the agent sample.** It used to
+  tour the music sample (`--template pipeline`). Now the finished example is
+  `s0ma new project example --sample`, and the reader's own project starts
+  as the same sample at step 0. The six requests a reader pastes follow the
+  sample's five steps, and the sixth changes a rule that is already there,
+  which is how the guide shows a changed part. Its two worked examples
+  follow: the first reads back the finished agent's graph, down to the lines
+  of `keep_the_rules` the guide quotes. The second lays the sample's steps
+  down one at a time with `--sample --step N` and reads the graph after each
+  build. Then it adds a rule by hand, that the agent never promises a
+  delivery date, builds, and finds the changed line. A test holds that edit
+  to the template's own `rules` files. The worked examples no longer copy
+  studi0's test sources.
+
 ### Fixed
 
 - **The Claude Code plugin's first install uses a Python s0ma supports, and

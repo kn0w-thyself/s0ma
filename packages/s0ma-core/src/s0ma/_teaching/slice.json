@@ -350,7 +350,7 @@
     "build_channel": "preview",
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.23.0",
-    "snapshot_hash": "sha256:363ee5a63303230e"
+    "snapshot_hash": "sha256:c64046d3e612bca7"
   },
   "topics": [
     {
@@ -4792,7 +4792,7 @@
         {
           "fact": "intent",
           "heading": "What this path is for",
-          "text": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in three requests, reading on the page what each build really added and changed."
+          "text": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in six requests, reading on the page what each build really added and changed."
         },
         {
           "fact": "concepts_required",
@@ -4831,11 +4831,11 @@
           "fact": "step_outcomes",
           "heading": "What you should see",
           "items": [
-            "A finished example app in its own folder, already built: twelve parts in four modules, one module per layer. It contacts nothing, because its songs are built-in samples.",
+            "A finished example agent in its own folder, already built: sixteen parts in fourteen modules, and six of the parts are tests. It contacts nothing, because a scripted stand-in plays its model and its answers and orders are built in.",
             "A local address on your own machine, printed and opened in a browser. The viewer reads what the last build produced and never runs the app.",
             "Every part of the example in its layer band. Clicking a part shows what it is for, what it promises, what it must never do, what it needs, and what it leans on, each line under its own s0ma word with a plain phrase beside it.",
-            "A second, separate project, built once already, holding only the small starter part every new project begins with.",
-            "The viewer on your own project, showing the starter part and an empty list of changes.",
+            "A second, separate project with nothing built: the same sample at step 0, with its project file and no module.",
+            "The viewer on your own project, saying nothing is built yet, with an empty list of changes.",
             "A fresh build of whatever the agent wrote for one request. What it contains is the agent's own work and differs from the example's.",
             "The page notices the new build within about a second. New parts arrive with a mark and stay outlined, and one entry joins the list of changes saying what the build added and changed."
           ]
@@ -4866,7 +4866,7 @@
           ]
         }
       ],
-      "summary": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in three requests, reading on the page what each build really added and changed.",
+      "summary": "Look at a finished small app in studi0 first, then start a project of your own and watch your coding agent build an app like it in six requests, reading on the page what each build really added and changed.",
       "title": "journey:watch-an-app-being-built"
     },
     {
