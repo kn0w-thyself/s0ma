@@ -47,6 +47,10 @@ PACKAGES = ("s0ma-core", "s0ma-dsl", "s0ma-mcp", "s0ma-studi0", "s0ma-lang")
 UMBRELLA = "s0ma-lang"
 PINNED = ("s0ma-lang-core", "s0ma-lang-dsl", "s0ma-lang-mcp", "s0ma-lang-studi0")
 
+#: Each pin as the real umbrella writes its name: the DSL pin asks for the
+#: ``test`` extra, so the umbrella brings pytest for ``s0ma test``.
+PIN_NAMES = {part: part for part in PINNED} | {"s0ma-lang-dsl": "s0ma-lang-dsl[test]"}
+
 #: Where the served changelog mirror lives, relative to the repo root.
 MIRROR_REL = "packages/s0ma-mcp/src/s0ma_mcp/_docs/CHANGELOG.md"
 
@@ -95,7 +99,7 @@ def _pyproject(name: str, version: str) -> str:
     """
     dependencies = ""
     if name == UMBRELLA:
-        pins = "".join(f'    "{part} == {version}",\n' for part in PINNED)
+        pins = "".join(f'    "{PIN_NAMES[part]} == {version}",\n' for part in PINNED)
         dependencies = f'dependencies = [\n{pins}    "decoy >= {version}",\n]\n'
     return f"""[build-system]
 requires = ["hatchling"]
@@ -496,7 +500,9 @@ def test_write_moves_the_umbrella_pins_with_its_version(cut_repo: CutRepo) -> No
     assert result.returncode == 0, result.stderr
     text = cut_repo.pyproject(UMBRELLA).read_text(encoding="utf-8")
     for part in PINNED:
-        assert f'"{part} == {NEXT_VERSION}",' in text
+        assert f'"{PIN_NAMES[part]} == {NEXT_VERSION}",' in text
+    # The extra a pin names moves with it.
+    assert f'"s0ma-lang-dsl[test] == {NEXT_VERSION}",' in text
     assert f"== {FIXTURE_VERSION}" not in text
     # A requirement that is not an exact pin is not the cut's to move.
     assert f'"decoy >= {FIXTURE_VERSION}",' in text
@@ -555,6 +561,61 @@ def test_an_umbrella_with_no_pins_is_refused(cut_repo: CutRepo) -> None:
     assert result.returncode == 1
     assert "found none" in result.stderr
     assert cut_repo.snapshot() == before
+
+
+def test_an_umbrella_pin_with_an_extra_off_the_lockstep_version_is_named(
+    cut_repo: CutRepo,
+) -> None:
+    """The drift check reads a pin that names an extra like any other pin."""
+    path = cut_repo.pyproject(UMBRELLA)
+    path.write_text(
+        path.read_text(encoding="utf-8").replace(
+            f'"s0ma-lang-dsl[test] == {FIXTURE_VERSION}"', '"s0ma-lang-dsl[test] == 0.16.1"'
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    cut_repo.git("add", "-A")
+    cut_repo.git("commit", "-q", "-m", "stale pin with an extra")
+    before = cut_repo.snapshot()
+
+    result = cut_repo.cut("--write")
+    assert result.returncode == 1
+    assert f"s0ma-lang-dsl[test] == 0.16.1 (expected {FIXTURE_VERSION})" in result.stderr
+    assert cut_repo.snapshot() == before
+
+
+@pytest.mark.parametrize(
+    "unread_form",
+    [
+        "s0ma-lang-mcp=={version}",
+        "s0ma-lang-mcp[a,b] == {version}",
+        "s0ma-lang-mcp ~= {version}",
+    ],
+)
+def test_an_umbrella_pin_the_cut_cannot_read_is_refused_in_both_modes(
+    cut_repo: CutRepo, unread_form: str
+) -> None:
+    """A pin in a form the cut does not read would stay behind while the other
+    three move. With fewer than four exact pins the cut stops and says so."""
+    path = cut_repo.pyproject(UMBRELLA)
+    path.write_text(
+        path.read_text(encoding="utf-8").replace(
+            f'"s0ma-lang-mcp == {FIXTURE_VERSION}"',
+            '"' + unread_form.format(version=FIXTURE_VERSION) + '"',
+        ),
+        encoding="utf-8",
+        newline="\n",
+    )
+    cut_repo.git("add", "-A")
+    cut_repo.git("commit", "-q", "-m", "a pin the cut cannot read")
+    before = cut_repo.snapshot()
+
+    for args in ((), ("--write",)):
+        result = cut_repo.cut(*args)
+        assert result.returncode == 1
+        assert f"expected {len(PINNED)} exact pins of the umbrella, found 3" in result.stderr
+        assert cut_repo.snapshot() == before
 
 
 def test_write_carves_the_changelog_byte_exactly(cut_repo: CutRepo) -> None:
