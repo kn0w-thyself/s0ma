@@ -876,8 +876,9 @@ def _tool_s0ma_table_with_bootstrap(
     authoring: str,
     bootstrap_files: tuple[str, ...],
     feedback: str | None = None,
+    health_command: str = "",
 ) -> str:
-    """The ``[tool.s0ma]`` table plus an optional ``bootstrap_files`` list.
+    """The ``[tool.s0ma]`` table plus optional ``bootstrap_files`` and ``health_command``.
 
     STD-M7: archetypes with a sanctioned plain-Python bootstrap (service,
     cli) declare it in ``[tool.s0ma].bootstrap_files`` so ``s0ma verify``
@@ -885,12 +886,16 @@ def _tool_s0ma_table_with_bootstrap(
     ``UNKNOWN`` (drift) — the boundary doctrine made executable. The base
     key order (STD-M4/M6) is preserved; ``bootstrap_files`` is appended
     after it. Archetypes without a bootstrap (library) get the base table.
+    An archetype that names a ``health_command`` gets it last, so the
+    build's closing line points at it.
     """
     table = _tool_s0ma_table(mode, authoring, feedback)
-    if not bootstrap_files:
-        return table
-    rendered = ", ".join(f'"{entry}"' for entry in bootstrap_files)
-    return f"{table}bootstrap_files = [{rendered}]\n"
+    if bootstrap_files:
+        rendered = ", ".join(f'"{entry}"' for entry in bootstrap_files)
+        table = f"{table}bootstrap_files = [{rendered}]\n"
+    if health_command:
+        table = f"{table}health_command = {json.dumps(health_command)}\n"
+    return table
 
 
 def _scaffold_archetype(
@@ -954,7 +959,11 @@ def _scaffold_archetype(
 
     # ---- pyproject: byte-preserving append, or a minimal create.
     table = _tool_s0ma_table_with_bootstrap(
-        mode, authoring, archetype.bootstrap_files, FEEDBACK_POSTURE
+        mode,
+        authoring,
+        archetype.bootstrap_files,
+        FEEDBACK_POSTURE,
+        archetype.health_command,
     )
     if pyproject.is_file():
         original = pyproject.read_bytes()
@@ -1134,51 +1143,58 @@ def _print_archetype_summary(
     bootstrap_files = [_rel(p) for p, _ in planned if p.suffix == ".py"]
 
     if json_mode:
-        print(
-            json.dumps(
-                {
-                    "ok": True,
-                    "project_root": str(target),
-                    "project_name": project_name,
-                    "template": archetype.name,
-                    "mode": mode,
-                    "authoring": authoring,
-                    "feedback": FEEDBACK_POSTURE,
-                    "features": list(archetype.features),
-                    "pyproject": {
-                        "path": str(pyproject),
-                        "action": pyproject_action,
-                    },
-                    "sources": s0ma_files,
-                    "bootstrap_files": bootstrap_files,
-                    "agents_file": {"path": str(agents_path)},
-                    "claude_file": {"path": str(claude_path)},
-                    "feedback_skill": {
-                        "path": str(skill_path),
-                        "created": skill_created,
-                    },
-                    "launch_config": {
-                        "path": str(launch_path),
-                        "created": launch_created,
-                    },
-                    "build": {
-                        "build_dir": str(build_dir),
-                        "modules": built_modules,
-                        "manifest_path": str(build_dir / manifest_filename),
-                    },
-                    "teaches": archetype.teaches,
-                    "next_steps": {
-                        "check": check_command,
-                        "build": "s0ma build src",
-                        "test": "s0ma test",
-                        "mcp_hint": MCP_HINT,
-                        "getting_started": GETTING_STARTED_URI,
-                        "learn": LEARN_HINT,
-                    },
-                },
-                indent=2,
-            )
-        )
+        report: dict[str, Any] = {
+            "ok": True,
+            "project_root": str(target),
+            "project_name": project_name,
+            "template": archetype.name,
+            "mode": mode,
+            "authoring": authoring,
+            "feedback": FEEDBACK_POSTURE,
+            "features": list(archetype.features),
+            "pyproject": {
+                "path": str(pyproject),
+                "action": pyproject_action,
+            },
+            "sources": s0ma_files,
+            "bootstrap_files": bootstrap_files,
+            "agents_file": {"path": str(agents_path)},
+            "claude_file": {"path": str(claude_path)},
+            "feedback_skill": {
+                "path": str(skill_path),
+                "created": skill_created,
+            },
+            "launch_config": {
+                "path": str(launch_path),
+                "created": launch_created,
+            },
+            "build": {
+                "build_dir": str(build_dir),
+                "modules": built_modules,
+                "manifest_path": str(build_dir / manifest_filename),
+            },
+            "teaches": archetype.teaches,
+            "next_steps": {
+                "check": check_command,
+                "build": "s0ma build src",
+                "test": "s0ma test",
+                "mcp_hint": MCP_HINT,
+                "getting_started": GETTING_STARTED_URI,
+                "learn": LEARN_HINT,
+            },
+        }
+        if archetype.steps:
+            # What a sample declared as steps says about itself.
+            from s0ma_dsl.cli.templates import count_parts
+
+            report["called"] = archetype.called
+            report["example_question"] = archetype.example_question
+            report["steps"] = [
+                {"number": number, "name": step.name, "intent": step.intent}
+                for number, step in enumerate(archetype.steps, start=1)
+            ]
+            report["parts"] = count_parts(archetype.files)
+        print(json.dumps(report, indent=2))
         return EXIT_SUCCESS
 
     summary = (
