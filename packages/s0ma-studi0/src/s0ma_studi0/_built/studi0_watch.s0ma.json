@@ -399,7 +399,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:d4f520972c9a55a14d7e61283d071075b55f6199f1339f01e491898720fef1ee",
+    "content_hash": "sha256:f44e758d0b634d3af9d0e0eff8b09da266a98161ffe21b917226d0f8c4af0ca3",
     "exports_helpers": {
       "state": "none"
     },
@@ -412,9 +412,9 @@
     "source_file": "s0ma_src/studi0_watch.s0ma",
     "tags": [],
     "transpiled_file": "studi0_watch.py",
-    "version": "0.23.0"
+    "version": "0.23.1"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:d4f520972c9a55a1",
+  "source_hash": "sha256:f44e758d0b634d3a",
   "transpiler_version": "1.0.0"
 }

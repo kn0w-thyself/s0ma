@@ -413,6 +413,14 @@ ALLOWLIST: tuple[Historical, ...] = (
         "field was dropped in 0.8.0",
         "dates when a field was removed (0.8.0); bumping it would make the sentence false",
     ),
+    # --- docs/RELEASING.md, the first run of the Claude plugin ---
+    # The Windows Desktop check names the release whose install failed there.
+    Historical(
+        "docs/RELEASING.md",
+        "0.23.0",
+        "In 0.23.0 it failed there",
+        "dates the release whose Windows Desktop install failed (0.23.0); bumping it would make the sentence false",
+    ),
 )
 
 

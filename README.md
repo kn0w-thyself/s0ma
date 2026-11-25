@@ -471,7 +471,7 @@ working.
 
 ## Packages
 
-One repository, one lockstep version (**0.23.0**), four independently
+One repository, one lockstep version (**0.23.1**), four independently
 installable packages, all Apache-2.0:
 
 | Distribution | Module | What it is |

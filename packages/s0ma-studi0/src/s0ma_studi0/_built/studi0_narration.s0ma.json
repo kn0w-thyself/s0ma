@@ -773,7 +773,7 @@
   },
   "integrations": [],
   "module": {
-    "content_hash": "sha256:50d015c57b5d992239c1808cb9ea3051c91ab349c237da5e337385dcb8250bc5",
+    "content_hash": "sha256:6cc6bd199f689f242c89fadedc2f3e79d53eafbd027decef6b8e61f24054fa9d",
     "exports_helpers": {
       "state": "none"
     },
@@ -786,9 +786,9 @@
     "source_file": "s0ma_src/studi0_narration.s0ma",
     "tags": [],
     "transpiled_file": "studi0_narration.py",
-    "version": "0.23.0"
+    "version": "0.23.1"
   },
   "schema_version": "3.0.0",
-  "source_hash": "sha256:50d015c57b5d9922",
+  "source_hash": "sha256:6cc6bd199f689f24",
   "transpiler_version": "1.0.0"
 }

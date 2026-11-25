@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "s0ma-lang"
-version = "0.23.0"
+version = "0.23.1"
 description = "All of s0ma, the software self-knowledge platform, as one install: the runtime, the .s0ma language and its command line, the authoring server and the studi0 viewer, at one version."
 readme = "README.md"
 license = "Apache-2.0"
@@ -35,10 +35,10 @@ dependencies = [
     # version disagree or when a workspace distribution is missing from this
     # list. The DSL pin asks for its `test` extra, which brings the pytest
     # that `s0ma test` runs.
-    "s0ma-lang-core == 0.23.0",
-    "s0ma-lang-dsl[test] == 0.23.0",
-    "s0ma-lang-mcp == 0.23.0",
-    "s0ma-lang-studi0 == 0.23.0",
+    "s0ma-lang-core == 0.23.1",
+    "s0ma-lang-dsl[test] == 0.23.1",
+    "s0ma-lang-mcp == 0.23.1",
+    "s0ma-lang-studi0 == 0.23.1",
 ]
 
 [project.urls]

@@ -11,6 +11,8 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+## [0.23.1] — 2026-11-25
+
 ### Added
 
 - **`s0ma new project <dir> --template agent` lays down a small agent.** It is
@@ -25,10 +27,10 @@ Historical entries describe artifacts as they were named at the time.
   (`ArchetypeStep`), and `Archetype.files_through(n)` and
   `Archetype.through_step(n)` give steps 1 to n. With `--format json` the
   agent's summary adds `called`, `example_question`, its `steps` (number,
-  name, intent), `modules`, and `parts`, both read from the build.
-  The project declares a `health_command`, so its build ends with the command
-  to run. The CLI now reads its `--template` names from the one list in
-  `s0ma_dsl.cli.templates`.
+  name, intent), `modules`, and `parts`. The project declares a
+  `health_command`, so its build ends with the command to run. The CLI now
+  reads its `--template` names from the one list in `s0ma_dsl.cli.templates`.
+
 - **`s0ma new project --step N` lays down a sample one step at a time, and
   `--sample` names the sample for you.** For a template made of steps, such
   as `agent`, `--step N` brings the project to step N and builds it. Step 0 is
@@ -43,7 +45,7 @@ Historical entries describe artifacts as they were named at the time.
   `finished`, `files_written`, and `files_kept`. `--sample` stands for
   `--template` with the sample s0ma uses for a first run (`agent` today), and
   the folder may be left out to use the sample's own name, `support-agent`.
-  The sample's `modules` and `parts` are now read from the built project, so
+  The sample's `modules` and `parts` are read from the built project, so
   they match the build's `Build complete: N module(s)` line and the sum of
   the Components column of `s0ma inspect --all` (14 and 16 for the whole
   agent).
@@ -85,6 +87,7 @@ Historical entries describe artifacts as they were named at the time.
   With JavaScript off, the page says "studi0 draws the component graph with
   JavaScript in this page." Code that imported `s0ma_studi0.sh0w_assets`
   must now import `s0ma_studi0.studi0_assets`.
+
 - **The Claude integration guide says how to load the plugin in the Code tab
   of the Claude Desktop app, and what differs on Windows.** The Code tab has
   no `/plugin` command, and its plugin browser never lists a plugin from a
@@ -93,10 +96,22 @@ Historical entries describe artifacts as they were named at the time.
   the Windows path's backslashes doubled. The release runbook's hand run
   gives the same route for the Desktop app and asks for the Python fix below
   to be confirmed on Windows.
+
 - **PRD v1.20: the graph renderer has no name of its own.** The PRD's
   description of studi0 and its glossary no longer use the name sh0w: studi0
   draws the graph itself, the glossary's sh0w row is gone, and its studi0 row
   says what studi0 draws. No requirement changes.
+
+- **The first-run check covers a machine where uv has to download the
+  Python.** A new `python-download` job on Linux, macOS and Windows runs the
+  newest uv with nothing naming an interpreter and only uv's own downloaded
+  Pythons allowed, then installs s0ma with no key through the plugin's
+  `s0ma-launch` from wheels built in the job. It checks that the
+  environment's Python is in the supported range and lives under the leg's
+  s0ma home, that uv's default Python folder gained nothing, and that `new
+  project`, `check`, `build .` and `test` pass. The run started by hand after
+  a release now waits, for up to five minutes and saying so at each wait,
+  when the package index does not show a version published moments before.
 
 ### Removed
 
@@ -131,17 +146,6 @@ Historical entries describe artifacts as they were named at the time.
   running; `s0ma-launch install` builds it again on a supported one. The
   plugin's README, its privacy notes, the trust model, the Claude integration
   guide and the uninstall guide say which Python is used and where it goes.
-
-- **The first-run check covers a machine where uv has to download the
-  Python.** A new `python-download` job on Linux, macOS and Windows runs the
-  newest uv with nothing naming an interpreter and only uv's own downloaded
-  Pythons allowed, then installs s0ma with no key through the plugin's
-  `s0ma-launch` from wheels built in the job. It checks that the
-  environment's Python is in the supported range and lives under the leg's
-  s0ma home, that uv's default Python folder gained nothing, and that `new
-  project`, `check`, `build .` and `test` pass. The run started by hand after
-  a release now waits, for up to five minutes and saying so at each wait,
-  when the package index does not show a version published moments before.
 
 - **`s0ma test` runs right after `pip install s0ma-lang`.** Before, a new
   project's `s0ma test` stopped with exit code 2 because nothing had installed
