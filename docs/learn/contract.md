@@ -70,5 +70,5 @@ nerve <name> :: <LAYER>
 ## Identity
 
 - Topic id: `concept:contract`
-- Release: `0.23.1`
+- Release: `0.23.1 (preview)`
 - Documentation snapshot: `sha256:adbfb3b65aab099d`
