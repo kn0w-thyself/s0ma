@@ -93,6 +93,10 @@ Historical entries describe artifacts as they were named at the time.
   the Windows path's backslashes doubled. The release runbook's hand run
   gives the same route for the Desktop app and asks for the Python fix below
   to be confirmed on Windows.
+- **PRD v1.20: the graph renderer has no name of its own.** The PRD's
+  description of studi0 and its glossary no longer use the name sh0w: studi0
+  draws the graph itself, the glossary's sh0w row is gone, and its studi0 row
+  says what studi0 draws. No requirement changes.
 
 ### Removed
 
