@@ -204,10 +204,6 @@ body {
   min-width: 0;
 }
 
-.banner-modules {
-  font-weight: 600;
-}
-
 .banner-dismiss {
   margin-left: auto;
 }
@@ -223,13 +219,6 @@ body {
   letter-spacing: 0.04em;
   text-transform: lowercase;
   white-space: nowrap;
-}
-
-.chip--stale {
-  border-color: var(--amber-line);
-  background: var(--surface);
-  color: var(--amber);
-  font-weight: 600;
 }
 
 .chip--pending {

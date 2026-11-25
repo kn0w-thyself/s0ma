@@ -51,7 +51,11 @@ Pinned here:
   stops it and `fit` starts it again, a build makes room before it lands,
   the ease is one named length done in script and asks about reduced
   motion first, and the marker says in fixed words how many of the newest
-  build's parts are out of view and which way.
+  build's parts are out of view and which way;
+* each view toggle has something to act on or is hidden: on the real
+  pipeline graphs the tests toggle has parts and the framework toggle is
+  hidden, on the synthetic fixture the framework toggle shows, and the
+  stale banner says the decided words.
 
 Whether the graph *looks* right is not decidable here; that is the
 browser pass over ``tests/fixtures/dev_harness.html``.
@@ -938,11 +942,12 @@ def test_the_empty_state_waits_for_the_server() -> None:
 
 
 def test_the_empty_canvas_draws_the_standard_bands() -> None:
-    """Every layer band, in the usual order, the framework one on its toggle."""
+    """Every layer band in the usual order, except an empty FRAMEWORK one."""
     app_js = read(APP_JS)
     layout = _between(app_js, "function emptyLayout(", "\n}\n")
     assert "LAYER_ORDER.length" in layout
-    assert 'LAYER_ORDER[i] === "FRAMEWORK" && !state.toggles.framework' in layout
+    assert 'if (LAYER_ORDER[i] === "FRAMEWORK") {\n      continue;' in layout
+    assert "state.toggles.framework" not in layout
     empty = _between(app_js, "function renderEmptyState(", "\n}\n")
     assert empty.index("state.layout = emptyLayout();") < empty.index("renderBands(state.layout);")
 
@@ -1486,3 +1491,91 @@ def test_a_reading_holds_what_is_on_screen_still_in_pixels() -> None:
         body = _between(app_js, fn, "\n}\n")
         assert "followTheLayout();" in body, fn
         assert "captureScreenHold" not in body, fn
+
+
+# ------------------------------------------------------ the toolbar toggles
+
+#: The real graphs: the app ``s0ma new project --template pipeline``
+#: scaffolds, at each of its three builds.
+REAL_GRAPHS = tuple(sorted((FIXTURE_DIR / "pipeline_builds").glob("build_*.graph.json")))
+
+#: The banner and the inspector note for a source changed after the build.
+STALE_WORDS = "Changes detected. View updates after next build."
+
+
+def _test_and_doc_types(app_js: str) -> set[str]:
+    """The declaration types the ``tests and docs`` toggle hides."""
+    block = _between(app_js, "var TEST_AND_DOC_TYPES = {", "};")
+    return set(re.findall(r"(\w+): true,", block))
+
+
+def _toggle_targets(graph: dict[str, object], app_js: str) -> dict[str, bool]:
+    """For each view toggle, whether ``graph`` holds something it acts on.
+
+    The same two rules ``isComponentVisible`` and ``isModuleVisible``
+    apply, read over the graph document the page receives: the tests toggle
+    acts on a part whose declaration type is in ``TEST_AND_DOC_TYPES``, the
+    framework toggle on a module or part whose layer is ``FRAMEWORK``, the
+    two things ``hasFrameworkLayer`` looks for.
+    """
+    components = graph["components"]
+    modules = graph["modules"]
+    assert isinstance(components, dict) and isinstance(modules, list)
+    hidden_types = _test_and_doc_types(app_js)
+    return {
+        "tests": any(c["declaration_type"] in hidden_types for c in components.values()),
+        "framework": any(m["layer"] == "FRAMEWORK" for m in modules)
+        or any(c.get("layer") == "FRAMEWORK" for c in components.values()),
+    }
+
+
+def test_the_view_toggles_are_the_two_this_file_checks() -> None:
+    """A new view toggle has to be added to the check below."""
+    shell = _between(read(APP_JS), "function buildShell(", "\n}\n")
+    assert re.findall(r"ui\.(toggle\w+) = toolbarButton\(", shell) == [
+        "toggleTests",
+        "toggleFramework",
+    ]
+
+
+def test_the_framework_toggle_shows_only_with_something_to_act_on() -> None:
+    """The toggle starts hidden, and each render shows it only for a FRAMEWORK module."""
+    app_js = read(APP_JS)
+    shell = _between(app_js, "function buildShell(", "\n}\n")
+    assert "ui.toggleFramework.hidden = true;" in shell
+    assert "ui.toggleTests.hidden" not in app_js
+    sync = _between(app_js, "function syncViewToggles(", "\n}\n")
+    assert "ui.toggleFramework.hidden = !hasFrameworkLayer(state.model);" in sync
+    render = _between(app_js, "function render(", "\n}\n")
+    # Before the early return for a project with nothing built.
+    assert render.index("syncViewToggles();") < render.index("renderEmptyState();")
+    rule = _between(app_js, "function hasFrameworkLayer(", "\n}\n")
+    assert "if (!model) {\n    return false;" in rule
+    assert 'model.modules[name].layer === "FRAMEWORK"' in rule
+    assert 'model.components[ids[i]].layer === "FRAMEWORK"' in rule
+
+
+@pytest.mark.parametrize("path", REAL_GRAPHS, ids=lambda p: p.name)
+def test_on_a_real_graph_every_toggle_acts_or_is_hidden(path: Path) -> None:
+    """The tests toggle has parts to act on, and the framework toggle is hidden."""
+    targets = _toggle_targets(json.loads(read(path)), read(APP_JS))
+    # The tests toggle is never hidden, so it must have something to act on.
+    assert targets["tests"], path.name
+    # No real project has a FRAMEWORK module, so hasFrameworkLayer is false
+    # and the toggle is hidden.
+    assert not targets["framework"], path.name
+
+
+def test_on_the_synthetic_fixture_the_framework_toggle_shows() -> None:
+    targets = _toggle_targets(json.loads(read(FIXTURE_PAYLOAD)), read(APP_JS))
+    assert targets == {"tests": True, "framework": True}
+
+
+def test_the_stale_banner_says_the_decided_words() -> None:
+    app_js = read(APP_JS)
+    assert 'var STALE_TEXT = "' + STALE_WORDS + '";' in app_js
+    banners = _between(app_js, "function renderBanners(", "\n}\n")
+    assert 'el("span", "banner-text", STALE_TEXT)' in banners
+    assert app_js.count('el("p", "inspector-note", STALE_TEXT)') == 2
+    assert "changed since the last build" not in app_js
+    assert "run s0ma build to refresh" not in app_js

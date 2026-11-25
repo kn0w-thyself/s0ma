@@ -185,10 +185,10 @@ agent says it is doing.
   lands. Ask your agent whether it built the project, and ask it to check and
   build if it did not. Then make sure studi0 is open on the same folder your
   agent is working in.
-- **A banner says a module "has changed since the last build".** Its source
-  file changed after the last build, so the page is still showing that last
-  build. This is normal while your agent is partway through a request. The
-  banner goes when the next build lands.
+- **A banner says "Changes detected. View updates after next build."** A
+  source file changed after the last build, so the page is still showing that
+  last build. This is normal while your agent is partway through a request.
+  The banner goes when the next build lands.
 - **The page says "Nothing is built yet."** The project has no build for the
   page to draw. Ask your agent to build it, or run `s0ma build` in the project
   folder yourself. The page repaints as soon as the build lands.
