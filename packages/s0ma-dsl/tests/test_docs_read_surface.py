@@ -494,6 +494,42 @@ class TestPackagedMirrorDrift:
         ).resolve()
 
 
+class TestPackagedEvidenceMirror:
+    """``s0ma_dsl/_docs_snapshot/evidence/`` mirrors ``docs/s0ma_src/evidence/``.
+
+    The worked examples a journey lists, packaged so ``s0ma docs show
+    example:...`` answers from a wheel. If this fails, refresh the copy:
+
+        cp docs/s0ma_src/evidence/*.json \\
+           packages/s0ma-dsl/src/s0ma_dsl/_docs_snapshot/evidence/
+    """
+
+    SOURCE = REPO_ROOT / "docs" / "s0ma_src" / "evidence"
+    MIRROR = PACKAGE_ROOT / "src" / "s0ma_dsl" / docs_commands.PACKAGED_EVIDENCE
+
+    def test_the_mirror_holds_the_same_files_byte_for_byte(self) -> None:
+        if not self.SOURCE.is_dir():  # pragma: no cover - wheel-install context
+            pytest.skip("not a repository checkout: no evidence folder to compare")
+        source = {path.name: path.read_bytes() for path in self.SOURCE.glob("*.json")}
+        mirror = {path.name: path.read_bytes() for path in self.MIRROR.glob("*.json")}
+        assert source, "the checkout holds no worked examples"
+        assert sorted(mirror) == sorted(source), (
+            "the packaged worked examples are not the checkout's set; refresh "
+            "them with: cp docs/s0ma_src/evidence/*.json "
+            "packages/s0ma-dsl/src/s0ma_dsl/_docs_snapshot/evidence/"
+        )
+        for name, data in source.items():
+            assert mirror[name] == data, (
+                f"_docs_snapshot/evidence/{name} has drifted from "
+                f"docs/s0ma_src/evidence/{name}; refresh it with the cp above"
+            )
+
+    def test_the_mirror_is_what_the_show_command_reads(self) -> None:
+        assert (
+            docs_commands.packaged_evidence_root() / docs_commands.PACKAGED_EVIDENCE
+        ).resolve() == self.MIRROR.resolve()
+
+
 # ---------------------------------------------------------------------------
 # The five parts
 # ---------------------------------------------------------------------------
