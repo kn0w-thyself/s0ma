@@ -89,6 +89,7 @@ TRANSFORMATIONS: tuple[str, ...] = (
     "section order: as declared, which is not the record's field order",
     "a list is written one item to a line after a hyphen",
     "an identifier in a list is written between backticks",
+    "a journey's worked example is followed by the command that shows it",
     "a written form is written inside a fenced block, one line to a line",
     "an empty list is written as one item reading 'none recorded'",
     "a fact whose value is empty and is not identity has its section left out",
@@ -256,6 +257,12 @@ _FOOTER: Mapping[str, str] = {
     "snapshot_hash": "Documentation snapshot",
 }
 
+#: How a journey's worked example is written: its id, then the command that
+#: opens it from an installed toolchain. A reader holding only the wheel
+#: has no other way to know the id is something they can ask for.
+_EXAMPLE_COMMAND = "`{id}`: run `s0ma docs show {id}`"
+_EXAMPLE_LINE = re.compile(r"^`(?P<id>[^`]*)`: run `s0ma docs show (?P=id)`$")
+
 _HEADING_LINE = re.compile(r"^(#{1,6})\s+(.*)$")
 _FOOTER_LINE = re.compile(r"^- ([^:]+): `(.*)`$")
 _BACKTICKED_ITEM = re.compile(r"^`(.*)`$", re.DOTALL)
@@ -297,7 +304,7 @@ def _is_empty(value: FactValue) -> bool:
     return not value if isinstance(value, tuple) else not value.strip()
 
 
-def _section_body(fact: str, value: FactValue) -> list[str]:
+def _section_body(fact: str, value: FactValue, group: str = "") -> list[str]:
     """One section's lines, below its heading."""
     if isinstance(value, str):
         return [value]
@@ -305,6 +312,8 @@ def _section_body(fact: str, value: FactValue) -> list[str]:
         return [_OPEN_FENCE, *(value or (EMPTY_MARKER,)), _FENCE]
     if not value:
         return [f"- {EMPTY_MARKER}"]
+    if fact == "example_ids" and group == "journeys":
+        return [f"- {_EXAMPLE_COMMAND.format(id=item)}" for item in value]
     if fact in _BACKTICKED:
         return [f"- `{item}`" for item in value]
     return [f"- {item}" for item in value]
@@ -334,7 +343,7 @@ def render_human(view: TopicView, spec: PresentationSpec | None = None) -> str:
         elif _is_empty(value) and fact not in IDENTITY_FACTS:
             continue
         else:
-            lines.extend([label, "", *_section_body(fact, value), ""])
+            lines.extend([label, "", *_section_body(fact, value, view.group), ""])
     lines.extend([_RULE, "", IDENTITY_HEADING, "", *footer])
     return "\n".join(lines) + "\n"
 
@@ -389,6 +398,10 @@ def _read_body(fact: str, lines: list[str]) -> FactValue:
     # read-back is a residue that agrees with a page it has corrupted.
     read: list[str] = []
     for item in items:
+        example = _EXAMPLE_LINE.match(item) if fact == "example_ids" else None
+        if example is not None:
+            read.append(example.group("id"))
+            continue
         matched = _BACKTICKED_ITEM.match(item)
         read.append(matched.group(1) if matched is not None else item)
     return tuple(read)
