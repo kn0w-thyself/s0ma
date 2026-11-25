@@ -1,7 +1,7 @@
 {
   "components": {
-    "music::Mood": {
-      "canonical_id": "music::Mood",
+    "inbox::Message": {
+      "canonical_id": "inbox::Message",
       "declaration_type": "cell",
       "fields": {
         "covered_by": {
@@ -9,61 +9,30 @@
         },
         "invariants": {
           "state": "value",
-          "value": "The name is one of lively, tense, calm, or low."
+          "value": "The text is never empty."
         },
         "schema": {
           "state": "value",
-          "value": "name: str, description: str"
+          "value": "text: str, order_number: str | None"
         }
       },
       "intent": {
         "state": "value",
-        "value": "The mood a song puts across, as one word and a short plain description."
+        "value": "One message from a customer: the words they wrote and the order number they gave, if any."
       },
       "kind": "MODEL",
       "layer": "DOMAIN",
       "location": {
-        "end_line": 40,
-        "file": "src/music/music.s0ma",
-        "line": 29,
-        "start_line": 29
-      },
-      "module": "music",
-      "visibility": "PUBLIC"
-    },
-    "music::Track": {
-      "canonical_id": "music::Track",
-      "declaration_type": "cell",
-      "fields": {
-        "covered_by": {
-          "state": "none"
-        },
-        "invariants": {
-          "state": "value",
-          "value": "Loudness runs from 0, silent, to 1, as loud as the song gets."
-        },
-        "schema": {
-          "state": "value",
-          "value": "title: str, artist: str, beats_per_minute: int, loudness: float, major_key: bool"
-        }
-      },
-      "intent": {
-        "state": "value",
-        "value": "A song that is playing: its title, who made it, how fast and how loud it is, and whether it is in a major key."
-      },
-      "kind": "MODEL",
-      "layer": "DOMAIN",
-      "location": {
-        "end_line": 27,
-        "file": "src/music/music.s0ma",
+        "end_line": 24,
+        "file": "src/inbox/inbox.s0ma",
         "line": 13,
         "start_line": 13
       },
-      "module": "music",
+      "module": "inbox",
       "visibility": "PUBLIC"
     },
-    "music::settle_mood": {
-      "canonical_id": "music::settle_mood",
+    "inbox::read_message": {
+      "canonical_id": "inbox::read_message",
       "declaration_type": "nerve",
       "fields": {
         "consumes_via_dict": {
@@ -84,15 +53,15 @@
         },
         "expects": {
           "state": "value",
-          "value": "A song."
+          "value": "The words a customer wrote."
         },
         "forbids": {
           "state": "value",
-          "value": "Never picks a mood outside those four."
+          "value": "Never changes what the customer said; it only tidies the spaces."
         },
         "guarantees": {
           "state": "value",
-          "value": "Gives back exactly one of four moods: lively, tense, calm, or low."
+          "value": "Gives back the message with extra spaces removed, and the order number when it has the form A followed by four digits."
         },
         "interface": {
           "state": "none"
@@ -115,21 +84,21 @@
       },
       "intent": {
         "state": "value",
-        "value": "Decides which mood a song puts across, from how fast and loud it is and its key."
+        "value": "Reads what a customer wrote and picks out the order number."
       },
       "kind": "FUNCTION",
       "layer": "DOMAIN",
       "location": {
-        "end_line": 72,
-        "file": "src/music/music.s0ma",
-        "line": 42,
-        "start_line": 42
+        "end_line": 50,
+        "file": "src/inbox/inbox.s0ma",
+        "line": 26,
+        "start_line": 26
       },
-      "module": "music",
+      "module": "inbox",
       "visibility": "PUBLIC"
     },
-    "music_tests::test_settle_mood_picks_one_of_four": {
-      "canonical_id": "music_tests::test_settle_mood_picks_one_of_four",
+    "inbox_tests::test_read_message_finds_the_order": {
+      "canonical_id": "inbox_tests::test_read_message_finds_the_order",
       "declaration_type": "test",
       "fields": {
         "depends_on": {
@@ -144,27 +113,58 @@
         "tests": {
           "state": "value",
           "value": [
-            "music.settle_mood"
+            "inbox.read_message"
           ]
         }
       },
       "intent": {
         "state": "value",
-        "value": "How fast and loud a song is, and its key, decide which of the four moods it gets."
+        "value": "A message with an order number gives that number back, and one without gives none."
       },
       "kind": null,
       "layer": "DOMAIN",
       "location": {
-        "end_line": 27,
-        "file": "tests/music/music_tests.s0ma",
+        "end_line": 22,
+        "file": "tests/inbox/inbox_tests.s0ma",
         "line": 13,
         "start_line": 13
       },
-      "module": "music_tests",
+      "module": "inbox_tests",
       "visibility": null
     },
-    "player::read_now_playing": {
-      "canonical_id": "player::read_now_playing",
+    "rules::Reply": {
+      "canonical_id": "rules::Reply",
+      "declaration_type": "cell",
+      "fields": {
+        "covered_by": {
+          "state": "none"
+        },
+        "invariants": {
+          "state": "value",
+          "value": "The action is answer or hand_off."
+        },
+        "schema": {
+          "state": "value",
+          "value": "action: str, text: str"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "What the agent does with one message: answer it, or hand it to a person, and the words it sends."
+      },
+      "kind": "MODEL",
+      "layer": "DOMAIN",
+      "location": {
+        "end_line": 24,
+        "file": "src/rules/rules.s0ma",
+        "line": 13,
+        "start_line": 13
+      },
+      "module": "rules",
+      "visibility": "PUBLIC"
+    },
+    "rules::keep_the_rules": {
+      "canonical_id": "rules::keep_the_rules",
       "declaration_type": "nerve",
       "fields": {
         "consumes_via_dict": {
@@ -185,15 +185,15 @@
         },
         "expects": {
           "state": "value",
-          "value": "A turn number, which picks one of the built-in sample songs."
+          "value": "A reply the agent wants to send."
         },
         "forbids": {
           "state": "value",
-          "value": "Never contacts a music player or a music service; the four sample songs are built into this file."
+          "value": "Never lets out a reply that promises a refund."
         },
         "guarantees": {
           "state": "value",
-          "value": "Gives back one of four built-in sample songs, and the same turn number always gives the same song."
+          "value": "Gives back the reply unchanged when it keeps the rules, and a hand-off to a person when it does not."
         },
         "interface": {
           "state": "none"
@@ -216,21 +216,21 @@
       },
       "intent": {
         "state": "value",
-        "value": "Tells the app which song is playing right now."
+        "value": "Checks a reply against the rules before it goes out."
       },
-      "kind": "ADAPTER",
-      "layer": "INFRASTRUCTURE",
+      "kind": "FUNCTION",
+      "layer": "DOMAIN",
       "location": {
-        "end_line": 45,
-        "file": "src/player/player.s0ma",
-        "line": 13,
-        "start_line": 13
+        "end_line": 50,
+        "file": "src/rules/rules.s0ma",
+        "line": 26,
+        "start_line": 26
       },
-      "module": "player",
+      "module": "rules",
       "visibility": "PUBLIC"
     },
-    "player_tests::test_read_now_playing_is_repeatable": {
-      "canonical_id": "player_tests::test_read_now_playing_is_repeatable",
+    "rules_tests::test_keep_the_rules_stops_a_refund_promise": {
+      "canonical_id": "rules_tests::test_keep_the_rules_stops_a_refund_promise",
       "declaration_type": "test",
       "fields": {
         "depends_on": {
@@ -245,23 +245,23 @@
         "tests": {
           "state": "value",
           "value": [
-            "player.read_now_playing"
+            "rules.keep_the_rules"
           ]
         }
       },
       "intent": {
         "state": "value",
-        "value": "The same turn number always gives the same built-in song, and the songs take turns."
+        "value": "A reply that promises a refund becomes a hand-off, and any other reply goes out as it was."
       },
       "kind": null,
-      "layer": "INFRASTRUCTURE",
+      "layer": "DOMAIN",
       "location": {
-        "end_line": 24,
-        "file": "tests/player/player_tests.s0ma",
+        "end_line": 23,
+        "file": "tests/rules/rules_tests.s0ma",
         "line": 13,
         "start_line": 13
       },
-      "module": "player_tests",
+      "module": "rules_tests",
       "visibility": null
     }
   },
@@ -271,32 +271,26 @@
       {
         "origin": "function_signature",
         "relation": "TYPE_USES",
-        "source": "music::settle_mood",
-        "target": "music::Mood"
+        "source": "inbox::read_message",
+        "target": "inbox::Message"
       },
       {
         "origin": "function_signature",
         "relation": "TYPE_USES",
-        "source": "music::settle_mood",
-        "target": "music::Track"
-      },
-      {
-        "origin": "function_signature",
-        "relation": "TYPE_USES",
-        "source": "player::read_now_playing",
-        "target": "music::Track"
+        "source": "rules::keep_the_rules",
+        "target": "rules::Reply"
       }
     ],
     "verification": [
       {
         "origin": "tests_field",
-        "test": "music_tests::test_settle_mood_picks_one_of_four",
-        "validates": "music::settle_mood"
+        "test": "inbox_tests::test_read_message_finds_the_order",
+        "validates": "inbox::read_message"
       },
       {
         "origin": "tests_field",
-        "test": "player_tests::test_read_now_playing_is_repeatable",
-        "validates": "player::read_now_playing"
+        "test": "rules_tests::test_keep_the_rules_stops_a_refund_promise",
+        "validates": "rules::keep_the_rules"
       }
     ]
   },
@@ -305,7 +299,7 @@
     "manifest_found": true,
     "stale_modules": [],
     "status": "fresh",
-    "transpiler_version": "0.22.0"
+    "transpiler_version": "0.23.0"
   },
   "integrations": [],
   "modules": [
@@ -335,7 +329,7 @@
       },
       "intent": {
         "state": "value",
-        "value": "This file is the map of the app: a list of its public parts and a short tour of how they fit together."
+        "value": "This file is the map of the agent: a list of its public parts, written from the agent itself."
       },
       "layer": "PRESENTATION",
       "name": "app_map",
@@ -345,16 +339,97 @@
     },
     {
       "components": [
-        "music::Mood",
-        "music::Track",
-        "music::settle_mood"
+        "inbox::Message",
+        "inbox::read_message"
       ],
       "exports": {
         "state": "value",
         "value": [
-          "Track",
-          "Mood",
-          "settle_mood"
+          "Message",
+          "read_message"
+        ]
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "value",
+          "value": [
+            "dataclasses.dataclass",
+            "re"
+          ]
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "none"
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "This file is what the agent hears: a customer message, and the order number in it if there is one."
+      },
+      "layer": "DOMAIN",
+      "name": "inbox",
+      "source_file": "src/inbox/inbox.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "inbox_tests::test_read_message_finds_the_order"
+      ],
+      "exports": {
+        "state": "value",
+        "value": []
+      },
+      "imports": {
+        "deferred_requires": {
+          "state": "none"
+        },
+        "privileged": [],
+        "requires": {
+          "state": "none"
+        },
+        "runtime_only_requires": {
+          "state": "none"
+        },
+        "soft_requires": {
+          "state": "none"
+        },
+        "uses": {
+          "state": "value",
+          "value": [
+            "inbox.read_message"
+          ]
+        }
+      },
+      "intent": {
+        "state": "value",
+        "value": "Tests for reading a customer message."
+      },
+      "layer": "DOMAIN",
+      "name": "inbox_tests",
+      "source_file": "tests/inbox/inbox_tests.s0ma",
+      "tags": [],
+      "version": "0.1.0"
+    },
+    {
+      "components": [
+        "rules::Reply",
+        "rules::keep_the_rules"
+      ],
+      "exports": {
+        "state": "value",
+        "value": [
+          "Reply",
+          "keep_the_rules"
         ]
       },
       "imports": {
@@ -380,17 +455,17 @@
       },
       "intent": {
         "state": "value",
-        "value": "This file holds what the app knows about music: a song and the mood it settles on."
+        "value": "This file holds what the agent must do and what it must never do."
       },
       "layer": "DOMAIN",
-      "name": "music",
-      "source_file": "src/music/music.s0ma",
+      "name": "rules",
+      "source_file": "src/rules/rules.s0ma",
       "tags": [],
       "version": "0.1.0"
     },
     {
       "components": [
-        "music_tests::test_settle_mood_picks_one_of_four"
+        "rules_tests::test_keep_the_rules_stops_a_refund_promise"
       ],
       "exports": {
         "state": "value",
@@ -413,109 +488,29 @@
         "uses": {
           "state": "value",
           "value": [
-            "music.Track",
-            "music.settle_mood"
+            "rules.Reply",
+            "rules.keep_the_rules"
           ]
         }
       },
       "intent": {
         "state": "value",
-        "value": "Tests for settling on a song's mood."
+        "value": "Tests for the rules the agent keeps."
       },
       "layer": "DOMAIN",
-      "name": "music_tests",
-      "source_file": "tests/music/music_tests.s0ma",
-      "tags": [],
-      "version": "0.1.0"
-    },
-    {
-      "components": [
-        "player::read_now_playing"
-      ],
-      "exports": {
-        "state": "value",
-        "value": [
-          "read_now_playing"
-        ]
-      },
-      "imports": {
-        "deferred_requires": {
-          "state": "none"
-        },
-        "privileged": [],
-        "requires": {
-          "state": "none"
-        },
-        "runtime_only_requires": {
-          "state": "none"
-        },
-        "soft_requires": {
-          "state": "none"
-        },
-        "uses": {
-          "state": "value",
-          "value": [
-            "music.Track"
-          ]
-        }
-      },
-      "intent": {
-        "state": "value",
-        "value": "This file finds out what is playing right now."
-      },
-      "layer": "INFRASTRUCTURE",
-      "name": "player",
-      "source_file": "src/player/player.s0ma",
-      "tags": [],
-      "version": "0.1.0"
-    },
-    {
-      "components": [
-        "player_tests::test_read_now_playing_is_repeatable"
-      ],
-      "exports": {
-        "state": "value",
-        "value": []
-      },
-      "imports": {
-        "deferred_requires": {
-          "state": "none"
-        },
-        "privileged": [],
-        "requires": {
-          "state": "none"
-        },
-        "runtime_only_requires": {
-          "state": "none"
-        },
-        "soft_requires": {
-          "state": "none"
-        },
-        "uses": {
-          "state": "value",
-          "value": [
-            "player.read_now_playing"
-          ]
-        }
-      },
-      "intent": {
-        "state": "value",
-        "value": "Tests for finding out what is playing."
-      },
-      "layer": "INFRASTRUCTURE",
-      "name": "player_tests",
-      "source_file": "tests/player/player_tests.s0ma",
+      "name": "rules_tests",
+      "source_file": "tests/rules/rules_tests.s0ma",
       "tags": [],
       "version": "0.1.0"
     }
   ],
   "nodes": [
-    "music::Mood",
-    "music::Track",
-    "music::settle_mood",
-    "music_tests::test_settle_mood_picks_one_of_four",
-    "player::read_now_playing",
-    "player_tests::test_read_now_playing_is_repeatable"
+    "inbox::Message",
+    "inbox::read_message",
+    "inbox_tests::test_read_message_finds_the_order",
+    "rules::Reply",
+    "rules::keep_the_rules",
+    "rules_tests::test_keep_the_rules_stops_a_refund_promise"
   ],
   "schema": "s0ma-graph@2"
 }

@@ -1495,9 +1495,14 @@ def test_a_reading_holds_what_is_on_screen_still_in_pixels() -> None:
 
 # ------------------------------------------------------ the toolbar toggles
 
-#: The real graphs: the app ``s0ma new project --template pipeline``
-#: scaffolds, at each of its three builds.
-REAL_GRAPHS = tuple(sorted((FIXTURE_DIR / "pipeline_builds").glob("build_*.graph.json")))
+#: The real graphs: the agent sample ``s0ma new project --sample`` lays
+#: down, at each of its five steps, then with one rule changed by hand
+#: (``tests/test_agent_builds.py``).
+REAL_GRAPHS = tuple(sorted((FIXTURE_DIR / "agent_builds").glob("build_*.graph.json")))
+
+#: How many real graphs there are. A moved or renamed folder finds none,
+#: and the tests over them would then skip; this number makes it fail.
+REAL_GRAPH_COUNT = 6
 
 #: The banner and the inspector note for a source changed after the build.
 STALE_WORDS = "Changes detected. View updates after next build."
@@ -1527,6 +1532,10 @@ def _toggle_targets(graph: dict[str, object], app_js: str) -> dict[str, bool]:
         "framework": any(m["layer"] == "FRAMEWORK" for m in modules)
         or any(c.get("layer") == "FRAMEWORK" for c in components.values()),
     }
+
+
+def test_the_real_graphs_are_all_found() -> None:
+    assert len(REAL_GRAPHS) == REAL_GRAPH_COUNT, [p.name for p in REAL_GRAPHS]
 
 
 def test_the_view_toggles_are_the_two_this_file_checks() -> None:

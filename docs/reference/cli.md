@@ -713,7 +713,7 @@ The handler this command reaches was transcribed from the dispatch — argparse 
 | `--quiet`, `-q` | no value | `false` | — |
 | `--sample` | no value | `false` | — |
 | `--step` | a value | — | — |
-| `--template` | a value | — | `service`, `library`, `cli`, `pipeline`, `agent` |
+| `--template` | a value | — | `service`, `library`, `cli`, `agent` |
 
 ### s0ma score
 

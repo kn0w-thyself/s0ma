@@ -80,6 +80,14 @@ Historical entries describe artifacts as they were named at the time.
   to the template's own `rules` files. The worked examples no longer copy
   studi0's test sources.
 
+### Removed
+
+- **`s0ma new project --template pipeline` is no longer accepted.** The music
+  sample it laid down is gone, and the command now refuses the name like any
+  unknown template. Use `--template agent`, or `--sample`, for a small worked
+  example. studi0's test fixtures and the plugin's new-project skill use the
+  agent sample in its place.
+
 ### Fixed
 
 - **The Claude Code plugin's first install uses a Python s0ma supports, and
