@@ -986,7 +986,7 @@ class TestFeedbackScaffold:
 
 
 # ---------------------------------------------------------------------------
-# STD-M7: --template archetypes (service / library / cli / pipeline)
+# STD-M7: --template archetypes (service / library / cli / agent)
 # ---------------------------------------------------------------------------
 
 
@@ -1037,21 +1037,6 @@ class TestArchetypeTemplates:
                     "greeting_application_tests",
                     "greeting_domain",
                     "greeting_domain_tests",
-                ],
-            ),
-            (
-                "pipeline",
-                ["player", "music", "coach", "page"],
-                [
-                    "app_map",
-                    "coach",
-                    "coach_tests",
-                    "music",
-                    "music_tests",
-                    "page",
-                    "page_tests",
-                    "player",
-                    "player_tests",
                 ],
             ),
         ],
@@ -1175,53 +1160,6 @@ class TestArchetypeTemplates:
         assert 'modules["console_presentation"].dispatch' in shim
         pyproject = (target / "pyproject.toml").read_text(encoding="utf-8")
         assert 'bootstrap_files = ["bootstrap/cli.py"]' in pyproject
-
-    def test_pipeline_is_one_module_per_layer_and_runs(
-        self, cli: S0maCLI, tmp_path: Path
-    ) -> None:
-        """The pipeline archetype has one module per layer, and its parts run.
-
-        Its own tests pass under ``s0ma test``, and the bootstrap prints the
-        page for a built-in song. The bootstrap runs in a subprocess so the
-        built modules do not register into this process's registry.
-        """
-        target = tmp_path / "pipe"
-        assert cli.run(
-            ["new", "project", str(target), "--template", "pipeline",
-             "--quiet"]
-        ) == EXIT_SUCCESS
-
-        layers = {
-            "player": "INFRASTRUCTURE",
-            "music": "DOMAIN",
-            "coach": "APPLICATION",
-            "page": "PRESENTATION",
-        }
-        for module, layer in layers.items():
-            source = (target / "src" / module / f"{module}.s0ma").read_text(
-                encoding="utf-8"
-            )
-            assert source.startswith(f"module {module}\n    layer: {layer}\n")
-        # The watcher observes the mood nerve, and the observation resolves.
-        coach_py = (target / "build" / "coach.py").read_text(encoding="utf-8")
-        assert '"resolved_observes": ["music::settle_mood"]' in coach_py
-        pyproject = (target / "pyproject.toml").read_text(encoding="utf-8")
-        assert 'bootstrap_files = ["bootstrap/main.py"]' in pyproject
-
-        assert cli.run(
-            ["--project-root", str(target), "test", "--quiet"]
-        ) == EXIT_SUCCESS
-
-        result = subprocess.run(
-            [sys.executable, str(target / "bootstrap" / "main.py"), "1"],
-            capture_output=True,
-            text=True,
-            timeout=120,
-            check=False,
-        )
-        assert result.returncode == 0, result.stderr
-        assert "now playing: Night Drive" in result.stdout
-        assert "<h1>The mood is tense</h1>" in result.stdout
 
     def test_archetype_tests_run_green(
         self, cli: S0maCLI, tmp_path: Path
@@ -1577,6 +1515,18 @@ class TestAgentTemplate:
         (template,) = (a for a in new._actions if a.dest == "template")
         assert list(template.choices) == list(TEMPLATE_CHOICES)
         assert "agent" in TEMPLATE_CHOICES
+
+    def test_a_removed_template_is_refused_like_any_unknown_name(
+        self, cli: S0maCLI, tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """``pipeline`` was removed, so it is refused and nothing is written."""
+        target = tmp_path / "x"
+        with pytest.raises(SystemExit) as exc_info:
+            cli.run(["new", "project", str(target), "--template", "pipeline"])
+        assert exc_info.value.code == EXIT_USAGE_ERROR
+        assert "invalid choice: 'pipeline'" in capsys.readouterr().err
+        assert not target.exists()
 
 
 #: What ``s0ma build`` and ``s0ma inspect --all`` show after steps 0 to N:
