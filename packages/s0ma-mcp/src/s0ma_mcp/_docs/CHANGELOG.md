@@ -48,6 +48,24 @@ Historical entries describe artifacts as they were named at the time.
   the Components column of `s0ma inspect --all` (14 and 16 for the whole
   agent).
 
+### Changed
+
+- **The Claude Code plugin's "show me" is a walk through the agent sample.**
+  `/s0ma:start` used to build a fixed music sample in one go and open studi0
+  on the finished project. Now it says what s0ma is, lays down s0ma's own
+  first-run sample at step 0, opens studi0 on the empty project, and builds
+  one step at a time, saying each step's line and waiting for "next" or
+  "finish". After the last step it checks the project, invites a question,
+  and answers it from the project's own model (`inspect_module`, or
+  `s0ma inspect` in the session that installed s0ma), not from its code. The
+  skill holds none of the sample's words: each one comes from the JSON
+  `s0ma new project --sample --step N` prints, which now also carries the
+  sample's `noun` (`agent`). A second "show me" in the same folder picks up
+  at the step the sample is on: a refusal to go back a step now also carries
+  `of`, the number of steps. The agent sample's run hint now lines up with
+  the other next steps. The first-run check now drives the walk with the
+  installed s0ma, twice.
+
 ### Fixed
 
 - **The Claude Code plugin's first install uses a Python s0ma supports, and
