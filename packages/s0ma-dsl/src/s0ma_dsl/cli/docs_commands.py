@@ -1065,7 +1065,9 @@ TERMINAL_ENVELOPE: tuple[str, ...] = (
 TERMINAL_TRANSFORMATIONS: tuple[str, ...] = (
     "the page is the human channel's, rendered verbatim",
     "the build identity is written as the first line, before the page",
-    "the committed page this topic is written on is named as the last line",
+    "the last line names where to read more: a repository path from a "
+    "checkout, or a s0ma docs show command or the page's address on GitHub "
+    "from an installed wheel",
     "prose is not wrapped: the terminal wraps it, so the bytes do not "
     "depend on the terminal's width",
     "line endings: line feed, with exactly one at the end",
