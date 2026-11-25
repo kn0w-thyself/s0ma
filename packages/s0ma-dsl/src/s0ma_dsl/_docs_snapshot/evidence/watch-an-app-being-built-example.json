@@ -21,7 +21,7 @@
         "surface": "studi0:action/api/graph"
       },
       {
-        "reason": "The poll answers only while the viewer is running, so it shares the launch step's boundary. What it reports is whether a newer build has landed, and the growth transcript for this path lands three builds one after another and reads the graph back after each, which is what the poll would notice.",
+        "reason": "The poll answers only while the viewer is running, so it shares the launch step's boundary. What it reports is whether a newer build has landed, and the growth transcript for this path lands six builds one after another and reads the graph back after each, which is what the poll would notice.",
         "surface": "studi0:action/api/state"
       }
     ],
@@ -31,8 +31,7 @@
         "new",
         "project",
         "example",
-        "--template",
-        "pipeline"
+        "--sample"
       ],
       "kind": "new-project",
       "workdir": "example"
@@ -53,35 +52,43 @@
         "stdout": [
           {
             "match": "contains",
-            "text": "\"coach::watch_swings\": {"
+            "text": "\"inbox::read_message\": {"
           },
           {
             "match": "contains",
-            "text": "\"music::settle_mood\": {"
+            "text": "\"rules::keep_the_rules\": {"
           },
           {
             "match": "contains",
-            "text": "\"value\": \"The scores for how a song sounds.\""
+            "text": "\"value\": \"A reply the agent wants to send.\""
           },
           {
             "match": "contains",
-            "text": "\"value\": \"Never picks a mood outside those four.\""
+            "text": "\"value\": \"Never lets out a reply that promises a refund.\""
           },
           {
             "match": "contains",
-            "text": "\"value\": \"Gives back exactly one of four moods: lively, tense, calm, or low.\""
+            "text": "\"value\": \"Gives back the reply unchanged when it keeps the rules, and a hand-off to a person when it does not.\""
           },
           {
             "match": "contains",
-            "text": "\"value\": \"Decides which mood a song puts across, from how it sounds.\""
+            "text": "\"value\": \"Checks a reply against the rules before it goes out.\""
           },
           {
             "match": "contains",
-            "text": "\"page::song_to_page\": {"
+            "text": "\"scripted_model::ScriptedModel\": {"
           },
           {
             "match": "contains",
-            "text": "\"player::read_now_playing\": {"
+            "text": "\"tools::look_up_order\": {"
+          },
+          {
+            "match": "contains",
+            "text": "\"triage::decide\": {"
+          },
+          {
+            "match": "contains",
+            "text": "\"watch::watch_replies\": {"
           },
           {
             "match": "line",

@@ -63,4 +63,4 @@ Do not read presence in the index as permission to call something. The index ans
 
 - Topic id: `concept:registry-snapshot`
 - Release: `0.23.0 (preview)`
-- Documentation snapshot: `sha256:363ee5a63303230e`
+- Documentation snapshot: `sha256:c64046d3e612bca7`
