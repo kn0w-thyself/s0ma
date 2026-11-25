@@ -11,6 +11,25 @@ Historical entries describe artifacts as they were named at the time.
 
 ## [Unreleased]
 
+### Added
+
+- **`s0ma new project <dir> --template agent` lays down a small agent.** It is
+  a support inbox: it reads a customer message, then answers from a short
+  list of common answers, looks up an order with a tool, or hands off to a
+  person, and it never promises a refund. Its model sits behind a port with a
+  scripted stand-in, so the project checks, builds, tests, and runs with no
+  account, no key, and no network. The sample is declared as five ordered
+  steps (what it hears, what it must and must never do, its tools, how it
+  decides, and the check that watches it), and the files of steps 1 to N make
+  a clean project for every N. A template can now declare its files as steps
+  (`ArchetypeStep`), and `Archetype.files_through(n)` and
+  `Archetype.through_step(n)` give steps 1 to n. With `--format json` the
+  agent's summary adds `called`, `example_question`, its `steps` (number,
+  name, intent), and `parts`, the count of its cells, nerves, and ganglia.
+  The project declares a `health_command`, so its build ends with the command
+  to run. The CLI now reads its `--template` names from the one list in
+  `s0ma_dsl.cli.templates`.
+
 ### Fixed
 
 - **The Claude Code plugin's first install uses a Python s0ma supports, and
