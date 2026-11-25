@@ -199,6 +199,8 @@ It exits 0 when it has exported; 1 when it refused and wrote nothing (uncommitte
 /plugin install s0ma@kn0wthyself
 ```
 
+Those two commands are for the terminal. The Desktop app's Code tab has no `/plugin` command: there, add the two settings entries that [the Claude guide](guides/claude-integration.md#in-the-code-tab-of-the-claude-desktop-app) shows, with the exported folder as the path, since it holds `.claude-plugin/marketplace.json` at its top. Then close the app and open it again. On Windows the settings file is `%USERPROFILE%\.claude\settings.json`, and every backslash in the path is doubled, as in `"C:\\Users\\Public\\s0ma-X.Y.Z"`.
+
 **The steps**, and what to look for at each:
 
 1. **Install the plugin** from that folder, as just described. No settings dialog opens and nothing asks for a key.
@@ -219,6 +221,8 @@ It exits 0 when it has exported; 1 when it refused and wrote nothing (uncommitte
 8. **Remove s0ma** by following [Removing s0ma](uninstall.md). Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
 
 **On Windows without Git for Windows**, the session line and the edit checks say nothing, and no hook error appears.
+
+**On Windows in the Desktop app**, confirm that the install at step 3 succeeds. In 0.23.0 it failed there: uv downloaded the newest Python there was, which s0ma is not tested on, and inside a packaged app the writes to uv's own Python folder were redirected, after which every `s0ma-launch` command failed. The launcher now asks uv for a Python s0ma supports and keeps it in `python` under s0ma's home. Afterwards `s0ma-launch status` answers, and `%USERPROFILE%\.s0ma\python` holds a Python from 3.11 to 3.13.
 
 Write down the host, the system, the Claude version and the s0ma version for each pass, and stop the publication at the first step that does not look as described.
 
