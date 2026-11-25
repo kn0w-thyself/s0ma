@@ -711,7 +711,7 @@ The handler this command reaches was transcribed from the dispatch — argparse 
 | `--name` | a value | — | — |
 | `--output-dir`, `-o` | a value | `.` | — |
 | `--quiet`, `-q` | no value | `false` | — |
-| `--template` | a value | — | `service`, `library`, `cli`, `pipeline` |
+| `--template` | a value | — | `service`, `library`, `cli`, `pipeline`, `agent` |
 
 ### s0ma score
 

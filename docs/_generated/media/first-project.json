@@ -4,7 +4,7 @@
     "journey": "journey:first-project",
     "published_by": "doc:guide/first-project",
     "release": "0.23.0 (preview)",
-    "snapshot": "sha256:46870ae6b32375c3"
+    "snapshot": "sha256:2cfa9cf99dc0d094"
   },
   "package": {
     "audience": [

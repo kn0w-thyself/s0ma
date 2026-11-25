@@ -4206,7 +4206,9 @@ class S0maCLI:
         # (`s0ma new project <dir>`). The project path lives in
         # `cli/new_project.py` per the migrate-ext separate-module
         # precedent; the project-only options below are ignored by the
-        # declaration scaffolds.
+        # declaration scaffolds. The template names come from one list.
+        from s0ma_dsl.cli.templates import TEMPLATE_CHOICES
+
         np = subparsers.add_parser(
             "new",
             help=(
@@ -4267,14 +4269,16 @@ class S0maCLI:
         np.add_argument(
             "--template",
             default=None,
-            choices=["service", "library", "cli", "pipeline"],
+            choices=list(TEMPLATE_CHOICES),
             help=(
                 "('project' only) Scaffold a complete archetype mini-app "
                 "instead of the minimal starter: 'service' (multi-feature, "
                 "cross-feature depends_on edges), 'library' (export-focused, "
                 "exports + covered_by), 'cli' (argparse.REMAINDER "
-                "bootstrap shim), or 'pipeline' (one module per layer, "
-                "described in plain words). Default: the minimal "
+                "bootstrap shim), 'pipeline' (one module per layer, "
+                "described in plain words), or 'agent' (a small "
+                "support-inbox agent in five steps, with a scripted "
+                "stand-in for its model). Default: the minimal "
                 "single-feature starter."
             ),
         )
