@@ -80,6 +80,12 @@ Historical entries describe artifacts as they were named at the time.
   to the template's own `rules` files. The worked examples no longer copy
   studi0's test sources.
 
+- **studi0's page drops the name sh0w.** The browser tab now reads
+  `s0ma studi0`, and the heading over the graph reads `Component graph`.
+  With JavaScript off, the page says "studi0 draws the component graph with
+  JavaScript in this page." Code that imported `s0ma_studi0.sh0w_assets`
+  must now import `s0ma_studi0.studi0_assets`.
+
 ### Removed
 
 - **`s0ma new project --template pipeline` is no longer accepted.** The music
