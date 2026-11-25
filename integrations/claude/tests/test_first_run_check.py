@@ -550,6 +550,84 @@ def test_a_launcher_at_another_version_stops_the_leg_before_anything_runs(
     assert driver.check_launcher_is_at(brings) == brings
 
 
+class QuietPlane:
+    """A stand-in for the control plane that nothing asks."""
+
+    host = "127.0.0.1:9"
+    requests: list[object] = []
+
+    def __init__(self, **kwargs: object) -> None:
+        pass
+
+    def start(self) -> None:
+        pass
+
+    def stop(self) -> None:
+        pass
+
+
+def test_the_real_index_leg_walks_the_sample_with_the_installed_s0ma(
+    driver: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """After the fresh project, the leg runs the show-me walk with the s0ma it
+    installed from the index, in a folder of its own."""
+    version = driver.launcher_version_line(driver.LAUNCHER_FILE)
+    work = tmp_path / "work"
+    work.mkdir()
+    toolchain = tmp_path / "toolchain"
+    cli = toolchain / "bin" / "s0ma"
+    state = tmp_path / "state.json"
+    state.write_text(json.dumps({"installed": [version]}), encoding="utf-8")
+    exported = tmp_path / "exported"
+    (exported / "launcher").mkdir(parents=True)
+    (exported / "launcher" / "s0ma_launch.py").write_text(
+        f'LAUNCHER_VERSION = "{version}"\n', encoding="utf-8"
+    )
+    fake_launcher = ModuleType("fake_launcher")
+    fake_launcher.managed_toolchain_dir = lambda home, v: toolchain
+    fake_launcher.state_path = lambda home: state
+    fake_launcher.installed_version_of = lambda tc, distribution: version
+    fake_launcher.venv_python = lambda tc: Path(sys.executable)
+    fake_launcher.bin_dir_of = lambda tc: cli.parent
+    fake_launcher.find_program = lambda bin_dir, name: cli
+
+    fake_plane = ModuleType("fake_control_plane")
+    fake_plane.FakeControlPlane = QuietPlane
+    monkeypatch.setitem(sys.modules, "fake_control_plane", fake_plane)
+    monkeypatch.setattr(driver, "load_launcher", lambda: fake_launcher)
+    monkeypatch.setattr(driver.shutil, "which", lambda name, path=None: "/fake/uv")
+    monkeypatch.setattr(driver, "run", lambda *args, **kwargs: driver.Ran(0, "uv 0.0.0", ""))
+    monkeypatch.setattr(driver, "export_tree", lambda *args, **kwargs: exported)
+    monkeypatch.setattr(driver, "install_from_real_index", lambda *args, **kwargs: "installed")
+    monkeypatch.setattr(driver, "installed_distributions", lambda *args: "listed")
+    monkeypatch.setattr(driver, "check_doctor_versions", lambda output, v: "versions")
+    monkeypatch.setattr(driver, "check_real_server", lambda *args, **kwargs: "served")
+
+    called: list[tuple[str, object, object, Path]] = []
+    monkeypatch.setattr(
+        driver,
+        "run_fresh_project_steps",
+        lambda c, env, parent, results: called.append(("fresh", c, env, parent)),
+    )
+    monkeypatch.setattr(
+        driver,
+        "run_show_me_walk",
+        lambda c, env, parent, results: called.append(("walk", c, env, parent)),
+    )
+
+    opts = driver.argparse.Namespace(version=version)
+    driver.leg_real_index(opts, work, driver.Results("real-index"))
+
+    assert [name for name, *_ in called] == ["fresh", "walk"]
+    (_, fresh_cli, fresh_env, fresh_parent), (_, walk_cli, walk_env, walk_parent) = called
+    assert walk_cli == cli == fresh_cli
+    assert walk_env is fresh_env
+    assert walk_env["S0MA_HOME"] == str(work / "s0ma-home")
+    assert walk_parent.parent == work
+    assert walk_parent.is_dir()
+    assert walk_parent != fresh_parent
+
+
 def test_doctor_versions_are_read(driver: ModuleType) -> None:
     output = (
         "s0ma doctor\n\nversions\n  python           3.13.1\n"

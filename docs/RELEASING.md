@@ -169,7 +169,7 @@ Once `publish-pypi` is green and the five PyPI project pages show this version, 
 gh workflow run first-run.yml --ref vX.Y.Z -f version=X.Y.Z
 ```
 
-Wait for its three `real-index` jobs, on Linux, macOS and Windows, to pass before you start the hand run below. It proves that the plugin at this tag, with uv and no license key, installs `s0ma-lang==X.Y.Z` from the public package index, and that the installed s0ma reports that version, serves its tools, and makes, checks, builds and tests a new project; it does not prove anything a person sees in Claude, which is what the hand run is for.
+Wait for its three `real-index` jobs, on Linux, macOS and Windows, to pass before you start the hand run below. It proves that the plugin at this tag, with uv and no license key, installs `s0ma-lang==X.Y.Z` from the public package index, and that the installed s0ma reports that version, serves its tools, makes, checks, builds and tests a new project, and walks the sample step by step; it does not prove anything a person sees in Claude, which is what the hand run is for.
 
 ## ☐ OWNER — the first run of the Claude plugin, by hand
 
