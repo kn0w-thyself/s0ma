@@ -274,6 +274,7 @@ def run_step(
                 "project_root": str(target),
                 "error": f"the project is at step {at}, past step {number}",
                 "at_step": at,
+                "of": total,
             },
             f"s0ma new project: {target} is at step {at} of {total}, and "
             f"--step does not go back to step {number}.",

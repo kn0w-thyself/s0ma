@@ -150,7 +150,8 @@ plugin's own folder.
 ### Your first conversation
 
 `/s0ma:start` stops for you at most twice: once to install what is missing, if
-anything is, and once to ask what to build. In the order you meet it:
+anything is, and once to ask what to build. The "show me" walk also waits for
+you between its steps. In the order you meet it:
 
 1. **It looks at what is missing**, with `s0ma-launch status`, and asks
    nothing if nothing is.
@@ -169,6 +170,7 @@ anything is, and once to ask what to build. In the order you meet it:
    me" and I'll build a small sample so you can watch how it works."
 5. **It creates the project and builds it** without another question, in a
    new folder inside the one the session is in, and names the folder it chose.
+   For "show me", this and the next two steps are the walk described below.
    It reports in one line what was created, how many modules and parts were
    built, and what the checks said, from what the commands printed.
 6. **It shows you studi0** without asking: "It's built, and studi0 is open
@@ -178,6 +180,18 @@ anything is, and once to ask what to build. In the order you meet it:
 7. **It tells you what you can say next**: what to change, how any part works,
    and two preferences you can set by saying them, "always use s0ma" and
    "always show studi0".
+
+If you say "show me", Claude first says in two sentences what s0ma is: it
+keeps what you want from your software inside the code, next to the part each
+piece belongs to, and makes that available to AI models like Claude. It lays
+down s0ma's own sample with nothing built yet and opens studi0 on it, empty.
+Then it builds the sample one step at a time, says what each step adds, and
+waits for you: say "next" to go on, or "finish" to build the rest at once. Each
+step appears in studi0 as it lands. When the last step is built and checked,
+it asks you to ask a question about the sample, and answers from the
+project's own model, the intent and rules the project declares, not from its
+code. Say "show me" again in the same folder and it picks up at the step the
+sample is on.
 
 s0ma's own tools in Claude arrive with your next session. Until then, Claude
 works through the `s0ma` command, so nothing waits on a restart.

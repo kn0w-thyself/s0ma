@@ -872,7 +872,7 @@ FRONT_DOOR_SENTENCES: tuple[tuple[str, str], ...] = (
     ),
     (
         "start",
-        "Created tip-calculator in this folder \u00b7 Built 3 modules, 7 parts "
+        "Created recipe-box in this folder \u00b7 Built 3 modules, 7 parts "
         "\u00b7 All checks pass",
     ),
     (

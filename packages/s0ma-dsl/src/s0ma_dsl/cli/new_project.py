@@ -1282,6 +1282,7 @@ def _print_archetype_summary(
             # counts are read from the build, as ``s0ma build`` and
             # ``s0ma inspect --all`` show them.
             report["called"] = archetype.called
+            report["noun"] = archetype.noun
             report["example_question"] = archetype.example_question
             report["steps"] = [
                 {"number": number, "name": s.name, "intent": s.intent}

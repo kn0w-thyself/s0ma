@@ -29,8 +29,14 @@ with the runner's own Python and nothing else.
     nothing else. In a project the installed s0ma makes with ``s0ma new
     project``, the installed ``s0ma test`` exits 0 with the starter tests
     passed, and the edit hooks refuse an edit under its build folder and hand
-    on what ``s0ma check`` finds in a broken ``.s0ma`` file. Imports the
-    end-to-end test's helpers, so run it with ``uv run python``.
+    on what ``s0ma check`` finds in a broken ``.s0ma`` file. The start skill's
+    "show me" walk runs with the installed s0ma: ``--sample --step 0``, each
+    step in turn on the folder it names, one step again, then ``s0ma check``
+    and ``s0ma build .``, each step's line, counts and ``finished`` held to
+    the sample's own words and to ``s0ma inspect --all``. Then step 0 again,
+    whose refusal must say where the project is, so a second walk picks up. Imports the
+    end-to-end test's helpers and s0ma's own sample, so run it with ``uv run
+    python``.
 
 ``python-download``
     With the newest uv and no Python handed to it: every variable that names
@@ -1565,6 +1571,11 @@ def leg_uv_present(opts: argparse.Namespace, work: Path, results: Results) -> No
             ),
         )
 
+        banner("uv present, the show-me walk with the installed s0ma")
+        walk_parent = work / "walk"
+        walk_parent.mkdir()
+        run_show_me_walk(cli, env, walk_parent, results)
+
         banner("uv present: the hooks in PowerShell, and the cost of the skip path")
         check_hooks_in_powershell(PLUGIN_DIR, env, project, results)
         skip_path_timing(PLUGIN_DIR, env, work, results)
@@ -1757,6 +1768,164 @@ def check_doctor_versions(output: str, version: str) -> str:
     wrong = {name: seen for name, seen in found.items() if seen != version}
     expect(not wrong, f"s0ma doctor reports {wrong}, not {version}")
     return ", ".join(f"{name} {found[name]}" for name in DOCTOR_PACKAGES)
+
+
+def walk_json(ran: Ran, what: str) -> dict[str, Any]:
+    """The JSON one ``--step`` call printed, or a failure saying what came."""
+    expect(ran.code == 0, f"{what} exited {ran.code}")
+    try:
+        report: dict[str, Any] = json.loads(ran.stdout)
+    except ValueError as exc:
+        raise CheckFailed(f"{what} printed no JSON: {ran.stdout!r}") from exc
+    expect(report.get("ok") is True, f"{what} said ok={report.get('ok')!r}: {report.get('error')!r}")
+    return report
+
+
+def expected_step_line(steps: list[tuple[str, str]], number: int) -> str:
+    """The ``line`` a step after step 0 says, from the sample's own words."""
+    name, intent = steps[number - 1]
+    return f"Step {number} of {len(steps)}: {name}. {intent}"
+
+
+def check_walk_step(
+    report: dict[str, Any],
+    number: int,
+    steps: list[tuple[str, str]],
+    sample: dict[str, str],
+) -> None:
+    """One step's JSON says that step, of this sample, and whether it is the last."""
+    total = len(steps)
+    step = report.get("step") or {}
+    expect(step.get("number") == number, f"step {number}: the JSON says step {step.get('number')!r}")
+    expect(step.get("of") == total, f"step {number}: the JSON says of {step.get('of')!r}, not {total}")
+    expect(report.get("finished") is (number == total), f"step {number}: finished is {report.get('finished')!r}")
+    for key, value in sample.items():
+        expect(report.get(key) == value, f"step {number}: {key} is {report.get(key)!r}, not {value!r}")
+    if number == 0:
+        expect(step.get("name") is None, f"step 0 has a name: {step.get('name')!r}")
+        expect(
+            (report.get("modules"), report.get("parts")) == (0, 0),
+            f"step 0 built something: {report.get('modules')} modules, {report.get('parts')} parts",
+        )
+        return
+    name, intent = steps[number - 1]
+    expect((step.get("name"), step.get("intent")) == (name, intent), f"step {number}: {step!r}")
+    line = expected_step_line(steps, number)
+    expect(report.get("line") == line, f"step {number}: line {report.get('line')!r}, not {line!r}")
+
+
+def check_walk_counts(
+    cli: Path, env: dict[str, str], root: Path, report: dict[str, Any], number: int
+) -> None:
+    """The step's ``modules`` and ``parts`` are what ``s0ma inspect --all`` reads."""
+    ran = run([str(cli), "inspect", "--all", "--format", "json"], env, root)
+    expect(ran.code == 0, f"s0ma inspect --all exited {ran.code} after step {number}")
+    modules = json.loads(ran.stdout)
+    parts = sum(int(module["components"]) for module in modules)
+    expect(
+        (report.get("modules"), report.get("parts")) == (len(modules), parts),
+        f"step {number}: the JSON says {report.get('modules')} modules, {report.get('parts')} parts; "
+        f"s0ma inspect --all reads {len(modules)} modules, {parts} parts",
+    )
+
+
+def run_show_me_walk(cli: Path, env: dict[str, str], parent: Path, results: Results) -> None:
+    """The start skill's "show me" walk, command by command, with the installed s0ma.
+
+    What each step must say is read from the sample's archetype in this tree,
+    which the installed wheels were built from, and from the JSON itself.
+    """
+    from s0ma_dsl.cli.templates import FIRST_RUN_SAMPLE, get_archetype
+
+    archetype = get_archetype(FIRST_RUN_SAMPLE)
+    steps = [(step.name, step.intent) for step in archetype.steps]
+    expect(len(steps) > 1, f"the first-run sample {FIRST_RUN_SAMPLE!r} has {len(steps)} steps")
+    sample = {
+        "called": archetype.called,
+        "noun": archetype.noun,
+        "example_question": archetype.example_question,
+    }
+    expect(all(sample.values()), f"the first-run sample leaves a word empty: {sample}")
+
+    def step(number: int, folder: str | None) -> dict[str, Any]:
+        where = [folder] if folder is not None else []
+        command = [str(cli), "new", "project", *where, "--sample", "--step", str(number), "--format", "json"]
+        return walk_json(run(command, env, parent), f"--sample --step {number}")
+
+    first = step(0, None)
+    check_walk_step(first, 0, steps, sample)
+    root = Path(str(first.get("project_root")))
+    expect(root.parent.resolve() == parent.resolve(), f"step 0 made {root}, not a folder in {parent}")
+    expect(not list((root / "build").glob("*.py")), "step 0 built something")
+    results.add(
+        "show-me walk, step 0",
+        f"exit 0, {root.name}/ made, step 0 of {len(steps)}, nothing built, called {first['called']!r}",
+    )
+
+    for number in range(1, len(steps) + 1):
+        report = step(number, str(root))
+        check_walk_step(report, number, steps, sample)
+        expect(report.get("project_root") == str(root), f"step {number} moved to {report.get('project_root')}")
+        expect(report.get("unchanged") is False, f"step {number} says it changed nothing")
+        check_walk_counts(cli, env, root, report, number)
+        results.add(
+            f"show-me walk, step {number}",
+            f"exit 0, {report['line']!r}, {report['modules']} modules, {report['parts']} parts, "
+            f"finished {report['finished']}",
+        )
+        if number == 1:
+            again = step(number, str(root))
+            check_walk_step(again, number, steps, sample)
+            expect(again.get("unchanged") is True, "a repeated step did not say it changed nothing")
+            expect(again.get("files_written") == [], f"a repeated step wrote {again.get('files_written')}")
+            expect(
+                (again.get("modules"), again.get("parts")) == (report.get("modules"), report.get("parts")),
+                "a repeated step changed the counts",
+            )
+            results.add(f"show-me walk, step {number} again", "exit 0, unchanged, nothing written")
+
+    ran = run([str(cli), "check"], env, root)
+    expect(ran.code == 0, f"s0ma check exited {ran.code} on the finished sample")
+    expect("No errors." in ran.stdout, "s0ma check did not say No errors. on the finished sample")
+    ran = run([str(cli), "build", "."], env, root)
+    expect(ran.code == 0, f"s0ma build . exited {ran.code} on the finished sample")
+    said = ran.stdout + ran.stderr
+    # The walk says "all checks pass" only when the build printed no error and
+    # no warning, and a build with either prints a `Results:` line.
+    results_lines = [line for line in said.splitlines() if line.strip().startswith("Results:")]
+    expect(results_lines == [], f"the finished sample's build printed {results_lines}")
+    results.add(
+        "show-me walk, the final check",
+        f"s0ma check: No errors.; s0ma build .: exit 0, no Results: line; "
+        f"{len(steps)} steps, {report['parts']} parts",
+    )
+
+    # A second "show me" in the same folder: step 0 refuses and says where the
+    # project is, and asking for that step picks the walk up, changing nothing.
+    ran = run(
+        [str(cli), "new", "project", "--sample", "--step", "0", "--format", "json"], env, parent
+    )
+    expect(ran.code != 0, "step 0 on a finished sample did not refuse")
+    try:
+        refusal: dict[str, Any] = json.loads(ran.stdout)
+    except ValueError as exc:
+        raise CheckFailed(f"the refusal printed no JSON: {ran.stdout!r}") from exc
+    expect(refusal.get("ok") is False, f"the refusal said ok={refusal.get('ok')!r}")
+    expect(
+        (refusal.get("project_root"), refusal.get("at_step"), refusal.get("of"))
+        == (str(root), len(steps), len(steps)),
+        f"the refusal says {refusal.get('project_root')!r}, at_step {refusal.get('at_step')!r}, "
+        f"of {refusal.get('of')!r}",
+    )
+    picked = step(int(refusal["at_step"]), str(root))
+    check_walk_step(picked, len(steps), steps, sample)
+    expect(picked.get("unchanged") is True, "picking the walk up changed something")
+    expect(picked.get("files_written") == [], f"picking the walk up wrote {picked.get('files_written')}")
+    results.add(
+        "show-me walk, a second time",
+        f"step 0 refused with at_step {refusal['at_step']} of {refusal['of']}; "
+        f"--step {refusal['at_step']} unchanged, finished {picked['finished']}",
+    )
 
 
 def run_fresh_project_steps(

@@ -43,7 +43,7 @@ step 3. When it starts serving, its first line names the project and the
 address, and a second line gives the same address by number:
 
 ```text
-studi0 serving tip-calculator at http://studi0.localhost:5710/
+studi0 serving recipe-box at http://studi0.localhost:5710/
 ```
 
 Read the address from that first line. 5710 is its own port. When another
