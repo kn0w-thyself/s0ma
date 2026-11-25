@@ -60,8 +60,11 @@ Historical entries describe artifacts as they were named at the time.
   `s0ma inspect` in the session that installed s0ma), not from its code. The
   skill holds none of the sample's words: each one comes from the JSON
   `s0ma new project --sample --step N` prints, which now also carries the
-  sample's `noun` (`agent`). The first-run check now drives the walk with
-  the installed s0ma.
+  sample's `noun` (`agent`). A second "show me" in the same folder picks up
+  at the step the sample is on: a refusal to go back a step now also carries
+  `of`, the number of steps. The agent sample's run hint now lines up with
+  the other next steps. The first-run check now drives the walk with the
+  installed s0ma, twice.
 
 ### Fixed
 
