@@ -39,11 +39,11 @@
 # does not bring. On Linux, macOS and Windows, with uv and no license key, the
 # exported plugin's `s0ma-launch install` has uv fetch `s0ma-lang==X.Y.Z` from
 # the index, and the installed s0ma is checked: its version, the server and its
-# tools, and `new project`, `check`, `build .` and `test` in a fresh project.
-# No Claude Code is installed for it and no Claude step runs. Nothing signs
-# in, nothing is published, and the version typed in reaches the shell only
-# through an environment variable, which the driver checks before it runs
-# anything.
+# tools, `new project`, `check`, `build .` and `test` in a fresh project, and
+# the sample walk (`new project --sample --step N`). No Claude Code is
+# installed for it and no Claude step runs. Nothing signs in, nothing is
+# published, and the version typed in reaches the shell only through an
+# environment variable, which the driver checks before it runs anything.
 name: first-run
 
 on:
