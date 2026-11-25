@@ -24,9 +24,10 @@ Historical entries describe artifacts as they were named at the time.
   test matrix runs; its script header and lock file carry it, both of its
   `uv venv` calls ask for it, and the server scripts' probe uses it, so a
   machine whose only Python is newer gets the not-set-up line and the
-  stand-in server rather than an error. Every plugin script that runs uv, and
-  the launcher for the uv it starts, set `UV_PYTHON_INSTALL_DIR` to `python`
-  under s0ma's home (`S0MA_HOME`, or `.s0ma` in the home folder, which is
+  stand-in server rather than an error. The Claude Desktop extension's
+  `pyproject.toml` asks its host for the same range. Every plugin script that
+  runs uv, and the launcher for the uv it starts, set `UV_PYTHON_INSTALL_DIR`
+  to `python` under s0ma's home (`S0MA_HOME`, or `.s0ma` in the home folder, which is
   `%USERPROFILE%` on Windows) unless it is already set, so a Python uv
   downloads for s0ma lives in a folder s0ma owns. uv's cache and everything
   else of uv's stay where they were. A test holds each script's rule to the
