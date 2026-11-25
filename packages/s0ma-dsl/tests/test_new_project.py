@@ -1394,6 +1394,7 @@ class TestAgentTemplate:
             _AGENT_STEPS
         )
         assert agent.called == "a small agent"
+        assert agent.noun == "agent"
         assert agent.example_question == (
             "what is this agent never allowed to do?"
         )
@@ -1518,6 +1519,7 @@ class TestAgentTemplate:
         assert report["ok"] is True
         assert report["template"] == "agent"
         assert report["called"] == "a small agent"
+        assert report["noun"] == "agent"
         assert report["example_question"] == (
             "what is this agent never allowed to do?"
         )
@@ -1543,7 +1545,9 @@ class TestAgentTemplate:
         assert cli.run(argv) == EXIT_SUCCESS
 
         report = json.loads(capsys.readouterr().out)
-        for key in ("called", "example_question", "steps", "modules", "parts"):
+        for key in (
+            "called", "noun", "example_question", "steps", "modules", "parts"
+        ):
             assert key not in report
 
     def test_the_cli_offers_exactly_the_template_list(self) -> None:
@@ -1908,7 +1912,8 @@ class TestAgentSteps:
             "authoring", "feedback", "features", "pyproject", "sources",
             "bootstrap_files", "agents_file", "claude_file",
             "feedback_skill", "launch_config", "build", "teaches",
-            "next_steps", "called", "example_question", "steps", "modules",
+            "next_steps", "called", "noun", "example_question", "steps",
+            "modules",
             "parts", "step", "line", "finished", "unchanged",
             "files_written", "files_kept",
         }

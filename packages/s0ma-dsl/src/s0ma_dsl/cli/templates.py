@@ -159,6 +159,8 @@ class Archetype:
     steps: tuple[ArchetypeStep, ...] = ()
     #: What the sample calls itself in a sentence (e.g. ``a small agent``).
     called: str = ""
+    #: The one word the sample is (e.g. ``agent``), as in "the whole agent".
+    noun: str = ""
     #: A question a person can ask the sample about itself.
     example_question: str = ""
     #: ``[tool.s0ma].health_command`` to declare; empty declares none.
@@ -1826,6 +1828,7 @@ def _agent() -> Archetype:
             "watching a decision"
         ),
         called="a small agent",
+        noun="agent",
         example_question="what is this agent never allowed to do?",
         default_project_name="support-agent",
         bootstrap_files=("bootstrap/main.py",),
