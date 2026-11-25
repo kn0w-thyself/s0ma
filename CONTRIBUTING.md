@@ -61,7 +61,7 @@ s0ma-new/
 │   ├── s0ma-dsl/     # s0ma-lang-dsl: the .s0ma transpiler + s0ma CLI (module: s0ma_dsl)
 │   ├── s0ma-mcp/     # s0ma-lang-mcp: the authoring MCP server (module: s0ma_mcp)
 │   ├── s0ma-studi0/  # s0ma-lang-studi0: the local visual environment `s0ma studi0`,
-│   │                 # hosting the sh0w graph renderer (module: s0ma_studi0)
+│   │                 # which draws the component graph (module: s0ma_studi0)
 │   └── s0ma-lang/    # s0ma-lang: the umbrella. No module: a manifest that requires
 │                     # each of the four above at exactly its own version
 ├── scripts/check.py  # the unified quality gate (what CI runs)

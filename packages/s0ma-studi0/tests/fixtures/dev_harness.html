@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>sh0w dev harness — fixture payload</title>
+    <title>studi0 dev harness — fixture payload</title>
     <!-- Dev harness for M4: renders the checked-in fixture payload with no
          server and no fetch, so the frontend can be worked on (and looked
          at) before the live API exists. Open this file directly, or serve
@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="../../s0ma_src/assets/app.css" />
   </head>
   <body>
-    <div id="s0ma-sh0w" class="sh0w-mount"></div>
-    <script id="sh0w-fixture" type="application/json">
+    <div id="s0ma-studi0" class="studi0-mount"></div>
+    <script id="graph-fixture" type="application/json">
 {
   "components": {
     "console::AGENDA_TEMPLATE": {
@@ -1809,7 +1809,7 @@
   "schema": "s0ma-graph@2"
 }
     </script>
-    <script id="sh0w-narration" type="application/json">
+    <script id="graph-narration" type="application/json">
 {
   "entries": [
     {
@@ -1854,7 +1854,7 @@
   "total": 4
 }
     </script>
-    <script id="sh0w-terms" type="application/json">
+    <script id="graph-terms" type="application/json">
 {
   "entries": [
     {
@@ -2238,13 +2238,13 @@
     </script>
     <script>
       window.__S0MA_FIXTURE__ = JSON.parse(
-        document.getElementById("sh0w-fixture").textContent
+        document.getElementById("graph-fixture").textContent
       );
       window.__S0MA_NARRATION__ = JSON.parse(
-        document.getElementById("sh0w-narration").textContent
+        document.getElementById("graph-narration").textContent
       );
       window.__S0MA_TERMS__ = JSON.parse(
-        document.getElementById("sh0w-terms").textContent
+        document.getElementById("graph-terms").textContent
       );
     </script>
     <script src="../../s0ma_src/assets/app.js"></script>

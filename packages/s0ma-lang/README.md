@@ -9,7 +9,7 @@
 | [`s0ma-lang-core`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-core) | `s0ma` | The runtime: the registry every part is declared into, the verifiers, the lifecycle, and the surfaces that answer what exists and why. |
 | [`s0ma-lang-dsl`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-dsl) | `s0ma_dsl` | The `.s0ma` language, its compiler, and the `s0ma` command line. |
 | [`s0ma-lang-mcp`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-mcp) | `s0ma_mcp` | The authoring server a coding agent works through, over the Model Context Protocol. |
-| [`s0ma-lang-studi0`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-studi0) | `s0ma_studi0` | studi0, the local visual environment (`s0ma studi0`), whose sh0w renderer draws a project's component graph from its build artifacts. |
+| [`s0ma-lang-studi0`](https://github.com/kn0w-thyself/s0ma/tree/main/packages/s0ma-studi0) | `s0ma_studi0` | studi0, the local visual environment (`s0ma studi0`), which draws a project's component graph from its build artifacts. |
 
 The `s0ma` and `s0ma-mcp` commands arrive with it, because the distributions that provide them are among its dependencies. There is nothing to import from `s0ma-lang` itself: the modules are the four in the table.
 

@@ -591,7 +591,7 @@ def _assert_studi0_payload(wheel: Path) -> None:
 
     ``src/s0ma_studi0/_built/`` is product, not a build artifact of the
     packaging step: the runtime bootstraps those emitted modules, and
-    ``sh0w_assets`` carries the viewer's embedded assets. The authoring
+    ``studi0_assets`` carries the viewer's embedded assets. The authoring
     inputs (``s0ma_src/``), the test suite and the incremental build cache
     (``.s0ma.cache/``, excluded by the package's hatch config) are NOT
     product and must stay out of the wheel.
@@ -612,7 +612,7 @@ def _assert_studi0_payload(wheel: Path) -> None:
     )
     # Named explicitly because its absence is the silent failure: the viewer
     # would install and start, then serve a page with no assets.
-    assert "sh0w_assets.py" in shipped, sorted(shipped)
+    assert "studi0_assets.py" in shipped, sorted(shipped)
 
     excluded = sorted(
         name

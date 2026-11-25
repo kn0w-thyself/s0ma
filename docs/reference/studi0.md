@@ -27,9 +27,9 @@ Every fact on this page is read from studi0's own built source when the document
 | --- | --- | --- | --- | --- | --- |
 | `/api/graph` | `studi0:action/api/graph` | `GET` | The whole component graph of the project being shown, wrapped in the sequence number it belongs to, fetched only when the sequence number says it is worth fetching. | read | NOT_BUILT |
 | `/api/state` | `studi0:action/api/state` | `GET` | The cheap poll: which reading this is, whether the build still matches the sources it was built from, which modules have moved on, and what an agent has said it is doing. | read | — |
-| `/assets/app.css` | `studi0:action/assets/app.css` | `GET` | The sh0w page's stylesheet, served as the build embedded it. | none | — |
-| `/assets/app.js` | `studi0:action/assets/app.js` | `GET` | The sh0w page's script, served as the build embedded it — the whole of the viewer's behaviour. | none | — |
-| `/` | `studi0:action/index` | `GET` | The sh0w page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API. | none | — |
+| `/assets/app.css` | `studi0:action/assets/app.css` | `GET` | The studi0 page's stylesheet, served as the build embedded it. | none | — |
+| `/assets/app.js` | `studi0:action/assets/app.js` | `GET` | The studi0 page's script, served as the build embedded it — the whole of the viewer's behaviour. | none | — |
+| `/` | `studi0:action/index` | `GET` | The studi0 page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API. | none | — |
 
 ## The contracts its build declares
 

@@ -1,4 +1,4 @@
-/* sh0w — the studi0 graph viewer.
+/* The studi0 graph viewer.
  *
  * One file, no imports, no build step, no external URL of any kind
  * (FR-STUDI0-7). Vanilla JS + SVG against evergreen browsers. The file
@@ -1374,13 +1374,13 @@ function cubicPoint(p0, p1, p2, p3, t) {
 
 function buildShell(mount) {
   clear(mount);
-  var root = el("div", "sh0w");
+  var root = el("div", "studi0");
 
   var topbar = el("header", "topbar");
   var brand = el("div", "brand");
   brand.appendChild(el("span", "brand-mark", "s0ma studi0"));
   brand.appendChild(
-    el("span", "brand-sub", "sh0w — canonical component graph")
+    el("span", "brand-sub", "Component graph")
   );
   topbar.appendChild(brand);
 
@@ -1592,7 +1592,7 @@ function buildDefs() {
   var families = ["authored", "derived", "verification"];
   for (var i = 0; i < families.length; i += 1) {
     var marker = svgEl("marker", {
-      id: "sh0w-arrow-" + families[i],
+      id: "studi0-arrow-" + families[i],
       markerWidth: 7,
       markerHeight: 7,
       refX: 6.2,
@@ -2079,7 +2079,7 @@ function renderEdges(layout) {
       svgEl("path", {
         class: "edge-line",
         d: group.geometry.d,
-        "marker-end": "url(#sh0w-arrow-" + group.family + ")",
+        "marker-end": "url(#studi0-arrow-" + group.family + ")",
       })
     );
     var hit = svgEl("path", { class: "edge-hit", d: group.geometry.d });
@@ -4432,7 +4432,7 @@ function inspectorTerm(word, role, className) {
   var seen = ui.termSeen[text] || 0;
   ui.termSeen[text] = seen + 1;
   button.setAttribute("data-term-key", text + "#" + seen);
-  button.sh0wTerm = { word: text, entry: entry };
+  button.studi0Term = { word: text, entry: entry };
   button.addEventListener("click", function () {
     toggleTermCard(button);
   });
@@ -4523,7 +4523,7 @@ function toggleTermCard(button) {
 }
 
 function openTermCard(button) {
-  var term = button.sh0wTerm;
+  var term = button.studi0Term;
   var anchor = termCardAnchor(button);
   var card = termCard(cardTagFor(anchor), term.word, term.entry, state.termCard);
   anchor.parentNode.insertBefore(card, anchor.nextSibling);
@@ -6591,10 +6591,10 @@ function showError(message) {
  * ------------------------------------------------------------------ */
 
 function boot() {
-  var mount = document.getElementById("s0ma-sh0w");
+  var mount = document.getElementById("s0ma-studi0");
   if (!mount) {
     mount = document.createElement("div");
-    mount.id = "s0ma-sh0w";
+    mount.id = "s0ma-studi0";
     document.body.appendChild(mount);
   }
   buildShell(mount);

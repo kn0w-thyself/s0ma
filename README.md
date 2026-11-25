@@ -479,7 +479,7 @@ installable packages, all Apache-2.0:
 | [`s0ma-lang-core`](packages/s0ma-core) | `s0ma` | The runtime: the registry every part is declared into, the verifiers, the lifecycle, and the surfaces that answer what exists and why. |
 | [`s0ma-lang-dsl`](packages/s0ma-dsl) | `s0ma_dsl` | The `.s0ma` language, its compiler, and the `s0ma` command line. |
 | [`s0ma-lang-mcp`](packages/s0ma-mcp) | `s0ma_mcp` | The authoring server a coding agent works through, over the Model Context Protocol. |
-| [`s0ma-lang-studi0`](packages/s0ma-studi0) | `s0ma_studi0` | studi0, the local visual environment (`s0ma studi0`), whose sh0w renderer draws a project's component graph from its build artifacts. **Early preview, with more coming.** |
+| [`s0ma-lang-studi0`](packages/s0ma-studi0) | `s0ma_studi0` | studi0, the local visual environment (`s0ma studi0`), which draws a project's component graph from its build artifacts. **Early preview, with more coming.** |
 
 Dependencies point one way: `s0ma-lang-mcp` and `s0ma-lang-studi0` depend on `s0ma-lang-dsl`,
 which depends on `s0ma-lang-core`. `s0ma-lang-core` stands alone with zero hard runtime

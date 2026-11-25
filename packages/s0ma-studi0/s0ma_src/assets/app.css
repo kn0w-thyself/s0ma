@@ -1,4 +1,4 @@
-/* sh0w — the studi0 graph viewer.
+/* The studi0 graph viewer.
  *
  * Calm and clean: near-white canvas, one accent hue, muted layer-band
  * tints, generous whitespace, system fonts. Amber is the one other hue,
@@ -75,18 +75,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.sh0w-mount,
-.sh0w {
+.studi0-mount,
+.studi0 {
   height: 100%;
 }
 
-.sh0w {
+.studi0 {
   display: flex;
   flex-direction: column;
   min-height: 100%;
 }
 
-.sh0w-noscript {
+.studi0-noscript {
   margin: 40px;
   max-width: 60ch;
   color: var(--ink-soft);
@@ -519,7 +519,7 @@ body {
 
 /* ---------------------------------------------------- materialize beat */
 
-/* The only motion on this canvas, and the only motion sh0w has. It runs
+/* The only motion on this canvas, and the only motion the graph viewer has. It runs
  * when a build lands and it says exactly one thing: here is what
  * changed. After a few seconds it stops saying it (app.js removes the
  * marks) and the view is a map again.
@@ -531,7 +531,7 @@ body {
  * Every duration below has a matching constant in app.js, which owns
  * the moment the marks come off. */
 
-@keyframes sh0w-materialize {
+@keyframes studi0-materialize {
   from {
     opacity: 0;
     transform: scale(0.82);
@@ -542,7 +542,7 @@ body {
   }
 }
 
-@keyframes sh0w-vanish {
+@keyframes studi0-vanish {
   from {
     opacity: 1;
     transform: scale(1);
@@ -553,7 +553,7 @@ body {
   }
 }
 
-@keyframes sh0w-ring-fade {
+@keyframes studi0-ring-fade {
   from {
     opacity: 1;
   }
@@ -562,7 +562,7 @@ body {
   }
 }
 
-@keyframes sh0w-outline-pulse {
+@keyframes studi0-outline-pulse {
   0% {
     stroke-width: 1.25;
   }
@@ -578,7 +578,7 @@ body {
 .node[data-delta="added"] {
   transform-box: fill-box;
   transform-origin: center;
-  animation: sh0w-materialize 300ms ease-out both;
+  animation: studi0-materialize 300ms ease-out both;
 }
 
 /* A component the last build removed. It is already out of the model,
@@ -587,12 +587,12 @@ body {
   transform-box: fill-box;
   transform-origin: center;
   pointer-events: none;
-  animation: sh0w-vanish 300ms ease-in both;
+  animation: studi0-vanish 300ms ease-in both;
 }
 
 /* A component the last build rewrote: one outline pulse, then still. */
 .node[data-delta="changed"] .node-glyph {
-  animation: sh0w-outline-pulse 620ms ease-out 1;
+  animation: studi0-outline-pulse 620ms ease-out 1;
 }
 
 /* The highlight that outlives the movement: four seconds to find what
@@ -602,7 +602,7 @@ body {
   stroke: var(--accent);
   stroke-width: 2;
   pointer-events: none;
-  animation: sh0w-ring-fade 4000ms ease-out both;
+  animation: studi0-ring-fade 4000ms ease-out both;
 }
 
 /* A module that has just gone stale: amber, because that is what amber

@@ -4358,13 +4358,13 @@
       "binding": "bound",
       "channel": "studi0",
       "component_refs": [
-        "component:s0ma_studi0.sh0w_assets.APP_CSS",
+        "component:s0ma_studi0.studi0_assets.APP_CSS",
         "component:s0ma_studi0.studi0_server.route_request"
       ],
       "errors": [],
       "governed_by": [],
       "id": "studi0:action/assets/app.css",
-      "intent": "The sh0w page's stylesheet, served as the build embedded it.",
+      "intent": "The studi0 page's stylesheet, served as the build embedded it.",
       "public_name": "/assets/app.css",
       "side_effects": [
         "none"
@@ -4374,13 +4374,13 @@
       "binding": "bound",
       "channel": "studi0",
       "component_refs": [
-        "component:s0ma_studi0.sh0w_assets.APP_JS",
+        "component:s0ma_studi0.studi0_assets.APP_JS",
         "component:s0ma_studi0.studi0_server.route_request"
       ],
       "errors": [],
       "governed_by": [],
       "id": "studi0:action/assets/app.js",
-      "intent": "The sh0w page's script, served as the build embedded it — the whole of the viewer's behaviour.",
+      "intent": "The studi0 page's script, served as the build embedded it — the whole of the viewer's behaviour.",
       "public_name": "/assets/app.js",
       "side_effects": [
         "none"
@@ -4390,13 +4390,13 @@
       "binding": "bound",
       "channel": "studi0",
       "component_refs": [
-        "component:s0ma_studi0.sh0w_assets.INDEX_HTML",
+        "component:s0ma_studi0.studi0_assets.INDEX_HTML",
         "component:s0ma_studi0.studi0_server.route_request"
       ],
       "errors": [],
       "governed_by": [],
       "id": "studi0:action/index",
-      "intent": "The sh0w page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API.",
+      "intent": "The studi0 page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API.",
       "public_name": "/",
       "side_effects": [
         "none"
@@ -4408,6 +4408,6 @@
   "source": {
     "model_schema": "s0ma-docs-model@1",
     "release_version": "0.23.0",
-    "snapshot_hash": "sha256:3a7d1bd1e640295a"
+    "snapshot_hash": "sha256:6816c5bb805215d7"
   }
 }

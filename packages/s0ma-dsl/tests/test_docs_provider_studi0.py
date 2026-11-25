@@ -742,7 +742,7 @@ class TestItComposes:
             + "    {\n"
             + '        "path": "/",\n'
             + '        "method": "GET",\n'
-            + '        "purpose": "The sh0w page.",\n'
+            + '        "purpose": "The studi0 page.",\n'
             + '        "effects": "none",\n'
             + '        "answered_by": "studi0_server::route_request",\n'
             + '        "media_type": "text/html; charset=utf-8",\n'

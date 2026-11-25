@@ -39,7 +39,7 @@ from typing import TYPE_CHECKING, Any
 import pytest
 from conftest import build_project, wait_until
 
-from s0ma_studi0 import sh0w_assets
+from s0ma_studi0 import studi0_assets
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -53,12 +53,12 @@ BUILD_MANIFEST = PACKAGE_ROOT / "src" / "s0ma_studi0" / "_built" / "build.s0ma.j
 #: (route, content type, embedded constant, source file) for each of the
 #: three files the page is made of.
 SERVED_ASSETS = [
-    ("/", "text/html; charset=utf-8", sh0w_assets.INDEX_HTML, "index.html"),
-    ("/assets/app.css", "text/css; charset=utf-8", sh0w_assets.APP_CSS, "app.css"),
+    ("/", "text/html; charset=utf-8", studi0_assets.INDEX_HTML, "index.html"),
+    ("/assets/app.css", "text/css; charset=utf-8", studi0_assets.APP_CSS, "app.css"),
     (
         "/assets/app.js",
         "text/javascript; charset=utf-8",
-        sh0w_assets.APP_JS,
+        studi0_assets.APP_JS,
         "app.js",
     ),
 ]
@@ -154,9 +154,9 @@ def test_the_manifest_records_every_embedded_file() -> None:
     embedded = manifest["external_content_files"]
 
     assert set(embedded) == {
-        "sh0w_assets::INDEX_HTML",
-        "sh0w_assets::APP_CSS",
-        "sh0w_assets::APP_JS",
+        "studi0_assets::INDEX_HTML",
+        "studi0_assets::APP_CSS",
+        "studi0_assets::APP_JS",
     }
     for key, entry in sorted(embedded.items()):
         assert entry["path"].startswith("assets/"), key

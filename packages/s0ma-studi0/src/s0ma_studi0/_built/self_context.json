@@ -845,36 +845,36 @@
     },
     {
       "dependencies": [],
-      "id": "sh0w_assets::APP_CSS",
+      "id": "studi0_assets::APP_CSS",
       "intent": {
         "state": "value",
-        "value": "The stylesheet served at /assets/app.css: the whole visual language of sh0w — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth."
+        "value": "The stylesheet served at /assets/app.css: the whole visual language of the studi0 page — near-white canvas, muted layer bands, one accent hue, amber reserved for stale — including the materialize beat and its reduced-motion variant, and the deliberately unlike-the-graph treatment of the narration pane (sunken surface, dashed edges, no glyphs and no accent) that keeps agent self-report visually separable from canonical truth."
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "sh0w_assets"
+      "module": "studi0_assets"
     },
     {
       "dependencies": [],
-      "id": "sh0w_assets::APP_JS",
+      "id": "studi0_assets::APP_JS",
       "intent": {
         "state": "value",
-        "value": "The script served at /assets/app.js: the whole sh0w viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
+        "value": "The script served at /assets/app.js: the whole graph viewer — layout, inspection, the live poll of the graph API, the delta beat that shows what a landing build changed, the narration pane that shows what an agent says it is doing beside it, and s0ma's own definitions of the words the page prints, opened from those words. One file, no imports, no build step."
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "sh0w_assets"
+      "module": "studi0_assets"
     },
     {
       "dependencies": [],
-      "id": "sh0w_assets::INDEX_HTML",
+      "id": "studi0_assets::INDEX_HTML",
       "intent": {
         "state": "value",
-        "value": "The document served at the root: a standalone HTML5 page that mounts sh0w and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7)."
+        "value": "The document served at the root: a standalone HTML5 page that mounts the graph viewer and pulls its stylesheet and script from studi0's own /assets routes. It reaches for nothing off this machine — no CDN, no web font, no remote image (FR-STUDI0-7)."
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
-      "module": "sh0w_assets"
+      "module": "studi0_assets"
     },
     {
       "dependencies": [],
@@ -936,7 +936,7 @@
       "id": "studi0_server::_CSS_CONTENT_TYPE",
       "intent": {
         "state": "value",
-        "value": "The Content-Type header value studi0 sends with the sh0w stylesheet, named here rather than at the route so the charset is declared once and cannot drift between assets."
+        "value": "The Content-Type header value studi0 sends with the page's stylesheet, named here rather than at the route so the charset is declared once and cannot drift between assets."
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
@@ -972,7 +972,7 @@
       "id": "studi0_server::_JS_CONTENT_TYPE",
       "intent": {
         "state": "value",
-        "value": "The Content-Type header value studi0 sends with the sh0w script. It must be a JavaScript type a browser will accept for a module script, or the page loads its stylesheet and then draws nothing."
+        "value": "The Content-Type header value studi0 sends with the page's script. It must be a JavaScript type a browser will accept for a module script, or the page loads its stylesheet and then draws nothing."
       },
       "kind": "CONSTANT",
       "layer": "PRESENTATION",
@@ -1203,14 +1203,14 @@
       "edges": [
         {
           "authored": true,
-          "carries": "the sh0w stylesheet",
+          "carries": "the page's stylesheet",
           "origin": "inline_depends_on",
           "relation": "READS",
           "target": "studi0_server::APP_CSS"
         },
         {
           "authored": true,
-          "carries": "the sh0w script",
+          "carries": "the page's script",
           "origin": "inline_depends_on",
           "relation": "READS",
           "target": "studi0_server::APP_JS"
@@ -1224,7 +1224,7 @@
         },
         {
           "authored": true,
-          "carries": "the sh0w page served at the root",
+          "carries": "the studi0 page served at the root",
           "origin": "inline_depends_on",
           "relation": "READS",
           "target": "studi0_server::INDEX_HTML"
@@ -1311,7 +1311,7 @@
       "id": "studi0_server::route_request",
       "intent": {
         "state": "value",
-        "value": "Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the sh0w page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
+        "value": "Decides what studi0 answers for one request: a structured FOREIGN_HOST refusal on every path when the request is addressed to a name studi0 does not go by, and otherwise, by path, the studi0 page at the root, the page's stylesheet and script on the two /assets routes, the session's current reading on the two graph API routes, a structured NOT_BUILT error when the project has no graph to serve, and a structured NOT_FOUND error for every path this build does not serve."
       },
       "kind": "FUNCTION",
       "layer": "PRESENTATION",
@@ -1435,8 +1435,8 @@
   "schema": "s0ma-self-context@1",
   "source_ir": [
     {
-      "path": "sh0w_assets.s0ma.json",
-      "sha256": "sha256:c0998ac5a6df3b64e3988529fae9a946852fd953df676a474502ca0059dab1c4"
+      "path": "studi0_assets.s0ma.json",
+      "sha256": "sha256:1560c872aa778f9dae7dc15ce8c4b6b14b8ea71a5171d1cf2d596ce218dcd46c"
     },
     {
       "path": "studi0_narration.s0ma.json",
@@ -1444,7 +1444,7 @@
     },
     {
       "path": "studi0_server.s0ma.json",
-      "sha256": "sha256:78bebe9a57fc07a65ba6c8478dee3f1605640ae492f477e7264c694af1c4393e"
+      "sha256": "sha256:7450c1fc71168ce0d28a267a6b3a56207245bfd9532b4e74d25cfcd7a97531a4"
     },
     {
       "path": "studi0_state.s0ma.json",

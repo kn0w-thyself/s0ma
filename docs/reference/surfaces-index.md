@@ -142,9 +142,9 @@ Effects are read from the thing itself wherever the thing declares them: `none`,
 | --- | --- | --- | --- | --- |
 | /api/graph | `studi0:action/api/graph` | The whole component graph of the project being shown, wrapped in the sequence number it belongs to, fetched only when the sequence number says it is worth fetching. | read | bound |
 | /api/state | `studi0:action/api/state` | The cheap poll: which reading this is, whether the build still matches the sources it was built from, which modules have moved on, and what an agent has said it is doing. | read | bound |
-| /assets/app.css | `studi0:action/assets/app.css` | The sh0w page's stylesheet, served as the build embedded it. | none | bound |
-| /assets/app.js | `studi0:action/assets/app.js` | The sh0w page's script, served as the build embedded it — the whole of the viewer's behaviour. | none | bound |
-| / | `studi0:action/index` | The sh0w page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API. | none | bound |
+| /assets/app.css | `studi0:action/assets/app.css` | The studi0 page's stylesheet, served as the build embedded it. | none | bound |
+| /assets/app.js | `studi0:action/assets/app.js` | The studi0 page's script, served as the build embedded it — the whole of the viewer's behaviour. | none | bound |
+| / | `studi0:action/index` | The studi0 page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API. | none | bound |
 
 ## The self-description interface
 

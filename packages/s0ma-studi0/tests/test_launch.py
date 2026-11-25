@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from s0ma_studi0 import launch, sh0w_assets, studi0_server, studi0_state
+from s0ma_studi0 import launch, studi0_assets, studi0_server, studi0_state
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -455,17 +455,17 @@ def test_browser_stays_closed_when_not_asked(
     assert browser.urls == []
 
 
-def test_root_serves_the_embedded_sh0w_page(
+def test_root_serves_the_embedded_studi0_page(
     launch_studi0: Callable[..., ServedStudi0],
     tmp_path: Path,
 ) -> None:
-    """GET / is the sh0w page, carried in the build and served whole."""
+    """GET / is the studi0 page, carried in the build and served whole."""
     session = launch_studi0(tmp_path / "billing-app")
     status, content_type, body = session.get("/")
 
     assert status == 200
     assert content_type == "text/html; charset=utf-8"
-    assert body == sh0w_assets.INDEX_HTML.encode("utf-8")
+    assert body == studi0_assets.INDEX_HTML.encode("utf-8")
     page = body.decode("utf-8")
     assert page.startswith("<!doctype html>")
     # The page pulls the rest of itself from studi0's own routes.
@@ -557,7 +557,7 @@ def test_query_strings_do_not_change_the_route(
     session = launch_studi0()
     status, _, body = session.get("/?since=7")
     assert status == 200
-    assert body == sh0w_assets.INDEX_HTML.encode("utf-8")
+    assert body == studi0_assets.INDEX_HTML.encode("utf-8")
 
 
 def test_project_display_name_falls_back_to_the_resolved_directory() -> None:
@@ -589,5 +589,5 @@ def test_the_page_carries_nothing_from_the_project_tree(tmp_path: Path) -> None:
     session = studi0_state.create_session(hostile)
     body = studi0_server.route_request("/", session)["body"]
 
-    assert body == sh0w_assets.INDEX_HTML.encode("utf-8")
+    assert body == studi0_assets.INDEX_HTML.encode("utf-8")
     assert b"<script>alert(1)</script>" not in body
