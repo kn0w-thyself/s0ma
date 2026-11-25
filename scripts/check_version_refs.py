@@ -554,10 +554,13 @@ def check_lockstep(root: Path, current: str) -> int:
     return mismatches
 
 
-#: One umbrella requirement in the only shape it may take: a bare
-#: distribution name and an exact version, nothing else. No extras, no
-#: markers, no second clause.
-EXACT_PIN_RE = re.compile(r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)\s*==\s*(?P<version>[^\s,;]+)$")
+#: One umbrella requirement in the only shape it may take: a distribution
+#: name and an exact version. The name may carry the one extra `[test]`, which
+#: the umbrella asks of s0ma-lang-dsl so that `pip install s0ma-lang` brings
+#: the pytest `s0ma test` runs. No other extra, no markers, no second clause.
+EXACT_PIN_RE = re.compile(
+    r"^(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)(?:\[test\])?\s*==\s*(?P<version>[^\s,;]+)$"
+)
 
 
 def _canonical(name: str) -> str:

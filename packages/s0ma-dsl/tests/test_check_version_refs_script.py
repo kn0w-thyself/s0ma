@@ -384,6 +384,60 @@ def test_an_umbrella_floor_is_red_even_at_the_current_version(
     assert f"{UMBRELLA} does not require s0ma-core" in output
 
 
+def test_an_umbrella_pin_with_the_test_extra_is_an_exact_pin(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """The umbrella asks for the DSL's `test` extra, so pytest comes with it."""
+    checker = _checker()
+    files = _tree()
+    files[checker.UMBRELLA_SOURCE] = files[checker.UMBRELLA_SOURCE].replace(
+        f'"s0ma-dsl == {SCRATCH_VERSION}"', f'"s0ma-dsl[test] == {SCRATCH_VERSION}"'
+    )
+    assert _check(_write(tmp_path, files)) == 0
+    output = capsys.readouterr().out
+    assert f"umbrella OK, {UMBRELLA} pins {len(PARTS)} distribution(s)" in output
+
+
+def test_an_umbrella_pin_with_the_test_extra_is_still_held_to_the_version(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    checker = _checker()
+    files = _tree()
+    files[checker.UMBRELLA_SOURCE] = files[checker.UMBRELLA_SOURCE].replace(
+        f'"s0ma-dsl == {SCRATCH_VERSION}"', f'"s0ma-dsl[test] == {STALE_VERSION}"'
+    )
+    assert _check(_write(tmp_path, files)) == 1
+    output = capsys.readouterr().out
+    assert f"s0ma-dsl is pinned to {STALE_VERSION}" in output
+
+
+@pytest.mark.parametrize(
+    "requirement",
+    [
+        "s0ma-dsl[dev] == {version}",
+        "s0ma-dsl[test,dev] == {version}",
+        "s0ma-dsl[ test ] == {version}",
+        "s0ma-dsl[test] == {version}; python_version >= '3.11'",
+        "s0ma-dsl[test] >= {version}",
+    ],
+)
+def test_an_umbrella_pin_with_any_other_extra_form_is_red(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], requirement: str
+) -> None:
+    """Only the one extra the umbrella needs passes, and only on an exact pin."""
+    checker = _checker()
+    files = _tree()
+    files[checker.UMBRELLA_SOURCE] = files[checker.UMBRELLA_SOURCE].replace(
+        f'"s0ma-dsl == {SCRATCH_VERSION}"',
+        '"' + requirement.format(version=SCRATCH_VERSION) + '"',
+    )
+    # The requirement is not an exact pin, and so s0ma-dsl is not required.
+    assert _check(_write(tmp_path, files)) == 2
+    output = capsys.readouterr().out
+    assert "is not an exact pin" in output
+    assert f"{UMBRELLA} does not require s0ma-dsl" in output
+
+
 def test_a_distribution_the_umbrella_does_not_require_is_red(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
