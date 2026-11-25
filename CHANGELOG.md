@@ -70,6 +70,15 @@ Historical entries describe artifacts as they were named at the time.
   the page's address on GitHub at the installed version's tag, where it used
   to name a repository path. From a checkout it still names the path.
 
+- **studi0 says less while a build is on its way, and drops a button that did
+  nothing.** When a source file changes after the last build, the banner now
+  reads "Changes detected. View updates after next build." It still clears by
+  itself when the next build lands. The inspector says the same for a part or
+  module of that file. The `framework layer` button shows only when the
+  project has a `FRAMEWORK` module, and the page no longer draws an empty
+  `FRAMEWORK` band. No project or template has such a module, so before, the
+  button only changed its own color.
+
 ## [0.23.0] — 2026-11-23
 
 ### Added
