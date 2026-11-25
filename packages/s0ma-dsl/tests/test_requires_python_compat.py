@@ -743,3 +743,113 @@ class TestRequiresPythonIncludes311Predicate:
     )
     def test_predicate(self, requires_python, expected) -> None:
         assert requires_python_includes_311(requires_python) is expected
+
+
+# ---------------------------------------------------------------------------
+# The reported line is the line in the .s0ma file
+# ---------------------------------------------------------------------------
+
+
+def _line_of(source: str, needle: str) -> int:
+    """The 1-based line of the only line in *source* that contains *needle*."""
+    hits = [
+        number
+        for number, line in enumerate(source.splitlines(), start=1)
+        if needle in line
+    ]
+    assert len(hits) == 1, f"{needle!r} is on lines {hits}"
+    return hits[0]
+
+
+class TestReportedLine:
+    """A finding names the line where the offending body line sits.
+
+    Every template here has a long header, so a line counted from the
+    header instead of from the body lands many lines too early.
+    """
+
+    _WALRUS = "return [(y := x * 2) for x in xs]"
+
+    def _nerve_source(self, *, leading_blank: bool = False) -> str:
+        body = _indent_body(dedent(f"""
+            def demo(xs):
+                total = 0
+                count = 0
+                {self._WALRUS}
+        """).strip())
+        if leading_blank:
+            body = "\n" + body
+        return _NERVE_TEMPLATE.format(body=body)
+
+    def test_nerve_line_is_the_body_line(self) -> None:
+        source = self._nerve_source()
+        diagnostics = _compat_only(_diagnostics(
+            source, requires_python=(">=3.11",),
+        ))
+        assert [d.line for d in diagnostics] == [_line_of(source, self._WALRUS)]
+        assert diagnostics[0].context["body_line"] == 4
+
+    def test_leading_blank_body_line_is_counted(self) -> None:
+        source = self._nerve_source(leading_blank=True)
+        diagnostics = _compat_only(_diagnostics(
+            source, requires_python=(">=3.11",),
+        ))
+        assert [d.line for d in diagnostics] == [_line_of(source, self._WALRUS)]
+
+    @pytest.mark.parametrize(
+        "template,kind",
+        [
+            ("_CELL_TEMPLATE", "cell"),
+            ("_GANGLION_TEMPLATE", "ganglion"),
+            ("_TEST_TEMPLATE", "test"),
+        ],
+    )
+    def test_other_kinds_report_the_body_line(self, template, kind) -> None:
+        body = _indent_body(dedent(f"""
+            def demo_{kind}(xs):
+                xs = [1, 2, 3]
+                {self._WALRUS}
+        """).strip())
+        if kind == "cell":
+            body = _indent_body(dedent(f"""
+                class DemoModel:
+                    def __init__(self, xs):
+                        {self._WALRUS}
+            """).strip())
+        source = globals()[template].format(body=body)
+        diagnostics = [
+            d for d in _compat_only(_diagnostics(
+                source, requires_python=(">=3.11",),
+            ))
+            if d.context["declaration_kind"] == kind
+        ]
+        assert [d.line for d in diagnostics] == [_line_of(source, self._WALRUS)]
+
+    @_REQUIRES_312_HOST
+    def test_nested_fstring_line_is_the_body_line(self) -> None:
+        needle = 'return f"outer {f"inner_{inner}"}"'
+        body = _indent_body(dedent(f"""
+            def demo(x):
+                inner = "value"
+                label = "x"
+                {needle}
+        """).strip())
+        source = _NERVE_TEMPLATE.format(body=body)
+        diagnostics = _compat_only(_diagnostics(
+            source, requires_python=(">=3.11",),
+        ))
+        assert [d.line for d in diagnostics] == [_line_of(source, needle)]
+
+    def test_matches_the_parser_body_start_line(self) -> None:
+        """The validator's first body line equals the one the parser records."""
+        from s0ma_dsl.parser import s0ma_parser
+        from s0ma_dsl.semantic.validator import _body_first_line
+
+        source = self._nerve_source(leading_blank=True)
+        raw = {
+            decl.header_names[0]: decl.body_start_line
+            for decl in s0ma_parser._split_declarations(source, "fixture.s0ma")
+        }
+        nerve = _parse(source).nerves[0]
+        assert nerve.body is not None
+        assert _body_first_line(nerve.location, nerve.body) == raw["demo"]
