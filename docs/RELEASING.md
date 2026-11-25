@@ -218,7 +218,7 @@ Those two commands are for the terminal. The Desktop app's Code tab has no `/plu
 5. **studi0 is shown without asking.** In the Desktop app's Code tab it opens beside the chat; in the terminal Claude gives its address as a link, and the page loads the project's graph. Claude ends by saying what you can ask next.
 6. **Set a preference by saying so**: "always show studi0". Claude answers in one sentence, and `s0ma-launch prefs` then reports studi0 `always`. A new session afterwards shows you no line about s0ma at all, though Claude is told, out of your sight, that s0ma is there and how you want it used.
 7. **Turn s0ma off for the project**: "turn s0ma off here". Claude answers that s0ma is off in this project and names the one file it added, `.s0ma/preferences.json`. A new session in that folder says nothing about s0ma.
-8. **Remove s0ma** by following [Removing s0ma](uninstall.md). Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
+8. **Remove s0ma** by following [Removing s0ma](uninstall.md). On the Desktop app route, also remove the two entries you added to the settings file, since they count as a s0ma setting in `~/.claude`. Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
 
 **On Windows without Git for Windows**, the session line and the edit checks say nothing, and no hook error appears.
 
