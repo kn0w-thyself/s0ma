@@ -1,6 +1,6 @@
 # s0ma-lang-studi0
 
-**studi0** is s0ma's local visual development environment, and **sh0w** is the graph renderer it hosts. `s0ma studi0 <project>` starts a loopback web server and opens one page: the project's own component graph — modules, components, and the authored, derived, and verification edges between them — drawn from the artifacts that project's last build produced (PRD §7.6, FR-STUDI0-1..9).
+**studi0** is s0ma's local visual development environment. `s0ma studi0 <project>` starts a loopback web server and opens one page: the project's own component graph — modules, components, and the authored, derived, and verification edges between them — drawn from the artifacts that project's last build produced (PRD §7.6, FR-STUDI0-1..9).
 
 Every fact on the page comes from `s0ma-lang-dsl`'s single graph-export contract (`s0ma_dsl.graph_export.collect_graph`, the same data `s0ma graph --format json --detail full` prints). studi0 has no second extraction path, so it cannot show you something the project did not declare. What it has no declaration for, it says so about: **nothing on the page is inferred, completed, or invented.** The one thing on the page that is not about your project is s0ma's own definition of the words it is written in, and that comes from s0ma too: the teaching slice `s0ma-lang-core` ships, the same entries `s0ma docs show` prints.
 
@@ -105,7 +105,7 @@ v1 is deliberately a pure viewer, and the honest list of what it is not is short
 
 ## How this package builds
 
-Like `s0ma-lang-mcp`, this package is itself a s0ma project — a viewer for s0ma models that is a s0ma model. Its behavior is authored in the DSL under `s0ma_src/*.s0ma` and shipped as the transpiler's committed, deterministic build output under `src/s0ma_studi0/_built/`; `src/s0ma_studi0/__init__.py` is the **single** handwritten Python module, which bootstraps the built modules and exposes `launch()`. sh0w's front end rides the same rule (FR-STUDI0-8): `index.html`, `app.css`, and `app.js` are plain files under `s0ma_src/assets/`, embedded into PUBLIC CONSTANT cells with the DSL's `content: @file(...)` directive, so the served page is s0ma-owned content with its bytes hash-tracked in the build manifest.
+Like `s0ma-lang-mcp`, this package is itself a s0ma project — a viewer for s0ma models that is a s0ma model. Its behavior is authored in the DSL under `s0ma_src/*.s0ma` and shipped as the transpiler's committed, deterministic build output under `src/s0ma_studi0/_built/`; `src/s0ma_studi0/__init__.py` is the **single** handwritten Python module, which bootstraps the built modules and exposes `launch()`. The page's front end rides the same rule (FR-STUDI0-8): `index.html`, `app.css`, and `app.js` are plain files under `s0ma_src/assets/`, embedded into PUBLIC CONSTANT cells with the DSL's `content: @file(...)` directive, so the served page is s0ma-owned content with its bytes hash-tracked in the build manifest.
 
 Never hand-edit anything under `_built/` — a CI stage rebuilds it and byte-compares. Edit the `.s0ma` source, rebuild, and commit both together in one commit:
 
@@ -115,7 +115,7 @@ Never hand-edit anything under `_built/` — a CI stage rebuilds it and byte-com
 uv run s0ma --project-root packages/s0ma-studi0 build packages/s0ma-studi0
 ```
 
-Point studi0 at itself to see the arrangement: `uv run s0ma studi0 packages/s0ma-studi0` draws five organs — the server, the state service, the watch loop, the narration side channel, and the embedded sh0w assets. [CONTRIBUTING.md](https://github.com/kn0w-thyself/s0ma/blob/main/CONTRIBUTING.md) has the workspace setup and the one command that runs the whole gate.
+Point studi0 at itself to see the arrangement: `uv run s0ma studi0 packages/s0ma-studi0` draws five organs — the server, the state service, the watch loop, the narration side channel, and the embedded page assets. [CONTRIBUTING.md](https://github.com/kn0w-thyself/s0ma/blob/main/CONTRIBUTING.md) has the workspace setup and the one command that runs the whole gate.
 
 ## Documentation
 

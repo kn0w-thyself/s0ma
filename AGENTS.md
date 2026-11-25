@@ -24,7 +24,7 @@ The distributions version in lockstep, but remain independently installable:
 ```text
 s0ma-lang (umbrella: no code, requires each of the four below at exactly its own version)
 s0ma-lang-mcp (agent authoring server)
-s0ma-lang-studi0 (local visual environment: studi0 and its sh0w graph renderer)
+s0ma-lang-studi0 (local visual environment: studi0 and its graph viewer)
     -> s0ma-lang-dsl (language, compiler, CLI)
         -> s0ma-lang-core (Apache-2.0 runtime, registry, verification, introspection)
 ```
@@ -46,7 +46,7 @@ one folder whose name is its distribution's name, and nothing depends on it.
 - Author MCP behavior in `packages/s0ma-mcp/s0ma_src/*.s0ma` and its embedded
   data files. Regenerate the committed build with:
   `uv run s0ma --project-root packages/s0ma-mcp build packages/s0ma-mcp --mode release --no-cache`.
-- Author studi0 behavior in `packages/s0ma-studi0/s0ma_src/*.s0ma`, and the sh0w
+- Author studi0 behavior in `packages/s0ma-studi0/s0ma_src/*.s0ma`, and the page
   front end in `packages/s0ma-studi0/s0ma_src/assets/` (embedded into CONSTANT
   cells with `content: @file(...)`). Regenerate the committed build with:
   `uv run s0ma --project-root packages/s0ma-studi0 build packages/s0ma-studi0`

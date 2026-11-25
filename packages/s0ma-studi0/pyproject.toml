@@ -13,7 +13,7 @@ requires-python = ">=3.11"
 authors = [
     { name = "kn0wthyself", email = "support@kn0wthyself.ai" },
 ]
-keywords = ["s0ma", "studi0", "sh0w", "dsl", "self-model", "self-knowledge"]
+keywords = ["s0ma", "studi0", "dsl", "self-model", "self-knowledge"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
