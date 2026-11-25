@@ -32,7 +32,8 @@ from s0ma_dsl.cli.main import (
     EXIT_VALIDATION_ERROR,
     S0maCLI,
 )
-from s0ma_dsl.cli.templates import TEMPLATE_CHOICES
+from s0ma_dsl.cli.migrate_grammar import current_grammar_source
+from s0ma_dsl.cli.templates import TEMPLATE_CHOICES, ArchetypeFile
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -1314,6 +1315,245 @@ class TestArchetypeTemplates:
         text = (target / "pyproject.toml").read_text(encoding="utf-8")
         assert text.startswith(original)
         assert 'bootstrap_files = ["bootstrap/cli.py"]' in text
+
+
+# ---------------------------------------------------------------------------
+# The agent template: five ordered steps, laid down whole
+# ---------------------------------------------------------------------------
+
+#: The decided name and one-line intent of each agent step, word for word.
+_AGENT_STEPS: tuple[tuple[str, str], ...] = (
+    (
+        "What it hears",
+        "A customer's message, and the order number in it if there is one.",
+    ),
+    (
+        "What it must and must never do",
+        "It answers or hands off to a person, and it never promises a refund.",
+    ),
+    (
+        "Its tools",
+        "A short list of common answers, and a way to look up an order.",
+    ),
+    (
+        "How it decides",
+        "It picks one of three: answer from the list, look up the order, or "
+        "hand off to a person. A scripted stand-in plays the model, so it "
+        "runs with no account.",
+    ),
+    (
+        "The check that watches it",
+        "It counts how many messages get handed to a person.",
+    ),
+)
+
+#: What the bootstrap prints for its default message after steps 1 to N.
+_AGENT_FIRST_LINE = {
+    1: "heard: Where is my order A1234? (order number: A1234)",
+    2: "heard: Where is my order A1234? (order number: A1234)",
+    3: "heard: Where is my order A1234? (order number: A1234)",
+    4: "answer: Order A1234 is shipped on Monday.",
+    5: "answer: Order A1234 is shipped on Monday.",
+}
+
+
+def _expected_sample_files(files: tuple[ArchetypeFile, ...]) -> dict[str, bytes]:
+    """What laying down *files* writes: ``.s0ma`` sources in the current grammar."""
+    return {
+        f.relpath: (
+            current_grammar_source(f.content, f.relpath)
+            if f.relpath.endswith(".s0ma")
+            else f.content
+        ).encode("utf-8")
+        for f in files
+    }
+
+
+def _written_sample_files(target: Path) -> dict[str, bytes]:
+    """Every file under ``src/``, ``tests/`` and ``bootstrap/``, by POSIX path."""
+    return {
+        p.relative_to(target).as_posix(): p.read_bytes()
+        for top in ("src", "tests", "bootstrap")
+        for p in sorted((target / top).rglob("*"))
+        if p.is_file()
+    }
+
+
+class TestAgentTemplate:
+    """``--template agent``: a small support-inbox agent in five steps.
+
+    Every prefix of its steps is a clean project, and laying it down whole
+    writes exactly the files of all five steps.
+    """
+
+    def test_the_decided_words_are_exact(self) -> None:
+        from s0ma_dsl.cli.templates import get_archetype
+
+        agent = get_archetype("agent")
+        assert tuple((step.name, step.intent) for step in agent.steps) == (
+            _AGENT_STEPS
+        )
+        assert agent.called == "a small agent"
+        assert agent.example_question == (
+            "what is this agent never allowed to do?"
+        )
+
+    def test_files_through_applies_the_steps_in_order(self) -> None:
+        """A later step replaces an earlier file in place; the count is checked."""
+        from s0ma_dsl.cli.templates import get_archetype
+
+        agent = get_archetype("agent")
+        sizes = [len(agent.files_through(n)) for n in range(1, 6)]
+        assert sizes == [4, 6, 8, 13, 15]
+        assert agent.files_through(5) == agent.files
+        first = {f.relpath: f for f in agent.files_through(1)}
+        whole = {f.relpath: f for f in agent.files}
+        # Step 4 replaces the bootstrap step 1 wrote.
+        assert first["bootstrap/main.py"] != whole["bootstrap/main.py"]
+        assert whole["bootstrap/main.py"] in agent.steps[3].files
+        assert [f.relpath for f in agent.files][:4] == [
+            f.relpath for f in agent.files_through(1)
+        ]
+        for count in (0, 6):
+            with pytest.raises(ValueError):
+                agent.files_through(count)
+        assert agent.through_step(2).files == agent.files_through(2)
+        assert agent.through_step(2).features == ("inbox", "rules")
+
+    @pytest.mark.parametrize("count", [1, 2, 3, 4, 5])
+    def test_steps_one_to_n_make_a_clean_project(
+        self,
+        cli: S0maCLI,
+        tmp_path: Path,
+        capsys: pytest.CaptureFixture[str],
+        monkeypatch: pytest.MonkeyPatch,
+        count: int,
+    ) -> None:
+        """Steps 1 to N check in dev and release mode, build, test, and run.
+
+        Nothing printed carries a diagnostic, a warning, or the nudge to
+        declare a health_command. The bootstrap runs in a subprocess so the
+        built modules stay out of this process's registry.
+        """
+        from s0ma_dsl.cli import templates
+
+        whole = templates.get_archetype("agent")
+        monkeypatch.setitem(
+            templates._ARCHETYPES, "agent", lambda: whole.through_step(count)
+        )
+        target = tmp_path / f"agent-{count}"
+        assert cli.run(_new_project_argv(target, "agent")) == EXIT_SUCCESS
+        capsys.readouterr()
+        assert _written_sample_files(target) == _expected_sample_files(
+            whole.files_through(count)
+        )
+
+        root = ["--project-root", str(target)]
+        for argv in (
+            [*root, "check"],
+            [*root, "check", "--mode", "release"],
+            [*root, "build", str(target)],
+            [*root, "test"],
+        ):
+            assert cli.run(argv) == EXIT_SUCCESS, argv
+            captured = capsys.readouterr()
+            printed = captured.out + captured.err
+            assert _DIAGNOSTIC_LINE.findall(printed) == [], (argv, printed)
+            assert "no health_command declared" not in printed, argv
+            if argv[2] != "test":  # pytest's own summary is not ours
+                assert "warning" not in printed.lower(), (argv, printed)
+            if argv[2] == "build":
+                assert "verify: python bootstrap/main.py" in printed
+
+        result = subprocess.run(
+            [sys.executable, str(target / "bootstrap" / "main.py")],
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=False,
+        )
+        assert result.returncode == 0, result.stderr
+        assert result.stderr == ""
+        assert result.stdout.splitlines() == [_AGENT_FIRST_LINE[count]]
+
+    def test_the_whole_sample_is_the_files_of_every_step(
+        self, cli: S0maCLI, tmp_path: Path
+    ) -> None:
+        """The one-shot project is byte for byte the files of steps 1 to 5."""
+        from s0ma_dsl.cli.templates import get_archetype
+
+        target = tmp_path / "agent-whole"
+        assert cli.run(_new_project_argv(target, "agent")) == EXIT_SUCCESS
+
+        expected = _expected_sample_files(
+            get_archetype("agent").files_through(5)
+        )
+        assert _written_sample_files(target) == expected
+        pyproject = (target / "pyproject.toml").read_text(encoding="utf-8")
+        assert 'bootstrap_files = ["bootstrap/main.py"]' in pyproject
+        assert 'health_command = "python bootstrap/main.py"' in pyproject
+
+    def test_files_are_lf_and_keep_their_backslashes(
+        self, cli: S0maCLI, tmp_path: Path
+    ) -> None:
+        """No CR on any platform, and a regex's \\b stays two characters."""
+        target = tmp_path / "agent-bytes"
+        assert cli.run(_new_project_argv(target, "agent")) == EXIT_SUCCESS
+
+        for relpath, data in _written_sample_files(target).items():
+            assert b"\r" not in data, relpath
+            assert b"\x08" not in data, relpath
+        inbox = (target / "src" / "inbox" / "inbox.s0ma").read_bytes()
+        assert b're.search(r"\\bA\\d{4}\\b", tidy)' in inbox
+
+    def test_json_says_what_the_sample_is(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        target = tmp_path / "agent-json"
+        argv = ["new", "project", str(target), "--template", "agent",
+                "--format", "json"]
+        assert cli.run(argv) == EXIT_SUCCESS
+
+        report = json.loads(capsys.readouterr().out)
+        assert report["ok"] is True
+        assert report["template"] == "agent"
+        assert report["called"] == "a small agent"
+        assert report["example_question"] == (
+            "what is this agent never allowed to do?"
+        )
+        assert report["steps"] == [
+            {"number": number, "name": name, "intent": intent}
+            for number, (name, intent) in enumerate(_AGENT_STEPS, start=1)
+        ]
+        assert report["parts"] == 10
+        assert report["features"] == [
+            "inbox", "rules", "tools", "model", "stand_in", "triage", "watch",
+        ]
+
+    def test_a_template_without_steps_reports_no_steps(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        target = tmp_path / "svc-nosteps"
+        argv = ["new", "project", str(target), "--template", "service",
+                "--format", "json"]
+        assert cli.run(argv) == EXIT_SUCCESS
+
+        report = json.loads(capsys.readouterr().out)
+        for key in ("called", "example_question", "steps", "parts"):
+            assert key not in report
+
+    def test_the_cli_offers_exactly_the_template_list(self) -> None:
+        import argparse
+
+        parser = S0maCLI().build_parser()
+        (commands,) = (
+            a for a in parser._actions
+            if isinstance(a, argparse._SubParsersAction)
+        )
+        new = commands.choices["new"]
+        (template,) = (a for a in new._actions if a.dest == "template")
+        assert list(template.choices) == list(TEMPLATE_CHOICES)
+        assert "agent" in TEMPLATE_CHOICES
 
 
 # ---------------------------------------------------------------------------
