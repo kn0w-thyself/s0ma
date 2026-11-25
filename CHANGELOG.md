@@ -85,6 +85,14 @@ Historical entries describe artifacts as they were named at the time.
   With JavaScript off, the page says "studi0 draws the component graph with
   JavaScript in this page." Code that imported `s0ma_studi0.sh0w_assets`
   must now import `s0ma_studi0.studi0_assets`.
+- **The Claude integration guide says how to load the plugin in the Code tab
+  of the Claude Desktop app, and what differs on Windows.** The Code tab has
+  no `/plugin` command, and its plugin browser never lists a plugin from a
+  folder. The guide now says which steps are for the terminal, and shows the
+  two entries in the Claude user settings file that load a local copy, with
+  the Windows path's backslashes doubled. The release runbook's hand run
+  gives the same route for the Desktop app and asks for the Python fix below
+  to be confirmed on Windows.
 
 ### Removed
 

@@ -199,6 +199,8 @@ It exits 0 when it has exported; 1 when it refused and wrote nothing (uncommitte
 /plugin install s0ma@kn0wthyself
 ```
 
+Those two commands are for the terminal. The Desktop app's Code tab has no `/plugin` command: there, add the two settings entries that [the Claude guide](guides/claude-integration.md#in-the-code-tab-of-the-claude-desktop-app) shows, with the exported folder as the path, since it holds `.claude-plugin/marketplace.json` at its top. Then close the app and open it again. On Windows the settings file is `%USERPROFILE%\.claude\settings.json`, and every backslash in the path is doubled, as in `"C:\\Users\\Public\\s0ma-X.Y.Z"`.
+
 **The steps**, and what to look for at each:
 
 1. **Install the plugin** from that folder, as just described. No settings dialog opens and nothing asks for a key.
@@ -216,9 +218,11 @@ It exits 0 when it has exported; 1 when it refused and wrote nothing (uncommitte
 5. **studi0 is shown without asking.** In the Desktop app's Code tab it opens beside the chat; in the terminal Claude gives its address as a link, and the page loads the project's graph. Claude ends by saying what you can ask next.
 6. **Set a preference by saying so**: "always show studi0". Claude answers in one sentence, and `s0ma-launch prefs` then reports studi0 `always`. A new session afterwards shows you no line about s0ma at all, though Claude is told, out of your sight, that s0ma is there and how you want it used.
 7. **Turn s0ma off for the project**: "turn s0ma off here". Claude answers that s0ma is off in this project and names the one file it added, `.s0ma/preferences.json`. A new session in that folder says nothing about s0ma.
-8. **Remove s0ma** by following [Removing s0ma](uninstall.md). Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
+8. **Remove s0ma** by following [Removing s0ma](uninstall.md). On the Desktop app route, also remove the two entries you added to the settings file, since they count as a s0ma setting in `~/.claude`. Afterwards none of the clean-account conditions above is broken, except that uv stays if you mean to keep it.
 
 **On Windows without Git for Windows**, the session line and the edit checks say nothing, and no hook error appears.
+
+**On Windows in the Desktop app**, confirm that the install at step 3 succeeds. In 0.23.0 it failed there: uv downloaded the newest Python there was, which s0ma is not tested on, and inside a packaged app the writes to uv's own Python folder were redirected, after which every `s0ma-launch` command failed. The launcher now asks uv for a Python s0ma supports and keeps it in `python` under s0ma's home. Afterwards `s0ma-launch status` answers, and `%USERPROFILE%\.s0ma\python` holds a Python from 3.11 to 3.13.
 
 Write down the host, the system, the Claude version and the s0ma version for each pass, and stop the publication at the first step that does not look as described.
 
