@@ -304,7 +304,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "26f6fe37627211b05595c93c4070fd4e8ce716e5bd0bc3064d099d2377311601",
+      "content_sha256": "c062418ddec00ed58ace50c0086d24a9867f35ddb76769366e4747952c1ae9e6",
       "delegates": [],
       "id": "authority:declared/package.s0ma-lang-studi0",
       "section": "[project]",
@@ -313,7 +313,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "d199a63eb702fa2f3d422bcf33008e969cb138e1c65e27cf8d1fce06ea998f9d",
+      "content_sha256": "1555c6becc68496202ae13bb842e3aa822045107ad9345b5671acace2c1fd152",
       "delegates": [],
       "id": "authority:declared/release",
       "section": "[0.23.0] — 2026-11-23",
@@ -340,7 +340,7 @@
     },
     {
       "authority_class": "declared",
-      "content_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60",
+      "content_sha256": "97eb880cdd37edc4d6844a87c9e006200e8e24ee000bdb19fbdca2e64359e88d",
       "delegates": [],
       "id": "authority:declared/studi0.serving-contract",
       "section": "Studi0ServerConfig",
@@ -5679,7 +5679,7 @@
     "build_channel": "preview",
     "release_version": "0.23.0",
     "schema": "s0ma-docs-model@1",
-    "snapshot_hash": "sha256:3a7d1bd1e640295a"
+    "snapshot_hash": "sha256:6816c5bb805215d7"
   },
   "surfaces": [
     {
@@ -11552,7 +11552,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
+        "source_sha256": "97eb880cdd37edc4d6844a87c9e006200e8e24ee000bdb19fbdca2e64359e88d"
       },
       "public_name": "/api/graph",
       "side_effects": [
@@ -11579,7 +11579,7 @@
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
+        "source_sha256": "97eb880cdd37edc4d6844a87c9e006200e8e24ee000bdb19fbdca2e64359e88d"
       },
       "public_name": "/api/state",
       "side_effects": [
@@ -11589,19 +11589,19 @@
     {
       "channel": "studi0",
       "component_refs": [
-        "component:s0ma_studi0.sh0w_assets.APP_CSS",
+        "component:s0ma_studi0.studi0_assets.APP_CSS",
         "component:s0ma_studi0.studi0_server.route_request"
       ],
       "errors": [],
       "governed_by": [],
       "id": "studi0:action/assets/app.css",
-      "intent": "The sh0w page's stylesheet, served as the build embedded it.",
+      "intent": "The studi0 page's stylesheet, served as the build embedded it.",
       "manual_exception": "",
       "provenance": {
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
+        "source_sha256": "97eb880cdd37edc4d6844a87c9e006200e8e24ee000bdb19fbdca2e64359e88d"
       },
       "public_name": "/assets/app.css",
       "side_effects": [
@@ -11611,19 +11611,19 @@
     {
       "channel": "studi0",
       "component_refs": [
-        "component:s0ma_studi0.sh0w_assets.APP_JS",
+        "component:s0ma_studi0.studi0_assets.APP_JS",
         "component:s0ma_studi0.studi0_server.route_request"
       ],
       "errors": [],
       "governed_by": [],
       "id": "studi0:action/assets/app.js",
-      "intent": "The sh0w page's script, served as the build embedded it — the whole of the viewer's behaviour.",
+      "intent": "The studi0 page's script, served as the build embedded it — the whole of the viewer's behaviour.",
       "manual_exception": "",
       "provenance": {
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
+        "source_sha256": "97eb880cdd37edc4d6844a87c9e006200e8e24ee000bdb19fbdca2e64359e88d"
       },
       "public_name": "/assets/app.js",
       "side_effects": [
@@ -11633,19 +11633,19 @@
     {
       "channel": "studi0",
       "component_refs": [
-        "component:s0ma_studi0.sh0w_assets.INDEX_HTML",
+        "component:s0ma_studi0.studi0_assets.INDEX_HTML",
         "component:s0ma_studi0.studi0_server.route_request"
       ],
       "errors": [],
       "governed_by": [],
       "id": "studi0:action/index",
-      "intent": "The sh0w page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API.",
+      "intent": "The studi0 page itself — the one document studi0 hands a browser, which then learns everything it draws from the graph API.",
       "manual_exception": "",
       "provenance": {
         "adapter_id": "studi0",
         "schema_version": "s0ma-docs-model@1",
         "source": "packages/s0ma-studi0/src/s0ma_studi0/_built/studi0_server.py",
-        "source_sha256": "d50accdb9b2596c6308927d1000520c1c5924303fedeca63baf2ca346d082c60"
+        "source_sha256": "97eb880cdd37edc4d6844a87c9e006200e8e24ee000bdb19fbdca2e64359e88d"
       },
       "public_name": "/",
       "side_effects": [
