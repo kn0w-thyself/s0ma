@@ -293,7 +293,8 @@ def built(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Path]:
 
 def test_there_is_one_build_per_step_and_one_edited() -> None:
     assert len(_archetype().steps) == LAST_STEP
-    assert BUILDS == tuple(f"build_{n}" for n in range(1, 7))
+    assert len(BUILDS) == 6
+    assert EDITED == "build_6"
     assert sorted(p.name for p in BUILDS_DIR.iterdir()) == sorted(
         [*(f"{name}.graph.json" for name in BUILDS), "unbuilt_answers.json"]
     )
