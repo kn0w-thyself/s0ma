@@ -772,9 +772,10 @@ def tool_journey_map() -> dict[str, list[str]]:
 
 
 if not TYPE_CHECKING:
-    # M10: the loader lives in Apache-licensed s0ma-lang-core, so a package
-    # that ships its own committed build boots without the authoring
-    # packages on the runtime path (INV-9).
+    # M10: the loader lives in Apache-licensed s0ma-lang-core and needs
+    # none of the authoring packages itself (INV-9). The built modules it
+    # loads import s0ma-lang-dsl's runtime bridge, so s0ma-lang-dsl must
+    # still be installed at run time.
     from s0ma.bootstrap import bootstrap_imports
 
     # One module object per built module, executed exactly once under

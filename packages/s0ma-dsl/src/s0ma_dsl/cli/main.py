@@ -3,9 +3,7 @@
 Provides the ``s0ma`` command with subcommands for transpiling, checking,
 building, inspecting, and graphing ``.s0ma`` projects.
 
-PRD references: FR-30, §2.8.1 (commands), §2.8.2 (exit codes), §2.8.3 (agent goals)
-
-Exit codes per §2.8.2:
+Exit codes (documented for users in ``docs/troubleshooting.md``):
   0 — Success (no errors, warnings may exist)
   1 — Validation errors (compilation blocked)
   2 — CLI usage error (invalid arguments)
@@ -2310,8 +2308,9 @@ def _snake_case(name: str) -> str:
 # Comment lines inserted at the top of scaffolded nerve bodies. Python
 # comments are legal in bodies (invisible to the AST classifier); these
 # teach the two body rules that kill first-time users before they ever
-# hit a PARSE_ERROR: exactly one def, and imports live in the module
-# header's `requires:` list, never in the body.
+# hit a PARSE_ERROR: the def is the body's first top-level statement,
+# and imports live in the module header's `requires:` list, never in
+# the body.
 _BODY_RULE_COMMENT = (
     "    # Body rule: exactly ONE def below — nothing else at this level.\n"
     "    # Imports do NOT go here: declare them in the module header, e.g.\n"
