@@ -68,8 +68,10 @@ with the runner's own Python and nothing else.
     version is checked: the version the installed ``s0ma doctor`` reports for
     each s0ma package (s0ma has no ``--version`` flag), the plugin's server
     and its tools, ``new project``, ``check``, ``build .`` and ``test`` in a
-    fresh project, and no request to the stand-in control plane. Every
-    installed distribution is printed with its version. No Claude step runs.
+    fresh project, the start skill's "show me" walk as the ``uv-present`` leg
+    runs it, and no request to the stand-in control plane. Every installed
+    distribution is printed with its version. No Claude step runs. Imports
+    s0ma's own sample for the walk, so run it with ``uv run python``.
 
 The real Claude Code (``claude plugin validate --strict``, ``claude plugin
 validate --profile directory``, each of which must exit 0 and is printed in
@@ -1832,8 +1834,10 @@ def check_walk_counts(
 def run_show_me_walk(cli: Path, env: dict[str, str], parent: Path, results: Results) -> None:
     """The start skill's "show me" walk, command by command, with the installed s0ma.
 
-    What each step must say is read from the sample's archetype in this tree,
-    which the installed wheels were built from, and from the JSON itself.
+    What each step must say is read from the sample's archetype in this tree
+    and from the JSON itself. In the ``uv-present`` leg the installed wheels
+    were built from this tree. In the ``real-index`` leg this tree is the
+    release's tag and the installed s0ma came from the package index.
     """
     from s0ma_dsl.cli.templates import FIRST_RUN_SAMPLE, get_archetype
 
@@ -2034,6 +2038,11 @@ def leg_real_index(opts: argparse.Namespace, work: Path, results: Results) -> No
         fresh_parent = work / "fresh"
         fresh_parent.mkdir()
         run_fresh_project_steps(cli, env, fresh_parent, results)
+
+        banner("The show-me walk with the installed s0ma")
+        walk_parent = work / "walk"
+        walk_parent.mkdir()
+        run_show_me_walk(cli, env, walk_parent, results)
 
         results.add("claude checks", "none in this leg")
         expect(
