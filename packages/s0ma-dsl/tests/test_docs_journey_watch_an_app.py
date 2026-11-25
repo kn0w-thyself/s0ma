@@ -1,22 +1,23 @@
 """Gates for ``journey:watch-an-app-being-built``, its guide, and its evidence.
 
 The guide has a reader look at a finished example in studi0 and then watch
-their own coding agent build one like it in three requests. Half of that
+their own coding agent build one like it in six requests. Half of that
 path is deterministic and half is not, and the line between them is what
 this suite holds in place:
 
 * **the path**: seven steps over surfaces this build really serves, in
   the order a reader walks them, composing with nothing to report;
 * **the evidence replays the half that needs no agent**, in two
-  transcripts, one per project the reader makes. In the first the example
-  is made and its graph read back. In the second the reader's own project
-  is made, and the example's three builds are landed in it one after
-  another from the sources committed under
-  ``packages/s0ma-studi0/tests/fixtures/pipeline_builds/.sources/``, byte
-  for byte, with the graph read back after each. ``s0ma build`` stands in
-  for the agent's ``build_project`` call, and both ledgers say so. Two
-  transcripts rather than one because a transcript prepares one project
-  and runs in it, and this path has the reader make two;
+  transcripts, one per project the reader makes. In the first the example,
+  s0ma's own agent sample, is made and its graph read back. In the second
+  the reader's own project is made at step 0 of the same sample, the
+  sample's five steps are laid down on it one after another, and then the
+  one change the last request asks for is made by hand to the template's
+  own ``rules`` files, with the graph read back after each build. The
+  steps and ``s0ma build`` stand in for the agent's ``build_project``
+  call, and both ledgers say so. Two transcripts rather than one because a
+  transcript prepares one project and runs in it, and this path has the
+  reader make two;
 * **the guide agrees with the evidence**: every command a reader is shown
   is one the transcript runs, save the two that serve until interrupted,
   and the commands that only stand in for the agent are never shown to the
@@ -37,6 +38,8 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
+from s0ma_dsl.cli.project_steps import template_bytes
+from s0ma_dsl.cli.templates import get_archetype
 from s0ma_dsl.docs_model.application import build as build_documentation
 from s0ma_dsl.docs_model.evidence import (
     CHANNEL_CLI,
@@ -72,12 +75,50 @@ GUIDE = "docs/guides/watch-an-app-being-built.md"
 #: The page's own source, read as text and never imported.
 APP_JS = REPO_ROOT / "packages" / "s0ma-studi0" / "s0ma_src" / "assets" / "app.js"
 
-#: The three builds the guide's requests describe, as studi0's own tests
-#: keep them.
-SOURCES = REPO_ROOT.joinpath(
-    "packages", "s0ma-studi0", "tests", "fixtures", "pipeline_builds", ".sources"
-)
-BUILDS = ("build_1", "build_2", "build_3")
+#: The sample both projects are made from, and its number of steps.
+SAMPLE = "agent"
+LAST_STEP = 5
+
+#: The one hand edit the growth transcript makes after the last step, so a
+#: build changes a part that is already there: each file it writes is the
+#: template's own file with exactly these lines replaced.
+HAND_EDIT: dict[str, tuple[tuple[str, str], ...]] = {
+    "src/rules/rules.s0ma": (
+        (
+            '    forbids: "Never lets out a reply that promises a refund."',
+            '    forbids: "Never lets out a reply that promises a refund or a delivery date."',
+        ),
+        (
+            '        """Hand off any reply that promises a refund."""',
+            '        """Hand off any reply that promises a refund or a delivery date."""',
+        ),
+        (
+            '        if "refund" in reply.text.lower():',
+            '        if any(word in reply.text.lower() for word in ("refund", "will arrive")):',
+        ),
+    ),
+    "tests/rules/rules_tests.s0ma": (
+        (
+            '    intent: "A reply that promises a refund becomes a hand-off, and any other'
+            ' reply goes out as it was."',
+            '    intent: "A reply that promises a refund or a delivery date becomes a'
+            ' hand-off, and any other reply goes out as it was."',
+        ),
+        (
+            '        ok = Reply(action="answer", text="It ships today.")',
+            '        assert keep_the_rules(Reply(action="answer", text="It will arrive on'
+            ' Friday.")).action == "hand_off"\n'
+            '        ok = Reply(action="answer", text="It ships today.")',
+        ),
+    ),
+}
+
+GRAPH_ARGV = ("s0ma", "graph", ".", "--format", "json", "--detail", "full")
+
+
+def _step_argv(number: int) -> tuple[str, ...]:
+    return ("s0ma", "new", "project", ".", "--sample", "--step", str(number))
+
 
 #: The path as authored. Written down rather than read off the record, so
 #: a step quietly appearing or moving fails here by name.
@@ -101,23 +142,25 @@ EXPECTED_TAUGHT: tuple[str, ...] = (
 
 #: The commands the guide shows that no transcript can replay: each serves
 #: until it is interrupted. Pinned so a third appearing is a failure.
-UNREPLAYABLE_IN_GUIDE: frozenset[str] = frozenset({"s0ma studi0 example", "s0ma studi0 song"})
+UNREPLAYABLE_IN_GUIDE: frozenset[str] = frozenset({"s0ma studi0 example", "s0ma studi0 helpdesk"})
 
-#: The transcript's own reading commands and its stand-in for the agent's
-#: build. A reader never types these, so the guide must not show them as
-#: commands; they are how the transcript sees what the page would draw.
+#: The transcript's own reading commands and its stand-ins for the agent's
+#: builds: the sample's five steps, and the build after the hand edit. A
+#: reader never types these, so the guide must not show them as commands;
+#: they are how the transcript sees what the page would draw.
 STAND_INS: frozenset[str] = frozenset(
     {
         "s0ma graph . --format json --detail full",
         "s0ma build",
+        *(" ".join(_step_argv(number)) for number in range(1, LAST_STEP + 1)),
     }
 )
 
 #: Sentences the guide quotes from studi0 that the page prints whole.
-#: Sentences the page assembles from counts ("Build 2 · added 2 parts,
-#: changed 1") are not here: they are read off the example's real builds,
-#: which the evidence lands, and the page's assembly of them is studi0's
-#: own suite's to pin.
+#: Sentences the page assembles from counts ("Build 6 · changed 1 part")
+#: are not here: they are read off the example's real builds, which the
+#: evidence lands, and the page's assembly of them is studi0's own suite's
+#: to pin.
 PAGE_QUOTES: tuple[str, ...] = (
     "What changed since you opened this page",
     "Nothing yet.",
@@ -200,13 +243,12 @@ def _rendered(argv: tuple[str, ...]) -> str:
     return " ".join(part if " " not in part else f'"{part}"' for part in argv)
 
 
-def _source_files(build: str) -> dict[str, str]:
-    root = SOURCES / build
-    return {
-        path.relative_to(root).as_posix(): path.read_text(encoding="utf-8")
-        for path in sorted(root.rglob("*"))
-        if path.is_file()
-    }
+def _template_text(relpath: str) -> str:
+    """The file at *relpath* as the sample's last step writes it."""
+    for file in get_archetype(SAMPLE).files_through(LAST_STEP):
+        if file.relpath == relpath:
+            return template_bytes(file).decode("utf-8")
+    raise AssertionError(f"the {SAMPLE} sample writes no {relpath}")
 
 
 # ---------------------------------------------------------------------------
@@ -314,37 +356,59 @@ class TestTheEvidence:
             "new",
             "project",
             "example",
-            "--template",
-            "pipeline",
+            "--sample",
         )
-        assert fixtures[GROWTH_ID].scaffold.argv == ("s0ma", "new", "project", "song")
+        assert fixtures[GROWTH_ID].scaffold.argv == (
+            "s0ma",
+            "new",
+            "project",
+            "helpdesk",
+            "--sample",
+            "--step",
+            "0",
+        )
 
-    def test_the_writes_are_the_three_committed_builds_byte_for_byte(
+    def test_the_growth_is_the_samples_own_steps_in_order(
         self, fixtures: dict[str, EvidenceRecord]
     ) -> None:
-        """Each build writes exactly the files that differ from the build before.
+        """Step 0, then each step with the graph read after it, then the edit and its build.
 
-        The transcript carries the sources as text, because a replay writes
-        nowhere but its own folder. This is what stops that copy drifting
-        from the one studi0's own tests build: the writes are regrouped at
-        each build command and compared with the committed tree.
+        The steps are the sample's own, so the growth the requests ask for
+        is the one the template declares, and only the last build is a
+        plain ``s0ma build`` on files the transcript wrote.
         """
-        groups: list[dict[str, str]] = []
-        pending: dict[str, str] = {}
-        for step in fixtures[GROWTH_ID].steps:
-            if isinstance(step, WriteStep):
-                pending[step.path] = step.text
-            elif isinstance(step, CommandStep) and step.argv == ("s0ma", "build"):
-                groups.append(pending)
-                pending = {}
-        assert pending == {}
-        assert len(groups) == len(BUILDS)
-        previous: dict[str, str] = {}
-        for build, written in zip(BUILDS, groups, strict=True):
-            current = _source_files(build)
-            changed = {path: text for path, text in current.items() if previous.get(path) != text}
-            assert written == changed, build
-            previous = current
+        expected: list[tuple[str, ...]] = [GRAPH_ARGV]
+        for number in range(1, LAST_STEP + 1):
+            expected += [_step_argv(number), GRAPH_ARGV]
+        expected += [("write",)] * len(HAND_EDIT) + [("s0ma", "build"), GRAPH_ARGV]
+        ran = [
+            step.argv if isinstance(step, CommandStep) else ("write",)
+            for step in fixtures[GROWTH_ID].steps
+        ]
+        assert ran == expected
+
+    def test_the_one_hand_edit_is_the_templates_rules_with_one_rule_added(
+        self, fixtures: dict[str, EvidenceRecord]
+    ) -> None:
+        """The files the transcript writes are the template's, with only the edit made.
+
+        The transcript carries the edited files as text, because a replay
+        writes nowhere but its own folder. This is what stops that copy
+        drifting from the template the steps lay down: each written file
+        is rebuilt from the template and the pinned replacements.
+        """
+        writes = {
+            step.path: step.text
+            for step in fixtures[GROWTH_ID].steps
+            if isinstance(step, WriteStep)
+        }
+        assert set(writes) == set(HAND_EDIT)
+        for relpath, replacements in HAND_EDIT.items():
+            text = _template_text(relpath)
+            for old, new in replacements:
+                assert text.count(old) == 1, (relpath, old)
+                text = text.replace(old, new)
+            assert writes[relpath] == text, relpath
 
     @pytest.mark.parametrize("identifier", [name for name, _ in EVIDENCE])
     def test_the_transcript_still_describes_the_product(
