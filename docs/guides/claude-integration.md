@@ -41,8 +41,8 @@ their commands in the root `README.md` "Install" section.
 
 From a checkout you can try the plugin now:
 
-- **Claude Code** installs from a folder. Point it at the folder that holds
-  `.claude-plugin/marketplace.json`; in a checkout of the s0ma repository that
+- **Claude Code in a terminal** installs from a folder. Point it at the folder
+  that holds `.claude-plugin/marketplace.json`; in a checkout of the s0ma repository that
   is `integrations/claude/`:
 
   ```text
@@ -56,6 +56,52 @@ From a checkout you can try the plugin now:
   `scripts/pack_desktop_extension.sh`. It stages the extension outside the
   repository, and prints the two commands that pack it when the packer is not
   already installed.
+
+### In the Code tab of the Claude Desktop app
+
+The two `/plugin` commands above are for Claude Code in a terminal. The Code
+tab of the Claude Desktop app has no `/plugin` command, so do not type them
+there. Its plugin browser, in the **+** menu, lists the Anthropic and Partners
+catalogs and never a plugin from a folder, and its "add marketplace" takes a
+GitHub repository or an `https://` address. Claude's documentation states that
+adding a marketplace from a GitHub repository on Windows needs Git for Windows.
+
+To load the plugin from a folder in the Desktop app, add two entries to your
+Claude user settings file: `~/.claude/settings.json` on macOS and Linux,
+`%USERPROFILE%\.claude\settings.json` on Windows. The first names the
+kn0wthyself marketplace and the folder it is in, and the second turns the
+plugin on. Both are needed: with only the first, the plugin does not appear.
+If the file already has either key, put the entry inside it.
+
+On macOS and Linux:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "kn0wthyself": {
+      "source": { "source": "directory", "path": "/path/to/s0ma/integrations/claude" }
+    }
+  },
+  "enabledPlugins": { "s0ma@kn0wthyself": true }
+}
+```
+
+On Windows, double every backslash in the path:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "kn0wthyself": {
+      "source": { "source": "directory", "path": "C:\\path\\to\\s0ma\\integrations\\claude" }
+    }
+  },
+  "enabledPlugins": { "s0ma@kn0wthyself": true }
+}
+```
+
+Then close the Desktop app and open it again. The plugin's commands are there,
+and `/s0ma:start` goes on as the rest of this page describes, with studi0
+opening beside the chat.
 
 [The plugin's own README](../../integrations/claude/plugin/README.md) says
 everything it runs, fetches, sends and writes.
@@ -94,6 +140,11 @@ Step 1 names the public catalog, which opens once the next release has passed
 its first-run test. Until it is open, add the marketplace from a checkout
 instead, as [What the next release holds](#what-the-next-release-holds) shows;
 every step after that is the same.
+
+Steps 1 and 2 are typed in Claude Code in a terminal. In the Code tab of the
+Claude Desktop app, load the plugin through your settings file instead, as
+[In the Code tab of the Claude Desktop app](#in-the-code-tab-of-the-claude-desktop-app)
+shows; step 3 is the same in both.
 
 1. **Add the marketplace.** Ours needs nobody's approval and is not Anthropic's:
 
