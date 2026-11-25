@@ -25,10 +25,28 @@ Historical entries describe artifacts as they were named at the time.
   (`ArchetypeStep`), and `Archetype.files_through(n)` and
   `Archetype.through_step(n)` give steps 1 to n. With `--format json` the
   agent's summary adds `called`, `example_question`, its `steps` (number,
-  name, intent), and `parts`, the count of its cells, nerves, and ganglia.
+  name, intent), `modules`, and `parts`, both read from the build.
   The project declares a `health_command`, so its build ends with the command
   to run. The CLI now reads its `--template` names from the one list in
   `s0ma_dsl.cli.templates`.
+- **`s0ma new project --step N` lays down a sample one step at a time, and
+  `--sample` names the sample for you.** For a template made of steps, such
+  as `agent`, `--step N` brings the project to step N and builds it. Step 0 is
+  the bare project, with no module and nothing built. On an empty folder it
+  lays down steps 1 to N at once; on a project at an earlier step it adds and
+  replaces what the later steps do. No state file is kept: the step a project
+  is on is read from its files. Running a step again changes nothing. A file
+  the next step would replace that has changes of yours stops the call before
+  anything is written, and the file is named; files no later step touches are
+  kept and listed. Going back a step is refused. The text output starts with
+  `Step N of M: <name>. <intent>`, and `--format json` adds `step`,
+  `finished`, `files_written`, and `files_kept`. `--sample` stands for
+  `--template` with the sample s0ma uses for a first run (`agent` today), and
+  the folder may be left out to use the sample's own name, `support-agent`.
+  The sample's `modules` and `parts` are now read from the built project, so
+  they match the build's `Build complete: N module(s)` line and the sum of
+  the Components column of `s0ma inspect --all` (14 and 16 for the whole
+  agent).
 
 ### Fixed
 
