@@ -392,6 +392,9 @@ To stop thinking about it, turn auto-update on for our marketplace once:
 then checks after a session has started and asks you to reload; the session you
 are in keeps the version it loaded.
 
+These `/plugin` commands are for Claude Code in a terminal. The Code tab of the
+Claude Desktop app has no `/plugin` command.
+
 The plugin is deliberately thin: twelve named commands, a start-up line, the
 script that starts the server and the small program that starts s0ma. So it
 changes rarely, and a slightly old one is not a problem.
@@ -546,6 +549,10 @@ s0ma server itself could not start.
 Remove the plugin with `/plugin`, or the extension through Claude Desktop's
 Extensions settings; each is Claude's own uninstall and takes the wrapper away,
 not the toolchain.
+
+`/plugin` is for Claude Code in a terminal. If you loaded the plugin in the
+Code tab of the Claude Desktop app, remove the two entries you added to your
+settings file, then close the app and open it again.
 
 The toolchain, everything s0ma downloaded, the Python uv downloaded for it if
 it needed one, and your key if you saved it with `s0ma-launch activate`, all
