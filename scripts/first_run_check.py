@@ -33,7 +33,8 @@ with the runner's own Python and nothing else.
     "show me" walk runs with the installed s0ma: ``--sample --step 0``, each
     step in turn on the folder it names, one step again, then ``s0ma check``
     and ``s0ma build .``, each step's line, counts and ``finished`` held to
-    the sample's own words and to ``s0ma inspect --all``. Imports the
+    the sample's own words and to ``s0ma inspect --all``. Then step 0 again,
+    whose refusal must say where the project is, so a second walk picks up. Imports the
     end-to-end test's helpers and s0ma's own sample, so run it with ``uv run
     python``.
 
@@ -1897,6 +1898,33 @@ def run_show_me_walk(cli: Path, env: dict[str, str], parent: Path, results: Resu
         "show-me walk, the final check",
         f"s0ma check: No errors.; s0ma build .: exit 0, no Results: line; "
         f"{len(steps)} steps, {report['parts']} parts",
+    )
+
+    # A second "show me" in the same folder: step 0 refuses and says where the
+    # project is, and asking for that step picks the walk up, changing nothing.
+    ran = run(
+        [str(cli), "new", "project", "--sample", "--step", "0", "--format", "json"], env, parent
+    )
+    expect(ran.code != 0, "step 0 on a finished sample did not refuse")
+    try:
+        refusal: dict[str, Any] = json.loads(ran.stdout)
+    except ValueError as exc:
+        raise CheckFailed(f"the refusal printed no JSON: {ran.stdout!r}") from exc
+    expect(refusal.get("ok") is False, f"the refusal said ok={refusal.get('ok')!r}")
+    expect(
+        (refusal.get("project_root"), refusal.get("at_step"), refusal.get("of"))
+        == (str(root), len(steps), len(steps)),
+        f"the refusal says {refusal.get('project_root')!r}, at_step {refusal.get('at_step')!r}, "
+        f"of {refusal.get('of')!r}",
+    )
+    picked = step(int(refusal["at_step"]), str(root))
+    check_walk_step(picked, len(steps), steps, sample)
+    expect(picked.get("unchanged") is True, "picking the walk up changed something")
+    expect(picked.get("files_written") == [], f"picking the walk up wrote {picked.get('files_written')}")
+    results.add(
+        "show-me walk, a second time",
+        f"step 0 refused with at_step {refusal['at_step']} of {refusal['of']}; "
+        f"--step {refusal['at_step']} unchanged, finished {picked['finished']}",
     )
 
 

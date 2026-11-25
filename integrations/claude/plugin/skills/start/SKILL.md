@@ -153,7 +153,8 @@ read its JSON.
 
 If a command fails or refuses, which it does with an exit code other than 0 or
 with `"ok": false` and an `error` in its JSON, say plainly what it printed and
-stop the walk there.
+stop the walk there. The one exception is a sample that is already in this
+folder, in step 2.
 
 1. **Say what s0ma is.**
 
@@ -170,10 +171,27 @@ stop the walk there.
    `called`, `noun` and `example_question`, which say what the sample is; and
    `step.of`, how many steps there are.
 
+   **If the sample is already here.** When the folder is there from an earlier
+   walk and past step 0, this command refuses, and its JSON carries
+   `project_root`, `at_step` and `of`. That refusal does not stop the walk.
+   Say this, with `at_step` in place of `{K}` and `of` in place of `{M}`:
+
+   > The sample is already in this folder, at step {K} of {M}. I'll pick up from there.
+
+   Then run step 5's command with `at_step` as `<n>` on that `project_root`.
+   It changes nothing, and its JSON carries everything the walk keeps. Show
+   studi0 on it as in step 3, and say nothing from step 4. If that step is the
+   last, go straight to step 6. Otherwise say its `line` with the "next" and
+   "finish" sentence from step 5, and wait for the person. A refusal with no
+   `at_step` is not this case: say what it printed and stop.
+
 3. **Show studi0 on that folder**, as the `/s0ma:studi0` skill says, with
    `project_root` as the project folder. If studi0 is already open on that
    folder, do not open it again. Its page says nothing is built yet. That is
-   right for now, so do not build the project to fill it.
+   right for now, so do not build the project to fill it. Before step 1,
+   studi0 also prints "warning: Declared bootstrap_file does not exist on
+   disk". That is expected, because that file comes with step 1, so do not
+   repeat it to the person and do not act on it.
 
 4. **Say what comes next**, with the JSON's `called` in place of `{called}`:
 

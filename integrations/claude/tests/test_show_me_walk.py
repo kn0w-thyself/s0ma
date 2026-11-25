@@ -52,6 +52,11 @@ AFTER_THE_LAST_STEP = (
     'part s0ma is for. Ask me anything about it, for example "{example_question}" '
     "I'll answer from the {noun}'s own model, not by guessing from its code."
 )
+PICK_UP = (
+    "The sample is already in this folder, at step {K} of {M}. I'll pick up "
+    "from there."
+)
+NOT_TO_REPEAT = "warning: Declared bootstrap_file does not exist on disk"
 THE_CLOSE = (
     "Tell me what to change, or ask how any part works. Or tell me what you "
     'want to build. Two things you can say any time: "always use s0ma" and '
@@ -62,6 +67,7 @@ DECIDED = (
     BEFORE_THE_FIRST_STEP,
     AFTER_A_STEP,
     AFTER_THE_LAST_STEP,
+    PICK_UP,
     THE_CLOSE,
 )
 
@@ -99,11 +105,15 @@ def _fill(sentence: str, report: dict[str, Any], line: str | None = None) -> str
     )
 
 
-def _json_of(argv: list[str]) -> dict[str, Any]:
+def _run(argv: list[str]) -> tuple[int, dict[str, Any]]:
     out = io.StringIO()
     with contextlib.redirect_stdout(out):
         code = S0maCLI().run([*argv, "--format", "json"])
-    report: dict[str, Any] = json.loads(out.getvalue())
+    return code, json.loads(out.getvalue())
+
+
+def _json_of(argv: list[str]) -> dict[str, Any]:
+    code, report = _run(argv)
     assert code == EXIT_SUCCESS, report
     assert report["ok"] is True, report
     return report
@@ -135,7 +145,14 @@ def reports(tmp_path_factory: pytest.TempPathFactory) -> dict[str, dict[str, Any
     last = _json_of(
         ["new", "project", root, "--sample", "--step", str(first["step"]["of"])]
     )
-    return {"first": first, "last": last}
+    # A second "show me" in the same folder: step 0 refuses, and says where
+    # the project is, so the walk can pick up there.
+    code, again = _run(["new", "project", root, "--sample", "--step", "0"])
+    assert code != EXIT_SUCCESS, again
+    picked = _json_of(
+        ["new", "project", again["project_root"], "--sample", "--step", str(again["at_step"])]
+    )
+    return {"first": first, "last": last, "again": again, "picked": picked}
 
 
 class TestTheDecidedWords:
@@ -171,6 +188,40 @@ class TestTheDecidedWords:
         for key in ("called", "noun", "example_question", "project_root"):
             assert first[key] == last[key], key
         assert first["step"]["of"] == last["step"]["number"]
+
+
+class TestASecondWalkPicksUp:
+    def test_the_refusal_carries_what_the_walk_needs(
+        self, reports: dict[str, dict[str, Any]]
+    ) -> None:
+        again, last = reports["again"], reports["last"]
+        assert again["ok"] is False
+        assert again["project_root"] == last["project_root"]
+        assert again["at_step"] == last["step"]["number"]
+        assert again["of"] == last["step"]["of"]
+        said = PICK_UP.replace("{K}", str(again["at_step"])).replace("{M}", str(again["of"]))
+        assert said == "The sample is already in this folder, at step 5 of 5. I'll pick up from there."
+
+    def test_reading_the_step_it_is_at_changes_nothing(
+        self, reports: dict[str, dict[str, Any]]
+    ) -> None:
+        picked, last = reports["picked"], reports["last"]
+        assert picked["unchanged"] is True
+        assert picked["files_written"] == []
+        for key in ("line", "finished", "parts", "noun", "example_question", "called"):
+            assert picked[key] == last[key], key
+        assert _fill(AFTER_THE_LAST_STEP, picked) == FILLED_AFTER
+
+    def test_the_skill_says_it_is_the_one_exception(self, walk: str) -> None:
+        text = _one_line(walk)
+        assert "The one exception is a sample that is already in this folder" in text
+        assert "That refusal does not stop the walk." in text
+        assert "A refusal with no `at_step` is not this case: say what it printed and stop." in text
+
+    def test_the_step_0_warning_is_not_repeated(self, walk: str) -> None:
+        text = _one_line(walk)
+        assert f'"{NOT_TO_REPEAT}"' in text
+        assert "do not repeat it to the person and do not act on it" in text
 
 
 class TestTheSkillHoldsNoneOfTheSamplesWords:
