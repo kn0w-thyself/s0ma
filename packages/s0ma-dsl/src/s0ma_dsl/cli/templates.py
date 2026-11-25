@@ -1834,7 +1834,7 @@ def _agent() -> Archetype:
         bootstrap_files=("bootstrap/main.py",),
         health_command="python bootstrap/main.py",
         run_hint=(
-            'Ask the agent something:        python bootstrap/main.py '
+            'Ask the agent something:         python bootstrap/main.py '
             '"What are your hours?"'
         ),
         steps=(

@@ -1399,6 +1399,21 @@ class TestAgentTemplate:
             "what is this agent never allowed to do?"
         )
 
+    def test_the_run_hint_lines_up_with_the_other_templates(self) -> None:
+        """Every hint's command starts in the same column of the next steps."""
+        from s0ma_dsl.cli.templates import get_archetype
+
+        columns = {}
+        for name in TEMPLATE_CHOICES:
+            hint = get_archetype(name).run_hint
+            if hint:
+                label = hint.split(":", 1)[0] + ":"
+                columns[name] = len(label) + len(
+                    hint[len(label):]
+                ) - len(hint[len(label):].lstrip(" "))
+        assert "agent" in columns
+        assert len(set(columns.values())) == 1, columns
+
     def test_files_through_applies_the_steps_in_order(self) -> None:
         """A later step replaces an earlier file in place; the count is checked."""
         from s0ma_dsl.cli.templates import get_archetype
@@ -1768,6 +1783,30 @@ class TestAgentSteps:
             f"s0ma new project: {target} is at step 3 of 5, and --step does "
             f"not go back to step 1.\n"
         )
+        assert _every_byte(target) == before
+
+    def test_a_refusal_to_go_back_says_where_the_project_is(
+        self, cli: S0maCLI, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+    ) -> None:
+        """Enough for a walk to pick up: the folder, the step, the count."""
+        target = tmp_path / "again"
+        assert cli.run(_step_argv(target, 3)) == EXIT_SUCCESS
+        before = _every_byte(target)
+
+        rc, report = _run_json(cli, _step_argv(target, 0), capsys)
+        assert rc == EXIT_VALIDATION_ERROR
+        assert report == {
+            "ok": False,
+            "project_root": str(target),
+            "error": "the project is at step 3, past step 0",
+            "at_step": 3,
+            "of": 5,
+        }
+        # Asking for the step it is at changes nothing and says its line.
+        rc, report = _run_json(cli, _step_argv(target, 3), capsys)
+        assert rc == EXIT_SUCCESS
+        assert report["unchanged"] is True
+        assert report["line"] == _step_line(3)
         assert _every_byte(target) == before
 
     def test_step_needs_a_template_made_of_steps(
