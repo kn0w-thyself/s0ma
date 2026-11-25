@@ -125,7 +125,7 @@ PAGE_QUOTES: tuple[str, ...] = (
     "more parts are hidden by the toolbar toggles.",
     "Show the rest",
     "Nothing is built yet.",
-    "changed since the last build",
+    "Changes detected. View updates after next build.",
     "agent narration",
     "self-reported by the agent working here",
     "On this page",
