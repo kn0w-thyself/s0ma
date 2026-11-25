@@ -65,6 +65,14 @@ Historical entries describe artifacts as they were named at the time.
   `of`, the number of steps. The agent sample's run hint now lines up with
   the other next steps. The first-run check now drives the walk with the
   installed s0ma, twice.
+- **The Claude integration guide says how to load the plugin in the Code tab
+  of the Claude Desktop app, and what differs on Windows.** The Code tab has
+  no `/plugin` command, and its plugin browser never lists a plugin from a
+  folder. The guide now says which steps are for the terminal, and shows the
+  two entries in the Claude user settings file that load a local copy, with
+  the Windows path's backslashes doubled. The release runbook's hand run
+  gives the same route for the Desktop app and asks for the Python fix below
+  to be confirmed on Windows.
 
 ### Fixed
 
