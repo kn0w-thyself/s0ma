@@ -13,13 +13,15 @@ Historical entries describe artifacts as they were named at the time.
 
 ### Fixed
 
-- **The guides state the body and diagnostic rules the tools apply.** The
-  survival card and the patterns guide said a nerve body is exactly one `def`
-  with nothing else beside it. The rule is that the body's first top-level
-  statement is the `def`, and classes and constants may follow it. The survival
-  card and the troubleshooting page now give the `helper` fix for a
-  `TEST_NOT_COLLECTED` block that holds fixtures or several definitions, and
-  the traceability table no longer recommends an exported helper for
+- **The guides describe four diagnostics as the tools report them.** The
+  survival card's `PARSE_ERROR` line now says the error fires when a body
+  does not start with its `def`, not when it has more than one statement. The
+  patterns guide names the right codes for a refused nerve body: `PARSE_ERROR`
+  when the first statement is not a `def`, and `CLASS_BODY_IN_NERVE` for a
+  `class` body on a kind other than `SERVICE` or `ADAPTER`. The survival card
+  and the troubleshooting page give the `helper` fix for a
+  `TEST_NOT_COLLECTED` block that holds fixtures or several definitions. The
+  traceability table no longer recommends an exported helper for
   `MODULE_SUBSCRIPT`.
 
 ## [0.23.1] — 2026-11-25

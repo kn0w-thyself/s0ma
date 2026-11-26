@@ -17,8 +17,8 @@ worked patterns: s0ma://guide/patterns — §31 for embodying physical hardware.
 ## The four rules that prevent most errors
 
 1. Only edit `.s0ma` files. Never edit generated `.py` files.
-2. A nerve body's first top-level statement is its `def`. Classes and
-   constants may follow the def, but not come before it.
+2. A nerve body is exactly ONE `def`. Nothing else at the top level of
+   the body — no imports, no constants, no second def.
 3. Imports never go in bodies. Declare them in the module header —
    `requires: [json, pathlib.Path]` — and the transpiler emits the
    import lines. References to other s0ma components go in `uses:`.
@@ -28,7 +28,7 @@ worked patterns: s0ma://guide/patterns — §31 for embodying physical hardware.
 
 ## Need several functions?
 
-A nerve is the one `def` its body opens with, so don't cram many functions into a module and
+A body is one `def`, so don't cram many functions into a module and
 subscript it from another: `registry["op"]` on a bare `uses: [registry]`
 module object is `MODULE_SUBSCRIPT` (a runtime `TypeError`). Instead — a
 `kind: SERVICE` nerve is ONE factory `def` that returns a dict of named
