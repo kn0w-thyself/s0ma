@@ -130,6 +130,22 @@ def _authored_bodies(
     return bodies
 
 
+def _body_first_line(location: SourceLocation | None, body: str) -> int:
+    """The ``.s0ma`` line that holds line 1 of *body*.
+
+    The parser ends a declaration on its last body line, and the stored
+    body keeps every line it read after the separator, leading blank
+    lines included. So the body fills the last N lines of the
+    declaration, where N is its line count. The source map finds the
+    body the same way (``SourceMapGenerator._get_body_source_range``).
+    Returns 0 when there is no location, as the other passes do.
+    """
+    if location is None:
+        return 0
+    line_count = len(body.rstrip("\n").split("\n"))
+    return max(location.start_line, location.end_line - line_count + 1)
+
+
 def _is_builtin_exception_name(name: str) -> bool:
     """Return True when *name* is a Python builtin exception class.
 
@@ -2744,19 +2760,11 @@ class IntraModuleValidator:
             findings: list[Python312OnlyFinding] = flag_python_312_only(body)
             if not findings:
                 continue
-            base_line = (
-                location.start_line if location is not None else 0
-            )
+            first_body_line = _body_first_line(location, body)
             for finding in findings:
-                # Compute the canonical line number. Body line is
-                # 1-based; the declaration's location.start_line is
-                # the header line, so the body's line numbers are
-                # offset from there. We approximate by adding the
-                # finding line minus 1; tests assert on the
-                # declaration-relative line so callers can pin
-                # locations even when the exact offset shifts with
-                # parser-internal formatting.
-                line = base_line + max(0, finding.line - 1)
+                # ``finding.line`` is 1-based inside the body, so body
+                # line 1 sits on the first line after the separator.
+                line = first_body_line + max(0, finding.line - 1)
                 errors.append(S0maSemanticError(
                     code="PARSE_GRAMMAR_FORWARD_INCOMPAT",
                     message=(

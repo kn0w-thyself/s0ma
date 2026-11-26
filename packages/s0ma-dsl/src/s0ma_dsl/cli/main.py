@@ -3,9 +3,7 @@
 Provides the ``s0ma`` command with subcommands for transpiling, checking,
 building, inspecting, and graphing ``.s0ma`` projects.
 
-PRD references: FR-30, §2.8.1 (commands), §2.8.2 (exit codes), §2.8.3 (agent goals)
-
-Exit codes per §2.8.2:
+Exit codes (documented for users in ``docs/troubleshooting.md``):
   0 — Success (no errors, warnings may exist)
   1 — Validation errors (compilation blocked)
   2 — CLI usage error (invalid arguments)

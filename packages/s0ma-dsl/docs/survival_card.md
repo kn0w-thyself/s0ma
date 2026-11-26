@@ -78,9 +78,9 @@ Leaving one out is SEMANTIC_REQUIRED_STATE_OMITTED.
 
 ## If check fails
 
-- PARSE_ERROR "body must be a function definition": the body has more
-  than one top-level statement — move imports to `requires:`, keep
-  exactly one `def`.
+- PARSE_ERROR "body must be a function definition": the body's first
+  top-level statement is not the `def`. Move imports to `requires:` and
+  start the body with the `def`.
 - BARE_IMPORT: delete the import line from the body AND declare the
   name in `requires:` (one edit, two parts).
 - MISSING_PACKAGE: `requires:` entries must be importable Python module
@@ -89,5 +89,6 @@ Leaving one out is SEMANTIC_REQUIRED_STATE_OMITTED.
   kind does not have, or a field not exactly four spaces in. Fix the
   spelling or the indent; s0ma://guide/quick-reference lists every line.
 - TEST_NOT_COLLECTED: name a test's function `test_...`, or the runner
-  never runs it.
+  never runs it. If the block holds fixtures or several definitions,
+  declare each one as its own `helper` instead.
 - Anything else: look the code up in s0ma://guide/errors.
