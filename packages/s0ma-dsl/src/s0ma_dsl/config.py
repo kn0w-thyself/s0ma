@@ -268,8 +268,8 @@ SEVERITY_MATRIX: dict[str, dict[StrictnessMode, str | None]] = {
     # body at all). The transpiler emits the concrete nerve's body as
     # written and never makes it a subclass of the abstract, so nothing
     # supplies a missing method, and the consumer fails at runtime when
-    # it calls the unimplemented method —
-    # the canonical motivating example is a renderer / strategy
+    # it calls the unimplemented method.
+    # The canonical motivating example is a renderer / strategy
     # subclass missing a ``render`` method that the abstract advertises.
     # Always an error in every mode: same load-bearing structural
     # correctness rule as ``CONSTANT_NAME_MISMATCH`` and

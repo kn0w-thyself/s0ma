@@ -2308,9 +2308,8 @@ def _snake_case(name: str) -> str:
 # Comment lines inserted at the top of scaffolded nerve bodies. Python
 # comments are legal in bodies (invisible to the AST classifier); these
 # teach the two body rules that kill first-time users before they ever
-# hit a PARSE_ERROR: the def is the body's first top-level statement,
-# and imports live in the module header's `requires:` list, never in
-# the body.
+# hit a PARSE_ERROR: exactly one def, and imports live in the module
+# header's `requires:` list, never in the body.
 _BODY_RULE_COMMENT = (
     "    # Body rule: exactly ONE def below — nothing else at this level.\n"
     "    # Imports do NOT go here: declare them in the module header, e.g.\n"
