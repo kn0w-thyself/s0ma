@@ -42,12 +42,16 @@ See:
 
 from __future__ import annotations
 
+import importlib.util
 import sys
+from collections import Counter
+from pathlib import Path
 from textwrap import dedent
 
 import pytest
 
 from s0ma_dsl.config import StrictnessMode
+from s0ma_dsl.errors import S0maError
 from s0ma_dsl.parser.s0ma_parser import parse_s0ma_with_warnings
 from s0ma_dsl.semantic.python_compat import (
     flag_python_312_only,
@@ -853,3 +857,186 @@ class TestReportedLine:
         nerve = _parse(source).nerves[0]
         assert nerve.body is not None
         assert _body_first_line(nerve.location, nerve.body) == raw["demo"]
+
+
+# ---------------------------------------------------------------------------
+# The body fills the last lines of its declaration
+# ---------------------------------------------------------------------------
+
+
+_REPOSITORY = Path(__file__).resolve().parents[3]
+
+#: Declaration kinds with a body, and the module attribute that lists them.
+_BODY_KINDS: dict[str, str] = {
+    "nerve": "nerves",
+    "cell": "cells",
+    "ganglion": "ganglia",
+    "test": "tests",
+    "helper": "helpers",
+}
+
+
+def _authored_trees() -> tuple[str, ...]:
+    """The trees the gate's ``authored-lines`` stage reads."""
+    path = _REPOSITORY / "scripts" / "check_authored_lines.py"
+    spec = importlib.util.spec_from_file_location("_authored_lines_trees", path)
+    assert spec is not None and spec.loader is not None, path
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        del sys.modules[spec.name]
+    return tuple(module.TREES)
+
+
+def _body_line_mismatches(source: str, filename: str) -> tuple[int, list[str]]:
+    """Compare each body's first line with the parser's ``body_start_line``.
+
+    Returns how many bodies were compared and one message per mismatch.
+    A name that two declarations of one kind share is skipped, since it
+    cannot be matched to one raw declaration.
+    """
+    from s0ma_dsl.parser import s0ma_parser
+    from s0ma_dsl.semantic.validator import _body_first_line
+
+    module, _ = parse_s0ma_with_warnings(source, filename, mode=StrictnessMode.DEV)
+    starts: dict[tuple[str, str], int | None] = {}
+    seen: Counter[tuple[str, str]] = Counter()
+    for raw in s0ma_parser._split_declarations(source, filename):
+        if raw.decl_type in _BODY_KINDS and raw.body:
+            key = (raw.decl_type, raw.header_names[0])
+            seen[key] += 1
+            starts[key] = raw.body_start_line
+    compared = 0
+    problems: list[str] = []
+    for kind, attribute in _BODY_KINDS.items():
+        for decl in getattr(module, attribute):
+            key = (kind, decl.name)
+            if not decl.body or seen[key] != 1:
+                continue
+            if kind == "cell" and decl.embedded_file_path is not None:
+                continue
+            compared += 1
+            derived = _body_first_line(decl.location, decl.body)
+            if derived != starts[key]:
+                problems.append(
+                    f"{_shown(filename)}: {kind} {decl.name}: the validator counts "
+                    f"the body from line {derived}, the parser recorded "
+                    f"line {starts[key]}"
+                )
+    return compared, problems
+
+
+def _shown(filename: str) -> str:
+    """*filename* relative to the repository when it lies inside it."""
+    path = Path(filename)
+    if path.is_absolute() and path.is_relative_to(_REPOSITORY):
+        return str(path.relative_to(_REPOSITORY))
+    return filename
+
+
+#: A short second declaration, so a body has something after it.
+_NEXT_DECLARATION = """\
+test test_other :: DOMAIN
+    intent: "A declaration that follows the body under test."
+    tests: [demo]
+    expects: none
+    depends_on: none
+    mocks: none
+    ---
+    def test_other():
+        assert True
+"""
+
+_WALRUS_LINE = "return [(y := x * 2) for x in xs]"
+
+
+def _shaped_body(*, trailing: str = "", inside: str = "") -> str:
+    """A nerve body with a finding on its third line.
+
+    *inside* is put between the first two lines. *trailing* follows the
+    body verbatim.
+    """
+    lines = ["    def demo(xs):", "        total = 0"]
+    if inside:
+        lines.insert(1, inside)
+    lines.append(f"        {_WALRUS_LINE}")
+    return "\n".join(lines) + trailing
+
+
+#: Each shape: the text after ``---`` up to the end of the file.
+_BODY_SHAPES: dict[str, str] = {
+    "blank lines before the next declaration": (
+        _shaped_body(trailing="\n\n\n\n") + _NEXT_DECLARATION
+    ),
+    "whitespace-only lines before the next declaration": (
+        _shaped_body(trailing="\n    \n\t\n  \n") + _NEXT_DECLARATION
+    ),
+    "trailing spaces on body lines": (
+        _shaped_body(inside="        x = 1   ").replace(
+            "total = 0", "total = 0  ",
+        ) + "   \n\n" + _NEXT_DECLARATION
+    ),
+    "column-0 comments after the body": (
+        _shaped_body(trailing="\n# a note after the body\n# another one\n\n")
+        + _NEXT_DECLARATION
+    ),
+    "indented comments after the body": (
+        _shaped_body(trailing="\n    # an indented note\n\n") + _NEXT_DECLARATION
+    ),
+    "whitespace-only line inside the body": _shaped_body(inside="    ") + "\n",
+    "last declaration, no final newline": _shaped_body(),
+    "last declaration, blank and whitespace lines at the end": (
+        _shaped_body(trailing="\n\n   \n\n")
+    ),
+    "leading blank line": "\n" + _shaped_body() + "\n",
+}
+
+
+class TestBodyFillsTheDeclarationEnd:
+    """``_body_first_line`` rests on one claim about the parser.
+
+    The body fills the last N lines of its declaration, N being its line
+    count. These tests hold that claim on every authored source tree and
+    on the shapes most likely to break it.
+    """
+
+    def test_authored_sources(self) -> None:
+        files = 0
+        compared = 0
+        problems: list[str] = []
+        for tree in _authored_trees():
+            for path in sorted((_REPOSITORY / tree).rglob("*.s0ma")):
+                if "_built" in path.parts or not path.is_file():
+                    continue
+                source = path.read_text(encoding="utf-8")
+                try:
+                    count, found = _body_line_mismatches(source, str(path))
+                except S0maError:
+                    # A fixture written to fail has no module to read.
+                    continue
+                files += 1
+                compared += count
+                problems.extend(found)
+        assert problems == []
+        # Today about 140 files and 400 bodies; the floors keep the test
+        # from passing on an empty walk.
+        assert files >= 100, files
+        assert compared >= 300, compared
+
+    @pytest.mark.parametrize("shape", sorted(_BODY_SHAPES))
+    def test_body_shape(self, shape: str) -> None:
+        header, _ = _NERVE_TEMPLATE.split("{body}")
+        source = header + _BODY_SHAPES[shape]
+        compared, problems = _body_line_mismatches(source, "fixture.s0ma")
+        assert problems == []
+        assert compared >= 1
+        diagnostics = _compat_only(_diagnostics(
+            source, requires_python=(">=3.11",),
+        ))
+        walrus = [
+            d for d in diagnostics
+            if d.context["construct_kind"] == "walrus_in_comprehension"
+        ]
+        assert [d.line for d in walrus] == [_line_of(source, _WALRUS_LINE)]
