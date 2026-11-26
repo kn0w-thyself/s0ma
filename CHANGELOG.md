@@ -23,6 +23,12 @@ Historical entries describe artifacts as they were named at the time.
   `TEST_NOT_COLLECTED` block that holds fixtures or several definitions. The
   traceability table no longer recommends an exported helper for
   `MODULE_SUBSCRIPT`.
+- **`s0ma check` reports a 3.12-only body construct on the right line.**
+  `PARSE_GRAMMAR_FORWARD_INCOMPAT` now names the line of the `.s0ma` file
+  where the offending body line sits. It used to count from the
+  declaration's header line, so the report landed early by the length of
+  the header. The line inside the body is still in the diagnostic's
+  `body_line` context.
 
 ## [0.23.1] — 2026-11-25
 
