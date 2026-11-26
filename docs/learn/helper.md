@@ -71,4 +71,4 @@ helper _<name> :: <LAYER>
 
 - Topic id: `concept:helper`
 - Release: `0.23.1 (preview)`
-- Documentation snapshot: `sha256:adbfb3b65aab099d`
+- Documentation snapshot: `sha256:ef7a1224e257ce05`
